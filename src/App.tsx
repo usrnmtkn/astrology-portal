@@ -145,7 +145,7 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
     "Aquarius",
     "Pisces"
   ];
-  const labelAngles = [225, 255, 285, 315, 345, 15, 45, 75, 105, 135, 165, 195];
+  const labelAngles = signs.map((_, index) => 240 + index * 30);
   const center = 300;
   const radius = {
     outer: 284,
@@ -209,14 +209,14 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
         {signs.map((sign, index) => {
           const p = point(labelAngles[index], 254);
           return (
-            <text
-              key={sign}
-              x={p.x}
-              y={p.y}
-              transform={`rotate(${labelAngles[index] + 90} ${p.x} ${p.y})`}
-            >
-              {sign}
-            </text>
+            <g key={sign} transform={`rotate(${labelAngles[index] + 90} ${p.x} ${p.y})`}>
+              <text className="sign-label-halo" x={p.x} y={p.y}>
+                {sign}
+              </text>
+              <text x={p.x} y={p.y}>
+                {sign}
+              </text>
+            </g>
           );
         })}
       </g>
