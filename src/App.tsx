@@ -131,25 +131,146 @@ export function App() {
 }
 
 function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
-  return (
-    <div className="sky-wheel" aria-label="Planet positions">
-      <div className="wheel-core">
-        <Sparkles size={28} />
-        <span>Now</span>
-      </div>
-      {positions.map((position, index) => {
-        const angle = (index / positions.length) * 360 - 90;
-        const style = {
-          "--angle": `${angle}deg`
-        } as React.CSSProperties;
+  const signs = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces"
+  ];
+  const labelAngles = [225, 255, 285, 315, 345, 15, 45, 75, 105, 135, 165, 195];
+  const center = 300;
+  const radius = {
+    outer: 284,
+    signInner: 226,
+    planet: 190,
+    aspect: 150,
+    house: 38
+  };
 
-        return (
-          <div className="planet-mark" style={style} key={position.planet} title={`${position.planet} in ${position.sign}`}>
-            <span>{position.glyph}</span>
-          </div>
-        );
-      })}
-    </div>
+  function point(angle: number, distance: number) {
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: center + Math.cos(rad) * distance,
+      y: center + Math.sin(rad) * distance
+    };
+  }
+
+  function planetAngle(position: PlanetPosition) {
+    const signIndex = signs.indexOf(position.sign);
+    const zodiacDegrees = signIndex * 30 + position.degree;
+    return 225 + zodiacDegrees;
+  }
+
+  const aspectPairs = positions.slice(0, 5).map((position, index) => ({
+    from: position,
+    to: positions[(index * 2 + 3) % positions.length],
+    soft: index % 2 === 0
+  }));
+
+  return (
+    <svg className="sky-wheel" viewBox="0 0 600 600" role="img" aria-label="Planet positions">
+      <title>Current zodiac wheel</title>
+      <g className="wheel-rings">
+        <circle cx={center} cy={center} r={radius.outer} />
+        <circle cx={center} cy={center} r={radius.signInner} />
+        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
+        <circle cx={center} cy={center} r={radius.house} />
+      </g>
+
+      <g className="wheel-sectors">
+        {signs.map((sign, index) => {
+          const a = 225 + index * 30;
+          const outer = point(a, radius.outer);
+          const inner = point(a, radius.house);
+          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+
+      <g className="house-numbers">
+        {Array.from({ length: 12 }, (_, index) => {
+          const p = point(240 + index * 30, 58);
+          return (
+            <text key={index + 1} x={p.x} y={p.y}>
+              {index + 1}
+            </text>
+          );
+        })}
+      </g>
+
+      <g className="sign-labels">
+        {signs.map((sign, index) => {
+          const p = point(labelAngles[index], 254);
+          return (
+            <text
+              key={sign}
+              x={p.x}
+              y={p.y}
+              transform={`rotate(${labelAngles[index] + 90} ${p.x} ${p.y})`}
+            >
+              {sign}
+            </text>
+          );
+        })}
+      </g>
+
+      <g className="aspect-lines">
+        {aspectPairs.map(({ from, to, soft }) => {
+          const a = point(planetAngle(from), radius.aspect);
+          const b = point(planetAngle(to), radius.aspect);
+          return (
+            <line
+              key={`${from.planet}-${to.planet}`}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              className={soft ? "soft" : "hard"}
+            />
+          );
+        })}
+      </g>
+
+      <line className="asc-line" x1={72} y1={center} x2={528} y2={center} />
+      <line className="asc-line" x1={center} y1={72} x2={center} y2={528} />
+
+      <g className="planet-labels">
+        {positions.map((position) => {
+          const marker = point(planetAngle(position), radius.planet);
+          const tickOuter = point(planetAngle(position), radius.signInner - 4);
+          const tickInner = point(planetAngle(position), radius.signInner - 18);
+          const label = point(planetAngle(position), radius.planet - 26);
+
+          return (
+            <g key={position.planet}>
+              <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
+              <circle cx={marker.x} cy={marker.y} r={12} className="planet-dot" />
+              <text x={marker.x} y={marker.y + 5} className="planet-glyph">
+                {position.glyph}
+              </text>
+              <text x={label.x} y={label.y} className="planet-degree">
+                {position.degree}°
+              </text>
+            </g>
+          );
+        })}
+      </g>
+
+      <text x={center} y={center - 4} className="center-date">
+        NOW
+      </text>
+      <text x={center} y={center + 14} className="center-date small">
+        CURRENT SKY
+      </text>
+      <Sparkles className="wheel-spark" x={center - 9} y={center + 24} size={18} />
+    </svg>
   );
 }
 
