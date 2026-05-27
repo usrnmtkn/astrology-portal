@@ -213,8 +213,7 @@ button {
 
 .sign-labels text,
 .house-numbers text,
-.planet-degree,
-.center-date {
+.planet-degree {
   fill: #1a1613;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   letter-spacing: 0;
@@ -234,8 +233,10 @@ button {
 }
 
 .house-numbers text {
-  font-size: 11px;
-  font-weight: 700;
+  alignment-baseline: middle;
+  dominant-baseline: middle;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .aspect-lines line {
@@ -252,16 +253,11 @@ button {
   stroke: #a84f3d;
 }
 
-.planet-dot {
-  fill: #ffffff;
-  stroke: #1a1613;
-  stroke-width: 1.2;
-}
-
 .planet-glyph {
   fill: #1a1613;
   font-family: Georgia, serif;
-  font-size: 18px;
+  font-size: 24px;
+  font-weight: 600;
   text-anchor: middle;
 }
 
@@ -269,20 +265,6 @@ button {
   fill: #4c4c4c;
   font-size: 9px;
   font-weight: 700;
-}
-
-.center-date {
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.center-date.small {
-  fill: rgba(26, 22, 19, 0.62);
-  font-size: 8px;
-}
-
-.wheel-spark {
-  color: rgba(168, 79, 61, 0.78);
 }
 
 .sky-stats {

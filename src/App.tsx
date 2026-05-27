@@ -4,7 +4,6 @@ import {
   LocateFixed,
   LogIn,
   Moon,
-  Sparkles,
   UserRound
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -196,9 +195,10 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
 
       <g className="house-numbers">
         {Array.from({ length: 12 }, (_, index) => {
-          const p = point(240 + index * 30, 58);
+          const angle = 240 + index * 30;
+          const p = point(angle, 58);
           return (
-            <text key={index + 1} x={p.x} y={p.y}>
+            <text key={index + 1} x={p.x} y={p.y} transform={`rotate(${angle + 90} ${p.x} ${p.y})`}>
               {index + 1}
             </text>
           );
@@ -251,7 +251,6 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
           return (
             <g key={position.planet}>
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-              <circle cx={marker.x} cy={marker.y} r={12} className="planet-dot" />
               <text x={marker.x} y={marker.y + 5} className="planet-glyph">
                 {position.glyph}
               </text>
@@ -262,14 +261,6 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
           );
         })}
       </g>
-
-      <text x={center} y={center - 4} className="center-date">
-        NOW
-      </text>
-      <text x={center} y={center + 14} className="center-date small">
-        CURRENT SKY
-      </text>
-      <Sparkles className="wheel-spark" x={center - 9} y={center + 24} size={18} />
     </svg>
   );
 }
