@@ -246,7 +246,7 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
           const marker = point(planetAngle(position), radius.planet);
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetAngle(position), radius.planet - 26);
+          const label = point(planetAngle(position), radius.planet - 14);
 
           return (
             <g key={position.planet}>

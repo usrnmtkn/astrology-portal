@@ -180,7 +180,6 @@ button {
 .sky-wheel {
   aspect-ratio: 1;
   background: #ffffff;
-  border: 1px solid rgba(55, 71, 79, 0.2);
   border-radius: 50%;
   display: block;
   margin: 8px auto 20px;
@@ -255,15 +254,16 @@ button {
 
 .planet-glyph {
   fill: #1a1613;
-  font-family: Georgia, serif;
-  font-size: 24px;
-  font-weight: 600;
+  font-family: "Apple Symbols", "Noto Sans Symbols 2", "Segoe UI Symbol", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  stroke: none;
   text-anchor: middle;
 }
 
 .planet-degree {
   fill: #4c4c4c;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
 }
 
