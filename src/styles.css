@@ -210,11 +210,6 @@ button {
   outline: none;
 }
 
-.date-link strong {
-  color: #a84f3d;
-  font: inherit;
-}
-
 .city-link {
   background: transparent;
   border-bottom: 2px solid rgba(168, 79, 61, 0.35);
