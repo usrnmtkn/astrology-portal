@@ -97,7 +97,7 @@ export function App() {
             <button onClick={applyManualLocation}>Update</button>
           </div>
 
-          <SkyWheel positions={sky.positions} />
+          <SkyWheel positions={sky.positions} ascendant={sky.ascendant} />
 
           <div className="sky-stats">
             <Stat label="Ascendant" value={sky.ascendant} />
@@ -129,7 +129,7 @@ export function App() {
   );
 }
 
-function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
+function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascendant: string }) {
   const signs = [
     "Aries",
     "Taurus",
@@ -168,6 +168,17 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
     return 225 + zodiacDegrees;
   }
 
+  function houseNumberForSign(sign: string) {
+    const signIndex = signs.indexOf(sign);
+    const ascendantIndex = signs.indexOf(ascendant);
+
+    if (signIndex < 0 || ascendantIndex < 0) {
+      return 1;
+    }
+
+    return ((signIndex - ascendantIndex + 12) % 12) + 1;
+  }
+
   const aspectPairs = positions.slice(0, 5).map((position, index) => ({
     from: position,
     to: positions[(index * 2 + 3) % positions.length],
@@ -194,12 +205,12 @@ function SkyWheel({ positions }: { positions: PlanetPosition[] }) {
       </g>
 
       <g className="house-numbers">
-        {Array.from({ length: 12 }, (_, index) => {
+        {signs.map((sign, index) => {
           const angle = 240 + index * 30;
           const p = point(angle, 58);
           return (
-            <text key={index + 1} x={p.x} y={p.y} transform={`rotate(${angle + 90} ${p.x} ${p.y})`}>
-              {index + 1}
+            <text key={sign} x={p.x} y={p.y} transform={`rotate(${angle + 90} ${p.x} ${p.y})`}>
+              {houseNumberForSign(sign)}
             </text>
           );
         })}

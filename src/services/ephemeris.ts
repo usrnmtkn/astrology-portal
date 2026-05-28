@@ -28,6 +28,21 @@ const planets = [
   ["Pluto", "♇", "depth"]
 ] as const;
 
+function signIndexFor(sign: string) {
+  return signs.findIndex(([name]) => name === sign);
+}
+
+function wholeSignHouse(sign: string, ascendant: string) {
+  const signIndex = signIndexFor(sign);
+  const ascendantIndex = signIndexFor(ascendant);
+
+  if (signIndex < 0 || ascendantIndex < 0) {
+    return 1;
+  }
+
+  return ((signIndex - ascendantIndex + 12) % 12) + 1;
+}
+
 export const defaultLocation: LocationInput = {
   label: "New York, NY",
   latitude: 40.7128,
@@ -39,10 +54,11 @@ export function getCurrentSky(location: LocationInput = defaultLocation): SkySna
   const daySeed = Math.floor(now.getTime() / 86_400_000);
   const locationSeed = Math.round((location.latitude + 90) * 10 + (location.longitude + 180) * 10);
 
-  const positions: PlanetPosition[] = planets.map(([planet, glyph, theme], index) => {
+  const basePositions: PlanetPosition[] = planets.map(([planet, glyph, theme], index) => {
     const raw = daySeed * (index + 3) + locationSeed + index * 47;
     const signIndex = Math.abs(raw) % signs.length;
     const [sign, signGlyph] = signs[signIndex];
+    const motion: PlanetPosition["motion"] = index > 1 && raw % 5 === 0 ? "retrograde" : "direct";
 
     return {
       planet,
@@ -50,16 +66,21 @@ export function getCurrentSky(location: LocationInput = defaultLocation): SkySna
       sign,
       signGlyph,
       degree: Math.abs(raw * 7) % 30,
-      house: (Math.abs(raw + index) % 12) + 1,
-      motion: index > 1 && raw % 5 === 0 ? "retrograde" : "direct",
+      house: 1,
+      motion,
       theme
     };
   });
+  const ascendant = basePositions[7].sign;
+  const positions: PlanetPosition[] = basePositions.map((position) => ({
+    ...position,
+    house: wholeSignHouse(position.sign, ascendant)
+  }));
 
   return {
     location,
     generatedAt: now.toISOString(),
-    ascendant: positions[7].sign,
+    ascendant,
     midheaven: positions[4].sign,
     moonPhase: "Waxing Crescent",
     dominantElement: ["Fire", "Earth", "Air", "Water"][Math.abs(locationSeed + daySeed) % 4] as SkySnapshot["dominantElement"],
