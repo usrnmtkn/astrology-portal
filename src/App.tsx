@@ -15,6 +15,16 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
+import {
+  getAuthAccount,
+  isAuthConfigured,
+  onAuthAccountChange,
+  signInWithMagicLink,
+  signInWithProvider,
+  signOutAuth,
+  signUpWithEmail
+} from "./services/auth";
+import type { AuthAccount, AuthProvider } from "./services/auth";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
@@ -91,6 +101,7 @@ type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
 const userProfileStorageKey = "tldrastro:userProfile";
+const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const synodicMonthDays = 29.530588;
 const zodiacSigns = [
   "Aries",
@@ -186,6 +197,22 @@ function isUserProfile(value: unknown): value is UserProfile {
     && typeof profile.name === "string"
     && typeof profile.email === "string"
     && Array.isArray(profile.charts);
+}
+
+function isSignupForm(value: unknown): value is SignupForm {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const form = value as Partial<SignupForm>;
+
+  return typeof form.fullName === "string"
+    && typeof form.email === "string"
+    && typeof form.password === "string"
+    && typeof form.birthDate === "string"
+    && typeof form.birthTime === "string"
+    && typeof form.unknownBirthTime === "boolean"
+    && typeof form.birthCity === "string";
 }
 
 function dateInputValue(date: Date = new Date()) {
@@ -374,9 +401,10 @@ function chartNameFromProfile(name: string) {
   return trimmedName ? `${trimmedName}'s birth chart` : "My birth chart";
 }
 
-function createUserProfile(form: SignupForm, provider: SignupProvider): UserProfile {
-  const name = form.fullName.trim() || (provider === "email" ? "New stargazer" : `${providerLabel(provider)} account`);
-  const email = form.email.trim() || `${provider}@tldrastro.local`;
+function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
+  const name = form.fullName.trim() || account?.name || (provider === "email" ? "New stargazer" : `${providerLabel(provider)} account`);
+  const email = account?.email || form.email.trim() || `${provider}@tldrastro.local`;
+  const resolvedProvider = normalizeSignupProvider(account?.provider, provider);
   const sun = zodiacFromBirthDate(form.birthDate);
   const chart: UserChart = {
     id: `chart-${Date.now()}`,
@@ -388,15 +416,51 @@ function createUserProfile(form: SignupForm, provider: SignupProvider): UserProf
   };
 
   return {
-    id: `user-${Date.now()}`,
+    id: account?.id ?? `user-${Date.now()}`,
     name,
     email,
-    provider,
+    provider: resolvedProvider,
     sun,
     moon: "Moon pending",
     rising: form.unknownBirthTime || !form.birthTime ? "Rising pending" : "Rising pending",
     charts: [chart]
   };
+}
+
+function normalizeSignupProvider(value: string | undefined, fallback: SignupProvider): SignupProvider {
+  return value === "email" || value === "google" || value === "apple" || value === "magic-link" ? value : fallback;
+}
+
+function readPendingSignupForm() {
+  try {
+    const savedForm = window.localStorage.getItem(pendingSignupStorageKey);
+
+    if (!savedForm) {
+      return defaultSignupForm;
+    }
+
+    const parsedForm = JSON.parse(savedForm) as unknown;
+
+    return isSignupForm(parsedForm) ? parsedForm : defaultSignupForm;
+  } catch {
+    return defaultSignupForm;
+  }
+}
+
+function savePendingSignupForm(form: SignupForm) {
+  try {
+    window.localStorage.setItem(pendingSignupStorageKey, JSON.stringify(form));
+  } catch {
+    return;
+  }
+}
+
+function clearPendingSignupForm() {
+  try {
+    window.localStorage.removeItem(pendingSignupStorageKey);
+  } catch {
+    return;
+  }
 }
 
 function providerLabel(provider: SignupProvider) {
@@ -618,6 +682,42 @@ export function App() {
       return;
     }
   }, [userProfile]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getAuthAccount()
+      .then((account) => {
+        if (cancelled || !account) {
+          return;
+        }
+
+        const pendingForm = readPendingSignupForm();
+
+        setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
+        clearPendingSignupForm();
+      })
+      .catch(() => {
+        return;
+      });
+
+    const unsubscribe = onAuthAccountChange((account) => {
+      if (!account) {
+        return;
+      }
+
+      const pendingForm = readPendingSignupForm();
+
+      setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
+      clearPendingSignupForm();
+      setMode("member");
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
@@ -883,7 +983,8 @@ export function App() {
             userProfile ? (
               <ProfileView
                 profile={userProfile}
-                onSignOut={() => {
+                onSignOut={async () => {
+                  await signOutAuth();
                   setUserProfile(null);
                   setMode("profile");
                 }}
@@ -1740,18 +1841,87 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfile) => void }) {
   const [form, setForm] = useState<SignupForm>(defaultSignupForm);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
+  const [authMessage, setAuthMessage] = useState("");
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
   }
 
-  function submitSignup(event: FormEvent<HTMLFormElement>) {
+  async function submitSignup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onCreateProfile(createUserProfile(form, "email"));
+
+    if (!isAuthConfigured) {
+      setAuthMessage("Add Supabase environment variables to enable real email signup.");
+      return;
+    }
+
+    if (!form.email.trim() || !form.password.trim()) {
+      setAuthMessage("Add an email and password to create your account.");
+      return;
+    }
+
+    setAuthStatus("loading");
+    setAuthMessage("");
+    savePendingSignupForm(form);
+
+    try {
+      const account = await signUpWithEmail({
+        email: form.email.trim(),
+        password: form.password,
+        fullName: form.fullName.trim()
+      });
+
+      if (account) {
+        onCreateProfile(createUserProfile(form, "email", account));
+        clearPendingSignupForm();
+      } else {
+        setAuthMessage("Check your email to confirm your account.");
+      }
+    } catch (error) {
+      setAuthMessage(error instanceof Error ? error.message : "Email signup failed.");
+    } finally {
+      setAuthStatus("idle");
+    }
   }
 
-  function socialSignup(provider: Exclude<SignupProvider, "email">) {
-    onCreateProfile(createUserProfile(form, provider));
+  async function socialSignup(provider: Exclude<SignupProvider, "email">) {
+    if (!isAuthConfigured) {
+      setAuthMessage("Add Supabase environment variables to enable real social sign-on.");
+      return;
+    }
+
+    if (provider === "magic-link") {
+      if (!form.email.trim()) {
+        setAuthMessage("Add your email first so we know where to send the magic link.");
+        return;
+      }
+
+      setAuthStatus("loading");
+      setAuthMessage("");
+      savePendingSignupForm(form);
+
+      try {
+        await signInWithMagicLink(form.email.trim());
+        setAuthMessage("Magic link sent. Check your email to sign in.");
+      } catch (error) {
+        setAuthMessage(error instanceof Error ? error.message : "Magic link failed.");
+      } finally {
+        setAuthStatus("idle");
+      }
+      return;
+    }
+
+    setAuthStatus("loading");
+    setAuthMessage("");
+    savePendingSignupForm(form);
+
+    try {
+      await signInWithProvider(provider as AuthProvider);
+    } catch (error) {
+      setAuthStatus("idle");
+      setAuthMessage(error instanceof Error ? error.message : `${providerLabel(provider)} sign-on failed.`);
+    }
   }
 
   return (
@@ -1777,20 +1947,28 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
           <span>Birth date, time, and city.</span>
         </div>
 
+        {!isAuthConfigured && (
+          <p className="auth-message">
+            Add VITE_SUPABASE_URL and a Supabase publishable key to enable live sign-on.
+          </p>
+        )}
+
         <div className="social-signons" aria-label="Social sign on">
-          <button type="button" onClick={() => socialSignup("google")}>
+          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
             <span className="google-mark" aria-hidden="true">G</span>
             Continue with Google
           </button>
-          <button type="button" onClick={() => socialSignup("apple")}>
+          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("apple")}>
             <span aria-hidden="true"></span>
             Continue with Apple
           </button>
-          <button type="button" onClick={() => socialSignup("magic-link")}>
+          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("magic-link")}>
             <Mail size={20} aria-hidden="true" />
             Email me a magic link
           </button>
         </div>
+
+        {authMessage && <p className="auth-message">{authMessage}</p>}
 
         <div className="email-divider"><span>or with email</span></div>
 
@@ -1870,7 +2048,9 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
           <p className="signup-note">Nearest major city is fine. We only need the location, not the address.</p>
         </div>
 
-        <button className="signup-submit" type="submit">Create my chart →</button>
+        <button className="signup-submit" type="submit" disabled={authStatus === "loading"}>
+          {authStatus === "loading" ? "Working..." : "Create my chart →"}
+        </button>
         <p className="signin-note">Already have an account? <button type="button" onClick={() => socialSignup("magic-link")}>Sign in</button></p>
         <p className="privacy-note">We'll never post anything. Your data stays yours.</p>
       </form>
@@ -1883,7 +2063,7 @@ function ProfileView({
   onSignOut
 }: {
   profile: UserProfile;
-  onSignOut: () => void;
+  onSignOut: () => void | Promise<void>;
 }) {
   return (
     <>

@@ -368,11 +368,20 @@ button {
 .signup-heading span,
 .signup-note,
 .signin-note,
-.privacy-note {
+.privacy-note,
+.auth-message {
   color: #63716c;
   font-family: var(--font-sans);
   font-size: 0.98rem;
   line-height: 1.35;
+}
+
+.auth-message {
+  background: #eef6f5;
+  border: 1px solid rgba(15, 95, 97, 0.16);
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px 14px;
 }
 
 .social-signons {
@@ -393,6 +402,12 @@ button {
   min-height: 54px;
   padding: 0 18px;
   text-transform: uppercase;
+}
+
+.social-signons button:disabled,
+.signup-submit:disabled {
+  cursor: wait;
+  opacity: 0.58;
 }
 
 .social-signons button,
@@ -503,7 +518,8 @@ button {
 
 .signup-note,
 .signin-note,
-.privacy-note {
+.privacy-note,
+.auth-message {
   margin: 0;
   text-align: center;
 }
@@ -1799,6 +1815,7 @@ blockquote {
 .theme-dark .signup-note,
 .theme-dark .signin-note,
 .theme-dark .privacy-note,
+.theme-dark .auth-message,
 .theme-dark .profile-charts p,
 .theme-dark .unknown-time,
 .theme-dark .member-header p,
@@ -1862,6 +1879,11 @@ blockquote {
 .theme-dark .email-divider::before,
 .theme-dark .email-divider::after {
   background: rgba(241, 238, 232, 0.16);
+}
+
+.theme-dark .auth-message {
+  background: #171612;
+  border-color: rgba(241, 238, 232, 0.16);
 }
 
 .theme-dark .city-suggestions button:hover,
