@@ -7,7 +7,6 @@ import {
   CircleHelp,
   Moon,
   Sparkles,
-  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
@@ -552,7 +551,6 @@ export function App() {
                 setSkyDate(nextDate);
                 setDatePickerOpen(false);
               }}
-              onClose={() => setDatePickerOpen(false)}
             />
           )}
 
@@ -674,39 +672,27 @@ function locationFromLabel(label: string): LocationInput {
 
 function SkyDatePicker({
   value,
-  onSelect,
-  onClose
+  onSelect
 }: {
   value: string;
   onSelect: (value: string) => void;
-  onClose: () => void;
 }) {
   const selectedDate = dateFromInput(value);
   const [visibleMonth, setVisibleMonth] = useState(() => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
   const days = calendarDaysFor(visibleMonth);
   const todayValue = dateInputValue();
   const selectedValue = dateInputValue(selectedDate);
-  const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+  const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
     <section className="date-picker" id="sky-date-picker" aria-label="Select sky date">
-      <div className="date-picker-title">
-        <div>
-          <span>Chart of day</span>
-          <strong>Tap any day</strong>
-        </div>
-        <button type="button" aria-label="Close date picker" onClick={onClose}>
-          <X size={24} aria-hidden="true" />
-        </button>
-      </div>
-
       <div className="date-picker-header">
         <button type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
-          <ChevronLeft size={22} aria-hidden="true" />
+          <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <strong>{monthLabel(visibleMonth)}</strong>
         <button type="button" aria-label="Next month" onClick={() => setVisibleMonth((month) => addMonths(month, 1))}>
-          <ChevronRight size={22} aria-hidden="true" />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
 
@@ -723,17 +709,14 @@ function SkyDatePicker({
           const isToday = dayValue === todayValue;
           const isOutsideMonth = day.getMonth() !== visibleMonth.getMonth();
 
-          if (isOutsideMonth) {
-            return <div key={dayValue} className="empty-day" role="presentation" />;
-          }
-
           return (
             <button
               key={dayValue}
               type="button"
               className={[
                 isSelected ? "selected" : "",
-                isToday ? "today" : ""
+                isToday ? "today" : "",
+                isOutsideMonth ? "outside-month" : ""
               ].filter(Boolean).join(" ")}
               aria-label={day.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
               aria-selected={isSelected}
@@ -745,6 +728,10 @@ function SkyDatePicker({
           );
         })}
       </div>
+
+      <button className="date-picker-today" type="button" onClick={() => onSelect(todayValue)}>
+        Today
+      </button>
     </section>
   );
 }
