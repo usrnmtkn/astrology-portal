@@ -575,26 +575,15 @@ export function App() {
   return (
     <main className={`app-shell theme-${theme}`}>
       <header className="topbar">
-        <div className="theme-toggle" aria-label="Display mode">
-          <button
-            type="button"
-            className={theme === "light" ? "active" : ""}
-            aria-pressed={theme === "light"}
-            aria-label="Use light mode"
-            onClick={() => setTheme("light")}
-          >
-            <Sun size={20} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className={theme === "dark" ? "active" : ""}
-            aria-pressed={theme === "dark"}
-            aria-label="Use dark mode"
-            onClick={() => setTheme("dark")}
-          >
-            <span aria-hidden="true">☾</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          className="theme-toggle"
+          aria-pressed={theme === "dark"}
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
+        >
+          {theme === "dark" ? <span aria-hidden="true">☾</span> : <Sun size={20} aria-hidden="true" />}
+        </button>
 
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
