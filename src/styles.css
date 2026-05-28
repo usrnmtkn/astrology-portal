@@ -1422,6 +1422,7 @@ blockquote {
 .theme-dark .horoscope span,
 .theme-dark .placement-card span,
 .theme-dark .placement-table td,
+.theme-dark .placement-prose p,
 .theme-dark .aspect-copy span,
 .theme-dark .aspect-copy p,
 .theme-dark .city-picker span,
@@ -1472,6 +1473,43 @@ blockquote {
 
 .theme-dark .sky-wheel {
   background: #100f0c;
+}
+
+.theme-dark .placement-prose p {
+  color: #d9d2c8;
+}
+
+.theme-dark .placement-prose strong {
+  border-bottom-color: rgba(241, 238, 232, 0.28);
+  color: #f1eee8;
+}
+
+.theme-dark .placement-prose span {
+  color: #b8c5c1;
+}
+
+.theme-dark .placement-table .retrograde-row td {
+  background: #241236;
+  border-bottom-color: rgba(184, 126, 255, 0.2);
+  color: #d9c7ff;
+}
+
+.theme-dark .placement-table .retrograde-row td:first-child,
+.theme-dark .placement-table .retrograde-row td:last-child {
+  background: #2d1644;
+}
+
+.theme-dark .placement-table .retrograde-row td:first-child,
+.theme-dark .placement-table .retrograde-row td:first-child strong,
+.theme-dark .placement-table .retrograde-row td:last-child,
+.theme-dark .placement-table .retrograde-row .table-glyph,
+.theme-dark .placement-table .retrograde-row .position-sign,
+.theme-dark .placement-table .retrograde-row .position-degree {
+  color: #f2e9ff;
+}
+
+.theme-dark .placement-table .retrograde-row .retrograde-badge {
+  color: #c084fc;
 }
 
 .theme-dark .wheel-rings circle,
