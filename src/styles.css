@@ -639,27 +639,13 @@ button {
   width: 10px;
 }
 
-.sky-card-glyph.moon::before,
-.sky-card-glyph.moon::after {
-  border: 3px solid #16878a;
-  border-radius: 999px;
-  content: "";
-  height: 46px;
-  position: absolute;
-  top: 0;
-  width: 34px;
-}
-
-.sky-card-glyph.moon::before {
-  left: 10px;
-}
-
-.sky-card-glyph.moon::after {
-  background: #ffffff;
-  border-left-color: transparent;
-  border-top-color: transparent;
-  border-bottom-color: transparent;
-  left: 20px;
+.sky-card-glyph.moon {
+  color: #16878a;
+  font-family: var(--font-display);
+  font-size: 4.2rem;
+  height: 54px;
+  line-height: 0.72;
+  width: 54px;
 }
 
 .sky-card-glyph.phase {

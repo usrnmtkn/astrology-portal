@@ -1062,7 +1062,7 @@ function SkyGlyph({ type }: { type: "sun" | "moon" | "phase" }) {
   return (
     <span className={`sky-card-glyph ${type}`} aria-hidden="true">
       {type === "sun" && <span />}
-      {type === "moon" && <span />}
+      {type === "moon" && "☾"}
       {type === "phase" && (
         <>
           <i />
