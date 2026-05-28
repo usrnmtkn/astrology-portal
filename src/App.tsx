@@ -548,6 +548,10 @@ function formatDegree(degree: number) {
   return degree.toFixed(2);
 }
 
+function formatPlacementPosition(position: PlanetPosition) {
+  return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatDegree(position.degree)}°`;
+}
+
 function SkyBriefing({ sky }: { sky: SkySnapshot }) {
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sun = sky.positions.find((position) => position.planet === "Sun");
@@ -801,10 +805,7 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
           {index === 0 ? "Today’s " : ""}
           <strong>{position.planet}</strong>
           {" at "}
-          <span>
-            {formatDegree(position.degree)}° {position.sign.toUpperCase()}
-            {position.motion === "retrograde" ? " ℞" : ""}
-          </span>
+          <span>{formatPlacementPosition(position).toUpperCase()}</span>
           {" "}
           {placementMeanings[position.planet]}
         </p>
@@ -832,12 +833,11 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
                 <strong>{position.planet}</strong>
               </td>
               <td className="position-cell">
-                <span>{formatDegree(position.degree)}° {position.sign}</span>
-                {position.motion === "retrograde" ? (
-                  <span className="retrograde-badge" aria-label="Retrograde">
-                    ℞
-                  </span>
-                ) : null}
+                <span className="position-sign">{position.sign}</span>
+                {" "}
+                {position.motion === "retrograde" ? <span className="retrograde-badge" aria-label="Retrograde">℞</span> : null}
+                {" "}
+                <span className="position-degree">{formatDegree(position.degree)}°</span>
               </td>
               <td>{placementThemes[position.planet]}</td>
             </tr>
