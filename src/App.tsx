@@ -5,15 +5,19 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleHelp,
+  Clock3,
+  EyeOff,
+  Mail,
   Moon,
   Sun,
+  UserRound,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
-import { getDemoProfile, getInitialAccountMode } from "./services/session";
+import { getInitialAccountMode } from "./services/session";
 import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 const periods: HoroscopePeriod[] = ["daily", "weekly", "monthly"];
@@ -23,6 +27,38 @@ type PortalMode = AccountMode | "transits";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
+type SignupProvider = "email" | "google" | "apple" | "magic-link";
+
+type UserChart = {
+  id: string;
+  name: string;
+  type: "Birth chart";
+  birthDate: string;
+  birthTime: string;
+  birthCity: string;
+};
+
+type UserProfile = {
+  id: string;
+  name: string;
+  email: string;
+  provider: SignupProvider;
+  sun: string;
+  moon: string;
+  rising: string;
+  charts: UserChart[];
+};
+
+type SignupForm = {
+  fullName: string;
+  email: string;
+  password: string;
+  birthDate: string;
+  birthTime: string;
+  unknownBirthTime: boolean;
+  birthCity: string;
+  birthLocation: LocationInput | null;
+};
 
 type TransitForm = {
   name: string;
@@ -57,6 +93,7 @@ type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
+const userProfileStorageKey = "tldrastro:userProfile";
 const synodicMonthDays = 29.530588;
 const zodiacSigns = [
   "Aries",
@@ -116,6 +153,17 @@ const defaultTransitForm: TransitForm = {
   chartDate: new Date().toISOString().slice(0, 10)
 };
 
+const defaultSignupForm: SignupForm = {
+  fullName: "",
+  email: "",
+  password: "",
+  birthDate: "",
+  birthTime: "",
+  unknownBirthTime: false,
+  birthCity: "",
+  birthLocation: null
+};
+
 function isLocationInput(value: unknown): value is LocationInput {
   if (!value || typeof value !== "object") {
     return false;
@@ -128,6 +176,19 @@ function isLocationInput(value: unknown): value is LocationInput {
     typeof location.latitude === "number" &&
     typeof location.longitude === "number"
   );
+}
+
+function isUserProfile(value: unknown): value is UserProfile {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const profile = value as Partial<UserProfile>;
+
+  return typeof profile.id === "string"
+    && typeof profile.name === "string"
+    && typeof profile.email === "string"
+    && Array.isArray(profile.charts);
 }
 
 function dateInputValue(date: Date = new Date()) {
@@ -262,6 +323,94 @@ function getInitialTheme(): UiTheme {
   } catch {
     return "light";
   }
+}
+
+function getInitialUserProfile(): UserProfile | null {
+  try {
+    const savedProfile = window.localStorage.getItem(userProfileStorageKey);
+
+    if (!savedProfile) {
+      return null;
+    }
+
+    const parsedProfile = JSON.parse(savedProfile) as unknown;
+
+    return isUserProfile(parsedProfile) ? parsedProfile : null;
+  } catch {
+    return null;
+  }
+}
+
+function zodiacFromBirthDate(value: string) {
+  const [, monthValue, dayValue] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const month = Number(monthValue);
+  const day = Number(dayValue);
+
+  if (!month || !day) {
+    return "Gemini";
+  }
+
+  const signStarts = [
+    { sign: "Capricorn", month: 1, day: 1 },
+    { sign: "Aquarius", month: 1, day: 20 },
+    { sign: "Pisces", month: 2, day: 19 },
+    { sign: "Aries", month: 3, day: 21 },
+    { sign: "Taurus", month: 4, day: 20 },
+    { sign: "Gemini", month: 5, day: 21 },
+    { sign: "Cancer", month: 6, day: 21 },
+    { sign: "Leo", month: 7, day: 23 },
+    { sign: "Virgo", month: 8, day: 23 },
+    { sign: "Libra", month: 9, day: 23 },
+    { sign: "Scorpio", month: 10, day: 23 },
+    { sign: "Sagittarius", month: 11, day: 22 },
+    { sign: "Capricorn", month: 12, day: 22 }
+  ];
+
+  return signStarts.reduce((currentSign, item) => (
+    month > item.month || (month === item.month && day >= item.day) ? item.sign : currentSign
+  ), "Capricorn");
+}
+
+function chartNameFromProfile(name: string) {
+  const trimmedName = name.trim();
+
+  return trimmedName ? `${trimmedName}'s birth chart` : "My birth chart";
+}
+
+function createUserProfile(form: SignupForm, provider: SignupProvider): UserProfile {
+  const name = form.fullName.trim() || (provider === "email" ? "New stargazer" : `${providerLabel(provider)} account`);
+  const email = form.email.trim() || `${provider}@tldrastro.local`;
+  const sun = zodiacFromBirthDate(form.birthDate);
+  const chart: UserChart = {
+    id: `chart-${Date.now()}`,
+    name: chartNameFromProfile(name),
+    type: "Birth chart",
+    birthDate: form.birthDate || "Birth date needed",
+    birthTime: form.unknownBirthTime ? "Time unknown" : form.birthTime || "Birth time needed",
+    birthCity: form.birthCity.trim() || "Birth city needed"
+  };
+
+  return {
+    id: `user-${Date.now()}`,
+    name,
+    email,
+    provider,
+    sun,
+    moon: "Moon pending",
+    rising: form.unknownBirthTime || !form.birthTime ? "Rising pending" : "Rising pending",
+    charts: [chart]
+  };
+}
+
+function providerLabel(provider: SignupProvider) {
+  const labels: Record<SignupProvider, string> = {
+    email: "Email",
+    google: "Google",
+    apple: "Apple",
+    "magic-link": "Magic link"
+  };
+
+  return labels[provider];
 }
 
 const sampleTransits: TransitItem[] = [
@@ -411,13 +560,14 @@ export function App() {
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
-  const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
+  const isSignupMode = mode === "member" && !userProfile;
   useEffect(() => {
     let cancelled = false;
     const selectedDate = dateFromInput(skyDate);
@@ -460,6 +610,18 @@ export function App() {
       return;
     }
   }, [hasLocationPreference, location]);
+
+  useEffect(() => {
+    try {
+      if (userProfile) {
+        window.localStorage.setItem(userProfileStorageKey, JSON.stringify(userProfile));
+      } else {
+        window.localStorage.removeItem(userProfileStorageKey);
+      }
+    } catch {
+      return;
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
@@ -611,8 +773,9 @@ export function App() {
         </button>
       </header>
 
-      <section className="portal-grid">
-        <section className="sky-panel" aria-label="Current sky">
+      <section className={isSignupMode ? "portal-grid signup-layout" : "portal-grid"}>
+        {!isSignupMode && (
+          <section className="sky-panel" aria-label="Current sky">
           <div className="panel-heading">
             <div>
               <button
@@ -685,7 +848,8 @@ export function App() {
           <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
           <SkyCards sky={sky} />
-        </section>
+          </section>
+        )}
 
         <section className="detail-panel" aria-label="Portal details">
           {mode === "guest" && <GuestView positions={sky.positions} />}
@@ -715,7 +879,22 @@ export function App() {
             />
           )}
           {mode === "member" && (
-            <MemberView profile={profile} period={period} setPeriod={setPeriod} horoscope={horoscope} />
+            userProfile ? (
+              <MemberView
+                profile={userProfile}
+                period={period}
+                setPeriod={setPeriod}
+                horoscope={horoscope}
+                onSignOut={() => setUserProfile(null)}
+              />
+            ) : (
+              <SignupView
+                onCreateProfile={(nextProfile) => {
+                  setUserProfile(nextProfile);
+                  setMode("member");
+                }}
+              />
+            )
           )}
         </section>
       </section>
@@ -1545,26 +1724,180 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
   );
 }
 
+function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfile) => void }) {
+  const [form, setForm] = useState<SignupForm>(defaultSignupForm);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
+    setForm({ ...form, [key]: value });
+  }
+
+  function submitSignup(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onCreateProfile(createUserProfile(form, "email"));
+  }
+
+  function socialSignup(provider: Exclude<SignupProvider, "email">) {
+    onCreateProfile(createUserProfile(form, provider));
+  }
+
+  return (
+    <section className="signup-split" aria-label="Create account">
+      <aside className="signup-story">
+        <span>tldrastro</span>
+        <h2>
+          Know what the sky is doing.
+          <em>Know what to do about it.</em>
+        </h2>
+        <p>Save your birth data once, then build charts, transits, and daily readings around your actual sky.</p>
+        <div className="signup-orbit" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+      </aside>
+
+      <form className="signup-form" onSubmit={submitSignup}>
+        <div className="signup-heading">
+          <p>Create account</p>
+          <h3>Your chart starts here.</h3>
+          <span>Birth date, time, and city.</span>
+        </div>
+
+        <div className="social-signons" aria-label="Social sign on">
+          <button type="button" onClick={() => socialSignup("google")}>
+            <span className="google-mark" aria-hidden="true">G</span>
+            Continue with Google
+          </button>
+          <button type="button" onClick={() => socialSignup("apple")}>
+            <span aria-hidden="true"></span>
+            Continue with Apple
+          </button>
+          <button type="button" onClick={() => socialSignup("magic-link")}>
+            <Mail size={20} aria-hidden="true" />
+            Email me a magic link
+          </button>
+        </div>
+
+        <div className="email-divider"><span>or with email</span></div>
+
+        <div className="signup-fields">
+          <label className="signup-field">
+            <span>Full name</span>
+            <div>
+              <UserRound size={20} aria-hidden="true" />
+              <input value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
+            </div>
+          </label>
+
+          <label className="signup-field">
+            <span>Email</span>
+            <div>
+              <Mail size={20} aria-hidden="true" />
+              <input type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
+            </div>
+          </label>
+
+          <label className="signup-field">
+            <span>Password</span>
+            <div>
+              <input
+                type={passwordVisible ? "text" : "password"}
+                value={form.password}
+                onChange={(event) => updateField("password", event.target.value)}
+                placeholder="at least 8 characters"
+              />
+              <button type="button" aria-label="Show password" onClick={() => setPasswordVisible((isVisible) => !isVisible)}>
+                <EyeOff size={20} aria-hidden="true" />
+              </button>
+            </div>
+          </label>
+
+          <div className="signup-grid">
+            <label className="signup-field">
+              <span>Birth date</span>
+              <div>
+                <input type="date" value={form.birthDate} onChange={(event) => updateField("birthDate", event.target.value)} />
+                <CalendarDays size={20} aria-hidden="true" />
+              </div>
+            </label>
+
+            <label className="signup-field">
+              <span>Birth time</span>
+              <div>
+                <input
+                  type="time"
+                  value={form.birthTime}
+                  disabled={form.unknownBirthTime}
+                  onChange={(event) => updateField("birthTime", event.target.value)}
+                />
+                <Clock3 size={20} aria-hidden="true" />
+              </div>
+            </label>
+          </div>
+
+          <label className="unknown-time">
+            <input
+              type="checkbox"
+              checked={form.unknownBirthTime}
+              onChange={(event) => {
+                setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "" : form.birthTime });
+              }}
+            />
+            <span>I don't know my birth time</span>
+          </label>
+
+          <CitySearchField
+            label="Birth city"
+            value={form.birthCity}
+            onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
+            onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
+            placeholder="Start typing a city..."
+          />
+          <p className="signup-note">Nearest major city is fine. We only need the location, not the address.</p>
+        </div>
+
+        <button className="signup-submit" type="submit">Create my chart →</button>
+        <p className="signin-note">Already have an account? <button type="button" onClick={() => socialSignup("magic-link")}>Sign in</button></p>
+        <p className="privacy-note">We'll never post anything. Your data stays yours.</p>
+      </form>
+    </section>
+  );
+}
+
 function MemberView({
   profile,
   period,
   setPeriod,
-  horoscope
+  horoscope,
+  onSignOut
 }: {
-  profile: ReturnType<typeof getDemoProfile>;
+  profile: UserProfile;
   period: HoroscopePeriod;
   setPeriod: (period: HoroscopePeriod) => void;
   horoscope: ReturnType<typeof getHoroscope>;
+  onSignOut: () => void;
 }) {
   return (
     <>
       <div className="member-header">
         <div>
-          <p>{profile.sun} Sun · {profile.moon} Moon · {profile.rising} Rising</p>
+          <p>{profile.sun} Sun · {profile.moon} · {profile.rising}</p>
           <h2>Hello, {profile.name}</h2>
         </div>
-        <CalendarDays size={20} />
+        <button className="signout-button" type="button" onClick={onSignOut}>Sign out</button>
       </div>
+
+      <section className="profile-charts" aria-label="Saved charts">
+        <span>Saved charts</span>
+        {profile.charts.map((chart) => (
+          <article key={chart.id}>
+            <strong>{chart.name}</strong>
+            <p>{chart.type} · {chart.birthDate} · {chart.birthTime}</p>
+            <p>{chart.birthCity}</p>
+          </article>
+        ))}
+      </section>
 
       <div className="period-tabs" role="tablist" aria-label="Horoscope period">
         {periods.map((item) => (
