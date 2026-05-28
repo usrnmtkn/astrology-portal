@@ -544,19 +544,6 @@ button {
   font-weight: 700;
 }
 
-.sky-briefing {
-  margin: 0 0 18px;
-  padding: 0;
-}
-
-.sky-briefing p {
-  color: #1a1613;
-  font-family: var(--font-display);
-  font-size: clamp(1.12rem, 1.7vw, 1.35rem);
-  line-height: 1.45;
-  margin: 0;
-}
-
 .sky-cards {
   display: grid;
   gap: 14px;

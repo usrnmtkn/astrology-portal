@@ -647,8 +647,6 @@ export function App() {
 
           <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
-          <SkyBriefing sky={sky} />
-
           <SkyCards sky={sky} />
         </section>
 
@@ -861,24 +859,6 @@ function formatDegree(degree: number) {
 
 function formatPlacementPosition(position: PlanetPosition) {
   return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatDegree(position.degree)}°`;
-}
-
-function SkyBriefing({ sky }: { sky: SkySnapshot }) {
-  const moon = sky.positions.find((position) => position.planet === "Moon");
-  const sun = sky.positions.find((position) => position.planet === "Sun");
-  const leadAspect = sky.aspects[0];
-
-  return (
-    <aside className="sky-briefing" aria-label="Sky summary">
-      <p>
-        {sun ? `The Sun in ${sun.sign} marks the current zodiac season.` : "The Sun sets the current zodiac season."}
-        {" "}
-        The {sky.moonPhase.toLowerCase()} Moon in {moon?.sign ?? "motion"} describes the day's emotional weather.
-        {" "}
-        {leadAspect ? ` Watch ${leadAspect.from} ${leadAspect.type} ${leadAspect.to}: ${leadAspect.meaning.toLowerCase()}` : ""}
-      </p>
-    </aside>
-  );
 }
 
 function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects: SkySnapshot["aspects"] }) {
