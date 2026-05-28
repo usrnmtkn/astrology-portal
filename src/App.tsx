@@ -6,7 +6,6 @@ import {
   ChevronRight,
   CircleHelp,
   Moon,
-  Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
@@ -870,17 +869,14 @@ function SkyBriefing({ sky }: { sky: SkySnapshot }) {
   const leadAspect = sky.aspects[0];
 
   return (
-    <aside className="sky-briefing" aria-label="Sky briefing">
-      <div>
-        <span><Sparkles size={15} aria-hidden="true" /> Sky briefing</span>
-        <p>
-          {sun ? `The Sun in ${sun.sign} marks the current zodiac season.` : "The Sun sets the current zodiac season."}
-          {" "}
-          The {sky.moonPhase.toLowerCase()} Moon in {moon?.sign ?? "motion"} describes the day's emotional weather.
-          {" "}
-          {leadAspect ? ` Watch ${leadAspect.from} ${leadAspect.type} ${leadAspect.to}: ${leadAspect.meaning.toLowerCase()}` : ""}
-        </p>
-      </div>
+    <aside className="sky-briefing" aria-label="Sky summary">
+      <p>
+        {sun ? `The Sun in ${sun.sign} marks the current zodiac season.` : "The Sun sets the current zodiac season."}
+        {" "}
+        The {sky.moonPhase.toLowerCase()} Moon in {moon?.sign ?? "motion"} describes the day's emotional weather.
+        {" "}
+        {leadAspect ? ` Watch ${leadAspect.from} ${leadAspect.type} ${leadAspect.to}: ${leadAspect.meaning.toLowerCase()}` : ""}
+      </p>
     </aside>
   );
 }
