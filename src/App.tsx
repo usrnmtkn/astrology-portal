@@ -2,11 +2,13 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   CircleHelp,
   Moon,
   Sparkles,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
@@ -124,6 +126,30 @@ function formatSkyDate(value: string) {
     weekday: "long",
     month: "long",
     day: "numeric"
+  });
+}
+
+function monthLabel(date: Date) {
+  return date.toLocaleDateString(undefined, {
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function addMonths(date: Date, amount: number) {
+  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+}
+
+function calendarDaysFor(month: Date) {
+  const firstOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+  const start = new Date(firstOfMonth);
+
+  start.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const day = new Date(start);
+    day.setDate(start.getDate() + index);
+    return day;
   });
 }
 
@@ -309,7 +335,6 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
-  const skyDateInputRef = useRef<HTMLInputElement>(null);
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
@@ -338,17 +363,6 @@ export function App() {
       cancelled = true;
     };
   }, [location, skyDate, skyRefreshKey]);
-
-  useEffect(() => {
-    if (!datePickerOpen) {
-      return;
-    }
-
-    const picker = skyDateInputRef.current;
-
-    picker?.focus();
-    picker?.showPicker?.();
-  }, [datePickerOpen]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -531,28 +545,13 @@ export function App() {
           </div>
 
           {datePickerOpen && (
-            <form
-              className="date-picker"
-              id="sky-date-picker"
-              onSubmit={(event) => {
-                event.preventDefault();
+            <SkyDatePicker
+              value={skyDate}
+              onSelect={(nextDate) => {
+                setSkyDate(nextDate);
                 setDatePickerOpen(false);
               }}
-            >
-              <label>
-                <span>Date</span>
-                <input
-                  ref={skyDateInputRef}
-                  aria-label="Sky date"
-                  type="date"
-                  value={skyDate}
-                  onChange={(event) => {
-                    setSkyDate(event.target.value);
-                    setDatePickerOpen(false);
-                  }}
-                />
-              </label>
-            </form>
+            />
           )}
 
           {cityPickerOpen && (
@@ -669,6 +668,72 @@ function locationFromLabel(label: string): LocationInput {
     latitude: ((hash % 1400) / 10) - 70,
     longitude: ((hash % 3000) / 10) - 150
   };
+}
+
+function SkyDatePicker({
+  value,
+  onSelect
+}: {
+  value: string;
+  onSelect: (value: string) => void;
+}) {
+  const selectedDate = dateFromInput(value);
+  const [visibleMonth, setVisibleMonth] = useState(() => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
+  const days = calendarDaysFor(visibleMonth);
+  const todayValue = dateInputValue();
+  const selectedValue = dateInputValue(selectedDate);
+  const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return (
+    <section className="date-picker" id="sky-date-picker" aria-label="Select sky date">
+      <div className="date-picker-header">
+        <button type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
+          <ChevronLeft size={16} aria-hidden="true" />
+        </button>
+        <strong>{monthLabel(visibleMonth)}</strong>
+        <button type="button" aria-label="Next month" onClick={() => setVisibleMonth((month) => addMonths(month, 1))}>
+          <ChevronRight size={16} aria-hidden="true" />
+        </button>
+      </div>
+
+      <div className="date-picker-weekdays" aria-hidden="true">
+        {weekdayLabels.map((day) => (
+          <span key={day}>{day}</span>
+        ))}
+      </div>
+
+      <div className="date-picker-grid" role="grid" aria-label={monthLabel(visibleMonth)}>
+        {days.map((day) => {
+          const dayValue = dateInputValue(day);
+          const isSelected = dayValue === selectedValue;
+          const isToday = dayValue === todayValue;
+          const isOutsideMonth = day.getMonth() !== visibleMonth.getMonth();
+
+          return (
+            <button
+              key={dayValue}
+              type="button"
+              className={[
+                isSelected ? "selected" : "",
+                isToday ? "today" : "",
+                isOutsideMonth ? "outside-month" : ""
+              ].filter(Boolean).join(" ")}
+              aria-label={day.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+              aria-selected={isSelected}
+              role="gridcell"
+              onClick={() => onSelect(dayValue)}
+            >
+              {day.getDate()}
+            </button>
+          );
+        })}
+      </div>
+
+      <button className="date-picker-today" type="button" onClick={() => onSelect(todayValue)}>
+        Today
+      </button>
+    </section>
+  );
 }
 
 function CitySuggestions({
