@@ -3,8 +3,8 @@
 :root {
   color: #18201e;
   background: #ffffff;
-  font-family: "Roboto Flex", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: "Roboto Flex", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Roboto Serif", Georgia, serif;
+  --font-body: "Roboto Serif", Georgia, serif;
   --font-display: "Roboto Serif", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-symbol: "Apple Symbols", "Noto Sans Symbols 2", "Segoe UI Symbol", sans-serif;
@@ -18,6 +18,7 @@
 }
 
 body {
+  font-family: var(--font-body);
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
@@ -171,7 +172,9 @@ button {
 
 .panel-heading h1,
 .member-header h2 {
+  font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.9rem);
+  font-weight: 500;
   line-height: 1.02;
   margin: 6px 0 0;
   max-width: 760px;
@@ -238,13 +241,69 @@ button {
   gap: 8px;
 }
 
+.city-picker-note {
+  color: #63716c;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.city-suggestions {
+  background: #ffffff;
+  border: 1px solid rgba(43, 63, 58, 0.14);
+  border-radius: 8px;
+  display: grid;
+  overflow: hidden;
+}
+
+.city-suggestions button {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(26, 22, 19, 0.1);
+  color: #1a1613;
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.city-suggestions button:last-child {
+  border-bottom: 0;
+}
+
+.city-suggestions button:hover,
+.city-suggestions button:focus-visible {
+  background: #f8f5ff;
+  outline: none;
+}
+
+.city-suggestions strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.city-suggestions span {
+  color: #6e7673;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .city-picker-actions button {
   background: #d8e3e0;
   border-radius: 8px;
   color: #20231d;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
   font-weight: 800;
+  letter-spacing: 0.12em;
   min-height: 38px;
   padding: 0 14px;
+  text-transform: uppercase;
 }
 
 .city-picker-actions button:last-child {
@@ -386,11 +445,37 @@ button {
 
 .stat strong {
   color: #1a1613;
-  display: block;
   font-family: var(--font-display);
   font-size: clamp(1.05rem, 1.5vw, 1.25rem);
   line-height: 1.15;
   margin-top: 8px;
+}
+
+.stat-value {
+  display: block;
+}
+
+.stat-value span {
+  color: inherit;
+  display: inline;
+  font: inherit;
+  letter-spacing: 0;
+  margin: 0;
+  text-transform: none;
+}
+
+.stat-value.with-art {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.moon-phase-art {
+  display: inline-block;
+  flex: 0 0 auto;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 1.8rem;
+  line-height: 1;
 }
 
 .placement-list {
@@ -554,6 +639,41 @@ button {
   font-weight: 400;
 }
 
+.placement-table td:last-child {
+  color: #4f4a45;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+.placement-table .retrograde-row td {
+  background: rgba(248, 245, 255, 0.72);
+}
+
+.placement-table .retrograde-row td:first-child {
+  color: #34205f;
+}
+
+.placement-table .retrograde-row td:first-child,
+.placement-table .retrograde-row td:last-child {
+  background: rgba(249, 247, 255, 0.5);
+}
+
+.retrograde-badge {
+  color: #5b21b6;
+  display: inline;
+  font-family: var(--font-symbol);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-left: 8px;
+  text-transform: none;
+  vertical-align: middle;
+}
+
 .table-glyph {
   color: #1a1613;
   display: inline-block;
@@ -579,6 +699,7 @@ button {
 }
 
 .horoscope h3 {
+  font-family: var(--font-display);
   font-size: 1.45rem;
   line-height: 1.25;
   margin: 8px 0 18px;
@@ -594,6 +715,7 @@ button {
   background: #f2f5f4;
   border-radius: 8px;
   color: #20342f;
+  font-family: var(--font-display);
   font-weight: 800;
   margin: 0;
   min-height: 68px;
@@ -603,6 +725,7 @@ button {
 blockquote {
   border-left: 3px solid #a84f3d;
   color: #384641;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   line-height: 1.4;
   margin: 18px 0 0;
@@ -674,6 +797,7 @@ blockquote {
 .aspects-card strong {
   color: #1a1613;
   display: block;
+  font-family: var(--font-display);
   font-size: 1.02rem;
   font-weight: 600;
   line-height: 1.25;
@@ -682,6 +806,7 @@ blockquote {
 
 .aspects-card p {
   color: #63716c;
+  font-family: var(--font-display);
   line-height: 1.45;
   margin: 5px 0 0;
 }
@@ -795,6 +920,7 @@ blockquote {
 
 .transit-summary p {
   color: #4f4a45;
+  font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.35;
   margin: 4px 0;
@@ -814,7 +940,7 @@ blockquote {
   font-family: var(--font-mono);
   font-size: 0.95rem;
   letter-spacing: 0.14em;
-  margin-left: 10px;
+  margin-left: 8px;
   text-transform: uppercase;
 }
 
@@ -995,6 +1121,7 @@ blockquote {
 
 .read-closely p {
   color: #c7c0b7;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   line-height: 1.5;
   margin: 0;

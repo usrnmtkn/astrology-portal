@@ -7,9 +7,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
+import { hasMapboxToken, searchCities } from "./services/mapbox";
 import { getDemoProfile, getInitialAccountMode } from "./services/session";
 import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
@@ -46,6 +47,8 @@ type TransitItem = {
   arc: number[];
   note: string;
 };
+
+type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 
 const placementThemes: Record<string, string> = {
   Sun: "identity and vitality",
@@ -227,6 +230,8 @@ export function App() {
   const [location, setLocation] = useState<LocationInput>(defaultLocation);
   const [manualLocation, setManualLocation] = useState(defaultLocation.label);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
+  const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
@@ -272,9 +277,58 @@ export function App() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    const query = manualLocation.trim();
+
+    if (!cityPickerOpen || !hasMapboxToken() || query.length < 2) {
+      setCitySuggestions([]);
+      setCitySearchStatus("idle");
+      return;
+    }
+
+    setCitySearchStatus("loading");
+    const searchTimer = window.setTimeout(() => {
+      searchCities(query)
+        .then((suggestions) => {
+          if (cancelled) {
+            return;
+          }
+
+          setCitySuggestions(suggestions);
+          setCitySearchStatus(suggestions.length > 0 ? "ready" : "empty");
+        })
+        .catch(() => {
+          if (cancelled) {
+            return;
+          }
+
+          setCitySuggestions([]);
+          setCitySearchStatus("error");
+        });
+    }, 260);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(searchTimer);
+    };
+  }, [cityPickerOpen, manualLocation]);
+
   function applyManualLocation() {
     setLocation(locationFromLabel(manualLocation));
     setManualLocation(manualLocation.trim() || defaultLocation.label);
+    setCityPickerOpen(false);
+  }
+
+  function applyCitySuggestion(suggestion: CitySuggestion) {
+    setLocation({
+      label: suggestion.label,
+      latitude: suggestion.latitude,
+      longitude: suggestion.longitude
+    });
+    setManualLocation(suggestion.label);
+    setCitySuggestions([]);
+    setCitySearchStatus("idle");
     setCityPickerOpen(false);
   }
 
@@ -285,8 +339,8 @@ export function App() {
           <div className="brand-mark" aria-hidden="true">
             <Moon size={28} />
           </div>
-          <div className="brand-wordmark" aria-label="LTDR Astro">
-            <span>LTDR</span>
+          <div className="brand-wordmark" aria-label="tldrastro">
+            <span>tldr</span>
             <em>astro</em>
           </div>
         </div>
@@ -337,9 +391,16 @@ export function App() {
                   value={manualLocation}
                   onChange={(event) => setManualLocation(event.target.value)}
                   aria-label="City"
+                  placeholder="Search for a city"
                   autoFocus
                 />
               </label>
+              <CitySuggestions
+                suggestions={citySuggestions}
+                status={citySearchStatus}
+                mapboxEnabled={hasMapboxToken()}
+                onSelect={applyCitySuggestion}
+              />
               <div className="city-picker-actions">
                 <button type="submit">Update</button>
                 <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
@@ -354,7 +415,7 @@ export function App() {
           <div className="sky-stats">
             <Stat label="Zodiac season" value={sunPosition ? `Sun in ${sunPosition.sign}` : "Current Sun"} />
             <Stat label="Moon sign" value={moonPosition?.sign ?? "Current Moon"} />
-            <Stat label="Moon phase" value={sky.moonPhase} />
+            <Stat label="Moon phase" value={sky.moonPhase} artwork={<MoonPhaseArt phase={sky.moonPhase} />} />
           </div>
         </section>
 
@@ -417,6 +478,58 @@ function locationFromLabel(label: string): LocationInput {
     latitude: ((hash % 1400) / 10) - 70,
     longitude: ((hash % 3000) / 10) - 150
   };
+}
+
+function CitySuggestions({
+  suggestions,
+  status,
+  mapboxEnabled,
+  onSelect
+}: {
+  suggestions: CitySuggestion[];
+  status: "idle" | "loading" | "ready" | "empty" | "error";
+  mapboxEnabled: boolean;
+  onSelect: (suggestion: CitySuggestion) => void;
+}) {
+  if (!mapboxEnabled) {
+    return (
+      <p className="city-picker-note">
+        Add VITE_MAPBOX_ACCESS_TOKEN to enable suggested city search.
+      </p>
+    );
+  }
+
+  if (status === "idle") {
+    return <p className="city-picker-note">Start typing to see suggested cities.</p>;
+  }
+
+  if (status === "loading") {
+    return <p className="city-picker-note">Searching cities...</p>;
+  }
+
+  if (status === "error") {
+    return <p className="city-picker-note">City suggestions are unavailable right now.</p>;
+  }
+
+  if (status === "empty") {
+    return <p className="city-picker-note">No city suggestions found.</p>;
+  }
+
+  return (
+    <div className="city-suggestions" role="listbox" aria-label="Suggested cities">
+      {suggestions.map((suggestion) => (
+        <button
+          key={suggestion.id}
+          type="button"
+          role="option"
+          onClick={() => onSelect(suggestion)}
+        >
+          <strong>{suggestion.label}</strong>
+          {suggestion.region && <span>{suggestion.region}</span>}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function aspectGlyph(type: string) {
@@ -614,11 +727,29 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function MoonPhaseArt({ phase }: { phase: string }) {
+  const phaseEmojis: Record<string, string> = {
+    "New Moon": "🌑",
+    "Waxing Crescent": "🌒",
+    "First Quarter": "🌓",
+    "Waxing Gibbous": "🌔",
+    "Full Moon": "🌕",
+    "Waning Gibbous": "🌖",
+    "Last Quarter": "🌗",
+    "Waning Crescent": "🌘"
+  };
+
+  return <span className="moon-phase-art" aria-hidden="true">{phaseEmojis[phase] ?? "🌙"}</span>;
+}
+
+function Stat({ label, value, artwork }: { label: string; value: string; artwork?: ReactNode }) {
   return (
     <div className="stat">
       <span>{label}</span>
-      <strong>{value}</strong>
+      <strong className={artwork ? "stat-value with-art" : "stat-value"}>
+        {artwork}
+        <span>{value}</span>
+      </strong>
     </div>
   );
 }
@@ -695,14 +826,18 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
         </thead>
         <tbody>
           {positions.map((position) => (
-            <tr key={position.planet}>
+            <tr key={position.planet} className={position.motion === "retrograde" ? "retrograde-row" : undefined}>
               <td>
                 <span className="table-glyph">{position.glyph}</span>
                 <strong>{position.planet}</strong>
               </td>
-              <td>
-                {formatDegree(position.degree)}° {position.sign}
-                {position.motion === "retrograde" ? " ℞" : ""}
+              <td className="position-cell">
+                <span>{formatDegree(position.degree)}° {position.sign}</span>
+                {position.motion === "retrograde" ? (
+                  <span className="retrograde-badge" aria-label="Retrograde">
+                    ℞
+                  </span>
+                ) : null}
               </td>
               <td>{placementThemes[position.planet]}</td>
             </tr>
