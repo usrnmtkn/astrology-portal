@@ -184,6 +184,26 @@ button {
   font-size: 1.7rem;
 }
 
+.date-link {
+  background: transparent;
+  border: 0;
+  color: #63716c;
+  display: inline;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  padding: 0;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.date-link:hover,
+.date-link:focus-visible {
+  color: #1d2623;
+  outline: none;
+}
+
 .city-link {
   background: transparent;
   border-bottom: 2px solid rgba(168, 79, 61, 0.35);
@@ -211,6 +231,40 @@ button {
   gap: 12px;
   margin: 18px 0 4px;
   padding: 14px;
+}
+
+.date-picker {
+  background: #f7f8f8;
+  border: 1px solid rgba(43, 63, 58, 0.13);
+  border-radius: 8px;
+  display: inline-grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  min-width: 260px;
+  padding: 12px;
+}
+
+.date-picker label {
+  display: grid;
+  gap: 6px;
+}
+
+.date-picker span {
+  color: #63716c;
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.date-picker input {
+  background: #ffffff;
+  border: 1px solid rgba(43, 63, 58, 0.18);
+  border-radius: 8px;
+  min-height: 42px;
+  min-width: 0;
+  padding: 0 12px;
 }
 
 .city-picker label {

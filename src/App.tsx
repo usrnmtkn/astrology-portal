@@ -6,7 +6,7 @@ import {
   Moon,
   Sparkles,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
@@ -105,6 +105,26 @@ function isLocationInput(value: unknown): value is LocationInput {
     typeof location.latitude === "number" &&
     typeof location.longitude === "number"
   );
+}
+
+function dateInputValue(date: Date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function dateFromInput(value: string) {
+  return new Date(`${value}T12:00:00`);
+}
+
+function formatSkyDate(value: string) {
+  return dateFromInput(value).toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+  });
 }
 
 function getInitialLocation() {
@@ -274,19 +294,22 @@ const sampleTransits: TransitItem[] = [
 
 export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
+  const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [period, setPeriod] = useState<HoroscopePeriod>("daily");
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
-  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location));
+  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
+  const skyDateInputRef = useRef<HTMLInputElement>(null);
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
@@ -295,9 +318,10 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const selectedDate = dateFromInput(skyDate);
 
-    setSky(getCurrentSky(location));
-    getAstrodienstSky(location)
+    setSky(getCurrentSky(location, selectedDate));
+    getAstrodienstSky(location, selectedDate)
       .then((nextSky) => {
         if (!cancelled) {
           setSky(nextSky);
@@ -306,14 +330,25 @@ export function App() {
       .catch((error) => {
         console.warn("Swiss Ephemeris sky calculation failed; using fallback sky.", error);
         if (!cancelled) {
-          setSky(getCurrentSky(location));
+          setSky(getCurrentSky(location, selectedDate));
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [location, skyRefreshKey]);
+  }, [location, skyDate, skyRefreshKey]);
+
+  useEffect(() => {
+    if (!datePickerOpen) {
+      return;
+    }
+
+    const picker = skyDateInputRef.current;
+
+    picker?.focus();
+    picker?.showPicker?.();
+  }, [datePickerOpen]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -470,7 +505,15 @@ export function App() {
         <section className="sky-panel" aria-label="Current sky">
           <div className="panel-heading">
             <div>
-              <p>{new Date(sky.generatedAt).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</p>
+              <button
+                className="date-link"
+                type="button"
+                aria-expanded={datePickerOpen}
+                aria-controls="sky-date-picker"
+                onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
+              >
+                {formatSkyDate(skyDate)}
+              </button>
               <h1>
                 Current sky over{" "}
                 <button
@@ -485,6 +528,31 @@ export function App() {
               </h1>
             </div>
           </div>
+
+          {datePickerOpen && (
+            <form
+              className="date-picker"
+              id="sky-date-picker"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setDatePickerOpen(false);
+              }}
+            >
+              <label>
+                <span>Date</span>
+                <input
+                  ref={skyDateInputRef}
+                  aria-label="Sky date"
+                  type="date"
+                  value={skyDate}
+                  onChange={(event) => {
+                    setSkyDate(event.target.value);
+                    setDatePickerOpen(false);
+                  }}
+                />
+              </label>
+            </form>
+          )}
 
           {cityPickerOpen && (
             <form

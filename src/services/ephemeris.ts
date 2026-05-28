@@ -172,14 +172,13 @@ export const defaultLocation: LocationInput = {
   longitude: -74.006
 };
 
-export async function getAstrodienstSky(location: LocationInput = defaultLocation): Promise<SkySnapshot> {
-  const now = new Date();
+export async function getAstrodienstSky(location: LocationInput = defaultLocation, date: Date = new Date()): Promise<SkySnapshot> {
   const swe = await getSwissEph();
   const jd = swe.julday(
-    now.getUTCFullYear(),
-    now.getUTCMonth() + 1,
-    now.getUTCDate(),
-    utcHour(now)
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate(),
+    utcHour(date)
   );
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
   const houses = swe.houses(jd, location.latitude, location.longitude, "P") as unknown as {
@@ -223,7 +222,7 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
 
   return {
     location,
-    generatedAt: now.toISOString(),
+    generatedAt: date.toISOString(),
     ascendant,
     midheaven,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
@@ -233,9 +232,8 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
   };
 }
 
-export function getCurrentSky(location: LocationInput = defaultLocation): SkySnapshot {
-  const now = new Date();
-  const daySeed = Math.floor(now.getTime() / 86_400_000);
+export function getCurrentSky(location: LocationInput = defaultLocation, date: Date = new Date()): SkySnapshot {
+  const daySeed = Math.floor(date.getTime() / 86_400_000);
   const locationSeed = Math.round((location.latitude + 90) * 10 + (location.longitude + 180) * 10);
 
   const basePositions: PlanetPosition[] = planets.map(([planet, glyph, theme], index) => {
@@ -263,7 +261,7 @@ export function getCurrentSky(location: LocationInput = defaultLocation): SkySna
 
   return {
     location,
-    generatedAt: now.toISOString(),
+    generatedAt: date.toISOString(),
     ascendant,
     midheaven: positions[4].sign,
     moonPhase: "Waxing Crescent",
