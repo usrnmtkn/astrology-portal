@@ -3,11 +3,8 @@ import {
   ArrowUpRight,
   CalendarDays,
   CircleHelp,
-  Compass,
-  LocateFixed,
   Moon,
   Sparkles,
-  UserRound
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
@@ -227,6 +224,7 @@ export function App() {
   const [period, setPeriod] = useState<HoroscopePeriod>("daily");
   const [location, setLocation] = useState<LocationInput>(defaultLocation);
   const [manualLocation, setManualLocation] = useState(defaultLocation.label);
+  const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
@@ -234,59 +232,37 @@ export function App() {
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
-
-  function useBrowserLocation() {
-    navigator.geolocation?.getCurrentPosition(
-      (position) => {
-        const nextLocation = {
-          label: "Current location",
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
-        setLocation(nextLocation);
-        setManualLocation(nextLocation.label);
-      },
-      () => {
-        setManualLocation(location.label);
-      }
-    );
-  }
+  const sunPosition = sky.positions.find((position) => position.planet === "Sun");
+  const moonPosition = sky.positions.find((position) => position.planet === "Moon");
 
   function applyManualLocation() {
-    const seed = manualLocation.trim() || defaultLocation.label;
-    const hash = [...seed].reduce((total, char) => total + char.charCodeAt(0), 0);
-    setLocation({
-      label: seed,
-      latitude: ((hash % 1400) / 10) - 70,
-      longitude: ((hash % 3000) / 10) - 150
-    });
+    setLocation(locationFromLabel(manualLocation));
+    setManualLocation(manualLocation.trim() || defaultLocation.label);
+    setCityPickerOpen(false);
   }
 
   return (
     <main className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <Moon aria-hidden="true" />
-          <div>
-            <span>Current Sky</span>
-            <strong>Astrology Portal</strong>
+          <div className="brand-mark" aria-hidden="true">
+            <Moon size={28} />
+          </div>
+          <div className="brand-wordmark" aria-label="LTDR Astro">
+            <span>LTDR</span>
+            <em>astro</em>
           </div>
         </div>
 
-        <div className="account-switch" aria-label="Portal mode">
+        <nav className="site-nav" aria-label="Primary navigation">
           <button className={mode === "guest" ? "active" : ""} onClick={() => setMode("guest")}>
-            <Compass size={16} />
             Today
           </button>
-          <button className={mode === "transits" ? "active" : ""} onClick={() => setMode("transits")}>
-            <CalendarDays size={16} />
-            Transits
+          <button type="button" onClick={() => setMode("member")}>Sign in</button>
+          <button className="chart-cta" type="button" onClick={() => setMode("transits")}>
+            Create my chart →
           </button>
-          <button className={mode === "member" ? "active" : ""} onClick={() => setMode("member")}>
-            <UserRound size={16} />
-            Member
-          </button>
-        </div>
+        </nav>
       </header>
 
       <section className="portal-grid">
@@ -294,34 +270,54 @@ export function App() {
           <div className="panel-heading">
             <div>
               <p>{new Date(sky.generatedAt).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</p>
-              <h1>Current sky over {sky.location.label}</h1>
+              <h1>
+                Current sky over{" "}
+                <button
+                  className="city-link"
+                  type="button"
+                  aria-expanded={cityPickerOpen}
+                  aria-controls="city-picker"
+                  onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
+                >
+                  {sky.location.label}
+                </button>
+              </h1>
             </div>
-            <button className="icon-button" onClick={useBrowserLocation} aria-label="Use current location" title="Use current location">
-              <LocateFixed size={20} />
-            </button>
           </div>
 
-          <div className="location-row">
-            <input
-              value={manualLocation}
-              onChange={(event) => setManualLocation(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") applyManualLocation();
+          {cityPickerOpen && (
+            <form
+              className="city-picker"
+              id="city-picker"
+              onSubmit={(event) => {
+                event.preventDefault();
+                applyManualLocation();
               }}
-              aria-label="Location"
-            />
-            <button onClick={applyManualLocation}>Update</button>
-          </div>
+            >
+              <label>
+                <span>City</span>
+                <input
+                  value={manualLocation}
+                  onChange={(event) => setManualLocation(event.target.value)}
+                  aria-label="City"
+                  autoFocus
+                />
+              </label>
+              <div className="city-picker-actions">
+                <button type="submit">Update</button>
+                <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+              </div>
+            </form>
+          )}
 
           <SkyWheel positions={sky.positions} ascendant={sky.ascendant} />
 
           <SkyBriefing sky={sky} />
 
           <div className="sky-stats">
-            <Stat label="Ascendant" value={sky.ascendant} />
-            <Stat label="Midheaven" value={sky.midheaven} />
+            <Stat label="Zodiac season" value={sunPosition ? `Sun in ${sunPosition.sign}` : "Current Sun"} />
+            <Stat label="Moon sign" value={moonPosition?.sign ?? "Current Moon"} />
             <Stat label="Moon phase" value={sky.moonPhase} />
-            <Stat label="Element" value={sky.dominantElement} />
           </div>
         </section>
 
@@ -353,14 +349,23 @@ export function App() {
         />
       )}
 
-      <section className="aspects-band" aria-label="Active aspects">
-        {sky.aspects.map((aspect) => (
-          <article key={`${aspect.from}-${aspect.to}`}>
-            <span>{aspect.type}</span>
-            <strong>{aspect.from} + {aspect.to}</strong>
-            <p>{aspect.meaning}</p>
-          </article>
-        ))}
+      <section className="aspects-card" aria-label="Active aspects">
+        <div className="aspects-heading">
+          <span>Active aspects</span>
+        </div>
+        <div className="aspect-list">
+          {sky.aspects.map((aspect) => (
+            <article key={`${aspect.from}-${aspect.to}`}>
+              <div className="glyph aspect-symbol" aria-hidden="true">{aspectGlyph(aspect.type)}</div>
+              <div className="aspect-copy">
+                <span>{aspect.type}</span>
+                <strong>{aspect.from} {aspect.type} {aspect.to}</strong>
+                <p>{aspect.meaning}</p>
+              </div>
+              <div className="aspect-orb">{aspect.orb.toFixed(1)}°</div>
+            </article>
+          ))}
+        </div>
       </section>
     </main>
   );
@@ -377,22 +382,32 @@ function locationFromLabel(label: string): LocationInput {
   };
 }
 
+function aspectGlyph(type: string) {
+  const glyphs: Record<string, string> = {
+    conjunction: "☌",
+    opposition: "☍",
+    square: "□",
+    trine: "△",
+    sextile: "✶"
+  };
+
+  return glyphs[type] ?? "·";
+}
+
 function SkyBriefing({ sky }: { sky: ReturnType<typeof getCurrentSky> }) {
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const leadAspect = sky.aspects[0];
-  const emphasis = moon?.house === 1 ? "personal pace" : `house ${moon?.house ?? 1} themes`;
 
   return (
     <aside className="sky-briefing" aria-label="Sky briefing">
-      <div className="briefing-icon">
-        <Sparkles size={18} aria-hidden="true" />
-      </div>
       <div>
-        <span>Sky briefing</span>
+        <span><Sparkles size={15} aria-hidden="true" /> Sky briefing</span>
         <p>
-          {sky.dominantElement} leads the weather while the {sky.moonPhase.toLowerCase()} Moon in {moon?.sign ?? "motion"} keeps attention on {emphasis}.
-          {sun ? ` The Sun in ${sun.sign} sets the daily center of gravity.` : ""}
+          {sun ? `The Sun in ${sun.sign} marks the current zodiac season.` : "The Sun sets the current zodiac season."}
+          {" "}
+          The {sky.moonPhase.toLowerCase()} Moon in {moon?.sign ?? "motion"} describes the day's emotional weather.
+          {" "}
           {leadAspect ? ` Watch ${leadAspect.from} ${leadAspect.type} ${leadAspect.to}: ${leadAspect.meaning.toLowerCase()}` : ""}
         </p>
       </div>
@@ -670,17 +685,17 @@ function TransitSetup({
 
       <div className="form-fields">
         <label className="field-line">
-          <span>My name</span>
+          <span>Name</span>
           <input value={form.name} onChange={(event) => updateField("name", event.target.value)} />
         </label>
 
         <label className="field-line">
-          <span>My place of birth</span>
+          <span>Place of birth</span>
           <input value={form.birthPlace} onChange={(event) => updateField("birthPlace", event.target.value)} />
         </label>
 
         <div className="field-group">
-          <span>My date of birth</span>
+          <span>Date of birth</span>
           <div className="date-grid">
             <input aria-label="Birth month" value={form.birthMonth} onChange={(event) => updateField("birthMonth", event.target.value)} />
             <input aria-label="Birth day" value={form.birthDay} onChange={(event) => updateField("birthDay", event.target.value)} />
@@ -689,7 +704,7 @@ function TransitSetup({
         </div>
 
         <div className="field-group">
-          <span>My time of birth</span>
+          <span>Time of birth</span>
           <div className="time-grid">
             <input aria-label="Birth hour" value={form.birthHour} onChange={(event) => updateField("birthHour", event.target.value)} />
             <input aria-label="Birth minute" value={form.birthMinute} onChange={(event) => updateField("birthMinute", event.target.value)} />
@@ -710,8 +725,8 @@ function TransitSetup({
         </label>
 
         <label className="field-line">
-          <span>My current location</span>
-          <input value={form.currentLocation} onChange={(event) => updateField("currentLocation", event.target.value)} />
+          <span>Current city</span>
+          <input aria-label="Current city" value={form.currentLocation} onChange={(event) => updateField("currentLocation", event.target.value)} />
         </label>
       </div>
 

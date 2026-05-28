@@ -36,34 +36,43 @@ button {
 .app-shell {
   min-height: 100vh;
   background: #ffffff;
-  padding: 24px;
+  padding: 0 24px 24px;
 }
 
 .topbar {
   align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(26, 22, 19, 0.14);
   display: flex;
   justify-content: space-between;
-  gap: 18px;
-  margin: 0 auto 22px;
-  max-width: 1180px;
+  gap: 24px;
+  margin: 0 -24px 28px;
+  min-height: 88px;
+  padding: 0 40px;
 }
 
 .brand {
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: 14px;
+  min-width: max-content;
 }
 
-.brand svg {
-  color: #a84f3d;
+.brand-mark {
+  align-items: center;
+  border: 2px solid #1a1613;
+  border-radius: 50%;
+  color: #1a1613;
+  display: inline-flex;
+  flex: 0 0 46px;
+  height: 46px;
+  justify-content: center;
 }
 
-.brand span,
 .panel-heading p,
 .member-header p,
 .stat span,
-.horoscope span,
-.aspects-band span {
+.horoscope span {
   color: #63716c;
   display: block;
   font-size: 0.78rem;
@@ -73,39 +82,65 @@ button {
   text-transform: uppercase;
 }
 
-.brand strong {
-  display: block;
-  font-size: 1.05rem;
-}
-
-.account-switch,
-.period-tabs {
-  background: #f7f8f8;
-  border: 1px solid rgba(43, 63, 58, 0.14);
-  border-radius: 8px;
+.brand-wordmark {
+  align-items: baseline;
+  color: #1a1613;
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: 8px;
+  line-height: 1;
 }
 
-.account-switch button,
+.brand-wordmark span {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 500;
+}
+
+.brand-wordmark em {
+  color: #716a63;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-style: italic;
+}
+
+.site-nav,
+.period-tabs {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.site-nav button,
 .period-tabs button {
   align-items: center;
   background: transparent;
-  border-radius: 6px;
-  color: #52615d;
+  border-radius: 999px;
+  color: #1a1613;
   display: inline-flex;
-  gap: 8px;
   justify-content: center;
-  min-height: 36px;
-  padding: 0 12px;
-  text-transform: capitalize;
+  min-height: 44px;
+  padding: 0 16px;
 }
 
-.account-switch button.active,
+.site-nav button {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.site-nav button.active,
 .period-tabs button.active {
-  background: #20342f;
+  background: #1a1613;
   color: #ffffff;
+}
+
+.site-nav .chart-cta {
+  background: #ffffff;
+  border: 2px solid #1a1613;
+  color: #1a1613;
+  padding: 0 22px;
 }
 
 .portal-grid {
@@ -146,25 +181,50 @@ button {
   font-size: 1.7rem;
 }
 
-.icon-button {
-  align-items: center;
-  aspect-ratio: 1;
-  background: #a84f3d;
+.city-link {
+  background: transparent;
+  border-bottom: 2px solid rgba(168, 79, 61, 0.35);
+  color: #a84f3d;
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.city-link:hover,
+.city-link:focus-visible {
+  border-bottom-color: #a84f3d;
+  outline: none;
+}
+
+.city-picker {
+  background: #f7f8f8;
+  border: 1px solid rgba(43, 63, 58, 0.13);
   border-radius: 8px;
-  color: white;
-  display: inline-flex;
-  flex: 0 0 42px;
-  justify-content: center;
-}
-
-.location-row {
   display: grid;
-  gap: 10px;
-  grid-template-columns: 1fr auto;
-  margin: 20px 0;
+  gap: 12px;
+  margin: 18px 0 4px;
+  padding: 14px;
 }
 
-.location-row input {
+.city-picker label {
+  display: grid;
+  gap: 6px;
+}
+
+.city-picker span {
+  color: #63716c;
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.city-picker input {
   background: #ffffff;
   border: 1px solid rgba(43, 63, 58, 0.18);
   border-radius: 8px;
@@ -173,12 +233,23 @@ button {
   padding: 0 12px;
 }
 
-.location-row button {
+.city-picker-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.city-picker-actions button {
   background: #d8e3e0;
   border-radius: 8px;
   color: #20231d;
   font-weight: 800;
-  padding: 0 16px;
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.city-picker-actions button:last-child {
+  background: transparent;
+  color: #52615d;
 }
 
 .sky-wheel {
@@ -267,66 +338,60 @@ button {
 
 .planet-degree {
   fill: #4c4c4c;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .sky-briefing {
-  align-items: flex-start;
-  background: #f7f8f8;
-  border: 1px solid rgba(32, 52, 47, 0.1);
-  border-radius: 8px;
-  display: flex;
-  gap: 14px;
-  margin: 0 0 14px;
-  padding: 14px;
-}
-
-.briefing-icon {
-  align-items: center;
-  background: #20342f;
-  border-radius: 8px;
-  color: #ffffff;
-  display: inline-flex;
-  flex: 0 0 36px;
-  height: 36px;
-  justify-content: center;
+  border-top: 1px solid rgba(26, 22, 19, 0.14);
+  margin: 0 0 18px;
+  padding: 18px 0 0;
 }
 
 .sky-briefing span {
+  align-items: center;
   color: #63716c;
-  display: block;
+  display: inline-flex;
   font-size: 0.78rem;
+  gap: 8px;
   font-weight: 800;
   letter-spacing: 0;
-  margin: 0 0 4px;
+  margin: 0 0 8px;
   text-transform: uppercase;
 }
 
 .sky-briefing p {
-  color: #384641;
-  font-size: 0.98rem;
+  color: #1a1613;
+  font-family: var(--font-display);
+  font-size: clamp(1.12rem, 1.7vw, 1.35rem);
   line-height: 1.45;
   margin: 0;
 }
 
 .sky-stats {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid rgba(26, 22, 19, 0.14);
+  gap: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .stat {
-  background: #f7f8f8;
-  border: 1px solid rgba(32, 52, 47, 0.1);
-  border-radius: 8px;
-  padding: 12px;
+  border-right: 1px solid rgba(26, 22, 19, 0.14);
+  min-height: 86px;
+  padding: 16px 14px 12px;
+}
+
+.stat:last-child {
+  border-right: 0;
 }
 
 .stat strong {
+  color: #1a1613;
   display: block;
-  font-size: 1rem;
-  margin-top: 5px;
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.15;
+  margin-top: 8px;
 }
 
 .placement-list {
@@ -358,8 +423,7 @@ button {
 }
 
 .placement-list p,
-.horoscope p,
-.aspects-band p {
+.horoscope p {
   color: #63716c;
   margin: 4px 0 0;
 }
@@ -546,24 +610,90 @@ blockquote {
   padding-left: 14px;
 }
 
-.aspects-band {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 18px auto 0;
-  max-width: 1180px;
-}
-
-.aspects-band article {
+.aspects-card {
   background: #ffffff;
   border: 1px solid rgba(32, 52, 47, 0.1);
   border-radius: 8px;
-  padding: 16px;
+  margin: 18px auto 0;
+  max-width: 1180px;
+  padding: 18px;
 }
 
-.aspects-band strong {
+.aspects-heading {
+  border-bottom: 1px solid rgba(26, 22, 19, 0.14);
+  padding-bottom: 14px;
+}
+
+.aspects-heading span,
+.aspect-copy span {
+  color: #8a8580;
   display: block;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.aspects-heading strong {
+  color: #1a1613;
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0;
+  text-align: right;
+}
+
+.aspect-list {
+  display: grid;
+}
+
+.aspects-card article {
+  align-items: center;
+  border-bottom: 1px solid rgba(26, 22, 19, 0.12);
+  display: flex;
+  gap: 12px;
+  min-height: 82px;
+  padding: 14px 0;
+}
+
+.aspects-card article:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.aspect-symbol {
+  background: #ffffff;
+  border: 1px solid rgba(26, 22, 19, 0.18);
+  color: #1a1613;
+  font-family: var(--font-symbol);
+  font-weight: 400;
+}
+
+.aspects-card strong {
+  color: #1a1613;
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.25;
   margin-top: 5px;
+}
+
+.aspects-card p {
+  color: #63716c;
+  line-height: 1.45;
+  margin: 5px 0 0;
+}
+
+.aspect-orb {
+  color: #8a8580;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 .transit-form {
@@ -572,8 +702,8 @@ blockquote {
 }
 
 .form-fields {
-  background: #f7f4ef;
-  border: 1px solid rgba(26, 22, 19, 0.1);
+  background: #ffffff;
+  border: 1px solid rgba(26, 22, 19, 0.14);
   border-radius: 8px;
   display: grid;
   gap: 18px;
@@ -703,7 +833,7 @@ blockquote {
 }
 
 .transit-explainer {
-  background: #ebe6dc;
+  background: #ffffff;
   border: 1px solid rgba(26, 22, 19, 0.08);
   border-radius: 8px;
   padding: 18px 22px;
@@ -748,7 +878,8 @@ blockquote {
 }
 
 .transit-row.active {
-  background: #f7f4ef;
+  background: #ffffff;
+  box-shadow: inset 3px 0 0 #1a1613;
 }
 
 .aspect-glyph {
@@ -872,29 +1003,33 @@ blockquote {
 
 @media (max-width: 860px) {
   .app-shell {
-    padding: 16px;
+    padding: 0 16px 16px;
   }
 
-  .topbar,
-  .portal-grid,
-  .aspects-band {
+  .portal-grid {
     grid-template-columns: 1fr;
+  }
+
+  .aspects-heading {
+    padding: 0 0 18px;
   }
 
   .topbar {
     align-items: stretch;
     flex-direction: column;
+    margin: 0 -16px 20px;
+    padding: 18px 16px;
   }
 
-  .account-switch {
+  .site-nav {
+    flex-wrap: wrap;
     width: 100%;
   }
 
-  .account-switch button {
-    flex: 1;
+  .site-nav button {
+    flex: 1 1 auto;
   }
 
-  .sky-stats,
   .focus-grid,
   .transit-summary,
   .transit-lists,
@@ -913,7 +1048,6 @@ blockquote {
     padding: 16px;
   }
 
-  .location-row,
   .sky-stats,
   .focus-grid,
   .date-grid,
@@ -922,6 +1056,24 @@ blockquote {
   .transit-lists,
   .transit-detail {
     grid-template-columns: 1fr;
+  }
+
+  .stat {
+    border-bottom: 1px solid rgba(26, 22, 19, 0.14);
+    border-right: 0;
+  }
+
+  .stat:last-child {
+    border-bottom: 0;
+  }
+
+  .aspects-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .aspects-heading strong {
+    text-align: left;
   }
 
   .transit-heading-row {
