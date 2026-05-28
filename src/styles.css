@@ -1142,7 +1142,7 @@ button {
 
 .placement-table {
   border-collapse: collapse;
-  min-width: 640px;
+  min-width: 460px;
   width: 100%;
 }
 
@@ -1172,19 +1172,23 @@ button {
   text-transform: none;
 }
 
+.placement-table th:first-child,
+.placement-table td:first-child {
+  width: 240px;
+}
+
 .placement-table td:first-child strong {
   font-family: var(--font-display);
   font-size: 1.45rem;
   font-weight: 400;
 }
 
-.placement-table td:last-child {
-  color: #4f4a45;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  letter-spacing: 0;
-  line-height: 1.25;
-  text-transform: none;
+.placement-table .position-cell {
+  color: #6e7673;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .placement-table .retrograde-row td {
