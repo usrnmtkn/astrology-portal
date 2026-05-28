@@ -52,6 +52,39 @@ button {
   padding: 0 40px;
 }
 
+.theme-toggle {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.theme-toggle button {
+  align-items: center;
+  background: #f7f8f8;
+  border: 1px solid rgba(26, 22, 19, 0.12);
+  border-radius: 999px;
+  color: #1a1613;
+  display: inline-flex;
+  height: 46px;
+  justify-content: center;
+  padding: 0;
+  width: 46px;
+}
+
+.theme-toggle button span {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+.theme-toggle button.active {
+  background: #ffffff;
+  border-color: #1b75d0;
+  box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #1b75d0;
+}
+
 .brand {
   align-items: center;
   display: flex;
@@ -1313,6 +1346,185 @@ blockquote {
   font-size: 1.05rem;
   line-height: 1.5;
   margin: 0;
+}
+
+.theme-dark {
+  background: #100f0c;
+  color: #f1eee8;
+}
+
+.theme-dark .topbar,
+.theme-dark .sky-panel,
+.theme-dark .detail-panel,
+.theme-dark .sky-card,
+.theme-dark .aspects-card,
+.theme-dark .placement-list article,
+.theme-dark .placement-table,
+.theme-dark .transit-setup,
+.theme-dark .transit-detail,
+.theme-dark .read-closely {
+  background: #100f0c;
+  border-color: rgba(241, 238, 232, 0.16);
+  box-shadow: none;
+}
+
+.theme-dark .topbar {
+  border-bottom-color: rgba(241, 238, 232, 0.16);
+}
+
+.theme-dark .theme-toggle button {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(241, 238, 232, 0.25);
+  color: #f1eee8;
+}
+
+.theme-dark .theme-toggle button.active {
+  background: #172235;
+  border-color: #2b8cff;
+  box-shadow: 0 0 0 3px #172235, 0 0 0 5px #2b8cff;
+}
+
+.theme-dark .brand-mark,
+.theme-dark .chart-cta,
+.theme-dark .date-link,
+.theme-dark .city-picker,
+.theme-dark .date-picker,
+.theme-dark .city-picker input,
+.theme-dark .city-suggestions,
+.theme-dark .period-tabs,
+.theme-dark .theme-toggle button {
+  border-color: rgba(241, 238, 232, 0.2);
+}
+
+.theme-dark .brand-mark,
+.theme-dark .brand-wordmark,
+.theme-dark .brand-wordmark em,
+.theme-dark .panel-heading h1,
+.theme-dark .member-header h2,
+.theme-dark .site-nav button,
+.theme-dark .chart-cta,
+.theme-dark .city-link,
+.theme-dark .sky-card > strong,
+.theme-dark .sky-card p,
+.theme-dark .sky-card .sky-card-degree,
+.theme-dark .placements-heading h2,
+.theme-dark .placement-card strong,
+.theme-dark .placement-table strong,
+.theme-dark .placement-paragraph strong,
+.theme-dark .aspects-heading h3,
+.theme-dark .aspect-copy strong,
+.theme-dark .date-picker-header strong,
+.theme-dark .transit-results,
+.theme-dark .transit-results h2,
+.theme-dark .transit-item strong,
+.theme-dark .transit-detail h3,
+.theme-dark .horoscope h3 {
+  color: #f1eee8;
+}
+
+.theme-dark .panel-heading p,
+.theme-dark .member-header p,
+.theme-dark .eyebrow,
+.theme-dark .horoscope span,
+.theme-dark .placement-card span,
+.theme-dark .placement-table td,
+.theme-dark .aspect-copy span,
+.theme-dark .aspect-copy p,
+.theme-dark .city-picker span,
+.theme-dark .city-picker-note,
+.theme-dark .date-picker-weekdays span,
+.theme-dark .date-link,
+.theme-dark .placements-heading span {
+  color: #a8a29a;
+}
+
+.theme-dark .site-nav button.active,
+.theme-dark .period-tabs button.active {
+  background: #f1eee8;
+  color: #100f0c;
+}
+
+.theme-dark .site-nav .chart-cta {
+  background: #f1eee8;
+  border-color: #f1eee8;
+  color: #100f0c;
+}
+
+.theme-dark .date-link,
+.theme-dark .city-picker,
+.theme-dark .date-picker,
+.theme-dark .city-picker input,
+.theme-dark .city-suggestions,
+.theme-dark .city-suggestions button,
+.theme-dark .placement-list article,
+.theme-dark .placement-toggle,
+.theme-dark .date-picker-grid button {
+  background: #171612;
+}
+
+.theme-dark .city-suggestions button:hover,
+.theme-dark .city-suggestions button:focus-visible,
+.theme-dark .date-picker-grid button:hover,
+.theme-dark .date-picker-grid button:focus-visible,
+.theme-dark .date-picker-today,
+.theme-dark .date-picker-header button:hover,
+.theme-dark .date-picker-header button:focus-visible {
+  background: #211f19;
+}
+
+.theme-dark .city-link {
+  border-bottom-color: rgba(241, 238, 232, 0.36);
+}
+
+.theme-dark .sky-wheel {
+  background: #100f0c;
+}
+
+.theme-dark .wheel-rings circle,
+.theme-dark .wheel-sectors line,
+.theme-dark .planet-tick {
+  stroke: rgba(241, 238, 232, 0.46);
+}
+
+.theme-dark .wheel-rings .faint {
+  stroke: rgba(241, 238, 232, 0.18);
+}
+
+.theme-dark .sign-labels text,
+.theme-dark .planet-glyph {
+  fill: #f1eee8;
+}
+
+.theme-dark .sign-labels .sign-label-halo {
+  stroke: #100f0c;
+}
+
+.theme-dark .planet-degree {
+  fill: #c9c3bb;
+}
+
+.theme-dark .aspect-lines .soft line {
+  stroke: #6d8990;
+}
+
+.theme-dark .aspect-lines .hard line {
+  stroke: #9b6b50;
+}
+
+.theme-dark .aspect-lines .neutral line {
+  stroke: #897f78;
+}
+
+.theme-dark .sky-card-glyph.moon {
+  color: #79a5a6;
+}
+
+.theme-dark .sky-card-glyph.sun {
+  border-color: #79a5a6;
+}
+
+.theme-dark .sky-card-glyph.sun span {
+  background: #79a5a6;
 }
 
 @media (max-width: 860px) {

@@ -6,6 +6,7 @@ import {
   ChevronRight,
   CircleHelp,
   Moon,
+  Sun,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
@@ -21,6 +22,7 @@ type PlacementMode = "paragraph" | "table";
 type PortalMode = AccountMode | "transits";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
+type UiTheme = "light" | "dark";
 
 type TransitForm = {
   name: string;
@@ -52,6 +54,7 @@ type TransitItem = {
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
+const selectedThemeStorageKey = "tldrastro:theme";
 const synodicMonthDays = 29.530588;
 const zodiacSigns = [
   "Aries",
@@ -247,6 +250,16 @@ function getInitialLocation() {
   }
 }
 
+function getInitialTheme(): UiTheme {
+  try {
+    const savedTheme = window.localStorage.getItem(selectedThemeStorageKey);
+
+    return savedTheme === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+}
+
 const sampleTransits: TransitItem[] = [
   {
     id: "sun-square-mercury",
@@ -382,6 +395,7 @@ const sampleTransits: TransitItem[] = [
 
 export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
+  const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [period, setPeriod] = useState<HoroscopePeriod>("daily");
@@ -422,6 +436,14 @@ export function App() {
       cancelled = true;
     };
   }, [location, skyDate, skyRefreshKey]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(selectedThemeStorageKey, theme);
+    } catch {
+      return;
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -551,8 +573,29 @@ export function App() {
   }
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell theme-${theme}`}>
       <header className="topbar">
+        <div className="theme-toggle" aria-label="Display mode">
+          <button
+            type="button"
+            className={theme === "light" ? "active" : ""}
+            aria-pressed={theme === "light"}
+            aria-label="Use light mode"
+            onClick={() => setTheme("light")}
+          >
+            <Sun size={20} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className={theme === "dark" ? "active" : ""}
+            aria-pressed={theme === "dark"}
+            aria-label="Use dark mode"
+            onClick={() => setTheme("dark")}
+          >
+            <span aria-hidden="true">☾</span>
+          </button>
+        </div>
+
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
             <Moon size={28} />
