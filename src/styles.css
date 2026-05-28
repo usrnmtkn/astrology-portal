@@ -185,23 +185,34 @@ button {
 }
 
 .date-link {
-  background: transparent;
-  border: 0;
+  align-items: center;
+  background: #f7f8f8;
+  border: 1px solid rgba(43, 63, 58, 0.13);
+  border-radius: 999px;
   color: #63716c;
-  display: inline;
+  display: inline-flex;
+  gap: 8px;
   font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0;
-  padding: 0;
+  min-height: 34px;
+  padding: 0 12px;
   text-align: left;
   text-transform: uppercase;
 }
 
 .date-link:hover,
 .date-link:focus-visible {
+  background: #ffffff;
+  border-color: rgba(168, 79, 61, 0.35);
   color: #1d2623;
   outline: none;
+}
+
+.date-link strong {
+  color: #a84f3d;
+  font: inherit;
 }
 
 .city-link {

@@ -512,7 +512,9 @@ export function App() {
                 aria-controls="sky-date-picker"
                 onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
               >
-                {formatSkyDate(skyDate)}
+                <CalendarDays size={16} aria-hidden="true" />
+                <span>{formatSkyDate(skyDate)}</span>
+                <strong>Change date</strong>
               </button>
               <h1>
                 Current sky over{" "}
