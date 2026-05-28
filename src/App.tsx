@@ -575,17 +575,6 @@ export function App() {
   return (
     <main className={`app-shell theme-${theme}`}>
       <header className="topbar">
-        <button
-          type="button"
-          className="theme-toggle"
-          aria-pressed={theme === "dark"}
-          aria-label="Toggle theme"
-          title="Toggle theme"
-          onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
-        >
-          {theme === "dark" ? <span aria-hidden="true">☾</span> : <Sun size={20} aria-hidden="true" />}
-        </button>
-
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
             <Moon size={28} />
@@ -605,6 +594,17 @@ export function App() {
             Create my chart →
           </button>
         </nav>
+
+        <button
+          type="button"
+          className="theme-toggle"
+          aria-pressed={theme === "dark"}
+          aria-label="Toggle theme"
+          title="Toggle theme"
+          onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
+        >
+          {theme === "dark" ? <span aria-hidden="true">☾</span> : <Sun size={20} aria-hidden="true" />}
+        </button>
       </header>
 
       <section className="portal-grid">
