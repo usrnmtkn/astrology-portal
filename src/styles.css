@@ -1137,7 +1137,12 @@ button {
 }
 
 .placement-table-wrap {
+  background: #ffffff;
+  border: 1px solid rgba(32, 52, 47, 0.1);
+  border-radius: 8px;
+  margin-top: 8px;
   overflow-x: auto;
+  padding: 18px;
 }
 
 .placement-table {
@@ -1148,7 +1153,7 @@ button {
 
 .placement-table th {
   border-bottom: 1px solid rgba(26, 22, 19, 0.18);
-  padding: 0 14px 14px;
+  padding: 0 0 14px;
   text-align: left;
 }
 
@@ -1158,7 +1163,8 @@ button {
   font-family: var(--font-mono);
   font-size: 0.9rem;
   letter-spacing: 0.08em;
-  padding: 18px 14px;
+  min-height: 82px;
+  padding: 14px 0;
   text-transform: uppercase;
   vertical-align: middle;
 }
@@ -1199,9 +1205,9 @@ button {
   color: #34205f;
 }
 
-.placement-table .retrograde-row td:first-child,
-.placement-table .retrograde-row td:last-child {
-  background: rgba(249, 247, 255, 0.5);
+.placement-table tbody tr:last-child td {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .position-degree {
