@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
-import { hasMapboxToken, searchCities } from "./services/mapbox";
+import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getDemoProfile, getInitialAccountMode } from "./services/session";
 import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
@@ -107,19 +107,35 @@ function isLocationInput(value: unknown): value is LocationInput {
   );
 }
 
-function getSavedLocation() {
+function getInitialLocation() {
   try {
     const savedLocation = window.localStorage.getItem(selectedLocationStorageKey);
 
     if (!savedLocation) {
-      return defaultLocation;
+      return {
+        location: defaultLocation,
+        hasSavedLocation: false
+      };
     }
 
     const parsedLocation = JSON.parse(savedLocation) as unknown;
 
-    return isLocationInput(parsedLocation) ? parsedLocation : defaultLocation;
+    if (isLocationInput(parsedLocation)) {
+      return {
+        location: parsedLocation,
+        hasSavedLocation: true
+      };
+    }
+
+    return {
+      location: defaultLocation,
+      hasSavedLocation: false
+    };
   } catch {
-    return defaultLocation;
+    return {
+      location: defaultLocation,
+      hasSavedLocation: false
+    };
   }
 }
 
@@ -257,11 +273,12 @@ const sampleTransits: TransitItem[] = [
 ];
 
 export function App() {
-  const initialLocation = useMemo(getSavedLocation, []);
+  const initialLocationState = useMemo(getInitialLocation, []);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [period, setPeriod] = useState<HoroscopePeriod>("daily");
-  const [location, setLocation] = useState<LocationInput>(initialLocation);
-  const [manualLocation, setManualLocation] = useState(initialLocation.label);
+  const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
+  const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
+  const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
@@ -269,7 +286,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
-  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocation));
+  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location));
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
@@ -299,12 +316,60 @@ export function App() {
   }, [location, skyRefreshKey]);
 
   useEffect(() => {
+    if (!hasLocationPreference) {
+      return;
+    }
+
     try {
       window.localStorage.setItem(selectedLocationStorageKey, JSON.stringify(location));
     } catch {
       return;
     }
-  }, [location]);
+  }, [hasLocationPreference, location]);
+
+  useEffect(() => {
+    if (hasLocationPreference || !("geolocation" in navigator)) {
+      return;
+    }
+
+    let cancelled = false;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const nextLocation = {
+          label: "Current location",
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        reverseGeocodeCity(nextLocation.latitude, nextLocation.longitude)
+          .catch(() => null)
+          .then((mappedLocation) => {
+            if (cancelled) {
+              return;
+            }
+
+            const resolvedLocation = mappedLocation ?? nextLocation;
+
+            setLocation(resolvedLocation);
+            setManualLocation(resolvedLocation.label);
+            setHasLocationPreference(true);
+          });
+      },
+      () => {
+        return;
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 600000,
+        timeout: 7000
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasLocationPreference]);
 
   useEffect(() => {
     function refreshSky() {
@@ -360,6 +425,7 @@ export function App() {
 
     setLocation(nextLocation);
     setManualLocation(nextLocation.label);
+    setHasLocationPreference(true);
     setCityPickerOpen(false);
   }
 
@@ -370,6 +436,7 @@ export function App() {
       longitude: suggestion.longitude
     });
     setManualLocation(suggestion.label);
+    setHasLocationPreference(true);
     setCitySuggestions([]);
     setCitySearchStatus("idle");
     setCityPickerOpen(false);
@@ -477,6 +544,7 @@ export function App() {
                   ...currentForm,
                   currentLocation: nextLocation.label
                 }));
+                setHasLocationPreference(true);
                 setTransitsDrawn(true);
               }}
             />

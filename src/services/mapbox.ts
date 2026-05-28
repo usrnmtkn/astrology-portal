@@ -119,3 +119,36 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
     };
   });
 }
+
+export async function reverseGeocodeCity(latitude: number, longitude: number): Promise<LocationInput | null> {
+  if (!mapboxToken) {
+    return null;
+  }
+
+  const params = new URLSearchParams({
+    access_token: mapboxToken,
+    latitude: String(latitude),
+    longitude: String(longitude),
+    limit: "1",
+    types: "place,locality"
+  });
+
+  const response = await fetch(`https://api.mapbox.com/search/geocode/v6/reverse?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Mapbox reverse geocode failed with ${response.status}`);
+  }
+
+  const data = (await response.json()) as MapboxResponse;
+  const [feature] = data.features ?? [];
+
+  if (!feature) {
+    return null;
+  }
+
+  return {
+    label: formatSuggestionLabel(feature),
+    latitude,
+    longitude
+  };
+}
