@@ -15,12 +15,9 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
-import { getHoroscope } from "./services/horoscopes";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
-import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySnapshot } from "./types";
-
-const periods: HoroscopePeriod[] = ["daily", "weekly", "monthly"];
+import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PlacementMode = "paragraph" | "table";
 type PortalMode = AccountMode | "transits" | "profile";
@@ -551,7 +548,6 @@ export function App() {
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
-  const [period, setPeriod] = useState<HoroscopePeriod>("daily");
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
@@ -565,7 +561,6 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
-  const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isProfileMode = mode === "profile";
@@ -855,7 +850,7 @@ export function App() {
         )}
 
         <section className="detail-panel" aria-label="Portal details">
-          {mode === "guest" && <GuestView positions={sky.positions} />}
+          {mode === "guest" && <TodayView positions={sky.positions} aspects={sky.aspects} />}
           {mode === "transits" && (
             <TransitSetup
               form={transitForm}
@@ -882,7 +877,7 @@ export function App() {
             />
           )}
           {mode === "member" && (
-            <MemberHomeView positions={sky.positions} period={period} setPeriod={setPeriod} horoscope={horoscope} />
+            <TodayView positions={sky.positions} aspects={sky.aspects} />
           )}
           {mode === "profile" && (
             userProfile ? (
@@ -1396,7 +1391,16 @@ function CitySearchField({
   );
 }
 
-function GuestView({ positions }: { positions: PlanetPosition[] }) {
+function TodayView({ positions, aspects }: { positions: PlanetPosition[]; aspects: SkySnapshot["aspects"] }) {
+  return (
+    <>
+      <PlacementView positions={positions} />
+      <ActiveAspects aspects={aspects} />
+    </>
+  );
+}
+
+function PlacementView({ positions }: { positions: PlanetPosition[] }) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("paragraph");
 
   return (
@@ -1432,6 +1436,29 @@ function GuestView({ positions }: { positions: PlanetPosition[] }) {
         <PlacementTable positions={positions} />
       )}
     </>
+  );
+}
+
+function ActiveAspects({ aspects }: { aspects: SkySnapshot["aspects"] }) {
+  return (
+    <section className="aspects-card" aria-label="Active aspects">
+      <div className="aspects-heading">
+        <span>Active aspects</span>
+      </div>
+      <div className="aspect-list">
+        {aspects.map((aspect) => (
+          <article key={`${aspect.from}-${aspect.to}`}>
+            <div className="glyph aspect-symbol" aria-hidden="true">{aspectGlyph(aspect.type)}</div>
+            <div className="aspect-copy">
+              <span>{aspect.type}</span>
+              <strong>{aspect.from} {aspect.type} {aspect.to}</strong>
+              <p>{aspect.meaning}</p>
+            </div>
+            <div className="aspect-orb">{aspect.orb.toFixed(1)}°</div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -1850,49 +1877,6 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
         <p className="privacy-note">We'll never post anything. Your data stays yours.</p>
       </form>
     </section>
-  );
-}
-
-function MemberHomeView({
-  positions,
-  period,
-  setPeriod,
-  horoscope
-}: {
-  positions: PlanetPosition[];
-  period: HoroscopePeriod;
-  setPeriod: (period: HoroscopePeriod) => void;
-  horoscope: ReturnType<typeof getHoroscope>;
-}) {
-  return (
-    <>
-      <GuestView positions={positions} />
-
-      <div className="period-tabs" role="tablist" aria-label="Horoscope period">
-        {periods.map((item) => (
-          <button
-            key={item}
-            role="tab"
-            aria-selected={period === item}
-            className={period === item ? "active" : ""}
-            onClick={() => setPeriod(item)}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-
-      <article className="horoscope">
-        <span>{horoscope.title}</span>
-        <h3>{horoscope.summary}</h3>
-        <div className="focus-grid">
-          {horoscope.focus.map((focus) => (
-            <p key={focus}>{focus}</p>
-          ))}
-        </div>
-        <blockquote>{horoscope.reflection}</blockquote>
-      </article>
-    </>
   );
 }
 
