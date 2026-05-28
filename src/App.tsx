@@ -914,24 +914,6 @@ export function App() {
         />
       )}
 
-      <section className="aspects-card" aria-label="Active aspects">
-        <div className="aspects-heading">
-          <span>Active aspects</span>
-        </div>
-        <div className="aspect-list">
-          {sky.aspects.map((aspect) => (
-            <article key={`${aspect.from}-${aspect.to}`}>
-              <div className="glyph aspect-symbol" aria-hidden="true">{aspectGlyph(aspect.type)}</div>
-              <div className="aspect-copy">
-                <span>{aspect.type}</span>
-                <strong>{aspect.from} {aspect.type} {aspect.to}</strong>
-                <p>{aspect.meaning}</p>
-              </div>
-              <div className="aspect-orb">{aspect.orb.toFixed(1)}°</div>
-            </article>
-          ))}
-        </div>
-      </section>
     </main>
   );
 }
