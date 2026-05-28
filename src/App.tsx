@@ -319,12 +319,8 @@ function GuestView({ positions }: { positions: PlanetPosition[] }) {
     <>
       <div className="placements-heading">
         <p>Placements</p>
-        <h2>{placementMode === "paragraph" ? "Today, simple." : "Where the ten planets sit today."}</h2>
-        <span>
-          {placementMode === "paragraph"
-            ? "What is up there today, and what it actually means down here."
-            : "The current sky in a scannable table."}
-        </span>
+        <h2>Today, simple.</h2>
+        <span>What is up there today, and what it actually means down here.</span>
       </div>
 
       <div className="placement-toggle" role="tablist" aria-label="Placement view">
@@ -345,8 +341,6 @@ function GuestView({ positions }: { positions: PlanetPosition[] }) {
           Table
         </button>
       </div>
-
-      <p className="placement-hint">Hover a planet or row to see it on the chart.</p>
 
       {placementMode === "paragraph" ? (
         <PlacementParagraph positions={positions} />
