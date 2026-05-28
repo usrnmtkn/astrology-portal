@@ -2,7 +2,6 @@ import {
   CalendarDays,
   Compass,
   LocateFixed,
-  LogIn,
   Moon,
   UserRound
 } from "lucide-react";
@@ -13,6 +12,34 @@ import { getDemoProfile, getInitialAccountMode } from "./services/session";
 import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition } from "./types";
 
 const periods: HoroscopePeriod[] = ["daily", "weekly", "monthly"];
+
+type PlacementMode = "paragraph" | "table";
+
+const placementThemes: Record<string, string> = {
+  Sun: "identity and vitality",
+  Moon: "mood and instinct",
+  Mercury: "thought and messages",
+  Venus: "love and taste",
+  Mars: "drive and action",
+  Jupiter: "growth and belief",
+  Saturn: "structure and limits",
+  Uranus: "change and disruption",
+  Neptune: "dreams and intuition",
+  Pluto: "depth and transformation"
+};
+
+const placementMeanings: Record<string, string> = {
+  Sun: "sets the tone for how attention, energy, and confidence want to move.",
+  Moon: "describes the emotional weather and what people reach for instinctively.",
+  Mercury: "shows how messages, plans, decisions, and nervous energy are moving.",
+  Venus: "speaks to taste, attraction, ease, money, and what feels worth choosing.",
+  Mars: "points to heat, friction, courage, and the kind of effort that wants an outlet.",
+  Jupiter: "expands the room, making growth easier where curiosity is already alive.",
+  Saturn: "asks for structure, patience, boundaries, and a more honest relationship with time.",
+  Uranus: "breaks the pattern just enough to show what needs more freedom.",
+  Neptune: "softens the edges, heightening imagination, longing, and projection.",
+  Pluto: "draws attention to pressure, power, endings, and deep internal change."
+};
 
 export function App() {
   const [mode, setMode] = useState<AccountMode>(getInitialAccountMode);
@@ -286,27 +313,94 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function GuestView({ positions }: { positions: PlanetPosition[] }) {
+  const [placementMode, setPlacementMode] = useState<PlacementMode>("paragraph");
+
   return (
     <>
-      <div className="member-header">
-        <div>
-          <p>Guest view</p>
-          <h2>Today’s planetary placements</h2>
-        </div>
-        <LogIn size={20} />
+      <div className="placements-heading">
+        <p>Placements</p>
+        <h2>{placementMode === "paragraph" ? "Today, simple." : "Where the ten planets sit today."}</h2>
+        <span>
+          {placementMode === "paragraph"
+            ? "What is up there today, and what it actually means down here."
+            : "The current sky in a scannable table."}
+        </span>
       </div>
-      <div className="placement-list">
-        {positions.slice(0, 7).map((position) => (
-          <article key={position.planet}>
-            <span className="glyph">{position.glyph}</span>
-            <div>
-              <strong>{position.planet} in {position.signGlyph} {position.sign}</strong>
-              <p>House {position.house} · {position.degree}° · {position.motion}</p>
-            </div>
-          </article>
-        ))}
+
+      <div className="placement-toggle" role="tablist" aria-label="Placement view">
+        <button
+          className={placementMode === "paragraph" ? "active" : ""}
+          onClick={() => setPlacementMode("paragraph")}
+          role="tab"
+          aria-selected={placementMode === "paragraph"}
+        >
+          Paragraph
+        </button>
+        <button
+          className={placementMode === "table" ? "active" : ""}
+          onClick={() => setPlacementMode("table")}
+          role="tab"
+          aria-selected={placementMode === "table"}
+        >
+          Table
+        </button>
       </div>
+
+      <p className="placement-hint">Hover a planet or row to see it on the chart.</p>
+
+      {placementMode === "paragraph" ? (
+        <PlacementParagraph positions={positions} />
+      ) : (
+        <PlacementTable positions={positions} />
+      )}
     </>
+  );
+}
+
+function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
+  return (
+    <div className="placement-prose">
+      {positions.map((position, index) => (
+        <p key={position.planet}>
+          {index === 0 ? "Today’s " : ""}
+          <strong>{position.planet}</strong>
+          {" at "}
+          <span>{position.degree}° {position.sign.toUpperCase()} · HOUSE {position.house}</span>
+          {" "}
+          {placementMeanings[position.planet]}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
+  return (
+    <div className="placement-table-wrap">
+      <table className="placement-table">
+        <thead>
+          <tr>
+            <th>Planet</th>
+            <th>Position</th>
+            <th>House</th>
+            <th>Theme</th>
+          </tr>
+        </thead>
+        <tbody>
+          {positions.map((position) => (
+            <tr key={position.planet}>
+              <td>
+                <span className="table-glyph">{position.glyph}</span>
+                <strong>{position.planet}</strong>
+              </td>
+              <td>{position.degree}° {position.sign}</td>
+              <td>{position.house}</td>
+              <td>{placementThemes[position.planet]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
