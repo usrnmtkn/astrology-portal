@@ -1487,7 +1487,6 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
           <tr>
             <th>Planet</th>
             <th>Position</th>
-            <th>Theme</th>
           </tr>
         </thead>
         <tbody>
@@ -1504,7 +1503,6 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
                 {" "}
                 <span className="position-degree">{formatDegree(position.degree)}°</span>
               </td>
-              <td>{placementThemes[position.planet]}</td>
             </tr>
           ))}
         </tbody>
