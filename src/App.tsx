@@ -27,6 +27,7 @@ type UiTheme = "light" | "dark";
 type TransitForm = {
   name: string;
   birthPlace: string;
+  birthLocation: LocationInput | null;
   birthMonth: string;
   birthDay: string;
   birthYear: string;
@@ -34,6 +35,7 @@ type TransitForm = {
   birthMinute: string;
   birthMeridiem: "AM" | "PM";
   currentLocation: string;
+  currentLocationData: LocationInput | null;
   chartDate: string;
 };
 
@@ -102,6 +104,7 @@ const placementMeanings: Record<string, string> = {
 const defaultTransitForm: TransitForm = {
   name: "",
   birthPlace: "",
+  birthLocation: null,
   birthMonth: "",
   birthDay: "",
   birthYear: "",
@@ -109,6 +112,7 @@ const defaultTransitForm: TransitForm = {
   birthMinute: "",
   birthMeridiem: "AM",
   currentLocation: "",
+  currentLocationData: null,
   chartDate: new Date().toISOString().slice(0, 10)
 };
 
@@ -690,15 +694,22 @@ export function App() {
               form={transitForm}
               setForm={setTransitForm}
               onDraw={() => {
-                const nextLocation = locationFromLabel(transitForm.currentLocation);
+                const currentCity = transitForm.currentLocation.trim();
 
-                setLocation(nextLocation);
-                setManualLocation(nextLocation.label);
-                setTransitForm((currentForm) => ({
-                  ...currentForm,
-                  currentLocation: nextLocation.label
-                }));
-                setHasLocationPreference(true);
+                if (currentCity) {
+                  const nextLocation = transitForm.currentLocationData?.label === currentCity
+                    ? transitForm.currentLocationData
+                    : locationFromLabel(currentCity);
+
+                  setLocation(nextLocation);
+                  setManualLocation(nextLocation.label);
+                  setTransitForm((currentForm) => ({
+                    ...currentForm,
+                    currentLocation: nextLocation.label
+                  }));
+                  setHasLocationPreference(true);
+                }
+
                 setTransitsDrawn(true);
               }}
             />
@@ -1119,6 +1130,105 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
   );
 }
 
+function CitySearchField({
+  label,
+  value,
+  onChange,
+  onSelect,
+  placeholder,
+  optional = false
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSelect?: (suggestion: CitySuggestion) => void;
+  placeholder: string;
+  optional?: boolean;
+}) {
+  const [isActive, setIsActive] = useState(false);
+  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
+  const query = value.trim();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!isActive || !hasMapboxToken() || query.length < 2) {
+      setSuggestions([]);
+      setStatus("idle");
+      return;
+    }
+
+    setStatus("loading");
+    const searchTimer = window.setTimeout(() => {
+      searchCities(query)
+        .then((nextSuggestions) => {
+          if (cancelled) {
+            return;
+          }
+
+          setSuggestions(nextSuggestions);
+          setStatus(nextSuggestions.length > 0 ? "ready" : "empty");
+        })
+        .catch(() => {
+          if (cancelled) {
+            return;
+          }
+
+          setSuggestions([]);
+          setStatus("error");
+        });
+    }, 260);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(searchTimer);
+    };
+  }, [isActive, query]);
+
+  function chooseSuggestion(suggestion: CitySuggestion) {
+    if (onSelect) {
+      onSelect(suggestion);
+    } else {
+      onChange(suggestion.label);
+    }
+    setSuggestions([]);
+    setStatus("idle");
+    setIsActive(false);
+  }
+
+  return (
+    <div className="field-line city-search-field">
+      <label>
+        <span>
+          {label}
+          {optional && <em>Optional</em>}
+        </span>
+        <input
+          aria-label={label}
+          value={value}
+          onChange={(event) => {
+            onChange(event.target.value);
+            setIsActive(true);
+          }}
+          onFocus={() => setIsActive(true)}
+          onBlur={() => window.setTimeout(() => setIsActive(false), 160)}
+          placeholder={placeholder}
+        />
+      </label>
+
+      {isActive && (
+        <CitySuggestions
+          suggestions={suggestions}
+          status={status}
+          mapboxEnabled={hasMapboxToken()}
+          onSelect={chooseSuggestion}
+        />
+      )}
+    </div>
+  );
+}
+
 function GuestView({ positions }: { positions: PlanetPosition[] }) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("paragraph");
 
@@ -1230,7 +1340,7 @@ function TransitSetup({
   return (
     <form className="transit-form" onSubmit={submitForm}>
       <div className="placements-heading">
-        <p>Tool No. 04 · Transits</p>
+        <p>Create your Chart</p>
         <h2>Your transits, plotted.</h2>
         <span>Where the sky is now, set against the sky of the day you were born.</span>
       </div>
@@ -1241,10 +1351,17 @@ function TransitSetup({
           <input value={form.name} onChange={(event) => updateField("name", event.target.value)} />
         </label>
 
-        <label className="field-line">
-          <span>Place of birth</span>
-          <input value={form.birthPlace} onChange={(event) => updateField("birthPlace", event.target.value)} />
-        </label>
+        <CitySearchField
+          label="Place of birth"
+          value={form.birthPlace}
+          onChange={(value) => {
+            setForm({ ...form, birthPlace: value, birthLocation: null });
+          }}
+          onSelect={(suggestion) => {
+            setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
+          }}
+          placeholder="City, state"
+        />
 
         <div className="field-group">
           <span>Date of birth</span>
@@ -1276,10 +1393,18 @@ function TransitSetup({
           <input type="date" value={form.chartDate} onChange={(event) => updateField("chartDate", event.target.value)} />
         </label>
 
-        <label className="field-line">
-          <span>Current city</span>
-          <input aria-label="Current city" value={form.currentLocation} onChange={(event) => updateField("currentLocation", event.target.value)} />
-        </label>
+        <CitySearchField
+          label="Current city"
+          value={form.currentLocation}
+          onChange={(value) => {
+            setForm({ ...form, currentLocation: value, currentLocationData: null });
+          }}
+          onSelect={(suggestion) => {
+            setForm({ ...form, currentLocation: suggestion.label, currentLocationData: suggestion });
+          }}
+          placeholder="City, state"
+          optional
+        />
       </div>
 
       <button className="draw-button" type="submit">Draw the transits</button>
@@ -1314,7 +1439,7 @@ function TransitResults({
         <div>
           <span>Chart of day</span>
           <strong>{chartDate}</strong>
-          <p>{form.currentLocation}</p>
+          {form.currentLocation && <p>{form.currentLocation}</p>}
         </div>
       </div>
 

@@ -1055,6 +1055,31 @@ blockquote {
   gap: 8px;
 }
 
+.city-search-field {
+  position: relative;
+}
+
+.city-search-field label {
+  display: grid;
+  gap: 8px;
+}
+
+.city-search-field em {
+  color: #a29a92;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-left: 0.65em;
+  text-transform: uppercase;
+}
+
+.city-search-field .city-picker-note,
+.city-search-field .city-suggestions {
+  margin-top: 4px;
+}
+
 .field-line span,
 .field-group > span,
 .transit-summary span,
@@ -1477,6 +1502,10 @@ blockquote {
 
 .theme-dark .placement-prose p {
   color: #d9d2c8;
+}
+
+.theme-dark .city-search-field em {
+  color: #8d8580;
 }
 
 .theme-dark .placement-prose strong {
