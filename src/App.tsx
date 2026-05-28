@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import type { FormEvent } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
@@ -53,6 +53,21 @@ type TransitItem = {
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
+const synodicMonthDays = 29.530588;
+const zodiacSigns = [
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces"
+];
 
 const placementThemes: Record<string, string> = {
   Sun: "identity and vitality",
@@ -127,6 +142,54 @@ function formatSkyDate(value: string) {
     month: "long",
     day: "numeric"
   });
+}
+
+function formatPlacementDegree(position?: PlanetPosition) {
+  if (!position) {
+    return "";
+  }
+
+  return `${position.degree.toFixed(2)}°`;
+}
+
+function zodiacLongitude(position?: PlanetPosition) {
+  if (!position) {
+    return 0;
+  }
+
+  const signIndex = zodiacSigns.indexOf(position.sign);
+
+  return (Math.max(signIndex, 0) * 30 + position.degree) % 360;
+}
+
+function normalizedAngle(value: number) {
+  return ((value % 360) + 360) % 360;
+}
+
+function nextMoonEvent(sky: SkySnapshot) {
+  const sun = sky.positions.find((position) => position.planet === "Sun");
+  const moon = sky.positions.find((position) => position.planet === "Moon");
+  const phaseAngle = normalizedAngle(zodiacLongitude(moon) - zodiacLongitude(sun));
+  const nextEvent = phaseAngle < 180 ? "Full Moon" : "New Moon";
+  const degreesUntilEvent = nextEvent === "Full Moon" ? 180 - phaseAngle : 360 - phaseAngle;
+  const daysUntilEvent = Math.max(0, (degreesUntilEvent / 360) * synodicMonthDays);
+
+  return {
+    name: nextEvent,
+    days: daysUntilEvent
+  };
+}
+
+function formatMoonCountdown(days: number) {
+  if (days < 0.5) {
+    return "less than a day";
+  }
+
+  if (days < 1.5) {
+    return "about 1 day";
+  }
+
+  return `${Math.round(days)} days`;
 }
 
 function monthLabel(date: Date) {
@@ -338,9 +401,6 @@ export function App() {
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
-  const sunPosition = sky.positions.find((position) => position.planet === "Sun");
-  const moonPosition = sky.positions.find((position) => position.planet === "Moon");
-
   useEffect(() => {
     let cancelled = false;
     const selectedDate = dateFromInput(skyDate);
@@ -590,11 +650,7 @@ export function App() {
 
           <SkyBriefing sky={sky} />
 
-          <div className="sky-stats">
-            <Stat label="Zodiac season" value={sunPosition ? `Sun in ${sunPosition.sign}` : "Current Sun"} />
-            <Stat label="Moon sign" value={moonPosition?.sign ?? "Current Moon"} />
-            <Stat label="Moon phase" value={sky.moonPhase} artwork={<MoonPhaseArt phase={sky.moonPhase} />} />
-          </div>
+          <SkyCards sky={sky} />
         </section>
 
         <section className="detail-panel" aria-label="Portal details">
@@ -1002,14 +1058,54 @@ function MoonPhaseArt({ phase }: { phase: string }) {
   return <span className="moon-phase-art" aria-hidden="true">{phaseEmojis[phase] ?? "🌙"}</span>;
 }
 
-function Stat({ label, value, artwork }: { label: string; value: string; artwork?: ReactNode }) {
+function SkyGlyph({ type }: { type: "sun" | "moon" | "phase" }) {
   return (
-    <div className="stat">
-      <span>{label}</span>
-      <strong className={artwork ? "stat-value with-art" : "stat-value"}>
-        {artwork}
-        <span>{value}</span>
-      </strong>
+    <span className={`sky-card-glyph ${type}`} aria-hidden="true">
+      {type === "sun" && <span />}
+      {type === "moon" && <span />}
+      {type === "phase" && (
+        <>
+          <i />
+          <i />
+          <i />
+        </>
+      )}
+    </span>
+  );
+}
+
+function SkyCards({ sky }: { sky: SkySnapshot }) {
+  const sun = sky.positions.find((position) => position.planet === "Sun");
+  const moon = sky.positions.find((position) => position.planet === "Moon");
+  const moonEvent = nextMoonEvent(sky);
+
+  return (
+    <div className="sky-cards" aria-label="Sky highlights">
+      <article className="sky-card">
+        <span className="eyebrow">The Sun</span>
+        <SkyGlyph type="sun" />
+        <strong>{sun?.sign ?? "Current Sun"}</strong>
+        <p className="sky-card-degree">{formatPlacementDegree(sun)}</p>
+        <p>Stay curious, change your mind.</p>
+      </article>
+
+      <article className="sky-card">
+        <span className="eyebrow">The Moon</span>
+        <SkyGlyph type="moon" />
+        <strong>{moon?.sign ?? "Current Moon"}</strong>
+        <p className="sky-card-degree">{formatPlacementDegree(moon)}</p>
+        <p>Feelings run deep. Let them tell the truth.</p>
+      </article>
+
+      <article className="sky-card">
+        <span className="eyebrow">Moon Phase</span>
+        <MoonPhaseArt phase={sky.moonPhase} />
+        <strong>{sky.moonPhase}</strong>
+        <p className="sky-card-degree">
+          {moonEvent.name} in {formatMoonCountdown(moonEvent.days)}
+        </p>
+        <p>The lunar pull is moving toward its next turning point.</p>
+      </article>
     </div>
   );
 }
