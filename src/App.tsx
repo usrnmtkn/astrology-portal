@@ -6,12 +6,12 @@ import {
   Moon,
   Sparkles,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { defaultLocation, getCurrentSky } from "./services/ephemeris";
+import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import { getHoroscope } from "./services/horoscopes";
 import { getDemoProfile, getInitialAccountMode } from "./services/session";
-import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition } from "./types";
+import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 const periods: HoroscopePeriod[] = ["daily", "weekly", "monthly"];
 
@@ -57,7 +57,8 @@ const placementThemes: Record<string, string> = {
   Saturn: "structure and limits",
   Uranus: "change and disruption",
   Neptune: "dreams and intuition",
-  Pluto: "depth and transformation"
+  Pluto: "depth and transformation",
+  "True Node": "direction and timing"
 };
 
 const placementMeanings: Record<string, string> = {
@@ -70,7 +71,8 @@ const placementMeanings: Record<string, string> = {
   Saturn: "asks for structure, patience, boundaries, and a more honest relationship with time.",
   Uranus: "breaks the pattern just enough to show what needs more freedom.",
   Neptune: "softens the edges, heightening imagination, longing, and projection.",
-  Pluto: "draws attention to pressure, power, endings, and deep internal change."
+  Pluto: "draws attention to pressure, power, endings, and deep internal change.",
+  "True Node": "marks the directional pull of the moment and what feels fated, unfamiliar, or newly relevant."
 };
 
 const defaultTransitForm: TransitForm = {
@@ -228,12 +230,47 @@ export function App() {
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
-  const sky = useMemo(() => getCurrentSky(location), [location]);
+  const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
+  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(defaultLocation));
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
   const sunPosition = sky.positions.find((position) => position.planet === "Sun");
   const moonPosition = sky.positions.find((position) => position.planet === "Moon");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setSky(getCurrentSky(location));
+    getAstrodienstSky(location)
+      .then((nextSky) => {
+        if (!cancelled) {
+          setSky(nextSky);
+        }
+      })
+      .catch((error) => {
+        console.warn("Swiss Ephemeris sky calculation failed; using fallback sky.", error);
+        if (!cancelled) {
+          setSky(getCurrentSky(location));
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location, skyRefreshKey]);
+
+  useEffect(() => {
+    function refreshSky() {
+      setSkyRefreshKey(Date.now());
+    }
+
+    window.addEventListener("pageshow", refreshSky);
+
+    return () => {
+      window.removeEventListener("pageshow", refreshSky);
+    };
+  }, []);
 
   function applyManualLocation() {
     setLocation(locationFromLabel(manualLocation));
@@ -310,7 +347,7 @@ export function App() {
             </form>
           )}
 
-          <SkyWheel positions={sky.positions} ascendant={sky.ascendant} />
+          <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
           <SkyBriefing sky={sky} />
 
@@ -394,7 +431,11 @@ function aspectGlyph(type: string) {
   return glyphs[type] ?? "·";
 }
 
-function SkyBriefing({ sky }: { sky: ReturnType<typeof getCurrentSky> }) {
+function formatDegree(degree: number) {
+  return degree.toFixed(2);
+}
+
+function SkyBriefing({ sky }: { sky: SkySnapshot }) {
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const leadAspect = sky.aspects[0];
@@ -415,7 +456,7 @@ function SkyBriefing({ sky }: { sky: ReturnType<typeof getCurrentSky> }) {
   );
 }
 
-function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascendant: string }) {
+function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects: SkySnapshot["aspects"] }) {
   const signs = [
     "Aries",
     "Taurus",
@@ -437,7 +478,7 @@ function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascen
     signInner: 226,
     planet: 190,
     aspect: 150,
-    house: 38
+    inner: 44
   };
 
   function point(angle: number, distance: number) {
@@ -454,22 +495,46 @@ function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascen
     return 225 + zodiacDegrees;
   }
 
-  function houseNumberForSign(sign: string) {
-    const signIndex = signs.indexOf(sign);
-    const ascendantIndex = signs.indexOf(ascendant);
-
-    if (signIndex < 0 || ascendantIndex < 0) {
-      return 1;
+  function aspectClass(type: string) {
+    if (["trine", "sextile"].includes(type)) {
+      return "soft";
     }
 
-    return ((signIndex - ascendantIndex + 12) % 12) + 1;
+    if (["square", "opposition"].includes(type)) {
+      return "hard";
+    }
+
+    return "neutral";
   }
 
-  const aspectPairs = positions.slice(0, 5).map((position, index) => ({
-    from: position,
-    to: positions[(index * 2 + 3) % positions.length],
-    soft: index % 2 === 0
-  }));
+  const aspectPairs = aspects
+    .map((aspect) => {
+      const from = positions.find((position) => position.planet === aspect.from);
+      const to = positions.find((position) => position.planet === aspect.to);
+
+      if (!from || !to) {
+        return null;
+      }
+
+      return {
+        ...aspect,
+        from,
+        to,
+        className: aspectClass(aspect.type)
+      };
+    })
+    .filter(
+      (
+        aspect
+      ): aspect is {
+        from: PlanetPosition;
+        to: PlanetPosition;
+        type: string;
+        orb: number;
+        meaning: string;
+        className: string;
+      } => Boolean(aspect)
+    );
 
   return (
     <svg className="sky-wheel" viewBox="0 0 600 600" role="img" aria-label="Planet positions">
@@ -478,27 +543,15 @@ function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascen
         <circle cx={center} cy={center} r={radius.outer} />
         <circle cx={center} cy={center} r={radius.signInner} />
         <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-        <circle cx={center} cy={center} r={radius.house} />
+        <circle cx={center} cy={center} r={radius.inner} />
       </g>
 
       <g className="wheel-sectors">
         {signs.map((sign, index) => {
           const a = 225 + index * 30;
           const outer = point(a, radius.outer);
-          const inner = point(a, radius.house);
+          const inner = point(a, radius.inner);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-
-      <g className="house-numbers">
-        {signs.map((sign, index) => {
-          const angle = 240 + index * 30;
-          const p = point(angle, 58);
-          return (
-            <text key={sign} x={p.x} y={p.y} transform={`rotate(${angle + 90} ${p.x} ${p.y})`}>
-              {houseNumberForSign(sign)}
-            </text>
-          );
         })}
       </g>
 
@@ -519,24 +572,23 @@ function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascen
       </g>
 
       <g className="aspect-lines">
-        {aspectPairs.map(({ from, to, soft }) => {
+        {aspectPairs.map(({ from, to, type, orb, className }) => {
           const a = point(planetAngle(from), radius.aspect);
           const b = point(planetAngle(to), radius.aspect);
+
           return (
-            <line
-              key={`${from.planet}-${to.planet}`}
-              x1={a.x}
-              y1={a.y}
-              x2={b.x}
-              y2={b.y}
-              className={soft ? "soft" : "hard"}
-            />
+            <g key={`${from.planet}-${to.planet}`} className={`${className} ${type}`}>
+              <line
+                x1={a.x}
+                y1={a.y}
+                x2={b.x}
+                y2={b.y}
+              />
+              <title>{from.planet} {type} {to.planet}, {orb.toFixed(1)}° orb</title>
+            </g>
           );
         })}
       </g>
-
-      <line className="asc-line" x1={72} y1={center} x2={528} y2={center} />
-      <line className="asc-line" x1={center} y1={72} x2={center} y2={528} />
 
       <g className="planet-labels">
         {positions.map((position) => {
@@ -552,7 +604,7 @@ function SkyWheel({ positions, ascendant }: { positions: PlanetPosition[]; ascen
                 {position.glyph}
               </text>
               <text x={label.x} y={label.y} className="planet-degree">
-                {position.degree}°
+                {Math.floor(position.degree)}°
               </text>
             </g>
           );
@@ -618,7 +670,10 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
           {index === 0 ? "Today’s " : ""}
           <strong>{position.planet}</strong>
           {" at "}
-          <span>{position.degree}° {position.sign.toUpperCase()} · HOUSE {position.house}</span>
+          <span>
+            {formatDegree(position.degree)}° {position.sign.toUpperCase()}
+            {position.motion === "retrograde" ? " ℞" : ""}
+          </span>
           {" "}
           {placementMeanings[position.planet]}
         </p>
@@ -635,7 +690,6 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
           <tr>
             <th>Planet</th>
             <th>Position</th>
-            <th>House</th>
             <th>Theme</th>
           </tr>
         </thead>
@@ -646,8 +700,10 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
                 <span className="table-glyph">{position.glyph}</span>
                 <strong>{position.planet}</strong>
               </td>
-              <td>{position.degree}° {position.sign}</td>
-              <td>{position.house}</td>
+              <td>
+                {formatDegree(position.degree)}° {position.sign}
+                {position.motion === "retrograde" ? " ℞" : ""}
+              </td>
               <td>{placementThemes[position.planet]}</td>
             </tr>
           ))}
@@ -862,7 +918,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
       <article className="read-closely">
         <span>Read it closely</span>
         <h3>{transit.note}</h3>
-        <p>Current reading is sample transit logic. The field structure is ready for a licensed ephemeris and birth-chart calculation service.</p>
+        <p>Today's sky now uses Swiss Ephemeris positions; natal transit matching still needs the birth-chart calculation pass.</p>
       </article>
     </section>
   );
