@@ -23,7 +23,7 @@ import type { AccountMode, HoroscopePeriod, LocationInput, PlanetPosition, SkySn
 const periods: HoroscopePeriod[] = ["daily", "weekly", "monthly"];
 
 type PlacementMode = "paragraph" | "table";
-type PortalMode = AccountMode | "transits";
+type PortalMode = AccountMode | "transits" | "profile";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -567,7 +567,8 @@ export function App() {
   const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
-  const isSignupMode = mode === "member" && !userProfile;
+  const isSignupMode = mode === "profile" && !userProfile;
+  const isProfileMode = mode === "profile";
   useEffect(() => {
     let cancelled = false;
     const selectedDate = dateFromInput(skyDate);
@@ -752,10 +753,12 @@ export function App() {
         </div>
 
         <nav className="site-nav" aria-label="Primary navigation">
-          <button className={mode === "guest" ? "active" : ""} onClick={() => setMode("guest")}>
+          <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
             Today
           </button>
-          <button type="button" onClick={() => setMode("member")}>Sign in</button>
+          <button className={mode === "profile" ? "active" : ""} type="button" onClick={() => setMode("profile")}>
+            {userProfile ? "Profile" : "Sign in"}
+          </button>
           <button className="chart-cta" type="button" onClick={() => setMode("transits")}>
             Create my chart →
           </button>
@@ -773,8 +776,8 @@ export function App() {
         </button>
       </header>
 
-      <section className={isSignupMode ? "portal-grid signup-layout" : "portal-grid"}>
-        {!isSignupMode && (
+      <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
+        {!isSignupMode && !isProfileMode && (
           <section className="sky-panel" aria-label="Current sky">
           <div className="panel-heading">
             <div>
@@ -879,13 +882,16 @@ export function App() {
             />
           )}
           {mode === "member" && (
+            <MemberHomeView positions={sky.positions} period={period} setPeriod={setPeriod} horoscope={horoscope} />
+          )}
+          {mode === "profile" && (
             userProfile ? (
-              <MemberView
+              <ProfileView
                 profile={userProfile}
-                period={period}
-                setPeriod={setPeriod}
-                horoscope={horoscope}
-                onSignOut={() => setUserProfile(null)}
+                onSignOut={() => {
+                  setUserProfile(null);
+                  setMode("profile");
+                }}
               />
             ) : (
               <SignupView
@@ -1865,39 +1871,20 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
   );
 }
 
-function MemberView({
-  profile,
+function MemberHomeView({
+  positions,
   period,
   setPeriod,
-  horoscope,
-  onSignOut
+  horoscope
 }: {
-  profile: UserProfile;
+  positions: PlanetPosition[];
   period: HoroscopePeriod;
   setPeriod: (period: HoroscopePeriod) => void;
   horoscope: ReturnType<typeof getHoroscope>;
-  onSignOut: () => void;
 }) {
   return (
     <>
-      <div className="member-header">
-        <div>
-          <p>{profile.sun} Sun · {profile.moon} · {profile.rising}</p>
-          <h2>Hello, {profile.name}</h2>
-        </div>
-        <button className="signout-button" type="button" onClick={onSignOut}>Sign out</button>
-      </div>
-
-      <section className="profile-charts" aria-label="Saved charts">
-        <span>Saved charts</span>
-        {profile.charts.map((chart) => (
-          <article key={chart.id}>
-            <strong>{chart.name}</strong>
-            <p>{chart.type} · {chart.birthDate} · {chart.birthTime}</p>
-            <p>{chart.birthCity}</p>
-          </article>
-        ))}
-      </section>
+      <GuestView positions={positions} />
 
       <div className="period-tabs" role="tablist" aria-label="Horoscope period">
         {periods.map((item) => (
@@ -1923,6 +1910,37 @@ function MemberView({
         </div>
         <blockquote>{horoscope.reflection}</blockquote>
       </article>
+    </>
+  );
+}
+
+function ProfileView({
+  profile,
+  onSignOut
+}: {
+  profile: UserProfile;
+  onSignOut: () => void;
+}) {
+  return (
+    <>
+      <div className="member-header">
+        <div>
+          <p>{profile.sun} Sun · {profile.moon} · {profile.rising}</p>
+          <h2>Hello, {profile.name}</h2>
+        </div>
+        <button className="signout-button" type="button" onClick={onSignOut}>Sign out</button>
+      </div>
+
+      <section className="profile-charts" aria-label="Saved charts">
+        <span>Saved charts</span>
+        {profile.charts.map((chart) => (
+          <article key={chart.id}>
+            <strong>{chart.name}</strong>
+            <p>{chart.type} · {chart.birthDate} · {chart.birthTime}</p>
+            <p>{chart.birthCity}</p>
+          </article>
+        ))}
+      </section>
     </>
   );
 }

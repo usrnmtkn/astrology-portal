@@ -185,6 +185,12 @@ button {
   max-width: 1280px;
 }
 
+.portal-grid.profile-layout {
+  grid-template-columns: minmax(0, 720px);
+  justify-content: center;
+  max-width: 920px;
+}
+
 .sky-panel,
 .detail-panel {
   background: #ffffff;
@@ -199,6 +205,10 @@ button {
   border: 0;
   box-shadow: none;
   padding: 0;
+}
+
+.profile-layout .detail-panel {
+  width: 100%;
 }
 
 .panel-heading,
