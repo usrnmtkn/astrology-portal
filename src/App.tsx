@@ -315,8 +315,10 @@ export function App() {
   }, [cityPickerOpen, manualLocation]);
 
   function applyManualLocation() {
-    setLocation(locationFromLabel(manualLocation));
-    setManualLocation(manualLocation.trim() || defaultLocation.label);
+    const nextLocation = locationFromLabel(manualLocation);
+
+    setLocation(nextLocation);
+    setManualLocation(nextLocation.label);
     setCityPickerOpen(false);
   }
 
@@ -426,8 +428,14 @@ export function App() {
               form={transitForm}
               setForm={setTransitForm}
               onDraw={() => {
-                setLocation(locationFromLabel(transitForm.currentLocation));
-                setManualLocation(transitForm.currentLocation);
+                const nextLocation = locationFromLabel(transitForm.currentLocation);
+
+                setLocation(nextLocation);
+                setManualLocation(nextLocation.label);
+                setTransitForm((currentForm) => ({
+                  ...currentForm,
+                  currentLocation: nextLocation.label
+                }));
                 setTransitsDrawn(true);
               }}
             />
@@ -470,7 +478,12 @@ export function App() {
 }
 
 function locationFromLabel(label: string): LocationInput {
-  const seed = label.trim() || defaultLocation.label;
+  const seed = label.trim();
+
+  if (!seed) {
+    return defaultLocation;
+  }
+
   const hash = [...seed].reduce((total, char) => total + char.charCodeAt(0), 0);
 
   return {
