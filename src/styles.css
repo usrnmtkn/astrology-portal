@@ -240,28 +240,73 @@ button {
 }
 
 .date-picker {
-  background: #ffffff;
-  border: 1px solid rgba(43, 63, 58, 0.13);
+  background: #fbf8f4;
+  border: 1px solid rgba(43, 63, 58, 0.12);
   border-radius: 8px;
   box-shadow: 0 18px 45px rgba(29, 38, 35, 0.1);
   display: grid;
-  gap: 12px;
+  gap: 0;
   margin: 14px 0 0;
-  max-width: 340px;
-  padding: 14px;
+  max-width: 520px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.date-picker-title {
+  align-items: center;
+  border-bottom: 1px solid rgba(43, 63, 58, 0.13);
+  display: flex;
+  justify-content: space-between;
+  min-height: 86px;
+  padding: 18px 24px;
+}
+
+.date-picker-title div {
+  display: grid;
+  gap: 8px;
+}
+
+.date-picker-title span,
+.date-picker-title strong {
+  color: #8b847d;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.date-picker-title button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #1d2623;
+  display: inline-flex;
+  justify-content: center;
+  padding: 6px;
+}
+
+.date-picker-title button:hover,
+.date-picker-title button:focus-visible {
+  color: #a84f3d;
+  outline: none;
 }
 
 .date-picker-header {
   align-items: center;
+  border-bottom: 1px solid rgba(43, 63, 58, 0.18);
   display: grid;
-  grid-template-columns: 34px 1fr 34px;
-  gap: 8px;
+  grid-template-columns: 44px 1fr 44px;
+  gap: 12px;
+  margin: 0 24px;
+  min-height: 82px;
 }
 
 .date-picker-header strong {
   color: #1d2623;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   font-weight: 500;
   text-align: center;
 }
@@ -269,9 +314,8 @@ button {
 .date-picker-header button {
   align-items: center;
   aspect-ratio: 1;
-  background: #f7f8f8;
-  border: 1px solid rgba(43, 63, 58, 0.12);
-  border-radius: 999px;
+  background: transparent;
+  border: 0;
   color: #1d2623;
   display: inline-flex;
   justify-content: center;
@@ -280,8 +324,7 @@ button {
 
 .date-picker-header button:hover,
 .date-picker-header button:focus-visible {
-  background: #ffffff;
-  border-color: rgba(168, 79, 61, 0.35);
+  color: #a84f3d;
   outline: none;
 }
 
@@ -289,32 +332,39 @@ button {
 .date-picker-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding: 0 24px;
 }
 
 .date-picker-weekdays span {
-  color: #8b928f;
-  font-size: 0.68rem;
+  color: #8b847d;
+  font-size: 0.86rem;
   font-weight: 800;
   letter-spacing: 0;
-  padding: 5px 0;
+  padding: 22px 0 16px;
   text-align: center;
   text-transform: uppercase;
 }
 
 .date-picker-grid {
-  border-top: 1px solid rgba(43, 63, 58, 0.1);
-  border-left: 1px solid rgba(43, 63, 58, 0.1);
+  gap: 14px 18px;
+  padding-bottom: 28px;
+}
+
+.date-picker-grid button,
+.date-picker-grid .empty-day {
+  align-items: center;
+  aspect-ratio: 1;
+  display: inline-flex;
+  justify-content: center;
 }
 
 .date-picker-grid button {
-  aspect-ratio: 1;
-  background: #ffffff;
+  background: transparent;
   border: 0;
-  border-right: 1px solid rgba(43, 63, 58, 0.1);
-  border-bottom: 1px solid rgba(43, 63, 58, 0.1);
+  border-radius: 999px;
   color: #1d2623;
-  font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
   font-weight: 700;
   min-width: 0;
   padding: 0;
@@ -322,12 +372,8 @@ button {
 
 .date-picker-grid button:hover,
 .date-picker-grid button:focus-visible {
-  background: #f7f8f8;
-  outline: inset 2px rgba(168, 79, 61, 0.28);
-}
-
-.date-picker-grid button.outside-month {
-  color: #b7bdba;
+  background: rgba(168, 79, 61, 0.08);
+  outline: none;
 }
 
 .date-picker-grid button.today {
@@ -336,25 +382,8 @@ button {
 
 .date-picker-grid button.selected {
   background: #14120f;
-  color: #ffffff;
-}
-
-.date-picker-today {
-  align-self: center;
-  background: #f7f8f8;
-  border: 1px solid rgba(43, 63, 58, 0.13);
   border-radius: 999px;
-  color: #1d2623;
-  justify-self: center;
-  min-height: 34px;
-  padding: 0 16px;
-}
-
-.date-picker-today:hover,
-.date-picker-today:focus-visible {
-  background: #ffffff;
-  border-color: rgba(168, 79, 61, 0.35);
-  outline: none;
+  color: #ffffff;
 }
 
 .city-picker label {
