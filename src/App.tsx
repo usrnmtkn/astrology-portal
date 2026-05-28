@@ -50,6 +50,8 @@ type TransitItem = {
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 
+const selectedLocationStorageKey = "tldrastro:selectedLocation";
+
 const placementThemes: Record<string, string> = {
   Sun: "identity and vitality",
   Moon: "mood and instinct",
@@ -90,6 +92,36 @@ const defaultTransitForm: TransitForm = {
   currentLocation: "",
   chartDate: new Date().toISOString().slice(0, 10)
 };
+
+function isLocationInput(value: unknown): value is LocationInput {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const location = value as Partial<LocationInput>;
+
+  return (
+    typeof location.label === "string" &&
+    typeof location.latitude === "number" &&
+    typeof location.longitude === "number"
+  );
+}
+
+function getSavedLocation() {
+  try {
+    const savedLocation = window.localStorage.getItem(selectedLocationStorageKey);
+
+    if (!savedLocation) {
+      return defaultLocation;
+    }
+
+    const parsedLocation = JSON.parse(savedLocation) as unknown;
+
+    return isLocationInput(parsedLocation) ? parsedLocation : defaultLocation;
+  } catch {
+    return defaultLocation;
+  }
+}
 
 const sampleTransits: TransitItem[] = [
   {
@@ -225,10 +257,11 @@ const sampleTransits: TransitItem[] = [
 ];
 
 export function App() {
+  const initialLocation = useMemo(getSavedLocation, []);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [period, setPeriod] = useState<HoroscopePeriod>("daily");
-  const [location, setLocation] = useState<LocationInput>(defaultLocation);
-  const [manualLocation, setManualLocation] = useState(defaultLocation.label);
+  const [location, setLocation] = useState<LocationInput>(initialLocation);
+  const [manualLocation, setManualLocation] = useState(initialLocation.label);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
@@ -236,7 +269,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
-  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(defaultLocation));
+  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocation));
   const horoscope = useMemo(() => getHoroscope(period, sky), [period, sky]);
   const profile = getDemoProfile();
   const selectedTransit = sampleTransits.find((transit) => transit.id === selectedTransitId) ?? sampleTransits[0];
@@ -264,6 +297,14 @@ export function App() {
       cancelled = true;
     };
   }, [location, skyRefreshKey]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(selectedLocationStorageKey, JSON.stringify(location));
+    } catch {
+      return;
+    }
+  }, [location]);
 
   useEffect(() => {
     function refreshSky() {
