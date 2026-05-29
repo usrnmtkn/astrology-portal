@@ -739,6 +739,7 @@ export function App() {
 
         setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
         clearPendingSignupForm();
+        setMode("profile");
       })
       .catch(() => {
         return;
@@ -753,7 +754,7 @@ export function App() {
 
       setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
       clearPendingSignupForm();
-      setMode("member");
+      setMode("profile");
     });
 
     return () => {
@@ -1036,7 +1037,7 @@ export function App() {
               <SignupView
                 onCreateProfile={(nextProfile) => {
                   setUserProfile(nextProfile);
-                  setMode("member");
+                  setMode("profile");
                 }}
               />
             )
