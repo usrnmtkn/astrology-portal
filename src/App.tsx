@@ -15,6 +15,7 @@ import {
   getAuthAccount,
   isAuthConfigured,
   onAuthAccountChange,
+  signInWithEmail,
   signInWithProvider,
   signOutAuth,
   signUpWithEmail
@@ -45,6 +46,7 @@ type UserProfile = {
   name: string;
   email: string;
   provider: SignupProvider;
+  avatarUrl?: string;
   sun: string;
   moon: string;
   rising: string;
@@ -465,6 +467,7 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
     name,
     email,
     provider: resolvedProvider,
+    avatarUrl: account?.avatarUrl,
     sun,
     moon: "Moon pending",
     rising: form.unknownBirthTime || !form.birthTime ? "Rising pending" : "Rising pending",
@@ -515,6 +518,29 @@ function providerLabel(provider: SignupProvider) {
   };
 
   return labels[provider];
+}
+
+function profileInitials(name: string, email: string) {
+  const source = name.trim() || email.split("@")[0] || "tldr";
+  const parts = source.split(/\s+/).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+
+  return source.slice(0, 2).toUpperCase();
+}
+
+function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; size?: "regular" | "large" }) {
+  return (
+    <span className={`profile-avatar profile-avatar-${size}`} aria-hidden="true">
+      {profile.avatarUrl ? (
+        <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" />
+      ) : (
+        profileInitials(profile.name, profile.email)
+      )}
+    </span>
+  );
 }
 
 const sampleTransits: TransitItem[] = [
@@ -895,8 +921,19 @@ export function App() {
           <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
             Today
           </button>
-          <button className={mode === "profile" ? "active" : ""} type="button" onClick={() => setMode("profile")}>
-            {userProfile ? "Profile" : "Sign in"}
+          <button
+            className={`account-nav ${mode === "profile" ? "active" : ""}`}
+            type="button"
+            onClick={() => setMode("profile")}
+          >
+            {userProfile ? (
+              <>
+                <ProfileAvatar profile={userProfile} />
+                <span>Profile</span>
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
           <button className="chart-cta" type="button" onClick={() => setMode("transits")}>
             Create my chart →
@@ -1896,12 +1933,14 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 }
 
 function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfile) => void }) {
+  const [authMode, setAuthMode] = useState<"create" | "login">("create");
   const [form, setForm] = useState<SignupForm>(defaultSignupForm);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
   const [authMessage, setAuthMessage] = useState("");
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
+  const isLogin = authMode === "login";
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
@@ -1931,25 +1970,32 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
     event.preventDefault();
 
     if (!isAuthConfigured) {
-      setAuthMessage("Add Supabase environment variables to enable real email signup.");
+      setAuthMessage(`Add Supabase environment variables to enable real email ${isLogin ? "login" : "signup"}.`);
       return;
     }
 
     if (!form.email.trim() || !form.password.trim()) {
-      setAuthMessage("Add an email and password to create your account.");
+      setAuthMessage(`Add an email and password to ${isLogin ? "log in" : "create your account"}.`);
       return;
     }
 
     setAuthStatus("loading");
     setAuthMessage("");
-    savePendingSignupForm(form);
+    if (!isLogin) {
+      savePendingSignupForm(form);
+    }
 
     try {
-      const account = await signUpWithEmail({
-        email: form.email.trim(),
-        password: form.password,
-        fullName: form.fullName.trim()
-      });
+      const account = isLogin
+        ? await signInWithEmail({
+            email: form.email.trim(),
+            password: form.password
+          })
+        : await signUpWithEmail({
+            email: form.email.trim(),
+            password: form.password,
+            fullName: form.fullName.trim()
+          });
 
       if (account) {
         onCreateProfile(createUserProfile(form, "email", account));
@@ -1972,7 +2018,11 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
 
     setAuthStatus("loading");
     setAuthMessage("");
-    savePendingSignupForm(form);
+    if (authMode === "create") {
+      savePendingSignupForm(form);
+    } else {
+      clearPendingSignupForm();
+    }
 
     try {
       await signInWithProvider(provider);
@@ -1986,8 +2036,8 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
     <section className="signup-split" aria-label="Create account">
       <aside className="signup-story">
         <h2>
-          Know what the sky is doing.
-          <em>Know what to do about it.</em>
+          {isLogin ? "Welcome back." : "Know what the sky is doing."}
+          <em>{isLogin ? "Your chart is waiting." : "Know what to do about it."}</em>
         </h2>
         <div className="signup-orbit" aria-hidden="true">
           <span />
@@ -1998,7 +2048,8 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
 
       <form className="signup-form" onSubmit={submitSignup}>
         <div className="signup-heading">
-          <p>Create account</p>
+          <p>{isLogin ? "Log in" : "Create profile"}</p>
+          <h3>{isLogin ? "Return to your sky." : "Your chart starts here."}</h3>
         </div>
 
         {!isAuthConfigured && (
@@ -2019,12 +2070,14 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
         <div className="email-divider"><span>or with email</span></div>
 
         <div className="signup-fields">
-          <label className="signup-field">
-            <span>Full name</span>
-            <div>
-              <input value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
-            </div>
-          </label>
+          {!isLogin && (
+            <label className="signup-field">
+              <span>Full name</span>
+              <div>
+                <input value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
+              </div>
+            </label>
+          )}
 
           <label className="signup-field">
             <span>Email</span>
@@ -2048,99 +2101,114 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
             </div>
           </label>
 
-          <CitySearchField
-            label="Birth city"
-            value={form.birthCity}
-            onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
-            onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
-            placeholder="Start typing the city where you were born."
-            className="signup-city-search"
-          />
+          {!isLogin && (
+            <>
+              <CitySearchField
+                label="Birth city"
+                value={form.birthCity}
+                onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
+                onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
+                placeholder="Start typing the city where you were born."
+                className="signup-city-search"
+              />
 
-          <div className="signup-grid">
-            <label className="signup-field">
-              <span>Birth date</span>
-              <div className="signup-date-control">
-                <input
-                  aria-label="Birth month"
-                  inputMode="numeric"
-                  placeholder="MM"
-                  value={birthDateParts.month}
-                  onChange={(event) => updateBirthDate("month", event.target.value)}
-                />
-                <span aria-hidden="true">/</span>
-                <input
-                  aria-label="Birth day"
-                  inputMode="numeric"
-                  placeholder="DD"
-                  value={birthDateParts.day}
-                  onChange={(event) => updateBirthDate("day", event.target.value)}
-                />
-                <span aria-hidden="true">/</span>
-                <input
-                  aria-label="Birth year"
-                  inputMode="numeric"
-                  placeholder="YYYY"
-                  value={birthDateParts.year}
-                  onChange={(event) => updateBirthDate("year", event.target.value)}
-                />
-              </div>
-            </label>
+              <div className="signup-grid">
+                <label className="signup-field">
+                  <span>Birth date</span>
+                  <div className="signup-date-control">
+                    <input
+                      aria-label="Birth month"
+                      inputMode="numeric"
+                      placeholder="MM"
+                      value={birthDateParts.month}
+                      onChange={(event) => updateBirthDate("month", event.target.value)}
+                    />
+                    <span aria-hidden="true">/</span>
+                    <input
+                      aria-label="Birth day"
+                      inputMode="numeric"
+                      placeholder="DD"
+                      value={birthDateParts.day}
+                      onChange={(event) => updateBirthDate("day", event.target.value)}
+                    />
+                    <span aria-hidden="true">/</span>
+                    <input
+                      aria-label="Birth year"
+                      inputMode="numeric"
+                      placeholder="YYYY"
+                      value={birthDateParts.year}
+                      onChange={(event) => updateBirthDate("year", event.target.value)}
+                    />
+                  </div>
+                </label>
 
-            <label className="signup-field">
-              <span>Birth time</span>
-              <div className="signup-time-control">
-                <input
-                  aria-label="Birth hour"
-                  inputMode="numeric"
-                  placeholder="HH"
-                  value={birthTimeParts.hour}
-                  disabled={form.unknownBirthTime}
-                  onChange={(event) => updateBirthTime("hour", event.target.value)}
-                />
-                <span className="time-separator" aria-hidden="true">:</span>
-                <input
-                  aria-label="Birth minute"
-                  inputMode="numeric"
-                  placeholder="MM"
-                  value={birthTimeParts.minute}
-                  disabled={form.unknownBirthTime}
-                  onChange={(event) => updateBirthTime("minute", event.target.value)}
-                />
-                <div className="signup-meridiem" aria-label="AM or PM">
-                  {(["AM", "PM"] as const).map((period) => (
-                    <button
-                      key={period}
-                      type="button"
-                      className={birthTimeParts.meridiem === period ? "active" : ""}
+                <label className="signup-field">
+                  <span>Birth time</span>
+                  <div className="signup-time-control">
+                    <input
+                      aria-label="Birth hour"
+                      inputMode="numeric"
+                      placeholder="HH"
+                      value={birthTimeParts.hour}
                       disabled={form.unknownBirthTime}
-                      aria-pressed={birthTimeParts.meridiem === period}
-                      onClick={() => updateBirthTime("meridiem", period)}
-                    >
-                      {period}
-                    </button>
-                  ))}
-                </div>
+                      onChange={(event) => updateBirthTime("hour", event.target.value)}
+                    />
+                    <span className="time-separator" aria-hidden="true">:</span>
+                    <input
+                      aria-label="Birth minute"
+                      inputMode="numeric"
+                      placeholder="MM"
+                      value={birthTimeParts.minute}
+                      disabled={form.unknownBirthTime}
+                      onChange={(event) => updateBirthTime("minute", event.target.value)}
+                    />
+                    <div className="signup-meridiem" aria-label="AM or PM">
+                      {(["AM", "PM"] as const).map((period) => (
+                        <button
+                          key={period}
+                          type="button"
+                          className={birthTimeParts.meridiem === period ? "active" : ""}
+                          disabled={form.unknownBirthTime}
+                          aria-pressed={birthTimeParts.meridiem === period}
+                          onClick={() => updateBirthTime("meridiem", period)}
+                        >
+                          {period}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </label>
               </div>
-            </label>
-          </div>
 
-          <label className="unknown-time">
-            <input
-              type="checkbox"
-              checked={form.unknownBirthTime}
-              onChange={(event) => {
-                setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "12:00 PM" : form.birthTime });
-              }}
-            />
-            <span>I don't know my birth time (You can change it later).</span>
-          </label>
+              <label className="unknown-time">
+                <input
+                  type="checkbox"
+                  checked={form.unknownBirthTime}
+                  onChange={(event) => {
+                    setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "12:00 PM" : form.birthTime });
+                  }}
+                />
+                <span>I don't know my birth time (You can change it later).</span>
+              </label>
+            </>
+          )}
         </div>
 
         <button className="signup-submit" type="submit" disabled={authStatus === "loading"}>
-          {authStatus === "loading" ? "Working..." : "Create my chart →"}
+          {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create my chart →"}
         </button>
-        <p className="signin-note">Already have an account? <button type="button">Login</button></p>
+        <p className="signin-note">
+          {isLogin ? "New here?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setAuthMessage("");
+              setAuthMode(isLogin ? "create" : "login");
+            }}
+          >
+            {isLogin ? "Create an account" : "Login"}
+          </button>
+        </p>
       </form>
     </section>
   );
@@ -2155,13 +2223,30 @@ function ProfileView({
 }) {
   return (
     <>
-      <div className="member-header">
-        <div>
-          <p>{profile.sun} Sun · {profile.moon} · {profile.rising}</p>
+      <div className="member-header profile-hero">
+        <ProfileAvatar profile={profile} size="large" />
+        <div className="profile-hero-copy">
+          <p>{profile.provider === "google" ? "Google account" : "Email account"}</p>
           <h2>Hello, {profile.name}</h2>
+          <span>{profile.email}</span>
         </div>
         <button className="signout-button" type="button" onClick={onSignOut}>Sign out</button>
       </div>
+
+      <section className="profile-summary" aria-label="Chart summary">
+        <article>
+          <span>Sun</span>
+          <strong>{profile.sun}</strong>
+        </article>
+        <article>
+          <span>Moon</span>
+          <strong>{profile.moon}</strong>
+        </article>
+        <article>
+          <span>Rising</span>
+          <strong>{profile.rising}</strong>
+        </article>
+      </section>
 
       <section className="profile-charts" aria-label="Saved charts">
         <span>Saved charts</span>

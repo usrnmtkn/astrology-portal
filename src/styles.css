@@ -159,10 +159,20 @@ button {
   text-transform: uppercase;
 }
 
+.site-nav .account-nav {
+  gap: 8px;
+  padding-left: 10px;
+}
+
 .site-nav button.active,
 .period-tabs button.active {
   background: #1a1613;
   color: #ffffff;
+}
+
+.site-nav button.active .profile-avatar {
+  background: #ffffff;
+  color: #1a1613;
 }
 
 .site-nav .chart-cta {
@@ -170,6 +180,38 @@ button {
   border: 2px solid #1a1613;
   color: #1a1613;
   padding: 0 22px;
+}
+
+.profile-avatar {
+  align-items: center;
+  background: #1a1613;
+  border: 1px solid rgba(26, 22, 19, 0.16);
+  border-radius: 50%;
+  color: #ffffff;
+  display: inline-flex;
+  flex: 0 0 30px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  height: 30px;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  width: 30px;
+}
+
+.profile-avatar-large {
+  flex-basis: 76px;
+  font-size: 1.15rem;
+  height: 76px;
+  width: 76px;
+}
+
+.profile-avatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .portal-grid {
@@ -231,6 +273,31 @@ button {
 
 .member-header h2 {
   font-size: 1.7rem;
+}
+
+.profile-hero {
+  align-items: center;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(15, 95, 97, 0.12), transparent 32%),
+    #ffffff;
+  border: 1px solid rgba(43, 63, 58, 0.13);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(29, 38, 35, 0.08);
+  padding: 18px;
+}
+
+.profile-hero-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-hero-copy span {
+  color: #63716c;
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .date-link {
@@ -645,6 +712,41 @@ button {
   gap: 12px;
   margin-top: 18px;
   padding: 16px;
+}
+
+.profile-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.profile-summary article {
+  background: #ffffff;
+  border: 1px solid rgba(32, 52, 47, 0.1);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-height: 118px;
+  padding: 16px;
+}
+
+.profile-summary span {
+  color: #6e7673;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.profile-summary strong {
+  align-self: end;
+  color: #1a1613;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 500;
+  line-height: 1;
 }
 
 .profile-charts article {
@@ -1834,6 +1936,8 @@ blockquote {
 .theme-dark .signup-field > div,
 .theme-dark .signup-city-search label > input,
 .theme-dark .signup-city-search .city-search-control,
+.theme-dark .profile-hero,
+.theme-dark .profile-summary article,
 .theme-dark .profile-charts,
 .theme-dark .sky-card,
 .theme-dark .aspects-card,
@@ -1878,6 +1982,7 @@ blockquote {
 .theme-dark .brand-mark,
 .theme-dark .brand-wordmark,
 .theme-dark .brand-wordmark em,
+.theme-dark .profile-summary strong,
 .theme-dark .panel-heading h1,
 .theme-dark .signup-story h2,
 .theme-dark .signup-heading h3,
@@ -1916,6 +2021,8 @@ blockquote {
 .theme-dark .signin-note,
 .theme-dark .privacy-note,
 .theme-dark .auth-message,
+.theme-dark .profile-hero-copy span,
+.theme-dark .profile-summary span,
 .theme-dark .profile-charts p,
 .theme-dark .unknown-time,
 .theme-dark .member-header p,
@@ -1941,6 +2048,11 @@ blockquote {
 
 .theme-dark .signup-meridiem {
   background: rgba(241, 238, 232, 0.12);
+}
+
+.theme-dark .profile-avatar {
+  background: #f1eee8;
+  color: #100f0c;
 }
 
 .theme-dark .signup-meridiem button {
@@ -2144,6 +2256,7 @@ blockquote {
   }
 
   .focus-grid,
+  .profile-summary,
   .transit-summary,
   .transit-lists,
   .transit-detail {
@@ -2163,6 +2276,7 @@ blockquote {
 
   .sky-cards,
   .focus-grid,
+  .profile-summary,
   .signup-grid,
   .date-grid,
   .time-grid,

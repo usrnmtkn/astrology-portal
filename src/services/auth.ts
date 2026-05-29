@@ -8,6 +8,7 @@ export type AuthAccount = {
   email: string;
   name: string;
   provider: string;
+  avatarUrl?: string;
 };
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -32,12 +33,14 @@ function authAccountFromUser(user: User): AuthAccount {
   const identities = user.identities ?? [];
   const provider = identities[0]?.provider ?? user.app_metadata.provider ?? "email";
   const metadataName = metadata.full_name ?? metadata.name ?? metadata.user_name;
+  const avatarUrl = metadata.avatar_url ?? metadata.picture;
 
   return {
     id: user.id,
     email: user.email ?? "",
     name: typeof metadataName === "string" && metadataName.trim() ? metadataName : user.email?.split("@")[0] ?? "New stargazer",
-    provider
+    provider,
+    avatarUrl: typeof avatarUrl === "string" && avatarUrl.trim() ? avatarUrl : undefined
   };
 }
 
@@ -106,6 +109,29 @@ export async function signUpWithEmail({
       },
       emailRedirectTo: redirectTo()
     }
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.user ? authAccountFromUser(data.user) : null;
+}
+
+export async function signInWithEmail({
+  email,
+  password
+}: {
+  email: string;
+  password: string;
+}) {
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
   });
 
   if (error) {
