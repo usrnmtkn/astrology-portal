@@ -469,9 +469,13 @@ button {
   align-items: center;
   border: 1px solid rgba(26, 22, 19, 0.2);
   border-radius: 8px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 58px;
   padding: 0 14px;
+}
+
+.signup-field > .password-control {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .signup-field span {
@@ -499,7 +503,100 @@ button {
   background: transparent;
   color: #6e7673;
   display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   padding: 0;
+  text-transform: uppercase;
+}
+
+.signup-field > .signup-date-control,
+.signup-field > .signup-time-control {
+  gap: 8px;
+  min-height: 58px;
+  padding: 0 16px;
+}
+
+.signup-field > .signup-date-control {
+  grid-template-columns: minmax(38px, 0.7fr) auto minmax(38px, 0.7fr) auto minmax(70px, 1.1fr);
+}
+
+.signup-field > .signup-time-control {
+  grid-template-columns: minmax(42px, 0.75fr) auto minmax(42px, 0.75fr) minmax(98px, 1.25fr);
+}
+
+.signup-field .time-separator,
+.signup-date-control span {
+  color: #6e7673;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.signup-date-control input,
+.signup-time-control input {
+  text-align: center;
+}
+
+.signup-meridiem {
+  background: rgba(26, 22, 19, 0.06);
+  border-radius: 999px;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 36px;
+  padding: 3px;
+}
+
+.signup-meridiem button {
+  border-radius: 999px;
+  color: #6e7673;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.signup-meridiem button.active {
+  background: #1a1613;
+  color: #ffffff;
+}
+
+.signup-meridiem button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.signup-city-search label {
+  display: grid;
+  gap: 8px;
+}
+
+.signup-city-search .city-search-control {
+  align-items: center;
+  border: 1px solid rgba(26, 22, 19, 0.2);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 58px;
+  padding: 0 14px;
+}
+
+.signup-city-search input,
+.signup-city-search label > input {
+  border: 0;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  min-height: 58px;
+  padding: 0 14px;
+}
+
+.signup-city-search label > input {
+  border: 1px solid rgba(26, 22, 19, 0.2);
 }
 
 .unknown-time {
@@ -1735,6 +1832,8 @@ blockquote {
 .theme-dark .detail-panel,
 .theme-dark .signup-story,
 .theme-dark .signup-field > div,
+.theme-dark .signup-city-search label > input,
+.theme-dark .signup-city-search .city-search-control,
 .theme-dark .profile-charts,
 .theme-dark .sky-card,
 .theme-dark .aspects-card,
@@ -1784,6 +1883,7 @@ blockquote {
 .theme-dark .signup-heading h3,
 .theme-dark .social-signons button,
 .theme-dark .signup-field input,
+.theme-dark .signup-city-search input,
 .theme-dark .signin-note button,
 .theme-dark .profile-charts strong,
 .theme-dark .signout-button,
@@ -1832,6 +1932,24 @@ blockquote {
 .theme-dark .date-link,
 .theme-dark .placements-heading span {
   color: #a8a29a;
+}
+
+.theme-dark .signup-field .time-separator,
+.theme-dark .signup-date-control span {
+  color: #a8a29a;
+}
+
+.theme-dark .signup-meridiem {
+  background: rgba(241, 238, 232, 0.12);
+}
+
+.theme-dark .signup-meridiem button {
+  color: #a8a29a;
+}
+
+.theme-dark .signup-meridiem button.active {
+  background: #f1eee8;
+  color: #100f0c;
 }
 
 .theme-dark .site-nav button.active,

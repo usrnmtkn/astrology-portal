@@ -5,7 +5,7 @@ A starter astrology website and member portal.
 ## Current scope
 
 - Guest daily current-sky dashboard by location
-- Supabase-backed account signup/sign-in UI for Google, Apple, magic links, and email/password
+- Supabase-backed account signup/sign-in UI for Google and email/password
 - Logged-in profile page with saved starter charts
 - Swiss Ephemeris current-sky calculations with deterministic fallback data
 - Mock writing adapter that can be replaced with the supplied house style
@@ -27,7 +27,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 VITE_AUTH_REDIRECT_URL=http://127.0.0.1:5173
 ```
 
-For production, add the same Supabase variables in Vercel. In Supabase, enable the Google and Apple providers under Authentication, then add `https://astrology-portal.vercel.app` as an allowed redirect URL.
+For production, add the same Supabase variables in Vercel. In Supabase, enable the Google provider under Authentication, then add `https://astrology-portal.vercel.app` as an allowed redirect URL.
 
 ## Integration points
 

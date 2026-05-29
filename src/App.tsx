@@ -5,26 +5,21 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleHelp,
-  Clock3,
-  EyeOff,
-  Mail,
   Moon,
   Sun,
-  UserRound,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
   getAuthAccount,
   isAuthConfigured,
   onAuthAccountChange,
-  signInWithMagicLink,
   signInWithProvider,
   signOutAuth,
   signUpWithEmail
 } from "./services/auth";
-import type { AuthAccount, AuthProvider } from "./services/auth";
+import type { AuthAccount } from "./services/auth";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
@@ -34,7 +29,7 @@ type PortalMode = AccountMode | "transits" | "profile";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
-type SignupProvider = "email" | "google" | "apple" | "magic-link";
+type SignupProvider = "email" | "google";
 
 type UserChart = {
   id: string;
@@ -97,6 +92,17 @@ type TransitItem = {
 };
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
+type SignupTimeParts = {
+  hour: string;
+  minute: string;
+  meridiem: "AM" | "PM";
+};
+
+type SignupDateParts = {
+  month: string;
+  day: string;
+  year: string;
+};
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -401,6 +407,45 @@ function chartNameFromProfile(name: string) {
   return trimmedName ? `${trimmedName}'s birth chart` : "My birth chart";
 }
 
+function splitSignupBirthTime(value: string): SignupTimeParts {
+  const [, hour = "", minute = "", meridiem = "AM"] = value.match(/^(\d{1,2}):(\d{0,2})\s?(AM|PM)$/i) ?? [];
+
+  return {
+    hour,
+    minute,
+    meridiem: meridiem.toUpperCase() === "PM" ? "PM" : "AM"
+  };
+}
+
+function formatSignupBirthTime({ hour, minute, meridiem }: SignupTimeParts) {
+  const cleanHour = hour.replace(/\D/g, "").slice(0, 2);
+  const cleanMinute = minute.replace(/\D/g, "").slice(0, 2);
+
+  if (!cleanHour && !cleanMinute) {
+    return "";
+  }
+
+  return `${cleanHour}:${cleanMinute} ${meridiem}`;
+}
+
+function splitSignupBirthDate(value: string): SignupDateParts {
+  const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+
+  return { month, day, year };
+}
+
+function formatSignupBirthDate({ month, day, year }: SignupDateParts) {
+  const cleanMonth = month.replace(/\D/g, "").slice(0, 2);
+  const cleanDay = day.replace(/\D/g, "").slice(0, 2);
+  const cleanYear = year.replace(/\D/g, "").slice(0, 4);
+
+  if (cleanMonth.length !== 2 || cleanDay.length !== 2 || cleanYear.length !== 4) {
+    return "";
+  }
+
+  return `${cleanYear}-${cleanMonth}-${cleanDay}`;
+}
+
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
   const name = form.fullName.trim() || account?.name || (provider === "email" ? "New stargazer" : `${providerLabel(provider)} account`);
   const email = account?.email || form.email.trim() || `${provider}@tldrastro.local`;
@@ -428,7 +473,7 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
 }
 
 function normalizeSignupProvider(value: string | undefined, fallback: SignupProvider): SignupProvider {
-  return value === "email" || value === "google" || value === "apple" || value === "magic-link" ? value : fallback;
+  return value === "email" || value === "google" ? value : fallback;
 }
 
 function readPendingSignupForm() {
@@ -466,9 +511,7 @@ function clearPendingSignupForm() {
 function providerLabel(provider: SignupProvider) {
   const labels: Record<SignupProvider, string> = {
     email: "Email",
-    google: "Google",
-    apple: "Apple",
-    "magic-link": "Magic link"
+    google: "Google"
   };
 
   return labels[provider];
@@ -1399,7 +1442,9 @@ function CitySearchField({
   onChange,
   onSelect,
   placeholder,
-  optional = false
+  optional = false,
+  icon,
+  className = ""
 }: {
   label: string;
   value: string;
@@ -1407,6 +1452,8 @@ function CitySearchField({
   onSelect?: (suggestion: CitySuggestion) => void;
   placeholder: string;
   optional?: boolean;
+  icon?: ReactNode;
+  className?: string;
 }) {
   const [isActive, setIsActive] = useState(false);
   const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
@@ -1460,24 +1507,33 @@ function CitySearchField({
     setIsActive(false);
   }
 
+  const input = (
+    <input
+      aria-label={label}
+      value={value}
+      onChange={(event) => {
+        onChange(event.target.value);
+        setIsActive(true);
+      }}
+      onFocus={() => setIsActive(true)}
+      onBlur={() => window.setTimeout(() => setIsActive(false), 160)}
+      placeholder={placeholder}
+    />
+  );
+
   return (
-    <div className="field-line city-search-field">
+    <div className={`field-line city-search-field ${className}`}>
       <label>
         <span>
           {label}
           {optional && <em>Optional</em>}
         </span>
-        <input
-          aria-label={label}
-          value={value}
-          onChange={(event) => {
-            onChange(event.target.value);
-            setIsActive(true);
-          }}
-          onFocus={() => setIsActive(true)}
-          onBlur={() => window.setTimeout(() => setIsActive(false), 160)}
-          placeholder={placeholder}
-        />
+        {icon ? (
+          <div className="city-search-control">
+            {icon}
+            {input}
+          </div>
+        ) : input}
       </label>
 
       {isActive && (
@@ -1843,9 +1899,31 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
   const [authMessage, setAuthMessage] = useState("");
+  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
+  const birthTimeParts = splitSignupBirthTime(form.birthTime);
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
+  }
+
+  function updateBirthTime(part: keyof SignupTimeParts, value: string) {
+    const nextParts = {
+      ...birthTimeParts,
+      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
+    };
+
+    updateField("birthTime", formatSignupBirthTime(nextParts));
+  }
+
+  function updateBirthDate(part: keyof SignupDateParts, value: string) {
+    const maxLength = part === "year" ? 4 : 2;
+    const nextParts = {
+      ...birthDateParts,
+      [part]: value.replace(/\D/g, "").slice(0, maxLength)
+    };
+
+    setBirthDateParts(nextParts);
+    updateField("birthDate", formatSignupBirthDate(nextParts));
   }
 
   async function submitSignup(event: FormEvent<HTMLFormElement>) {
@@ -1885,30 +1963,9 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
     }
   }
 
-  async function socialSignup(provider: Exclude<SignupProvider, "email">) {
+  async function socialSignup(provider: "google") {
     if (!isAuthConfigured) {
       setAuthMessage("Add Supabase environment variables to enable real social sign-on.");
-      return;
-    }
-
-    if (provider === "magic-link") {
-      if (!form.email.trim()) {
-        setAuthMessage("Add your email first so we know where to send the magic link.");
-        return;
-      }
-
-      setAuthStatus("loading");
-      setAuthMessage("");
-      savePendingSignupForm(form);
-
-      try {
-        await signInWithMagicLink(form.email.trim());
-        setAuthMessage("Magic link sent. Check your email to sign in.");
-      } catch (error) {
-        setAuthMessage(error instanceof Error ? error.message : "Magic link failed.");
-      } finally {
-        setAuthStatus("idle");
-      }
       return;
     }
 
@@ -1917,7 +1974,7 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
     savePendingSignupForm(form);
 
     try {
-      await signInWithProvider(provider as AuthProvider);
+      await signInWithProvider(provider);
     } catch (error) {
       setAuthStatus("idle");
       setAuthMessage(error instanceof Error ? error.message : `${providerLabel(provider)} sign-on failed.`);
@@ -1927,12 +1984,10 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
   return (
     <section className="signup-split" aria-label="Create account">
       <aside className="signup-story">
-        <span>tldrastro</span>
         <h2>
           Know what the sky is doing.
           <em>Know what to do about it.</em>
         </h2>
-        <p>Save your birth data once, then build charts, transits, and daily readings around your actual sky.</p>
         <div className="signup-orbit" aria-hidden="true">
           <span />
           <span />
@@ -1943,8 +1998,6 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
       <form className="signup-form" onSubmit={submitSignup}>
         <div className="signup-heading">
           <p>Create account</p>
-          <h3>Your chart starts here.</h3>
-          <span>Birth date, time, and city.</span>
         </div>
 
         {!isAuthConfigured && (
@@ -1958,14 +2011,6 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
             <span className="google-mark" aria-hidden="true">G</span>
             Continue with Google
           </button>
-          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("apple")}>
-            <span aria-hidden="true"></span>
-            Continue with Apple
-          </button>
-          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("magic-link")}>
-            <Mail size={20} aria-hidden="true" />
-            Email me a magic link
-          </button>
         </div>
 
         {authMessage && <p className="auth-message">{authMessage}</p>}
@@ -1976,7 +2021,6 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
           <label className="signup-field">
             <span>Full name</span>
             <div>
-              <UserRound size={20} aria-hidden="true" />
               <input value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
             </div>
           </label>
@@ -1984,45 +2028,98 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
           <label className="signup-field">
             <span>Email</span>
             <div>
-              <Mail size={20} aria-hidden="true" />
               <input type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
             </div>
           </label>
 
           <label className="signup-field">
             <span>Password</span>
-            <div>
+            <div className="password-control">
               <input
                 type={passwordVisible ? "text" : "password"}
                 value={form.password}
                 onChange={(event) => updateField("password", event.target.value)}
                 placeholder="at least 8 characters"
               />
-              <button type="button" aria-label="Show password" onClick={() => setPasswordVisible((isVisible) => !isVisible)}>
-                <EyeOff size={20} aria-hidden="true" />
+              <button type="button" onClick={() => setPasswordVisible((isVisible) => !isVisible)}>
+                {passwordVisible ? "Hide" : "Show"}
               </button>
             </div>
           </label>
 
+          <CitySearchField
+            label="Birth city"
+            value={form.birthCity}
+            onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
+            onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
+            placeholder="Start typing the city where you were born."
+            className="signup-city-search"
+          />
+
           <div className="signup-grid">
             <label className="signup-field">
               <span>Birth date</span>
-              <div>
-                <input type="date" value={form.birthDate} onChange={(event) => updateField("birthDate", event.target.value)} />
-                <CalendarDays size={20} aria-hidden="true" />
+              <div className="signup-date-control">
+                <input
+                  aria-label="Birth month"
+                  inputMode="numeric"
+                  placeholder="MM"
+                  value={birthDateParts.month}
+                  onChange={(event) => updateBirthDate("month", event.target.value)}
+                />
+                <span aria-hidden="true">/</span>
+                <input
+                  aria-label="Birth day"
+                  inputMode="numeric"
+                  placeholder="DD"
+                  value={birthDateParts.day}
+                  onChange={(event) => updateBirthDate("day", event.target.value)}
+                />
+                <span aria-hidden="true">/</span>
+                <input
+                  aria-label="Birth year"
+                  inputMode="numeric"
+                  placeholder="YYYY"
+                  value={birthDateParts.year}
+                  onChange={(event) => updateBirthDate("year", event.target.value)}
+                />
               </div>
             </label>
 
             <label className="signup-field">
               <span>Birth time</span>
-              <div>
+              <div className="signup-time-control">
                 <input
-                  type="time"
-                  value={form.birthTime}
+                  aria-label="Birth hour"
+                  inputMode="numeric"
+                  placeholder="HH"
+                  value={birthTimeParts.hour}
                   disabled={form.unknownBirthTime}
-                  onChange={(event) => updateField("birthTime", event.target.value)}
+                  onChange={(event) => updateBirthTime("hour", event.target.value)}
                 />
-                <Clock3 size={20} aria-hidden="true" />
+                <span className="time-separator" aria-hidden="true">:</span>
+                <input
+                  aria-label="Birth minute"
+                  inputMode="numeric"
+                  placeholder="MM"
+                  value={birthTimeParts.minute}
+                  disabled={form.unknownBirthTime}
+                  onChange={(event) => updateBirthTime("minute", event.target.value)}
+                />
+                <div className="signup-meridiem" aria-label="AM or PM">
+                  {(["AM", "PM"] as const).map((period) => (
+                    <button
+                      key={period}
+                      type="button"
+                      className={birthTimeParts.meridiem === period ? "active" : ""}
+                      disabled={form.unknownBirthTime}
+                      aria-pressed={birthTimeParts.meridiem === period}
+                      onClick={() => updateBirthTime("meridiem", period)}
+                    >
+                      {period}
+                    </button>
+                  ))}
+                </div>
               </div>
             </label>
           </div>
@@ -2032,27 +2129,17 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
               type="checkbox"
               checked={form.unknownBirthTime}
               onChange={(event) => {
-                setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "" : form.birthTime });
+                setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "12:00 PM" : form.birthTime });
               }}
             />
-            <span>I don't know my birth time</span>
+            <span>I don't know my birth time (You can change it later).</span>
           </label>
-
-          <CitySearchField
-            label="Birth city"
-            value={form.birthCity}
-            onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
-            onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
-            placeholder="Start typing a city..."
-          />
-          <p className="signup-note">Nearest major city is fine. We only need the location, not the address.</p>
         </div>
 
         <button className="signup-submit" type="submit" disabled={authStatus === "loading"}>
           {authStatus === "loading" ? "Working..." : "Create my chart →"}
         </button>
-        <p className="signin-note">Already have an account? <button type="button" onClick={() => socialSignup("magic-link")}>Sign in</button></p>
-        <p className="privacy-note">We'll never post anything. Your data stays yours.</p>
+        <p className="signin-note">Already have an account? <button type="button">Login</button></p>
       </form>
     </section>
   );
