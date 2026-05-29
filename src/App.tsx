@@ -7,6 +7,7 @@ import {
   CircleHelp,
   Eye,
   EyeOff,
+  MapPin,
   Moon,
   Sun,
 } from "lucide-react";
@@ -28,7 +29,7 @@ import { getInitialAccountMode } from "./services/session";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PlacementMode = "paragraph" | "table";
-type PortalMode = AccountMode | "transits" | "profile";
+type PortalMode = AccountMode | "profile";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -41,6 +42,7 @@ type UserChart = {
   birthDate: string;
   birthTime: string;
   birthCity: string;
+  birthLocation?: LocationInput | null;
 };
 
 type UserProfile = {
@@ -52,6 +54,8 @@ type UserProfile = {
   sun: string;
   moon: string;
   rising: string;
+  currentLocation?: string;
+  currentLocationData?: LocationInput | null;
   charts: UserChart[];
 };
 
@@ -107,6 +111,8 @@ type SignupDateParts = {
   day: string;
   year: string;
 };
+
+type AuthMode = "create" | "login";
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -461,7 +467,8 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
     type: "Birth chart",
     birthDate: form.birthDate || "Birth date needed",
     birthTime: form.unknownBirthTime ? "Time unknown" : form.birthTime || "Birth time needed",
-    birthCity: form.birthCity.trim() || "Birth city needed"
+    birthCity: form.birthCity.trim() || "Birth city needed",
+    birthLocation: form.birthLocation
   };
 
   return {
@@ -531,6 +538,11 @@ function profileInitials(name: string, email: string) {
   }
 
   return source.slice(0, 2).toUpperCase();
+}
+
+function profileFirstName(name: string, email: string) {
+  const source = name.trim() || email.split("@")[0] || "Profile";
+  return source.split(/\s+/).filter(Boolean)[0] ?? "Profile";
 }
 
 function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; size?: "regular" | "large" }) {
@@ -703,6 +715,8 @@ export function App() {
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(defaultTransitForm);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
+  const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
+  const [chartModalOpen, setChartModalOpen] = useState(false);
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
@@ -917,6 +931,28 @@ export function App() {
     setCityPickerOpen(false);
   }
 
+  function drawTransitChart() {
+    const currentCity = transitForm.currentLocation.trim();
+
+    if (currentCity) {
+      const nextLocation = transitForm.currentLocationData?.label === currentCity
+        ? transitForm.currentLocationData
+        : locationFromLabel(currentCity);
+
+      setLocation(nextLocation);
+      setManualLocation(nextLocation.label);
+      setTransitForm((currentForm) => ({
+        ...currentForm,
+        currentLocation: nextLocation.label
+      }));
+      setHasLocationPreference(true);
+    }
+
+    setTransitsDrawn(true);
+    setChartModalOpen(false);
+    setMode(userProfile ? "profile" : "guest");
+  }
+
   return (
     <main className={`app-shell theme-${theme}`}>
       <header className="topbar">
@@ -934,23 +970,44 @@ export function App() {
           <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
             Today
           </button>
-          <button
-            className={`account-nav ${mode === "profile" ? "active" : ""}`}
-            type="button"
-            onClick={() => setMode("profile")}
-          >
-            {userProfile ? (
-              <>
+          {userProfile ? (
+            <>
+              <button
+                className={`account-nav ${mode === "profile" ? "active" : ""}`}
+                type="button"
+                onClick={() => setMode("profile")}
+              >
                 <ProfileAvatar profile={userProfile} />
-                <span>Profile</span>
-              </>
-            ) : (
-              "Sign in"
-            )}
-          </button>
-          <button className="chart-cta" type="button" onClick={() => setMode("transits")}>
-            Create my chart →
-          </button>
+                <span>{profileFirstName(userProfile.name, userProfile.email)}</span>
+              </button>
+              <button className="chart-cta" type="button" onClick={() => setChartModalOpen(true)}>
+                Create my chart →
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className={`account-nav ${mode === "profile" && accountIntent === "login" ? "active" : ""}`}
+                type="button"
+                onClick={() => {
+                  setAccountIntent("login");
+                  setMode("profile");
+                }}
+              >
+                Sign in
+              </button>
+              <button
+                className={`chart-cta ${mode === "profile" && accountIntent === "create" ? "active-outline" : ""}`}
+                type="button"
+                onClick={() => {
+                  setAccountIntent("create");
+                  setMode("profile");
+                }}
+              >
+                Create account
+              </button>
+            </>
+          )}
         </nav>
 
         <button
@@ -1045,31 +1102,6 @@ export function App() {
 
         <section className="detail-panel" aria-label="Portal details">
           {mode === "guest" && <TodayView positions={sky.positions} aspects={sky.aspects} />}
-          {mode === "transits" && (
-            <TransitSetup
-              form={transitForm}
-              setForm={setTransitForm}
-              onDraw={() => {
-                const currentCity = transitForm.currentLocation.trim();
-
-                if (currentCity) {
-                  const nextLocation = transitForm.currentLocationData?.label === currentCity
-                    ? transitForm.currentLocationData
-                    : locationFromLabel(currentCity);
-
-                  setLocation(nextLocation);
-                  setManualLocation(nextLocation.label);
-                  setTransitForm((currentForm) => ({
-                    ...currentForm,
-                    currentLocation: nextLocation.label
-                  }));
-                  setHasLocationPreference(true);
-                }
-
-                setTransitsDrawn(true);
-              }}
-            />
-          )}
           {mode === "member" && (
             <TodayView positions={sky.positions} aspects={sky.aspects} />
           )}
@@ -1077,6 +1109,12 @@ export function App() {
             userProfile ? (
               <ProfileView
                 profile={userProfile}
+                onUpdateProfile={setUserProfile}
+                transitForm={transitForm}
+                transitsDrawn={transitsDrawn}
+                selectedTransit={selectedTransit}
+                selectedTransitId={selectedTransitId}
+                setSelectedTransitId={setSelectedTransitId}
                 onSignOut={async () => {
                   await signOutAuth();
                   setUserProfile(null);
@@ -1085,6 +1123,7 @@ export function App() {
               />
             ) : (
               <SignupView
+                initialMode={accountIntent}
                 onCreateProfile={(nextProfile) => {
                   setUserProfile(nextProfile);
                   setMode("profile");
@@ -1095,13 +1134,25 @@ export function App() {
         </section>
       </section>
 
-      {mode === "transits" && transitsDrawn && (
-        <TransitResults
-          form={transitForm}
-          selectedTransit={selectedTransit}
-          selectedTransitId={selectedTransitId}
-          setSelectedTransitId={setSelectedTransitId}
-        />
+      {chartModalOpen && (
+        <div className="chart-modal-backdrop" role="presentation" onMouseDown={() => setChartModalOpen(false)}>
+          <section
+            className="chart-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="chart-modal-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
+              ×
+            </button>
+            <TransitSetup
+              form={transitForm}
+              setForm={setTransitForm}
+              onDraw={drawTransitChart}
+            />
+          </section>
+        </div>
       )}
 
     </main>
@@ -1732,23 +1783,29 @@ function TransitSetup({
     setForm({ ...form, [key]: value });
   }
 
+  function updateNumberField<Key extends keyof TransitForm>(key: Key, value: string, maxLength = 2) {
+    updateField(key, value.replace(/\D/g, "").slice(0, maxLength) as TransitForm[Key]);
+  }
+
   function submitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onDraw();
   }
 
   return (
-    <form className="transit-form" onSubmit={submitForm}>
-      <div className="placements-heading">
+    <form className="transit-form signup-form chart-create-form" onSubmit={submitForm}>
+      <div className="signup-heading">
         <p>Create your Chart</p>
-        <h2>Your transits, plotted.</h2>
-        <span>Where the sky is now, set against the sky of the day you were born.</span>
+        <h3 id="chart-modal-title">Your chart starts here.</h3>
+        <span>Birth date, time, birth city, and where you are now.</span>
       </div>
 
-      <div className="form-fields">
-        <label className="field-line">
+      <div className="signup-fields">
+        <label className="signup-field">
           <span>Name</span>
-          <input value={form.name} onChange={(event) => updateField("name", event.target.value)} />
+          <div>
+            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Your name" />
+          </div>
         </label>
 
         <CitySearchField
@@ -1760,37 +1817,80 @@ function TransitSetup({
           onSelect={(suggestion) => {
             setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
           }}
-          placeholder="City, state"
+          placeholder="Start typing the city where you were born."
+          className="signup-city-search"
         />
 
-        <div className="field-group">
-          <span>Date of birth</span>
-          <div className="date-grid">
-            <input aria-label="Birth month" value={form.birthMonth} onChange={(event) => updateField("birthMonth", event.target.value)} />
-            <input aria-label="Birth day" value={form.birthDay} onChange={(event) => updateField("birthDay", event.target.value)} />
-            <input aria-label="Birth year" value={form.birthYear} onChange={(event) => updateField("birthYear", event.target.value)} />
-          </div>
+        <div className="signup-grid">
+          <label className="signup-field">
+            <span>Date of birth</span>
+            <div className="signup-date-control">
+              <input
+                aria-label="Birth month"
+                inputMode="numeric"
+                placeholder="MM"
+                value={form.birthMonth}
+                onChange={(event) => updateNumberField("birthMonth", event.target.value)}
+              />
+              <span aria-hidden="true">/</span>
+              <input
+                aria-label="Birth day"
+                inputMode="numeric"
+                placeholder="DD"
+                value={form.birthDay}
+                onChange={(event) => updateNumberField("birthDay", event.target.value)}
+              />
+              <span aria-hidden="true">/</span>
+              <input
+                aria-label="Birth year"
+                inputMode="numeric"
+                placeholder="YYYY"
+                value={form.birthYear}
+                onChange={(event) => updateNumberField("birthYear", event.target.value, 4)}
+              />
+            </div>
+          </label>
+
+          <label className="signup-field">
+            <span>Time of birth</span>
+            <div className="signup-time-control">
+              <input
+                aria-label="Birth hour"
+                inputMode="numeric"
+                placeholder="HH"
+                value={form.birthHour}
+                onChange={(event) => updateNumberField("birthHour", event.target.value)}
+              />
+              <span className="time-separator" aria-hidden="true">:</span>
+              <input
+                aria-label="Birth minute"
+                inputMode="numeric"
+                placeholder="MM"
+                value={form.birthMinute}
+                onChange={(event) => updateNumberField("birthMinute", event.target.value)}
+              />
+              <div className="signup-meridiem" aria-label="AM or PM">
+                {(["AM", "PM"] as const).map((period) => (
+                  <button
+                    key={period}
+                    type="button"
+                    className={form.birthMeridiem === period ? "active" : ""}
+                    aria-pressed={form.birthMeridiem === period}
+                    onClick={() => updateField("birthMeridiem", period)}
+                  >
+                    {period}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </label>
         </div>
 
-        <div className="field-group">
-          <span>Time of birth</span>
-          <div className="time-grid">
-            <input aria-label="Birth hour" value={form.birthHour} onChange={(event) => updateField("birthHour", event.target.value)} />
-            <input aria-label="Birth minute" value={form.birthMinute} onChange={(event) => updateField("birthMinute", event.target.value)} />
-            <select
-              aria-label="AM or PM"
-              value={form.birthMeridiem}
-              onChange={(event) => updateField("birthMeridiem", event.target.value as TransitForm["birthMeridiem"])}
-            >
-              <option>AM</option>
-              <option>PM</option>
-            </select>
-          </div>
-        </div>
-
-        <label className="field-line">
+        <label className="signup-field">
           <span>Chart of day</span>
-          <input type="date" value={form.chartDate} onChange={(event) => updateField("chartDate", event.target.value)} />
+          <div className="chart-date-control">
+            <input type="date" value={form.chartDate} onChange={(event) => updateField("chartDate", event.target.value)} />
+          </div>
         </label>
 
         <CitySearchField
@@ -1802,12 +1902,13 @@ function TransitSetup({
           onSelect={(suggestion) => {
             setForm({ ...form, currentLocation: suggestion.label, currentLocationData: suggestion });
           }}
-          placeholder="City, state"
+          placeholder="Start typing where you are now."
+          className="signup-city-search"
           optional
         />
       </div>
 
-      <button className="draw-button" type="submit">Draw the transits</button>
+      <button className="signup-submit" type="submit">Create chart →</button>
     </form>
   );
 }
@@ -1945,8 +2046,8 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
   );
 }
 
-function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfile) => void }) {
-  const [authMode, setAuthMode] = useState<"create" | "login">("create");
+function SignupView({ initialMode = "create", onCreateProfile }: { initialMode?: AuthMode; onCreateProfile: (profile: UserProfile) => void }) {
+  const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
   const [form, setForm] = useState<SignupForm>(defaultSignupForm);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
@@ -1954,6 +2055,10 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
   const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
   const birthTimeParts = splitSignupBirthTime(form.birthTime);
   const isLogin = authMode === "login";
+
+  useEffect(() => {
+    setAuthMode(initialMode);
+  }, [initialMode]);
 
   function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
     setForm({ ...form, [key]: value });
@@ -2234,11 +2339,120 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
 
 function ProfileView({
   profile,
+  onUpdateProfile,
+  transitForm,
+  transitsDrawn,
+  selectedTransit,
+  selectedTransitId,
+  setSelectedTransitId,
   onSignOut
 }: {
   profile: UserProfile;
+  onUpdateProfile: (profile: UserProfile) => void;
+  transitForm: TransitForm;
+  transitsDrawn: boolean;
+  selectedTransit: TransitItem;
+  selectedTransitId: string;
+  setSelectedTransitId: (id: string) => void;
   onSignOut: () => void | Promise<void>;
 }) {
+  const primaryChart = profile.charts[0];
+  const savedBirthDate = primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "";
+  const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Time unknown" && primaryChart.birthTime !== "Birth time needed"
+    ? primaryChart.birthTime
+    : "";
+  const [birthCity, setBirthCity] = useState(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "");
+  const [birthLocation, setBirthLocation] = useState<LocationInput | null>(primaryChart?.birthLocation ?? null);
+  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(savedBirthDate));
+  const [birthTime, setBirthTime] = useState(savedBirthTime);
+  const [unknownBirthTime, setUnknownBirthTime] = useState(primaryChart?.birthTime === "Time unknown");
+  const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
+  const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
+  const [locationStatus, setLocationStatus] = useState<"idle" | "loading" | "error">("idle");
+  const birthTimeParts = splitSignupBirthTime(birthTime);
+  const hasBirthDetails = Boolean(birthCity.trim() && formatSignupBirthDate(birthDateParts));
+  const hasCurrentLocation = Boolean(currentCity.trim());
+  const completedSteps = 1 + (hasBirthDetails ? 1 : 0) + (hasCurrentLocation ? 1 : 0);
+  const setupProgress = `${Math.round((completedSteps / 3) * 100)}%`;
+
+  function updateProfileBirthDate(part: keyof SignupDateParts, value: string) {
+    const maxLength = part === "year" ? 4 : 2;
+    setBirthDateParts({
+      ...birthDateParts,
+      [part]: value.replace(/\D/g, "").slice(0, maxLength)
+    });
+  }
+
+  function updateProfileBirthTime(part: keyof SignupTimeParts, value: string) {
+    const nextParts = {
+      ...birthTimeParts,
+      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
+    };
+
+    setBirthTime(formatSignupBirthTime(nextParts));
+  }
+
+  function saveBirthDetails() {
+    const nextBirthDate = formatSignupBirthDate(birthDateParts);
+    const chart: UserChart = {
+      id: primaryChart?.id ?? `chart-${Date.now()}`,
+      name: primaryChart?.name ?? chartNameFromProfile(profile.name),
+      type: "Birth chart",
+      birthDate: nextBirthDate || "Birth date needed",
+      birthTime: unknownBirthTime ? "Time unknown" : birthTime || "Birth time needed",
+      birthCity: birthCity.trim() || "Birth city needed",
+      birthLocation
+    };
+
+    onUpdateProfile({
+      ...profile,
+      sun: nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun,
+      rising: unknownBirthTime || !birthTime ? "Rising pending" : profile.rising,
+      charts: [chart, ...profile.charts.slice(1)]
+    });
+  }
+
+  function saveCurrentLocation() {
+    onUpdateProfile({
+      ...profile,
+      currentLocation: currentCity.trim(),
+      currentLocationData
+    });
+  }
+
+  function useBrowserLocation() {
+    if (!("geolocation" in navigator)) {
+      setLocationStatus("error");
+      return;
+    }
+
+    setLocationStatus("loading");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const fallbackLocation = {
+          label: "Current location",
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        reverseGeocodeCity(fallbackLocation.latitude, fallbackLocation.longitude)
+          .catch(() => null)
+          .then((mappedLocation) => {
+            const resolvedLocation = mappedLocation ?? fallbackLocation;
+            setCurrentCity(resolvedLocation.label);
+            setCurrentLocationData(resolvedLocation);
+            setLocationStatus("idle");
+          });
+      },
+      () => setLocationStatus("error"),
+      {
+        enableHighAccuracy: false,
+        maximumAge: 600000,
+        timeout: 7000
+      }
+    );
+  }
+
   return (
     <>
       <div className="member-header profile-hero">
@@ -2250,6 +2464,124 @@ function ProfileView({
         </div>
         <button className="signout-button" type="button" onClick={onSignOut}>Sign out</button>
       </div>
+
+      <section className="profile-setup" aria-label="Profile setup">
+        <div className="profile-setup-meter">
+          <span>Your setup</span>
+          <div aria-hidden="true"><i style={{ width: setupProgress }} /></div>
+          <span>{completedSteps} of 3</span>
+        </div>
+
+        <p className="profile-setup-copy">
+          We’ve got your name and email. Now we just need your <strong>birth date, exact birth time, and birth city</strong> for your natal chart, plus your <strong>current city</strong>.
+        </p>
+
+        <div className="profile-setup-grid">
+          <section className="setup-card setup-card-dark" aria-label="Natal chart setup">
+            <div className="setup-card-heading">
+              <span>Step 2 · Natal chart</span>
+              <em>Once, forever</em>
+            </div>
+            <h3>Where & when were you born?</h3>
+            <p>The sky at the minute you arrived. Fixed forever.</p>
+
+            <CitySearchField
+              label="Birth city"
+              value={birthCity}
+              onChange={(value) => {
+                setBirthCity(value);
+                setBirthLocation(null);
+              }}
+              onSelect={(suggestion) => {
+                setBirthCity(suggestion.label);
+                setBirthLocation(suggestion);
+              }}
+              placeholder="Start typing the city where you were born."
+              className="profile-city-search"
+            />
+
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Birth date</span>
+                <div className="signup-date-control">
+                  <input aria-label="Birth month" inputMode="numeric" placeholder="MM" value={birthDateParts.month} onChange={(event) => updateProfileBirthDate("month", event.target.value)} />
+                  <span aria-hidden="true">/</span>
+                  <input aria-label="Birth day" inputMode="numeric" placeholder="DD" value={birthDateParts.day} onChange={(event) => updateProfileBirthDate("day", event.target.value)} />
+                  <span aria-hidden="true">/</span>
+                  <input aria-label="Birth year" inputMode="numeric" placeholder="YYYY" value={birthDateParts.year} onChange={(event) => updateProfileBirthDate("year", event.target.value)} />
+                </div>
+              </label>
+
+              <label className="signup-field">
+                <span>Birth time</span>
+                <div className="signup-time-control">
+                  <input aria-label="Birth hour" inputMode="numeric" placeholder="HH" value={birthTimeParts.hour} disabled={unknownBirthTime} onChange={(event) => updateProfileBirthTime("hour", event.target.value)} />
+                  <span className="time-separator" aria-hidden="true">:</span>
+                  <input aria-label="Birth minute" inputMode="numeric" placeholder="MM" value={birthTimeParts.minute} disabled={unknownBirthTime} onChange={(event) => updateProfileBirthTime("minute", event.target.value)} />
+                  <div className="signup-meridiem" aria-label="AM or PM">
+                    {(["AM", "PM"] as const).map((period) => (
+                      <button key={period} type="button" className={birthTimeParts.meridiem === period ? "active" : ""} disabled={unknownBirthTime} aria-pressed={birthTimeParts.meridiem === period} onClick={() => updateProfileBirthTime("meridiem", period)}>
+                        {period}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <label className="unknown-time">
+              <input
+                type="checkbox"
+                checked={unknownBirthTime}
+                onChange={(event) => {
+                  setUnknownBirthTime(event.target.checked);
+                  setBirthTime(event.target.checked ? "12:00 PM" : birthTime);
+                }}
+              />
+              <span>I don't know my birth time (you can change it later).</span>
+            </label>
+
+            <button className="setup-submit setup-submit-light" type="button" onClick={saveBirthDetails}>Save birth details →</button>
+          </section>
+
+          <section className="setup-card" aria-label="Current location setup">
+            <div className="setup-card-heading">
+              <span>Step 3 · Today's transits</span>
+              <em>Changes as you move</em>
+            </div>
+            <h3>Where are you now?</h3>
+            <p>Where you live now sets the timezone for today's sky.</p>
+
+            <button className="location-use-button" type="button" onClick={useBrowserLocation} disabled={locationStatus === "loading"}>
+              <span><MapPin size={20} aria-hidden="true" /></span>
+              <strong>{locationStatus === "loading" ? "Finding your location" : "Use my current location"}</strong>
+              <em>One tap · we'll ask your browser</em>
+              <b aria-hidden="true">→</b>
+            </button>
+
+            {locationStatus === "error" && <p className="auth-message">Location access did not finish. You can type your city instead.</p>}
+
+            <div className="email-divider"><span>or type it</span></div>
+
+            <CitySearchField
+              label="Current city"
+              value={currentCity}
+              onChange={(value) => {
+                setCurrentCity(value);
+                setCurrentLocationData(null);
+              }}
+              onSelect={(suggestion) => {
+                setCurrentCity(suggestion.label);
+                setCurrentLocationData(suggestion);
+              }}
+              placeholder="New York City, New York"
+              className="profile-city-search"
+            />
+
+            <button className="setup-submit" type="button" onClick={saveCurrentLocation}>Save location →</button>
+          </section>
+        </div>
+      </section>
 
       <section className="profile-summary" aria-label="Chart summary">
         <article>
@@ -2276,6 +2608,17 @@ function ProfileView({
           </article>
         ))}
       </section>
+
+      {transitsDrawn && (
+        <section className="profile-transits" aria-label="Profile transits">
+          <TransitResults
+            form={transitForm}
+            selectedTransit={selectedTransit}
+            selectedTransitId={selectedTransitId}
+            setSelectedTransitId={setSelectedTransitId}
+          />
+        </section>
+      )}
     </>
   );
 }
