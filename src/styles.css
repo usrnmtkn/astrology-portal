@@ -471,13 +471,27 @@ button {
   text-transform: uppercase;
 }
 
+.social-signons button {
+  border: 1px solid #747775;
+  border-radius: 8px;
+  color: #1f1f1f;
+  font-family: "Roboto Flex", var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  gap: 12px;
+  letter-spacing: 0;
+  line-height: 20px;
+  min-height: 40px;
+  padding: 0 12px;
+  text-transform: none;
+}
+
 .social-signons button:disabled,
 .signup-submit:disabled {
   cursor: wait;
   opacity: 0.58;
 }
 
-.social-signons button,
 .signup-submit,
 .email-divider span,
 .signup-field span {
@@ -488,12 +502,10 @@ button {
 }
 
 .google-mark {
-  color: #1a73e8;
-  font-family: var(--font-sans);
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: none;
+  display: block;
+  flex: 0 0 20px;
+  height: 20px;
+  width: 20px;
 }
 
 .email-divider {
@@ -576,6 +588,20 @@ button {
   letter-spacing: 0.14em;
   padding: 0;
   text-transform: uppercase;
+}
+
+.password-control button {
+  border-radius: 50%;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.password-control button:hover,
+.password-control button:focus-visible {
+  background: rgba(26, 22, 19, 0.06);
+  color: #1f1f1f;
+  outline: none;
 }
 
 .signup-field > .signup-date-control,
@@ -2044,6 +2070,12 @@ blockquote {
 .theme-dark .signup-field .time-separator,
 .theme-dark .signup-date-control span {
   color: #a8a29a;
+}
+
+.theme-dark .password-control button:hover,
+.theme-dark .password-control button:focus-visible {
+  background: rgba(241, 238, 232, 0.1);
+  color: #f1eee8;
 }
 
 .theme-dark .signup-meridiem {

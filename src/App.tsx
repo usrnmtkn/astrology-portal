@@ -5,6 +5,8 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleHelp,
+  Eye,
+  EyeOff,
   Moon,
   Sun,
 } from "lucide-react";
@@ -540,6 +542,17 @@ function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; si
         profileInitials(profile.name, profile.email)
       )}
     </span>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg className="google-mark" aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+      <path d="M19.6 10.23c0-.71-.06-1.39-.18-2.05H10v3.87h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.31 2.98-7.35Z" fill="#4285F4" />
+      <path d="M10 20c2.7 0 4.96-.9 6.62-2.42l-3.23-2.51c-.9.6-2.04.95-3.39.95a5.9 5.9 0 0 1-5.6-4.12H1.06v2.59A9.99 9.99 0 0 0 10 20Z" fill="#34A853" />
+      <path d="M4.4 11.9a6.01 6.01 0 0 1 0-3.8V5.51H1.06a10 10 0 0 0 0 8.98L4.4 11.9Z" fill="#FBBC04" />
+      <path d="M10 3.98c1.47 0 2.79.5 3.82 1.49l2.87-2.86A9.6 9.6 0 0 0 10 0 9.99 9.99 0 0 0 1.06 5.51L4.4 8.1A5.9 5.9 0 0 1 10 3.98Z" fill="#E94235" />
+    </svg>
   );
 }
 
@@ -2060,7 +2073,7 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
 
         <div className="social-signons" aria-label="Social sign on">
           <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
-            <span className="google-mark" aria-hidden="true">G</span>
+            <GoogleIcon />
             Continue with Google
           </button>
         </div>
@@ -2095,8 +2108,13 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
                 onChange={(event) => updateField("password", event.target.value)}
                 placeholder="at least 8 characters"
               />
-              <button type="button" onClick={() => setPasswordVisible((isVisible) => !isVisible)}>
-                {passwordVisible ? "Hide" : "Show"}
+              <button
+                type="button"
+                aria-label={passwordVisible ? "Hide password" : "Show password"}
+                title={passwordVisible ? "Hide password" : "Show password"}
+                onClick={() => setPasswordVisible((isVisible) => !isVisible)}
+              >
+                {passwordVisible ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
               </button>
             </div>
           </label>
@@ -2195,7 +2213,7 @@ function SignupView({ onCreateProfile }: { onCreateProfile: (profile: UserProfil
         </div>
 
         <button className="signup-submit" type="submit" disabled={authStatus === "loading"}>
-          {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create my chart →"}
+          {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
         </button>
         <p className="signin-note">
           {isLogin ? "New here?" : "Already have an account?"}{" "}
