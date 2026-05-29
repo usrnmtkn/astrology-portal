@@ -1,4 +1,5 @@
 import type { LocationInput } from "../types";
+import { timeZoneForLocation } from "./timezones";
 
 type MapboxFeature = {
   id: string;
@@ -115,7 +116,13 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
       label: formatSuggestionLabel(feature),
       region: regionForFeature(feature),
       latitude,
-      longitude
+      longitude,
+      timeZone: timeZoneForLocation({
+        label: formatSuggestionLabel(feature),
+        region: regionForFeature(feature),
+        latitude,
+        longitude
+      })
     };
   });
 }
@@ -149,6 +156,12 @@ export async function reverseGeocodeCity(latitude: number, longitude: number): P
   return {
     label: formatSuggestionLabel(feature),
     latitude,
-    longitude
+    longitude,
+    timeZone: timeZoneForLocation({
+      label: formatSuggestionLabel(feature),
+      region: regionForFeature(feature),
+      latitude,
+      longitude
+    })
   };
 }

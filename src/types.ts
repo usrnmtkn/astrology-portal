@@ -6,6 +6,7 @@ export type LocationInput = {
   label: string;
   latitude: number;
   longitude: number;
+  timeZone?: string;
 };
 
 export type PlanetPosition = {
@@ -25,6 +26,12 @@ export type SkySnapshot = {
   ascendant: string;
   midheaven: string;
   moonPhase: string;
+  moonEvent?: {
+    name: "Full Moon" | "New Moon";
+    sign: string;
+    occursAt: string;
+    days: number;
+  };
   dominantElement: "Fire" | "Earth" | "Air" | "Water";
   positions: PlanetPosition[];
   aspects: Array<{

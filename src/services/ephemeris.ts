@@ -1,4 +1,3 @@
-import SwissEph from "swisseph-wasm";
 import type { LocationInput, PlanetPosition, SkySnapshot } from "../types";
 
 const signs = [
@@ -30,12 +29,15 @@ const planets = [
   ["True Node", "☊", "direction"]
 ] as const;
 
-type SwissEphInstance = InstanceType<typeof SwissEph>;
+type SwissEphConstructor = typeof import("swisseph-wasm").default;
+type SwissEphInstance = InstanceType<SwissEphConstructor>;
 
 type CalculatedPlanet = PlanetPosition & {
   longitude: number;
   speed: number;
 };
+
+type MoonEvent = NonNullable<SkySnapshot["moonEvent"]>;
 
 const aspectDefinitions = [
   ["conjunction", 0],
@@ -88,6 +90,7 @@ function elementForSign(sign: string): SkySnapshot["dominantElement"] {
 async function getSwissEph() {
   if (!swissEphPromise) {
     swissEphPromise = (async () => {
+      const { default: SwissEph } = await import("swisseph-wasm");
       const swe = new SwissEph();
       await swe.initSwissEph();
       return swe;
@@ -116,6 +119,63 @@ function moonPhaseName(sunLongitude: number, moonLongitude: number) {
   const index = Math.floor(((phase + 22.5) % 360) / 45);
 
   return names[index];
+}
+
+function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Date) {
+  const jd = swe.julday(
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate(),
+    utcHour(date)
+  );
+  const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
+
+  return normalizeDegrees(swe.calc_ut(jd, planetId, flags)[0]);
+}
+
+function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
+  return normalizeDegrees(
+    exactPlanetLongitude(swe, swe.SE_MOON, date) - exactPlanetLongitude(swe, swe.SE_SUN, date)
+  );
+}
+
+function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
+  const startingPhase = moonSunPhaseAngle(swe, date);
+  const targetPhase = startingPhase < 180 ? 180 : 360;
+  const name: MoonEvent["name"] = targetPhase === 180 ? "Full Moon" : "New Moon";
+  const synodicMonthDays = 29.530588;
+  const estimatedDays = Math.max(0.05, ((targetPhase - startingPhase) / 360) * synodicMonthDays);
+  const phaseProgress = (eventDate: Date) => {
+    const phase = moonSunPhaseAngle(swe, eventDate);
+    return phase < startingPhase ? phase + 360 : phase;
+  };
+
+  let lower = new Date(date);
+  let upper = new Date(date.getTime() + (estimatedDays + 2) * 86_400_000);
+
+  while (phaseProgress(upper) < targetPhase) {
+    upper = new Date(upper.getTime() + 86_400_000);
+  }
+
+  for (let index = 0; index < 60; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+
+    if (phaseProgress(midpoint) >= targetPhase) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+    }
+  }
+
+  const occursAt = new Date((lower.getTime() + upper.getTime()) / 2);
+  const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, occursAt);
+
+  return {
+    name,
+    sign: signForLongitude(moonLongitude).sign,
+    occursAt: occursAt.toISOString(),
+    days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000)
+  };
 }
 
 function angularSeparation(first: number, second: number) {
@@ -169,7 +229,8 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
 export const defaultLocation: LocationInput = {
   label: "New York, NY",
   latitude: 40.7128,
-  longitude: -74.006
+  longitude: -74.006,
+  timeZone: "America/New_York"
 };
 
 export async function getAstrodienstSky(location: LocationInput = defaultLocation, date: Date = new Date()): Promise<SkySnapshot> {
@@ -226,6 +287,7 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
     ascendant,
     midheaven,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
+    moonEvent: nextMoonEvent(swe, date),
     dominantElement: elementForSign(sun.sign),
     positions: positions.map(({ longitude, speed, ...position }) => position),
     aspects: calculateAspects(positions)
