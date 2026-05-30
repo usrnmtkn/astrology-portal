@@ -4,10 +4,21 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
+  CircleHelp,
   Eye,
   EyeOff,
+  Gift,
+  LogOut,
+  MapPin,
+  Menu,
   Moon,
+  Pencil,
+  Settings,
+  Sparkles,
+  Star,
   Sun,
+  User,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
@@ -28,7 +39,7 @@ import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc 
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PlacementMode = "paragraph" | "table";
-type PortalMode = AccountMode | "profile" | "settings";
+type PortalMode = AccountMode | "profile" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -861,6 +872,7 @@ export function App() {
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(createBlankTransitForm);
@@ -875,7 +887,7 @@ export function App() {
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
-  const isProfileMode = mode === "profile" || mode === "settings";
+  const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   useEffect(() => {
     let cancelled = false;
     const selectedDate = dateFromInput(skyDate);
@@ -1199,9 +1211,12 @@ export function App() {
     setMode(userProfile ? "profile" : "guest");
   }
 
+  const isTodayMode = mode === "guest" || mode === "member";
+
   return (
-    <main className={`app-shell theme-${theme}`}>
-      <header className="topbar">
+    <main className={`app-shell theme-${theme} mode-${mode} ${isSignupMode ? "auth-mode" : ""}`}>
+      {!isSignupMode && (
+        <header className="topbar">
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
             <Moon size={28} />
@@ -1214,97 +1229,160 @@ export function App() {
 
         <nav className="site-nav" aria-label="Primary navigation">
           <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
-            Today
+            <Sparkles size={18} aria-hidden="true" />
+            <span>Today</span>
           </button>
           {userProfile ? (
-            <>
-              <button
-                className={`account-nav ${mode === "profile" ? "active" : ""}`}
-                type="button"
-                onClick={() => setMode("profile")}
-              >
-                <ProfileAvatar profile={userProfile} />
-                <span>{profileFirstName(userProfile.name, userProfile.email)}</span>
-              </button>
-              <button
-                className={mode === "settings" ? "active" : ""}
-                type="button"
-                onClick={() => setMode("settings")}
-              >
-                Settings
-              </button>
-              <button className="chart-cta" type="button" onClick={() => openCreateChartModal()}>
-                Create chart →
-              </button>
-            </>
+            <button
+              className={`account-nav ${mode === "profile" || mode === "account" || mode === "settings" ? "active" : ""}`}
+              type="button"
+              onClick={() => setMode("profile")}
+            >
+              <User size={18} aria-hidden="true" />
+              <span>You</span>
+            </button>
           ) : (
             <>
               <button
-                className={`account-nav ${mode === "profile" && accountIntent === "login" ? "active" : ""}`}
+                className={mode === "profile" && accountIntent === "login" ? "active" : ""}
                 type="button"
                 onClick={() => {
                   setAccountIntent("login");
                   setMode("profile");
                 }}
               >
-                Sign in
+                <User size={18} aria-hidden="true" />
+                <span>Sign In</span>
               </button>
               <button
-                className={`chart-cta ${mode === "profile" && accountIntent === "create" ? "active-outline" : ""}`}
+                className={mode === "profile" && accountIntent === "create" ? "active" : ""}
                 type="button"
                 onClick={() => {
                   setAccountIntent("create");
                   setMode("profile");
                 }}
               >
-                Create account
+                <Star size={18} aria-hidden="true" />
+                <span>Join</span>
               </button>
             </>
           )}
         </nav>
 
-        <button
-          type="button"
-          className="theme-toggle"
-          aria-pressed={theme === "dark"}
-          aria-label="Toggle theme"
-          title="Toggle theme"
-          onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
-        >
-          {theme === "dark" ? <span aria-hidden="true">☾</span> : <Sun size={20} aria-hidden="true" />}
-        </button>
-      </header>
-
-      <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
-        {!isSignupMode && !isProfileMode && (
-          <section className="sky-panel" aria-label="Current sky">
-          <div className="panel-heading">
-            <div>
-              <button
-                className="date-link"
-                type="button"
-                aria-expanded={datePickerOpen}
-                aria-controls="sky-date-picker"
-                onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
-              >
-                <CalendarDays size={16} aria-hidden="true" />
-                <span>{formatSkyDate(skyDate)}</span>
+        <div className="topbar-actions">
+          <button
+            type="button"
+            className="theme-toggle"
+            key={theme}
+            aria-pressed={theme === "dark"}
+            aria-label="Toggle theme"
+            title="Toggle theme"
+            onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
+          >
+            {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
+          </button>
+          <button
+            type="button"
+            className="menu-toggle"
+            aria-expanded={menuOpen}
+            aria-label="Open menu"
+            onClick={() => setMenuOpen((isOpen) => !isOpen)}
+          >
+            <Menu size={24} aria-hidden="true" />
+          </button>
+          {menuOpen && (
+            <nav className="site-menu" aria-label="Site menu">
+              <button className="site-menu-close" type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
+                <X size={18} aria-hidden="true" />
               </button>
-              <h1>
-                Current sky over{" "}
-                <button
-                  className="city-link"
-                  type="button"
-                  aria-expanded={cityPickerOpen}
-                  aria-controls="city-picker"
-                  onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
-                >
-                  {sky.location.label}
+              {userProfile && (
+                <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
+                  <User size={20} aria-hidden="true" />
+                  <span>Account</span>
                 </button>
-              </h1>
-            </div>
-          </div>
+              )}
+              <button type="button" onClick={() => { setMode("settings"); setMenuOpen(false); }}>
+                <Settings size={20} aria-hidden="true" />
+                <span>Settings</span>
+              </button>
+              <button type="button">
+                <CircleHelp size={20} aria-hidden="true" />
+                <span>Help & FAQ</span>
+              </button>
+              <button type="button">
+                <Star size={20} aria-hidden="true" />
+                <span>What’s new</span>
+              </button>
+              <div className="site-menu-gift">
+                <Gift size={20} aria-hidden="true" />
+                <div>
+                  <strong>Gift tldr astro</strong>
+                  <span>Share the sky with someone you love.</span>
+                </div>
+              </div>
+              {userProfile ? (
+                <button className="site-menu-signout" type="button" onClick={async () => { await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
+                  <LogOut size={20} aria-hidden="true" />
+                  <span>Sign out</span>
+                </button>
+              ) : (
+                <div className="site-menu-auth" aria-label="Account actions">
+                  <button
+                    className="site-menu-join"
+                    type="button"
+                    onClick={() => {
+                      setAccountIntent("create");
+                      setMode("profile");
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Join tldr astro
+                  </button>
+                  <button
+                    className="site-menu-login"
+                    type="button"
+                    onClick={() => {
+                      setAccountIntent("login");
+                      setMode("profile");
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Login
+                  </button>
+                </div>
+              )}
+            </nav>
+          )}
+        </div>
+        </header>
+      )}
 
+      {isTodayMode && (
+        <section className="today-hero" aria-label="Today controls">
+          <h1>the sky today.</h1>
+          <div className="today-controls">
+            <button
+              className="today-pill"
+              type="button"
+              aria-expanded={datePickerOpen}
+              aria-controls="sky-date-picker"
+              onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
+            >
+              <CalendarDays size={18} aria-hidden="true" />
+              <span>{formatSkyDate(skyDate)}</span>
+            </button>
+            <button
+              className="today-pill"
+              type="button"
+              aria-expanded={cityPickerOpen}
+              aria-controls="city-picker"
+              onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
+            >
+              <MapPin size={18} aria-hidden="true" />
+              <span>{sky.location.label}</span>
+              <Pencil size={16} aria-hidden="true" />
+            </button>
+          </div>
           {datePickerOpen && (
             <SkyDatePicker
               value={skyDate}
@@ -1314,10 +1392,9 @@ export function App() {
               }}
             />
           )}
-
           {cityPickerOpen && (
             <form
-              className="city-picker"
+              className="city-picker hero-city-picker"
               id="city-picker"
               onSubmit={(event) => {
                 event.preventDefault();
@@ -1346,7 +1423,12 @@ export function App() {
               </div>
             </form>
           )}
+        </section>
+      )}
 
+      <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
+        {!isSignupMode && !isProfileMode && (
+          <section className="sky-panel" aria-label="Current sky">
           <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
           <SkyCards sky={sky} />
@@ -1370,11 +1452,14 @@ export function App() {
                 selectedTransitId={selectedTransitId}
                 setSelectedTransitId={setSelectedTransitId}
                 onCreateChart={() => openCreateChartModal()}
-                onSettings={() => setMode("settings")}
               />
             ) : (
               <SignupView
                 initialMode={accountIntent}
+                onClose={() => {
+                  setAccountIntent("create");
+                  setMode(userProfile ? "profile" : "guest");
+                }}
                 onCreateProfile={(nextProfile) => {
                   setUserProfile(nextProfile);
                   setMode("profile");
@@ -1382,16 +1467,38 @@ export function App() {
               />
             )
           )}
-          {mode === "settings" && userProfile && (
-            <SettingsView
+          {mode === "account" && userProfile && (
+            <AccountView
               profile={userProfile}
-              onUpdateProfile={setUserProfile}
               onSignOut={async () => {
                 await signOutAuth();
                 setUserProfile(null);
                 setMode("profile");
               }}
             />
+          )}
+          {mode === "settings" && (
+            userProfile ? (
+              <SettingsView
+                profile={userProfile}
+                onUpdateProfile={setUserProfile}
+                onSignOut={async () => {
+                  await signOutAuth();
+                  setUserProfile(null);
+                  setMode("profile");
+                }}
+              />
+            ) : (
+              <GuestSettingsView
+                theme={theme}
+                location={location}
+                onThemeChange={setTheme}
+                onJoin={() => {
+                  setAccountIntent("create");
+                  setMode("profile");
+                }}
+              />
+            )
           )}
         </section>
       </section>
@@ -1929,7 +2036,7 @@ function TodayView({ positions, aspects }: { positions: PlanetPosition[]; aspect
 }
 
 function PlacementView({ positions }: { positions: PlanetPosition[] }) {
-  const [placementMode, setPlacementMode] = useState<PlacementMode>("paragraph");
+  const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
 
   return (
     <>
@@ -1941,6 +2048,14 @@ function PlacementView({ positions }: { positions: PlanetPosition[] }) {
 
       <div className="placement-toggle" role="tablist" aria-label="Placement view">
         <button
+          className={placementMode === "table" ? "active" : ""}
+          onClick={() => setPlacementMode("table")}
+          role="tab"
+          aria-selected={placementMode === "table"}
+        >
+          List
+        </button>
+        <button
           className={placementMode === "paragraph" ? "active" : ""}
           onClick={() => setPlacementMode("paragraph")}
           role="tab"
@@ -1948,20 +2063,12 @@ function PlacementView({ positions }: { positions: PlanetPosition[] }) {
         >
           Paragraph
         </button>
-        <button
-          className={placementMode === "table" ? "active" : ""}
-          onClick={() => setPlacementMode("table")}
-          role="tab"
-          aria-selected={placementMode === "table"}
-        >
-          Table
-        </button>
       </div>
 
-      {placementMode === "paragraph" ? (
-        <PlacementParagraph positions={positions} />
-      ) : (
+      {placementMode === "table" ? (
         <PlacementTable positions={positions} />
+      ) : (
+        <PlacementParagraph positions={positions} />
       )}
     </>
   );
@@ -2330,7 +2437,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
   );
 }
 
-function SignupView({ initialMode = "create", onCreateProfile }: { initialMode?: AuthMode; onCreateProfile: (profile: UserProfile) => void }) {
+function SignupView({ initialMode = "create", onClose, onCreateProfile }: { initialMode?: AuthMode; onClose: () => void; onCreateProfile: (profile: UserProfile) => void }) {
   const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
   const [form, setForm] = useState<SignupForm>(defaultSignupForm);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -2435,7 +2542,10 @@ function SignupView({ initialMode = "create", onCreateProfile }: { initialMode?:
   }
 
   return (
-    <section className="signup-split" aria-label="Create account">
+    <section className="signup-split" aria-label={isLogin ? "Log in" : "Create account"}>
+      <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
+        <X size={20} aria-hidden="true" />
+      </button>
       <aside className="signup-story">
         <h2>
           {isLogin ? "Welcome back." : "Know what the sky is doing."}
@@ -2725,37 +2835,16 @@ function SettingsView({
   return (
     <section className="settings-page" aria-label="Settings">
       <div className="settings-header">
-        <div>
-          <p>Settings</p>
-          <h2>Manage your account</h2>
-        </div>
+        <h2>settings.</h2>
         <button className="settings-save" type="button" onClick={handleSettingsAction}>
           {settingsEditing ? "Save changes" : "Edit info"}
         </button>
       </div>
 
-      <div className="settings-tabs" role="tablist" aria-label="Settings sections">
-        {[
-          ["account", "Account"],
-          ["chart", "Chart"],
-          ["preferences", "Preferences"]
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={activeSettingsTab === id}
-            className={activeSettingsTab === id ? "active" : ""}
-            onClick={() => setActiveSettingsTab(id as typeof activeSettingsTab)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
       <div className="settings-panel">
-        {activeSettingsTab === "account" && (
-          <section className="settings-card" aria-label="Account profile">
+        <section className="settings-group" aria-label="Account profile">
+          <span className="settings-group-label">Account</span>
+          <div className="settings-card">
             <div className="settings-profile-row">
               <ProfileAvatar profile={profile} size="large" />
               <div>
@@ -2791,27 +2880,21 @@ function SettingsView({
                   <strong>{profile.email}</strong>
                 </div>
                 <div className="settings-row">
-                  <span>Sign in</span>
+                  <span>Signed in with</span>
                   <strong>{profile.provider === "google" ? "Google" : "Email"}</strong>
                 </div>
+                <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
+                  <span>Sign out</span>
+                  <ChevronRight size={18} aria-hidden="true" />
+                </button>
               </div>
             )}
+          </div>
+        </section>
 
-            <div className="settings-actions">
-              <button type="button" className="settings-secondary-action" onClick={onSignOut}>Sign out</button>
-            </div>
-          </section>
-        )}
-
-        {activeSettingsTab === "chart" && (
-          <section className="settings-card" aria-label="Birth and transit information">
-            <div className="settings-card-heading">
-              <div>
-                <span>Chart information</span>
-                <p>Birth details create your natal chart. Current city powers daily transits.</p>
-              </div>
-            </div>
-
+        <section className="settings-group" aria-label="Birth and transit information">
+          <span className="settings-group-label">Birth chart</span>
+          <div className="settings-card">
             {settingsEditing ? (
               <div className="settings-fields">
                 <div className="signup-grid">
@@ -2890,15 +2973,15 @@ function SettingsView({
             ) : (
               <div className="settings-list" aria-label="Chart details">
                 <div className="settings-row">
-                  <span>Birth date</span>
+                  <span>Date</span>
                   <strong>{birthDateDisplay}</strong>
                 </div>
                 <div className="settings-row">
-                  <span>Birth time</span>
+                  <span>Time</span>
                   <strong>{birthTimeDisplay}</strong>
                 </div>
                 <div className="settings-row">
-                  <span>Birth city</span>
+                  <span>Place</span>
                   <strong>{birthCityDisplay}</strong>
                 </div>
                 <div className="settings-row">
@@ -2907,17 +2990,12 @@ function SettingsView({
                 </div>
               </div>
             )}
+          </div>
+        </section>
 
-          </section>
-        )}
-
-        {activeSettingsTab === "preferences" && (
-          <section className="settings-card" aria-label="Chart preferences">
-            <div className="settings-card-heading">
-              <div>
-                <span>Chart settings</span>
-              </div>
-            </div>
+        <section className="settings-group" aria-label="Chart preferences">
+          <span className="settings-group-label">Personalize</span>
+          <div className="settings-card">
             <div className="settings-list">
               <div className="settings-row">
                 <span>House system</span>
@@ -2939,9 +3017,159 @@ function SettingsView({
                 )}
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
+function GuestSettingsView({
+  theme,
+  location,
+  onThemeChange,
+  onJoin
+}: {
+  theme: UiTheme;
+  location: LocationInput;
+  onThemeChange: (theme: UiTheme) => void;
+  onJoin: () => void;
+}) {
+  return (
+    <section className="settings-page guest-settings-page" aria-label="Settings">
+      <div className="settings-header">
+        <h2>settings.</h2>
+      </div>
+
+      <div className="settings-panel">
+        <section className="settings-group" aria-label="Personal settings">
+          <span className="settings-group-label">Personalize</span>
+          <div className="settings-card">
+            <div className="settings-list">
+              <div className="settings-row">
+                <span>Reading style</span>
+                <strong>Aspects</strong>
+              </div>
+              <div className="settings-row">
+                <span>Default location</span>
+                <strong>{location.label}</strong>
+              </div>
+              <div className="settings-row settings-row-control">
+                <span>Appearance</span>
+                <div className="settings-theme-control" aria-label="Appearance">
+                  {(["light", "dark"] as const).map((themeOption) => (
+                    <button
+                      key={themeOption}
+                      type="button"
+                      className={theme === themeOption ? "active" : ""}
+                      aria-pressed={theme === themeOption}
+                      onClick={() => onThemeChange(themeOption)}
+                    >
+                      {themeOption}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="settings-row settings-row-control">
+                <div>
+                  <span>Sunrise orb</span>
+                  <small>A warm glow at the top of the sky</small>
+                </div>
+                <span className="settings-switch is-on" aria-hidden="true">
+                  <span />
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Account settings">
+          <span className="settings-group-label">Account</span>
+          <div className="settings-card guest-settings-account">
+            <h3>Save your sky.</h3>
+            <p>Create an account to save birth details, chart preferences, and daily transit settings.</p>
+            <button type="button" onClick={onJoin}>
+              Join tldr astro
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
+function AccountView({
+  profile,
+  onSignOut
+}: {
+  profile: UserProfile;
+  onSignOut: () => void | Promise<void>;
+}) {
+  const primaryChart = profile.charts[0];
+  const savedBirthDate = primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "";
+  const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed" ? primaryChart.birthTime : "";
+  const birthCityDisplay = primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "Not set";
+  const birthDateDisplay = savedBirthDate ? formatProfileBirthDate(savedBirthDate) : "Not set";
+  const birthTimeDisplay = savedBirthTime || "Not set";
+
+  return (
+    <section className="account-page" aria-label="Account">
+      <div className="account-page-heading">
+        <h2>account.</h2>
+      </div>
+
+      <section className="settings-card settings-account-card" aria-label="Account details">
+        <div className="settings-profile-row">
+          <ProfileAvatar profile={profile} size="large" />
+          <div>
+            <h3>{profile.name}</h3>
+            <span>{profile.email}</span>
+          </div>
         </div>
+
+        <div className="settings-list">
+          <div className="settings-row">
+            <span>Name</span>
+            <strong>{profile.name}</strong>
+          </div>
+          <div className="settings-row">
+            <span>Email</span>
+            <strong>{profile.email}</strong>
+          </div>
+          <div className="settings-row">
+            <span>Signed in with</span>
+            <strong>{profile.provider === "google" ? "Google" : "Email"}</strong>
+          </div>
+          <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
+            <span>Sign out</span>
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+
+      <section className="settings-group account-chart-group" aria-label="Birth chart">
+        <span className="settings-group-label">Birth chart</span>
+        <div className="settings-card">
+          <div className="settings-list">
+            <div className="settings-row">
+              <span>Date</span>
+              <strong>{birthDateDisplay}</strong>
+            </div>
+            <div className="settings-row">
+              <span>Time</span>
+              <strong>{birthTimeDisplay}</strong>
+            </div>
+            <div className="settings-row">
+              <span>Place</span>
+              <strong>{birthCityDisplay}</strong>
+            </div>
+            <div className="settings-row">
+              <span>House system</span>
+              <strong>Whole House</strong>
+            </div>
+          </div>
+        </div>
+      </section>
     </section>
   );
 }
@@ -2955,8 +3183,7 @@ function ProfileView({
   selectedTransit,
   selectedTransitId,
   setSelectedTransitId,
-  onCreateChart,
-  onSettings
+  onCreateChart
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
@@ -2967,7 +3194,6 @@ function ProfileView({
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
   onCreateChart: () => void;
-  onSettings: () => void;
 }) {
   const primaryChart = profile.charts[0];
   const savedBirthDate = primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "";
@@ -2991,6 +3217,7 @@ function ProfileView({
   const [unknownBirthTime, setUnknownBirthTime] = useState(primaryChart?.birthTime === "Time unknown");
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
+  const [profileTab, setProfileTab] = useState<"transits" | "chart">("chart");
   const birthTimeParts = splitSignupBirthTime(birthTime);
 
   function updateProfileBirthDate(part: keyof SignupDateParts, value: string) {
@@ -3060,21 +3287,46 @@ function ProfileView({
 
   return (
     <>
-      <div className="member-header profile-hero">
+      <div className="member-header profile-hero you-summary-card">
         <ProfileAvatar profile={profile} size="large" />
         <div className="profile-hero-copy">
-          <p>{profile.provider === "google" ? "Google account" : "Email account"}</p>
-          <h2>Hello, {profile.name}</h2>
-          <span>{profile.email}</span>
-        </div>
-        <div className="profile-actions">
-          <button className="edit-profile-button" type="button" onClick={onSettings}>
-            Settings
-          </button>
+          <h2>{profile.name}</h2>
+          <span>
+            {savedBirthDate ? formatProfileBirthDate(savedBirthDate) : "Birth date needed"}
+            {primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? ` · ${primaryChart.birthCity}` : ""}
+          </span>
+          {hasSavedBirthDetails && (
+            <p className="you-signature">
+              <span>☉ {profile.sun}</span>
+              <span>☽ {profile.moon}</span>
+              <span>↑ {profile.rising}</span>
+            </p>
+          )}
         </div>
       </div>
 
-      {profileEditorOpen && (
+      <div className="you-tabs" role="tablist" aria-label="Profile sections">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={profileTab === "transits"}
+          className={profileTab === "transits" ? "active" : ""}
+          onClick={() => setProfileTab("transits")}
+        >
+          Transits
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={profileTab === "chart"}
+          className={profileTab === "chart" ? "active" : ""}
+          onClick={() => setProfileTab("chart")}
+        >
+          Chart
+        </button>
+      </div>
+
+      {profileTab === "chart" && profileEditorOpen && (
       <section className="profile-setup" aria-label="Profile setup">
         <p className="profile-setup-copy">
           We’ve got your name and email. The last details we need are your <strong>birth date, exact birth time, and birth city</strong> for your natal chart, plus your <strong>current city</strong> so we can map today’s planetary transits and see how they interact with your chart.
@@ -3197,25 +3449,40 @@ function ProfileView({
       </section>
       )}
 
-      <section className="profile-charts" aria-label="Saved charts">
-        <span>Saved charts</span>
-        {hasSavedBirthDetails ? (
-          profile.charts.map((chart) => (
-            <article key={chart.id}>
-              <strong>{chart.name}</strong>
-              <p>{chart.type} · {chart.birthDate} · {chart.birthTime}</p>
-              <p>{chart.birthCity}</p>
+      {profileTab === "chart" && (
+        <section className="profile-charts" aria-label="Saved charts">
+          <span>Birth chart</span>
+          {hasSavedBirthDetails ? (
+            profile.charts.map((chart) => (
+              <article key={chart.id}>
+                <div className="profile-chart-row">
+                  <span>Date</span>
+                  <strong>{formatProfileBirthDate(chart.birthDate)}</strong>
+                </div>
+                <div className="profile-chart-row">
+                  <span>Time</span>
+                  <strong>{chart.birthTime}</strong>
+                </div>
+                <div className="profile-chart-row">
+                  <span>Place</span>
+                  <strong>{chart.birthCity}</strong>
+                </div>
+                <div className="profile-chart-row">
+                  <span>House system</span>
+                  <strong>Whole House</strong>
+                </div>
+              </article>
+            ))
+          ) : (
+            <article className="profile-chart-empty">
+              <strong>No charts yet.</strong>
+              <button type="button" onClick={onCreateChart}>Create Chart →</button>
             </article>
-          ))
-        ) : (
-          <article className="profile-chart-empty">
-            <strong>No charts yet.</strong>
-            <button type="button" onClick={onCreateChart}>Create Chart →</button>
-          </article>
-        )}
-      </section>
+          )}
+        </section>
+      )}
 
-      {transitsDrawn && (
+      {profileTab === "transits" && transitsDrawn && (
         <section className="profile-transits" aria-label="Profile transits">
           <TransitResults
             form={transitForm}
@@ -3224,6 +3491,15 @@ function ProfileView({
             selectedTransitId={selectedTransitId}
             setSelectedTransitId={setSelectedTransitId}
           />
+        </section>
+      )}
+      {profileTab === "transits" && !transitsDrawn && (
+        <section className="profile-charts" aria-label="Transit setup needed">
+          <span>Daily Transits</span>
+          <article className="profile-chart-empty">
+            <strong>Transits will appear after your chart is saved.</strong>
+            <button type="button" onClick={onCreateChart}>Create Chart →</button>
+          </article>
         </section>
       )}
     </>
