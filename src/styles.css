@@ -2,7 +2,7 @@
 
 :root {
   color: #18201e;
-  background: #ffffff;
+  background: #f2f2f1;
   font-family: "Roboto Serif", Georgia, serif;
   --font-body: "Roboto Serif", Georgia, serif;
   --font-display: "Roboto Serif", Georgia, serif;
@@ -23,6 +23,13 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: #f2f2f1;
+}
+
+html,
+#root {
+  min-height: 100%;
+  background: #f2f2f1;
 }
 
 button,
@@ -3805,6 +3812,7 @@ blockquote {
     radial-gradient(54% 54% at 16% 92%, rgba(172, 198, 238, 0.44) 0%, transparent 64%),
     #f2f2f1;
   color: var(--ink-app);
+  display: flow-root;
   font-family: "Hanken Grotesk", var(--font-sans);
   padding: 0 24px 96px;
 }
@@ -5042,35 +5050,6 @@ blockquote {
 }
 
 
-/* Close control inside the pop-over menu. */
-.site-menu .site-menu-close,
-.theme-dark .site-menu .site-menu-close {
-  align-items: center;
-  background: #f7f7f6;
-  border: 1px solid rgba(26, 28, 27, 0.1);
-  border-radius: 999px;
-  color: #1a1c1b;
-  display: inline-flex;
-  height: 34px;
-  justify-content: center;
-  justify-self: end;
-  margin: -4px -4px 6px 0;
-  min-height: 34px;
-  padding: 0;
-  width: 34px;
-}
-
-.site-menu .site-menu-close:hover,
-.theme-dark .site-menu .site-menu-close:hover {
-  background: #eeeeec;
-}
-
-.site-menu .site-menu-close svg,
-.theme-dark .site-menu .site-menu-close svg {
-  color: #1a1c1b;
-}
-
-
 /* Reduced settings for signed-out visitors. */
 .guest-settings-page .settings-header {
   margin-bottom: 44px;
@@ -5096,7 +5075,9 @@ blockquote {
   border-radius: 999px;
   display: inline-flex;
   gap: 4px;
+  justify-self: end;
   padding: 4px;
+  width: 160px;
 }
 
 .settings-theme-control button {
@@ -5104,12 +5085,13 @@ blockquote {
   border: 0;
   border-radius: 999px;
   color: var(--muted-app);
+  flex: 1 1 0;
   font-family: "Hanken Grotesk", var(--font-sans);
   font-size: 0.95rem;
   font-weight: 700;
   min-height: 36px;
-  min-width: 74px;
-  padding: 0 16px;
+  min-width: 0;
+  padding: 0 10px;
   text-transform: capitalize;
 }
 
@@ -5128,11 +5110,17 @@ blockquote {
   background: color-mix(in srgb, var(--surface-app) 82%, var(--ink-app) 7%);
   border: 1px solid var(--line-app);
   border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
   height: 38px;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  justify-self: end;
   padding: 3px;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
   width: 66px;
 }
 
@@ -5141,11 +5129,53 @@ blockquote {
   border-radius: 50%;
   box-shadow: 0 1px 2px rgba(20, 20, 20, 0.18);
   height: 30px;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
   width: 30px;
 }
 
 .settings-switch.is-on {
   background: var(--ink-app);
+}
+
+.settings-switch.is-on span {
+  transform: translateX(28px);
+}
+
+.settings-switch:hover,
+.settings-switch:focus-visible {
+  border-color: color-mix(in srgb, var(--ink-app) 24%, var(--line-app));
+  outline: none;
+}
+
+.theme-dark .settings-switch span {
+  background: #f4f2ee;
+}
+
+.theme-dark .settings-switch {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.theme-dark .settings-switch.is-on {
+  background: #f4f2ee;
+  border-color: #f4f2ee;
+}
+
+.theme-dark .settings-switch.is-on span {
+  background: #171818;
+  box-shadow: none;
+}
+
+.theme-dark .settings-switch:hover,
+.theme-dark .settings-switch:focus-visible {
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.theme-dark .settings-switch.is-on:hover,
+.theme-dark .settings-switch.is-on:focus-visible {
+  border-color: #ffffff;
 }
 
 .guest-settings-account {
@@ -5183,4 +5213,22 @@ blockquote {
   min-height: 48px;
   padding: 0 28px;
   text-transform: uppercase;
+}
+
+
+/* Sunrise orb preference removes the warm top glow while keeping the page calm. */
+.app-shell.sunrise-orb-disabled {
+  background:
+    radial-gradient(52% 46% at 88% 10%, rgba(176, 194, 236, 0.46) 0%, transparent 64%),
+    radial-gradient(56% 52% at 82% 86%, rgba(198, 188, 234, 0.38) 0%, transparent 64%),
+    radial-gradient(54% 54% at 16% 92%, rgba(172, 198, 238, 0.36) 0%, transparent 64%),
+    #f2f2f1;
+}
+
+.theme-dark.sunrise-orb-disabled {
+  background:
+    radial-gradient(54% 48% at 100% 2%, rgba(96, 134, 224, 0.3) 0%, transparent 56%),
+    radial-gradient(64% 56% at 88% 100%, rgba(138, 116, 220, 0.24) 0%, transparent 60%),
+    radial-gradient(56% 50% at 6% 100%, rgba(74, 168, 168, 0.18) 0%, transparent 58%),
+    #000;
 }

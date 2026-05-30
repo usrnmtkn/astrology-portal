@@ -134,6 +134,7 @@ type AuthMode = "create" | "login";
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
+const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const userProfileStorageKey = "tldrastro:userProfile";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const synodicMonthDays = 29.530588;
@@ -448,6 +449,14 @@ function getInitialTheme(): UiTheme {
     return savedTheme === "dark" ? "dark" : "light";
   } catch {
     return "light";
+  }
+}
+
+function getInitialSunriseOrb() {
+  try {
+    return window.localStorage.getItem(sunriseOrbStorageKey) !== "off";
+  } catch {
+    return true;
   }
 }
 
@@ -865,6 +874,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
 export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
+  const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
@@ -918,6 +928,14 @@ export function App() {
       return;
     }
   }, [theme]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(sunriseOrbStorageKey, sunriseOrbEnabled ? "on" : "off");
+    } catch {
+      return;
+    }
+  }, [sunriseOrbEnabled]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -1214,7 +1232,7 @@ export function App() {
   const isTodayMode = mode === "guest" || mode === "member";
 
   return (
-    <main className={`app-shell theme-${theme} mode-${mode} ${isSignupMode ? "auth-mode" : ""}`}>
+    <main className={`app-shell theme-${theme} mode-${mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
       {!isSignupMode && (
         <header className="topbar">
         <div className="brand">
@@ -1230,7 +1248,7 @@ export function App() {
         <nav className="site-nav" aria-label="Primary navigation">
           <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
             <Sparkles size={18} aria-hidden="true" />
-            <span>Today</span>
+            <span>Sky</span>
           </button>
           {userProfile ? (
             <button
@@ -1292,9 +1310,6 @@ export function App() {
           </button>
           {menuOpen && (
             <nav className="site-menu" aria-label="Site menu">
-              <button className="site-menu-close" type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-                <X size={18} aria-hidden="true" />
-              </button>
               {userProfile && (
                 <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
                   <User size={20} aria-hidden="true" />
@@ -1482,6 +1497,10 @@ export function App() {
               <SettingsView
                 profile={userProfile}
                 onUpdateProfile={setUserProfile}
+                theme={theme}
+                sunriseOrbEnabled={sunriseOrbEnabled}
+                onThemeChange={setTheme}
+                onSunriseOrbChange={setSunriseOrbEnabled}
                 onSignOut={async () => {
                   await signOutAuth();
                   setUserProfile(null);
@@ -1492,7 +1511,9 @@ export function App() {
               <GuestSettingsView
                 theme={theme}
                 location={location}
+                sunriseOrbEnabled={sunriseOrbEnabled}
                 onThemeChange={setTheme}
+                onSunriseOrbChange={setSunriseOrbEnabled}
                 onJoin={() => {
                   setAccountIntent("create");
                   setMode("profile");
@@ -2734,10 +2755,18 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 function SettingsView({
   profile,
   onUpdateProfile,
+  theme,
+  sunriseOrbEnabled,
+  onThemeChange,
+  onSunriseOrbChange,
   onSignOut
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
+  theme: UiTheme;
+  sunriseOrbEnabled: boolean;
+  onThemeChange: (theme: UiTheme) => void;
+  onSunriseOrbChange: (enabled: boolean) => void;
   onSignOut: () => void | Promise<void>;
 }) {
   const primaryChart = profile.charts[0];
@@ -3005,6 +3034,21 @@ function SettingsView({
                 <span>Zodiac</span>
                 <strong>Tropical</strong>
               </div>
+              <div className="settings-row settings-row-control">
+                <span>Theme</span>
+                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
+              </div>
+              <div className="settings-row settings-row-control">
+                <div>
+                  <span>Sunrise orb</span>
+                  <small>A warm glow at the top of the sky</small>
+                </div>
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle sunrise orb"
+                  onChange={onSunriseOrbChange}
+                />
+              </div>
               <div className="settings-row">
                 <span>Aspect orbs</span>
                 {settingsEditing ? (
@@ -3027,12 +3071,16 @@ function SettingsView({
 function GuestSettingsView({
   theme,
   location,
+  sunriseOrbEnabled,
   onThemeChange,
+  onSunriseOrbChange,
   onJoin
 }: {
   theme: UiTheme;
   location: LocationInput;
+  sunriseOrbEnabled: boolean;
   onThemeChange: (theme: UiTheme) => void;
+  onSunriseOrbChange: (enabled: boolean) => void;
   onJoin: () => void;
 }) {
   return (
@@ -3055,46 +3103,81 @@ function GuestSettingsView({
                 <strong>{location.label}</strong>
               </div>
               <div className="settings-row settings-row-control">
-                <span>Appearance</span>
-                <div className="settings-theme-control" aria-label="Appearance">
-                  {(["light", "dark"] as const).map((themeOption) => (
-                    <button
-                      key={themeOption}
-                      type="button"
-                      className={theme === themeOption ? "active" : ""}
-                      aria-pressed={theme === themeOption}
-                      onClick={() => onThemeChange(themeOption)}
-                    >
-                      {themeOption}
-                    </button>
-                  ))}
-                </div>
+                <span>Theme</span>
+                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
               </div>
               <div className="settings-row settings-row-control">
                 <div>
                   <span>Sunrise orb</span>
                   <small>A warm glow at the top of the sky</small>
                 </div>
-                <span className="settings-switch is-on" aria-hidden="true">
-                  <span />
-                </span>
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle sunrise orb"
+                  onChange={onSunriseOrbChange}
+                />
               </div>
             </div>
           </div>
         </section>
 
         <section className="settings-group" aria-label="Account settings">
-          <span className="settings-group-label">Account</span>
+          <span className="settings-group-label">Personalize</span>
           <div className="settings-card guest-settings-account">
-            <h3>Save your sky.</h3>
             <p>Create an account to save birth details, chart preferences, and daily transit settings.</p>
             <button type="button" onClick={onJoin}>
-              Join tldr astro
+              Join
             </button>
           </div>
         </section>
       </div>
     </section>
+  );
+}
+
+function AppearanceToggle({
+  theme,
+  onThemeChange
+}: {
+  theme: UiTheme;
+  onThemeChange: (theme: UiTheme) => void;
+}) {
+  return (
+    <div className="settings-theme-control" aria-label="Theme">
+      {(["light", "dark"] as const).map((themeOption) => (
+        <button
+          key={themeOption}
+          type="button"
+          className={theme === themeOption ? "active" : ""}
+          aria-pressed={theme === themeOption}
+          onClick={() => onThemeChange(themeOption)}
+        >
+          {themeOption}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function SwitchControl({
+  checked,
+  label,
+  onChange
+}: {
+  checked: boolean;
+  label: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`settings-switch ${checked ? "is-on" : ""}`}
+      aria-label={label}
+      aria-pressed={checked}
+      onClick={() => onChange(!checked)}
+    >
+      <span aria-hidden="true" />
+    </button>
   );
 }
 
