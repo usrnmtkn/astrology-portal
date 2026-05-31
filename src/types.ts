@@ -24,7 +24,9 @@ export type SkySnapshot = {
   location: LocationInput;
   generatedAt: string;
   ascendant: string;
+  ascendantLongitude?: number;
   midheaven: string;
+  midheavenLongitude?: number;
   moonPhase: string;
   moonEvent?: {
     name: "Full Moon" | "New Moon";
