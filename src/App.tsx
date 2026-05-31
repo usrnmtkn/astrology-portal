@@ -4,13 +4,10 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  CircleHelp,
   Eye,
   EyeOff,
-  Gift,
   LogOut,
   MapPin,
-  Menu,
   Moon,
   Pencil,
   Settings,
@@ -131,6 +128,13 @@ type SignupDateParts = {
 };
 
 type AuthMode = "create" | "login";
+type SkyDetail = {
+  glyph: string;
+  kicker: string;
+  title: string;
+  meta: string;
+  body: ReactNode[];
+};
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -283,6 +287,28 @@ function dateInputValue(date: Date = new Date()) {
 
 function dateFromInput(value: string) {
   return new Date(`${value}T12:00:00`);
+}
+
+function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).formatToParts(date);
+  const valueFor = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  const hour = valueFor("hour") || "12";
+  const minute = valueFor("minute") || "00";
+  const meridiem = valueFor("dayPeriod").toUpperCase() === "PM" ? "PM" : "AM";
+
+  return `${hour}:${minute} ${meridiem}`;
+}
+
+function skyDateTimeFromInput(value: string, location: LocationInput, now: Date = new Date()) {
+  const resolvedLocation = withTimeZone(location);
+  const localTime = timeInZoneForInput(now, resolvedLocation.timeZone);
+
+  return zonedDateTimeToUtc(value, localTime, resolvedLocation.timeZone);
 }
 
 function formatSkyDate(value: string) {
@@ -477,7 +503,10 @@ function getInitialUserProfile(): UserProfile | null {
 }
 
 function zodiacFromBirthDate(value: string) {
-  const [, monthValue, dayValue] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const slashMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const monthValue = isoMatch?.[2] ?? slashMatch?.[1] ?? "";
+  const dayValue = isoMatch?.[3] ?? slashMatch?.[2] ?? "";
   const month = Number(monthValue);
   const day = Number(dayValue);
 
@@ -504,6 +533,42 @@ function zodiacFromBirthDate(value: string) {
   return signStarts.reduce((currentSign, item) => (
     month > item.month || (month === item.month && day >= item.day) ? item.sign : currentSign
   ), "Capricorn");
+}
+
+function planetSignFromSky(sky: SkySnapshot, planet: string) {
+  return sky.positions.find((position) => position.planet === planet)?.sign ?? "";
+}
+
+function natalBigThreeFromSky(sky: SkySnapshot, unknownBirthTime: boolean) {
+  return {
+    sun: planetSignFromSky(sky, "Sun") || sky.positions[0]?.sign || "Sun pending",
+    moon: planetSignFromSky(sky, "Moon") || "Moon pending",
+    rising: unknownBirthTime ? "Rising pending" : sky.ascendant
+  };
+}
+
+function validChartBirthDate(chart?: UserChart) {
+  const value = chart?.birthDate?.trim() ?? "";
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const [, month = "", day = "", year = ""] = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) ?? [];
+
+  if (!month || !day || !year) {
+    return "";
+  }
+
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+function validChartBirthCity(chart?: UserChart) {
+  return chart?.birthCity && chart.birthCity !== "Birth city needed" ? chart.birthCity : "";
+}
+
+function validChartBirthTime(chart?: UserChart) {
+  return chart?.birthTime && chart.birthTime !== "Birth time needed" ? chart.birthTime : "";
 }
 
 function chartNameFromProfile(name: string) {
@@ -555,6 +620,22 @@ function formatProfileBirthDate(value: string) {
   const { month, day, year } = splitSignupBirthDate(value);
 
   return month && day && year ? `${month}/${day}/${year}` : value;
+}
+
+function formatProfileBirthDateLong(value: string) {
+  const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+
+  if (!year || Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(date);
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -647,6 +728,101 @@ function profileFirstName(name: string, email: string) {
   return source.split(/\s+/).filter(Boolean)[0] ?? "Profile";
 }
 
+function compactCityLabel(city: string) {
+  const stateMap: Record<string, string> = {
+    Alabama: "AL",
+    Alaska: "AK",
+    Arizona: "AZ",
+    Arkansas: "AR",
+    California: "CA",
+    Colorado: "CO",
+    Connecticut: "CT",
+    Delaware: "DE",
+    Florida: "FL",
+    Georgia: "GA",
+    Hawaii: "HI",
+    Idaho: "ID",
+    Illinois: "IL",
+    Indiana: "IN",
+    Iowa: "IA",
+    Kansas: "KS",
+    Kentucky: "KY",
+    Louisiana: "LA",
+    Maine: "ME",
+    Maryland: "MD",
+    Massachusetts: "MA",
+    Michigan: "MI",
+    Minnesota: "MN",
+    Mississippi: "MS",
+    Missouri: "MO",
+    Montana: "MT",
+    Nebraska: "NE",
+    Nevada: "NV",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
+    Ohio: "OH",
+    Oklahoma: "OK",
+    Oregon: "OR",
+    Pennsylvania: "PA",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
+    Tennessee: "TN",
+    Texas: "TX",
+    Utah: "UT",
+    Vermont: "VT",
+    Virginia: "VA",
+    Washington: "WA",
+    "West Virginia": "WV",
+    Wisconsin: "WI",
+    Wyoming: "WY"
+  };
+  const withoutCountry = city.replace(/,\s*United States$/i, "").trim();
+
+  return withoutCountry
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part, index) => (index > 0 && stateMap[part] ? stateMap[part] : part))
+    .join(", ");
+}
+
+function chartSetupSteps(profile: UserProfile) {
+  const primaryChart = profile.charts[0];
+  const birthDate = validChartBirthDate(primaryChart);
+  const birthTime = Boolean(primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed");
+  const birthCity = Boolean(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed");
+  const currentCity = Boolean(profile.currentLocation?.trim());
+
+  return [
+    { label: "Birth date", complete: Boolean(birthDate) },
+    { label: "Birth time", complete: birthTime },
+    { label: "Birth city", complete: birthCity },
+    { label: "Current city", complete: currentCity }
+  ];
+}
+
+function hasCompleteChartSetup(profile: UserProfile) {
+  return chartSetupSteps(profile).every((step) => step.complete);
+}
+
+function chartFlowStepsLeft(profile: UserProfile) {
+  const primaryChart = profile.charts[0];
+  const savedBirthDate = validChartBirthDate(primaryChart);
+  const savedBirthCity = Boolean(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed");
+  const birthInfoComplete = Boolean(savedBirthDate && savedBirthCity);
+  const currentCityComplete = Boolean(profile.currentLocation?.trim());
+
+  return [
+    birthInfoComplete ? "" : "Birth information",
+    currentCityComplete ? "" : "Current city"
+  ].filter(Boolean).length;
+}
+
 function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; size?: "regular" | "large" }) {
   return (
     <span className={`profile-avatar profile-avatar-${size}`} aria-hidden="true">
@@ -656,6 +832,36 @@ function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; si
         profileInitials(profile.name, profile.email)
       )}
     </span>
+  );
+}
+
+function SmileNavIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
+      <path d="M8.5 14q3.5 3 7 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
+      <path d="M9.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
+      <path d="M14.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
+    </svg>
+  );
+}
+
+function BrandAsterisk({ size = 28 }: { size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g stroke="currentColor" strokeWidth="13" strokeLinecap="round">
+        <line x1="50" y1="87" x2="50" y2="13" />
+        <line x1="82.04" y1="68.5" x2="17.96" y2="31.5" />
+        <line x1="82.04" y1="31.5" x2="17.96" y2="68.5" />
+      </g>
+    </svg>
   );
 }
 
@@ -889,21 +1095,29 @@ export function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
   const [chartModalOpen, setChartModalOpen] = useState(false);
+  const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
+  const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
-  const [sky, setSky] = useState<SkySnapshot>(() => getCurrentSky(initialLocationState.location, dateFromInput(dateInputValue())));
+  const [sky, setSky] = useState<SkySnapshot>(() => {
+    const initialLocation = withTimeZone(initialLocationState.location);
+
+    return getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
+  });
+  const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   useEffect(() => {
     let cancelled = false;
-    const selectedDate = dateFromInput(skyDate);
+    const skyLocation = withTimeZone(location);
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
 
-    setSky(getCurrentSky(location, selectedDate));
-    getAstrodienstSky(location, selectedDate)
+    setSky(getCurrentSky(skyLocation, selectedDateTime));
+    getAstrodienstSky(skyLocation, selectedDateTime)
       .then((nextSky) => {
         if (!cancelled) {
           setSky(nextSky);
@@ -912,7 +1126,7 @@ export function App() {
       .catch((error) => {
         console.warn("Swiss Ephemeris sky calculation failed; using fallback sky.", error);
         if (!cancelled) {
-          setSky(getCurrentSky(location, selectedDate));
+          setSky(getCurrentSky(skyLocation, selectedDateTime));
         }
       });
 
@@ -960,6 +1174,93 @@ export function App() {
       return;
     }
   }, [userProfile]);
+
+  useEffect(() => {
+    if (!userProfile) {
+      return;
+    }
+
+    const primaryChart = userProfile.charts[0];
+    const birthDate = validChartBirthDate(primaryChart);
+    const birthCity = validChartBirthCity(primaryChart);
+    const birthTime = validChartBirthTime(primaryChart);
+
+    if (!birthDate || !birthCity || !birthTime) {
+      setProfileNatalSky(null);
+      return;
+    }
+
+    const unknownBirthTime = birthTime === "Time unknown";
+    let cancelled = false;
+    const birthLocation = withTimeZone(primaryChart?.birthLocation ?? locationFromLabel(birthCity));
+    const birthDateTime = zonedDateTimeToUtc(birthDate, unknownBirthTime ? "12:00 PM" : birthTime, birthLocation.timeZone);
+
+    getAstrodienstSky(birthLocation, birthDateTime)
+      .then((natalSky) => {
+        if (cancelled) {
+          return;
+        }
+
+        const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
+        const nextTransits = buildNatalTransitItems(sky.positions, natalSky.positions);
+
+        setProfileNatalSky(natalSky);
+        setProfileTransits(nextTransits);
+        setTransitsDrawn(true);
+        setSelectedTransitId((currentId) => (
+          nextTransits.some((transit) => transit.id === currentId)
+            ? currentId
+            : nextTransits[0]?.id ?? sampleTransits[0].id
+        ));
+
+        setUserProfile((currentProfile) => {
+          if (!currentProfile || currentProfile.id !== userProfile.id) {
+            return currentProfile;
+          }
+
+          const currentChart = currentProfile.charts[0];
+          const shouldUpdateChartLocation = currentChart?.birthLocation?.timeZone !== birthLocation.timeZone;
+          const nextRising = natalBigThree.rising;
+
+          if (
+            currentProfile.sun === natalBigThree.sun
+            && currentProfile.moon === natalBigThree.moon
+            && currentProfile.rising === nextRising
+            && !shouldUpdateChartLocation
+          ) {
+            return currentProfile;
+          }
+
+          return {
+            ...currentProfile,
+            sun: natalBigThree.sun,
+            moon: natalBigThree.moon,
+            rising: nextRising,
+            charts: currentChart
+              ? [{ ...currentChart, birthLocation }, ...currentProfile.charts.slice(1)]
+              : currentProfile.charts
+          };
+        });
+      })
+      .catch(() => {
+        return;
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    userProfile?.id,
+    userProfile?.sun,
+    userProfile?.moon,
+    userProfile?.rising,
+    userProfile?.charts[0]?.birthDate,
+    userProfile?.charts[0]?.birthTime,
+    userProfile?.charts[0]?.birthCity,
+    userProfile?.charts[0]?.birthLocation?.label,
+    userProfile?.charts[0]?.birthLocation?.timeZone,
+    sky.generatedAt
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1115,8 +1416,11 @@ export function App() {
   }
 
   function openCreateChartModal({ prefill = false }: { prefill?: boolean } = {}) {
+    setChartModalStep("overview");
+
     if (!prefill) {
-      setTransitForm(createBlankTransitForm());
+      const blankForm = createBlankTransitForm();
+      setTransitForm(userProfile ? { ...blankForm, name: userProfile.name } : blankForm);
       setChartModalOpen(true);
       return;
     }
@@ -1148,7 +1452,13 @@ export function App() {
     setChartModalOpen(true);
   }
 
-  async function drawTransitChart() {
+  async function drawTransitChart({
+    closeModal = true,
+    nextStep
+  }: {
+    closeModal?: boolean;
+    nextStep?: "overview" | "birth" | "city";
+  } = {}) {
     const currentCity = transitForm.currentLocation.trim();
     let resolvedCurrentLocationData = transitForm.currentLocationData;
     const nextBirthDate = formatSignupBirthDate({
@@ -1189,7 +1499,7 @@ export function App() {
     if (userProfile) {
       const primaryChart = userProfile.charts[0];
       const nextProfileName = nextName || userProfile.name;
-      const nextChart: UserChart = {
+      let nextChart: UserChart = {
         id: primaryChart?.id ?? `chart-${Date.now()}`,
         name: chartNameFromProfile(nextProfileName),
         type: "Birth chart",
@@ -1198,38 +1508,51 @@ export function App() {
         birthCity: birthCity || "Birth city needed",
         birthLocation
       };
+      let nextSun = nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : userProfile.sun;
+      let nextMoon = userProfile.moon;
+      let nextRising = transitForm.unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : userProfile.rising;
 
-      setUserProfile({
-        ...userProfile,
-        name: nextProfileName,
-        sun: nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : userProfile.sun,
-        rising: transitForm.unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : userProfile.rising,
-        currentLocation: currentCity || userProfile.currentLocation,
-        currentLocationData: resolvedCurrentLocationData ?? userProfile.currentLocationData,
-        settings: normalizeChartSettings(userProfile.settings),
-        charts: [nextChart, ...userProfile.charts.slice(1)]
-      });
-
-      if (nextBirthDate && birthLocation) {
+      if (nextBirthDate && birthLocation && nextBirthTime !== "Birth time needed") {
         const birthDateTime = zonedDateTimeToUtc(
           nextBirthDate,
           transitForm.unknownBirthTime ? "12:00 PM" : nextBirthTime,
           birthLocation.timeZone
         );
         const natalSky = await getAstrodienstSky(birthLocation, birthDateTime);
+        const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
         const nextTransits = buildNatalTransitItems(sky.positions, natalSky.positions);
 
+        nextSun = natalBigThree.sun;
+        nextMoon = natalBigThree.moon;
+        nextRising = natalBigThree.rising;
+        nextChart = { ...nextChart, birthLocation: birthLocation };
         setProfileTransits(nextTransits);
         setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
       }
+
+      setUserProfile({
+        ...userProfile,
+        name: nextProfileName,
+        sun: nextSun,
+        moon: nextMoon,
+        rising: nextRising,
+        currentLocation: currentCity || userProfile.currentLocation,
+        currentLocationData: resolvedCurrentLocationData ?? userProfile.currentLocationData,
+        settings: normalizeChartSettings(userProfile.settings),
+        charts: [nextChart, ...userProfile.charts.slice(1)]
+      });
     }
 
     setTransitsDrawn(true);
-    setChartModalOpen(false);
+    setChartModalOpen(!closeModal);
+    if (nextStep) {
+      setChartModalStep(nextStep);
+    }
     setMode(userProfile ? "profile" : "guest");
   }
 
   const isTodayMode = mode === "guest" || mode === "member";
+  const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
 
   return (
     <main className={`app-shell theme-${theme} mode-${mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
@@ -1237,10 +1560,10 @@ export function App() {
         <header className="topbar">
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
-            <Moon size={28} />
+            <BrandAsterisk />
           </div>
           <div className="brand-wordmark" aria-label="tldrastro">
-            <span>tldr</span>
+            <span>TLDR</span>
             <em>astro</em>
           </div>
         </div>
@@ -1250,40 +1573,15 @@ export function App() {
             <Sparkles size={18} aria-hidden="true" />
             <span>Sky</span>
           </button>
-          {userProfile ? (
+          {userProfile && (
             <button
-              className={`account-nav ${mode === "profile" || mode === "account" || mode === "settings" ? "active" : ""}`}
+              className={`account-nav ${mode === "profile" ? "active" : ""}`}
               type="button"
               onClick={() => setMode("profile")}
             >
-              <User size={18} aria-hidden="true" />
+              <SmileNavIcon />
               <span>You</span>
             </button>
-          ) : (
-            <>
-              <button
-                className={mode === "profile" && accountIntent === "login" ? "active" : ""}
-                type="button"
-                onClick={() => {
-                  setAccountIntent("login");
-                  setMode("profile");
-                }}
-              >
-                <User size={18} aria-hidden="true" />
-                <span>Sign In</span>
-              </button>
-              <button
-                className={mode === "profile" && accountIntent === "create" ? "active" : ""}
-                type="button"
-                onClick={() => {
-                  setAccountIntent("create");
-                  setMode("profile");
-                }}
-              >
-                <Star size={18} aria-hidden="true" />
-                <span>Join</span>
-              </button>
-            </>
           )}
         </nav>
 
@@ -1303,10 +1601,14 @@ export function App() {
             type="button"
             className="menu-toggle"
             aria-expanded={menuOpen}
-            aria-label="Open menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((isOpen) => !isOpen)}
           >
-            <Menu size={24} aria-hidden="true" />
+            <span className="hamburger-icon" aria-hidden="true">
+              <span className="hamburger-line hamburger-line-top" />
+              <span className="hamburger-line hamburger-line-middle" />
+              <span className="hamburger-line hamburger-line-bottom" />
+            </span>
           </button>
           {menuOpen && (
             <nav className="site-menu" aria-label="Site menu">
@@ -1320,21 +1622,6 @@ export function App() {
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
-              <button type="button">
-                <CircleHelp size={20} aria-hidden="true" />
-                <span>Help & FAQ</span>
-              </button>
-              <button type="button">
-                <Star size={20} aria-hidden="true" />
-                <span>What’s new</span>
-              </button>
-              <div className="site-menu-gift">
-                <Gift size={20} aria-hidden="true" />
-                <div>
-                  <strong>Gift tldr astro</strong>
-                  <span>Share the sky with someone you love.</span>
-                </div>
-              </div>
               {userProfile ? (
                 <button className="site-menu-signout" type="button" onClick={async () => { await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
                   <LogOut size={20} aria-hidden="true" />
@@ -1444,16 +1731,17 @@ export function App() {
       <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
         {!isSignupMode && !isProfileMode && (
           <section className="sky-panel" aria-label="Current sky">
-          <SkyWheel positions={sky.positions} aspects={sky.aspects} />
+            <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
-          <SkyCards sky={sky} />
+            <SkyCards sky={sky} />
+            <RetrogradeCallout positions={sky.positions} onOpenDetail={setSelectedSkyDetail} />
           </section>
         )}
 
         <section className="detail-panel" aria-label="Portal details">
-          {mode === "guest" && <TodayView positions={sky.positions} aspects={sky.aspects} />}
+          {mode === "guest" && <TodayView positions={sky.positions} aspects={sky.aspects} onOpenDetail={setSelectedSkyDetail} />}
           {mode === "member" && (
-            <TodayView positions={sky.positions} aspects={sky.aspects} />
+            <TodayView positions={sky.positions} aspects={sky.aspects} onOpenDetail={setSelectedSkyDetail} />
           )}
           {mode === "profile" && (
             userProfile ? (
@@ -1462,6 +1750,7 @@ export function App() {
                 onUpdateProfile={setUserProfile}
                 transitForm={transitForm}
                 transitItems={activeTransits}
+                natalSky={profileNatalSky}
                 transitsDrawn={transitsDrawn}
                 selectedTransit={selectedTransit}
                 selectedTransitId={selectedTransitId}
@@ -1524,6 +1813,18 @@ export function App() {
         </section>
       </section>
 
+      {isTodayMode && mode === "member" && userProfile && needsChartSetup && (
+        <button className="create-chart-fab" type="button" onClick={() => openCreateChartModal()}>
+          <span className="create-chart-fab-icon" aria-hidden="true">
+            <Sparkles size={18} />
+          </span>
+          <span className="create-chart-fab-copy">
+            <strong>Create your chart</strong>
+            <em>{chartFlowStepsLeft(userProfile)} steps left</em>
+          </span>
+        </button>
+      )}
+
       {chartModalOpen && (
         <div className="chart-modal-backdrop" role="presentation" onMouseDown={() => setChartModalOpen(false)}>
           <section
@@ -1536,11 +1837,39 @@ export function App() {
             <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
               ×
             </button>
-            <TransitSetup
+            <CreateChartFlow
               form={transitForm}
               setForm={setTransitForm}
-              onDraw={drawTransitChart}
+              profile={userProfile}
+              step={chartModalStep}
+              setStep={setChartModalStep}
+              onSave={drawTransitChart}
             />
+          </section>
+        </div>
+      )}
+
+      {selectedSkyDetail && (
+        <div className="sky-detail-backdrop" role="presentation" onMouseDown={() => setSelectedSkyDetail(null)}>
+          <section
+            className="sky-detail-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sky-detail-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button className="sky-detail-close" type="button" aria-label="Close detail" onClick={() => setSelectedSkyDetail(null)}>
+              <X size={22} aria-hidden="true" />
+            </button>
+            <div className="sky-detail-glyph" aria-hidden="true">{selectedSkyDetail.glyph}</div>
+            <span>{selectedSkyDetail.kicker}</span>
+            <h2 id="sky-detail-title">{selectedSkyDetail.title}</h2>
+            <p className="sky-detail-meta">{selectedSkyDetail.meta}</p>
+            <div className="sky-detail-body">
+              {selectedSkyDetail.body.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
           </section>
         </div>
       )}
@@ -1707,7 +2036,91 @@ function formatPlacementPosition(position: PlanetPosition) {
   return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatDegree(position.degree)}°`;
 }
 
-function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects: SkySnapshot["aspects"] }) {
+function ordinalHouse(house: number) {
+  const rem100 = house % 100;
+
+  if (rem100 >= 11 && rem100 <= 13) {
+    return `${house}th`;
+  }
+
+  const suffixes: Record<number, string> = {
+    1: "st",
+    2: "nd",
+    3: "rd"
+  };
+
+  return `${house}${suffixes[house % 10] ?? "th"}`;
+}
+
+const natalSignatureDescriptions: Record<string, string> = {
+  Ascendant: "Your motivation for living life",
+  Sun: "Your identity and where you shine",
+  Moon: "Your inner world and emotions",
+  Mercury: "How and where you communicate",
+  Venus: "How and where you connect",
+  Mars: "How and where you take action",
+  Jupiter: "How and where you grow",
+  Saturn: "Where you build and commit",
+  Uranus: "How and where you break free",
+  Neptune: "How and where you dream",
+  Pluto: "How and where you transform"
+};
+
+function natalPlacementTitle(position: PlanetPosition) {
+  return `${position.planet} in ${position.sign} · ${ordinalHouse(position.house)} House`;
+}
+
+function natalPlacementDescription(planet: string) {
+  return natalSignatureDescriptions[planet] ?? "A signature in your chart";
+}
+
+const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
+  Aries: "Fire",
+  Leo: "Fire",
+  Sagittarius: "Fire",
+  Taurus: "Earth",
+  Virgo: "Earth",
+  Capricorn: "Earth",
+  Gemini: "Air",
+  Libra: "Air",
+  Aquarius: "Air",
+  Cancer: "Water",
+  Scorpio: "Water",
+  Pisces: "Water"
+};
+
+function natalElementBalance(positions: PlanetPosition[]) {
+  const counts = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
+
+  positions.forEach((position) => {
+    const element = signElementMap[position.sign];
+
+    if (element) {
+      counts[element] += 1;
+    }
+  });
+
+  return (["Fire", "Earth", "Air", "Water"] as const).map((element) => ({
+    element,
+    count: counts[element]
+  }));
+}
+
+function SkyWheel({
+  positions,
+  aspects,
+  ascendant,
+  ascendantLongitude,
+  midheavenLongitude,
+  showHouses = false
+}: {
+  positions: PlanetPosition[];
+  aspects: SkySnapshot["aspects"];
+  ascendant?: string;
+  ascendantLongitude?: number;
+  midheavenLongitude?: number;
+  showHouses?: boolean;
+}) {
   const signs = [
     "Aries",
     "Taurus",
@@ -1722,13 +2135,14 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
     "Aquarius",
     "Pisces"
   ];
-  const labelAngles = signs.map((_, index) => 240 + index * 30);
+  const isNatalWheel = showHouses && typeof ascendantLongitude === "number";
   const center = 300;
   const radius = {
     outer: 284,
     signInner: 226,
     planet: 190,
     aspect: 150,
+    house: 112,
     inner: 44
   };
 
@@ -1740,10 +2154,16 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
     };
   }
 
+  function angleForLongitude(longitude: number) {
+    if (isNatalWheel) {
+      return 180 - normalizedAngle(longitude - ascendantLongitude);
+    }
+
+    return 225 + longitude;
+  }
+
   function planetAngle(position: PlanetPosition) {
-    const signIndex = signs.indexOf(position.sign);
-    const zodiacDegrees = signIndex * 30 + position.degree;
-    return 225 + zodiacDegrees;
+    return angleForLongitude(zodiacLongitude(position));
   }
 
   function aspectClass(type: string) {
@@ -1756,6 +2176,17 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
     }
 
     return "neutral";
+  }
+
+  function houseNumberForSign(sign: string) {
+    const signIndex = signs.indexOf(sign);
+    const ascendantIndex = ascendant ? signs.indexOf(ascendant) : -1;
+
+    if (!showHouses || signIndex < 0 || ascendantIndex < 0) {
+      return null;
+    }
+
+    return ((signIndex - ascendantIndex + 12) % 12) + 1;
   }
 
   const aspectPairs = aspects
@@ -1797,20 +2228,37 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
         <circle cx={center} cy={center} r={radius.inner} />
       </g>
 
+      <circle
+        className="sign-band"
+        cx={center}
+        cy={center}
+        r={(radius.outer + radius.signInner) / 2}
+      />
+
       <g className="wheel-sectors">
         {signs.map((sign, index) => {
-          const a = 225 + index * 30;
-          const outer = point(a, radius.outer);
+          const a = isNatalWheel ? angleForLongitude(ascendantLongitude + index * 30) : 225 + index * 30;
+          const outer = point(a, radius.signInner);
           const inner = point(a, radius.inner);
+          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+
+      <g className="sign-band-dividers">
+        {signs.map((sign, index) => {
+          const a = angleForLongitude(index * 30);
+          const outer = point(a, radius.outer);
+          const inner = point(a, radius.signInner);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
       </g>
 
       <g className="sign-labels">
         {signs.map((sign, index) => {
-          const p = point(labelAngles[index], 254);
+          const labelAngle = angleForLongitude(index * 30 + 15);
+          const p = point(labelAngle, 254);
           return (
-            <g key={sign} transform={`rotate(${labelAngles[index] + 90} ${p.x} ${p.y})`}>
+            <g key={sign} transform={`rotate(${labelAngle + 90} ${p.x} ${p.y})`}>
               <text className="sign-label-halo" x={p.x} y={p.y}>
                 {sign}
               </text>
@@ -1841,12 +2289,52 @@ function SkyWheel({ positions, aspects }: { positions: PlanetPosition[]; aspects
         })}
       </g>
 
+      {showHouses && ascendant && (
+        <g className="house-labels" aria-label="Whole sign houses">
+          {Array.from({ length: 12 }, (_, index) => {
+            const house = index + 1;
+            const p = isNatalWheel
+              ? point(angleForLongitude(ascendantLongitude + index * 30 + 15), radius.house)
+              : point(angleForLongitude((signs.indexOf(ascendant) + index) * 30 + 15), radius.house);
+
+            return (
+              <text key={house} x={p.x} y={p.y}>
+                {house}
+              </text>
+            );
+          })}
+        </g>
+      )}
+
+      {isNatalWheel && (
+        <g className="angular-labels" aria-label="Chart angles">
+          {[
+            ["ASC", ascendantLongitude],
+            ["DSC", ascendantLongitude + 180],
+            ["MC", midheavenLongitude],
+            ["IC", typeof midheavenLongitude === "number" ? midheavenLongitude + 180 : undefined]
+          ].map(([label, longitude]) => {
+            if (typeof longitude !== "number") {
+              return null;
+            }
+
+            const p = point(angleForLongitude(longitude), radius.signInner - 38);
+
+            return (
+              <text key={label} x={p.x} y={p.y}>
+                {label}
+              </text>
+            );
+          })}
+        </g>
+      )}
+
       <g className="planet-labels">
         {positions.map((position) => {
           const marker = point(planetAngle(position), radius.planet);
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetAngle(position), radius.planet - 14);
+          const label = point(planetAngle(position), radius.planet - 22);
 
           return (
             <g key={position.planet}>
@@ -1930,6 +2418,65 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
         <p>The lunar pull is moving toward its next turning point.</p>
       </article>
     </div>
+  );
+}
+
+function RetrogradeCallout({
+  positions,
+  onOpenDetail
+}: {
+  positions: PlanetPosition[];
+  onOpenDetail: (detail: SkyDetail) => void;
+}) {
+  const retrogrades = positions.filter((position) => position.motion === "retrograde");
+
+  if (retrogrades.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="retrograde-section" aria-label="Retrograde planets">
+      <span className="section-label">Retrograde</span>
+      <div className="retro-list">
+        {retrogrades.map((position) => {
+          const title = `${position.planet} retrograde`;
+
+          return (
+            <button
+              key={position.planet}
+              className="retro"
+              type="button"
+              onClick={() => onOpenDetail({
+                glyph: position.glyph,
+                kicker: "Retrograde",
+                title,
+                meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
+                body: [
+                  <>
+                    <strong>{position.planet}</strong> is retrograde in <strong>{position.sign}</strong> right now.
+                  </>,
+                  placementMeanings[position.planet] ?? "This retrograde marks one of the live notes in today's sky.",
+                  "Read retrograde motion as a cue to review, refine, and revisit this planet's topic before pushing it forward."
+                ]
+              })}
+            >
+              <span className="retro-badge" aria-hidden="true">
+                {position.glyph}
+                <span className="rx">℞</span>
+              </span>
+              <span className="retro-main">
+                <span className="retro-top">
+                  <strong>{title}</strong>
+                  <em>now</em>
+                </span>
+                <span className="retro-sub">{formatPlacementPosition(position)}</span>
+                <span className="retro-copy">Review, refine, revisit. This planet is asking for a second look.</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -2047,16 +2594,24 @@ function CitySearchField({
   );
 }
 
-function TodayView({ positions, aspects }: { positions: PlanetPosition[]; aspects: SkySnapshot["aspects"] }) {
+function TodayView({
+  positions,
+  aspects,
+  onOpenDetail
+}: {
+  positions: PlanetPosition[];
+  aspects: SkySnapshot["aspects"];
+  onOpenDetail: (detail: SkyDetail) => void;
+}) {
   return (
     <>
-      <PlacementView positions={positions} />
-      <ActiveAspects aspects={aspects} />
+      <PlacementView positions={positions} onOpenDetail={onOpenDetail} />
+      <ActiveAspects aspects={aspects} onOpenDetail={onOpenDetail} />
     </>
   );
 }
 
-function PlacementView({ positions }: { positions: PlanetPosition[] }) {
+function PlacementView({ positions, onOpenDetail }: { positions: PlanetPosition[]; onOpenDetail: (detail: SkyDetail) => void }) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
 
   return (
@@ -2087,7 +2642,7 @@ function PlacementView({ positions }: { positions: PlanetPosition[] }) {
       </div>
 
       {placementMode === "table" ? (
-        <PlacementTable positions={positions} />
+        <PlacementTable positions={positions} onOpenDetail={onOpenDetail} />
       ) : (
         <PlacementParagraph positions={positions} />
       )}
@@ -2095,15 +2650,74 @@ function PlacementView({ positions }: { positions: PlanetPosition[] }) {
   );
 }
 
-function ActiveAspects({ aspects }: { aspects: SkySnapshot["aspects"] }) {
+function aspectTone(type: string) {
+  if (["trine", "sextile"].includes(type)) {
+    return "Flow";
+  }
+
+  if (["square", "opposition"].includes(type)) {
+    return "Friction";
+  }
+
+  return "Contact";
+}
+
+function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspects"]; onOpenDetail: (detail: SkyDetail) => void }) {
   return (
     <section className="aspects-card" aria-label="Active aspects">
       <div className="aspects-heading">
         <span>Active aspects</span>
       </div>
       <div className="aspect-list">
-        {aspects.map((aspect) => (
-          <article key={`${aspect.from}-${aspect.to}`}>
+        {aspects.map((aspect) => {
+          const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
+
+          return (
+          <article
+            key={`${aspect.from}-${aspect.to}`}
+            tabIndex={0}
+            role="button"
+            aria-label={`Read more about ${title}`}
+            onClick={() => onOpenDetail({
+              glyph: aspectGlyph(aspect.type),
+              kicker: "Today's aspect",
+              title,
+              meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
+              body: [
+                aspect.meaning,
+                <>
+                  <strong>{aspect.from}</strong> and <strong>{aspect.to}</strong> are in a {aspect.type} today. The smaller the orb, the more exact the contact feels.
+                </>,
+                aspectTone(aspect.type) === "Flow"
+                  ? "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day."
+                  : aspectTone(aspect.type) === "Friction"
+                    ? "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it."
+                    : "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore."
+              ]
+            })}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onOpenDetail({
+                  glyph: aspectGlyph(aspect.type),
+                  kicker: "Today's aspect",
+                  title,
+                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
+                  body: [
+                    aspect.meaning,
+                    <>
+                      <strong>{aspect.from}</strong> and <strong>{aspect.to}</strong> are in a {aspect.type} today. The smaller the orb, the more exact the contact feels.
+                    </>,
+                    aspectTone(aspect.type) === "Flow"
+                      ? "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day."
+                      : aspectTone(aspect.type) === "Friction"
+                        ? "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it."
+                        : "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore."
+                  ]
+                });
+              }
+            }}
+          >
             <div className="glyph aspect-symbol" aria-hidden="true">{aspectGlyph(aspect.type)}</div>
             <div className="aspect-copy">
               <span>{aspect.type}</span>
@@ -2112,7 +2726,8 @@ function ActiveAspects({ aspects }: { aspects: SkySnapshot["aspects"] }) {
             </div>
             <div className="aspect-orb">{aspect.orb.toFixed(1)}°</div>
           </article>
-        ))}
+        );
+        })}
       </div>
     </section>
   );
@@ -2135,7 +2750,7 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
   );
 }
 
-function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
+function PlacementTable({ positions, onOpenDetail }: { positions: PlanetPosition[]; onOpenDetail: (detail: SkyDetail) => void }) {
   return (
     <div className="placement-table-wrap">
       <table className="placement-table">
@@ -2146,8 +2761,37 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
           </tr>
         </thead>
         <tbody>
-          {positions.map((position) => (
-            <tr key={position.planet} className={position.motion === "retrograde" ? "retrograde-row" : undefined}>
+          {positions.map((position) => {
+            const title = `${position.planet} in ${position.sign}`;
+            const openDetail = () => onOpenDetail({
+              glyph: position.glyph,
+              kicker: "Placement",
+              title,
+              meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
+              body: [
+                <>
+                  <strong>{position.planet}</strong> is moving through <strong>{formatPlacementPosition(position)}</strong> in the current sky.
+                </>,
+                placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
+                `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
+              ]
+            });
+
+            return (
+            <tr
+              key={position.planet}
+              className={position.motion === "retrograde" ? "retrograde-row" : undefined}
+              tabIndex={0}
+              role="button"
+              aria-label={`Read more about ${title}`}
+              onClick={openDetail}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  openDetail();
+                }
+              }}
+            >
               <td>
                 <span className="table-glyph">{position.glyph}</span>
                 <strong>{position.planet}</strong>
@@ -2160,21 +2804,28 @@ function PlacementTable({ positions }: { positions: PlanetPosition[] }) {
                 <span className="position-degree">{formatDegree(position.degree)}°</span>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
 }
 
-function TransitSetup({
+function CreateChartFlow({
   form,
   setForm,
-  onDraw
+  profile,
+  step,
+  setStep,
+  onSave
 }: {
   form: TransitForm;
   setForm: (form: TransitForm) => void;
-  onDraw: () => void | Promise<void>;
+  profile: UserProfile | null;
+  step: "overview" | "birth" | "city";
+  setStep: (step: "overview" | "birth" | "city") => void;
+  onSave: (options?: { closeModal?: boolean; nextStep?: "overview" | "birth" | "city" }) => void | Promise<void>;
 }) {
   function updateField<Key extends keyof TransitForm>(key: Key, value: TransitForm[Key]) {
     setForm({ ...form, [key]: value });
@@ -2184,24 +2835,112 @@ function TransitSetup({
     updateField(key, value.replace(/\D/g, "").slice(0, maxLength) as TransitForm[Key]);
   }
 
-  function submitForm(event: FormEvent<HTMLFormElement>) {
+  function submitBirthForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void onDraw();
+    void onSave({ closeModal: false, nextStep: "overview" });
+  }
+
+  function submitCityForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void onSave();
+  }
+
+  const primaryChart = profile?.charts[0];
+  const accountComplete = Boolean(profile);
+  const birthDate = formatSignupBirthDate({
+    month: form.birthMonth,
+    day: form.birthDay,
+    year: form.birthYear
+  }) || (primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "");
+  const birthComplete = Boolean(
+    birthDate &&
+    form.birthPlace.trim() &&
+    (form.unknownBirthTime || formatSignupBirthTime({
+      hour: form.birthHour,
+      minute: form.birthMinute,
+      meridiem: form.birthMeridiem
+    }))
+  );
+  const currentCityComplete = Boolean(form.currentLocation.trim() || profile?.currentLocation?.trim());
+  const flowSteps = [
+    { id: "account", label: "Create account", status: accountComplete ? "complete" : "step 1", complete: accountComplete, icon: <User size={21} aria-hidden="true" />, onClick: null },
+    { id: "birth", label: "Add birth information", status: birthComplete ? "complete" : accountComplete ? "next step" : "step 2", complete: birthComplete, icon: <CalendarDays size={21} aria-hidden="true" />, onClick: () => setStep("birth") },
+    { id: "city", label: "Enter current city", status: currentCityComplete ? "complete" : birthComplete ? "next step" : "step 3", complete: currentCityComplete, icon: <MapPin size={21} aria-hidden="true" />, onClick: () => setStep("city") }
+  ];
+
+  if (step === "overview") {
+    return (
+      <div className="create-chart-flow create-chart-overview">
+        <div className="chart-modal-heading">
+          <h3 id="chart-modal-title">Create your chart</h3>
+          <p>Three quick steps to unlock your personalized sky.</p>
+        </div>
+
+        <div className="create-chart-steps" aria-label="Create your chart steps">
+          {flowSteps.map((flowStep, index) => (
+            <div
+              className={`create-chart-step-row ${flowStep.complete ? "complete" : ""} ${!flowStep.complete && flowSteps.findIndex((candidate) => !candidate.complete) === index ? "active" : ""}`}
+              key={flowStep.id}
+            >
+              <span className="create-chart-rail" aria-hidden="true"><span /></span>
+              <button
+                className="create-chart-step"
+                type="button"
+                disabled={!flowStep.onClick}
+                onClick={() => flowStep.onClick?.()}
+              >
+                <span className="create-chart-step-icon">{flowStep.icon}</span>
+                <span className="create-chart-step-copy">
+                  <span>{flowStep.status}</span>
+                  <strong>{flowStep.label}</strong>
+                </span>
+                {flowStep.onClick && <ChevronRight size={20} aria-hidden="true" />}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "city") {
+    return (
+      <form className="create-chart-flow create-chart-detail" onSubmit={submitCityForm}>
+        <div className="chart-modal-heading">
+          <h3 id="chart-modal-title">Where are you now?</h3>
+          <p>Your current city sets the sky for today's readings.</p>
+        </div>
+
+        <CitySearchField
+          label="Current city"
+          value={form.currentLocation}
+          onChange={(value) => {
+            setForm({ ...form, currentLocation: value, currentLocationData: null });
+          }}
+          onSelect={(suggestion) => {
+            setForm({ ...form, currentLocation: suggestion.label, currentLocationData: suggestion });
+          }}
+          placeholder="New York City, NY"
+          className="signup-city-search create-chart-city-search"
+        />
+
+        <button className="signup-submit create-chart-save" type="submit">Save location</button>
+      </form>
+    );
   }
 
   return (
-    <form className="transit-form signup-form chart-create-form" onSubmit={submitForm}>
-      <div className="signup-heading">
-        <p>Create Chart</p>
-        <h3 id="chart-modal-title">Birth date. Birth time. Birth city. Current city.</h3>
-        <span>We'll take it from there.</span>
+    <form className="create-chart-flow create-chart-detail" onSubmit={submitBirthForm}>
+      <div className="chart-modal-heading">
+        <h3 id="chart-modal-title">Your birth information</h3>
+        <p>This pinpoints the exact sky at your first breath.</p>
       </div>
 
-      <div className="signup-fields">
+      <div className="signup-fields create-chart-fields">
         <label className="signup-field">
-          <span>Name</span>
+          <span>Full name</span>
           <div>
-            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Your name" />
+            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Marie Satori" />
           </div>
         </label>
 
@@ -2291,7 +3030,7 @@ function TransitSetup({
         </label>
 
         <CitySearchField
-          label="Place of birth"
+          label="Birth place"
           value={form.birthPlace}
           onChange={(value) => {
             setForm({ ...form, birthPlace: value, birthLocation: null });
@@ -2299,27 +3038,12 @@ function TransitSetup({
           onSelect={(suggestion) => {
             setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
           }}
-          placeholder="Start typing the city where you were born."
-          className="signup-city-search"
-        />
-
-        <CitySearchField
-          label="Current city"
-          value={form.currentLocation}
-          onChange={(value) => {
-            setForm({ ...form, currentLocation: value, currentLocationData: null });
-          }}
-          onSelect={(suggestion) => {
-            setForm({ ...form, currentLocation: suggestion.label, currentLocationData: suggestion });
-          }}
-          placeholder="Start typing where you are now."
-          className="signup-city-search"
-          optional
-          optionalLabel="(For Daily Transits)"
+          placeholder="Manhattan, NY"
+          className="signup-city-search create-chart-city-search"
         />
       </div>
 
-      <button className="signup-submit" type="submit">Create chart →</button>
+      <button className="signup-submit create-chart-save" type="submit">Save birth details</button>
     </form>
   );
 }
@@ -2820,12 +3544,12 @@ function SettingsView({
     setBirthTime(formatSignupBirthTime(nextParts));
   }
 
-  function saveSettings() {
+  async function saveSettings() {
     const nextName = profileName.trim() || profile.name;
     const nextEmail = profileEmail.trim() || profile.email;
     const nextBirthDate = formatSignupBirthDate(birthDateParts);
     const nextBirthTime = unknownBirthTime ? "Time unknown" : birthTime || "Birth time needed";
-    const chart: UserChart = {
+    let chart: UserChart = {
       id: primaryChart?.id ?? `chart-${Date.now()}`,
       name: primaryChart?.name && primaryChart.name !== chartNameFromProfile(profile.name)
         ? primaryChart.name
@@ -2836,13 +3560,34 @@ function SettingsView({
       birthCity: birthCity.trim() || "Birth city needed",
       birthLocation
     };
+    let nextSun = nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun;
+    let nextMoon = profile.moon;
+    let nextRising = unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : profile.rising;
+    const nextBirthCity = birthCity.trim();
+    const resolvedBirthLocation = nextBirthCity
+      ? birthLocation?.label === nextBirthCity
+        ? withTimeZone(birthLocation)
+        : locationFromLabel(nextBirthCity)
+      : null;
+
+    if (nextBirthDate && resolvedBirthLocation && nextBirthTime !== "Birth time needed") {
+      const birthDateTime = zonedDateTimeToUtc(nextBirthDate, unknownBirthTime ? "12:00 PM" : nextBirthTime, resolvedBirthLocation.timeZone);
+      const natalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
+      const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
+
+      nextSun = natalBigThree.sun;
+      nextMoon = natalBigThree.moon;
+      nextRising = natalBigThree.rising;
+      chart = { ...chart, birthLocation: resolvedBirthLocation };
+    }
 
     onUpdateProfile({
       ...profile,
       name: nextName,
       email: nextEmail,
-      sun: nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun,
-      rising: unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : profile.rising,
+      sun: nextSun,
+      moon: nextMoon,
+      rising: nextRising,
       currentLocation: currentCity.trim(),
       currentLocationData,
       settings: normalizeChartSettings(settings),
@@ -2853,7 +3598,11 @@ function SettingsView({
 
   function handleSettingsAction() {
     if (settingsEditing) {
-      saveSettings();
+      onUpdateProfile({
+        ...profile,
+        settings: normalizeChartSettings(settings)
+      });
+      setSettingsEditing(false);
       return;
     }
 
@@ -2866,173 +3615,29 @@ function SettingsView({
       <div className="settings-header">
         <h2>settings.</h2>
         <button className="settings-save" type="button" onClick={handleSettingsAction}>
-          {settingsEditing ? "Save changes" : "Edit info"}
+          {settingsEditing ? "Save changes" : "Edit settings"}
         </button>
       </div>
 
       <div className="settings-panel">
-        <section className="settings-group" aria-label="Account profile">
-          <span className="settings-group-label">Account</span>
-          <div className="settings-card">
-            <div className="settings-profile-row">
-              <ProfileAvatar profile={profile} size="large" />
-              <div>
-                <p>{profile.provider === "google" ? "Google account" : "Email account"}</p>
-                <h3>{profile.name}</h3>
-                <span>{profile.email}</span>
-              </div>
-            </div>
-
-            {settingsEditing ? (
-              <div className="settings-fields">
-                <label className="signup-field">
-                  <span>Name</span>
-                  <div>
-                    <input value={profileName} onChange={(event) => setProfileName(event.target.value)} />
-                  </div>
-                </label>
-                <label className="signup-field">
-                  <span>Email</span>
-                  <div>
-                    <input type="email" value={profileEmail} onChange={(event) => setProfileEmail(event.target.value)} />
-                  </div>
-                </label>
-              </div>
-            ) : (
-              <div className="settings-list" aria-label="Account details">
-                <div className="settings-row">
-                  <span>Name</span>
-                  <strong>{profile.name}</strong>
-                </div>
-                <div className="settings-row">
-                  <span>Email</span>
-                  <strong>{profile.email}</strong>
-                </div>
-                <div className="settings-row">
-                  <span>Signed in with</span>
-                  <strong>{profile.provider === "google" ? "Google" : "Email"}</strong>
-                </div>
-                <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
-                  <span>Sign out</span>
-                  <ChevronRight size={18} aria-hidden="true" />
-                </button>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Birth and transit information">
-          <span className="settings-group-label">Birth chart</span>
-          <div className="settings-card">
-            {settingsEditing ? (
-              <div className="settings-fields">
-                <div className="signup-grid">
-                  <label className="signup-field">
-                    <span>Birth date</span>
-                    <div className="signup-date-control">
-                      <input aria-label="Birth month" inputMode="numeric" placeholder="MM" value={birthDateParts.month} onChange={(event) => updateBirthDate("month", event.target.value)} />
-                      <span aria-hidden="true">/</span>
-                      <input aria-label="Birth day" inputMode="numeric" placeholder="DD" value={birthDateParts.day} onChange={(event) => updateBirthDate("day", event.target.value)} />
-                      <span aria-hidden="true">/</span>
-                      <input aria-label="Birth year" inputMode="numeric" placeholder="YYYY" value={birthDateParts.year} onChange={(event) => updateBirthDate("year", event.target.value)} />
-                    </div>
-                  </label>
-
-                  <label className="signup-field">
-                    <span>Birth time</span>
-                    <div className="signup-time-control">
-                      <input aria-label="Birth hour" inputMode="numeric" placeholder="HH" value={birthTimeParts.hour} disabled={unknownBirthTime} onChange={(event) => updateBirthTime("hour", event.target.value)} />
-                      <span className="time-separator" aria-hidden="true">:</span>
-                      <input aria-label="Birth minute" inputMode="numeric" placeholder="MM" value={birthTimeParts.minute} disabled={unknownBirthTime} onChange={(event) => updateBirthTime("minute", event.target.value)} />
-                      <div className="signup-meridiem" aria-label="AM or PM">
-                        {(["AM", "PM"] as const).map((period) => (
-                          <button key={period} type="button" className={birthTimeParts.meridiem === period ? "active" : ""} disabled={unknownBirthTime} aria-pressed={birthTimeParts.meridiem === period} onClick={() => updateBirthTime("meridiem", period)}>
-                            {period}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </label>
-                </div>
-
-                <label className="unknown-time">
-                  <input
-                    type="checkbox"
-                    checked={unknownBirthTime}
-                    onChange={(event) => {
-                      setUnknownBirthTime(event.target.checked);
-                      setBirthTime(event.target.checked ? "12:00 PM" : birthTime);
-                    }}
-                  />
-                  <span>I don't know my birth time.</span>
-                </label>
-
-                <CitySearchField
-                  label="Birth city"
-                  value={birthCity}
-                  onChange={(value) => {
-                    setBirthCity(value);
-                    setBirthLocation(null);
-                  }}
-                  onSelect={(suggestion) => {
-                    setBirthCity(suggestion.label);
-                    setBirthLocation(suggestion);
-                  }}
-                  placeholder="Start typing the city where you were born."
-                  className="signup-city-search settings-city-search"
-                />
-
-                <CitySearchField
-                  label="Current city"
-                  value={currentCity}
-                  onChange={(value) => {
-                    setCurrentCity(value);
-                    setCurrentLocationData(null);
-                  }}
-                  onSelect={(suggestion) => {
-                    setCurrentCity(suggestion.label);
-                    setCurrentLocationData(suggestion);
-                  }}
-                  placeholder="Start typing where you are now."
-                  className="signup-city-search settings-city-search"
-                  optional
-                  optionalLabel="(For Daily Transits)"
-                />
-              </div>
-            ) : (
-              <div className="settings-list" aria-label="Chart details">
-                <div className="settings-row">
-                  <span>Date</span>
-                  <strong>{birthDateDisplay}</strong>
-                </div>
-                <div className="settings-row">
-                  <span>Time</span>
-                  <strong>{birthTimeDisplay}</strong>
-                </div>
-                <div className="settings-row">
-                  <span>Place</span>
-                  <strong>{birthCityDisplay}</strong>
-                </div>
-                <div className="settings-row">
-                  <span>Current city</span>
-                  <strong>{currentCityDisplay}</strong>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Chart preferences">
+        <section className="settings-group" aria-label="Personalization settings">
           <span className="settings-group-label">Personalize</span>
           <div className="settings-card">
-            <div className="settings-list">
+            <div className="settings-list" aria-label="Personalization settings">
               <div className="settings-row">
-                <span>House system</span>
-                <strong>Whole House</strong>
+                <span>Reading style</span>
+                {settingsEditing ? (
+                  <select value={settings.aspects} onChange={(event) => setSettings({ ...settings, aspects: event.target.value as ChartSettings["aspects"] })}>
+                    <option>Standard</option>
+                    <option>Tight</option>
+                  </select>
+                ) : (
+                  <strong>{settings.aspects}</strong>
+                )}
               </div>
               <div className="settings-row">
-                <span>Zodiac</span>
-                <strong>Tropical</strong>
+                <span>Default location</span>
+                <strong>{currentCityDisplay}</strong>
               </div>
               <div className="settings-row settings-row-control">
                 <span>Theme</span>
@@ -3049,16 +3654,21 @@ function SettingsView({
                   onChange={onSunriseOrbChange}
                 />
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Chart defaults">
+          <span className="settings-group-label">Chart defaults</span>
+          <div className="settings-card">
+            <div className="settings-list" aria-label="Chart defaults">
               <div className="settings-row">
-                <span>Aspect orbs</span>
-                {settingsEditing ? (
-                  <select value={settings.aspects} onChange={(event) => setSettings({ ...settings, aspects: event.target.value as ChartSettings["aspects"] })}>
-                    <option>Standard</option>
-                    <option>Tight</option>
-                  </select>
-                ) : (
-                  <strong>{settings.aspects}</strong>
-                )}
+                <span>Zodiac</span>
+                <strong>Tropical</strong>
+              </div>
+              <div className="settings-row">
+                <span>House system</span>
+                <strong>Whole House</strong>
               </div>
             </div>
           </div>
@@ -3259,12 +3869,9 @@ function AccountView({
 
 function ProfileView({
   profile,
-  onUpdateProfile,
-  transitForm,
   transitItems,
+  natalSky,
   transitsDrawn,
-  selectedTransit,
-  selectedTransitId,
   setSelectedTransitId,
   onCreateChart
 }: {
@@ -3272,6 +3879,7 @@ function ProfileView({
   onUpdateProfile: (profile: UserProfile) => void;
   transitForm: TransitForm;
   transitItems: TransitItem[];
+  natalSky: SkySnapshot | null;
   transitsDrawn: boolean;
   selectedTransit: TransitItem;
   selectedTransitId: string;
@@ -3279,121 +3887,98 @@ function ProfileView({
   onCreateChart: () => void;
 }) {
   const primaryChart = profile.charts[0];
-  const savedBirthDate = primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "";
-  const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Time unknown" && primaryChart.birthTime !== "Birth time needed"
+  const savedBirthDate = validChartBirthDate(primaryChart);
+  const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed"
     ? primaryChart.birthTime
     : "";
-  const hasSavedBirthDetails = Boolean(
-    savedBirthDate &&
-    savedBirthTime &&
-    primaryChart?.birthCity &&
-    primaryChart.birthCity !== "Birth city needed"
-  );
+  const savedBirthCity = primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "";
+  const hasSavedBirthDetails = Boolean(savedBirthDate && savedBirthTime && savedBirthCity);
   const hasSavedCurrentCity = Boolean(profile.currentLocation?.trim());
-  const [profileEditorOpen, setProfileEditorOpen] = useState(!hasSavedBirthDetails || !hasSavedCurrentCity);
-  const [profileName, setProfileName] = useState(profile.name);
-  const [profileEmail, setProfileEmail] = useState(profile.email);
-  const [birthCity, setBirthCity] = useState(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "");
-  const [birthLocation, setBirthLocation] = useState<LocationInput | null>(primaryChart?.birthLocation ?? null);
-  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(savedBirthDate));
-  const [birthTime, setBirthTime] = useState(savedBirthTime);
-  const [unknownBirthTime, setUnknownBirthTime] = useState(primaryChart?.birthTime === "Time unknown");
-  const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
-  const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
   const [profileTab, setProfileTab] = useState<"transits" | "chart">("chart");
-  const birthTimeParts = splitSignupBirthTime(birthTime);
+  const setupStepsLeft = chartFlowStepsLeft(profile);
+  const summaryBirthDateDisplay = savedBirthDate ? formatProfileBirthDateLong(savedBirthDate) : "";
+  const birthCityDisplay = savedBirthCity ? compactCityLabel(savedBirthCity) : "Birth city needed";
+  const unknownBirthTime = savedBirthTime === "Time unknown";
+  const calculatedBigThree = natalSky ? natalBigThreeFromSky(natalSky, unknownBirthTime) : null;
+  const profileSun = profile.sun && profile.sun !== "Sun pending" ? profile.sun : "";
+  const profileMoon = profile.moon && profile.moon !== "Moon pending" ? profile.moon : "";
+  const profileRising = profile.rising && profile.rising !== "Rising pending" ? profile.rising : "";
+  const displaySun = calculatedBigThree?.sun ?? profileSun;
+  const displayMoon = calculatedBigThree?.moon ?? profileMoon;
+  const displayRising = calculatedBigThree?.rising ?? (unknownBirthTime ? "Rising pending" : profileRising);
+  const signaturesReady = Boolean(displaySun && displayMoon && (unknownBirthTime || displayRising));
+  const safeSun = displaySun || "your Sun";
+  const safeMoon = displayMoon || "your Moon";
+  const safeRising = displayRising || "your rising sign";
+  const natalPositions = natalSky?.positions ?? [];
+  const natalSun = natalPositions.find((position) => position.planet === "Sun");
+  const natalMoon = natalPositions.find((position) => position.planet === "Moon");
+  const planetRows = natalPositions.filter((position) => !["Sun", "Moon", "True Node"].includes(position.planet));
+  const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
+  const aspectRows = transitItems.slice(0, 8);
+  const elementalBalance = natalElementBalance(natalPositions);
+  const leadingElements = elementalBalance
+    .filter((item) => item.count === Math.max(...elementalBalance.map((element) => element.count)) && item.count > 0)
+    .map((item) => item.element);
+  const elementalSummary = leadingElements.length > 0 ? `${leadingElements.join(" & ")} led` : "Balance pending";
+  const plutoSignature = natalPositions.find((position) => position.planet === "Pluto");
+  const signatureTitle = plutoSignature?.house === 7 ? "Relationships remake you" : `${safeSun} shapes your center`;
+  const signatureBody = plutoSignature?.house === 7
+    ? "Pluto sits angular in your 7th house - partnership is where your deepest growth and power play out. Nothing about love stays surface-level."
+    : `${natalSun ? natalPlacementTitle(natalSun) : `Sun in ${safeSun}`} sets the center of gravity, while ${safeMoon} and ${safeRising} shape how the chart meets the world.`;
 
-  function updateProfileBirthDate(part: keyof SignupDateParts, value: string) {
-    const maxLength = part === "year" ? 4 : 2;
-    setBirthDateParts({
-      ...birthDateParts,
-      [part]: value.replace(/\D/g, "").slice(0, maxLength)
-    });
-  }
-
-  function updateProfileBirthTime(part: keyof SignupTimeParts, value: string) {
-    const nextParts = {
-      ...birthTimeParts,
-      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
-    };
-
-    setBirthTime(formatSignupBirthTime(nextParts));
-  }
-
-  function saveBirthDetails() {
-    const nextBirthDate = formatSignupBirthDate(birthDateParts);
-    const chart: UserChart = {
-      id: primaryChart?.id ?? `chart-${Date.now()}`,
-      name: primaryChart?.name ?? chartNameFromProfile(profile.name),
-      type: "Birth chart",
-      birthDate: nextBirthDate || "Birth date needed",
-      birthTime: unknownBirthTime ? "Time unknown" : birthTime || "Birth time needed",
-      birthCity: birthCity.trim() || "Birth city needed",
-      birthLocation
-    };
-
-    onUpdateProfile({
-      ...profile,
-      name: profileName.trim() || profile.name,
-      email: profileEmail.trim() || profile.email,
-      sun: nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun,
-      rising: unknownBirthTime || !birthTime ? "Rising pending" : profile.rising,
-      charts: [chart, ...profile.charts.slice(1)]
-    });
-  }
-
-  function saveCurrentLocation() {
-    onUpdateProfile({
-      ...profile,
-      name: profileName.trim() || profile.name,
-      email: profileEmail.trim() || profile.email,
-      currentLocation: currentCity.trim(),
-      currentLocationData
-    });
-  }
-
-  function saveProfileInfo() {
-    const nextName = profileName.trim() || profile.name;
-    const nextEmail = profileEmail.trim() || profile.email;
-
-    onUpdateProfile({
-      ...profile,
-      name: nextName,
-      email: nextEmail,
-      charts: profile.charts.map((chart, index) => (
-        index === 0 && chart.name === chartNameFromProfile(profile.name)
-          ? { ...chart, name: chartNameFromProfile(nextName) }
-          : chart
-      ))
-    });
+  if (!hasSavedBirthDetails) {
+    return (
+      <section className="you-empty-state" aria-label="Create your chart">
+        <div className="you-empty-orb" aria-hidden="true">✶</div>
+        <h2>Your chart is waiting.</h2>
+        <p>
+          Add your birth details, and we'll map the exact sky you were born under - then show how today's planets are activating your chart.
+        </p>
+        <button type="button" className="you-empty-cta" onClick={onCreateChart}>
+          <span className="you-empty-cta-icon" aria-hidden="true">
+            <Sparkles size={22} />
+          </span>
+          <span className="you-empty-cta-copy">
+            <strong>Create your chart</strong>
+            <em>{setupStepsLeft} steps left</em>
+          </span>
+        </button>
+        <div className="you-empty-features" aria-label="Chart unlocks">
+          <span>☉ Placements</span>
+          <span>△ Aspects</span>
+          <span>↗ Daily transits</span>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <>
-      <div className="member-header profile-hero you-summary-card">
-        <ProfileAvatar profile={profile} size="large" />
-        <div className="profile-hero-copy">
+    <section className="you-page" aria-label="You">
+      <div className="you-profile-card" aria-label="Profile summary">
+        <span className="you-profile-monogram" aria-hidden="true">
+          {profileInitials(profile.name, profile.email)}
+        </span>
+        <div className="you-profile-copy">
           <h2>{profile.name}</h2>
-          <span>
-            {savedBirthDate ? formatProfileBirthDate(savedBirthDate) : "Birth date needed"}
-            {primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? ` · ${primaryChart.birthCity}` : ""}
-          </span>
-          {hasSavedBirthDetails && (
-            <p className="you-signature">
-              <span>☉ {profile.sun}</span>
-              <span>☽ {profile.moon}</span>
-              <span>↑ {profile.rising}</span>
-            </p>
+          {signaturesReady ? (
+            <div className="you-signature-row" aria-label="Big three">
+              <span><span aria-hidden="true">☉</span>{displaySun}</span>
+              <span><span aria-hidden="true">☽</span>{displayMoon}</span>
+              <span><span aria-hidden="true">↑</span>{displayRising}</span>
+            </div>
+          ) : (
+            <p className="you-profile-status">Calculating chart signatures...</p>
           )}
         </div>
       </div>
 
-      <div className="you-tabs" role="tablist" aria-label="Profile sections">
+      <div className="seg subtabs you-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
         <button
           type="button"
           role="tab"
           aria-selected={profileTab === "transits"}
-          className={profileTab === "transits" ? "active" : ""}
+          className={profileTab === "transits" ? "on active" : ""}
           onClick={() => setProfileTab("transits")}
         >
           Transits
@@ -3402,189 +3987,188 @@ function ProfileView({
           type="button"
           role="tab"
           aria-selected={profileTab === "chart"}
-          className={profileTab === "chart" ? "active" : ""}
+          className={profileTab === "chart" ? "on active" : ""}
           onClick={() => setProfileTab("chart")}
         >
           Chart
         </button>
       </div>
 
-      {profileTab === "chart" && profileEditorOpen && (
-      <section className="profile-setup" aria-label="Profile setup">
-        <p className="profile-setup-copy">
-          We’ve got your name and email. The last details we need are your <strong>birth date, exact birth time, and birth city</strong> for your natal chart, plus your <strong>current city</strong> so we can map today’s planetary transits and see how they interact with your chart.
-        </p>
-
-        <div className="profile-setup-grid">
-          <section className="setup-card" aria-label="Profile information">
-            <div className="setup-card-heading">
-              <span>Profile information</span>
-            </div>
-            <h3>Your account details</h3>
-
-            <label className="signup-field">
-              <span>Name</span>
-              <div>
-                <input value={profileName} onChange={(event) => setProfileName(event.target.value)} />
-              </div>
-            </label>
-
-            <label className="signup-field">
-              <span>Email</span>
-              <div>
-                <input type="email" value={profileEmail} onChange={(event) => setProfileEmail(event.target.value)} />
-              </div>
-            </label>
-
-            <button className="setup-submit" type="button" onClick={saveProfileInfo}>Save profile →</button>
-          </section>
-
-          <section className="setup-card setup-card-dark" aria-label="Natal chart setup">
-            <div className="setup-card-heading">
-              <span>Natal chart</span>
-            </div>
-            <h3>Where and when were you born?</h3>
-            <p>A snapshot of the sky the exact moment of your first breath.</p>
-
-            <CitySearchField
-              label="Birth city"
-              value={birthCity}
-              onChange={(value) => {
-                setBirthCity(value);
-                setBirthLocation(null);
-              }}
-              onSelect={(suggestion) => {
-                setBirthCity(suggestion.label);
-                setBirthLocation(suggestion);
-              }}
-              placeholder="Start typing the city where you were born."
-              className="profile-city-search"
-            />
-
-            <div className="signup-grid">
-              <label className="signup-field">
-                <span>Birth date</span>
-                <div className="signup-date-control">
-                  <input aria-label="Birth month" inputMode="numeric" placeholder="MM" value={birthDateParts.month} onChange={(event) => updateProfileBirthDate("month", event.target.value)} />
-                  <span aria-hidden="true">/</span>
-                  <input aria-label="Birth day" inputMode="numeric" placeholder="DD" value={birthDateParts.day} onChange={(event) => updateProfileBirthDate("day", event.target.value)} />
-                  <span aria-hidden="true">/</span>
-                  <input aria-label="Birth year" inputMode="numeric" placeholder="YYYY" value={birthDateParts.year} onChange={(event) => updateProfileBirthDate("year", event.target.value)} />
-                </div>
-              </label>
-
-              <label className="signup-field">
-                <span>Birth time</span>
-                <div className="signup-time-control">
-                  <input aria-label="Birth hour" inputMode="numeric" placeholder="HH" value={birthTimeParts.hour} disabled={unknownBirthTime} onChange={(event) => updateProfileBirthTime("hour", event.target.value)} />
-                  <span className="time-separator" aria-hidden="true">:</span>
-                  <input aria-label="Birth minute" inputMode="numeric" placeholder="MM" value={birthTimeParts.minute} disabled={unknownBirthTime} onChange={(event) => updateProfileBirthTime("minute", event.target.value)} />
-                  <div className="signup-meridiem" aria-label="AM or PM">
-                    {(["AM", "PM"] as const).map((period) => (
-                      <button key={period} type="button" className={birthTimeParts.meridiem === period ? "active" : ""} disabled={unknownBirthTime} aria-pressed={birthTimeParts.meridiem === period} onClick={() => updateProfileBirthTime("meridiem", period)}>
-                        {period}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </label>
-            </div>
-
-            <label className="unknown-time">
-              <input
-                type="checkbox"
-                checked={unknownBirthTime}
-                onChange={(event) => {
-                  setUnknownBirthTime(event.target.checked);
-                  setBirthTime(event.target.checked ? "12:00 PM" : birthTime);
-                }}
-              />
-              <span>I don't know my birth time.</span>
-            </label>
-
-            <button className="setup-submit setup-submit-light" type="button" onClick={saveBirthDetails}>Save birth details →</button>
-          </section>
-
-          <section className="setup-card" aria-label="Current location setup">
-            <div className="setup-card-heading">
-              <span>Daily Transits</span>
-            </div>
-            <h3>What city are you in now?</h3>
-
-            <CitySearchField
-              label="Current city"
-              value={currentCity}
-              onChange={(value) => {
-                setCurrentCity(value);
-                setCurrentLocationData(null);
-              }}
-              onSelect={(suggestion) => {
-                setCurrentCity(suggestion.label);
-                setCurrentLocationData(suggestion);
-              }}
-              placeholder="New York City, New York"
-              className="profile-city-search"
-            />
-
-            <button className="setup-submit" type="button" onClick={saveCurrentLocation}>Save location →</button>
-          </section>
-        </div>
-      </section>
-      )}
-
       {profileTab === "chart" && (
-        <section className="profile-charts" aria-label="Saved charts">
-          <span>Birth chart</span>
-          {hasSavedBirthDetails ? (
-            profile.charts.map((chart) => (
-              <article key={chart.id}>
-                <div className="profile-chart-row">
-                  <span>Date</span>
-                  <strong>{formatProfileBirthDate(chart.birthDate)}</strong>
-                </div>
-                <div className="profile-chart-row">
-                  <span>Time</span>
-                  <strong>{chart.birthTime}</strong>
-                </div>
-                <div className="profile-chart-row">
-                  <span>Place</span>
-                  <strong>{chart.birthCity}</strong>
-                </div>
-                <div className="profile-chart-row">
-                  <span>House system</span>
-                  <strong>Whole House</strong>
-                </div>
-              </article>
-            ))
-          ) : (
-            <article className="profile-chart-empty">
-              <strong>No charts yet.</strong>
-              <button type="button" onClick={onCreateChart}>Create Chart →</button>
-            </article>
+        <div className="subpane" id="sub-chart">
+          {natalSky && (
+            <div className="wheel natal-wheel" id="wheel-natal" aria-label="Natal chart wheel">
+              <SkyWheel
+                positions={natalSky.positions}
+                aspects={natalSky.aspects}
+                ascendant={natalSky.ascendant}
+                ascendantLongitude={natalSky.ascendantLongitude}
+                midheavenLongitude={natalSky.midheavenLongitude}
+                showHouses
+              />
+            </div>
           )}
-        </section>
+          {!natalSky && (
+            <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
+              <span>Chart</span>
+              <h3>Calculating your chart.</h3>
+              <p>We have the birth details. Your chart wheel and signatures will appear as soon as the calculation finishes.</p>
+            </section>
+          )}
+
+          <section className="you-signatures-card" aria-label="Your signatures">
+            <button type="button" className="you-signatures-main" onClick={onCreateChart}>
+              <span className="eyebrow section-label">Your signatures</span>
+              <ChevronRight className="you-signatures-chevron" size={22} aria-hidden="true" />
+              <h3>{signatureTitle}</h3>
+              <p>{signatureBody}</p>
+            </button>
+            <div className="elemental-balance" aria-label="Elemental balance">
+              <div className="elemental-balance-head">
+                <span className="eyebrow section-label">Elemental balance</span>
+                <span>{elementalSummary}</span>
+              </div>
+              <div className="element-bars" aria-hidden="true">
+                {elementalBalance.map((item) => (
+                  <span
+                    key={item.element}
+                    className={`element-bar element-${item.element.toLowerCase()}`}
+                    style={{ flexGrow: Math.max(item.count, 1) }}
+                  />
+                ))}
+              </div>
+              <div className="element-legend">
+                {elementalBalance.map((item) => (
+                  <span key={item.element} className={`element-legend-item element-${item.element.toLowerCase()}`}>
+                    <i aria-hidden="true" />
+                    {item.element} <b>{item.count}</b>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <span className="eyebrow section-label">Big Three</span>
+          <div className="list you-list-card" aria-label="Big three">
+            <button type="button" className="chart-row" onClick={onCreateChart}>
+              <span className="crg" aria-hidden="true">↑</span>
+              <span className="crb">
+                <span className="crt">
+                  {displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
+                </span>
+                <span className="crs">{natalSignatureDescriptions.Ascendant}</span>
+              </span>
+              <ChevronRight className="chev" size={18} aria-hidden="true" />
+            </button>
+            <button type="button" className="chart-row" onClick={onCreateChart}>
+              <span className="crg" aria-hidden="true">☉</span>
+              <span className="crb">
+                <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
+                <span className="crs">{natalSignatureDescriptions.Sun}</span>
+              </span>
+              <ChevronRight className="chev" size={18} aria-hidden="true" />
+            </button>
+            <button type="button" className="chart-row" onClick={onCreateChart}>
+              <span className="crg" aria-hidden="true">☽</span>
+              <span className="crb">
+                <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
+                <span className="crs">{natalSignatureDescriptions.Moon}</span>
+              </span>
+              <ChevronRight className="chev" size={18} aria-hidden="true" />
+            </button>
+          </div>
+
+          {planetRows.length > 0 && (
+            <>
+              <span className="eyebrow section-label">Your planets</span>
+              <div className="list you-list-card" aria-label="Your planets">
+                {planetRows.map((position) => (
+                  <button type="button" className="chart-row" key={position.planet} onClick={onCreateChart}>
+                    <span className="crg" aria-hidden="true">{position.glyph}</span>
+                    <span className="crb">
+                      <span className="crt">{natalPlacementTitle(position)}</span>
+                      <span className="crs">{natalPlacementDescription(position.planet)}</span>
+                    </span>
+                    <ChevronRight className="chev" size={18} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {natalAspectRows.length > 0 && (
+            <>
+              <span className="eyebrow section-label">Aspects in your chart</span>
+              <div className="list you-aspects-list natal-aspects-list" aria-label="Aspects in your chart">
+                {natalAspectRows.map((aspect) => (
+                  <button
+                    type="button"
+                    className="aspect"
+                    key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                    onClick={onCreateChart}
+                  >
+                    <span className="ag" aria-hidden="true">
+                      {aspectGlyph(aspect.type)}
+                    </span>
+                    <span className="ab">
+                      <h4>{aspect.from} {aspect.type} {aspect.to}</h4>
+                      <p>{aspect.meaning}</p>
+                    </span>
+                    <span className="am">
+                      <span className="orb">{aspect.orb.toFixed(1)}°</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       )}
 
-      {profileTab === "transits" && transitsDrawn && (
-        <section className="profile-transits" aria-label="Profile transits">
-          <TransitResults
-            form={transitForm}
-            transits={transitItems}
-            selectedTransit={selectedTransit}
-            selectedTransitId={selectedTransitId}
-            setSelectedTransitId={setSelectedTransitId}
-          />
-        </section>
+      {profileTab === "transits" && (
+        <div className="subpane" id="sub-transits">
+          <span className="eyebrow section-label">Today’s aspects to your chart</span>
+          {!hasSavedCurrentCity && (
+            <section className="you-empty-card" aria-label="Current city needed">
+              <span>Daily transits</span>
+              <h3>Add your current city.</h3>
+              <p>We need your current city to localize today’s sky against your chart.</p>
+              <button type="button" onClick={onCreateChart}>Add current city →</button>
+            </section>
+          )}
+          {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
+            <div className="list you-aspects-list" aria-label="Today’s aspects to your chart">
+              {aspectRows.map((transit) => (
+                <button
+                  type="button"
+                  className="aspect"
+                  key={transit.id}
+                  onClick={() => setSelectedTransitId(transit.id)}
+                >
+                  <span className="ag" aria-hidden="true">
+                    {transit.glyph}
+                  </span>
+                  <span className="ab">
+                    <h4>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h4>
+                    <p>{transit.note}</p>
+                  </span>
+                  <span className="am">
+                    <span className="orb">{transit.orb}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (
+            <section className="you-empty-card" aria-label="Transit setup">
+              <span>Daily transits</span>
+              <h3>Your transit view is ready.</h3>
+              <p>Open Create Chart any time to update your birth chart or current city.</p>
+              <button type="button" onClick={onCreateChart}>Edit details →</button>
+            </section>
+          )}
+        </div>
       )}
-      {profileTab === "transits" && !transitsDrawn && (
-        <section className="profile-charts" aria-label="Transit setup needed">
-          <span>Daily Transits</span>
-          <article className="profile-chart-empty">
-            <strong>Transits will appear after your chart is saved.</strong>
-            <button type="button" onClick={onCreateChart}>Create Chart →</button>
-          </article>
-        </section>
-      )}
-    </>
+    </section>
   );
 }

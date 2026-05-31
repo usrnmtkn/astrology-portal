@@ -227,7 +227,7 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
 }
 
 export const defaultLocation: LocationInput = {
-  label: "New York, NY",
+  label: "New York City, NY",
   latitude: 40.7128,
   longitude: -74.006,
   timeZone: "America/New_York"
@@ -245,8 +245,10 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
   const houses = swe.houses(jd, location.latitude, location.longitude, "P") as unknown as {
     ascmc: Float64Array;
   };
-  const ascendant = signForLongitude(houses.ascmc[0]).sign;
-  const midheaven = signForLongitude(houses.ascmc[1]).sign;
+  const ascendantLongitude = normalizeDegrees(houses.ascmc[0]);
+  const midheavenLongitude = normalizeDegrees(houses.ascmc[1]);
+  const ascendant = signForLongitude(ascendantLongitude).sign;
+  const midheaven = signForLongitude(midheavenLongitude).sign;
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -285,7 +287,9 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
     location,
     generatedAt: date.toISOString(),
     ascendant,
+    ascendantLongitude,
     midheaven,
+    midheavenLongitude,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
     moonEvent: nextMoonEvent(swe, date),
     dominantElement: elementForSign(sun.sign),
@@ -325,7 +329,9 @@ export function getCurrentSky(location: LocationInput = defaultLocation, date: D
     location,
     generatedAt: date.toISOString(),
     ascendant,
+    ascendantLongitude: signs.findIndex(([name]) => name === ascendant) * 30,
     midheaven: positions[4].sign,
+    midheavenLongitude: signs.findIndex(([name]) => name === positions[4].sign) * 30,
     moonPhase: "Waxing Crescent",
     dominantElement: ["Fire", "Earth", "Air", "Water"][Math.abs(locationSeed + daySeed) % 4] as SkySnapshot["dominantElement"],
     positions,
