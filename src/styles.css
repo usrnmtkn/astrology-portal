@@ -1815,6 +1815,93 @@ button {
   padding: 0 14px;
 }
 
+.settings-row-button {
+  background: transparent;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.settings-row-button:hover,
+.settings-row-button:focus-visible {
+  background: rgba(26, 28, 27, 0.035);
+  outline: none;
+}
+
+.settings-row-action {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.settings-row-action strong {
+  justify-self: auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settings-row-action svg {
+  color: #8a8d89;
+  flex: 0 0 auto;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.settings-edit-row:hover .settings-row-action svg,
+.settings-edit-row:focus-visible .settings-row-action svg {
+  color: #1a1613;
+  transform: translateX(2px);
+}
+
+.settings-location-editor {
+  align-items: stretch;
+  grid-template-columns: 1fr;
+  padding-block: 18px;
+}
+
+.settings-location-editor .city-search-field {
+  margin: 0;
+}
+
+.settings-location-editor .city-search-field input {
+  justify-self: stretch;
+}
+
+.settings-location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.settings-location-actions button {
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 800;
+  min-height: 40px;
+  padding: 0 18px;
+}
+
+.settings-location-save {
+  background: #1a1613;
+  border: 1px solid #1a1613;
+  color: #ffffff;
+}
+
+.settings-location-cancel {
+  background: transparent;
+  border: 1px solid rgba(26, 22, 19, 0.18);
+  color: #63716c;
+}
+
 .settings-signout-row {
   background: transparent;
   color: #b9564f;
@@ -2272,6 +2359,15 @@ button {
   stroke-dasharray: 2 7;
 }
 
+.natal-angle-lines line {
+  fill: none;
+  opacity: 0.9;
+  stroke: rgba(26, 22, 19, 0.72);
+  stroke-dasharray: 5 8;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
 .planet-glyph {
   fill: #1a1613;
   font-family: var(--font-symbol);
@@ -2300,7 +2396,7 @@ button {
 .angular-labels text {
   fill: var(--wheel-glyph, #1a1613);
   font-family: var(--font-mono);
-  font-size: 17px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-anchor: middle;
@@ -3324,6 +3420,38 @@ blockquote {
   color: #100f0c;
 }
 
+.theme-dark .settings-row-button:hover,
+.theme-dark .settings-row-button:focus-visible {
+  background: rgba(241, 238, 232, 0.05);
+}
+
+.theme-dark .settings-row-action svg {
+  color: rgba(241, 238, 232, 0.52);
+}
+
+.theme-dark .settings-edit-row:hover .settings-row-action svg,
+.theme-dark .settings-edit-row:focus-visible .settings-row-action svg {
+  color: #f1eee8;
+}
+
+.theme-dark .settings-location-save {
+  background: #f1eee8;
+  border-color: #f1eee8;
+  color: #100f0c;
+}
+
+.theme-dark .settings-location-cancel {
+  border-color: rgba(241, 238, 232, 0.22);
+  color: #a8a29a;
+}
+
+.theme-dark .settings-location-editor .city-search-field input,
+.theme-dark .settings-location-editor .city-suggestions {
+  background: #171612;
+  border-color: rgba(241, 238, 232, 0.18);
+  color: #f1eee8;
+}
+
 .theme-dark .settings-nav a:hover,
 .theme-dark .settings-nav a:focus-visible {
   background: rgba(241, 238, 232, 0.08);
@@ -3681,6 +3809,10 @@ blockquote {
 
 .theme-dark .aspect-lines .neutral line {
   stroke: #897f78;
+}
+
+.theme-dark .natal-angle-lines line {
+  stroke: rgba(241, 238, 232, 0.74);
 }
 
 .theme-dark .sky-card-glyph.moon {
@@ -6196,10 +6328,11 @@ html,
 }
 
 .today-hero {
-  margin: 0 auto 34px;
+  gap: 16px;
+  margin: 0 auto 28px;
   max-width: var(--col-app);
-  min-height: 310px;
-  padding: 92px 0 36px;
+  min-height: 260px;
+  padding: 74px 0 28px;
 }
 
 .today-hero h1 {
@@ -6818,7 +6951,7 @@ html,
   }
 
   .today-hero {
-    padding-top: 68px;
+    padding-top: 54px;
   }
 
   .signup-grid {
@@ -6948,6 +7081,71 @@ html,
 .settings-page .settings-row strong,
 .settings-page .settings-readonly-row strong {
   font-weight: 400;
+}
+
+.account-chart-group .account-editable-row {
+  cursor: text;
+}
+
+.account-chart-group .account-row-input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--ink-app, #1a1a1a);
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(1rem, 1.2vw, 1.12rem);
+  font-weight: 400;
+  line-height: 1.25;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0;
+  text-align: right;
+  width: min(100%, 360px);
+}
+
+.account-chart-group .account-row-input::placeholder {
+  color: var(--muted-app, #8c8c89);
+  opacity: 1;
+}
+
+.account-chart-group .account-row-input:focus {
+  outline: none;
+}
+
+.account-chart-group .account-row-input:focus-visible {
+  box-shadow: inset 0 -2px 0 currentColor;
+}
+
+.account-chart-group .account-row-input[type="date"] {
+  color-scheme: light;
+}
+
+.theme-dark .account-chart-group .account-row-input[type="date"] {
+  color-scheme: dark;
+}
+
+.account-birth-save-row {
+  min-height: 88px;
+}
+
+.account-birth-save-button {
+  background: var(--ink-app, #1a1a1a);
+  border: 1px solid var(--ink-app, #1a1a1a);
+  border-radius: 999px;
+  color: var(--surface-app, #fff);
+  cursor: pointer;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  padding: 0.85rem 1.2rem;
+  text-transform: uppercase;
+}
+
+.theme-dark .account-birth-save-button {
+  background: var(--surface-app, #f4f2ee);
+  border-color: var(--surface-app, #f4f2ee);
+  color: var(--ink-app, #1a1a1a);
 }
 
 .create-chart-fab {
@@ -7358,17 +7556,60 @@ html,
 
 .create-chart-detail .signup-grid {
   gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+.create-chart-detail .signup-date-control,
+.create-chart-detail .signup-time-control {
+  box-sizing: border-box;
+  column-gap: 8px;
+  overflow: hidden;
+  padding-inline: 14px;
+  width: 100%;
+}
+
+.create-chart-detail .signup-date-control {
+  grid-template-columns: minmax(34px, 1fr) auto minmax(34px, 1fr) auto minmax(54px, 1.35fr);
 }
 
 .create-chart-detail .signup-time-control {
-  grid-template-columns: minmax(36px, 0.8fr) auto minmax(36px, 0.8fr) minmax(96px, 1.45fr);
+  grid-template-columns: minmax(38px, 1fr) auto minmax(38px, 1fr) 104px;
+}
+
+.create-chart-detail .signup-date-control input,
+.create-chart-detail .signup-time-control input {
+  box-sizing: border-box;
+  min-width: 0;
+  padding-inline: 0;
+  text-align: center;
+  width: 100%;
 }
 
 .create-chart-detail .signup-meridiem {
   background: #ece9ed;
   border-radius: 999px;
-  min-width: 96px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 0;
   padding: 4px;
+  width: 104px;
+}
+
+.create-chart-detail .signup-meridiem button {
+  min-width: 0;
+  padding-inline: 0;
+}
+
+.chart-modal:has(.create-chart-flow) :is(input, button):focus-visible {
+  outline: 2px solid #7a8fe8;
+  outline-offset: 2px;
+}
+
+.create-chart-detail .signup-field > div:focus-within,
+.create-chart-detail .signup-city-search .city-search-control:focus-within {
+  border-color: #7a8fe8;
+  box-shadow: 0 0 0 3px rgba(122, 143, 232, 0.16);
 }
 
 .create-chart-detail .unknown-time {
@@ -7645,11 +7886,18 @@ html,
   }
 
   .create-chart-detail .signup-time-control {
-    grid-template-columns: minmax(34px, 0.8fr) auto minmax(34px, 0.8fr) minmax(96px, 1.4fr);
+    grid-template-columns: minmax(34px, 1fr) auto minmax(34px, 1fr) 96px;
+    padding-inline: 12px;
+  }
+
+  .create-chart-detail .signup-date-control {
+    grid-template-columns: minmax(32px, 1fr) auto minmax(32px, 1fr) auto minmax(52px, 1.25fr);
+    padding-inline: 12px;
   }
 
   .create-chart-detail .signup-meridiem {
-    min-width: 96px;
+    min-width: 0;
+    width: 96px;
   }
 }
 
@@ -7757,6 +8005,16 @@ html,
 .theme-dark .create-chart-detail .signup-meridiem button.active {
   background: #f1eee8;
   color: #181817;
+}
+
+.theme-dark .chart-modal:has(.create-chart-flow) :is(input, button):focus-visible {
+  outline-color: #d45cc8;
+}
+
+.theme-dark .create-chart-detail .signup-field > div:focus-within,
+.theme-dark .create-chart-detail .signup-city-search .city-search-control:focus-within {
+  border-color: rgba(212, 92, 200, 0.75);
+  box-shadow: 0 0 0 3px rgba(212, 92, 200, 0.18);
 }
 
 .theme-dark .create-chart-save {
@@ -9259,7 +9517,7 @@ html,
   font-size: clamp(24px, 3vw, 30px) !important;
   font-weight: 800 !important;
   line-height: 1.14 !important;
-  margin: 18px 42px 12px 0 !important;
+  margin: 0 42px 12px 0 !important;
 }
 
 .app-shell.mode-profile .profile-layout .you-page .you-signatures-card p {
@@ -9573,10 +9831,15 @@ html,
   flex-direction: column !important;
   justify-content: center !important;
   margin: 0 auto !important;
-  min-height: clamp(560px, 72vh, 760px) !important;
-  padding: 58px 24px 76px !important;
+  min-height: clamp(480px, 62vh, 640px) !important;
+  padding: 40px 24px 64px !important;
   text-align: center !important;
   width: min(100%, 920px) !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-orb,
+.app-shell.theme-dark.mode-profile .profile-layout .you-empty-orb {
+  display: none !important;
 }
 
 .app-shell.mode-profile .profile-layout .you-empty-orb {
@@ -9604,22 +9867,23 @@ html,
 .app-shell.mode-profile .profile-layout .you-empty-state h2 {
   color: var(--ink-app) !important;
   font-family: var(--font-mono) !important;
-  font-size: clamp(38px, 5vw, 56px) !important;
+  font-size: clamp(30px, 3.8vw, 46px) !important;
   font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: 0 !important;
   line-height: 1.05 !important;
-  margin: 0 0 24px !important;
+  margin: 0 0 18px !important;
+  max-width: 720px !important;
 }
 
 .app-shell.mode-profile .profile-layout .you-empty-state p {
   color: var(--muted-app) !important;
   font-family: var(--font-mono) !important;
-  font-size: clamp(18px, 2.2vw, 24px) !important;
+  font-size: clamp(15px, 1.5vw, 19px) !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
-  line-height: 1.55 !important;
-  margin: 0 auto 40px !important;
-  max-width: 710px !important;
+  line-height: 1.65 !important;
+  margin: 0 auto 34px !important;
+  max-width: 650px !important;
 }
 
 .app-shell.mode-profile .profile-layout .you-empty-state .you-empty-cta {
@@ -9728,4 +9992,408 @@ html,
   color: var(--muted-app) !important;
   font-size: 17px !important;
   margin: 0 !important;
+}
+
+/* Final Sky view cleanup: keep the individual cards, remove the legacy outer panel. */
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .portal-grid > .detail-panel {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .portal-grid > .detail-panel::before,
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .portal-grid > .detail-panel::after {
+  display: none !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro,
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  appearance: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  background: var(--surface-app) !important;
+  border-color: color-mix(in srgb, var(--line-app) 86%, var(--ink-app) 6%) !important;
+  color: var(--ink-app) !important;
+  outline: none !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(strong, h1, h2, h3, span, div) {
+  color: var(--ink-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(p, .retro-sub, .retro-copy) {
+  color: var(--muted-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge {
+  background: var(--faint-app) !important;
+  border-color: var(--line-app) !important;
+  color: var(--ink-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge .rx {
+  background: var(--ink-app) !important;
+  color: var(--surface-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro .retro-badge span.rx,
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge span.rx {
+  background: var(--ink-app) !important;
+  color: var(--surface-app) !important;
+}
+
+.app-shell.theme-dark:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro,
+.app-shell.theme-dark:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  background: var(--surface-app) !important;
+  border-color: color-mix(in srgb, var(--line-app) 70%, #ffffff 14%) !important;
+  color: var(--ink-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active),
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .aspect-list article:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  background: color-mix(in srgb, var(--surface-app) 96%, var(--ink-app) 2%) !important;
+  color: var(--ink-app) !important;
+  outline: none !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active) > :is(td, th),
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active) > :is(td, th)::before,
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active) > :is(td, th)::after {
+  background: transparent !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(td, th, span, strong, div),
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .aspect-list article:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(h1, h2, h3, span, strong, div) {
+  color: var(--ink-app) !important;
+}
+
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(.muted, .planet-row-copy),
+.app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .aspect-list article:is(:hover, :focus, :focus-visible, :focus-within, :active) :is(p, small) {
+  color: var(--muted-app) !important;
+}
+
+.app-shell.theme-dark:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .placement-table tr:is(:hover, :focus, :focus-visible, :focus-within, :active),
+.app-shell.theme-dark:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .aspect-list article:is(:hover, :focus, :focus-visible, :focus-within, :active) {
+  background: color-mix(in srgb, var(--surface-app) 88%, #ffffff 8%) !important;
+  color: var(--ink-app) !important;
+}
+
+/* Completed You chart content is informational; setup opens only from explicit edit/create actions. */
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-main {
+  cursor: default !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-main:hover {
+  background: transparent !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .chart-row-static,
+.app-shell.mode-profile .profile-layout .you-page .aspect-static {
+  cursor: default !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .chart-row-static:hover,
+.app-shell.mode-profile .profile-layout .you-page .aspect-static:hover,
+.mode-profile .you-page .chart-row-static:hover,
+.mode-profile .you-page .aspect-static:hover {
+  background: transparent !important;
+}
+
+/* Keep aspect glyph outlines circular even when rows wrap taller. */
+.aspect-list .aspect-symbol,
+.aspects-card .aspect-symbol {
+  --aspect-symbol-size: 56px;
+  align-self: center !important;
+  aspect-ratio: 1 / 1;
+  block-size: var(--aspect-symbol-size) !important;
+  box-sizing: border-box;
+  display: inline-grid !important;
+  flex: 0 0 var(--aspect-symbol-size);
+  inline-size: var(--aspect-symbol-size) !important;
+  line-height: 1;
+  max-block-size: var(--aspect-symbol-size);
+  max-inline-size: var(--aspect-symbol-size);
+  min-block-size: var(--aspect-symbol-size);
+  min-inline-size: var(--aspect-symbol-size);
+  place-items: center;
+  border-radius: 999px !important;
+}
+
+@media (max-width: 640px) {
+  .aspect-list .aspect-symbol,
+  .aspects-card .aspect-symbol {
+    --aspect-symbol-size: 52px;
+  }
+}
+
+/* Prototype typography consolidation: Space Grotesk for UI chrome, mono for readings/details. */
+:root {
+  --font-ui: var(--font-display);
+  --font-detail: var(--font-mono);
+  --type-label: 10.5px;
+  --type-small: 13.5px;
+  --type-copy: 14.5px;
+  --type-row-title: 16px;
+  --type-card-title: 22px;
+}
+
+.app-shell {
+  font-family: var(--font-detail);
+  font-variant-numeric: tabular-nums;
+}
+
+.app-shell :is(.brand-wordmark, .brand-text, .nav-link, .nav-item, .top-nav, .theme-toggle, .menu-toggle, .menu-popover, .menu-popover button, .popover-menu, .popover-menu button, .primary-cta, .secondary-cta, .auth-button, .join-button, .login-button, .tab-toggle button, .segmented button, .you-tabs button, .screen-title, .page-title, .today-hero h1, .account-page h1, .settings-page h1) {
+  font-family: var(--font-ui) !important;
+}
+
+.app-shell :is(.section-kicker, .section-label, .table-label, .field-label, .setting-label, .settings-group-label, .eyebrow, .sky-card-label, .retro-label, .card-eyebrow, .panel-label, .placement-table th, .you-page .section-label) {
+  font-family: var(--font-detail) !important;
+  font-size: var(--type-label) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-copy h2,
+.app-shell.mode-profile .profile-layout .you-page .you-profile-copy h2,
+.app-shell.mode-profile .profile-layout .you-page .you-signature-card .who h2,
+.app-shell.mode-profile .profile-layout .you-profile-card h2 {
+  font-family: var(--font-ui) !important;
+  font-size: clamp(22px, 2.4vw, 28px) !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+}
+
+.app-shell.mode-profile .profile-layout :is(.you-profile-status, .you-signature-row, .you-profile-copy p, .signature-chips, .you-page .you-profile-copy p) {
+  font-family: var(--font-detail) !important;
+  font-size: var(--type-small) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-monogram {
+  font-family: var(--font-ui) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crt, .aspect .ab h4, .you-signatures-main h3, .big-three-row strong, .you-list-card .chart-row strong) {
+  font-family: var(--font-ui) !important;
+  font-size: var(--type-row-title) !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crs, .aspect .ab p, .you-signatures-main p, .big-three-row span, .you-list-card .chart-row span) {
+  font-family: var(--font-detail) !important;
+  font-size: var(--type-copy) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .element-legend,
+.app-shell.mode-profile .profile-layout .you-page .elemental-balance-head {
+  font-size: var(--type-small) !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-orb,
+.app-shell.theme-dark.mode-profile .profile-layout .you-empty-orb {
+  display: none !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-state {
+  gap: 22px !important;
+  min-height: clamp(360px, 52vh, 500px) !important;
+  padding-block: clamp(36px, 7vw, 68px) !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-state h2 {
+  font-family: var(--font-ui) !important;
+  font-size: clamp(30px, 5vw, 42px) !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.045em !important;
+  line-height: 0.98 !important;
+  max-width: 720px !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-state p {
+  color: var(--muted-app) !important;
+  font-family: var(--font-detail) !important;
+  font-size: clamp(14px, 1.5vw, 17px) !important;
+  font-weight: 500 !important;
+  line-height: 1.65 !important;
+  max-width: 640px !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-state .you-empty-cta {
+  min-height: 66px !important;
+  padding: 10px 22px 10px 10px !important;
+  width: min(100%, 360px) !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-cta-icon {
+  flex-basis: 48px !important;
+  height: 48px !important;
+  width: 48px !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-cta-copy strong {
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-empty-cta-copy em {
+  font-size: 12px !important;
+}
+
+/* Account/settings values are data, not headings. */
+.app-shell :is(.account-row-value, .settings-row-value, .setting-value, .account-card .value, .settings-card .value, .account-list .value, .settings-list .value, .settings-readonly-row strong) {
+  font-family: var(--font-detail) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Give the You page profile header room below the floating nav without enlarging the card. */
+.app-shell.mode-profile .profile-layout > .detail-panel:has(.you-page),
+.app-shell.theme-dark.mode-profile .profile-layout > .detail-panel:has(.you-page) {
+  margin: clamp(34px, 4.6vw, 58px) auto 0 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-page {
+  gap: clamp(30px, 3.8vw, 50px) !important;
+  padding-top: clamp(12px, 2vw, 24px) !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-card {
+  border-radius: 30px !important;
+  gap: 18px !important;
+  max-width: 700px !important;
+  min-height: 92px !important;
+  padding: 16px 28px !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-monogram {
+  border-width: 4px !important;
+  flex: 0 0 62px !important;
+  font-size: 16px !important;
+  height: 62px !important;
+  width: 62px !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-copy h2,
+.app-shell.mode-profile .profile-layout .you-profile-card h2 {
+  font-size: clamp(20px, 2vw, 25px) !important;
+  line-height: 1.05 !important;
+}
+
+.app-shell.mode-profile .profile-layout .you-signature-row {
+  font-size: clamp(13px, 1.35vw, 16px) !important;
+  gap: 12px !important;
+  margin-top: 7px !important;
+}
+
+@media (max-width: 760px) {
+  .app-shell.mode-profile .profile-layout > .detail-panel:has(.you-page),
+  .app-shell.theme-dark.mode-profile .profile-layout > .detail-panel:has(.you-page) {
+    margin-top: 24px !important;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-profile-card {
+    max-width: min(100%, 520px) !important;
+    padding: 15px 18px !important;
+  }
+}
+
+/* Sky lists follow the prototype: UI titles, mono measurements/copy. */
+.app-shell :is(.placement-table td, .placement-table th, .placement-toggle button, .aspect-list article, .aspect-list p, .aspect-list small) {
+  font-family: var(--font-detail) !important;
+}
+
+.app-shell .placement-table td {
+  font-size: 15px !important;
+}
+
+.app-shell .placement-table td:first-child strong,
+.app-shell .placement-table .planet-name {
+  font-family: var(--font-ui) !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.app-shell .placement-table :is(.position-cell, .position-sign, .position-degree, .retrograde-badge) {
+  font-family: var(--font-detail) !important;
+  font-size: 15px !important;
+}
+
+.app-shell .placement-prose p {
+  font-family: var(--font-detail) !important;
+  font-size: var(--type-copy) !important;
+  line-height: 1.65 !important;
+}
+
+.app-shell .placement-prose strong {
+  font-family: var(--font-ui) !important;
+}
+
+.app-shell .aspect-list article {
+  min-height: 96px !important;
+}
+
+.app-shell .aspect-list h3 {
+  font-family: var(--font-ui) !important;
+  font-size: var(--type-row-title) !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .aspect-list p {
+  font-size: var(--type-copy) !important;
+  line-height: 1.45 !important;
+}
+
+/* Create-chart and auth modals: compact, prototype-scale forms. */
+.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal, .auth-card, .auth-panel) :is(h1, h2, h3) {
+  font-family: var(--font-ui) !important;
+  font-size: clamp(28px, 4vw, 38px) !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.035em !important;
+  line-height: 1.05 !important;
+}
+
+.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal, .auth-card, .auth-panel) :is(p, label, input, button, select) {
+  font-family: var(--font-detail) !important;
+}
+
+.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal) :is(p, label) {
+  font-size: var(--type-copy) !important;
+  line-height: 1.55 !important;
+}
+
+@media (max-width: 760px) {
+  .app-shell.mode-profile .profile-layout .you-empty-state h2 {
+    font-size: clamp(28px, 8vw, 36px) !important;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-empty-state p {
+    font-size: 14px !important;
+  }
+}
+
+/* Keep the active You section segment visibly selected after profile overrides. */
+.app-shell.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs button:is(.on, .active, [aria-selected="true"]) {
+  background: #1a1c1b !important;
+  color: #ffffff !important;
+}
+
+.app-shell.theme-dark.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs button:is(.on, .active, [aria-selected="true"]) {
+  background: #f1eee8 !important;
+  color: #111312 !important;
 }
