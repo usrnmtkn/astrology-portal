@@ -1,10 +1,10 @@
 {
-  "id": "moon-opposition-sun",
-  "transiting": "moon",
+  "id": "sun-opposition-moon",
+  "transiting": "sun",
   "aspect": "opposition",
-  "other": "sun",
-  "tldr": "the Moon opposition the Sun.",
-  "traditional": "the Moon opposition the Sun: a hard contact. The body, home, and daily needs works against vitality, authority, and recognition \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "other": "moon",
+  "tldr": "Sun opposition the Moon.",
+  "traditional": "Sun opposition the Moon: a hard contact. The body, home, and daily needs works against vitality, authority, and recognition — obstruction, friction, and strained outcomes in these areas.",
   "modern": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Psychologically the opposition is inner tension to integrate: Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled. The growth is owning both sides instead of splitting them.",
   "cyclic": {
     "phase": "Full (culmination)",

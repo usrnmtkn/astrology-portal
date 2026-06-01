@@ -1,0 +1,109 @@
+{
+  "id": "synastry",
+  "schema": "modifier/synastry",
+  "appliesTo": [
+    "synastry",
+    "composite",
+    "relationship-reading"
+  ],
+  "summary": "Synastry compares two natal charts to describe relationship dynamics without treating the chart as a verdict.",
+  "body": "Synastry compares two charts to read how two people interact and activate each other. It describes the connection and its dynamics; it does not decree the outcome. Read it as the meeting of two natal charts, not as a verdict.",
+  "definition": "Synastry compares two charts to read how two people interact and activate each other. It describes the connection and its dynamics; it does not decree the outcome. Read it as the meeting of two natal charts, not as a verdict.",
+  "appUsage": [
+    "Read each natal chart first, then synastry, then composite.",
+    "Use synastry to describe activation, friction, support, and timing; do not present it as destiny or a compatibility score.",
+    "Prioritize personal planets, luminaries, angles, tight interaspects, and house overlays.",
+    "Downweight outer-planet, Chiron, and modern-point contacts between people of similar age unless they contact a personal planet or angle.",
+    "Keep relationship guidance choice-centered and avoid telling users to stay in or leave a relationship based on charts alone."
+  ],
+  "note": "Normalized from approved project synastry guidance.",
+  "classes": {
+    "synastryVsComposite": "Synastry = how the two individuals interact (the initial connection and its push-pull). Composite = how the relationship itself behaves as its own entity. Order of reading: each natal chart first, then synastry, then composite.",
+    "method": [
+      {
+        "step": 1,
+        "name": "Read each natal chart first",
+        "detail": "Unresolved patterns in an individual chart get carried into every relationship, so read both charts alone before comparing. Key relational signals: the Moon (the needs a partner must meet), Venus (what the person seeks in love, by sign/house/aspect), the 7th house (partnership), houses 5 and 8 (romance, intimacy, shared life), and the Sun and Moon as the relational luminaries. No synastry can override an individual chart whose conflicts are unworked."
+      },
+      {
+        "step": 2,
+        "name": "Element balance",
+        "detail": "Weigh the dominant element of each whole chart (not just the Suns). Fire-Fire stimulates but risks aggression; Fire-Air feeds and animates; Fire-Earth and Fire-Water need care; Earth-Earth steadies but can flatten; Air-Air connects mentally but drifts; Water-Water bonds deeply but can pool into moodiness; mixed pairs each ask the partners to lend what the other lacks."
+      },
+      {
+        "step": 3,
+        "name": "Planet overlays",
+        "detail": "Place each person's planets into the other's houses to see which life areas they activate. The house person feels the contact in that area of life.",
+        "planetInHouse": {
+          "sun": "illuminates and brings attention to that area",
+          "moon": "sensitizes it and creates needs there",
+          "mercury": "adds movement, talk, and agility",
+          "venus": "brings pleasure and ease to that area",
+          "mars": "activates and energizes it (and can heat it up)",
+          "jupiter": "is where the partner helps you grow",
+          "saturn": "is where the bond steadies you and also where it can inhibit you",
+          "uranus": "brings surprise and openness to the new",
+          "neptune": "idealizes and spiritualizes it (watch for illusion)",
+          "pluto": "brings depth and the pressure to transform",
+          "chiron": "is where the partner can both wound and help heal"
+        },
+        "toTheAscendant": "Benefic/personal contacts (Sun, Moon, Mercury, Venus, Jupiter) to a partner's Ascendant tend to feel good; Mars, Saturn, and the outers/Chiron are heavier to carry."
+      },
+      {
+        "step": 4,
+        "name": "Interaspects",
+        "detail": "The aspects formed between one person's planets and the other's. Harmonious contacts ease the bond; tense ones bring friction but can add depth and growth, and a relationship with only easy aspects tends to go flat. An aspect must actually form by degree, not merely share an element.",
+        "orbs": "About 2 to 3 degrees for conjunction, sextile, square, trine, and opposition; allow 1 to 2 degrees more for the luminaries."
+      },
+      {
+        "step": 5,
+        "name": "Karmic / fated-feeling indicators",
+        "detail": "Contacts traditionally read as karmic or fated (held as how the tradition interprets them, not as literal claims about past lives).",
+        "indicators": [
+          "one person's planet conjunct the other's lunar node",
+          "a node conjunct the partner's Ascendant",
+          "one person's Saturn conjunct or in tight aspect to the other's planets (duty, durability, a sense of test)",
+          "one person's planets falling in the other's 12th house",
+          "a planet or angle conjunct the partner's Vertex (a fated-feeling pull; Vertex-Ascendant is common)"
+        ]
+      },
+      {
+        "step": 6,
+        "name": "The astrological moment",
+        "detail": "Read current transits and the coming year for both people. Timing conditions whether a bond forms, deepens, or strains, independent of the static synastry."
+      }
+    ],
+    "keyInteraspects": {
+      "sun-sun": "Shared core temperament. Harmonious aspects bring easy mutual respect and aligned goals; opposition attracts strongly; square and quincunx grate.",
+      "sun-moon": "A classic compatibility contact, especially the conjunction: one person's core self meets the other's emotional nature. Hard aspects do not doom it.",
+      "sun-mercury": "Good aspects bring mental rapport; hard ones, misunderstanding.",
+      "sun-mars": "The Mars person energizes and initiates the Sun person, and can also irritate them.",
+      "sun-saturn": "Can forge durability and commitment; poorly aspected, it may bind two people together more out of fear of change than desire.",
+      "moon-moon": "Key for daily life together; even without an exact aspect, compatible elements ease the everyday exchange.",
+      "moon-mars": "Stimulating but friction-prone; the Moon person's feelings bruise easily on hard contacts.",
+      "moon-saturn": "A maturity test: the Moon can feel weighed down by duty while Saturn offers stability. It works when the Moon values Saturn's steadiness and Saturn softens toward the Moon's feelings.",
+      "moon-pluto": "Intense emotional depth and attachment; on hard contacts it can tip into control or possessiveness.",
+      "venus-saturn": "Loyalty and commitment when well-aspected, with Venus supplying the warmth Saturn struggles to show; hard contacts can withhold affection.",
+      "venus-uranus": "Instant, electric attraction; exciting but not inherently durable, and can cool as fast as it sparked.",
+      "venus-neptune": "Tenderness and idealization; lovely but needs grounding so it does not slide into illusion.",
+      "venus-pluto": "Magnetic, deep, sometimes compulsive attraction and strong bonding.",
+      "saturn-saturn": "A shared sense of responsibility; stabilizing for long bonds, while hard aspects test each other's security."
+    },
+    "ethicalBoundary": "Synastry shows dynamics and potentials, not destiny. Do not frame abusive dynamics as lessons, ignore red flags, or create dependence on astrological validation."
+  },
+  "weighting": [
+    "Personal planets (Sun, Moon, Mercury, Venus, Mars), the luminaries, and the angles carry the most weight.",
+    "Outer/transpersonal planets (Uranus, Neptune, Pluto) and Chiron should be discounted between people of similar age, since they will be near-conjunct for a whole generation. They matter mainly across significant age gaps, or when they land on a personal planet or an angle. This mirrors the modern-points policy: never let a generational contact carry a reading on its own.",
+    "Read both natal charts before the synastry; the synastry cannot fix an unresolved individual chart.",
+    "Use tight orbs and require the aspect to actually form; 'compatible by element' is not the same as an exact contact.",
+    "Some hard aspects are necessary; an all-harmonious synastry tends to be flat, and tension can carry the growth.",
+    "Percentage 'compatibility scores' are marketing, not signal; weigh the actual contacts.",
+    "An accurate birth time matters, since the Moon, angles, and house overlays depend on it."
+  ],
+  "orbs": {
+    "majorAspects": "Use about 2 to 3 degrees for conjunction, sextile, square, trine, and opposition; allow 1 to 2 degrees more for the luminaries when the contact is central.",
+    "exactness": "Require the aspect to actually form by degree. Elemental compatibility alone is not an interaspect."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

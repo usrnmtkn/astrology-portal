@@ -1,10 +1,10 @@
 {
-  "id": "mercury-conjunction-sun",
-  "transiting": "mercury",
+  "id": "sun-conjunction-mercury",
+  "transiting": "sun",
   "aspect": "conjunction",
-  "other": "sun",
-  "tldr": "Mercury conjunction the Sun.",
-  "traditional": "Mercury conjunct the Sun: communication, commerce, and contracts fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
+  "other": "mercury",
+  "tldr": "Sun conjunction Mercury.",
+  "traditional": "Sun conjunct Mercury: communication, commerce, and contracts fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
   "modern": "Identity fused with mind and communication. Self-expression runs through ideas and speech. Only the conjunction is possible, since Mercury never travels far from the Sun. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
   "cyclic": {
     "phase": "New (seed)",

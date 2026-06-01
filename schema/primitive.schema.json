@@ -109,6 +109,7 @@
               "element": { "enum": ["fire", "earth", "air", "water"] },
               "mode": { "enum": ["cardinal", "fixed", "mutable"] },
               "traditionalRuler": { "type": "string" },
+              "modernRuler": { "type": "string" },
               "keywords": { "type": "array", "items": { "type": "string" } },
               "voiceNeutral": { "const": true },
               "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }

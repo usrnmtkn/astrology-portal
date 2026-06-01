@@ -1,10 +1,10 @@
 {
-  "id": "moon-conjunction-sun",
-  "transiting": "moon",
+  "id": "sun-conjunction-moon",
+  "transiting": "sun",
   "aspect": "conjunction",
-  "other": "sun",
-  "tldr": "the Moon conjunction the Sun.",
-  "traditional": "the Moon conjunct the Sun: the body, home, and daily needs fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
+  "other": "moon",
+  "tldr": "Sun conjunction the Moon.",
+  "traditional": "Sun conjunct the Moon: the body, home, and daily needs fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
   "modern": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
   "cyclic": {
     "phase": "New (seed)",
