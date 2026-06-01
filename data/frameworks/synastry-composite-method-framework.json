@@ -1,0 +1,44 @@
+{
+  "id": "synastry-composite-method-framework",
+  "kind": "framework",
+  "title": "Synastry And Composite Method Framework",
+  "sections": [
+    {
+      "id": "start-with-natal-capacity",
+      "heading": "Start With Natal Capacity",
+      "body": "Before comparing two charts, read each person's natal relationship pattern. Synastry cannot override a person's own Moon needs, Venus style, Mars pursuit pattern, Saturn defenses, attachment habits, or unresolved relational wounds. A good match on paper still has to pass through the people living it."
+    },
+    {
+      "id": "core-triad",
+      "heading": "Core Triad",
+      "body": "Begin comparison with Sun, Moon, and Ascendant. The Sun shows identity and life direction. The Moon shows emotional safety and instinctive needs. The Ascendant shows embodiment and immediate style. If these do not understand each other, later chemistry needs extra support."
+    },
+    {
+      "id": "interaspects",
+      "heading": "Interaspects",
+      "body": "Prioritize close major aspects between one person's planets and the other's personal planets or angles. Conjunctions fuse and intensify. Oppositions polarize and reveal the other side. Squares create friction and action. Trines ease exchange. Sextiles offer cooperation that must be used."
+    },
+    {
+      "id": "house-overlays",
+      "heading": "House Overlays",
+      "body": "House overlays show where one person lands in the other's life. A partner's planets in your 1st affect identity and embodiment; 4th affects home and roots; 5th affects pleasure and romance; 7th affects partnership; 8th affects intimacy and shared resources; 10th affects reputation and life direction."
+    },
+    {
+      "id": "saturn-and-durability",
+      "heading": "Saturn And Durability",
+      "body": "Saturn contacts can indicate commitment, endurance, duty, and structure, but also inhibition, fear, coldness, delay, or burden. Do not romanticize Saturn as proof of longevity. Ask whether the Saturn person provides structure that supports the bond or pressure that makes affection shrink."
+    },
+    {
+      "id": "composite-chart",
+      "heading": "Composite Chart",
+      "body": "Use the composite chart to describe the relationship as a third entity. Composite Sun describes purpose and identity of the bond. Composite Moon describes the daily emotional climate. Composite Venus describes affection and pleasure. Composite Mars describes conflict and desire. Composite Saturn describes tests, limits, and durability."
+    },
+    {
+      "id": "order-of-reading",
+      "heading": "Order Of Reading",
+      "body": "Recommended order: each natal relationship pattern, shared Sun-Moon-Ascendant story, close interaspects, house overlays, Venus-Mars attraction, Saturn durability, nodal or turning-point contacts if used, composite chart, then a grounded summary of strengths, risks, and choices."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

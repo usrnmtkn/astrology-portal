@@ -1,0 +1,44 @@
+{
+  "id": "synastry-writing-framework",
+  "kind": "synastry",
+  "title": "Synastry Writing Framework",
+  "sections": [
+    {
+      "id": "core-purpose",
+      "heading": "Core Purpose",
+      "body": "Analyze relationship dynamics between two birth charts using synastry techniques. Focus on how individuals activate, challenge, and support each other through planetary interactions, aspects, and house overlays."
+    },
+    {
+      "id": "required-input",
+      "heading": "Required Input Data",
+      "body": "Person A birth date, exact birth time, and birth location. Person B birth date, exact birth time, and birth location."
+    },
+    {
+      "id": "output-structure",
+      "heading": "Output Structure",
+      "body": "Present analysis in this order: opening dynamic, Sun-Moon connections, Venus-Mars dynamics, major aspects organized by type, composite midpoints, house overlays, shadow work for each person, strengths and challenges, and final assessment emphasizing choice over fate."
+    },
+    {
+      "id": "analysis-framework",
+      "heading": "Analysis Framework",
+      "body": "Do not romanticize. Name the relationship's primary tension or gift immediately, then analyze Sun-Moon emotional safety, Venus-Mars attraction and pursuit, major aspects, composite midpoints, house overlays, and each person's growth edge.",
+      "items": [
+        { "label": "Opening Dynamic", "body": "Identify the core relationship pattern in 2-3 sentences using specific planetary placements. Be direct and honest." },
+        { "label": "Sun-Moon Connections", "body": "Analyze how each person's core identity affects the other's emotional needs. Ask whether the two people can make each other feel both seen and safe, or whether one person's authentic self threatens the other's emotional security." },
+        { "label": "Venus-Mars Dynamics", "body": "Examine attraction patterns, romantic compatibility, and sexual chemistry. Maintain the distinction that chemistry is not compatibility and attraction is not commitment." },
+        { "label": "Major Aspects", "body": "Use 6-8 degree orb for major aspects only. Prioritize Sun/Moon, Venus/Mars, Saturn, and outer planets. For each aspect, state the aspect, explain the dynamic, and name both gift and challenge." },
+        { "label": "Composite Midpoints", "body": "Analyze Composite Sun, Moon, Venus, and Saturn by sign and house. Do not romanticize difficult composite placements." },
+        { "label": "House Overlays", "body": "Explain where each person's planets land in the other's chart and what life areas are activated. Critical overlays include 1st, 4th, 5th, 7th, 8th, and 10th houses." },
+        { "label": "Shadow Work", "body": "Name the specific pattern, wound, or defense mechanism each person cannot avoid in the relationship. Do not frame every challenge as a growth opportunity; sometimes incompatibility creates harm." },
+        { "label": "Compatibility Assessment", "body": "List 2-3 concrete strengths and 2-3 concrete challenges. End with the framing that the question is not whether charts are compatible, but whether both people are willing to do the work the charts require." }
+      ]
+    },
+    {
+      "id": "ethical-boundaries",
+      "heading": "Ethical Boundaries",
+      "body": "Synastry shows dynamics and potentials, not destiny. Do not tell someone to stay in or leave a relationship based on charts alone. Do not frame abusive dynamics as karmic lessons. Do not pathologize normal relationship challenges, create dependency on astrological validation, or ignore red flags because charts look compatible. Do acknowledge serious challenges, distinguish attraction from compatibility, identify growth-producing difficulty versus harm-producing incompatibility, emphasize choice and responsibility, and suggest professional help when deeper issues are indicated."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

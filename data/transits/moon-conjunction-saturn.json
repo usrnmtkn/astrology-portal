@@ -1,0 +1,29 @@
+{
+  "id": "moon-conjunction-saturn",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "saturn",
+  "tldr": "the Moon conjunction Saturn.",
+  "traditional": "the Moon conjunct Saturn: the body, home, and daily needs fused with limitation, delay, and hard structure. The two act as one and the combined significations are hard to separate.",
+  "modern": "Emotion meets limit and duty. Emotional reserve, seriousness, and a habit of bracing for the worst. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of feeling and limit is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Dependable under pressure; the risk is grinding joylessly.",
+  "shadow": "Moodiness and over-need fused with fear and rigidity, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:moon-saturn",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets limit and duty. Emotional reserve, seriousness, and a habit of bracing for the worst. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

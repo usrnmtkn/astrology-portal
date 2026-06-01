@@ -1,0 +1,24 @@
+{
+  "id": "mercury-saturn",
+  "planetA": "mercury",
+  "planetB": "saturn",
+  "traditional": "Communication and commerce combined with limitation and structure.",
+  "modern": {
+    "blend": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence.",
+    "harmonious": "Rigor, depth, and thoroughness.",
+    "hard": "Brooding and mental heaviness; the remedy is keeping the mind on useful work.",
+    "business": "Thorough and exacting, with little patience for small talk."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence.",
+  "harmonious": "Rigor, depth, and thoroughness.",
+  "hard": "Brooding and mental heaviness; the remedy is keeping the mind on useful work.",
+  "business": "Thorough and exacting, with little patience for small talk."
+}

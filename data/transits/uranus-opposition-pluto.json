@@ -1,0 +1,29 @@
+{
+  "id": "uranus-opposition-pluto",
+  "transiting": "uranus",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "Uranus opposition Pluto.",
+  "traditional": "No classical doctrine: Uranus, Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology. Psychologically the opposition is inner tension to integrate: Destructive upheaval and the urge to overturn at speed. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Disruption and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Transformative, disruptive, generational themes.",
+  "shadow": "Instability for its own sake collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:uranus-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology. Psychologically the opposition is inner tension to integrate: Destructive upheaval and the urge to overturn at speed. The growth is owning both sides instead of splitting them."
+}

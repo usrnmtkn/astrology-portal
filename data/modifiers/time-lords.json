@@ -1,0 +1,88 @@
+{
+  "id": "time-lords",
+  "schema": "modifier/time-lords",
+  "definition": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord.",
+  "annualProfections": {
+    "definition": "Each year of life advances the focus one whole sign from the Ascendant. The ruler of the profected sign is the Lord of the Year.",
+    "computation": {
+      "profectedHouse": "(age mod 12) + 1 # age 0 = 1st house",
+      "profectedSign": "the sign that many whole signs from the natal Ascendant, counterclockwise",
+      "lordOfYear": "the domicile ruler of the profected sign (use dignity.domicile)",
+      "monthly": "from the annual profected sign, advance one sign per ~month (12 over the year) for the Lord of the Month",
+      "daily": "subdivide the month the same way for a Lord of the Day"
+    },
+    "interpretationRules": [
+      "The year's topics are read from the profected house (see houseTopics).",
+      "The Lord of the Year's natal condition (house, sign, dignity, sect, aspects) sets the year's quality.",
+      "That year, transits TO or FROM the Lord of the Year and TO the profected sign are the ones that fire; others are background.",
+      "If the Lord of the Year is also currently transited by a malefic, weight the year's difficulty up; by a benefic, down.",
+      "A profection to a house activates the planets natally in that house and the planet ruling it."
+    ],
+    "houseTopics": {
+      "1": "self, body, vitality, the year's overall direction",
+      "2": "money, resources, livelihood, movable goods",
+      "3": "siblings, neighbors, short trips, daily communication, learning",
+      "4": "home, family, parents, foundations, property, endings",
+      "5": "children, creativity, pleasure, romance, speculation",
+      "6": "work, routine, health, illness, subordinates, daily grind",
+      "7": "marriage, partners, clients, open enemies, one-to-one dealings",
+      "8": "shared resources, debt, other people's money, crisis, death, transformation",
+      "9": "travel, foreigners, higher learning, religion, philosophy, publishing",
+      "10": "career, action, reputation, public standing, authority",
+      "11": "friends, allies, groups, patrons, hopes and goals, gains",
+      "12": "seclusion, loss, hidden things, self-undoing, hidden enemies, retreat"
+    }
+  },
+  "zodiacalReleasing": {
+    "definition": "Releases time from a Lot through the signs, each sign lasting its ruler's period-years, producing nested life chapters (L1 major, L2 sub, L3, L4).",
+    "source": "Valens",
+    "lots": {
+      "spirit": "career, action, mind, reputation, the volitional life",
+      "fortune": "body, circumstance, health, material conditions"
+    },
+    "periodYears": {
+      "saturn": 30,
+      "jupiter": 12,
+      "mars": 15,
+      "sun": 19,
+      "venus": 8,
+      "mercury": 20,
+      "moon": 25
+    },
+    "signPeriodYears": {
+      "aries": 15,
+      "taurus": 8,
+      "gemini": 20,
+      "cancer": 25,
+      "leo": 19,
+      "virgo": 20,
+      "libra": 8,
+      "scorpio": 15,
+      "sagittarius": 12,
+      "capricorn": 30,
+      "aquarius": 30,
+      "pisces": 12
+    },
+    "signPeriodNote": "Each sign's L1 length equals its ruler's period-years (Cancer=Moon 25, Leo=Sun 19, etc.). L2 subdivides that span through all twelve signs in order.",
+    "mechanics": [
+      "Start L1 at the sign of the Lot; advance through signs in order, each lasting its signPeriodYears.",
+      "Within each L1, run L2 through all twelve signs, each L2 lasting its own signPeriodYears, scaled into the L1 span.",
+      "'Loosing of the bond': when an L2 run completes the zodiac and would pass the sign opposite its start, it jumps to that opposite sign instead. Marks a major turning point.",
+      "Peak periods: L2 periods whose sign is angular (1st/4th/7th/10th) to the Lot of Fortune are high-activity 'peak' times; signs in aversion to the Lot are low/quiet."
+    ],
+    "interpretationRules": [
+      "Read Spirit-based ZR for career and chosen action; Fortune-based for body, health, and circumstance.",
+      "The current L1/L2 ruling sign and its lord describe the chapter's theme; the lord's natal condition sets its quality.",
+      "Treat MVP use as advisory background ('what season of life'), not a daily trigger."
+    ],
+    "note": "Advanced; structured here for later. Not required for the daily MVP, but the period numbers and peak rule are enough to compute chapters."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "chart",
+    "transit"
+  ],
+  "summary": "Time-lord systems describe which natal topics and planets are activated during a life chapter.",
+  "body": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord."
+}

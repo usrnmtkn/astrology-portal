@@ -1,0 +1,242 @@
+{
+  "kind": "aspect",
+  "note": "Two interpretive schools held side by side, not blended. Pick which the app reads from per surface, or use cyclic for structure and traditional for weighting. Minor aspects (major:false) are optional and off by default for the daily MVP.",
+  "provenance": {
+    "traditional": "Classical benefic-malefic and dynamic framing; applying/separating = the faster planet moving toward or away from exact.",
+    "cyclic": "Humanistic, process-oriented cyclic model: each planet pair runs a cycle from conjunction to conjunction (the lunation cycle as prototype). Waxing half = instinctive/building; waning half = conscious/releasing."
+  },
+  "entries": [
+    {
+      "id": "conjunction",
+      "angle": 0,
+      "arc": "same degree",
+      "major": true,
+      "traditional": {
+        "dynamic": "variable",
+        "nature": "takes the combined nature of the two planets",
+        "applyingMeaning": "The two meanings fuse and intensify as they close in.",
+        "separatingMeaning": "The fused theme has peaked and begins to discharge and integrate."
+      },
+      "cyclic": {
+        "phase": "New (seed)",
+        "hemicycle": "start",
+        "meaning": "The start of the pair's cycle. A new impulse is sown, instinctive and not yet conscious of itself. Subjective fusion, pure potential."
+      },
+      "dynamic": "variable",
+      "applyingMeaning": "The two meanings fuse and intensify as they close in.",
+      "separatingMeaning": "The fused theme has peaked and begins to discharge and integrate.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "semisextile",
+      "angle": 30,
+      "arc": "one sign apart",
+      "major": false,
+      "traditional": {
+        "dynamic": "minor",
+        "nature": "weak, slightly awkward",
+        "applyingMeaning": "A first tentative contact forms.",
+        "separatingMeaning": "The faint contact dissolves."
+      },
+      "cyclic": {
+        "phase": "Emergence",
+        "hemicycle": "waxing",
+        "meaning": "The first step out of the seed. The new impulse begins to differentiate itself, still fragile and barely formed."
+      },
+      "dynamic": "minor",
+      "applyingMeaning": "A first tentative contact forms.",
+      "separatingMeaning": "The faint contact dissolves.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "octile",
+      "aliases": [
+        "semisquare"
+      ],
+      "angle": 45,
+      "arc": "half a square",
+      "major": false,
+      "traditional": {
+        "dynamic": "minor hard",
+        "nature": "friction, agitation",
+        "applyingMeaning": "Irritation builds that pushes toward action.",
+        "separatingMeaning": "The agitation settles."
+      },
+      "cyclic": {
+        "phase": "Mobilization",
+        "hemicycle": "waxing",
+        "meaning": "A minor crisis of mobilization. Friction that prods the emerging impulse to commit to building a form."
+      },
+      "dynamic": "minor hard",
+      "applyingMeaning": "Irritation builds that pushes toward action.",
+      "separatingMeaning": "The agitation settles.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sextile",
+      "angle": 60,
+      "arc": "two signs apart",
+      "major": true,
+      "traditional": {
+        "dynamic": "soft",
+        "nature": "benefic-leaning, conditional",
+        "applyingMeaning": "A supportive opening becomes available; it is offered, not automatic.",
+        "separatingMeaning": "The opening closes; unused, it passes."
+      },
+      "cyclic": {
+        "phase": "Phase 2 (waxing) / Phase 7 (waning)",
+        "hemicycle": "both",
+        "waxingMeaning": "Organizing raw, unformed material into new structures. A chance to build, requiring active take-up.",
+        "waningMeaning": "Reorganizing understanding after the opposition's revaluation; sharing and communicating what was learned."
+      },
+      "dynamic": "soft",
+      "applyingMeaning": "A supportive opening becomes available; it is offered, not automatic.",
+      "separatingMeaning": "The opening closes; unused, it passes.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "quintile",
+      "angle": 72,
+      "arc": "a fifth of the circle",
+      "major": false,
+      "traditional": {
+        "dynamic": "minor soft",
+        "nature": "mildly favorable (Kepler)",
+        "applyingMeaning": "A creative knack comes into play.",
+        "separatingMeaning": "The creative window passes."
+      },
+      "cyclic": {
+        "phase": "Creative faculty",
+        "hemicycle": "either",
+        "meaning": "An individual shaping or forming talent; the capacity to give personal style to the cycle's material."
+      },
+      "dynamic": "minor soft",
+      "applyingMeaning": "A creative knack comes into play.",
+      "separatingMeaning": "The creative window passes.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "square",
+      "angle": 90,
+      "arc": "three signs apart",
+      "major": true,
+      "traditional": {
+        "dynamic": "hard",
+        "nature": "malefic-leaning",
+        "applyingMeaning": "Friction builds toward a forced adjustment.",
+        "separatingMeaning": "The crisis passes; what was restructured under pressure settles."
+      },
+      "cyclic": {
+        "phase": "First Quarter (waxing) / Last Quarter (waning)",
+        "hemicycle": "both",
+        "waxingMeaning": "Crisis of action. The impulse must consciously take the wheel and build a durable form, or be thrown off course.",
+        "waningMeaning": "Crisis of consciousness and meaning. Old forms break down to clear the way for the next cycle; reorientation."
+      },
+      "dynamic": "hard",
+      "applyingMeaning": "Friction builds toward a forced adjustment.",
+      "separatingMeaning": "The crisis passes; what was restructured under pressure settles.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "trine",
+      "angle": 120,
+      "arc": "four signs apart, same triplicity",
+      "major": true,
+      "traditional": {
+        "dynamic": "soft",
+        "nature": "benefic-leaning",
+        "applyingMeaning": "Ease and support build and arrive almost on their own.",
+        "separatingMeaning": "The ease withdraws; the flow passes, used or not."
+      },
+      "cyclic": {
+        "phase": "Phase 5 (waxing) / Phase 8 (waning)",
+        "hemicycle": "both",
+        "waxingMeaning": "The form won at the waxing square now flows and is enjoyed; responding with ease to opportunity.",
+        "waningMeaning": "Distributing and sharing the realized meaning; giving understanding an easy, transmissible form."
+      },
+      "dynamic": "soft",
+      "applyingMeaning": "Ease and support build and arrive almost on their own.",
+      "separatingMeaning": "The ease withdraws; the flow passes, used or not.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sesquiquadrate",
+      "aliases": [
+        "tri-octile"
+      ],
+      "angle": 135,
+      "arc": "a square and a half",
+      "major": false,
+      "traditional": {
+        "dynamic": "minor hard",
+        "nature": "friction, agitation",
+        "applyingMeaning": "Restless agitation rises.",
+        "separatingMeaning": "The agitation eases."
+      },
+      "cyclic": {
+        "phase": "Waning agitation",
+        "hemicycle": "waning",
+        "meaning": "Friction in the waning half; pressure around releasing and reorienting what has outlived its purpose."
+      },
+      "dynamic": "minor hard",
+      "applyingMeaning": "Restless agitation rises.",
+      "separatingMeaning": "The agitation eases.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "quincunx",
+      "aliases": [
+        "inconjunct"
+      ],
+      "angle": 150,
+      "arc": "five signs apart",
+      "major": false,
+      "traditional": {
+        "dynamic": "minor",
+        "nature": "awkward, requires adjustment",
+        "applyingMeaning": "Mismatched elements are pushed together and chafe.",
+        "separatingMeaning": "The forced adjustment relaxes."
+      },
+      "cyclic": {
+        "phase": "Crisis of adjustment",
+        "hemicycle": "flanks the opposition",
+        "meaning": "Two factors that do not naturally fit are forced to adjust to each other; reorientation around the cycle's turning point."
+      },
+      "dynamic": "minor",
+      "applyingMeaning": "Mismatched elements are pushed together and chafe.",
+      "separatingMeaning": "The forced adjustment relaxes.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "opposition",
+      "angle": 180,
+      "arc": "six signs apart, facing",
+      "major": true,
+      "traditional": {
+        "dynamic": "hard",
+        "nature": "malefic-leaning, oriented to awareness and relationship",
+        "applyingMeaning": "A confrontation builds; the other side comes fully into view.",
+        "separatingMeaning": "The standoff resolves into balance or a clean split."
+      },
+      "cyclic": {
+        "phase": "Full (culmination)",
+        "hemicycle": "turn",
+        "meaning": "The peak of the cycle. The impulse becomes fully conscious and faces its other: objectivity, awareness, fulfillment or confrontation. The pivot from instinct (waxing) to meaning (waning)."
+      },
+      "dynamic": "hard",
+      "applyingMeaning": "A confrontation builds; the other side comes fully into view.",
+      "separatingMeaning": "The standoff resolves into balance or a clean split.",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    }
+  ]
+}

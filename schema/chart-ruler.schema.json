@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/chart-ruler.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "tldr", "meaning", "business", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "enum": ["chart-ruler-rising", "chart-ruler-house"] },
+    "risingSign": { "type": "string" },
+    "ruler": { "type": "string" },
+    "modernCoRuler": { "type": "string" },
+    "modernLens": { "type": "string" },
+    "house": { "type": "number" },
+    "tldr": { "type": "string" },
+    "meaning": { "type": "string" },
+    "business": { "type": "string" },
+    "shadow": { "type": "string" },
+    "advice": { "type": "string" },
+    "readNext": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

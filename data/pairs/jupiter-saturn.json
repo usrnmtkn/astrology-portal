@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-saturn",
+  "planetA": "jupiter",
+  "planetB": "saturn",
+  "traditional": "Growth and fortune combined with limitation and structure. One benefic, one malefic: the benefic tempers the malefic.",
+  "modern": {
+    "blend": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline.",
+    "harmonious": "Ambition grounded by realism; you grow at a sustainable pace.",
+    "hard": "Lurching between extremes, from let-loose to grind, without a steady middle.",
+    "business": "Balancing risk against prudence; unmanaged, it reads as inconsistency."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline.",
+  "harmonious": "Ambition grounded by realism; you grow at a sustainable pace.",
+  "hard": "Lurching between extremes, from let-loose to grind, without a steady middle.",
+  "business": "Balancing risk against prudence; unmanaged, it reads as inconsistency."
+}

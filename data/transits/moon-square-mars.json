@@ -1,0 +1,30 @@
+{
+  "id": "moon-square-mars",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "mars",
+  "tldr": "the Moon square Mars.",
+  "traditional": "the Moon square Mars: a hard contact. The body, home, and daily needs works against action, conflict, and heat \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them. Psychologically the square is inner tension to integrate: Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for feeling against drive, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the feeling/drive form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Drive powered by feeling; the work is managing reactivity.",
+  "shadow": "Moodiness and over-need collides with anger and recklessness; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:moon-mars",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them. Psychologically the square is inner tension to integrate: Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling. The growth is owning both sides instead of splitting them."
+}

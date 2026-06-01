@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/pair.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "planetA", "planetB", "blend", "harmonious", "hard", "business", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "planetA": { "type": "string" },
+    "planetB": { "type": "string" },
+    "blend": { "type": "string" },
+    "harmonious": { "type": "string" },
+    "hard": { "type": "string" },
+    "business": { "type": "string" },
+    "traditional": { "type": "string" },
+    "modern": { "type": "object" },
+    "cyclicNote": { "type": "string" },
+    "sourceNote": { "type": "string" },
+    "provenance": { "type": "object" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

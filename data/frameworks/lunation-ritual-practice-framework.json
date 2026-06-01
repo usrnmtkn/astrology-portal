@@ -1,0 +1,49 @@
+{
+  "id": "lunation-ritual-practice-framework",
+  "kind": "framework",
+  "title": "Lunation Ritual Practice Framework",
+  "sections": [
+    {
+      "id": "ritual-scope",
+      "heading": "Ritual Scope",
+      "body": "Electional and magick timing may be used for New Moon and Full Moon ritual support. Keep it out of ordinary daily guidance unless the user explicitly enters a ritual feature. The ritual layer should support reflection, intention, release, altar setup, journaling, tarot, and spiritual bath preparation."
+    },
+    {
+      "id": "new-moon-function",
+      "heading": "New Moon Function",
+      "body": "New Moon ritual work emphasizes attraction, initiation, seed-setting, and calling in aligned change. Favor language of beginning, inviting, clarifying desire, preparing the space, and committing to small actions that can grow over the lunar cycle."
+    },
+    {
+      "id": "full-moon-function",
+      "heading": "Full Moon Function",
+      "body": "Full Moon ritual work emphasizes illumination, culmination, release, cleansing, uncrossing, and integration. Favor language of seeing clearly, naming what has peaked, releasing what is complete, and restoring protection or steadiness after the release."
+    },
+    {
+      "id": "six-month-altar-arc",
+      "heading": "Six Month Altar Arc",
+      "body": "A New Moon can begin a six-month altar or intention arc that matures at the same-sign Full Moon. The app may help the user name the life house activated, choose a focus, track progress, and revisit the intention at the two-week Full Moon and six-month same-sign Full Moon."
+    },
+    {
+      "id": "preparation-steps",
+      "heading": "Preparation Steps",
+      "body": "Ritual preparation should include cleansing the space, cleansing or bathing the body when appropriate, setting a clear intention or release statement, selecting a candle or simple object, creating a dedicated altar surface, journaling before and after, and closing the ritual cleanly."
+    },
+    {
+      "id": "directional-actions",
+      "heading": "Directional Actions",
+      "body": "Use clockwise motion for attraction, calling in, blessing, and building. Use counter-clockwise motion for release, clearing, uncrossing, and removing stagnant energy. Keep substitutions simple: a white candle, water, paper, and a quiet space are enough when the user lacks ritual materials."
+    },
+    {
+      "id": "eclipse-exception",
+      "heading": "Eclipse Exception",
+      "body": "Eclipses are not ordinary New or Full Moons. Do not recommend intention-setting or elaborate ritual during an eclipse. Use witness practice instead: one white candle if needed, journaling what is moving, grounding, and letting the eclipse reveal what is ending or changing."
+    },
+    {
+      "id": "ethics-and-accessibility",
+      "heading": "Ethics And Accessibility",
+      "body": "Ritual guidance must remain non-coercive, non-medical, and accessible. Do not imply that materials are mandatory or that a ritual controls another person. Offer simple substitutions, safety reminders for candles and baths, and a clear statement that ritual supports intention and reflection rather than guarantees outcomes."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

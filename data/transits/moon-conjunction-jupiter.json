@@ -1,0 +1,29 @@
+{
+  "id": "moon-conjunction-jupiter",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "jupiter",
+  "tldr": "the Moon conjunction Jupiter.",
+  "traditional": "the Moon conjunct Jupiter: the body, home, and daily needs fused with growth, fortune, and patronage. The two act as one and the combined significations are hard to separate.",
+  "modern": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of feeling and growth is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Warmth and generosity that draw people in; watch the tendency to overextend.",
+  "shadow": "Moodiness and over-need fused with excess and overreach, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:moon-jupiter",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

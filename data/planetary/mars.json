@@ -1,0 +1,66 @@
+{
+  "id": "mars",
+  "planet": "mars",
+  "title": "Mars Meaning",
+  "overview": "PLACEHOLDER - author review from source",
+  "cycle": "Mars typically spends around six to seven weeks in each zodiac sign, but its precise duration may vary due to its periodic retrograde motion. Retrograde periods occur approximately every two years, causing Mars to appear to move backward in the sky from our Earthly perspective. During these times, Mars can spend several months in a single zodiac sign. It is advisable to consult astrological calendars or ephemerides for specic dates and durations of Mars' transits.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "With Mars in Aries, you're blessed with a surge o energy and assertiveness. You act with condence and a pioneering spirit, eager to forge your own path. uick decisions and rapid action are your signatures."
+    },
+    {
+      "sign": "taurus",
+      "body": "Mars in Taurus lends you a steady, persistent drive. You tackle tasks with determination, and once you've set a goal, it's near impossible to deter you. Patience and a love for the sensual pleasures of life mark your journey."
+    },
+    {
+      "sign": "gemini",
+      "body": "With Mars in Gemini in your chart, your actions are powered by your intellect. uick - thinking and versatility guide your moves. You may be drawn towards activities that involve communication, networking, or learning new skills."
+    },
+    {
+      "sign": "cancer",
+      "body": "When Mars is in Cancer, your actions are motivated by emotion and intuition. You protect what you hold dear with a erce determination. While you may approach situations cautiously, once you commit, you invest deep emotional energy."
+    },
+    {
+      "sign": "leo",
+      "body": "Mars in Leo gives you a air for the dramatic. Your actions oen attract attention, and you carry out your tasks with a sense of pride and a desire for recognition. Your energy levels are consistently high, and you face life with a courageous heart."
+    },
+    {
+      "sign": "virgo",
+      "body": "With Mars in Virgo, you act with precision and practicality. You have an acute eye for detail and a desire for perfection. Your energy is applied in service, organization, and tasks that reuire meticulous attention."
+    },
+    {
+      "sign": "libra",
+      "body": "Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might nd yourself in the role of a mediator. You may also have a knack for artistic pursuits."
+    },
+    {
+      "sign": "scorpio",
+      "body": "You act with intensity and a strong will. Your actions are oen guided by your deep intuition, and you're not afraid to explore the hidden depths of any situation."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "If Mars is in Sagittarius, your actions embody an adventurous spirit. You relish taking risks and exploring new frontiers. Guided by optimism and enthusiasm, you're always prepared for the next big adventure."
+    },
+    {
+      "sign": "capricorn",
+      "body": "With Mars is in Capricorn, your actions are driven by your ambition and discipline. You have a strong work ethic and the patience to achieve your long - term goals. You act with practicality, and a strong sense o responsibility."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Mars in Aquarius bestows upon you a uniue, innovative drive. You act based on your strong ideals and are willing to challenge the status uo. You may be drawn towards activities that benet society as a whole or involve cutting-edge technology."
+    },
+    {
+      "sign": "pisces",
+      "body": "With Mars in Pisces, your actions are motivated by your empathy and intuition. You have a seless desire to help and heal. Your actions might be guided by your deep spiritual beliefs or a strong sense of creative inspiration. 274"
+    }
+  ],
+  "source": {
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      274,
+      275
+    ]
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "saturn-square-neptune",
+  "transiting": "saturn",
+  "aspect": "square",
+  "other": "neptune",
+  "tldr": "Saturn square Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Psychologically the square is inner tension to integrate: Expecting the worst, anxiety, and worry that mostly never materializes. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for limit against imagination, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the limit/imagination form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Disciplined vision realized over time; the task is managing fear.",
+  "shadow": "Fear and rigidity collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:saturn-neptune",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Psychologically the square is inner tension to integrate: Expecting the worst, anxiety, and worry that mostly never materializes. The growth is owning both sides instead of splitting them."
+}

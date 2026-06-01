@@ -1,0 +1,24 @@
+{
+  "id": "moon-jupiter",
+  "planetA": "moon",
+  "planetB": "jupiter",
+  "traditional": "The body and daily needs combined with growth and fortune.",
+  "modern": {
+    "blend": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity.",
+    "harmonious": "Emotional warmth and an instinct to give.",
+    "hard": "Emotional and physical excess; overindulgence and overcommitment.",
+    "business": "Warmth and generosity that draw people in; watch the tendency to overextend."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity.",
+  "harmonious": "Emotional warmth and an instinct to give.",
+  "hard": "Emotional and physical excess; overindulgence and overcommitment.",
+  "business": "Warmth and generosity that draw people in; watch the tendency to overextend."
+}

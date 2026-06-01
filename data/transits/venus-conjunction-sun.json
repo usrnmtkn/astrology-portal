@@ -1,0 +1,29 @@
+{
+  "id": "venus-conjunction-sun",
+  "transiting": "venus",
+  "aspect": "conjunction",
+  "other": "sun",
+  "tldr": "Venus conjunction the Sun.",
+  "traditional": "Venus conjunct the Sun: love, money, and pleasure fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
+  "modern": "Identity blended with charm, pleasure, and a sense of value. Sociability and taste become part of how you show up. Only the conjunction is possible, as Venus stays close to the Sun. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of connection and selfhood is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Tends to be well-liked in the work and to 'look good' doing it.",
+  "shadow": "Indulgence and vanity fused with egotism and needing to be the center, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-venus",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity blended with charm, pleasure, and a sense of value. Sociability and taste become part of how you show up. Only the conjunction is possible, as Venus stays close to the Sun. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

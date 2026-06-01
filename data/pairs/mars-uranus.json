@@ -1,0 +1,24 @@
+{
+  "id": "mars-uranus",
+  "planetA": "mars",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology.",
+    "harmonious": "Quick, original action and inventive problem-solving.",
+    "hard": "Accident-proneness, a temper that goes off like a shot, and unpredictable tactics that either win big or backfire fast.",
+    "business": "Innovative and fast; the cost is recklessness and volatility."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology.",
+  "harmonious": "Quick, original action and inventive problem-solving.",
+  "hard": "Accident-proneness, a temper that goes off like a shot, and unpredictable tactics that either win big or backfire fast.",
+  "business": "Innovative and fast; the cost is recklessness and volatility."
+}

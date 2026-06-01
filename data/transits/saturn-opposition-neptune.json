@@ -1,0 +1,29 @@
+{
+  "id": "saturn-opposition-neptune",
+  "transiting": "saturn",
+  "aspect": "opposition",
+  "other": "neptune",
+  "tldr": "Saturn opposition Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Psychologically the opposition is inner tension to integrate: Expecting the worst, anxiety, and worry that mostly never materializes. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Limit and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Disciplined vision realized over time; the task is managing fear.",
+  "shadow": "Fear and rigidity collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:saturn-neptune",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Psychologically the opposition is inner tension to integrate: Expecting the worst, anxiety, and worry that mostly never materializes. The growth is owning both sides instead of splitting them."
+}

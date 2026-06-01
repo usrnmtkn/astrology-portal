@@ -1,0 +1,15 @@
+{
+  "id": "lilith-conjunct-moon",
+  "kind": "natal",
+  "point": "black-moon-lilith",
+  "aspect": "conjunction",
+  "planet": "moon",
+  "tldr": "Black Moon Lilith conjunct Moon.",
+  "body": "Emotional life runs deep and sits close to the unconscious; you feel intensely and stay unusually in touch with what most people bury. Feelings can surface with a force others don't carry, and little stays buried for long.",
+  "business": "Emotionally perceptive and resilient; reads the undercurrent in a room.",
+  "shadow": "Emotional volatility, and old feelings that come up raw and large until they're given room.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

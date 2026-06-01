@@ -1,0 +1,70 @@
+{
+  "id": "lunation-and-transit-templates",
+  "kind": "template",
+  "title": "Lunation and Transit Writing Templates",
+  "sections": [
+    {
+      "id": "season-overview-axis-work",
+      "heading": "Season Overview With Axis Work",
+      "body": "Maintain this structure: start with shared themes before differences; include higher and lower vibrations for each sign; present the shadow of the Sun sign first, then Moon sign; create a visual spectrum with shadows on the ends and integration in the middle; end with an invitation for Full Moon work; emphasize unconditional love or the highest principle throughout; include practical guidance for recognizing and shifting shadow patterns; balance individual and collective perspectives; acknowledge all expressions have equal value; close with the ultimate truth of the axis.",
+      "items": [
+        { "label": "Introduction and Shared Ground", "body": "State where the Moon and Sun are, introduce the axis, name shared values or mutual focus, and describe how both signs aim toward a similar end goal even if their approaches differ." },
+        { "label": "Unique Contributions", "body": "Break down what each sign offers in balance. Highlight how Sign 1 contributes to the whole and how Sign 2 complements it." },
+        { "label": "Common Challenges", "body": "Address how each sign's energy can lead to self-betrayal if misused. Name pretending, fitting in, or avoiding as blocks to integration." },
+        { "label": "Higher Vibrations", "body": "Define the highest expression of each sign and explain how they come together to create something greater." },
+        { "label": "Lower Vibrations", "body": "Clearly outline each sign's shadow, including behaviors, motivations, and patterns." },
+        { "label": "Integration Point", "body": "Describe the line of energy from one shadow extreme to the other and name the balanced midpoint." },
+        { "label": "Full Moon Opportunity", "body": "Tie it back to release and integration, naming a release focus for both signs' shadows." },
+        { "label": "Closing Axis Insight", "body": "End with an empowering reminder of the axis' ultimate teaching." },
+        { "label": "Season Altar Setup", "body": "Include sign side, opposite side, center bridge, what to call in, what to balance, kamea placement, practical substitution, and relevant location." }
+      ]
+    },
+    {
+      "id": "new-moon-template",
+      "heading": "New Moon Template",
+      "body": "Opening: If the reader has been self-abandoning through specific behaviors, frame the New Moon in the sign as a reframe, deep truth, and permission statement. Arc connection: name the old pattern, new pattern, two-week opposite-sign Full Moon reveal, and six-month same-sign Full Moon maturation. Consequences: name what opens if they commit and what repeats if they avoid. Include intention setting, ritual, timing after exact New Moon, sign energy keywords, journal prompt, and intentions by sign/rising."
+    },
+    {
+      "id": "full-moon-template",
+      "heading": "Full Moon Template",
+      "body": "Include two-week arc, six-month arc, axis integration, consequences, ritual, journal prompt, tarot question, and intentions by sign/rising. The two-week arc connects New Moon sign themes to Full Moon sign revelation. The six-month arc asks what has taken root since the same-sign New Moon."
+    },
+    {
+      "id": "aspect-template",
+      "heading": "Aspects of Full Moon, New Moon, or Transit Template",
+      "body": "For each major aspect, state planet, sign, exact aspect type, the qualities being blended or challenged, the practical support or tension, optional date/time, active range, degrees impacted, additional planets, larger patterns, reflection questions, house activation, practical application, and closing statement."
+    },
+    {
+      "id": "transit-retrograde-aspect-template",
+      "heading": "Transit, Retrograde, or Aspect in Sign Template",
+      "body": "Include opening energy statement, key aspects and planetary influences, exact date/time, active range, degrees impacted, additional planets, larger patterns, archetype and essence, shadow and conditioning, historical reflection, planetary mechanics and tensions, collective and personal influence, body memory and ancestral patterns, purpose and work of the transit, optional house activation, practical application, reflection questions, and closing alignment."
+    },
+    {
+      "id": "horoscope-template",
+      "heading": "Horoscope Template for Moon Phase in Sign by Rising Sign",
+      "body": "For each rising sign, state the moon phase, house number and life areas, patterns or dynamics being illuminated, aspects in play, release/shift items, why the release matters, and the higher path. Use concrete lower-vibration behaviors and connect personal alignment to collective impact."
+    },
+    {
+      "id": "zodiac-sign-template",
+      "heading": "Zodiac Sign Template",
+      "body": "Include overview and symbolism, mythic origins, collective influence, shadow lore, optional astrological age or long-term collective influence, planetary ruler explanation, application, reflection questions, and personal experiment."
+    },
+    {
+      "id": "monthly-seasonal-horoscope-template",
+      "heading": "Monthly or Seasonal Horoscope Template",
+      "body": "Lead with where the main transit lands by house. Name psychological depth, unconscious pattern, direct challenge with compassion, permission statements, reframes, 2-3 specific dates, integration of multiple transits, reflection questions, paradoxes, and house theme focus."
+    },
+    {
+      "id": "seasonal-event-template",
+      "heading": "Seasonal Event Template",
+      "body": "For equinoxes and solstices, include title, one clear astronomical fact, exact UTC time, global times for Los Angeles, Chicago, Mexico City, New York, Toronto, London, Barcelona, and Dubai, Northern Hemisphere season, Southern Hemisphere season, universal themes, lore and lineage, and respectful ritual/cultural context."
+    },
+    {
+      "id": "waning-phase-release-template",
+      "heading": "Waning Phase Release Template",
+      "body": "Connect the lunar phase to the previous moon phase. Name how the previous sign guided the work and how the current Moon sign invites refinement. Balance the current Sun sign and Moon sign. Include body awareness, release imagery, consequences of commitment versus resistance, and a closing action line."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

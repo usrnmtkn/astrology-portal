@@ -1,0 +1,109 @@
+{
+  "id": "career-foundations",
+  "kind": "guide",
+  "title": "Career Astrology Foundations",
+  "sections": [
+    {
+      "id": "elements",
+      "heading": "Elements",
+      "body": "Count how many planets are in each element. The dominant element shows how someone tends to navigate life. If one element is overemphasized and another is missing, the person may over-rely on one approach and need to bring in what is missing through environment, collaborators, or practices.",
+      "items": [
+        { "label": "Fire Signs", "body": "Aries, Leo, Sagittarius. Fire emphasis indicates orientation toward initiative, creativity, and leadership. Strong fire tends to be energized by inspiring others, starting new projects, and taking independent action. Career applications often include entrepreneurship, entertainment, education, athletics, and fields where visibility and autonomous decision-making are valued." },
+        { "label": "Earth Signs", "body": "Taurus, Virgo, Capricorn. Earth emphasis suggests practical approaches to goals and steady work habits. These individuals find satisfaction through tangible results and building useful things. Career applications often include business, healthcare, engineering, skilled trades, and fields with clear advancement paths and concrete outcomes." },
+        { "label": "Air Signs", "body": "Gemini, Libra, Aquarius. Air emphasis reveals mental agility and communication strengths. These people are energized by ideas, social connection, and problem-solving. Career applications often include writing, teaching, technology, law, consulting, and roles involving variety, intellectual stimulation, and human interaction." },
+        { "label": "Water Signs", "body": "Cancer, Scorpio, Pisces. Water emphasis indicates emotional sensitivity and intuitive understanding. These individuals are drawn to helping others and creating emotional safety. Career applications often include counseling, healthcare, arts, spiritual work, and fields where empathy and emotional intelligence are valuable." },
+        { "label": "Element Imbalances", "body": "Earth-heavy charts might resist change. Fire-heavy charts may burn hot and fast. Air-dominant charts can feel ungrounded. Water-dominant charts may absorb too much from others." }
+      ]
+    },
+    {
+      "id": "modes",
+      "heading": "Modes",
+      "body": "Count how many planets are in each mode. A lot of Cardinal may start projects but burn out. Too little Cardinal may struggle to begin. Fixed-heavy charts need consistency. Mutable-heavy charts need change and stimulation.",
+      "items": [
+        { "label": "Cardinal Signs", "body": "Aries, Cancer, Libra, Capricorn. Cardinal emphasis suggests natural leadership abilities and comfort with starting projects. These individuals often thrive in roles where they can initiate new directions or take charge." },
+        { "label": "Fixed Signs", "body": "Taurus, Leo, Scorpio, Aquarius. Fixed emphasis indicates strength in sustaining effort and maintaining consistency. These people excel in roles requiring persistence, depth, and seeing projects through." },
+        { "label": "Mutable Signs", "body": "Gemini, Virgo, Sagittarius, Pisces. Mutable emphasis reveals adaptability and learning orientation. These individuals often excel in teaching, consulting, or roles requiring flexibility and adjustment to changing circumstances." }
+      ]
+    },
+    {
+      "id": "hemispheres-quadrants",
+      "heading": "Hemisphere and Quadrant Analysis",
+      "body": "Use house emphasis to identify orientation toward personal development, collective contribution, self-direction, or collaboration.",
+      "items": [
+        { "label": "Northern Hemisphere", "body": "Houses 1-6. Emphasis suggests focus on personal development and individual achievement. Career satisfaction often comes through developing personal skills and expertise." },
+        { "label": "Southern Hemisphere", "body": "Houses 7-12. Emphasis indicates orientation toward social contribution and collective impact. Career fulfillment often involves serving others or contributing to larger social purposes." },
+        { "label": "Eastern Hemisphere", "body": "Houses 10-3. Emphasis suggests self-directed, initiating energy. These individuals often prefer to create their own opportunities rather than wait for others to provide them." },
+        { "label": "Western Hemisphere", "body": "Houses 4-9. Emphasis indicates others-oriented, responding energy. These people often work best in collaborative environments or in response to others' needs and initiatives." }
+      ]
+    },
+    {
+      "id": "career-anchors",
+      "heading": "Career Anchors",
+      "body": "Look at signs on the 10th, 6th, and 2nd house cusps and any planets inside for career themes.",
+      "items": [
+        { "label": "10th House / Midheaven", "body": "Represents how the world sees the person, how they want to be known professionally, and what kind of public impact they wish to make. The Midheaven sign and planets in the 10th reveal themes central to career expression." },
+        { "label": "6th House", "body": "Shows natural work style, how the person prefers to serve others, and what daily routine supports productivity. The sign on the 6th cusp and planets here reveal ideal work environment." },
+        { "label": "2nd House", "body": "Reveals relationship with money, material security, and values. Understanding the 2nd house helps align career choices with genuine values rather than paths that conflict with what is meaningful." }
+      ]
+    },
+    {
+      "id": "sun-moon-midheaven",
+      "heading": "Sun, Moon, and Midheaven",
+      "body": "The Sun describes core identity and career satisfaction. The Moon describes emotional needs and productive work atmosphere. The Midheaven describes professional image and public role.",
+      "items": [
+        { "label": "Fire Sun", "body": "Fire Suns typically display natural leadership and initiative. They find energy through creative projects and inspiring others. They need work that allows them to initiate rather than constantly respond to others' direction." },
+        { "label": "Earth Sun", "body": "Earth Suns demonstrate practical approaches to goals and steady work habits. They need practical results and tend to prefer stability over constant change." },
+        { "label": "Air Sun", "body": "Air Suns exhibit mental agility and communication strengths. They need mental challenge and social connection to feel engaged." },
+        { "label": "Water Sun", "body": "Water Suns show emotional sensitivity and intuitive understanding. They need work that feels personally meaningful rather than only financially rewarding." },
+        { "label": "Fire Moon", "body": "Needs excitement, autonomy, room for spontaneity, variety, and sometimes competitive elements. Rigid schedules or micromanagement can drain energy." },
+        { "label": "Earth Moon", "body": "Needs stability, clear expectations, practical outcomes, consistent schedules, and measurable progress. Chaotic environments can reduce productivity." },
+        { "label": "Air Moon", "body": "Needs intellectual stimulation, social interaction, collaborative environments, idea exchange, task variety, and freedom to communicate." },
+        { "label": "Water Moon", "body": "Needs emotional safety, meaningful connection, supportive atmospheres, and personally meaningful work. Harsh or competitive environments can be draining." },
+        { "label": "Fire Midheaven", "body": "Projects a public image as a dynamic leader or inspirational figure. Careers often involve innovation, creativity, teaching, or inspiring action." },
+        { "label": "Earth Midheaven", "body": "Projects a public image as a reliable expert or skilled professional. Careers often involve building, organizing, or practical services." },
+        { "label": "Air Midheaven", "body": "Projects a public image as communicator, connector, or advocate. Careers often involve ideas, networking, social causes, or facilitating understanding." },
+        { "label": "Water Midheaven", "body": "Projects a public image as nurturer, healer, or creative visionary. Careers often involve care, artistic expression, or emotional support." }
+      ]
+    },
+    {
+      "id": "growth-planets",
+      "heading": "North Node, Saturn, and Jupiter",
+      "body": "Use these placements to identify growth direction, mastery through challenge, and natural expansion.",
+      "items": [
+        { "label": "North Node Cardinal", "body": "Learning to initiate and lead. Career growth often involves taking more responsibility and making independent decisions." },
+        { "label": "North Node Fixed", "body": "Learning to sustain effort and develop consistency. Career growth often involves deepening expertise and building lasting value." },
+        { "label": "North Node Mutable", "body": "Learning to adapt and teach others. Career growth often involves flexibility and sharing knowledge gained through experience." },
+        { "label": "Saturn", "body": "Represents consistent challenges that can become expertise and authority when worked through. The house placement shows where competence must be built through sustained effort." },
+        { "label": "Jupiter Fire", "body": "Finds meaning through inspiring others and expanding possibilities." },
+        { "label": "Jupiter Earth", "body": "Finds meaning through practical improvement and building useful things." },
+        { "label": "Jupiter Air", "body": "Finds meaning through sharing ideas and facilitating understanding." },
+        { "label": "Jupiter Water", "body": "Finds meaning through emotional healing and spiritual growth." }
+      ]
+    },
+    {
+      "id": "career-patterns",
+      "heading": "Common Career Patterns",
+      "body": "Use chart indicators to identify recurring vocational archetypes.",
+      "items": [
+        { "label": "Executive Type", "body": "Indicators: strong Earth emphasis, planets in the 10th house, well-aspected Saturn, and often prominent Cardinal signs. Themes: management, business ownership, organizational structures, long-term planning, strategic implementation." },
+        { "label": "Helper Type", "body": "Indicators: strong Water emphasis, planets in the 6th or 12th houses, prominent Moon, and often Mutable signs. Themes: service, helping others navigate challenges, emotional needs, supportive assistance." },
+        { "label": "Communicator Type", "body": "Indicators: strong Air emphasis, prominent Mercury, planets in the 3rd or 9th houses, and often Mutable signs. Themes: sharing information, facilitating understanding, connecting perspectives." },
+        { "label": "Creator Type", "body": "Indicators: strong Fire emphasis, planets in the 5th house, prominent Sun or Leo energy, and often Fixed signs. Themes: creative expression, inspiration, innovation, motivating others." },
+        { "label": "Innovator Type", "body": "Indicators: prominent Uranus, strong Aquarius emphasis, planets in the 11th house, and often Air emphasis. Themes: cutting-edge fields, social reform, collective problem-solving, future possibilities." }
+      ]
+    },
+    {
+      "id": "timing-life-phases",
+      "heading": "Timing and Life Phases",
+      "body": "Use major cycles to contextualize career and life transitions.",
+      "items": [
+        { "label": "Saturn Return", "body": "Ages 29-30 and 58-60. Major life restructuring. The first often involves choosing a serious career direction; the second may involve legacy and sharing wisdom." },
+        { "label": "Jupiter Return", "body": "Every 12 years. Brings opportunities for growth and expansion in the life area Jupiter occupies." },
+        { "label": "Uranus Transits", "body": "Every 7 years to different chart areas. When Uranus transits career houses such as the 6th or 10th, sudden changes, technological innovations, or breakthroughs may free limiting professional circumstances." },
+        { "label": "North Node Return", "body": "Every 18-19 years. Offers opportunities to align more closely with growth direction and integrate lessons." }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

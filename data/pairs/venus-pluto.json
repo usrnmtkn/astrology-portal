@@ -1,0 +1,24 @@
+{
+  "id": "venus-pluto",
+  "planetA": "venus",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Love and value meet intensity. All-or-nothing attraction, profound desire, and a strong pull toward control in relationships.",
+    "harmonious": "Depth and devotion in love, used deliberately.",
+    "hard": "Power struggles, jealousy, and treating happiness as a kind of vulnerability to be guarded against.",
+    "business": "Magnetic and persuasive; the intensity has to be moderated."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Love and value meet intensity. All-or-nothing attraction, profound desire, and a strong pull toward control in relationships.",
+  "harmonious": "Depth and devotion in love, used deliberately.",
+  "hard": "Power struggles, jealousy, and treating happiness as a kind of vulnerability to be guarded against.",
+  "business": "Magnetic and persuasive; the intensity has to be moderated."
+}

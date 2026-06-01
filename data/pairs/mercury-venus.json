@@ -1,0 +1,24 @@
+{
+  "id": "mercury-venus",
+  "planetA": "mercury",
+  "planetB": "venus",
+  "traditional": "Communication and commerce combined with love, money, and pleasure.",
+  "modern": {
+    "blend": "Mind meets charm. Speech and thought take on grace and an artistic flair. Only the conjunction and sextile are possible.",
+    "harmonious": "Smooth, pleasant, persuasive communication.",
+    "hard": "Not applicable in the hard aspects; the geometry doesn't allow them.",
+    "business": "Diplomacy, the arts, and any work where pleasant, persuasive expression matters."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Mind meets charm. Speech and thought take on grace and an artistic flair. Only the conjunction and sextile are possible.",
+  "harmonious": "Smooth, pleasant, persuasive communication.",
+  "hard": "Not applicable in the hard aspects; the geometry doesn't allow them.",
+  "business": "Diplomacy, the arts, and any work where pleasant, persuasive expression matters."
+}

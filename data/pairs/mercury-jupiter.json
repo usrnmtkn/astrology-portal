@@ -1,0 +1,24 @@
+{
+  "id": "mercury-jupiter",
+  "planetA": "mercury",
+  "planetB": "jupiter",
+  "traditional": "Communication and commerce combined with growth and fortune.",
+  "modern": {
+    "blend": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication.",
+    "harmonious": "Fluid shifting between generalities and specifics; the conjunction here generally reads as easy.",
+    "hard": "Exaggeration, and swinging between getting lost in detail and ignoring it entirely.",
+    "business": "Strong for pairing vision with persuasion; watch overstatement."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication.",
+  "harmonious": "Fluid shifting between generalities and specifics; the conjunction here generally reads as easy.",
+  "hard": "Exaggeration, and swinging between getting lost in detail and ignoring it entirely.",
+  "business": "Strong for pairing vision with persuasion; watch overstatement."
+}

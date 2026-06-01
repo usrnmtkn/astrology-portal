@@ -1,0 +1,24 @@
+{
+  "id": "mars-neptune",
+  "planetA": "mars",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull.",
+    "harmonious": "Charismatic motivation; action aligned with imagination.",
+    "hard": "Misdirected effort: setting off one way and ending up another, with energy quietly draining away.",
+    "business": "Inspiring and persuasive; keep the aim concrete or the drive dissipates."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull.",
+  "harmonious": "Charismatic motivation; action aligned with imagination.",
+  "hard": "Misdirected effort: setting off one way and ending up another, with energy quietly draining away.",
+  "business": "Inspiring and persuasive; keep the aim concrete or the drive dissipates."
+}

@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-pluto",
+  "planetA": "jupiter",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs.",
+    "harmonious": "Transformative ambition pursued with focus.",
+    "hard": "Conviction hardens into zealotry or overreach.",
+    "business": "Big, transformative ambition; the intensity can overshoot."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs.",
+  "harmonious": "Transformative ambition pursued with focus.",
+  "hard": "Conviction hardens into zealotry or overreach.",
+  "business": "Big, transformative ambition; the intensity can overshoot."
+}

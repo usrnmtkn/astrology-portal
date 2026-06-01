@@ -1,0 +1,39 @@
+{
+  "id": "traditional-method-guardrails",
+  "kind": "framework",
+  "title": "Traditional Method Guardrails",
+  "sections": [
+    {
+      "id": "significator-discipline",
+      "heading": "Significator Discipline",
+      "body": "Do not read every planet as equally relevant to every question. Identify the significator first: the planet ruling the relevant house, the planet occupying the house, the chart ruler, the Moon, or another specifically activated planet. Interpretation becomes clearer when the responsible planet is named."
+    },
+    {
+      "id": "strength-before-story",
+      "heading": "Strength Before Story",
+      "body": "Before writing interpretation, inspect whether the significator can act. Dignity, angularity, sect, solar phase, speed, direction, reception, and maltreatment or bonification all describe the planet's condition. The same meaning changes tone depending on whether the planet is strong, weak, supported, or obstructed."
+    },
+    {
+      "id": "houses-are-places",
+      "heading": "Houses Are Places",
+      "body": "House topics are not moods. They are life places and fields of manifestation. The house tells where the matter happens; the planet tells what agency or force is acting; the sign and dignity describe how that planet behaves; aspects describe help, conflict, or exchange."
+    },
+    {
+      "id": "avoid-overpsychologizing",
+      "heading": "Avoid Overpsychologizing",
+      "body": "Psychological language is useful, but it should not erase concrete topics. If the 2nd house is activated, include resources, income, possessions, livelihood, and value. If the 10th is activated, include career, reputation, authority, and visible action."
+    },
+    {
+      "id": "modern-planets-boundary",
+      "heading": "Modern Planets Boundary",
+      "body": "Use Uranus, Neptune, and Pluto as modern overlay factors, not as traditional rulers, time-lords, dignity rulers, sect participants, or primary significators in the traditional spine. If they are surfaced, label the layer as modern."
+    },
+    {
+      "id": "no-fatalism",
+      "heading": "No Fatalism",
+      "body": "Traditional method can be concrete without being fatalistic. Name pressure, weakness, and risk plainly, but do not remove agency. Good interpretation shows the condition of the field and the likely forms of manifestation, then names the choices that remain."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

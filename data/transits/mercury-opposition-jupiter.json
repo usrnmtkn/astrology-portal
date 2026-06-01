@@ -1,0 +1,29 @@
+{
+  "id": "mercury-opposition-jupiter",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "jupiter",
+  "tldr": "Mercury opposition Jupiter.",
+  "traditional": "Mercury opposition Jupiter: a hard contact. Communication, commerce, and contracts works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Psychologically the opposition is inner tension to integrate: Exaggeration, and swinging between getting lost in detail and ignoring it entirely. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Thinking and growth reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Strong for pairing vision with persuasion; watch overstatement.",
+  "shadow": "Scattered overthinking collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mercury-jupiter",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Psychologically the opposition is inner tension to integrate: Exaggeration, and swinging between getting lost in detail and ignoring it entirely. The growth is owning both sides instead of splitting them."
+}

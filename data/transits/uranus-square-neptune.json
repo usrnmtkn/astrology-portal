@@ -1,0 +1,30 @@
+{
+  "id": "uranus-square-neptune",
+  "transiting": "uranus",
+  "aspect": "square",
+  "other": "neptune",
+  "tldr": "Uranus square Neptune.",
+  "traditional": "No classical doctrine: Uranus, Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Psychologically the square is inner tension to integrate: Idealism that destabilizes more than it builds. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for disruption against imagination, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the disruption/imagination form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Generational and visionary themes rather than a personal day-to-day read.",
+  "shadow": "Instability for its own sake collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:uranus-neptune",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Psychologically the square is inner tension to integrate: Idealism that destabilizes more than it builds. The growth is owning both sides instead of splitting them."
+}

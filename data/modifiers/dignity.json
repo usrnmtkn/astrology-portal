@@ -1,0 +1,685 @@
+{
+  "id": "dignity",
+  "schema": "modifier/dignity",
+  "definition": "Essential dignity measures how at-home a planet is in the degree it occupies, from strongest (domicile, exaltation) to weakest (detriment, fall). Minor dignities (triplicity, bounds, decan) refine the weighting.",
+  "appUsage": "Score each transiting planet: +5 domicile, +4 exaltation, +3 triplicity, +2 bounds, +1 decan, -5 detriment, -4 fall. A dignified malefic is far less destructive; a debilitated benefic delivers less. Use the running total to weight how strongly the transit speaks.",
+  "domicile": {
+    "sun": [
+      "leo"
+    ],
+    "moon": [
+      "cancer"
+    ],
+    "mercury": [
+      "gemini",
+      "virgo"
+    ],
+    "venus": [
+      "taurus",
+      "libra"
+    ],
+    "mars": [
+      "aries",
+      "scorpio"
+    ],
+    "jupiter": [
+      "sagittarius",
+      "pisces"
+    ],
+    "saturn": [
+      "capricorn",
+      "aquarius"
+    ]
+  },
+  "exaltation": {
+    "sun": {
+      "sign": "aries",
+      "degree": 19
+    },
+    "moon": {
+      "sign": "taurus",
+      "degree": 3
+    },
+    "mercury": {
+      "sign": "virgo",
+      "degree": 15
+    },
+    "venus": {
+      "sign": "pisces",
+      "degree": 27
+    },
+    "mars": {
+      "sign": "capricorn",
+      "degree": 28
+    },
+    "jupiter": {
+      "sign": "cancer",
+      "degree": 15
+    },
+    "saturn": {
+      "sign": "libra",
+      "degree": 21
+    }
+  },
+  "detriment": {
+    "sun": [
+      "aquarius"
+    ],
+    "moon": [
+      "capricorn"
+    ],
+    "mercury": [
+      "sagittarius",
+      "pisces"
+    ],
+    "venus": [
+      "aries",
+      "scorpio"
+    ],
+    "mars": [
+      "taurus",
+      "libra"
+    ],
+    "jupiter": [
+      "gemini",
+      "virgo"
+    ],
+    "saturn": [
+      "cancer",
+      "leo"
+    ]
+  },
+  "fall": {
+    "sun": "libra",
+    "moon": "scorpio",
+    "mercury": "pisces",
+    "venus": "virgo",
+    "mars": "cancer",
+    "jupiter": "capricorn",
+    "saturn": "aries"
+  },
+  "boundsEgyptian": {
+    "aries": [
+      [
+        "jupiter",
+        0,
+        6
+      ],
+      [
+        "venus",
+        6,
+        12
+      ],
+      [
+        "mercury",
+        12,
+        20
+      ],
+      [
+        "mars",
+        20,
+        25
+      ],
+      [
+        "saturn",
+        25,
+        30
+      ]
+    ],
+    "taurus": [
+      [
+        "venus",
+        0,
+        8
+      ],
+      [
+        "mercury",
+        8,
+        14
+      ],
+      [
+        "jupiter",
+        14,
+        22
+      ],
+      [
+        "saturn",
+        22,
+        27
+      ],
+      [
+        "mars",
+        27,
+        30
+      ]
+    ],
+    "gemini": [
+      [
+        "mercury",
+        0,
+        6
+      ],
+      [
+        "jupiter",
+        6,
+        12
+      ],
+      [
+        "venus",
+        12,
+        17
+      ],
+      [
+        "mars",
+        17,
+        24
+      ],
+      [
+        "saturn",
+        24,
+        30
+      ]
+    ],
+    "cancer": [
+      [
+        "mars",
+        0,
+        7
+      ],
+      [
+        "venus",
+        7,
+        13
+      ],
+      [
+        "mercury",
+        13,
+        19
+      ],
+      [
+        "jupiter",
+        19,
+        26
+      ],
+      [
+        "saturn",
+        26,
+        30
+      ]
+    ],
+    "leo": [
+      [
+        "jupiter",
+        0,
+        6
+      ],
+      [
+        "venus",
+        6,
+        11
+      ],
+      [
+        "saturn",
+        11,
+        18
+      ],
+      [
+        "mercury",
+        18,
+        24
+      ],
+      [
+        "mars",
+        24,
+        30
+      ]
+    ],
+    "virgo": [
+      [
+        "mercury",
+        0,
+        7
+      ],
+      [
+        "venus",
+        7,
+        17
+      ],
+      [
+        "jupiter",
+        17,
+        21
+      ],
+      [
+        "mars",
+        21,
+        28
+      ],
+      [
+        "saturn",
+        28,
+        30
+      ]
+    ],
+    "libra": [
+      [
+        "saturn",
+        0,
+        6
+      ],
+      [
+        "mercury",
+        6,
+        14
+      ],
+      [
+        "jupiter",
+        14,
+        21
+      ],
+      [
+        "venus",
+        21,
+        28
+      ],
+      [
+        "mars",
+        28,
+        30
+      ]
+    ],
+    "scorpio": [
+      [
+        "mars",
+        0,
+        7
+      ],
+      [
+        "venus",
+        7,
+        11
+      ],
+      [
+        "mercury",
+        11,
+        19
+      ],
+      [
+        "jupiter",
+        19,
+        24
+      ],
+      [
+        "saturn",
+        24,
+        30
+      ]
+    ],
+    "sagittarius": [
+      [
+        "jupiter",
+        0,
+        12
+      ],
+      [
+        "venus",
+        12,
+        17
+      ],
+      [
+        "mercury",
+        17,
+        21
+      ],
+      [
+        "saturn",
+        21,
+        26
+      ],
+      [
+        "mars",
+        26,
+        30
+      ]
+    ],
+    "capricorn": [
+      [
+        "mercury",
+        0,
+        7
+      ],
+      [
+        "jupiter",
+        7,
+        14
+      ],
+      [
+        "venus",
+        14,
+        22
+      ],
+      [
+        "saturn",
+        22,
+        26
+      ],
+      [
+        "mars",
+        26,
+        30
+      ]
+    ],
+    "aquarius": [
+      [
+        "mercury",
+        0,
+        7
+      ],
+      [
+        "venus",
+        7,
+        13
+      ],
+      [
+        "jupiter",
+        13,
+        20
+      ],
+      [
+        "mars",
+        20,
+        25
+      ],
+      [
+        "saturn",
+        25,
+        30
+      ]
+    ],
+    "pisces": [
+      [
+        "venus",
+        0,
+        12
+      ],
+      [
+        "jupiter",
+        12,
+        16
+      ],
+      [
+        "mercury",
+        16,
+        19
+      ],
+      [
+        "mars",
+        19,
+        28
+      ],
+      [
+        "saturn",
+        28,
+        30
+      ]
+    ]
+  },
+  "boundsNote": "Egyptian bounds, the standard traditional set; [ruler, startDegree, endDegree] within each sign. Ptolemaic bounds are a documented variant if you prefer them.",
+  "decansChaldean": {
+    "aries": [
+      [
+        "mars",
+        0,
+        10
+      ],
+      [
+        "sun",
+        10,
+        20
+      ],
+      [
+        "venus",
+        20,
+        30
+      ]
+    ],
+    "taurus": [
+      [
+        "mercury",
+        0,
+        10
+      ],
+      [
+        "moon",
+        10,
+        20
+      ],
+      [
+        "saturn",
+        20,
+        30
+      ]
+    ],
+    "gemini": [
+      [
+        "jupiter",
+        0,
+        10
+      ],
+      [
+        "mars",
+        10,
+        20
+      ],
+      [
+        "sun",
+        20,
+        30
+      ]
+    ],
+    "cancer": [
+      [
+        "venus",
+        0,
+        10
+      ],
+      [
+        "mercury",
+        10,
+        20
+      ],
+      [
+        "moon",
+        20,
+        30
+      ]
+    ],
+    "leo": [
+      [
+        "saturn",
+        0,
+        10
+      ],
+      [
+        "jupiter",
+        10,
+        20
+      ],
+      [
+        "mars",
+        20,
+        30
+      ]
+    ],
+    "virgo": [
+      [
+        "sun",
+        0,
+        10
+      ],
+      [
+        "venus",
+        10,
+        20
+      ],
+      [
+        "mercury",
+        20,
+        30
+      ]
+    ],
+    "libra": [
+      [
+        "moon",
+        0,
+        10
+      ],
+      [
+        "saturn",
+        10,
+        20
+      ],
+      [
+        "jupiter",
+        20,
+        30
+      ]
+    ],
+    "scorpio": [
+      [
+        "mars",
+        0,
+        10
+      ],
+      [
+        "sun",
+        10,
+        20
+      ],
+      [
+        "venus",
+        20,
+        30
+      ]
+    ],
+    "sagittarius": [
+      [
+        "mercury",
+        0,
+        10
+      ],
+      [
+        "moon",
+        10,
+        20
+      ],
+      [
+        "saturn",
+        20,
+        30
+      ]
+    ],
+    "capricorn": [
+      [
+        "jupiter",
+        0,
+        10
+      ],
+      [
+        "mars",
+        10,
+        20
+      ],
+      [
+        "sun",
+        20,
+        30
+      ]
+    ],
+    "aquarius": [
+      [
+        "venus",
+        0,
+        10
+      ],
+      [
+        "mercury",
+        10,
+        20
+      ],
+      [
+        "moon",
+        20,
+        30
+      ]
+    ],
+    "pisces": [
+      [
+        "saturn",
+        0,
+        10
+      ],
+      [
+        "jupiter",
+        10,
+        20
+      ],
+      [
+        "mars",
+        20,
+        30
+      ]
+    ]
+  },
+  "decansNote": "Faces, 10 degrees each, in Chaldean order starting Mars at Aries 0. Weakest dignity; use only as a tiebreaker.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "triplicityLordsDorothean": {
+    "fire": {
+      "signs": [
+        "aries",
+        "leo",
+        "sagittarius"
+      ],
+      "day": "sun",
+      "night": "jupiter",
+      "participating": "saturn"
+    },
+    "earth": {
+      "signs": [
+        "taurus",
+        "virgo",
+        "capricorn"
+      ],
+      "day": "venus",
+      "night": "moon",
+      "participating": "mars"
+    },
+    "air": {
+      "signs": [
+        "gemini",
+        "libra",
+        "aquarius"
+      ],
+      "day": "saturn",
+      "night": "mercury",
+      "participating": "jupiter"
+    },
+    "water": {
+      "signs": [
+        "cancer",
+        "scorpio",
+        "pisces"
+      ],
+      "day": "venus",
+      "night": "mars",
+      "participating": "moon"
+    }
+  },
+  "appliesTo": [
+    "planet",
+    "transit"
+  ],
+  "summary": "Essential dignity describes how strongly or cleanly a planet can deliver its significations.",
+  "body": "Essential dignity measures how at-home a planet is in the degree it occupies, from strongest (domicile, exaltation) to weakest (detriment, fall). Minor dignities (triplicity, bounds, decan) refine the weighting."
+}

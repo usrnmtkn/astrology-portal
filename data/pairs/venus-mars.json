@@ -1,0 +1,24 @@
+{
+  "id": "venus-mars",
+  "planetA": "venus",
+  "planetB": "mars",
+  "traditional": "Love, money, and pleasure combined with action and heat. One benefic, one malefic: the benefic tempers the malefic.",
+  "modern": {
+    "blend": "Attraction meets drive. Desire, and the channeling of energy into pleasure, art, or pursuit. The conjunction can either fuse charm and drive or have the two cancel out.",
+    "harmonious": "Popularity and energy that flows easily into creative or romantic pursuits.",
+    "hard": "Bad timing in romance, indecision, and friction between wanting and acting.",
+    "business": "Charm plus initiative; manage the push-pull between attraction and aggression."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Attraction meets drive. Desire, and the channeling of energy into pleasure, art, or pursuit. The conjunction can either fuse charm and drive or have the two cancel out.",
+  "harmonious": "Popularity and energy that flows easily into creative or romantic pursuits.",
+  "hard": "Bad timing in romance, indecision, and friction between wanting and acting.",
+  "business": "Charm plus initiative; manage the push-pull between attraction and aggression."
+}

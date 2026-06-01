@@ -1,0 +1,29 @@
+{
+  "id": "neptune-conjunction-pluto",
+  "transiting": "neptune",
+  "aspect": "conjunction",
+  "other": "pluto",
+  "tldr": "Neptune conjunction Pluto.",
+  "traditional": "No classical doctrine: Neptune, Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of imagination and power is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Generational and collective; minimal personal day-to-day meaning.",
+  "shadow": "Illusion and escapism fused with control and obsession, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:neptune-pluto",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

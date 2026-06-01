@@ -1,0 +1,29 @@
+{
+  "id": "moon-opposition-venus",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "venus",
+  "tldr": "the Moon opposition Venus.",
+  "traditional": "the Moon opposition Venus: a hard contact. The body, home, and daily needs works against love, money, and pleasure \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty. Psychologically the opposition is inner tension to integrate: Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and connection reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Likable and warm; watch indulgence and shaky money instincts.",
+  "shadow": "Moodiness and over-need collides with indulgence and vanity; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:moon-venus",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty. Psychologically the opposition is inner tension to integrate: Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause. The growth is owning both sides instead of splitting them."
+}

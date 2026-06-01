@@ -1,0 +1,29 @@
+{
+  "id": "moon-conjunction-mars",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "mars",
+  "tldr": "the Moon conjunction Mars.",
+  "traditional": "the Moon conjunct Mars: the body, home, and daily needs fused with action, conflict, and heat. The two act as one and the combined significations are hard to separate.",
+  "modern": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of feeling and drive is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Drive powered by feeling; the work is managing reactivity.",
+  "shadow": "Moodiness and over-need fused with anger and recklessness, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:moon-mars",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

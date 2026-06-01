@@ -1,0 +1,29 @@
+{
+  "id": "mercury-conjunction-neptune",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "neptune",
+  "tldr": "Mercury conjunction Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Mind meets imagination. Strong imagination and intuitive, associative thinking. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of thinking and imagination is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Creative ideation; verify the details before acting on them.",
+  "shadow": "Scattered overthinking fused with illusion and escapism, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mercury-neptune",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets imagination. Strong imagination and intuitive, associative thinking. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

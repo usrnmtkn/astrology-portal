@@ -1,0 +1,29 @@
+{
+  "id": "mars-opposition-pluto",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "Mars opposition Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Drive meets power. Relentless force and a 'win at any cost' edge, with real capacity to eliminate or transform. Psychologically the opposition is inner tension to integrate: Volcanic temper and a tendency to destroy work before it's finished. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Drive and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Formidable drive; temper and overkill are the dangers.",
+  "shadow": "Anger and recklessness collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mars-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Drive meets power. Relentless force and a 'win at any cost' edge, with real capacity to eliminate or transform. Psychologically the opposition is inner tension to integrate: Volcanic temper and a tendency to destroy work before it's finished. The growth is owning both sides instead of splitting them."
+}

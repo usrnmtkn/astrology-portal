@@ -1,0 +1,24 @@
+{
+  "id": "sun-saturn",
+  "planetA": "sun",
+  "planetB": "saturn",
+  "traditional": "Vitality and authority combined with limitation and structure.",
+  "modern": {
+    "blend": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence.",
+    "harmonious": "Practical, conservative, orderly. Benefits come grudgingly and mostly as stability rather than ease.",
+    "hard": "A heavy self-concept: difficulty with authority figures, self-doubt, and a chronic sense of falling short. The remedy is steady, useful work.",
+    "business": "Disciplined and reliable; the risk is self-limiting caution and joyless striving."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence.",
+  "harmonious": "Practical, conservative, orderly. Benefits come grudgingly and mostly as stability rather than ease.",
+  "hard": "A heavy self-concept: difficulty with authority figures, self-doubt, and a chronic sense of falling short. The remedy is steady, useful work.",
+  "business": "Disciplined and reliable; the risk is self-limiting caution and joyless striving."
+}

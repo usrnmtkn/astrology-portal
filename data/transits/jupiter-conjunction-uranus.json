@@ -1,0 +1,29 @@
+{
+  "id": "jupiter-conjunction-uranus",
+  "transiting": "jupiter",
+  "aspect": "conjunction",
+  "other": "uranus",
+  "tldr": "Jupiter conjunction Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of growth and disruption is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Innovative thinking whose reception depends heavily on how it's framed.",
+  "shadow": "Excess and overreach fused with instability for its own sake, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:jupiter-uranus",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

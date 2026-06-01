@@ -1,0 +1,29 @@
+{
+  "id": "saturn-conjunction-neptune",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "neptune",
+  "tldr": "Saturn conjunction Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of limit and imagination is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Disciplined vision realized over time; the task is managing fear.",
+  "shadow": "Fear and rigidity fused with illusion and escapism, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:saturn-neptune",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

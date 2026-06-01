@@ -1,0 +1,9 @@
+{
+  "profiles": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "description": "PLACEHOLDER - voice profile rules authored separately."
+    }
+  ]
+}

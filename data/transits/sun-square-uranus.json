@@ -1,0 +1,30 @@
+{
+  "id": "sun-square-uranus",
+  "transiting": "sun",
+  "aspect": "square",
+  "other": "uranus",
+  "tldr": "the Sun square Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the square is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking people to no purpose. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for selfhood against disruption, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the selfhood/disruption form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Suited to independent or innovative work where you aren't boxed in.",
+  "shadow": "Egotism and needing to be the center collides with instability for its own sake; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:sun-uranus",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the square is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking people to no purpose. The growth is owning both sides instead of splitting them."
+}

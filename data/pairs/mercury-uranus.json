@@ -1,0 +1,25 @@
+{
+  "id": "mercury-uranus",
+  "planetA": "mercury",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order.",
+    "harmonious": "Brilliant, inventive insight and quick grasp of new systems and technology.",
+    "hard": "Scattered, jumpy thinking, nervous tension, and impatience with slow or conventional reasoning.",
+    "business": "Strong for innovation, problem-solving, and tech; weak for routine detail and steady communication."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "sourceNote": "Composed from planet primitives, not the pair cookbook (which omits Uranus-Moon/Mercury/Venus).",
+  "provenance": {
+    "traditional": "n/a (Uranus is a modern planet)",
+    "modern": "composed from planet primitives and modern outer-planet conventions; cookbook omits these pairs",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order.",
+  "harmonious": "Brilliant, inventive insight and quick grasp of new systems and technology.",
+  "hard": "Scattered, jumpy thinking, nervous tension, and impatience with slow or conventional reasoning.",
+  "business": "Strong for innovation, problem-solving, and tech; weak for routine detail and steady communication."
+}

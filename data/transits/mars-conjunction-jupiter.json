@@ -1,0 +1,29 @@
+{
+  "id": "mars-conjunction-jupiter",
+  "transiting": "mars",
+  "aspect": "conjunction",
+  "other": "jupiter",
+  "tldr": "Mars conjunction Jupiter.",
+  "traditional": "Mars conjunct Jupiter: action, conflict, and heat fused with growth, fortune, and patronage. The two act as one and the combined significations are hard to separate. The benefic Jupiter tempers the malefic Mars.",
+  "modern": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of drive and growth is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "shadow": "Anger and recklessness fused with excess and overreach, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mars-jupiter",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

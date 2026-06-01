@@ -1,0 +1,30 @@
+{
+  "id": "saturn-square-pluto",
+  "transiting": "saturn",
+  "aspect": "square",
+  "other": "pluto",
+  "tldr": "Saturn square Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control. Psychologically the square is inner tension to integrate: Strict accountability and early, immediate retribution; severity and rigidity. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for limit against power, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the limit/power form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Able to carry punishing, transformative work; the risk is harshness.",
+  "shadow": "Fear and rigidity collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:saturn-pluto",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control. Psychologically the square is inner tension to integrate: Strict accountability and early, immediate retribution; severity and rigidity. The growth is owning both sides instead of splitting them."
+}
