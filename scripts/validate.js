@@ -25,7 +25,8 @@ const primitiveShapes = {
   },
   sign: {
     required: ["id", "element", "mode", "traditionalRuler", "keywords", "voiceNeutral", "status"],
-    types: { id: "string", element: "string", mode: "string", traditionalRuler: "string", keywords: "array:string" },
+    optional: ["modernRuler"],
+    types: { id: "string", element: "string", mode: "string", traditionalRuler: "string", modernRuler: "string", keywords: "array:string" },
     enums: {
       element: ["fire", "earth", "air", "water"],
       mode: ["cardinal", "fixed", "mutable"]

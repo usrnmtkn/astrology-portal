@@ -1,0 +1,296 @@
+{
+  "kind": "dignity",
+  "note": "Consensus essential dignity table for the seven traditional planets: domicile, exaltation, detriment, and fall.",
+  "entries": [
+    {
+      "id": "sun-domicile",
+      "planet": "sun",
+      "dignity": "domicile",
+      "signs": [
+        "leo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sun-exaltation",
+      "planet": "sun",
+      "dignity": "exaltation",
+      "signs": [
+        "aries"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sun-detriment",
+      "planet": "sun",
+      "dignity": "detriment",
+      "signs": [
+        "aquarius"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sun-fall",
+      "planet": "sun",
+      "dignity": "fall",
+      "signs": [
+        "libra"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "moon-domicile",
+      "planet": "moon",
+      "dignity": "domicile",
+      "signs": [
+        "cancer"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "moon-exaltation",
+      "planet": "moon",
+      "dignity": "exaltation",
+      "signs": [
+        "taurus"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "moon-detriment",
+      "planet": "moon",
+      "dignity": "detriment",
+      "signs": [
+        "capricorn"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "moon-fall",
+      "planet": "moon",
+      "dignity": "fall",
+      "signs": [
+        "scorpio"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mercury-domicile",
+      "planet": "mercury",
+      "dignity": "domicile",
+      "signs": [
+        "gemini",
+        "virgo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mercury-exaltation",
+      "planet": "mercury",
+      "dignity": "exaltation",
+      "signs": [
+        "virgo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mercury-detriment",
+      "planet": "mercury",
+      "dignity": "detriment",
+      "signs": [
+        "sagittarius",
+        "pisces"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mercury-fall",
+      "planet": "mercury",
+      "dignity": "fall",
+      "signs": [
+        "pisces"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "venus-domicile",
+      "planet": "venus",
+      "dignity": "domicile",
+      "signs": [
+        "taurus",
+        "libra"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "venus-exaltation",
+      "planet": "venus",
+      "dignity": "exaltation",
+      "signs": [
+        "pisces"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "venus-detriment",
+      "planet": "venus",
+      "dignity": "detriment",
+      "signs": [
+        "aries",
+        "scorpio"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "venus-fall",
+      "planet": "venus",
+      "dignity": "fall",
+      "signs": [
+        "virgo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mars-domicile",
+      "planet": "mars",
+      "dignity": "domicile",
+      "signs": [
+        "aries",
+        "scorpio"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mars-exaltation",
+      "planet": "mars",
+      "dignity": "exaltation",
+      "signs": [
+        "capricorn"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mars-detriment",
+      "planet": "mars",
+      "dignity": "detriment",
+      "signs": [
+        "taurus",
+        "libra"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mars-fall",
+      "planet": "mars",
+      "dignity": "fall",
+      "signs": [
+        "cancer"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "jupiter-domicile",
+      "planet": "jupiter",
+      "dignity": "domicile",
+      "signs": [
+        "sagittarius",
+        "pisces"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "jupiter-exaltation",
+      "planet": "jupiter",
+      "dignity": "exaltation",
+      "signs": [
+        "cancer"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "jupiter-detriment",
+      "planet": "jupiter",
+      "dignity": "detriment",
+      "signs": [
+        "gemini",
+        "virgo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "jupiter-fall",
+      "planet": "jupiter",
+      "dignity": "fall",
+      "signs": [
+        "capricorn"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "saturn-domicile",
+      "planet": "saturn",
+      "dignity": "domicile",
+      "signs": [
+        "capricorn",
+        "aquarius"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "saturn-exaltation",
+      "planet": "saturn",
+      "dignity": "exaltation",
+      "signs": [
+        "libra"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "saturn-detriment",
+      "planet": "saturn",
+      "dignity": "detriment",
+      "signs": [
+        "cancer",
+        "leo"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "saturn-fall",
+      "planet": "saturn",
+      "dignity": "fall",
+      "signs": [
+        "aries"
+      ],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    }
+  ]
+}

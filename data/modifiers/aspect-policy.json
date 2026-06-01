@@ -1,0 +1,98 @@
+{
+  "id": "aspect-policy",
+  "schema": "modifier/aspect-policy",
+  "appliesTo": [
+    "aspect",
+    "same-moment-aspect",
+    "transit-to-natal",
+    "composite",
+    "natal",
+    "current-sky"
+  ],
+  "summary": "Aspect lookup must choose the correct regime first: same-moment pairs are canonicalized and have 11 impossible inner-planet aspects; transit-to-natal aspects are ordered and have no impossible exclusions.",
+  "body": "Use this policy to prevent two different aspect regimes from being mixed. Same-moment aspects measure both bodies at one instant, so Sun, Mercury, and Venus elongation limits make 11 combinations impossible. Transit-to-natal aspects measure a moving transiting body against a fixed natal point, so every ordered planet-aspect-planet combination can occur and must not be filtered by same-moment exclusions.",
+  "definition": "Lookup and validity policy for same-moment aspect files versus transit-to-natal aspect lookups.",
+  "appUsage": [
+    "Pick the regime before lookup.",
+    "For same-moment aspects, canonicalize the pair using canonical_order, then skip file reads for impossible combinations.",
+    "For transit-to-natal aspects, preserve order as transiting planet -> natal point and do not apply impossible exclusions.",
+    "Do not treat missing Moon aspects as elongation exclusions; the Moon has no elongation cap in this policy.",
+    "Do not create reverse-order same-moment files. Reverse spellings are aliases of canonical keys."
+  ],
+  "note": "Normalized from approved project aspect policy JSON. Source file was not copied into the repository.",
+  "classes": {
+    "policy": "aspect_validity",
+    "version": 1,
+    "canonicalOrder": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto"
+    ],
+    "dedupRule": "Every same-moment pair is stored and looked up under canonical_order. The reverse spelling (e.g. mercury_sun) is an ALIAS of the canonical key (sun_mercury), never a separate file. Resolve order before lookup.",
+    "regimes": {
+      "same_moment": {
+        "applies_to": [
+          "natal internal aspects",
+          "composite (midpoint / Davison)",
+          "current-sky transit-to-transit"
+        ],
+        "ordered": false,
+        "rationale": "Both bodies are measured at one instant, so inner-planet elongation caps the maximum separation. The combinations below cannot occur. The app must NOT request or expect a file for them.",
+        "impossible": {
+          "sun_mercury": [
+            "sextile",
+            "square",
+            "trine",
+            "opposition"
+          ],
+          "sun_venus": [
+            "sextile",
+            "square",
+            "trine",
+            "opposition"
+          ],
+          "mercury_venus": [
+            "square",
+            "trine",
+            "opposition"
+          ]
+        },
+        "impossible_count": 11,
+        "valid_count": 214,
+        "moon_rule": "The Moon has NO elongation limit. All five aspects to all nine other bodies are valid. A missing Moon file is a gap to fill, not an exclusion."
+      },
+      "transit_to_natal": {
+        "applies_to": [
+          "daily check-in: transiting planet -> natal planet"
+        ],
+        "ordered": true,
+        "rationale": "Bodies are not co-measured. A transiting planet sweeps the entire zodiac against a fixed natal point, so it can form ANY of the five aspects to ANY natal point. The same_moment impossibilities DO NOT apply here. Do not filter transit-to-natal lookups through the impossible set.",
+        "impossible": {},
+        "impossible_count": 0,
+        "valid_count": 500
+      }
+    },
+    "lookupContract": "Pick the regime first. For same_moment: canonicalize the pair, then if (pair, aspect) is in impossible -> return no-match WITHOUT a file read. For transit_to_natal: keep order (transiting, natal), never apply the impossible set.",
+    "fileNameStyle": "Repository transit aspect files use hyphenated canonical same-moment ids: planet-aspect-planet. App lookup keys may use underscores internally, but must map to this file naming convention."
+  },
+  "prohibitions": [
+    "Do not apply same-moment elongation exclusions to transit-to-natal readings.",
+    "Do not request same-moment files for impossible Sun-Mercury, Sun-Venus, or Mercury-Venus aspects listed in this policy.",
+    "Do not create reverse-order duplicate same-moment files.",
+    "Do not exclude Moon aspects under the elongation rule."
+  ],
+  "weighting": [
+    "This policy controls lookup validity, not interpretation weight.",
+    "Same-moment aspect files in data/transits are canonical pair files, not ordered transit-to-natal files.",
+    "Transit-to-natal interpretation support should be handled by ordered lookup logic or a separate ordered corpus if authored later."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

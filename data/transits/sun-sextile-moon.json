@@ -1,10 +1,10 @@
 {
-  "id": "moon-sextile-sun",
-  "transiting": "moon",
+  "id": "sun-sextile-moon",
+  "transiting": "sun",
   "aspect": "sextile",
-  "other": "sun",
-  "tldr": "the Moon sextile the Sun.",
-  "traditional": "the Moon sextile the Sun: a soft contact. The body, home, and daily needs supports vitality, authority, and recognition \u2014 cooperation and favorable conditions in these areas.",
+  "other": "moon",
+  "tldr": "Sun sextile the Moon.",
+  "traditional": "Sun sextile the Moon: a soft contact. The body, home, and daily needs supports vitality, authority, and recognition — cooperation and favorable conditions in these areas.",
   "modern": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. The sextile makes this a natural strength: Outer and inner self move easily together. Steady, consistent, at ease with oneself, though it can lack a charge of its own. The growth edge is not to coast on the ease.",
   "cyclic": {
     "phase": "Waxing / waning sextile",
