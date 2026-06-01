@@ -3035,7 +3035,7 @@ function CreateChartFlow({
         <label className="signup-field">
           <span>Full name</span>
           <div>
-            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Marie Satori" />
+            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Your name" />
           </div>
         </label>
 
