@@ -1,0 +1,24 @@
+{
+  "id": "mercury-pluto",
+  "planetA": "mercury",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered.",
+    "harmonious": "Persuasive depth and a talent for getting at hidden information.",
+    "hard": "Communication turns coercive or obsessive.",
+    "business": "Sales, persuasion, research, and anything requiring depth and force of message."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered.",
+  "harmonious": "Persuasive depth and a talent for getting at hidden information.",
+  "hard": "Communication turns coercive or obsessive.",
+  "business": "Sales, persuasion, research, and anything requiring depth and force of message."
+}

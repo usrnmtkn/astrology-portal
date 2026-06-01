@@ -1,0 +1,102 @@
+{
+  "id": "lunar-cycle-framework",
+  "kind": "framework",
+  "title": "Lunar Cycle Framework",
+  "sections": [
+    {
+      "id": "arc-doctrine",
+      "heading": "Arc Doctrine",
+      "body": "Every New Moon plants seeds revealed six months later at the same-sign Full Moon. Track both the two-week immediate arc and the six-month maturation arc. Always name both."
+    },
+    {
+      "id": "six-month-arcs",
+      "heading": "Six-Month Arc Connections",
+      "body": "Same-sign New Moon to Full Moon maturation arcs.",
+      "items": [
+        { "label": "Capricorn New to Capricorn Full", "body": "Foundation to legacy" },
+        { "label": "Aquarius New to Aquarius Full", "body": "Innovation to revolution" },
+        { "label": "Pisces New to Pisces Full", "body": "Dream to wisdom" },
+        { "label": "Aries New to Aries Full", "body": "Courage to command" },
+        { "label": "Taurus New to Taurus Full", "body": "Value to harvest" },
+        { "label": "Gemini New to Gemini Full", "body": "Words to vision" },
+        { "label": "Cancer New to Cancer Full", "body": "Protection to belonging" },
+        { "label": "Leo New to Leo Full", "body": "Spark to radiance" },
+        { "label": "Virgo New to Virgo Full", "body": "Routine to excellence" },
+        { "label": "Libra New to Libra Full", "body": "Intention to embodiment" },
+        { "label": "Scorpio New to Scorpio Full", "body": "Death to rebirth" },
+        { "label": "Sagittarius New to Sagittarius Full", "body": "Journey to message" }
+      ]
+    },
+    {
+      "id": "two-week-arcs",
+      "heading": "Two-Week Arc Connections",
+      "body": "New Moon to opposite-sign Full Moon immediate arcs.",
+      "items": [
+        { "label": "Aries New to Libra Full", "body": "If you've been starting new chapters while worrying about who you're leaving behind, this Full Moon shows that the right people support your growth." },
+        { "label": "Taurus New to Scorpio Full", "body": "Exposing where you've been accepting less because you didn't think you deserved more." },
+        { "label": "Gemini New to Sagittarius Full", "body": "If you've been keeping your message small, what if your truth could free someone else?" },
+        { "label": "Cancer New to Capricorn Full", "body": "Where protecting yourself became isolating yourself." },
+        { "label": "Leo New to Aquarius Full", "body": "Your people want exactly who you are, not who you think you should be." },
+        { "label": "Virgo New to Pisces Full", "body": "You can't hate yourself into a version you'll love." },
+        { "label": "Libra New to Aries Full", "body": "Where compromising became self-betrayal." },
+        { "label": "Scorpio New to Taurus Full", "body": "Where holding on too tight pushes away what you want." },
+        { "label": "Sagittarius New to Gemini Full", "body": "Your story needs updating to match who you've become." },
+        { "label": "Capricorn New to Cancer Full", "body": "Where success was chosen over softness." },
+        { "label": "Aquarius New to Leo Full", "body": "You can't change the world while selling a version of yourself you don't believe in." },
+        { "label": "Pisces New to Virgo Full", "body": "Where structure will set you free." }
+      ]
+    },
+    {
+      "id": "axis-themes",
+      "heading": "Complete Axis Themes",
+      "body": "Use axis work to name shared themes, differences, shadows, integration point, and Full Moon opportunity.",
+      "items": [
+        { "label": "Aries / Libra", "body": "Self vs. Others. Core tension: independence vs. partnership. Integration question: Can you stand fully in yourself while still making room for someone else? Shadow work includes times you kept the peace but lost yourself, or pushed people away in the name of independence." },
+        { "label": "Taurus / Scorpio", "body": "Security vs. Transformation. Core tension: stability vs. change. Integration question: Can you create stability in your life that also leaves room for change? Shadow work includes staying too long because it felt safe, or blowing everything up because stability felt suffocating." },
+        { "label": "Gemini / Sagittarius", "body": "Information vs. Wisdom. Core tension: details vs. big picture. Integration question: Can you stay curious without getting lost in details, and share insights without oversimplifying them? Shadow work includes avoiding decisions by asking endless questions, or clinging to a belief so tightly you stopped listening." },
+        { "label": "Cancer / Capricorn", "body": "Nurturing vs. Achievement. Core tension: emotional safety vs. public success. Integration question: Can you build success without sacrificing the people and peace that matter most, and care for home life without retreating from the world? Shadow work includes avoiding challenges in the name of self-care, or pursuing success at the expense of well-being." },
+        { "label": "Leo / Aquarius", "body": "Personal expression vs. collective good. Core tension: standing out vs. belonging. Integration question: Can you shine without making it all about you, and contribute to the group without disappearing in the crowd? Shadow work includes shaping yourself to be accepted, or withdrawing to prove you do not need anyone." },
+        { "label": "Virgo / Pisces", "body": "Precision vs. Flow. Core tension: control vs. surrender. Integration question: Can you give your all without losing yourself, and loosen your grip without letting go of the vision? Shadow work includes fixating on details to avoid uncertainty, or drifting into fantasy to avoid reality." }
+      ]
+    },
+    {
+      "id": "double-new-moon",
+      "heading": "Double New Moon System",
+      "body": "When two New Moons occur in the same sign about 29.5 days apart, the lesson is emphasized as non-negotiable. First New Moon at 0-3 degrees: this is the first of two New Moons and a chance to go deeper. Second New Moon at 27-29 degrees: review what began four weeks ago and see how the attempt can grow into a higher expression or slip into shadow.",
+      "items": [
+        { "label": "Fire Signs", "body": "First: charge forward to burnout. Second: lead with wisdom to sustainable fire." },
+        { "label": "Earth Signs", "body": "First: control everything to rigidity. Second: build with flexibility to lasting structures." },
+        { "label": "Air Signs", "body": "First: think my way through to mental loops. Second: communicate with depth to real connection." },
+        { "label": "Water Signs", "body": "First: feel everything to overwhelm. Second: flow with wisdom to emotional mastery." }
+      ]
+    },
+    {
+      "id": "eclipse-protocol",
+      "heading": "Eclipse Protocol",
+      "body": "Eclipse Witness: Stop. Put down candles, crystals, and kameas. If something must be done, light one white candle. Journal what is actually moving through you: what is ending, changing, or being removed. Eclipses take what is expired and give what is needed. The most powerful magick is knowing when not to interfere."
+    },
+    {
+      "id": "major-aspect-patterns",
+      "heading": "Major Aspect Patterns",
+      "body": "Use these patterns when writing major planetary aspects.",
+      "items": [
+        { "label": "Conjunction", "body": "0 degrees. Planet 1 meets Planet 2 in a sign. This is fusion: one planet's quality merges with the other's quality, creating something neither could achieve alone." },
+        { "label": "Square", "body": "90 degrees. Planet 1 in Sign 1 squares Planet 2 in Sign 2. The tension shows competing approaches. Neither is wrong; both are necessary. The friction creates breakthrough through a third way." },
+        { "label": "Opposition", "body": "180 degrees. Planet 1 opposes Planet 2. The person is pulled between two qualities. This is not about choosing sides; it is about finding the bridge and holding both." },
+        { "label": "Trine", "body": "120 degrees. Planet 1 in Sign 1 trines Planet 2 in Sign 2. When signs align by element, quality flows with less effort. Notice what feels easier and do not overthink the gift." }
+      ]
+    },
+    {
+      "id": "retrograde-daily-guidance",
+      "heading": "Retrograde Daily Guidance Framework",
+      "body": "Use daily guidance to identify the pattern becoming visible, not to force action.",
+      "items": [
+        { "label": "Mercury Retrograde", "body": "21-24 days. Focus on communication patterns, mental loops, technology issues, travel delays, and unfinished conversations returning. Notice where communication patterns have been operating on autopilot." },
+        { "label": "Venus Retrograde", "body": "40-43 days. Focus on worth patterns, relationship dynamics, financial decisions, beauty ideals, and self-care versus indulgence. Notice where undervaluing yourself or compromising too quickly shapes connection, spending, creation, and care." },
+        { "label": "Mars Retrograde", "body": "58-81 days. Focus on anger patterns, energy management, action versus reaction, boundaries, and initiative versus force. Let anger be messenger, not driver." }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

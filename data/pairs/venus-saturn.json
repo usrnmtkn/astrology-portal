@@ -1,0 +1,24 @@
+{
+  "id": "venus-saturn",
+  "planetA": "venus",
+  "planetB": "saturn",
+  "traditional": "Love, money, and pleasure combined with limitation and structure. One benefic, one malefic: the benefic tempers the malefic.",
+  "modern": {
+    "blend": "Affection and value meet limit. Loyalty, restraint in pleasure and love, and a strong sense of obligation.",
+    "harmonious": "Committed, steady, and loyal in relationships and finances.",
+    "hard": "Difficulty enjoying success, fear of loss, blocked rewards, and free-floating guilt.",
+    "business": "Loyal and hardworking; the risk is joyless striving and a belief that reward must be suffered for."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Affection and value meet limit. Loyalty, restraint in pleasure and love, and a strong sense of obligation.",
+  "harmonious": "Committed, steady, and loyal in relationships and finances.",
+  "hard": "Difficulty enjoying success, fear of loss, blocked rewards, and free-floating guilt.",
+  "business": "Loyal and hardworking; the risk is joyless striving and a belief that reward must be suffered for."
+}

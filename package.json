@@ -1,0 +1,21 @@
+{
+  "name": "@yourorg/astro-knowledge",
+  "version": "0.1.0",
+  "description": "Standalone astrology knowledge-base bundle for web and React Native consumers.",
+  "main": "dist/knowledge.json",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dist/knowledge.json",
+    "./index": "./dist/knowledge.index.json",
+    "./entries/*": "./dist/entries/*.json"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "build": "node scripts/build.js"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

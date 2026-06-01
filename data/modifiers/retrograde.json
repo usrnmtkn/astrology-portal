@@ -1,0 +1,27 @@
+{
+  "id": "retrograde",
+  "schema": "modifier/retrograde",
+  "definition": "A planet that appears to move backward through the zodiac. Its themes turn inward, repeat, and revisit rather than advance.",
+  "appUsage": "When a transiting planet is retrograde, frame its lane as review/revisit/delay rather than new initiation. When stationing, treat its theme as intensified and unavoidable for those days.",
+  "retrograde": {
+    "effect": "Internalized, delayed, or reconsidered expression of the planet. Good for redoing, auditing, and returning; poor for launching."
+  },
+  "station": {
+    "effect": "Near the turn between retrograde and direct, the planet is nearly motionless and its significations are concentrated and emphasized.",
+    "types": [
+      "stationing retrograde (turning inward)",
+      "stationing direct (turning outward)"
+    ]
+  },
+  "notApplicable": [
+    "sun",
+    "moon"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "planet"
+  ],
+  "summary": "Retrograde motion turns a planet back through revision, delay, return, and reworking.",
+  "body": "A planet that appears to move backward through the zodiac. Its themes turn inward, repeat, and revisit rather than advance."
+}

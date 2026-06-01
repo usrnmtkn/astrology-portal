@@ -1,0 +1,29 @@
+{
+  "id": "mars-conjunction-saturn",
+  "transiting": "mars",
+  "aspect": "conjunction",
+  "other": "saturn",
+  "tldr": "Mars conjunction Saturn.",
+  "traditional": "Mars conjunct Saturn: action, conflict, and heat fused with limitation, delay, and hard structure. The two act as one and the combined significations are hard to separate. Two malefics, eased by the soft angle, but still demanding.",
+  "modern": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of drive and limit is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "shadow": "Anger and recklessness fused with fear and rigidity, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mars-saturn",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

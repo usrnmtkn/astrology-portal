@@ -1,0 +1,29 @@
+{
+  "id": "uranus-conjunction-neptune",
+  "transiting": "uranus",
+  "aspect": "conjunction",
+  "other": "neptune",
+  "tldr": "Uranus conjunction Neptune.",
+  "traditional": "No classical doctrine: Uranus, Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of disruption and imagination is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Generational and visionary themes rather than a personal day-to-day read.",
+  "shadow": "Instability for its own sake fused with illusion and escapism, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:uranus-neptune",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

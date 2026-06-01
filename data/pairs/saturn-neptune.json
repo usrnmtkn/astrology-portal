@@ -1,0 +1,24 @@
+{
+  "id": "saturn-neptune",
+  "planetA": "saturn",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion.",
+    "harmonious": "Dreams worked patiently into something real.",
+    "hard": "Expecting the worst, anxiety, and worry that mostly never materializes.",
+    "business": "Disciplined vision realized over time; the task is managing fear."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion.",
+  "harmonious": "Dreams worked patiently into something real.",
+  "hard": "Expecting the worst, anxiety, and worry that mostly never materializes.",
+  "business": "Disciplined vision realized over time; the task is managing fear."
+}

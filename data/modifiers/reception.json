@@ -1,0 +1,20 @@
+{
+  "id": "reception",
+  "schema": "modifier/reception",
+  "definition": "A planet receives another when the second sits in a sign or degree the first rules by dignity. Mutual reception is when each occupies the other's dignity; the two then cooperate and can act almost as if joined.",
+  "appUsage": [
+    "If two planets in a HARD aspect are in mutual reception, weight the difficulty DOWN: they find a way to work together despite the angle.",
+    "Reception strengthens a soft aspect and rescues a hard one; absence of reception leaves a hard aspect at full force.",
+    "Reception by major dignity (domicile, exaltation) is strong; by minor dignity (triplicity, bounds, decan) is weaker."
+  ],
+  "note": "Use the dignity tables to detect reception: planet A in a sign ruled by B, and B in a sign ruled by A.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "planet",
+    "aspect",
+    "transit"
+  ],
+  "summary": "Reception describes whether planets can cooperate through dignity, especially across difficult aspects.",
+  "body": "A planet receives another when the second sits in a sign or degree the first rules by dignity. Mutual reception is when each occupies the other's dignity; the two then cooperate and can act almost as if joined."
+}

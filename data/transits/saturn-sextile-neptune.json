@@ -1,0 +1,30 @@
+{
+  "id": "saturn-sextile-neptune",
+  "transiting": "saturn",
+  "aspect": "sextile",
+  "other": "neptune",
+  "tldr": "Saturn sextile Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. The sextile makes this a natural strength: Dreams worked patiently into something real. The growth edge is not to coast on the ease.",
+  "cyclic": {
+    "phase": "Waxing / waning sextile",
+    "waxing": "A chance to organize limit and imagination into a new form; it must be actively taken up.",
+    "waning": "Reorganize and share what limit and imagination have taught; communicate the insight."
+  },
+  "business": "An opening in this area. Disciplined vision realized over time; the task is managing fear.",
+  "shadow": "The ease lets fear and rigidity and illusion and escapism go unchecked, or the opening pass unused.",
+  "arcApplying": "A supportive opening becomes available; offered, not automatic.",
+  "arcSeparating": "The opening closes; unused, it passes.",
+  "composedFrom": [
+    "pair:saturn-neptune",
+    "aspect:sextile"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Structure meets dream. Grounding imagination into reality, or pessimism colliding with illusion. The sextile makes this a natural strength: Dreams worked patiently into something real. The growth edge is not to coast on the ease."
+}

@@ -1,0 +1,24 @@
+{
+  "id": "mars-saturn",
+  "planetA": "mars",
+  "planetB": "saturn",
+  "traditional": "Action and heat combined with limitation and structure. Two malefics: demanding, and condition/sect decides how hard.",
+  "modern": {
+    "blend": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit.",
+    "harmonious": "Stamina and controlled, sustained effort.",
+    "hard": "Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat.",
+    "business": "Endurance and discipline; the friction is the constant start-stop of push against restraint."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit.",
+  "harmonious": "Stamina and controlled, sustained effort.",
+  "hard": "Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat.",
+  "business": "Endurance and discipline; the friction is the constant start-stop of push against restraint."
+}

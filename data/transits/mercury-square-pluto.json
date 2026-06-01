@@ -1,0 +1,30 @@
+{
+  "id": "mercury-square-pluto",
+  "transiting": "mercury",
+  "aspect": "square",
+  "other": "pluto",
+  "tldr": "Mercury square Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered. Psychologically the square is inner tension to integrate: Communication turns coercive or obsessive. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for thinking against power, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the thinking/power form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Sales, persuasion, research, and anything requiring depth and force of message.",
+  "shadow": "Scattered overthinking collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:mercury-pluto",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered. Psychologically the square is inner tension to integrate: Communication turns coercive or obsessive. The growth is owning both sides instead of splitting them."
+}

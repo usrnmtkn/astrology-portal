@@ -1,0 +1,30 @@
+{
+  "id": "moon-square-uranus",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "uranus",
+  "tldr": "the Moon square Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Emotional life meets disruption and the need for freedom. Feelings turn unpredictable, restless, and resistant to routine. Psychologically the square is inner tension to integrate: Emotional volatility, sudden moods, and a recoil from anything that feels confining. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for feeling against disruption, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the feeling/disruption form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Good for inventive moves and breaking stale routines; poor for steady, predictable handling.",
+  "shadow": "Moodiness and over-need collides with instability for its own sake; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:moon-uranus",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotional life meets disruption and the need for freedom. Feelings turn unpredictable, restless, and resistant to routine. Psychologically the square is inner tension to integrate: Emotional volatility, sudden moods, and a recoil from anything that feels confining. The growth is owning both sides instead of splitting them."
+}

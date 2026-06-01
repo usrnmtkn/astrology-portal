@@ -1,0 +1,29 @@
+{
+  "id": "sun-opposition-pluto",
+  "transiting": "sun",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "the Sun opposition Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the opposition is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Selfhood and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Real influence; the intensity tends to polarize people.",
+  "shadow": "Egotism and needing to be the center collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:sun-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the opposition is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them."
+}

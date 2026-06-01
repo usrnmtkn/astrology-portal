@@ -1,0 +1,71 @@
+{
+  "id": "chart-ruler",
+  "schema": "modifier/chart-ruler",
+  "definition": "The chart ruler (lord of the Ascendant, lord of the chart) is the planet that rules the rising sign. It is the most personal significator of the native: the steering planet of the whole life. Where it sits and how well it is conditioned describes the direction and quality of the life.",
+  "determination": {
+    "rule": "Take the rising sign and find its traditional domicile ruler (use dignity.domicile). That planet is the chart ruler.",
+    "modernCoRuler": "For Scorpio, Aquarius, and Pisces a modern co-ruler may be read only as a secondary modern lens. The traditional ruler stays primary and is the one used for naming, weighting, dignity, sect, and time-lord logic."
+  },
+  "surfacePolicy": {
+    "default": "Default chart-ruler text names the traditional ruler as the chart ruler.",
+    "modernLens": "Modern co-rulers may appear in an explicitly labeled modern lens field or view. Phrase them as modern lenses, not replacements.",
+    "doNotSurfaceAsRuler": "Do not describe Pluto, Uranus, or Neptune as the chart ruler. For Scorpio, say Mars is the traditional ruler and Pluto is the modern lens. For Aquarius, say Saturn is the traditional ruler and Uranus is the modern lens. For Pisces, say Jupiter is the traditional ruler and Neptune is the modern lens."
+  },
+  "howToRead": [
+    "The rising sign sets the style; its ruler is the agent that carries that style into the world.",
+    "The HOUSE the chart ruler occupies shows where the life is steered, where the main story unfolds.",
+    "The SIGN it occupies shows the manner in which the life is pursued.",
+    "Its dignity (use the dignity scoring) shows how effectively the native pursues their direction: a debilitated chart ruler means a harder, more obstructed path.",
+    "Its sect status (in/out of sect) and solar phase (combust, cazimi, under the beams) further weight how cleanly it operates.",
+    "Aspects to the chart ruler are the main forces helping or blocking the life direction."
+  ],
+  "appUsage": "Rank transits to the chart ruler among the most personally significant in any day, alongside transits to the Sun, Moon, and Ascendant. A transit to the chart ruler speaks to the whole life-direction, not one lane; weight it up across all three lanes (business, creative, self).",
+  "rulers": {
+    "aries": {
+      "ruler": "mars"
+    },
+    "taurus": {
+      "ruler": "venus"
+    },
+    "gemini": {
+      "ruler": "mercury"
+    },
+    "cancer": {
+      "ruler": "moon"
+    },
+    "leo": {
+      "ruler": "sun"
+    },
+    "virgo": {
+      "ruler": "mercury"
+    },
+    "libra": {
+      "ruler": "venus"
+    },
+    "scorpio": {
+      "ruler": "mars",
+      "modernCoRuler": "pluto"
+    },
+    "sagittarius": {
+      "ruler": "jupiter"
+    },
+    "capricorn": {
+      "ruler": "saturn"
+    },
+    "aquarius": {
+      "ruler": "saturn",
+      "modernCoRuler": "uranus"
+    },
+    "pisces": {
+      "ruler": "jupiter",
+      "modernCoRuler": "neptune"
+    }
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "chart"
+  ],
+  "summary": "The chart ruler is the ruler of the rising sign and describes the steering planet of the life.",
+  "body": "The chart ruler (lord of the Ascendant, lord of the chart) is the planet that rules the rising sign. It is the most personal significator of the native: the steering planet of the whole life. Where it sits and how well it is conditioned describes the direction and quality of the life."
+}

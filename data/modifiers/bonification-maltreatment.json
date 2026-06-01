@@ -1,0 +1,32 @@
+{
+  "id": "bonification-maltreatment",
+  "schema": "modifier/bonification-maltreatment",
+  "definition": "The master weighting rule. Benefics improve what they touch (bonification); malefics harm what they touch (maltreatment). This decides whether a given meaning resolves well or badly.",
+  "bonification": {
+    "agents": [
+      "jupiter",
+      "venus"
+    ],
+    "effect": "A planet or point a benefic conjoins or aspects (especially by trine or sextile, in tight orb) is helped, protected, and its outcomes improved.",
+    "strength": "The in-sect benefic (Jupiter by day, Venus by night) bonifies most strongly."
+  },
+  "maltreatment": {
+    "agents": [
+      "mars",
+      "saturn"
+    ],
+    "effect": "A planet or point a malefic conjoins, squares, or opposes (in tight orb) is harmed and its outcomes worsened.",
+    "strength": "The out-of-sect malefic (Saturn by night, Mars by day) maltreats most harshly; a dignified or in-sect malefic does far less damage."
+  },
+  "overcoming": "The planet in the earlier zodiacal degree holds the superior position and dominates the relationship, especially across a square.",
+  "appUsage": "After reading a transit, scan for a benefic or malefic also aspecting the same point. Benefic present -> weight the outcome UP. Malefic present -> weight it DOWN, more so if out of sect. This converts a neutral meaning into a good or bad day.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "planet",
+    "transit",
+    "placement"
+  ],
+  "summary": "Benefic and malefic contacts weight whether an indication resolves more easily or more harshly.",
+  "body": "The master weighting rule. Benefics improve what they touch (bonification); malefics harm what they touch (maltreatment). This decides whether a given meaning resolves well or badly."
+}

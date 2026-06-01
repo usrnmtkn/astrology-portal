@@ -1,0 +1,66 @@
+{
+  "id": "sun",
+  "planet": "sun",
+  "title": "Sun Meaning",
+  "overview": "and houses e Sun, a radiant and resplendent celestial luminary, holds a revered position within the magnicent tapestry of the cosmos. It is a beacon of illumination, casting its warm and vitalizing rays upon our earthly path. As the sovereign ruler of Leo, the Sun reigns over our individuality, creative expression, and personal power. It serves as a guiding force, igniting the ames of our passions and propelling us toward the wondrous journey of self-realization. By embracing the radiant energy of the Sun, we embark upon a transformative path of self-discovery, one that invites us to cultivate unwavering self-condence and to fully embrace the kaleidoscope of our uniue talents and abilities. As we traverse the labyrinthine landscape of the zodiac houses, may the profound blessings of the Sun permeate the very fabric of our lives. May joy dance in our hearts, creativity ows through our veins, and an indomitable connection to our true essence be eternally kindled within our souls. As the Sun embarks on its celestial odyssey through each zodiac sign, may we, too, embark upon our own transformative journey, continuously evolving, expressing, and embracing the resplendence of our uniue light. Sun through the zodiac signs",
+  "cycle": "PLACEHOLDER - author review from source",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "With your Sun in Aries, you radiate energy and courage. You have a pioneering spirit, a love o competition, and a knack for initiating new projects. You value your independence and aren't afraid to walk your path boldly and condently."
+    },
+    {
+      "sign": "taurus",
+      "body": "As a Taurus Sun, you exude steadiness, reliability, and a deep connection with the physical world. You appreciate beauty and comfort, and you're likely to build a life that engages your senses. You show your tenacity in achieving goals and can be uite unyielding once your mind is set."
+    },
+    {
+      "sign": "gemini",
+      "body": "With your Sun in Gemini, you embody versatility, curiosity, and a need for variety. Communication is your forte, and you shine when sharing ideas or gathering knowledge. Your mutable nature makes you adaptable, and you're oen drawn to activities that involve a fair degree of mental stimulation."
+    },
+    {
+      "sign": "cancer",
+      "body": "As a Cancer Sun, you exude nurturing energy and emotional sensitivity. You highly value family and home and take pride in caring for loved ones. You're guided by your emotions and intuition, and you have an innate ability to provide comfort and security to those around you."
+    },
+    {
+      "sign": "leo",
+      "body": "With your Sun in Leo, you radiate warmth, generosity, and a zest for life. Your presence is oen magnetic, drawing others to you naturally. You shine when expressing your creativity and have a strong drive for personal recognition and a desire to be at the center of attention."
+    },
+    {
+      "sign": "virgo",
+      "body": "As a Virgo Sun, you personify eciency, practicality, and a focus on service. You're detail-oriented and oen drawn to tasks that involve analysis or helping others. You shine when precision and care are needed, and your work ethic is second to none."
+    },
+    {
+      "sign": "libra",
+      "body": "With your Sun in Libra, you reect balance, harmony, and a knack for partnership. You are socially oriented, oen striving to create peace and fairness in your surroundings. Your charm and diplomatic skills allow you to navigate relationships with grace and ease."
+    },
+    {
+      "sign": "scorpio",
+      "body": "As a Scorpio Sun, you emanate depth, transformation, and intensity. You thrive on emotional intimacy and are unafraid to dive into life's more profound mysteries. Your determination is unyielding, and your passions run deep, allowing you to navigate life's ups and downs with resilience."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "With your Sun in Sagittarius, you reect a love of freedom, adventure, and truth-seeking. You're drawn to exploring life's big uestions and aren't afraid to roam far and wide in your search for answers. Your optimistic nature and broad-minded outlook make you a natural philosopher."
+    },
+    {
+      "sign": "capricorn",
+      "body": "As a Capricorn Sun, you exude discipline, ambition, and a strong sense of responsibility. You have a natural knack for management and strategy, and you shine when setting long-term goals. Your practical and cautious approach to life is oen a model of success for others. 289"
+    },
+    {
+      "sign": "aquarius",
+      "body": "With your Sun in Aquarius, you embody individuality, innovation, and a deep sense o humanitarianism. You thrive on uniueness and oen seek to challenge the status uo. You shine in situations where you can utilize your inventive mind and make a dierence in the world."
+    },
+    {
+      "sign": "pisces",
+      "body": "As a Pisces Sun, you emanate empathy, spiritual depth, and a strong intuitive sense. You are in tune with the collective unconscious and oen show a seless desire to help others. Your imaginative and compassionate nature allows you to navigate the world with grace and sensitivity."
+    }
+  ],
+  "source": {
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      289,
+      290
+    ]
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

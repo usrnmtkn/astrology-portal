@@ -1,0 +1,15 @@
+{
+  "id": "lilith-conjunct-ascendant",
+  "kind": "natal",
+  "point": "black-moon-lilith",
+  "aspect": "conjunction",
+  "planet": "ascendant",
+  "tldr": "Black Moon Lilith conjunct the Ascendant.",
+  "body": "The disowned, uncompromising self sits right on the face you show the world; people feel your raw, untamed edge before you say a word.",
+  "business": "An undeniable, magnetic presence that refuses to perform.",
+  "shadow": "A guarded or confrontational first impression, either over-projecting the raw self or hiding it behind armor.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

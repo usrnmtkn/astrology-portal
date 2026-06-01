@@ -1,0 +1,34 @@
+{
+  "id": "asteroid-synastry-policy",
+  "kind": "framework",
+  "title": "Asteroid Synastry Policy",
+  "sections": [
+    {
+      "id": "secondary-layer",
+      "heading": "Secondary Layer",
+      "body": "Asteroids are a secondary synastry layer. They should never override the core relationship structure shown by natal capacity, Sun, Moon, Ascendant, Venus, Mars, Saturn, angles, house overlays, and the composite chart."
+    },
+    {
+      "id": "use-tight-orbs",
+      "heading": "Use Tight Orbs",
+      "body": "Use tight orbs for asteroid contacts. Prioritize exact or near-exact conjunctions to personal planets, angles, nodes, or composite points. Treat wide asteroid contacts as symbolic background, not as primary evidence."
+    },
+    {
+      "id": "asteroid-roles",
+      "heading": "Asteroid Roles",
+      "body": "Asteroids can clarify a specific theme: commitment, longing, erotic charge, devotion, injury, repair, muse-like inspiration, or mythic patterning. They are best used to name nuance after the main relationship dynamics are already established."
+    },
+    {
+      "id": "karmic-language-boundary",
+      "heading": "Karmic Language Boundary",
+      "body": "Avoid deterministic language such as soul debt, destined suffering, or proof of a past-life bond. If nodal, Saturn, Vertex, Chiron, or asteroid contacts feel fated, phrase them as intensity, recognition, unfinished emotional pattern, or developmental pressure rather than proof that the relationship must continue."
+    },
+    {
+      "id": "safety",
+      "heading": "Safety",
+      "body": "Never use asteroid or karmic indicators to justify harm, obsession, coercion, or staying in a damaging relationship. If a contact describes pain, compulsion, or fixation, name the pattern and direct attention back to consent, boundaries, behavior, and support."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

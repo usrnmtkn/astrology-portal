@@ -1,0 +1,24 @@
+{
+  "id": "venus-jupiter",
+  "planetA": "venus",
+  "planetB": "jupiter",
+  "traditional": "Love, money, and pleasure combined with growth and fortune. Two benefics: easy, with a tendency to excess.",
+  "modern": {
+    "blend": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease.",
+    "harmonious": "Warmth, goodwill, and good fortune in what you value.",
+    "hard": "Play-before-work and indulgence undercut accomplishment.",
+    "business": "Likable and fortunate; the missing ingredient is discipline."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease.",
+  "harmonious": "Warmth, goodwill, and good fortune in what you value.",
+  "hard": "Play-before-work and indulgence undercut accomplishment.",
+  "business": "Likable and fortunate; the missing ingredient is discipline."
+}

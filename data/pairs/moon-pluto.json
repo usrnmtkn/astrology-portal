@@ -1,0 +1,24 @@
+{
+  "id": "moon-pluto",
+  "planetA": "moon",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings.",
+    "harmonious": "Emotional depth and resilience that can be drawn on deliberately.",
+    "hard": "Emotional power struggles, jealousy, and compulsion.",
+    "business": "Emotional intensity: depth is an asset, volatility a liability."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings.",
+  "harmonious": "Emotional depth and resilience that can be drawn on deliberately.",
+  "hard": "Emotional power struggles, jealousy, and compulsion.",
+  "business": "Emotional intensity: depth is an asset, volatility a liability."
+}

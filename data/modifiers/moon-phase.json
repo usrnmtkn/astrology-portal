@@ -1,0 +1,38 @@
+{
+  "id": "moon-phase",
+  "schema": "modifier/moon-phase",
+  "definition": "The Moon's phase (its angle to the Sun) sets the timing tone of a day: when to initiate, build, culminate, or release. It pairs with the cyclic waxing/waning model.",
+  "phases": {
+    "new": {
+      "range": "conjunction to ~45 deg ahead of Sun",
+      "tone": "Initiate, plant, begin. Instinctive, low-visibility starts."
+    },
+    "waxing": {
+      "range": "~45 to 180 deg (crescent, first quarter, gibbous)",
+      "tone": "Build, develop, push forward. Effort and growth."
+    },
+    "full": {
+      "range": "opposition (~180 deg)",
+      "tone": "Culminate, reveal, harvest. Peak visibility and emotion; results show."
+    },
+    "waning": {
+      "range": "~180 to 360 deg (disseminating, last quarter, balsamic)",
+      "tone": "Release, distribute, complete, rest. Wind down and let go."
+    }
+  },
+  "voidOfCourse": {
+    "definition": "The Moon makes no more major aspects before leaving its current sign.",
+    "effect": "A poor window to initiate; plans started now tend to fizzle. Good only for routine, rest, and finishing.",
+    "appUsage": "Flag void-of-course periods as a do-not-launch window and steer the daily advice toward maintenance over initiation."
+  },
+  "appUsage": "Gate 'initiate vs release' advice by phase: push new ventures while waxing, complete and let go while waning. Treat the full Moon as a reveal/peak, the new Moon as a reset.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "moon",
+    "timing",
+    "transit"
+  ],
+  "summary": "The Moon phase sets timing tone for initiation, growth, culmination, release, and void-of-course caution.",
+  "body": "The Moon's phase (its angle to the Sun) sets the timing tone of a day: when to initiate, build, culminate, or release. It pairs with the cyclic waxing/waning model."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "chiron-conjunct-venus",
+  "kind": "natal",
+  "point": "chiron",
+  "aspect": "conjunction",
+  "planet": "venus",
+  "tldr": "Chiron conjunct Venus.",
+  "body": "The wound is in love and worth: a fear of not being lovable or valued, often from early rejection.",
+  "business": "You help others feel worthy in love, having doubted it yourself.",
+  "shadow": "Over-giving to be kept, or avoiding closeness to protect the sore spot.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

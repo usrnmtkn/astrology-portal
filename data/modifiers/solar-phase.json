@@ -1,0 +1,35 @@
+{
+  "id": "solar-phase",
+  "schema": "modifier/solar-phase",
+  "definition": "A planet's condition relative to the Sun. Proximity to the Sun's rays weakens most planets by hiding them, except at the exact center, where the planet is strengthened.",
+  "appUsage": "Down-weight a transiting planet that is combust or under the beams (its signification is obscured). Up-weight a cazimi planet. Note orientality for Mercury's sect.",
+  "cazimi": {
+    "orb": "within ~17 arcminutes of the Sun",
+    "effect": "'In the heart of the Sun'. Strengthened and clarified, the strongest condition."
+  },
+  "combust": {
+    "orb": "within 8 degrees of the Sun (outside cazimi)",
+    "effect": "Burnt up and weakened; the planet's significations are hidden or overpowered."
+  },
+  "underTheBeams": {
+    "orb": "within ~15 degrees of the Sun (outside combustion)",
+    "effect": "Obscured and diminished, though less severely than combust."
+  },
+  "freeOfBeams": {
+    "orb": "beyond ~15 degrees",
+    "effect": "Visible and operating normally."
+  },
+  "orientality": {
+    "oriental": "rises before the Sun (morning)",
+    "occidental": "sets after the Sun (evening)",
+    "note": "Determines Mercury's and other common planets' sect; also shades how a planet expresses (initiating vs reflective)."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "planet",
+    "sun"
+  ],
+  "summary": "Solar phase describes whether a planet is strengthened, obscured, or hidden by proximity to the Sun.",
+  "body": "A planet's condition relative to the Sun. Proximity to the Sun's rays weakens most planets by hiding them, except at the exact center, where the planet is strengthened."
+}

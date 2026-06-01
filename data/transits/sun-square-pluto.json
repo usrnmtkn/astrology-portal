@@ -1,0 +1,30 @@
+{
+  "id": "sun-square-pluto",
+  "transiting": "sun",
+  "aspect": "square",
+  "other": "pluto",
+  "tldr": "the Sun square Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the square is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for selfhood against power, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the selfhood/power form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Real influence; the intensity tends to polarize people.",
+  "shadow": "Egotism and needing to be the center collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:sun-pluto",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the square is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them."
+}

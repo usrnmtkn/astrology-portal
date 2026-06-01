@@ -1,0 +1,29 @@
+{
+  "id": "saturn-opposition-uranus",
+  "transiting": "saturn",
+  "aspect": "opposition",
+  "other": "uranus",
+  "tldr": "Saturn opposition Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Order meets disruption. The clash of the established and the radical, the structured and the new. Psychologically the opposition is inner tension to integrate: Restlessness fights control; each demands attention and sabotages the other until both are satisfied at once. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Limit and disruption reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Innovation inside structure works; an either-or stance stalls.",
+  "shadow": "Fear and rigidity collides with instability for its own sake; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:saturn-uranus",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Order meets disruption. The clash of the established and the radical, the structured and the new. Psychologically the opposition is inner tension to integrate: Restlessness fights control; each demands attention and sabotages the other until both are satisfied at once. The growth is owning both sides instead of splitting them."
+}

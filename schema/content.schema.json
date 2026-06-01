@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/content.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "title", "sections", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": {
+      "enum": ["guide", "framework", "template", "correspondence", "synastry"]
+    },
+    "title": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "heading", "body"],
+        "properties": {
+          "id": { "type": "string" },
+          "heading": { "type": "string" },
+          "body": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "body"],
+              "properties": {
+                "label": { "type": "string" },
+                "body": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

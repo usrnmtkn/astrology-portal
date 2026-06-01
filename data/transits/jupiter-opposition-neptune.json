@@ -1,0 +1,29 @@
+{
+  "id": "jupiter-opposition-neptune",
+  "transiting": "jupiter",
+  "aspect": "opposition",
+  "other": "neptune",
+  "tldr": "Jupiter opposition Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Expansion meets imagination. Idealism and vision on a large scale. Psychologically the opposition is inner tension to integrate: Gullibility and wishful thinking mistaken for reality. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Growth and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Inspired vision; test it against logic before committing.",
+  "shadow": "Excess and overreach collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:jupiter-neptune",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets imagination. Idealism and vision on a large scale. Psychologically the opposition is inner tension to integrate: Gullibility and wishful thinking mistaken for reality. The growth is owning both sides instead of splitting them."
+}

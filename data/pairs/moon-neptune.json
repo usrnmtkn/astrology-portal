@@ -1,0 +1,24 @@
+{
+  "id": "moon-neptune",
+  "planetA": "moon",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Feelings meet imagination and dissolution. A need for escape and reverie, high sensitivity, and compassion.",
+    "harmonious": "Imaginative and receptive; help seems to arrive from others.",
+    "hard": "Emotional boundaries dissolve, leaving you drained by others or lost in daydream.",
+    "business": "Strong for imaginative work; protect boundaries and energy."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Feelings meet imagination and dissolution. A need for escape and reverie, high sensitivity, and compassion.",
+  "harmonious": "Imaginative and receptive; help seems to arrive from others.",
+  "hard": "Emotional boundaries dissolve, leaving you drained by others or lost in daydream.",
+  "business": "Strong for imaginative work; protect boundaries and energy."
+}

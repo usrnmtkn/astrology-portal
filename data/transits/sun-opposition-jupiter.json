@@ -1,0 +1,29 @@
+{
+  "id": "sun-opposition-jupiter",
+  "transiting": "sun",
+  "aspect": "opposition",
+  "other": "jupiter",
+  "tldr": "the Sun opposition Jupiter.",
+  "traditional": "the Sun opposition Jupiter: a hard contact. Vitality, authority, and recognition works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Psychologically the opposition is inner tension to integrate: The same confidence overreaches. Sooner or later the luck gets pushed too far. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Selfhood and growth reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Confidence and opportunity, with overextension as the standing risk.",
+  "shadow": "Egotism and needing to be the center collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:sun-jupiter",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Psychologically the opposition is inner tension to integrate: The same confidence overreaches. Sooner or later the luck gets pushed too far. The growth is owning both sides instead of splitting them."
+}

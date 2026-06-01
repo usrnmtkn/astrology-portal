@@ -1,0 +1,53 @@
+{
+  "id": "sect",
+  "schema": "modifier/sect",
+  "definition": "Every chart belongs to one of two sects, day or night, set by whether the Sun is above or below the horizon. Each planet has its own sect affiliation, and a planet operates more comfortably when its sect matches the chart's.",
+  "chartSect": {
+    "diurnal": "Sun above the horizon (day chart). The Sun is the sect light.",
+    "nocturnal": "Sun below the horizon (night chart). The Moon is the sect light."
+  },
+  "planetSect": {
+    "diurnal": [
+      "sun",
+      "jupiter",
+      "saturn"
+    ],
+    "nocturnal": [
+      "moon",
+      "venus",
+      "mars"
+    ],
+    "common": [
+      "mercury"
+    ]
+  },
+  "mercuryRule": "Mercury is common: diurnal when it rises before the Sun (oriental), nocturnal when it sets after the Sun (occidental).",
+  "benefics": {
+    "greater": "jupiter",
+    "lesser": "venus"
+  },
+  "malefics": {
+    "greater": "saturn",
+    "lesser": "mars"
+  },
+  "sectBenefic": {
+    "day": "jupiter",
+    "night": "venus"
+  },
+  "sectMalefic": {
+    "day": "saturn",
+    "night": "mars"
+  },
+  "inSect": "A planet in sect operates more constructively and is better able to deliver its significations.",
+  "outOfSect": "A planet out of sect is less stable. The out-of-sect malefic is the harsher of the two: Saturn is most difficult in a night chart, Mars most difficult in a day chart.",
+  "paradox": "The malefics are placed in the sect opposite their nature so they can be tempered: cold, heavy Saturn is warmed by the day sect; hot, volatile Mars is cooled by the night sect.",
+  "testimony": "Benefics regarding (aspecting) a malefic can moderate or restrain it; a malefic overcome by Jupiter or Venus does less damage.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "chart",
+    "planet"
+  ],
+  "summary": "Sect distinguishes day charts from night charts and determines which benefic or malefic is most constructive or difficult.",
+  "body": "Every chart belongs to one of two sects, day or night, set by whether the Sun is above or below the horizon. Each planet has its own sect affiliation, and a planet operates more comfortably when its sect matches the chart's."
+}

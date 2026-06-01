@@ -1,0 +1,29 @@
+{
+  "id": "mercury-opposition-pluto",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "Mercury opposition Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered. Psychologically the opposition is inner tension to integrate: Communication turns coercive or obsessive. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Thinking and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Sales, persuasion, research, and anything requiring depth and force of message.",
+  "shadow": "Scattered overthinking collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mercury-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets power. Forceful, penetrating communication; words that can heal or wound and tend to be remembered. Psychologically the opposition is inner tension to integrate: Communication turns coercive or obsessive. The growth is owning both sides instead of splitting them."
+}

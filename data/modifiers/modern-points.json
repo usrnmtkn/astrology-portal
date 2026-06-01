@@ -1,0 +1,47 @@
+{
+  "id": "modern-points",
+  "schema": "modifier/modern-points",
+  "appliesTo": [
+    "point",
+    "chart-display",
+    "placement",
+    "transit"
+  ],
+  "summary": "Chiron and Black Moon Lilith are modern secondary points that may appear in the same chart only when the user enables them.",
+  "body": "Use Chiron and Black Moon Lilith as optional modern shadow-and-healing points. They can be displayed inside the same chart wheel and chart interpretation flow, but they are hidden by default behind a user-controlled toggle. They do not replace planets, rulers, dignity, sect, houses, or time-lord logic.",
+  "definition": "Display and weighting policy for modern secondary points such as Chiron and Black Moon Lilith.",
+  "appUsage": [
+    "Default chart view: hide modern points unless the user turns on the modern-points toggle.",
+    "When enabled, show Chiron and Black Moon Lilith in the same chart display with a visual distinction from planets.",
+    "Label the toggle clearly, for example: Chiron & Lilith, Shadow Points, or Modern Points.",
+    "Do not show these points as chart rulers, sign rulers, sect factors, dignity factors, or time-lord candidates.",
+    "If a modern point closely contacts the Sun, Moon, Ascendant, Venus, Mars, or Midheaven, allow an optional callout in the reading."
+  ],
+  "surfacePolicy": {
+    "default": "Hidden by default in the main chart.",
+    "toggle": "User can enable Chiron and Black Moon Lilith in the same chart view.",
+    "label": "The UI must make clear that these are modern secondary points, not planets or traditional rulers.",
+    "readingPlacement": "When enabled, they may appear in a Shadow & Healing, Reclamation, or Modern Points section, or as optional callouts inside the main chart reading.",
+    "visualTreatment": "Use a distinct glyph, color, opacity, or layer treatment so users can tell these points apart from planets."
+  },
+  "prohibitions": [
+    "Do not show modern points by default without an opt-in.",
+    "Do not use modern points as chart rulers or sign rulers.",
+    "Do not include modern points in dignity, sect, profection, zodiacal releasing, or traditional timing calculations.",
+    "Do not let a modern point override a clear planet, house, ruler, or angle indication.",
+    "Do not frame Chiron or Lilith placements as fate, pathology, or permanent damage."
+  ],
+  "weighting": [
+    "Use as secondary interpretive material after planets, angles, houses, rulers, and major aspects.",
+    "Weight up when Chiron or Black Moon Lilith is conjunct or tightly aspecting the Sun, Moon, Ascendant, Venus, Mars, or Midheaven.",
+    "Weight up when the point is angular or closely tied to a chart concentration.",
+    "For daily content, avoid overemphasizing slow modern point movement unless a personal contact, station, return, or house ingress is relevant."
+  ],
+  "orbs": {
+    "default": "Use tight orbs.",
+    "conjunctionToPersonalPlanetOrAngle": "Prefer 2-3 degrees.",
+    "generalAspect": "Prefer 1-2 degrees unless the app's aspect engine has a stricter policy."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

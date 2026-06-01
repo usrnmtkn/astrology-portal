@@ -1,0 +1,163 @@
+{
+  "kind": "planet",
+  "note": "Seven classical planets. governs/verb/tempo/shadow are behavioral; nature/sect/element/gender are traditional classifications. Outer planets (uranus, neptune, pluto) are used in the pairs layer but have no traditional sect/benefic-malefic classification and are handled separately.",
+  "entries": [
+    {
+      "id": "sun",
+      "governs": [
+        "identity",
+        "vitality",
+        "recognition",
+        "creative self-expression",
+        "authority"
+      ],
+      "verb": "to shine",
+      "tempo": "steady, central",
+      "shadow": "egotism, needing to be the center",
+      "nature": "luminary (day sect light)",
+      "sect": "diurnal",
+      "element": [
+        "hot",
+        "dry"
+      ],
+      "gender": "masculine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "moon",
+      "governs": [
+        "emotion",
+        "instinct",
+        "needs",
+        "nurture",
+        "the body",
+        "daily rhythm"
+      ],
+      "verb": "to nourish",
+      "tempo": "fast, cyclical, changeable",
+      "shadow": "moodiness, dependence, over-need",
+      "nature": "luminary (night sect light)",
+      "sect": "nocturnal",
+      "element": [
+        "moist"
+      ],
+      "gender": "feminine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mercury",
+      "governs": [
+        "mind",
+        "communication",
+        "information",
+        "analysis",
+        "movement of ideas"
+      ],
+      "verb": "to relate and convey",
+      "tempo": "quick, restless",
+      "shadow": "overthinking, scattered, slippery",
+      "nature": "changeable (neutral, colored by what it touches)",
+      "sect": "common",
+      "element": [
+        "changeable"
+      ],
+      "gender": "androgynous",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "venus",
+      "governs": [
+        "attraction",
+        "pleasure",
+        "love",
+        "value",
+        "beauty",
+        "ease"
+      ],
+      "verb": "to attract and connect",
+      "tempo": "soft, unhurried",
+      "shadow": "indulgence, laziness, vanity",
+      "nature": "lesser benefic",
+      "sect": "nocturnal",
+      "element": [
+        "moist",
+        "hot"
+      ],
+      "gender": "feminine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "mars",
+      "governs": [
+        "action",
+        "drive",
+        "aggression",
+        "assertion",
+        "conflict",
+        "desire"
+      ],
+      "verb": "to act and cut",
+      "tempo": "fast, forceful",
+      "shadow": "anger, recklessness, destruction",
+      "nature": "lesser malefic",
+      "sect": "nocturnal",
+      "element": [
+        "hot",
+        "dry"
+      ],
+      "gender": "masculine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "jupiter",
+      "governs": [
+        "expansion",
+        "growth",
+        "optimism",
+        "luck",
+        "belief",
+        "abundance"
+      ],
+      "verb": "to expand",
+      "tempo": "broad, generous",
+      "shadow": "excess, overreach, complacency",
+      "nature": "greater benefic",
+      "sect": "diurnal",
+      "element": [
+        "hot",
+        "moist"
+      ],
+      "gender": "masculine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "saturn",
+      "governs": [
+        "limit",
+        "structure",
+        "discipline",
+        "responsibility",
+        "time",
+        "consequence"
+      ],
+      "verb": "to limit and consolidate",
+      "tempo": "slow, heavy",
+      "shadow": "fear, rigidity, deprivation",
+      "nature": "greater malefic",
+      "sect": "diurnal",
+      "element": [
+        "cold",
+        "dry"
+      ],
+      "gender": "masculine",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    }
+  ]
+}

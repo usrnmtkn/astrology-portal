@@ -1,0 +1,24 @@
+{
+  "id": "uranus-pluto",
+  "planetA": "uranus",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Uranus, Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology.",
+    "harmonious": "Fast, effective adaptation to change.",
+    "hard": "Destructive upheaval and the urge to overturn at speed.",
+    "business": "Transformative, disruptive, generational themes."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology.",
+  "harmonious": "Fast, effective adaptation to change.",
+  "hard": "Destructive upheaval and the urge to overturn at speed.",
+  "business": "Transformative, disruptive, generational themes."
+}

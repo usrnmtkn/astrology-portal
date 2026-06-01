@@ -1,0 +1,30 @@
+{
+  "id": "mercury-square-mars",
+  "transiting": "mercury",
+  "aspect": "square",
+  "other": "mars",
+  "tldr": "Mercury square Mars.",
+  "traditional": "Mercury square Mars: a hard contact. Communication, commerce, and contracts works against action, conflict, and heat \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. Psychologically the square is inner tension to integrate: Arguments and verbal aggression; the mind never switches off. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for thinking against drive, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the thinking/drive form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Fast, cutting thinking; the task is channeling the edge productively.",
+  "shadow": "Scattered overthinking collides with anger and recklessness; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:mercury-mars",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. Psychologically the square is inner tension to integrate: Arguments and verbal aggression; the mind never switches off. The growth is owning both sides instead of splitting them."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "moon-conjunction-pluto",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "pluto",
+  "tldr": "the Moon conjunction Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of feeling and power is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Emotional intensity: depth is an asset, volatility a liability.",
+  "shadow": "Moodiness and over-need fused with control and obsession, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:moon-pluto",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

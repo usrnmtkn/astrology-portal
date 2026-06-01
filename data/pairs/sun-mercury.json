@@ -1,0 +1,24 @@
+{
+  "id": "sun-mercury",
+  "planetA": "sun",
+  "planetB": "mercury",
+  "traditional": "Vitality and authority combined with communication and commerce.",
+  "modern": {
+    "blend": "Identity fused with mind and communication. Self-expression runs through ideas and speech. Only the conjunction is possible, since Mercury never travels far from the Sun.",
+    "harmonious": "Adds mental steadiness and articulacy. You think and speak as an extension of who you are.",
+    "hard": "Risk of identifying so closely with your own ideas that outside input is hard to take in.",
+    "business": "Strong for pitching, writing, and putting your own thinking forward in your own voice."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity fused with mind and communication. Self-expression runs through ideas and speech. Only the conjunction is possible, since Mercury never travels far from the Sun.",
+  "harmonious": "Adds mental steadiness and articulacy. You think and speak as an extension of who you are.",
+  "hard": "Risk of identifying so closely with your own ideas that outside input is hard to take in.",
+  "business": "Strong for pitching, writing, and putting your own thinking forward in your own voice."
+}

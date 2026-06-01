@@ -1,0 +1,30 @@
+{
+  "id": "mars-square-jupiter",
+  "transiting": "mars",
+  "aspect": "square",
+  "other": "jupiter",
+  "tldr": "Mars square Jupiter.",
+  "traditional": "Mars square Jupiter: a hard contact. Action, conflict, and heat works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas. The benefic Jupiter tempers the malefic Mars.",
+  "modern": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Psychologically the square is inner tension to integrate: Shortened temper and patience, and energy scattered across one ill-considered pursuit after another. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for drive against growth, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the drive/growth form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "shadow": "Anger and recklessness collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:mars-jupiter",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Psychologically the square is inner tension to integrate: Shortened temper and patience, and energy scattered across one ill-considered pursuit after another. The growth is owning both sides instead of splitting them."
+}

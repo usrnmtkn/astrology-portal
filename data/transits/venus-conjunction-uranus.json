@@ -1,0 +1,29 @@
+{
+  "id": "venus-conjunction-uranus",
+  "transiting": "venus",
+  "aspect": "conjunction",
+  "other": "uranus",
+  "tldr": "Venus conjunction Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of connection and disruption is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Good for fresh, original creative and social moves; unreliable for steady commitments.",
+  "shadow": "Indulgence and vanity fused with instability for its own sake, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:venus-uranus",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

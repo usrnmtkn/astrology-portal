@@ -1,0 +1,24 @@
+{
+  "id": "sun-uranus",
+  "planetA": "sun",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Identity meets independence and disruption. The urge to be different and to do things your own way.",
+    "harmonious": "Originality that reads as brilliance or healthy independence.",
+    "hard": "Difference for its own sake: eccentricity, instability, shocking people to no purpose.",
+    "business": "Suited to independent or innovative work where you aren't boxed in."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets independence and disruption. The urge to be different and to do things your own way.",
+  "harmonious": "Originality that reads as brilliance or healthy independence.",
+  "hard": "Difference for its own sake: eccentricity, instability, shocking people to no purpose.",
+  "business": "Suited to independent or innovative work where you aren't boxed in."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "jupiter-opposition-saturn",
+  "transiting": "jupiter",
+  "aspect": "opposition",
+  "other": "saturn",
+  "tldr": "Jupiter opposition Saturn.",
+  "traditional": "Jupiter opposition Saturn: a hard contact. Growth, fortune, and patronage works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas. The benefic Jupiter tempers the malefic Saturn.",
+  "modern": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the opposition is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Growth and limit reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Balancing risk against prudence; unmanaged, it reads as inconsistency.",
+  "shadow": "Excess and overreach collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:jupiter-saturn",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the opposition is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "jupiter-opposition-pluto",
+  "transiting": "jupiter",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "Jupiter opposition Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs. Psychologically the opposition is inner tension to integrate: Conviction hardens into zealotry or overreach. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Growth and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Big, transformative ambition; the intensity can overshoot.",
+  "shadow": "Excess and overreach collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:jupiter-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs. Psychologically the opposition is inner tension to integrate: Conviction hardens into zealotry or overreach. The growth is owning both sides instead of splitting them."
+}
