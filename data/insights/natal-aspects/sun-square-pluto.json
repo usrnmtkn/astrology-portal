@@ -1,0 +1,48 @@
+{
+  "id": "sun-square-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Powerful Or Controlling",
+  "summary": "You may feel life intensely and resist being shaped by anyone else's will. Power is a central lesson.",
+  "body": "Sun square Pluto describes a strong survival current inside identity. You may notice control, threat, secrecy, or hidden motives faster than other people do. This can make you perceptive and hard to intimidate, but it can also make ordinary vulnerability feel dangerous. You may push yourself to transform, prove strength, or stay in command when softness would be more honest. The gift is depth and resilience. The growth is using power to become more truthful, not more defended.",
+  "gift": "Resilience, focus, psychological insight, and the courage to face what others avoid.",
+  "shadow": "Control, suspicion, power struggles, and the belief that vulnerability means losing authority.",
+  "integration": "Let strength include honesty. You do not have to dominate the room to be safe inside it.",
+  "do": [
+    "Name what you are trying to control",
+    "Use intensity for repair and focus",
+    "Let trusted people see the unfinished part"
+  ],
+  "dont": [
+    "Treat every challenge as a threat",
+    "Hold power by withholding truth",
+    "Confuse privacy with isolation"
+  ],
+  "lifeAreas": [
+    "identity",
+    "power",
+    "growth"
+  ],
+  "tags": [
+    "control",
+    "resilience",
+    "transformation",
+    "will",
+    "truth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
