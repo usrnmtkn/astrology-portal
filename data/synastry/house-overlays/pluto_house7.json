@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "pluto",
   "house": "7",
-  "plainTranslation": "Their Pluto in your 7th house activates partnership as a place of transformation and power. You may feel drawn in quickly, and the bond can expose control patterns on both sides. Powerful is not automatically safe; watch how conflict is handled.",
+  "plainTranslation": "Their Pluto in your 7th house: intense, transformative partnership pull - powerful, high-stakes, all-or-nothing. Failure mode: power struggles, control, the relationship as a battleground. Let it transform you; name the power dynamic, and don't confuse intensity for rightness.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }
