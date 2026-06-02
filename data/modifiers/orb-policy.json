@@ -1,0 +1,56 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "orb-policy",
+  "schema": "modifier/orb-policy",
+  "appliesTo": [
+    "aspect",
+    "transit",
+    "natal-chart",
+    "synastry",
+    "composite-chart"
+  ],
+  "summary": "Default aspect orb profiles for natal, transit, synastry, and composite interpretation.",
+  "body": "Orbs control whether an aspect is active enough to read. Use wider allowances for natal patterns, tighter allowances for daily transits, and strict settings for midpoint-based composite charts.",
+  "definition": "An orb is the permitted distance from exactness for an aspect to count as active.",
+  "appUsage": [
+    "Use transit orbs for daily check-ins and notification logic.",
+    "Use natal or synastry profiles for birth-chart and relationship analysis.",
+    "Treat exact or near-exact aspects as louder than wide aspects even when both are valid."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "orbs": {
+    "policy": "orb_defaults",
+    "version": 1,
+    "aspectOrbs": {
+      "conjunction": 8,
+      "opposition": 8,
+      "trine": 7,
+      "square": 7,
+      "sextile": 5
+    },
+    "minorAspectDefaultOrb": 2,
+    "bodyModifiers": {
+      "sun": 2,
+      "moon": 2
+    },
+    "profiles": {
+      "natal": {
+        "basis": "aspectOrbs",
+        "applyBodyModifiers": true,
+        "note": "Add the larger body modifier when a luminary is one of the two bodies."
+      },
+      "transit": {
+        "conjunction": 3,
+        "opposition": 3,
+        "trine": 3,
+        "square": 3,
+        "sextile": 2,
+        "applyBodyModifiers": false,
+        "note": "Tight orbs for daily weather. For the check-in's 'tightest orb' pick, rank by exact distance regardless of cap; ~1 degree is a strong daily hit. The Moon moves ~13 deg/day, so lunar transits stay in orb for hours, not days."
+      }
+    },
+    "rule": "effectiveOrb = profile orb for the aspect (+ body modifier under the natal profile). A contact counts when |separation - aspectAngle| <= effectiveOrb. Rank candidates by |separation - aspectAngle| ascending.",
+    "status": "DRAFT"
+  }
+}
