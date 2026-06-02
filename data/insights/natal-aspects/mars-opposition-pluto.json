@@ -1,0 +1,48 @@
+{
+  "id": "mars-opposition-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Forceful Or Combative",
+  "summary": "Your will can be formidable. Conflict may expose where power, fear, and desire are already charged.",
+  "body": "Mars opposition Pluto describes intense drive, strong survival instincts, and a complicated relationship with force. You may sense power dynamics quickly and resist being dominated, sometimes before anyone has made a move. This can give enormous stamina, courage, and capacity for transformation, but it can also turn conflict into a battle for control. The gift is focused power. The growth is learning when to apply force, when to stand down, and when the real fight is with an old pattern.",
+  "gift": "Stamina, courage, strategic force, and the ability to confront difficult realities directly.",
+  "shadow": "Power struggles, coercion, suppressed anger, and treating every challenge as a contest of wills.",
+  "integration": "Use intensity with consent and purpose. Power becomes cleaner when it is not trying to prove that no one can control you.",
+  "do": [
+    "Pause before escalating",
+    "Channel force into focused work",
+    "Ask what power dynamic is being activated"
+  ],
+  "dont": [
+    "Fight just to avoid feeling vulnerable",
+    "Use pressure to get honesty",
+    "Assume backing down means losing"
+  ],
+  "lifeAreas": [
+    "power",
+    "work",
+    "sex"
+  ],
+  "tags": [
+    "will",
+    "conflict",
+    "control",
+    "stamina",
+    "desire"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "shadow-work",
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
