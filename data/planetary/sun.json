@@ -2,64 +2,61 @@
   "id": "sun",
   "planet": "sun",
   "title": "Sun Meaning",
-  "overview": "and houses e Sun, a radiant and resplendent celestial luminary, holds a revered position within the magnicent tapestry of the cosmos. It is a beacon of illumination, casting its warm and vitalizing rays upon our earthly path. As the sovereign ruler of Leo, the Sun reigns over our individuality, creative expression, and personal power. It serves as a guiding force, igniting the ames of our passions and propelling us toward the wondrous journey of self-realization. By embracing the radiant energy of the Sun, we embark upon a transformative path of self-discovery, one that invites us to cultivate unwavering self-condence and to fully embrace the kaleidoscope of our uniue talents and abilities. As we traverse the labyrinthine landscape of the zodiac houses, may the profound blessings of the Sun permeate the very fabric of our lives. May joy dance in our hearts, creativity ows through our veins, and an indomitable connection to our true essence be eternally kindled within our souls. As the Sun embarks on its celestial odyssey through each zodiac sign, may we, too, embark upon our own transformative journey, continuously evolving, expressing, and embracing the resplendence of our uniue light. Sun through the zodiac signs",
-  "cycle": "PLACEHOLDER - author review from source",
+  "overview": "The Sun describes core identity, vitality, creative force, visibility, and the part of the chart that wants to live with purpose. It shows what gives a person energy, what they are learning to embody, and where life asks them to act from the center rather than from imitation or approval-seeking.",
+  "cycle": "The Sun moves through the zodiac once each year, spending about one month in each sign. Its sign describes the style of identity and vitality; its house shows the life area where that identity seeks expression.",
   "signs": [
     {
       "sign": "aries",
-      "body": "With your Sun in Aries, you radiate energy and courage. You have a pioneering spirit, a love o competition, and a knack for initiating new projects. You value your independence and aren't afraid to walk your path boldly and condently."
+      "body": "Sun in Aries expresses identity through courage, immediacy, initiative, and the willingness to begin. This placement needs movement, challenge, and room to act directly."
     },
     {
       "sign": "taurus",
-      "body": "As a Taurus Sun, you exude steadiness, reliability, and a deep connection with the physical world. You appreciate beauty and comfort, and you're likely to build a life that engages your senses. You show your tenacity in achieving goals and can be uite unyielding once your mind is set."
+      "body": "Sun in Taurus expresses identity through steadiness, embodiment, loyalty, and the building of lasting value. This placement needs stability, beauty, and a life that can be trusted by the senses."
     },
     {
       "sign": "gemini",
-      "body": "With your Sun in Gemini, you embody versatility, curiosity, and a need for variety. Communication is your forte, and you shine when sharing ideas or gathering knowledge. Your mutable nature makes you adaptable, and you're oen drawn to activities that involve a fair degree of mental stimulation."
+      "body": "Sun in Gemini expresses identity through curiosity, language, movement, and connection. This placement needs variety, conversation, learning, and room to keep asking better questions."
     },
     {
       "sign": "cancer",
-      "body": "As a Cancer Sun, you exude nurturing energy and emotional sensitivity. You highly value family and home and take pride in caring for loved ones. You're guided by your emotions and intuition, and you have an innate ability to provide comfort and security to those around you."
+      "body": "Sun in Cancer expresses identity through care, protection, memory, and emotional intelligence. This placement needs belonging, privacy, and a life rooted in what feels safe and meaningful."
     },
     {
       "sign": "leo",
-      "body": "With your Sun in Leo, you radiate warmth, generosity, and a zest for life. Your presence is oen magnetic, drawing others to you naturally. You shine when expressing your creativity and have a strong drive for personal recognition and a desire to be at the center of attention."
+      "body": "Sun in Leo expresses identity through creativity, warmth, visibility, and personal radiance. This placement needs joy, self-expression, and permission to be seen without performing for approval."
     },
     {
       "sign": "virgo",
-      "body": "As a Virgo Sun, you personify eciency, practicality, and a focus on service. You're detail-oriented and oen drawn to tasks that involve analysis or helping others. You shine when precision and care are needed, and your work ethic is second to none."
+      "body": "Sun in Virgo expresses identity through discernment, craft, service, repair, and attention to what can be improved. This placement needs useful work and a way to serve without reducing the self to flaws."
     },
     {
       "sign": "libra",
-      "body": "With your Sun in Libra, you reect balance, harmony, and a knack for partnership. You are socially oriented, oen striving to create peace and fairness in your surroundings. Your charm and diplomatic skills allow you to navigate relationships with grace and ease."
+      "body": "Sun in Libra expresses identity through relationship, balance, beauty, fairness, and social awareness. This placement needs reciprocity and the courage to choose without disappearing into compromise."
     },
     {
       "sign": "scorpio",
-      "body": "As a Scorpio Sun, you emanate depth, transformation, and intensity. You thrive on emotional intimacy and are unafraid to dive into life's more profound mysteries. Your determination is unyielding, and your passions run deep, allowing you to navigate life's ups and downs with resilience."
+      "body": "Sun in Scorpio expresses identity through depth, emotional honesty, trust, and transformation. This placement needs real intimacy, privacy, and the strength to release control when truth is asking to surface."
     },
     {
       "sign": "sagittarius",
-      "body": "With your Sun in Sagittarius, you reect a love of freedom, adventure, and truth-seeking. You're drawn to exploring life's big uestions and aren't afraid to roam far and wide in your search for answers. Your optimistic nature and broad-minded outlook make you a natural philosopher."
+      "body": "Sun in Sagittarius expresses identity through meaning, movement, candor, learning, and the search for a wider horizon. This placement needs freedom, truth, and experience that becomes wisdom."
     },
     {
       "sign": "capricorn",
-      "body": "As a Capricorn Sun, you exude discipline, ambition, and a strong sense of responsibility. You have a natural knack for management and strategy, and you shine when setting long-term goals. Your practical and cautious approach to life is oen a model of success for others. 289"
+      "body": "Sun in Capricorn expresses identity through discipline, responsibility, structure, and earned authority. This placement needs goals that matter and a path where effort can become legacy."
     },
     {
       "sign": "aquarius",
-      "body": "With your Sun in Aquarius, you embody individuality, innovation, and a deep sense o humanitarianism. You thrive on uniueness and oen seek to challenge the status uo. You shine in situations where you can utilize your inventive mind and make a dierence in the world."
+      "body": "Sun in Aquarius expresses identity through originality, perspective, community, and future-minded change. This placement needs room to be different while staying connected to something larger than the self."
     },
     {
       "sign": "pisces",
-      "body": "As a Pisces Sun, you emanate empathy, spiritual depth, and a strong intuitive sense. You are in tune with the collective unconscious and oen show a seless desire to help others. Your imaginative and compassionate nature allows you to navigate the world with grace and sensitivity."
+      "body": "Sun in Pisces expresses identity through empathy, imagination, spiritual sensitivity, and porous awareness. This placement needs compassion, creative space, and boundaries strong enough to protect openness."
     }
   ],
   "source": {
-    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
-    "pages": [
-      289,
-      290
-    ]
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
   },
   "voiceNeutral": true,
   "status": "DRAFT"
