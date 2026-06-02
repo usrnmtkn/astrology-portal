@@ -1,0 +1,12 @@
+{
+  "id": "A-sun_B-moon_conjunction",
+  "kind": "interaspect",
+  "planetA": "sun",
+  "planetB": "moon",
+  "aspect": "conjunction",
+  "plainTranslation": "Wants and needs run together. You operate as one instinct. Strong glue. Build something with the ease; don't just coast on it.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry feature notes. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
