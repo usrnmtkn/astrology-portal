@@ -8,6 +8,8 @@
   --font-display: var(--font-sans);
   --font-mono: var(--font-sans);
   --font-symbol: var(--font-glyph);
+  --font-ui: var(--font-sans);
+  --font-detail: var(--font-sans);
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
@@ -25,6 +27,31 @@
   --text-caption: 12.5px;
   --text-eyebrow: 12px;
   --text-micro: 11px;
+  --type-label: var(--text-eyebrow);
+  --type-small: var(--text-meta);
+  --type-copy: var(--text-caption);
+  --type-row-title: var(--text-body);
+  --type-section-title: var(--text-h3);
+  --type-card-title: var(--text-h2);
+  --type-h1: var(--text-h1);
+  --type-h2: var(--text-h2);
+  --type-h3: var(--text-h3);
+  --type-h4: var(--text-h4);
+  --type-h5: var(--text-label);
+  --type-h6: var(--text-meta);
+  --type-body: var(--text-body);
+  --leading-heading: 1.15;
+  --leading-body: 1.5;
+  --sky-row-gap: 13px;
+  --sky-row-padding-block: 13px;
+  --sky-row-padding-inline: 20px;
+  --sky-row-title-size: var(--text-body);
+  --sky-row-degree-size: var(--text-meta);
+  --sky-row-subline-size: var(--text-caption);
+  --sky-row-title-weight: var(--fw-semibold);
+  --sky-row-title-tracking: 0;
+  --sky-row-subline-weight: var(--fw-regular);
+  --sky-row-line-height: 1.3;
   font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -2605,11 +2632,11 @@ button {
 .app-shell .sky-lunar-tldr p {
   color: var(--ink-app);
   font-family: var(--font-sans);
-  font-size: var(--text-h2);
+  font-size: var(--text-body);
   font-style: normal;
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.02em;
-  line-height: 1.22;
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -4808,8 +4835,7 @@ blockquote {
 }
 
 /* ============================================================
-   Navigation refresh v2
-   Updated reference: pill nav, transparent chart, compact sky stats.
+   App navigation and Sky shell
    ============================================================ */
 .topbar {
   --nav-width: clamp(320px, 58vw, 620px);
@@ -5752,8 +5778,7 @@ blockquote {
 }
 
 /* ============================================================
-   TLDR visual port v3
-   Design-language layer from the refreshed static prototype.
+   App visual system
    ============================================================ */
 :root {
   --bg-app: #f2f2f1;
@@ -8095,7 +8120,7 @@ html,
   }
 }
 
-/* Final You page alignment: dedicated prototype card, no legacy profile-card bleed. */
+/* You page layout. */
 .app-shell.mode-profile .profile-layout > .detail-panel:has(.you-page),
 .app-shell.theme-dark.mode-profile .profile-layout > .detail-panel:has(.you-page) {
   background: transparent;
@@ -8249,7 +8274,7 @@ html,
   }
 }
 
-/* Final You page empty/calculating states: match prototype scale and avoid legacy card bleed. */
+/* You page empty and calculating states. */
 .app-shell.mode-profile .profile-layout > .detail-panel:has(.you-empty-state),
 .app-shell.theme-dark.mode-profile .profile-layout > .detail-panel:has(.you-empty-state) {
   background: transparent;
@@ -8436,7 +8461,7 @@ html,
   margin: 0;
 }
 
-/* Final Sky view cleanup: keep the individual cards, remove the legacy outer panel. */
+/* Sky view panel reset. */
 .app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) .portal-grid > .detail-panel {
   background: transparent;
   border: 0;
@@ -8512,37 +8537,7 @@ html,
   background: transparent;
 }
 
-/* Typography consolidation: neutral neo-grotesque UI and compact data rows. */
-:root {
-  --font-ui: var(--font-sans);
-  --font-detail: var(--font-sans);
-  --type-label: var(--text-eyebrow);
-  --type-small: var(--text-meta);
-  --type-copy: var(--text-caption);
-  --type-row-title: var(--text-body);
-  --type-section-title: var(--text-h3);
-  --type-card-title: var(--text-h2);
-  --type-h1: var(--text-h1);
-  --type-h2: var(--text-h2);
-  --type-h3: var(--text-h3);
-  --type-h4: var(--text-h4);
-  --type-h5: var(--text-label);
-  --type-h6: var(--text-meta);
-  --type-body: var(--text-body);
-  --leading-heading: 1.15;
-  --leading-body: 1.5;
-  --sky-row-gap: 13px;
-  --sky-row-padding-block: 13px;
-  --sky-row-padding-inline: 20px;
-  --sky-row-title-size: var(--text-body);
-  --sky-row-degree-size: var(--text-meta);
-  --sky-row-subline-size: var(--text-caption);
-  --sky-row-title-weight: var(--fw-semibold);
-  --sky-row-title-tracking: 0;
-  --sky-row-subline-weight: var(--fw-regular);
-  --sky-row-line-height: 1.3;
-}
-
+/* Global typography and compact data rows. */
 .app-shell {
   font-family: var(--font-ui);
   font-variant-numeric: normal;
@@ -8963,7 +8958,7 @@ html,
   }
 }
 
-/* Create-chart and auth modals: compact, prototype-scale forms. */
+/* Create-chart and auth modals. */
 .app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal, .auth-card, .auth-panel) :is(h1, h2, h3) {
   font-family: var(--font-ui);
   font-size: clamp(28px, 4vw, 38px);
