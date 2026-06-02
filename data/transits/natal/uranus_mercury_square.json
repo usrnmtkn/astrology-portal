@@ -1,0 +1,12 @@
+{
+  "id": "uranus_mercury_square",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "mercury",
+  "aspect": "square",
+  "plainTranslation": "Mental restlessness. Erratic decisions, sudden reversals. Pin down what is true before you act.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
