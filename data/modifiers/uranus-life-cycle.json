@@ -17,7 +17,7 @@
     "Use the cycle to contextualize life phases, not to predict sudden events by itself.",
     "Check transits to angles, Sun, Moon, chart ruler, and time-lord context before surfacing event examples."
   ],
-  "note": "Distilled from project cycle material. Source file was not copied into the repository.",
+  "note": "Expanded from approved project outer-planet source material. Source files were not copied into the repository.",
   "classes": {
     "cycleFacts": {
       "period": "about 84 years",
@@ -89,6 +89,42 @@
         "refusal of old-age scripts",
         "unusual freedom or perspective"
       ]
+    },
+    "examplePatterns": {
+      "oppositionMidlife": [
+        "Restlessness around the life already built, especially when old goals feel abandoned or unexpressed.",
+        "A return to school, training, creative practice, or an earlier dream that had been set aside for practical reasons.",
+        "A career pivot, leaving a role, exploring self-employment, or changing the structure of work so there is more autonomy.",
+        "Relationship reevaluation: changing roles inside the relationship, asking for more freedom, or ending patterns that have gone stagnant.",
+        "Impulsive purchases or lifestyle changes as a substitute for the deeper freedom question; treat these as signals, not solutions.",
+        "Small controlled changes to routine can discharge the pressure before it becomes a full life overhaul."
+      ],
+      "constructiveOutlets": [
+        "Learn something outside the usual lane.",
+        "Change a daily routine in a low-risk way before making a major break.",
+        "Test a new work format, side project, or independent offer before quitting stable income.",
+        "Switch roles in a relationship conversation so each person sees the pattern from the other side.",
+        "Use the need for change to update habits, friendships, and thought patterns rather than shocking everyone around you."
+      ],
+      "cautionExamples": [
+        "Do not present a new car, breakup, relocation, job exit, or sudden marriage as guaranteed from Uranus alone.",
+        "If the user feels urgent pressure to change everything, frame the urgency as information that needs pacing.",
+        "Name the difference between freedom and reactivity: freedom creates more agency; reactivity creates cleanup."
+      ]
+    },
+    "transitExamplesByHouse": {
+      "1": "Identity, body, style, and personal direction may feel ready for reinvention; unexpected incidents can force a new self-definition.",
+      "2": "Values, income, possessions, and security patterns may change; the person may need more financial independence or a less conventional resource strategy.",
+      "3": "Mental restlessness rises; new classes, skills, devices, writing, short trips, or sibling/neighborhood changes can become active.",
+      "4": "Home and family patterns get unsettled; repairs, moves, family disruptions, or a desire to change the living environment may surface.",
+      "5": "Romance, dating, creativity, hobbies, and children can become unpredictable; attraction to unusual people or unfamiliar pleasures may increase.",
+      "6": "Daily work, schedules, health habits, and service patterns need flexibility; freelancing, unusual hours, or sudden routine changes can appear.",
+      "7": "Close relationships ask for more room; fast attractions, sudden breaks, renegotiated commitments, or a less conventional partnership model can arise.",
+      "8": "Shared resources, debt, intimacy, trust, and dependency patterns shift; the person may need to stop relying on someone else financially or emotionally.",
+      "9": "Beliefs, travel, education, publishing, and cultural exposure open new doors; interest may spike quickly and need grounding to last.",
+      "10": "Career direction, reputation, and authority relationships can change suddenly; unusual work, public pivots, or self-directed ambition may call louder.",
+      "11": "Friendships, groups, networks, activism, and future plans change; the person may seek more unusual communities or detach from stale circles.",
+      "12": "Old habits, hidden anxieties, retreat, service, and unconscious patterns get interrupted; private liberation work matters before it becomes public."
     }
   },
   "prohibitions": [
