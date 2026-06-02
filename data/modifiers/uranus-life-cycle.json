@@ -1,0 +1,107 @@
+{
+  "id": "uranus-life-cycle",
+  "schema": "modifier/planetary-life-cycle",
+  "appliesTo": [
+    "uranus",
+    "outer-planet-cycle",
+    "life-cycle",
+    "timing",
+    "transit"
+  ],
+  "summary": "Uranus cycle milestones mark phases of individuation, disruption, freedom, reinvention, and changing relationship to the life script.",
+  "body": "Use Uranus cycle milestones as long-range life-cycle context. The first square, opposition, last square, and return can coincide with changes in freedom, identity, work, community, technology, and the need to stop living inside an inherited pattern. Because Uranus is a modern outer planet, treat this as a modern lens and do not use it in traditional dignity, sect, rulership, or time-lord logic.",
+  "definition": "Uranus takes about 84 years to return to its natal position, with major quarter-cycle checkpoints around ages 21, 42, 63, and 84.",
+  "appUsage": [
+    "Compute exact Uranus contacts to natal Uranus by degree; do not rely on age alone.",
+    "Label this explicitly as a modern outer-planet life-cycle layer.",
+    "Use the cycle to contextualize life phases, not to predict sudden events by itself.",
+    "Check transits to angles, Sun, Moon, chart ruler, and time-lord context before surfacing event examples."
+  ],
+  "note": "Distilled from project cycle material. Source file was not copied into the repository.",
+  "classes": {
+    "cycleFacts": {
+      "period": "about 84 years",
+      "segments": "Four roughly 21-year phases: initiation, cultivation, review, adjustment.",
+      "theme": "A long story of dissatisfaction with the status quo and learning to value the eccentric, one-of-a-kind self. Upheaval (the Tower) asks you to improvise, innovate, and adapt."
+    },
+    "milestones": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "waxing_square",
+        "aspect": "square",
+        "age": 21,
+        "phase": "waxing",
+        "plainTranslation": "First Uranus square. Rebellion, throwing off inherited rules, claiming a life that's your own. Unsettling: you may not know who you are or what you want yet.",
+        "guidance": "Experiment and break from what you inherited, but don't burn down everything that works."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "opposition",
+        "aspect": "opposition",
+        "age": 42,
+        "phase": "full",
+        "plainTranslation": "The Uranus opposition, the classic midlife awakening. Unlike at 21, you know who you are. The question now is whether you still want to be that person. It surfaces every way you don't fit.",
+        "guidance": "Make the change you actually need, deliberately, not as a reactive blow-up."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "waning_square",
+        "aspect": "square",
+        "age": 63,
+        "phase": "waning",
+        "plainTranslation": "The last Uranus square, traditionally the threshold into retirement. New freedom can feel disorienting after a lifetime of structure.",
+        "guidance": "Choose how you spend the freedom on purpose. Keep group and community ties; they matter now."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "return",
+        "aspect": "conjunction",
+        "age": 84,
+        "phase": "return",
+        "plainTranslation": "The once-in-a-lifetime Uranus return. A final reinvention, and a rejection of society's script for old age.",
+        "guidance": "Claim your independence on your own terms."
+      }
+    ],
+    "examples": {
+      "firstSquare": [
+        "leaving inherited rules",
+        "experimentation",
+        "education or work redirection",
+        "identity independence"
+      ],
+      "opposition": [
+        "midlife awakening",
+        "relationship to freedom changes",
+        "career or lifestyle course correction",
+        "truth about not fitting"
+      ],
+      "waningSquare": [
+        "retirement or role transition",
+        "new relationship to time",
+        "community and future reorientation"
+      ],
+      "return": [
+        "late-life reinvention",
+        "refusal of old-age scripts",
+        "unusual freedom or perspective"
+      ]
+    }
+  },
+  "prohibitions": [
+    "Do not use Uranus as a traditional ruler in user-facing text.",
+    "Do not frame disruption as automatically liberating.",
+    "Do not predict divorce, job loss, relocation, or crisis from Uranus cycle alone."
+  ],
+  "weighting": [
+    "Exact Uranus-to-Uranus contact is stronger than age estimate.",
+    "Angular Uranus or contacts to Sun, Moon, Ascendant, MC, Venus, Mars, or chart ruler increase relevance.",
+    "Repeated testimony from returns, progressions, profections, or transits is required before naming concrete events.",
+    "Use as modern lens context behind the scenes unless the app exposes modern life-cycle views."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

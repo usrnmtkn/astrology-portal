@@ -26,12 +26,212 @@
       "5": "children, creativity, pleasure, romance, speculation",
       "6": "work, routine, health, illness, subordinates, daily grind",
       "7": "marriage, partners, clients, open enemies, one-to-one dealings",
-      "8": "shared resources, debt, other people's money, crisis, death, transformation",
+      "8": "shared resources, debt, other people's money, crisis, mortality, major transition",
       "9": "travel, foreigners, higher learning, religion, philosophy, publishing",
       "10": "career, action, reputation, public standing, authority",
       "11": "friends, allies, groups, patrons, hopes and goals, gains",
       "12": "seclusion, loss, hidden things, self-undoing, hidden enemies, retreat"
-    }
+    },
+    "method": {
+      "rule": "Each year of life, the focus advances one whole sign/house from the Ascendant. Age 0 = 1st house; the cycle repeats every 12 years (age mod 12 + 1 = the profected house).",
+      "timeLord": "The ruler of the profected house is that year's time-lord. Watch where that planet sits by sign and house, and what transits it receives, for the year's dominant theme.",
+      "activation": "The sign on the profected house and its ruler color the year; transits to the time-lord are emphasized."
+    },
+    "yearCycle": [
+      {
+        "ageMod12": 0,
+        "profectedHouse": 1,
+        "exampleAges": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "theme": "self, body, vitality, the year's overall tone",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 1,
+        "profectedHouse": 2,
+        "exampleAges": [
+          1,
+          13,
+          25,
+          37,
+          49,
+          61,
+          73
+        ],
+        "theme": "money, resources, what you value",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 2,
+        "profectedHouse": 3,
+        "exampleAges": [
+          2,
+          14,
+          26,
+          38,
+          50,
+          62,
+          74
+        ],
+        "theme": "communication, siblings, local life, learning",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 3,
+        "profectedHouse": 4,
+        "exampleAges": [
+          3,
+          15,
+          27,
+          39,
+          51,
+          63,
+          75
+        ],
+        "theme": "home, family, roots, property",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 4,
+        "profectedHouse": 5,
+        "exampleAges": [
+          4,
+          16,
+          28,
+          40,
+          52,
+          64,
+          76
+        ],
+        "theme": "creativity, romance, children, pleasure",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 5,
+        "profectedHouse": 6,
+        "exampleAges": [
+          5,
+          17,
+          29,
+          41,
+          53,
+          65,
+          77
+        ],
+        "theme": "work, health, routine, service",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 6,
+        "profectedHouse": 7,
+        "exampleAges": [
+          6,
+          18,
+          30,
+          42,
+          54,
+          66,
+          78
+        ],
+        "theme": "partnership, marriage, open relationships, others",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 7,
+        "profectedHouse": 8,
+        "exampleAges": [
+          7,
+          19,
+          31,
+          43,
+          55,
+          67,
+          79
+        ],
+        "theme": "shared resources, intimacy, debt, transformation",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 8,
+        "profectedHouse": 9,
+        "exampleAges": [
+          8,
+          20,
+          32,
+          44,
+          56,
+          68,
+          80
+        ],
+        "theme": "travel, study, beliefs, the bigger picture",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 9,
+        "profectedHouse": 10,
+        "exampleAges": [
+          9,
+          21,
+          33,
+          45,
+          57,
+          69,
+          81
+        ],
+        "theme": "career, reputation, public role, authority",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 10,
+        "profectedHouse": 11,
+        "exampleAges": [
+          10,
+          22,
+          34,
+          46,
+          58,
+          70,
+          82
+        ],
+        "theme": "friends, groups, hopes, community",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 11,
+        "profectedHouse": 12,
+        "exampleAges": [
+          11,
+          23,
+          35,
+          47,
+          59,
+          71,
+          83
+        ],
+        "theme": "retreat, the hidden, endings, the unconscious",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      }
+    ],
+    "sourceCaution": "Cycle table imported as DRAFT project material; verify against primary timing references before marking reviewed."
   },
   "zodiacalReleasing": {
     "definition": "Releases time from a Lot through the signs, each sign lasting its ruler's period-years, producing nested life chapters (L1 major, L2 sub, L3, L4).",
