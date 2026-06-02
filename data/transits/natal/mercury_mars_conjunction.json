@@ -4,9 +4,9 @@
   "transiting": "mercury",
   "natal": "mars",
   "aspect": "conjunction",
-  "plainTranslation": "Mental activity arrives full-force in your drive and temper. Days.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "plainTranslation": "Your mind and drive fuse. Sharp, fast, decisive thinking, also sharp words. Great for cutting through a problem, bad for snapping. Aim the wit, don't fire it.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
   "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

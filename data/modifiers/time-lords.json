@@ -28,13 +28,13 @@
       "3": "siblings, neighbors, short trips, daily communication, learning",
       "4": "home, family, parents, foundations, property, endings",
       "5": "children, creativity, pleasure, romance, speculation",
-      "6": "work, routine, health, illness, subordinates, daily grind",
+      "6": "work, routine, health, illness, injury, affliction, subordinates, daily grind",
       "7": "marriage, partners, clients, open enemies, one-to-one dealings",
       "8": "shared resources, debt, other people's money, crisis, mortality, major transition",
       "9": "travel, foreigners, higher learning, religion, philosophy, publishing",
       "10": "career, action, reputation, public standing, authority",
       "11": "friends, allies, groups, patrons, hopes and goals, gains",
-      "12": "seclusion, loss, hidden things, self-undoing, hidden enemies, retreat"
+      "12": "seclusion, isolation, confinement, loss, hidden things, self-undoing, hidden enemies, retreat"
     },
     "method": {
       "rule": "Each year of life, the focus advances one whole sign/house from the Ascendant. Age 0 = 1st house; the cycle repeats every 12 years (age mod 12 + 1 = the profected house).",

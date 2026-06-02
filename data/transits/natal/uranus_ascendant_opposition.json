@@ -1,0 +1,12 @@
+{
+  "id": "uranus_ascendant_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "ascendant",
+  "aspect": "opposition",
+  "plainTranslation": "Uranus disrupts your presence through others, sudden changes via relationships and people who shake up how you see yourself. Stay open to the jolt without letting others detonate your identity.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

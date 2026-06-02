@@ -4,9 +4,9 @@
   "transiting": "pluto",
   "natal": "moon",
   "aspect": "conjunction",
-  "plainTranslation": "Feelings go to the depths. Intense emotion, old wounds surface, deep change. Let it move through; do not drown or control it.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "plainTranslation": "Feelings go to the depths. Intense emotion, old wounds surface, deep change. Let it move through; don't drown or control it.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

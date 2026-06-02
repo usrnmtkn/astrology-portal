@@ -4,9 +4,9 @@
   "transiting": "pluto",
   "natal": "venus",
   "aspect": "conjunction",
-  "plainTranslation": "Love and values transform, intensely. Obsessive attraction, deep bonding, or loss. Powerful. Watch jealousy and control; let what is over end.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "plainTranslation": "Love and values transform, intensely. Obsessive attraction, deep bonding, or loss. Powerful. Watch jealousy and control; let what's over end.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

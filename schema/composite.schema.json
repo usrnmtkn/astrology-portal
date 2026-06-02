@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/composite.schema.json",
+  "title": "Composite Chart Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "placementType", "plainTranslation", "policy", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string", "enum": ["composite"] },
+    "placementType": { "type": "string", "enum": ["sign", "house", "aspect"] },
+    "planet": { "type": "string" },
+    "sign": { "type": "string" },
+    "house": { "type": "string" },
+    "aspect": { "type": "string" },
+    "plainTranslation": { "type": "string" },
+    "policy": { "type": "string" },
+    "note": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "type": "string", "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "moon_saturn_opposition",
+  "kind": "composite",
+  "placementType": "aspect",
+  "plainTranslation": "Composite Moon opposite Saturn: closeness pulls against duty and distance. Work: commit to the warmth, not just the obligation.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from approved project composite chart material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED",
+  "planet": "moon-saturn",
+  "aspect": "opposition"
+}

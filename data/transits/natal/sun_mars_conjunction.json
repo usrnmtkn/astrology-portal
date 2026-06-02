@@ -4,9 +4,9 @@
   "transiting": "sun",
   "natal": "mars",
   "aspect": "conjunction",
-  "plainTranslation": "Vitality and focus arrives full-force in your drive and temper. Days.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "plainTranslation": "Light fires your drive. Energized, bold, ready to act and lead. Strong vitality, short patience. Direct the force at a real goal; don't burn it on irritation.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
   "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

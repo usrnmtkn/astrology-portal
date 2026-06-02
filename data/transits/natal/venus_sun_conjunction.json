@@ -4,9 +4,9 @@
   "transiting": "venus",
   "natal": "sun",
   "aspect": "conjunction",
-  "plainTranslation": "Warmth and attraction arrives full-force in your identity and direction. Days.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "plainTranslation": "Warmth and charm light up your identity. Attractive, sociable, easy to like. A lovely day for connection, pleasure, and being seen warmly. Enjoy it; let people in.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
   "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

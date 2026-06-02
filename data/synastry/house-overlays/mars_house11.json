@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "mars",
   "house": "11",
-  "plainTranslation": "Someone's Mars in the other's House 11: brings drive into friendships, community, and hopes.",
+  "plainTranslation": "Their Mars in your 11th house: they energize your friendships and future plans; drive toward shared goals, or friction in your circle. Failure mode: conflict among friends. Aim the energy at the shared goal; keep the group peace.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

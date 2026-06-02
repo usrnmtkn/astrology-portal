@@ -4,9 +4,9 @@
   "transiting": "pluto",
   "natal": "mercury",
   "aspect": "conjunction",
-  "plainTranslation": "Thinking goes deep and obsessive. Probing insight, or fixation. Use the focus; do not tunnel into one dark thought.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "plainTranslation": "Thinking goes deep and obsessive. Probing insight, or fixation. Use the focus; don't tunnel into one dark thought.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

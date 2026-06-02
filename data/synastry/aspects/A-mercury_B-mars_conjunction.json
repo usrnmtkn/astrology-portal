@@ -4,9 +4,9 @@
   "planetA": "mercury",
   "planetB": "mars",
   "aspect": "conjunction",
-  "plainTranslation": "A's mind meets B's drive. The conjunction fuses them - intense and inseparable.",
+  "plainTranslation": "Mind meets drive. The Mercury person's thinking gets energized and quickened; the Mars person sharpens it into action. Stimulating, decisive, fast. At worst, conversations turn into arguments and words turn into weapons. Failure mode: bickering and cutting remarks. Aim the mental heat at problems, not at each other.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

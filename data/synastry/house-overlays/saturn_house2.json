@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "saturn",
   "house": "2",
-  "plainTranslation": "Someone's Saturn in the other's House 2: brings structure into money, possessions, and what you value.",
+  "plainTranslation": "Their Saturn in your 2nd house: they bring seriousness to your resources and worth; stability and discipline, or restriction around money. Failure mode: feeling financially controlled or judged. Build security together; don't let one ration the other's worth.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

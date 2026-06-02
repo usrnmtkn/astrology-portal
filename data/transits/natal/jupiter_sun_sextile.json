@@ -4,9 +4,9 @@
   "transiting": "jupiter",
   "natal": "sun",
   "aspect": "sextile",
-  "plainTranslation": "An opening to grow your reach or your standing. It will not knock twice. Reach for it.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "plainTranslation": "An opening to grow your reach or your standing. It won't knock twice. Reach for it.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

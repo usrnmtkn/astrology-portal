@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "sun",
   "house": "6",
-  "plainTranslation": "Someone's Sun in the other's House 6: brings identity into work, health, and daily routine.",
+  "plainTranslation": "Their Sun in your 6th house: they energize your routines, work, and health; you get more done and take better care of yourself around them. Failure mode: the bond becomes all logistics. Let them help; don't reduce it to usefulness.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

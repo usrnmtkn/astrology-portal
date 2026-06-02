@@ -43,7 +43,12 @@
     {
       "id": "sixth-house-place",
       "heading": "6th House Place",
-      "body": "Traditionally, the 6th is Bad Fortune: cadent, weak, in aversion to the Ascendant, and associated with illness, injury, toil, accidents, and subordinates. It is the joy of Mars. Joy is a strength condition, not a softening; a planet in its joy does its job more, and Mars's job here includes sickness and strain."
+      "body": "The 6th is the place of the health affliction itself: illness, injury, disease, accidents, bodily strain, toil, labor, and subordinates. It is cadent, weak, in aversion to the Ascendant, and associated with Bad Fortune. It is also the joy of Mars. Joy is a strength condition, not a softening; a planet in its joy does its job more, and Mars's job here includes sickness and strain. Do not confuse the 6th with the isolating experience around treatment or confinement; that belongs to the 12th."
+    },
+    {
+      "id": "twelfth-house-place",
+      "heading": "12th House Place",
+      "body": "The 12th describes isolation, retreat, confinement, hidden burdens, and being separated from ordinary life. In health-related timing, the 6th describes the illness, injury, or affliction itself, while the 12th describes the isolating experience that can surround hospitalization, quarantine, institutional care, or being kept apart from the usual world. Keep this distinction descriptive and non-diagnostic."
     },
     {
       "id": "transit-ranking-order",

@@ -118,13 +118,13 @@
       "3": "Messages, siblings, neighbors, paperwork, short travel, commuting, school, scheduling, devices, and daily logistics.",
       "4": "Home, family, parents, property, living situation, privacy, roots, moving, renovation, and emotional foundation.",
       "5": "Children, dating, creativity, pleasure, pregnancy-related topics, artistic risks, play, and personal joy.",
-      "6": "Workload, coworkers, service, routines, health maintenance, appointments, recovery, burnout, and daily systems.",
+      "6": "Workload, coworkers, service, routines, health maintenance, appointments, recovery, burnout, daily systems, illness, injury, and the health affliction itself.",
       "7": "Marriage, partnership, clients, open conflict, contracts, negotiations, commitment talks, and relationship definition.",
       "8": "Shared money, taxes, debt, loans, inheritance, intimacy, trust, therapy, crisis support, and power exchange.",
       "9": "Law, higher education, teaching, publishing, long-distance travel, immigration, faith, worldview, and formal learning.",
       "10": "Career, reputation, public role, bosses, parents, achievement, leadership, visibility, and long-term contribution.",
       "11": "Friends, networks, audience, groups, community, collaborators, future plans, and collective commitments.",
-      "12": "Rest, retreat, hidden matters, closure, hospitalization or institutional settings, therapy, spiritual practice, and private burdens."
+      "12": "Rest, retreat, hidden matters, closure, hospitalization or institutional settings, quarantine, isolation, confinement, therapy, spiritual practice, and private burdens."
     },
     "exampleClusters": {
       "relationshipDefinition": {

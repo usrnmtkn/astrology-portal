@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "venus",
   "house": "11",
-  "plainTranslation": "Someone's Venus in the other's House 11: brings love and values into friendships, community, and hopes.",
+  "plainTranslation": "Their Venus in your 11th house: they bring warmth to your friendships and future; easy liking, a pleasant fit in your wider life. Failure mode: more friendship than passion. Enjoy the companionship; notice if you want more.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }
