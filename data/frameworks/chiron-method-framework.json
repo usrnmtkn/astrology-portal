@@ -1,0 +1,39 @@
+{
+  "id": "chiron-method-framework",
+  "kind": "framework",
+  "title": "Chiron Method Framework",
+  "sections": [
+    {
+      "id": "archetype",
+      "heading": "Archetype",
+      "body": "Chiron describes a tender, old hurt and the wisdom that can develop around it. It points to an area where a person may feel different, inadequate, exposed, or unusually sensitive, and where honest integration can become a source of compassion, guidance, and skill."
+    },
+    {
+      "id": "framing-rule",
+      "heading": "Framing Rule",
+      "body": "Always pair the wound with the healing path. Never frame the person as broken, doomed, defective, or permanently defined by the wound. Chiron describes sensitivity and integration work, not a fixed outcome."
+    },
+    {
+      "id": "houses-versus-signs",
+      "heading": "Houses Versus Signs",
+      "body": "Chiron by house is usually more personally specific because it shows where the wound gets lived: identity, money, voice, home, creativity, work, partnership, intimacy, meaning, public role, community, or hidden life. Chiron by sign is useful, but often more generational because Chiron spends uneven years in a sign. Weight sign text up when Chiron closely aspects a personal planet or angle."
+    },
+    {
+      "id": "modern-point-policy",
+      "heading": "Modern Point Policy",
+      "body": "Chiron is a modern point and should be secondary in weighting. Do not use it for dignity, sect, traditional rulership, time-lord logic, or primary chart-ruler logic. It becomes more important when it sits on an angle, aspects the Sun, Moon, Mercury, Venus, Mars, or chart angles, or repeats a theme already shown elsewhere in the chart."
+    },
+    {
+      "id": "symbolic-safety",
+      "heading": "Symbolic Safety",
+      "body": "Chiron placements are descriptive and non-deterministic. Health-house or body-related placements must be emotional and symbolic only, never medical. Do not use Chiron to diagnose, explain symptoms, suggest treatment, or tell a user what will happen to their body."
+    },
+    {
+      "id": "app-display",
+      "heading": "App Display",
+      "body": "Show Chiron in an optional shadow and healing layer, with callouts when it touches personal planets or angles. Keep the language practical: what hurts, what pattern forms around it, what integration asks for, and what the person can offer others once the pattern is owned."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
