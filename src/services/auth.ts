@@ -11,6 +11,8 @@ export type AuthAccount = {
   avatarUrl?: string;
 };
 
+export type PersistedProfileData = unknown;
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabasePublishableKey = (
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -68,6 +70,42 @@ export function onAuthAccountChange(callback: (account: AuthAccount | null) => v
   });
 
   return () => data.subscription.unsubscribe();
+}
+
+export async function loadPersistedProfile(userId: string): Promise<PersistedProfileData | null> {
+  if (!supabase) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .select("data")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.data ?? null;
+}
+
+export async function upsertPersistedProfile(userId: string, data: PersistedProfileData) {
+  if (!supabase) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("user_profiles")
+    .upsert({
+      user_id: userId,
+      data,
+      updated_at: new Date().toISOString()
+    });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function signInWithProvider(provider: AuthProvider) {
