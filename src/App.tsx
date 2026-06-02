@@ -2760,32 +2760,37 @@ function moonPhaseTldr(phase: string) {
 function SkyCards({ sky }: { sky: SkySnapshot }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
-  const moonEvent = nextMoonEvent(sky);
 
   return (
     <section className="sky-lunar-brief" aria-label="Sky highlights">
-      <div className="sky-lunar-phase">
-        <MoonPhaseArt phase={sky.moonPhase} />
-        <strong>{sky.moonPhase}</strong>
-        <span>{moonEvent.name} in {formatMoonCountdown(moonEvent.days)}</span>
-      </div>
-      <div className="sky-lunar-copy">
-        <p>
-          <span>TLDR</span>
-          {moonPhaseTldr(sky.moonPhase)}
-        </p>
-        <div className="sky-lunar-chips" aria-label="Current Sun and Moon">
-          <span className="sky-lunar-chip">
-            <span aria-hidden="true">☉</span>
+      <div className="sky-lunar-pills" aria-label="Current Sun, Moon, and phase">
+        <span className="sky-lunar-pill">
+          <span className="sky-lunar-pill-icon" aria-hidden="true">☉</span>
+          <span className="sky-lunar-pill-copy">
             <em>Sun</em>
             <strong>{sun?.sign ?? "Current"} {formatBriefPlacementDegree(sun)}</strong>
           </span>
-          <span className="sky-lunar-chip">
-            <span aria-hidden="true">☽</span>
+        </span>
+        <span className="sky-lunar-pill">
+          <span className="sky-lunar-pill-icon" aria-hidden="true">☽</span>
+          <span className="sky-lunar-pill-copy">
             <em>Moon</em>
             <strong>{moon?.sign ?? "Current"} {formatBriefPlacementDegree(moon)}</strong>
           </span>
-        </div>
+        </span>
+        <span className="sky-lunar-pill">
+          <span className="sky-lunar-pill-icon sky-lunar-pill-phase" aria-hidden="true">
+            <MoonPhaseArt phase={sky.moonPhase} />
+          </span>
+          <span className="sky-lunar-pill-copy">
+            <em>Phase</em>
+            <strong>{sky.moonPhase}</strong>
+          </span>
+        </span>
+      </div>
+      <div className="sky-lunar-tldr">
+        <span>TLDR</span>
+        <p>{moonPhaseTldr(sky.moonPhase)}</p>
       </div>
     </section>
   );
