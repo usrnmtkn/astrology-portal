@@ -1,0 +1,48 @@
+{
+  "id": "venus-square-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Electric Or Unavailable",
+  "summary": "Love needs freedom, surprise, and room to stay alive. Too much predictability can feel like a locked door.",
+  "body": "Venus square Uranus describes attraction that wakes up around difference, distance, novelty, or surprise. You may be drawn to people who feel unusual, unavailable, exciting, or impossible to fully script. This can make love creative and honest, but it can also create sudden starts, sudden stops, or fear when closeness becomes routine. The gift is relational originality. The growth is learning how to keep freedom inside commitment instead of using disruption to escape it.",
+  "gift": "Originality in love, creative taste, honesty about desire, and the courage to choose unconventional bonds.",
+  "shadow": "Hot-cold patterns, fear of being trapped, chasing unavailable people, and mistaking instability for chemistry.",
+  "integration": "Let love breathe without making it unreliable. The right connection does not require you to disappear to stay yourself.",
+  "do": [
+    "Name your need for space early",
+    "Choose people who respect difference",
+    "Keep novelty alive through honesty and shared choice"
+  ],
+  "dont": [
+    "Create distance just to feel desire again",
+    "Confuse anxiety with attraction",
+    "Punish steadiness for not feeling dramatic"
+  ],
+  "lifeAreas": [
+    "love",
+    "creativity",
+    "friends"
+  ],
+  "tags": [
+    "freedom",
+    "attraction",
+    "novelty",
+    "independence",
+    "chemistry"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "relationship-bonds",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
