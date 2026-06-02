@@ -1,0 +1,63 @@
+{
+  "id": "addiction-ethics-policy",
+  "schema": "modifier/addiction-ethics-policy",
+  "appliesTo": [
+    "addiction-support",
+    "sensitive-content",
+    "natal-chart",
+    "recovery-support"
+  ],
+  "summary": "Safety and ethics policy for any addiction-pattern or recovery-support content in the knowledge base.",
+  "body": "Addiction-related astrology content is sensitive, optional, and non-clinical. It must be framed as pattern awareness with constructive support, never as diagnosis, destiny, shame, or medical guidance.",
+  "definition": "A review policy governing how addiction-support interpretations can be authored, reviewed, and surfaced.",
+  "appUsage": [
+    "Require human review before changing any addiction-support status beyond DRAFT.",
+    "Keep this content behind an app-level sensitive-content toggle unless a separate product decision says otherwise.",
+    "If a user signals active struggle, crisis, or risk, prioritize support options over astrological interpretation.",
+    "Use region-appropriate support resources and avoid categorical promises about outcomes."
+  ],
+  "note": "Imported from the project support bundle. Source files were not copied into the repository.",
+  "classes": {
+    "version": 1,
+    "principles": [
+      "Descriptive, not deterministic. A chart never causes, predicts, or excuses addiction.",
+      "Never diagnostic. This content is not medical or clinical advice and does not replace care.",
+      "Recovery-oriented. Difficulty is workable; the chart is a mirror for awareness, paired always with action and support.",
+      "Agency first. The person, not the planets, is the author of change."
+    ],
+    "prohibitedFramings": [
+      "Any 'your chart dooms you to addiction' or fated/inevitable framing.",
+      "Romanticizing, glamorizing, or normalizing substance use or any addictive behavior.",
+      "Moralizing, shame, or blame.",
+      "Using astrology to delay, substitute for, or argue against professional treatment.",
+      "Dwelling on or sensationalizing overdose deaths or specific named tragedies.",
+      "Clinical or diagnostic claims about a person's mind, body, or substance use."
+    ],
+    "requiredFramings": [
+      "Pair every pattern with a constructive channel and a pointer toward real support.",
+      "State plainly that recovery is possible and help exists.",
+      "Keep the energy workable, not a sentence."
+    ],
+    "safety": {
+      "activeStruggle": "If a user signals active struggle, crisis, or risk, the product leads with support options, not an astrological explanation. Astrology never rationalizes or replaces care.",
+      "resources": "Surface region-appropriate support. For US users, an example is the SAMHSA National Helpline, 1-800-662-4357 (free, confidential, 24/7). Do not make categorical promises about confidentiality or outcomes; let users choose.",
+      "doNot": "Do not provide instructions, dosing, sourcing, or any how-to relating to substances."
+    },
+    "reviewGate": "All addiction/recovery content stays DRAFT until reviewed against this policy. This policy needs human sign-off before any such content ships READY."
+  },
+  "prohibitions": [
+    "Any 'your chart dooms you to addiction' or fated/inevitable framing.",
+    "Romanticizing, glamorizing, or normalizing substance use or any addictive behavior.",
+    "Moralizing, shame, or blame.",
+    "Using astrology to delay, substitute for, or argue against professional treatment.",
+    "Dwelling on or sensationalizing overdose deaths or specific named tragedies.",
+    "Clinical or diagnostic claims about a person's mind, body, or substance use."
+  ],
+  "weighting": [
+    "Ethics policy overrides interpretive style when there is conflict.",
+    "Clinical safety overrides astrological explanation when a user indicates active risk.",
+    "No addiction-support entry can ship without review against this policy."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
