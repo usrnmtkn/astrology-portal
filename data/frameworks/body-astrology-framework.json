@@ -1,0 +1,126 @@
+{
+  "id": "body-astrology-framework",
+  "kind": "framework",
+  "title": "Body Astrology Framework",
+  "sections": [
+    {
+      "id": "scope-and-safety",
+      "heading": "Scope And Safety",
+      "body": "Body astrology is a symbolic correspondence layer only. It is not health advice, not nutritional advice, not a remedy system, and not a way to identify or explain body concerns. Always use 'traditionally associated with' for the seven visible planets and sign correspondences, and 'modern overlay associated with' for Uranus, Neptune, and Pluto. For any body or health concern, direct the user to a licensed professional."
+    },
+    {
+      "id": "excluded-by-design",
+      "heading": "Excluded By Design",
+      "body": "Do not include supplement, vitamin, herb, flower essence, tea, diet, remedy, or protocol tables in the app. The knowledge base may store symbolic body correspondences, but it must not give instructions about what a user should consume, avoid, apply, or do for a body concern."
+    },
+    {
+      "id": "planet-correspondences",
+      "heading": "Planet Correspondences",
+      "body": "Use these as symbolic planet-body associations only. Do not turn them into predictions, warnings, or care instructions.",
+      "items": [
+        {
+          "label": "Sun",
+          "body": "Traditionally associated with vitality, core energy, and the body's central animating force."
+        },
+        {
+          "label": "Moon",
+          "body": "Traditionally associated with upper digestion, bodily fluids, nourishment, and the body's changing rhythms."
+        },
+        {
+          "label": "Mercury",
+          "body": "Traditionally associated with the brain, nervous system, coordination, and the body's communication channels."
+        },
+        {
+          "label": "Venus",
+          "body": "Traditionally associated with softness, moisture, ease, the lymphatic layer, and relaxation in the body."
+        },
+        {
+          "label": "Mars",
+          "body": "Traditionally associated with heat, urgency, sharpness, redness, activation, and fast-moving body symbolism."
+        },
+        {
+          "label": "Jupiter",
+          "body": "Traditionally associated with growth, expansion, abundance, and excess as a symbolic body principle."
+        },
+        {
+          "label": "Saturn",
+          "body": "Traditionally associated with structure, boundaries, dryness, restriction, bones, teeth, skin, and slow-moving body symbolism."
+        },
+        {
+          "label": "Uranus",
+          "body": "Modern overlay associated with sudden shifts, irregular rhythms, electrical symbolism, and erratic nervous-system themes."
+        },
+        {
+          "label": "Neptune",
+          "body": "Modern overlay associated with sensitivity, porous boundaries, diffusion, subtlety, and body experiences that feel hard to pin down."
+        },
+        {
+          "label": "Pluto",
+          "body": "Modern overlay associated with deep release, elimination, regeneration symbolism, and hidden processes coming to the surface."
+        }
+      ]
+    },
+    {
+      "id": "sign-correspondences",
+      "heading": "Sign Correspondences",
+      "body": "Use these as traditional sign-body correspondences only. They describe symbolic rulerships, not risk, certainty, or instruction.",
+      "items": [
+        {
+          "label": "Aries",
+          "body": "Traditionally associated with the head, face, brain, eyes, and skull."
+        },
+        {
+          "label": "Taurus",
+          "body": "Traditionally associated with the throat, neck, thyroid, and vocal cords."
+        },
+        {
+          "label": "Gemini",
+          "body": "Traditionally associated with the lungs, arms, hands, shoulders, and nervous system."
+        },
+        {
+          "label": "Cancer",
+          "body": "Traditionally associated with the chest, breasts, stomach, and upper digestive tract."
+        },
+        {
+          "label": "Leo",
+          "body": "Traditionally associated with the heart, spine, upper back, and circulation."
+        },
+        {
+          "label": "Virgo",
+          "body": "Traditionally associated with the intestines, digestive system, gut, and spleen."
+        },
+        {
+          "label": "Libra",
+          "body": "Traditionally associated with the kidneys, lower back, adrenal glands, and skin."
+        },
+        {
+          "label": "Scorpio",
+          "body": "Traditionally associated with the reproductive organs, bladder, and excretory system."
+        },
+        {
+          "label": "Sagittarius",
+          "body": "Traditionally associated with the hips, thighs, liver, and sciatic nerve."
+        },
+        {
+          "label": "Capricorn",
+          "body": "Traditionally associated with the bones, knees, joints, teeth, and skin."
+        },
+        {
+          "label": "Aquarius",
+          "body": "Traditionally associated with the lower legs, ankles, calves, and circulation."
+        },
+        {
+          "label": "Pisces",
+          "body": "Traditionally associated with the feet, lymphatic system, and immune system."
+        }
+      ]
+    },
+    {
+      "id": "app-policy",
+      "heading": "App Policy",
+      "body": "If shown in the app, label this as a symbolic body-correspondence layer. Do not display it in a way that implies a chart can determine, predict, or explain a person's health. Keep it separate from transit alerts, personal recommendations, and any feature that could be mistaken for care guidance."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
