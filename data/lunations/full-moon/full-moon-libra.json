@@ -1,0 +1,111 @@
+{
+  "id": "full-moon-libra",
+  "kind": "full-moon",
+  "phase": "full",
+  "sign": "libra",
+  "oppositeSign": "aries",
+  "title": "Full Moon in Libra",
+  "tldr": "A culmination and release point for the Libra / Aries axis.",
+  "theme": "This Full Moon illuminates relationship, reciprocity, beauty, justice, consent, and the courage to choose cleanly through the Libra side of the axis, while the Sun in Aries asks for integration rather than extremes.",
+  "shadow": "keeping peace at the expense of yourself, over-accommodating, or calling avoidance harmony",
+  "integration": "creating balance that includes your needs too",
+  "twoWeekArc": {
+    "from": "New Moon in Aries",
+    "to": "Full Moon in Libra",
+    "teaching": "The right people support your growth when you stop minimizing the beginning to protect everyone else.",
+    "appPrompt": "Name what the last two weeks revealed. Release the pattern that blocks the Libra / Aries balance point."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Libra",
+    "to": "Full Moon in Libra",
+    "teaching": "Intention to embodiment",
+    "appPrompt": "Look back to the same-sign New Moon. What took root because you tended it, and what grew because the soil was left untended?"
+  },
+  "ritual": {
+    "function": "illumination, release, cleansing, integration, and completion",
+    "timing": "Use after the exact Full Moon when possible. Keep eclipse lunations under the separate witness protocol, not ordinary release ritual.",
+    "materials": "Venus kamea, pink or white candle, rose quartz, copper, peridot, roses, water, and incense.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what is complete, what is ready to be released, and how the higher expression of Libra can be embodied without rejecting Aries."
+  },
+  "journalPrompt": "What am I ready to release from the shadow of Libra, and what balance with Aries is asking to be lived now?",
+  "tarotPrompt": "What truth is this Libra Full Moon revealing that I can no longer avoid?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Release the stale pattern in partnerships, clients, commitments, and mirrors and integrate the Libra / Aries axis with more honesty."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Release the stale pattern in daily rhythm, work, health, service, and maintenance and integrate the Libra / Aries axis with more honesty."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Release the stale pattern in creativity, joy, romance, pleasure, and children and integrate the Libra / Aries axis with more honesty."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Release the stale pattern in home, roots, family, and emotional foundations and integrate the Libra / Aries axis with more honesty."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Release the stale pattern in communication, learning, siblings, and daily movement and integrate the Libra / Aries axis with more honesty."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Release the stale pattern in money, values, resources, and self-worth and integrate the Libra / Aries axis with more honesty."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Release the stale pattern in self, body, identity, and how you meet life and integrate the Libra / Aries axis with more honesty."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Release the stale pattern in rest, release, solitude, hidden patterns, and spiritual repair and integrate the Libra / Aries axis with more honesty."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Release the stale pattern in friendship, community, networks, hopes, and future vision and integrate the Libra / Aries axis with more honesty."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Release the stale pattern in career, visibility, authority, and public contribution and integrate the Libra / Aries axis with more honesty."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Release the stale pattern in belief, travel, study, publishing, and wider meaning and integrate the Libra / Aries axis with more honesty."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Release the stale pattern in shared resources, intimacy, trust, grief, and transformation and integrate the Libra / Aries axis with more honesty."
+    }
+  },
+  "policy": "Full Moon ritual guidance is optional app content. Do not frame release work as coercive, guaranteed, or appropriate for eclipse ritual.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

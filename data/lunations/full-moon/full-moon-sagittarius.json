@@ -1,0 +1,111 @@
+{
+  "id": "full-moon-sagittarius",
+  "kind": "full-moon",
+  "phase": "full",
+  "sign": "sagittarius",
+  "oppositeSign": "gemini",
+  "title": "Full Moon in Sagittarius",
+  "tldr": "A culmination and release point for the Sagittarius / Gemini axis.",
+  "theme": "This Full Moon illuminates truth, faith, travel, teaching, perspective, and the message that grows from lived experience through the Sagittarius side of the axis, while the Sun in Gemini asks for integration rather than extremes.",
+  "shadow": "philosophy without embodiment, certainty that stops listening, or escape dressed as freedom",
+  "integration": "living the wisdom you claim to believe",
+  "twoWeekArc": {
+    "from": "New Moon in Gemini",
+    "to": "Full Moon in Sagittarius",
+    "teaching": "A small message now can reveal a bigger truth when the opposite-sign Full Moon arrives.",
+    "appPrompt": "Name what the last two weeks revealed. Release the pattern that blocks the Sagittarius / Gemini balance point."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Sagittarius",
+    "to": "Full Moon in Sagittarius",
+    "teaching": "Journey to message",
+    "appPrompt": "Look back to the same-sign New Moon. What took root because you tended it, and what grew because the soil was left untended?"
+  },
+  "ritual": {
+    "function": "illumination, release, cleansing, integration, and completion",
+    "timing": "Use after the exact Full Moon when possible. Keep eclipse lunations under the separate witness protocol, not ordinary release ritual.",
+    "materials": "Jupiter kamea, yellow or white candle, citrine, turquoise or green jasper, water, and incense.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what is complete, what is ready to be released, and how the higher expression of Sagittarius can be embodied without rejecting Gemini."
+  },
+  "journalPrompt": "What am I ready to release from the shadow of Sagittarius, and what balance with Gemini is asking to be lived now?",
+  "tarotPrompt": "What truth is this Sagittarius Full Moon revealing that I can no longer avoid?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Release the stale pattern in belief, travel, study, publishing, and wider meaning and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Release the stale pattern in shared resources, intimacy, trust, grief, and transformation and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Release the stale pattern in partnerships, clients, commitments, and mirrors and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Release the stale pattern in daily rhythm, work, health, service, and maintenance and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Release the stale pattern in creativity, joy, romance, pleasure, and children and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Release the stale pattern in home, roots, family, and emotional foundations and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Release the stale pattern in communication, learning, siblings, and daily movement and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Release the stale pattern in money, values, resources, and self-worth and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Release the stale pattern in self, body, identity, and how you meet life and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Release the stale pattern in rest, release, solitude, hidden patterns, and spiritual repair and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Release the stale pattern in friendship, community, networks, hopes, and future vision and integrate the Sagittarius / Gemini axis with more honesty."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Release the stale pattern in career, visibility, authority, and public contribution and integrate the Sagittarius / Gemini axis with more honesty."
+    }
+  },
+  "policy": "Full Moon ritual guidance is optional app content. Do not frame release work as coercive, guaranteed, or appropriate for eclipse ritual.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

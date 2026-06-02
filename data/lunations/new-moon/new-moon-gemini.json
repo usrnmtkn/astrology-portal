@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-gemini",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "gemini",
+  "oppositeSign": "sagittarius",
+  "title": "New Moon in Gemini",
+  "tldr": "A seed point for language, curiosity, learning, conversation, and the courage to name what is true now.",
+  "theme": "Gemini is a mutable air sign ruled traditionally by Mercury. This New Moon begins work around language, curiosity, learning, conversation, and the courage to name what is true now.",
+  "shadow": "mental loops that prevent commitment, asking endless questions to avoid choosing",
+  "integration": "turning scattered information into a message that can move",
+  "twoWeekArc": {
+    "from": "New Moon in Gemini",
+    "to": "Full Moon in Sagittarius",
+    "teaching": "A small message now can reveal a bigger truth when the opposite-sign Full Moon arrives.",
+    "appPrompt": "Begin with Gemini; watch what the Sagittarius Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Gemini",
+    "to": "Full Moon in Gemini",
+    "teaching": "Words to vision",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Mercury kamea, yellow or white candle, agate or clear quartz, feather, water, and a writing tool.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Gemini. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through language, curiosity, learning, conversation, and the courage to name what is true now, without repeating the shadow of mental loops that prevent commitment, asking endless questions to avoid choosing?",
+  "tarotPrompt": "What first action will help this Gemini intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Gemini's language, curiosity, learning, conversation, and the courage to name what is true now."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
