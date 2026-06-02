@@ -1,0 +1,48 @@
+{
+  "id": "mercury-square-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Careful Or Censored",
+  "summary": "Your mind can be rigorous, but it may also expect criticism before anyone has spoken.",
+  "body": "Mercury square Saturn describes serious thought, careful speech, and a strong internal editor. You may learn through pressure, delay, or the feeling that you have to be certain before you are allowed to speak. This can make you precise, disciplined, and trustworthy with complex ideas. It can also make your voice smaller than your intelligence. The growth is to keep the discernment while letting yourself think out loud, revise, and be human in the process.",
+  "gift": "Precision, discipline, realism, and the ability to give language a durable structure.",
+  "shadow": "Harsh self-criticism, fear of sounding wrong, pessimism, and withholding thoughts until the moment has passed.",
+  "integration": "Let thinking be a process instead of a verdict. Your standards are useful when they support expression rather than blocking it.",
+  "do": [
+    "Say the first clear version",
+    "Separate feedback from rejection",
+    "Use structure to support your voice"
+  ],
+  "dont": [
+    "Wait for perfect certainty",
+    "Let an old authority become your inner narrator",
+    "Call every doubt realism"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "identity"
+  ],
+  "tags": [
+    "voice",
+    "self-trust",
+    "discipline",
+    "criticism",
+    "thinking"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

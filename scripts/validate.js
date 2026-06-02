@@ -171,6 +171,13 @@ const entryShapes = {
     optional: ["role", "category"],
     types: { id: "string", kind: "string", title: "string", sections: "array", role: "string", category: "string", voiceNeutral: "boolean", status: "string" },
     enums: { kind: ["guide", "framework", "template", "correspondence", "synastry"] }
+  },
+  insightCard: {
+    schemaFile: "insight-card.schema.json",
+    required: ["id", "kind", "displayTitle", "summary", "body", "gift", "shadow", "integration", "do", "dont", "lifeAreas", "tags", "intensity", "sourceFactors", "collectionHints", "voiceNeutral", "status"],
+    optional: [],
+    types: { id: "string", kind: "string", displayTitle: "string", summary: "string", body: "string", gift: "string", shadow: "string", integration: "string", do: "array:string", dont: "array:string", lifeAreas: "array:string", tags: "array:string", intensity: "number", sourceFactors: "array", collectionHints: "array:string" },
+    enums: { kind: ["natal-aspect"] }
   }
 };
 
@@ -395,6 +402,39 @@ function validateEntryFile(filePath, kind, errors) {
       errors.push(`${rel(filePath)}: composite aspect entries require field aspect`);
     }
   }
+  if (kind === "insightCard") {
+    if (json.intensity !== undefined && (!Number.isInteger(json.intensity) || json.intensity < 1 || json.intensity > 5)) {
+      errors.push(`${rel(filePath)}: field intensity must be an integer between 1 and 5`);
+    }
+    const validLifeAreas = new Set(["identity", "emotions", "love", "sex", "money", "work", "home", "family", "friends", "creativity", "health", "spirituality", "power", "communication", "growth"]);
+    for (const [index, lifeArea] of (json.lifeAreas || []).entries()) {
+      if (!validLifeAreas.has(lifeArea)) {
+        errors.push(`${rel(filePath)}: field lifeAreas[${index}] is not supported`);
+      }
+    }
+    const validCollectionHints = new Set(["core-traits", "love-patterns", "career-patterns", "emotional-needs", "shadow-work", "relationship-bonds", "personal-growth"]);
+    for (const [index, hint] of (json.collectionHints || []).entries()) {
+      if (!validCollectionHints.has(hint)) {
+        errors.push(`${rel(filePath)}: field collectionHints[${index}] is not supported`);
+      }
+    }
+    for (const [index, factor] of (json.sourceFactors || []).entries()) {
+      if (!factor || typeof factor !== "object" || Array.isArray(factor)) {
+        errors.push(`${rel(filePath)}: field sourceFactors[${index}] must be object`);
+        continue;
+      }
+      for (const field of ["type", "planetA", "aspect", "planetB"]) {
+        if (!(field in factor)) errors.push(`${rel(filePath)}: missing required field sourceFactors[${index}].${field}`);
+      }
+      for (const field of Object.keys(factor)) {
+        if (!["type", "planetA", "aspect", "planetB"].includes(field)) errors.push(`${rel(filePath)}: unexpected field sourceFactors[${index}].${field}`);
+      }
+      if (factor.type !== undefined && factor.type !== "natal-aspect") errors.push(`${rel(filePath)}: field sourceFactors[${index}].type must be natal-aspect`);
+      for (const field of ["planetA", "aspect", "planetB"]) {
+        if (factor[field] !== undefined && typeof factor[field] !== "string") errors.push(`${rel(filePath)}: field sourceFactors[${index}].${field} must be string`);
+      }
+    }
+  }
 }
 
 function validateSource(filePath, source, errors) {
@@ -546,6 +586,9 @@ function validateAll() {
   }
   for (const filePath of listDirectJsonFiles(path.join(dataRoot, "synastry"))) {
     validateEntryFile(filePath, "content", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "insights"))) {
+    validateEntryFile(filePath, "insightCard", errors);
   }
   validateVoicePolicy(errors);
 

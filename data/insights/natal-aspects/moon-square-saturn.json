@@ -1,0 +1,48 @@
+{
+  "id": "moon-square-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Self-Sufficient Or Underfed",
+  "summary": "You may have learned early to manage your feelings privately. Strength is real here, but so is the need for care.",
+  "body": "Moon square Saturn describes emotional restraint, endurance, and a habit of becoming responsible before you feel ready. You may carry the sense that needs are inconvenient, that comfort has to be earned, or that asking for support will expose too much. This can create steadiness and maturity, but it can also make tenderness feel unfamiliar. The growth is not to abandon discipline; it is to build an inner life where your needs are allowed to exist before they become emergencies.",
+  "gift": "Emotional discipline, loyalty, patience, and the ability to stay present when life asks for maturity.",
+  "shadow": "Isolation, emotional scarcity, fear of needing too much, and mistaking self-denial for strength.",
+  "integration": "Let care become part of your structure. Consistency matters, but it should include rest, softness, and people who do not require you to perform being fine.",
+  "do": [
+    "Ask for one specific kind of support",
+    "Build routines that include comfort",
+    "Notice when responsibility is covering sadness"
+  ],
+  "dont": [
+    "Treat every need as a weakness",
+    "Withdraw until no one can reach you",
+    "Make endurance your whole identity"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "family"
+  ],
+  "tags": [
+    "needs",
+    "boundaries",
+    "responsibility",
+    "care",
+    "loneliness"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "square",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "shadow-work",
+    "core-traits"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
