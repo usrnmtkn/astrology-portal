@@ -2522,6 +2522,175 @@ button {
   margin-top: 28px;
 }
 
+.sky-lunar-brief {
+  align-items: center;
+  background: var(--surface-app, #ffffff);
+  border: 1px solid var(--line-app, rgba(20, 20, 20, 0.08));
+  border-radius: 28px;
+  box-shadow: 0 1px 2px rgba(20, 20, 20, 0.03);
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  grid-template-columns: minmax(160px, 0.8fr) minmax(0, 1.8fr);
+  margin: 24px auto 0;
+  max-width: 920px;
+  padding: clamp(28px, 5vw, 48px);
+}
+
+.sky-lunar-phase {
+  align-items: center;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.sky-lunar-phase .moon-phase-art {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-2-app, #eef0f5) 76%, transparent);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: clamp(3.2rem, 7vw, 4.8rem);
+  height: clamp(116px, 15vw, 150px);
+  justify-content: center;
+  margin: 0 0 24px;
+  width: clamp(116px, 15vw, 150px);
+}
+
+.sky-lunar-phase strong {
+  color: var(--ink-app);
+  font-family: var(--font-sans);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.sky-lunar-phase span:not(.moon-phase-art) {
+  color: var(--muted-app);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.35;
+  margin-top: 12px;
+}
+
+.sky-lunar-copy {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.sky-lunar-copy p {
+  color: var(--ink-app);
+  font-family: var(--font-sans);
+  font-size: clamp(1.45rem, 3.1vw, 2rem);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.sky-lunar-copy p > span {
+  background: var(--ink-app);
+  border-radius: 10px;
+  color: var(--surface-app);
+  display: inline-flex;
+  font-size: 0.74em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  margin-right: 14px;
+  padding: 0.48em 0.74em;
+  text-transform: uppercase;
+  transform: translateY(-0.1em);
+}
+
+.sky-lunar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sky-lunar-chip {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-app) 88%, var(--ink-app) 4%);
+  border: 1px solid var(--line-app);
+  border-radius: 999px;
+  display: inline-grid;
+  gap: 0 12px;
+  grid-template-columns: auto auto;
+  min-height: 72px;
+  padding: 14px 26px;
+}
+
+.sky-lunar-chip > span {
+  color: var(--ink-app);
+  font-family: var(--font-symbol);
+  font-size: 24px;
+  grid-row: span 2;
+  line-height: 1;
+}
+
+.sky-lunar-chip em {
+  color: var(--muted-app);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sky-lunar-chip strong {
+  color: var(--ink-app);
+  font-family: var(--font-sans);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.theme-dark .sky-lunar-brief {
+  background: var(--surface-app);
+  border-color: color-mix(in srgb, var(--line-app) 72%, transparent);
+}
+
+.theme-dark .sky-lunar-phase .moon-phase-art {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.theme-dark .sky-lunar-chip {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (max-width: 760px) {
+  .sky-lunar-brief {
+    gap: 24px;
+    grid-template-columns: 1fr;
+    padding: 28px 22px;
+    text-align: center;
+  }
+
+  .sky-lunar-copy {
+    gap: 22px;
+  }
+
+  .sky-lunar-copy p {
+    font-size: clamp(1.25rem, 6vw, 1.65rem);
+  }
+
+  .sky-lunar-copy p > span {
+    margin: 0 0 10px;
+  }
+
+  .sky-lunar-chips {
+    justify-content: center;
+  }
+
+  .sky-lunar-chip {
+    min-height: 64px;
+    padding: 12px 20px;
+  }
+}
+
 .placement-list {
   display: grid;
   gap: 10px;
