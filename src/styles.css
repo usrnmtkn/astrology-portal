@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
-
 :root {
   color: #18201e;
   background: #f2f2f1;
@@ -23,7 +21,7 @@
 
 body {
   font-family: var(--font-body);
-  letter-spacing: 0;
+  letter-spacing: -0.003em;
   line-height: 1.45;
   margin: 0;
   min-width: 320px;
@@ -2047,7 +2045,7 @@ button {
   border: 1px solid rgba(43, 63, 58, 0.13);
   border-radius: 8px;
   display: grid;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   gap: 12px;
   margin: 18px 0 4px;
   padding: 14px;
@@ -2059,7 +2057,7 @@ button {
   border-radius: 8px;
   box-shadow: 0 18px 45px rgba(29, 38, 35, 0.1);
   display: grid;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   gap: 12px;
   margin: 14px 0 0;
   max-width: 340px;
@@ -2075,7 +2073,7 @@ button {
 
 .date-picker-header strong {
   color: #1d2623;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.1rem;
   font-weight: 700;
   text-align: center;
@@ -2108,7 +2106,7 @@ button {
 
 .date-picker-weekdays span {
   color: #8b928f;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -2129,7 +2127,7 @@ button {
   border-right: 1px solid rgba(43, 63, 58, 0.1);
   border-bottom: 1px solid rgba(43, 63, 58, 0.1);
   color: #1d2623;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.88rem;
   font-weight: 700;
   min-width: 0;
@@ -2161,7 +2159,7 @@ button {
   border: 1px solid rgba(43, 63, 58, 0.13);
   border-radius: 999px;
   color: #1d2623;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   justify-self: center;
   min-height: 34px;
@@ -2183,7 +2181,7 @@ button {
 .city-picker span {
   color: #63716c;
   display: block;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -2194,7 +2192,7 @@ button {
   background: #ffffff;
   border: 1px solid rgba(43, 63, 58, 0.18);
   border-radius: 8px;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   min-height: 42px;
   min-width: 0;
   padding: 0 12px;
@@ -2207,7 +2205,7 @@ button {
 
 .city-picker-note {
   color: #63716c;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.35;
   margin: 0;
@@ -2226,7 +2224,7 @@ button {
   border-bottom: 1px solid rgba(26, 22, 19, 0.1);
   color: #1a1613;
   display: grid;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   gap: 3px;
   min-height: 58px;
   padding: 10px 12px;
@@ -2244,7 +2242,7 @@ button {
 }
 
 .city-suggestions strong {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.1;
@@ -2252,7 +2250,7 @@ button {
 
 .city-suggestions span {
   color: #6e7673;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -2263,7 +2261,7 @@ button {
   background: #d8e3e0;
   border-radius: 8px;
   color: #20231d;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -2606,13 +2604,14 @@ button {
   text-transform: uppercase;
 }
 
-.sky-lunar-pill-copy strong {
+.sky-lunar-pill-copy :is(h3, strong) {
   color: var(--ink-app);
   font-family: var(--font-sans);
-  font-size: clamp(18px, 1.55vw, 22px);
-  font-weight: 700;
-  letter-spacing: -0.012em;
-  line-height: 1.12;
+  font-size: var(--type-section-title, 18px);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.16;
+  margin: 0;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -2627,11 +2626,11 @@ button {
 .sky-lunar-tldr p {
   color: var(--ink-app);
   font-family: var(--font-sans);
-  font-size: clamp(21px, 2.1vw, 28px);
+  font-size: var(--type-card-title, 22px);
   font-style: normal;
   font-weight: 500;
-  letter-spacing: -0.018em;
-  line-height: 1.32;
+  letter-spacing: -0.012em;
+  line-height: 1.35;
   margin: 0;
 }
 
@@ -2665,12 +2664,12 @@ button {
     gap: 12px;
   }
 
-  .sky-lunar-pill-copy strong {
-    font-size: 18px;
+  .sky-lunar-pill-copy :is(h3, strong) {
+    font-size: var(--type-section-title, 18px);
   }
 
   .sky-lunar-tldr p {
-    font-size: 21px;
+    font-size: var(--type-card-title, 22px);
   }
 }
 
@@ -2690,7 +2689,7 @@ button {
     width: 48px;
   }
 
-  .sky-lunar-pill-copy strong {
+  .sky-lunar-pill-copy :is(h3, strong) {
     font-size: 20px;
   }
 
@@ -4230,7 +4229,7 @@ blockquote {
     #f2f2f1;
   color: var(--ink-app);
   display: flow-root;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   padding: 0 24px 96px;
 }
 
@@ -4282,7 +4281,7 @@ blockquote {
 
 .brand-wordmark span,
 .brand-wordmark em {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: clamp(1.35rem, 2vw, 1.85rem);
 }
 
@@ -4303,7 +4302,7 @@ blockquote {
 
 .site-nav button {
   color: #555553;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.05rem;
   font-weight: 600;
   min-height: 50px;
@@ -4377,7 +4376,7 @@ blockquote {
 .site-menu-gift {
   border-radius: 14px;
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   min-height: 52px;
   padding: 0 12px;
 }
@@ -4393,7 +4392,7 @@ blockquote {
 .site-menu button span,
 .site-menu-gift strong,
 .site-menu-gift span {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
 }
 
 .today-hero {
@@ -4407,7 +4406,7 @@ blockquote {
 .account-page-heading h2,
 .settings-header h2 {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   letter-spacing: -0.04em;
 }
@@ -4424,7 +4423,7 @@ blockquote {
 }
 
 .today-pill span {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -4494,7 +4493,7 @@ blockquote {
 .sky-card > strong,
 .sky-card p,
 .sky-card .sky-card-degree {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
 }
 
 .sky-card > strong {
@@ -4515,7 +4514,7 @@ blockquote {
 
 .placements-heading h2 {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   letter-spacing: -0.04em;
 }
@@ -4524,7 +4523,7 @@ blockquote {
 .placement-prose p,
 .aspect-copy strong,
 .aspect-copy p {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
 }
 
 .placements-heading span {
@@ -4539,7 +4538,7 @@ blockquote {
 }
 
 .placement-toggle button {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0;
@@ -4560,7 +4559,7 @@ blockquote {
 .placements-heading p,
 .aspects-heading span,
 .settings-group-label {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   letter-spacing: 0.14em;
 }
@@ -4624,7 +4623,7 @@ blockquote {
 .settings-row strong,
 .settings-readonly-row strong {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
 }
 
 .you-tabs {
@@ -4636,7 +4635,7 @@ blockquote {
 
 .you-tabs button,
 .settings-tabs button {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 600;
 }
 
@@ -4674,14 +4673,14 @@ blockquote {
 .profile-chart-empty button,
 .signup-submit,
 .setup-submit {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   letter-spacing: 0.12em;
 }
 
 .signup-heading h3,
 .signup-story h2 {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 700;
   letter-spacing: -0.04em;
 }
@@ -4692,7 +4691,7 @@ blockquote {
 .city-picker input,
 .settings-row input,
 .settings-row select {
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
 }
 
 .you-page {
@@ -4836,7 +4835,7 @@ blockquote {
 
 .you-big-three strong {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.98rem;
   font-weight: 800;
 }
@@ -4865,7 +4864,7 @@ blockquote {
   background: var(--ink-app);
   border-radius: 999px;
   color: var(--surface-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -4895,7 +4894,7 @@ blockquote {
 .you-chart-rows span,
 .you-chart-rows strong {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1rem;
 }
 
@@ -4943,7 +4942,7 @@ blockquote {
 .you-list-card strong {
   color: var(--ink-app);
   display: block;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 800;
 }
@@ -4951,7 +4950,7 @@ blockquote {
 .you-list-card article span {
   color: var(--muted-app);
   display: block;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.94rem;
   margin-top: 3px;
 }
@@ -4966,7 +4965,7 @@ blockquote {
 .you-empty-card h3,
 .you-transit-brief h3 {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: clamp(2rem, 5vw, 3.4rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -4977,7 +4976,7 @@ blockquote {
 .you-empty-card p,
 .you-transit-brief p {
   color: var(--muted-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.02rem;
   line-height: 1.45;
   margin: 0;
@@ -5002,7 +5001,7 @@ blockquote {
   border: 1px solid var(--line-app);
   border-radius: 999px;
   color: var(--muted-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.86rem;
   font-weight: 700;
   padding: 8px 12px;
@@ -5267,7 +5266,7 @@ blockquote {
 
 .sky-card-glyph.moon {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 2.2rem;
   height: auto;
   line-height: 0.8;
@@ -5279,7 +5278,7 @@ blockquote {
 
 .sky-card > strong {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.08rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -5289,7 +5288,7 @@ blockquote {
 
 .sky-card .sky-card-degree {
   color: var(--muted-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.82rem;
   font-style: normal;
   font-weight: 600;
@@ -5658,7 +5657,7 @@ blockquote {
   align-items: center;
   border-radius: 18px;
   display: inline-flex;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.05rem;
   font-weight: 700;
   justify-content: center;
@@ -5845,7 +5844,7 @@ blockquote {
 
 .sky-detail-modal h2 {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: clamp(2.3rem, 8vw, 5.1rem);
   font-weight: 800;
   letter-spacing: -0.055em;
@@ -5874,7 +5873,7 @@ blockquote {
 
 .sky-detail-body p {
   color: color-mix(in srgb, var(--ink-app) 76%, transparent);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: clamp(1.05rem, 2vw, 1.28rem);
   line-height: 1.48;
   margin: 0;
@@ -5936,7 +5935,7 @@ blockquote {
 .settings-row small {
   color: var(--muted-app);
   display: block;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   line-height: 1.3;
   margin-top: 5px;
@@ -5960,7 +5959,7 @@ blockquote {
   border-radius: 999px;
   color: var(--muted-app);
   flex: 1 1 0;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 700;
   min-height: 36px;
@@ -6058,7 +6057,7 @@ blockquote {
 
 .guest-settings-account h3 {
   color: var(--ink-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1.5rem;
   letter-spacing: -0.02em;
   margin: 0 0 8px;
@@ -6066,7 +6065,7 @@ blockquote {
 
 .guest-settings-account p {
   color: var(--muted-app);
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.45;
   margin: 0 0 22px;
@@ -6079,7 +6078,7 @@ blockquote {
   border-radius: 999px;
   color: var(--surface-app);
   display: inline-flex;
-  font-family: "Hanken Grotesk", var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.85rem;
   font-weight: 800;
   justify-content: center;
@@ -6149,7 +6148,7 @@ html,
     var(--bg-app);
   color: var(--ink-app);
   font-family: var(--font-body);
-  letter-spacing: 0;
+  letter-spacing: -0.003em;
   padding: 0 24px 80px;
 }
 
@@ -10317,7 +10316,17 @@ html,
   --type-small: 13.5px;
   --type-copy: 14.5px;
   --type-row-title: 16px;
+  --type-section-title: 18px;
   --type-card-title: 22px;
+  --type-h1: clamp(36px, 6vw, 68px);
+  --type-h2: clamp(28px, 4vw, 44px);
+  --type-h3: var(--type-card-title);
+  --type-h4: var(--type-section-title);
+  --type-h5: var(--type-row-title);
+  --type-h6: var(--type-small);
+  --type-body: var(--type-copy);
+  --leading-heading: 1.08;
+  --leading-body: 1.5;
   --sky-row-gap: 13px;
   --sky-row-padding-block: 13px;
   --sky-row-padding-inline: 20px;
@@ -10333,6 +10342,47 @@ html,
 .app-shell {
   font-family: var(--font-ui);
   font-variant-numeric: normal;
+}
+
+.app-shell :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: var(--leading-heading);
+  margin: 0;
+}
+
+.app-shell h1 {
+  font-size: var(--type-h1);
+}
+
+.app-shell h2 {
+  font-size: var(--type-h2);
+}
+
+.app-shell h3 {
+  font-size: var(--type-h3);
+}
+
+.app-shell h4 {
+  font-size: var(--type-h4);
+}
+
+.app-shell h5 {
+  font-size: var(--type-h5);
+}
+
+.app-shell h6 {
+  font-size: var(--type-h6);
+}
+
+.app-shell p {
+  font-family: var(--font-detail);
+  font-size: var(--type-body);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: var(--leading-body);
+  margin: 0;
 }
 
 .app-shell :is(.brand-wordmark, .brand-text, .nav-link, .nav-item, .top-nav, .theme-toggle, .menu-toggle, .menu-popover, .menu-popover button, .popover-menu, .popover-menu button, .primary-cta, .secondary-cta, .auth-button, .join-button, .login-button, .tab-toggle button, .segmented button, .app-tabs button, .screen-title, .page-title, .today-hero h1, .account-page h1, .settings-page h1) {
