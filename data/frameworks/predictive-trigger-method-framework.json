@@ -1,0 +1,49 @@
+{
+  "id": "predictive-trigger-method-framework",
+  "kind": "framework",
+  "title": "Predictive Trigger Method Framework",
+  "sections": [
+    {
+      "id": "natal-promise-first",
+      "heading": "Natal Promise First",
+      "body": "Do not read a transit or progression as creating a life theme from nothing. Start with the natal chart: planet condition, house topics, rulership, aspects, angularity, sect, dignity, and repeated chart patterns. The timing technique activates what the natal chart can already describe."
+    },
+    {
+      "id": "progressions-show-current-potential",
+      "heading": "Progressions Show Current Potential",
+      "body": "Secondary progressions describe the chapter currently developing from the natal chart. They are slower, more interior, and better for reading the background plot of a life phase. Progressed-to-natal and progressed-to-progressed contacts show the themes that are ready to be lived now."
+    },
+    {
+      "id": "transits-trigger-the-theme",
+      "heading": "Transits Trigger The Theme",
+      "body": "Transits are the timing pressure that can bring a progressed or natal theme into lived focus. A transit is louder when it repeats the same planetary pair, house topic, or life area already active by progression, return chart, profection, or natal promise."
+    },
+    {
+      "id": "three-indicator-rule",
+      "heading": "Three Indicator Rule",
+      "body": "One indicator is not enough for a major event. Require multiple testimonies pointing in the same direction before the app treats a theme as high confidence. Useful agreement can come from natal promise, active progression, transit trigger, return chart emphasis, activated house ruler, angular planet, or repeated planetary pair."
+    },
+    {
+      "id": "exactness-and-orb",
+      "heading": "Exactness And Orb",
+      "body": "The closer an aspect is to exact, the louder it is. Applying contacts build the trend; exact contacts peak it; separating contacts describe aftermath and integration. A wider contact can still manifest if another active planet triggers the same configuration or midpoint."
+    },
+    {
+      "id": "priority-stack",
+      "heading": "Priority Stack",
+      "body": "Prioritize angles, Sun, Moon, chart ruler, sect light, activated time lord, and planets already prominent in the natal chart. A planet is more prominent when angular, elevated, part of a stellium, heavily aspected, ruling an activated house, or repeating a current progressed or transit theme."
+    },
+    {
+      "id": "house-rulers-matter",
+      "heading": "House Rulers Matter",
+      "body": "When a house ruler becomes active by progression, return, or transit, the house topics it rules become part of the story. For relationship timing, watch the 7th ruler along with Venus, Moon, Mercury, and relationship houses. For career timing, watch the 10th ruler along with Sun, Jupiter, Saturn, and public houses."
+    },
+    {
+      "id": "user-facing-translation",
+      "heading": "User-Facing Translation",
+      "body": "The app should not expose the full machinery unless the user asks for it. Translate agreement between techniques as plain confidence language: a background theme is active, a trigger is pressing it now, and the user's choices decide how consciously it is handled."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
