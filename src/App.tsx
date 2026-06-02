@@ -378,6 +378,14 @@ function formatPlacementDegree(position?: PlanetPosition) {
   return `${position.degree.toFixed(2)}°`;
 }
 
+function formatBriefPlacementDegree(position?: PlanetPosition) {
+  if (!position) {
+    return "";
+  }
+
+  return `${Math.round(position.degree)}°`;
+}
+
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
     return 0;
@@ -435,32 +443,6 @@ function formatMoonCountdown(days: number) {
   }
 
   return `${Math.round(days)} days`;
-}
-
-function formatMoonEventDate(date: Date, timeZone?: string) {
-  return date.toLocaleDateString(undefined, {
-    timeZone,
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-}
-
-function formatMoonEventTime(date: Date, timeZone?: string) {
-  return date.toLocaleTimeString(undefined, {
-    timeZone,
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short"
-  });
-}
-
-function formatMoonEventLine(event: ReturnType<typeof nextMoonEvent>, timeZone?: string) {
-  if (event.days <= 3) {
-    return `${event.name} in ${event.sign} in ${formatMoonCountdown(event.days)}, ${formatMoonEventDate(event.occursAt, timeZone)} at ${formatMoonEventTime(event.occursAt, timeZone)}.`;
-  }
-
-  return `${event.name} in ${formatMoonCountdown(event.days)}`;
 }
 
 function monthLabel(date: Date) {
@@ -2696,56 +2678,52 @@ function MoonPhaseArt({ phase }: { phase: string }) {
   return <span className="moon-phase-art" aria-hidden="true">{phaseEmojis[phase] ?? "🌙"}</span>;
 }
 
-function SkyGlyph({ type }: { type: "sun" | "moon" | "phase" }) {
-  return (
-    <span className={`sky-card-glyph ${type}`} aria-hidden="true">
-      {type === "sun" && <span />}
-      {type === "moon" && "☾"}
-      {type === "phase" && (
-        <>
-          <i />
-          <i />
-          <i />
-        </>
-      )}
-    </span>
-  );
+function moonPhaseTldr(phase: string) {
+  const summaries: Record<string, string> = {
+    "New Moon": "A reset is opening. Keep the signal simple and choose what gets your first real yes.",
+    "Waxing Crescent": "Momentum is still tender. Feed the thing that wants to grow before asking it to prove itself.",
+    "First Quarter": "The day asks for action. A small decision now can clear more space than a perfect plan.",
+    "Waxing Gibbous": "The story is filling in. Refine the details, but do not lose the thread that started it.",
+    "Full Moon": "Feelings reach a peak and something hidden comes to light - a clear, honest day to say the real thing.",
+    "Waning Gibbous": "The lesson is visible now. Share what you know, and let the extra noise fall away.",
+    "Last Quarter": "A choice wants closure. Release the part of the plan that no longer matches the truth.",
+    "Waning Crescent": "Energy turns inward. Rest, integrate, and let the next beginning arrive without force."
+  };
+
+  return summaries[phase] ?? "The Moon is setting the emotional weather. Notice what rises, softens, and asks for care.";
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const moonEvent = nextMoonEvent(sky);
-  const skyTimeZone = sky.location.timeZone ?? browserTimeZone();
 
   return (
-    <div className="sky-cards" aria-label="Sky highlights">
-      <article className="sky-card">
-        <span className="eyebrow">The Sun</span>
-        <SkyGlyph type="sun" />
-        <strong>{sun?.sign ?? "Current Sun"}</strong>
-        <p className="sky-card-degree">{formatPlacementDegree(sun)}</p>
-        <p>Stay curious, change your mind.</p>
-      </article>
-
-      <article className="sky-card">
-        <span className="eyebrow">The Moon</span>
-        <SkyGlyph type="moon" />
-        <strong>{moon?.sign ?? "Current Moon"}</strong>
-        <p className="sky-card-degree">{formatPlacementDegree(moon)}</p>
-        <p>Feelings run deep. Let them tell the truth.</p>
-      </article>
-
-      <article className="sky-card">
-        <span className="eyebrow">Moon Phase</span>
+    <section className="sky-lunar-brief" aria-label="Sky highlights">
+      <div className="sky-lunar-phase">
         <MoonPhaseArt phase={sky.moonPhase} />
         <strong>{sky.moonPhase}</strong>
-        <p className="sky-card-degree">
-          {formatMoonEventLine(moonEvent, skyTimeZone)}
+        <span>{moonEvent.name} in {formatMoonCountdown(moonEvent.days)}</span>
+      </div>
+      <div className="sky-lunar-copy">
+        <p>
+          <span>TLDR</span>
+          {moonPhaseTldr(sky.moonPhase)}
         </p>
-        <p>The lunar pull is moving toward its next turning point.</p>
-      </article>
-    </div>
+        <div className="sky-lunar-chips" aria-label="Current Sun and Moon">
+          <span className="sky-lunar-chip">
+            <span aria-hidden="true">☉</span>
+            <em>Sun</em>
+            <strong>{sun?.sign ?? "Current"} {formatBriefPlacementDegree(sun)}</strong>
+          </span>
+          <span className="sky-lunar-chip">
+            <span aria-hidden="true">☽</span>
+            <em>Moon</em>
+            <strong>{moon?.sign ?? "Current"} {formatBriefPlacementDegree(moon)}</strong>
+          </span>
+        </div>
+      </div>
+    </section>
   );
 }
 
