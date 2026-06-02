@@ -1,0 +1,17 @@
+{
+  "id": "north-node",
+  "kind": "point",
+  "aliases": [
+    "north_node",
+    "ascending-node",
+    "lunar-north-node"
+  ],
+  "type": "lunar-node",
+  "orbit": "Calculated intersection of the Moon's orbit with the ecliptic; always opposite the South Node.",
+  "core": "Growth direction, unfamiliar medicine, the qualities and life field that ask for conscious development.",
+  "keyTransit": "Nodal returns, nodal reversals, eclipses, and transiting nodes to angles or personal planets can mark developmental thresholds and important meetings, choices, or releases.",
+  "policy": "Lunar node; calculated point, not a planet. Use as a developmental axis and timing factor. Do not use for dignity, sect, rulership, or planetary condition.",
+  "note": "Distilled from approved project node source material. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

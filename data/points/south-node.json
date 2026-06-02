@@ -1,0 +1,17 @@
+{
+  "id": "south-node",
+  "kind": "point",
+  "aliases": [
+    "south_node",
+    "descending-node",
+    "lunar-south-node"
+  ],
+  "type": "lunar-node",
+  "orbit": "Calculated intersection of the Moon's orbit with the ecliptic; always opposite the North Node.",
+  "core": "Familiar pattern, default strategy, inherited competence, and the comfort zone that can become repetitive when unconscious.",
+  "keyTransit": "South Node activations can correlate with releases, separations, old patterns returning, or moments when an already-known strategy has to be used with more awareness.",
+  "policy": "Lunar node; calculated point, not a planet. Use as a developmental axis and timing factor. Do not use for dignity, sect, rulership, or planetary condition.",
+  "note": "Distilled from approved project node source material. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
