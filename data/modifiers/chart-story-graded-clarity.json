@@ -1,0 +1,71 @@
+{
+  "id": "chart-story-graded-clarity",
+  "schema": "modifier/chart-story-graded-clarity",
+  "appliesTo": [
+    "ethics",
+    "prediction",
+    "chart-reading",
+    "transit",
+    "progression",
+    "synastry",
+    "life-cycle"
+  ],
+  "summary": "The chart speaks most clearly about the shape of the story, less clearly about the choices made within it, and least clearly about the exact scenes through which it unfolds.",
+  "body": "Use this stance to keep readings descriptive rather than deterministic. The chart can describe themes, arcs, pressures, patterns, and timing windows with meaningful confidence. It cannot honestly guarantee exact scenes, fixed outcomes, or the user's choices.",
+  "definition": "A graded-clarity policy for astrological interpretation: read the arc with confidence, hold the choices as open, and treat exact events as too contingent to promise.",
+  "appUsage": [
+    "Use this as an ethics anchor for chart, transit, progression, synastry, and timing features.",
+    "Describe the arc and active pattern clearly.",
+    "Frame choices as open and user-led.",
+    "Do not sell exact scenes, outcomes, dates, jobs, relationships, or decisions as fixed.",
+    "When the app gives examples, label them as possible expressions of a pattern rather than guaranteed events."
+  ],
+  "note": "Original project stance. Added as policy material; no external source file was copied into the repository.",
+  "classes": {
+    "stance": "chart_story_graded_clarity",
+    "version": 1,
+    "sourceBacked": true,
+    "anchor": "The chart speaks most clearly about the shape of the story, less clearly about the choices made within it, and least clearly about the exact scenes through which it unfolds.",
+    "layers": [
+      {
+        "id": "arc",
+        "name": "The shape of the story",
+        "clarity": "most",
+        "plainTranslation": "Your nature, your themes, the arc you're living. This is where the chart is loudest. Read it."
+      },
+      {
+        "id": "agency",
+        "name": "The choices made within it",
+        "clarity": "less",
+        "plainTranslation": "The choices you make inside that shape. The chart hints; it doesn't decide. This part is on you."
+      },
+      {
+        "id": "events",
+        "name": "The exact scenes",
+        "clarity": "least",
+        "plainTranslation": "The job, the date, the timing. The chart can't call these. Too many hands on them, yours most of all."
+      }
+    ],
+    "principles": [
+      "Read the arc with confidence. Hold the choices as open. Treat the scenes as un-callable.",
+      "The further you push toward naming exact events, the less the chart can honestly say.",
+      "It's for understanding the shape you're in, not fortune-telling. Direction, not scenes.",
+      "Nothing here is fixed. The chart isn't a verdict. You're still the one driving."
+    ],
+    "useInProduct": "Anchors the descriptive-not-deterministic stance in the ethics policies. Read the arc with confidence, the choices as open, the events as un-callable. Never sell a scene as fixed."
+  },
+  "prohibitions": [
+    "Do not frame astrology as a verdict.",
+    "Do not present exact life scenes as guaranteed.",
+    "Do not remove user agency from timing or compatibility features.",
+    "Do not treat examples as predictions."
+  ],
+  "weighting": [
+    "Arc-level interpretation can be stated with the most confidence.",
+    "Choice-level interpretation should be framed as available paths and pressures.",
+    "Event-level interpretation should be framed as possible expressions only when multiple indicators repeat.",
+    "Exact dates and exact outcomes require the strongest caution language."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
