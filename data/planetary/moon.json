@@ -2,64 +2,61 @@
   "id": "moon",
   "planet": "moon",
   "title": "Moon Meaning",
-  "overview": "and houses Luna's reminds us of the eternal dance between light and darkness as she waxes and wanes. In her many phases, she mirrors the ebb and ow of life itself, urging us to connect with our inner selves and embrace the signicance of our emotions. rough her luminous guidance, we are encouraged to explore the depths of our souls and nd solace in the rhythms that shape our journey. Luna gracefully transitions between signs approximately every two to two and a half days, traveling through the entire zodiac approximately 27 and 1/3 days. e Moon/Luna through the zodiac signs",
-  "cycle": "Luna gracefully transitions between signs approximately every two to two and a half days, traveling through the entire zodiac approximately 27 and 1/3 days.",
+  "overview": "The Moon describes emotional needs, instinctive reactions, memory, body rhythms, caretaking patterns, and what helps a person feel safe enough to respond rather than defend. It shows the private self: how feelings move, how comfort is sought, and what kind of environment supports steadiness.",
+  "cycle": "The Moon travels through the zodiac in about 27.3 days and changes signs roughly every two to two and a half days. Its sign describes emotional style; its house shows where the person seeks safety, familiarity, and nourishment.",
   "signs": [
     {
       "sign": "aries",
-      "body": "With the Moon in Aries, your emotions are intense and ery. You experience emotions in a spontaneous and impulsive manner, oen wearing your heart on your sleeve. Your instinctive nature is to take action, and you seek emotional independence and freedom."
+      "body": "Moon in Aries feels quickly and responds directly. Emotional safety comes through autonomy, honest action, and the freedom to move instead of waiting for permission."
     },
     {
       "sign": "taurus",
-      "body": "With the Moon in Taurus, your emotions run deep and are grounded in the material world. You seek comfort, stability, and security. You appreciate the simple pleasures of life and nd solace in nature and the physical senses."
+      "body": "Moon in Taurus seeks emotional steadiness through comfort, touch, routine, and reliable surroundings. Feelings settle when life feels simple, embodied, and materially secure."
     },
     {
       "sign": "gemini",
-      "body": "With the Moon in Gemini, your emotions are uick and changeable. You have a curious and adaptable nature, and your feelings are oen expressed through communication and mental stimulation. Your emotional well-being depends on variety and mental engagement."
+      "body": "Moon in Gemini processes feelings through language, movement, curiosity, and mental variety. Emotional regulation often comes from naming the feeling and talking it through."
     },
     {
       "sign": "cancer",
-      "body": "With the Moon in Cancer, you experience emotions strongly and deeply. Your nurturing instincts are heightened, and you have a strong connection to home, family, and your roots. You seek emotional security and nd comfort in familiar environments."
+      "body": "Moon in Cancer is deeply responsive, protective, and tied to home, memory, and belonging. Emotional safety comes through care, privacy, and trusted bonds."
     },
     {
       "sign": "leo",
-      "body": "With the Moon in Leo, your emotions are dramatic and passionate. You have a need for recognition and appreciation, and your feelings oen demand to be expressed with air and creativity. You seek emotional warmth and enjoy being at the center of attention."
+      "body": "Moon in Leo needs warmth, affection, play, and heartfelt recognition. Feelings want expression, and emotional safety grows when joy and loyalty are present."
     },
     {
       "sign": "virgo",
-      "body": "With the Moon in Virgo, your emotions are practical and analytical. You have a keen eye for detail and strive for emotional order and eciency. Your feelings are expressed through acts of service and a desire for self-improvement."
+      "body": "Moon in Virgo processes emotions through order, usefulness, observation, and practical care. Safety comes from rhythm, repair, and knowing what can be done next."
     },
     {
       "sign": "libra",
-      "body": "With the Moon in Libra, your emotions are balanced and harmonious. You have a natural anity for relationships and seek emotional euilibrium. You value fairness and seek to nd emotional fulllment through cooperation and diplomacy."
+      "body": "Moon in Libra seeks emotional balance through harmony, fairness, beauty, and relational attunement. Safety grows when conflict can be addressed without losing respect."
     },
     {
       "sign": "scorpio",
-      "body": "With the Moon in Scorpio, your emotions are intense and deeply transformative. You experience emotions on a profound level and are not afraid to explore the depths of your feelings. You seek emotional authenticity and have a strong intuition."
+      "body": "Moon in Scorpio feels intensely and needs emotional honesty, privacy, and trust. Safety comes from depth, loyalty, and the freedom to name what is usually hidden."
     },
     {
       "sign": "sagittarius",
-      "body": "With the Moon in Sagittarius, your emotions are expansive and optimistic. You have a thirst for adventure and new experiences, and your feelings are oen tied to a sense of freedom and exploration. You seek emotional growth and philosophical understanding."
+      "body": "Moon in Sagittarius needs freedom, movement, humor, meaning, and room to breathe. Emotional safety grows when life still feels open and the story can keep expanding."
     },
     {
       "sign": "capricorn",
-      "body": "With the Moon in Capricorn, your emotions are serious and disciplined. You have a strong sense of responsibility and seek emotional security through long - term goals and accomplishments. You nd comfort in structure and tradition."
+      "body": "Moon in Capricorn seeks emotional safety through competence, structure, responsibility, and self-command. Feelings may be private, but they are not absent."
     },
     {
       "sign": "aquarius",
-      "body": "With the Moon in Aquarius, your emotions are unconventional and independent. You have a uniue and detached approach to your feelings, and you seek emotional freedom and intellectual stimulation. You value individuality and a sense of community."
+      "body": "Moon in Aquarius needs space, perspective, friendship, and respect for individuality. Emotional safety grows when feelings can be understood without being crowded."
     },
     {
       "sign": "pisces",
-      "body": "With the Moon in Pisces, your emotions are sensitive and empathetic. You have a deep connection to the collective unconscious and are highly intuitive. Your feelings are expressed through creativity, compassion, and a desire for spiritual connection. 337 e"
+      "body": "Moon in Pisces feels through empathy, imagination, atmosphere, and spiritual sensitivity. Safety comes through gentleness, creative release, and boundaries that keep compassion from becoming overwhelm."
     }
   ],
   "source": {
-    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
-    "pages": [
-      337,
-      338
-    ]
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
   },
   "voiceNeutral": true,
   "status": "DRAFT"

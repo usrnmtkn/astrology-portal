@@ -2,64 +2,61 @@
   "id": "jupiter",
   "planet": "jupiter",
   "title": "Jupiter Meaning",
-  "overview": "and houses Jupiter is known as the Greater Benec or Fortune, and the embodiment of abundance. Its energy encourages us to broaden our horizons, both intellectually and spiritually, and to explore higher education, particularly in the realms of religion or law. With Jupiter's inuence, we can expand our understanding of the world and our place within it, unlocking new avenues for personal and intellectual growth. Jupiter's energy, in contrast to the limitations of Saturn, is innitely expansive, sometimes pushing boundaries and breaking barriers. It invites us to embrace a mindset of limitless possibilities and to have faith in the abundance that life has to oer. When we align ourselves with Jupiter's energy, we open ourselves to the ow of blessings, synchronicities, and opportunities that come our way. As we navigate the journey of Jupiter through the zodiac houses, we embark on a path of personal growth and enrichment. Each house represents a uniue area of life, and with Jupiter's inuence, we can experience expansion, success, and the fulllment of our highest aspirations in those domains. Whether it be in matters of relationships, career, spirituality, or creativity, Jupiter's presence oers us the chance to embrace abundance and tap into the blessings that await us. By working with Jupiter's energy, we align ourselves with the cosmic forces of expansion and good fortune. We trust in Jupiter's ability to bring abundance into our lives and open ourselves to the serendipitous ow of opportunities that come our way. As we embark on this journey through the zodiac houses, we invite the blessings of Jupiter to illuminate our path and guide us towards a life of growth, prosperity, and fulllment. Jupiter typically spends around one year in each zodiac sign. However, like other planets, the exact duration can vary due to Jupiter's retrograde motion. It's important to note that the interpretation of Jupiter's inuence in the zodiac signs and its transits should be considered in conjunction with other aspects. Jupiter through the zodiac signs",
-  "cycle": "Jupiter typically spends around one year in each zodiac sign. However, like other planets, the exact duration can vary due to Jupiter's retrograde motion. It's important to note that the interpretation of Jupiter's inuence in the zodiac signs and its transits should be considered in conjunction with other aspects.",
+  "overview": "Jupiter describes expansion, confidence, opportunity, faith, generosity, learning, teaching, and the way a person grows beyond the familiar. It shows where life tends to open doors, where wisdom is developed, and where excess can become the shadow of abundance.",
+  "cycle": "Jupiter spends about one year in each sign, with some variation due to retrograde motion. Its sign describes the style of growth and belief; its house shows where opportunity, learning, and expansion are most likely to gather.",
   "signs": [
     {
       "sign": "aries",
-      "body": "When Jupiter is in Aries in your chart, it amplies your condence and initiative. You nd yourself blessed with an increased drive to conuer new territories and champion causes, and you have the potential to lead and inspire others with your enthusiasm."
+      "body": "Jupiter in Aries grows through courage, initiative, risk, and self-trust. Opportunity opens when the person is willing to begin before every condition is perfect."
     },
     {
       "sign": "taurus",
-      "body": "With Jupiter in Taurus, you may nd your fortunes linked to perseverance and practicality. Opportunities for growth and expansion might be found in the nancial and material realms, encouraging you to seek security and luxury while still appreciating the value of hard work."
+      "body": "Jupiter in Taurus grows through steadiness, resources, embodiment, and the patient building of value. Opportunity opens through consistency and respect for what is tangible."
     },
     {
       "sign": "gemini",
-      "body": "Jupiter in Gemini in your chart heightens your curiosity and thirst for knowledge. You may nd yoursel drawn to diverse areas of interest, and are likely to excel in any eld that reuires communication, networking, or learning new skills."
+      "body": "Jupiter in Gemini grows through curiosity, language, learning, and connection. Opportunity opens through conversation, adaptability, and the willingness to explore many angles."
     },
     {
       "sign": "cancer",
-      "body": "When Jupiter resides in Cancer, you'll nd your emotional intuition amplied. You're blessed with a nurturing spirit and an ability to create a sense of home and community wherever you go. You might also nd luck when dealing with real estate or family matters."
+      "body": "Jupiter in Cancer grows through care, belonging, home, protection, and emotional wisdom. Opportunity opens through nurturing what matters and creating a safe base."
     },
     {
       "sign": "leo",
-      "body": "With Jupiter in Leo, you're bestowed with an enhanced sense of creativity, charm, and leadership. You're likely to shine in the spotlight and succeed in endeavors where your uniue talents and charisma can be put on full display."
+      "body": "Jupiter in Leo grows through creativity, confidence, generosity, and visible self-expression. Opportunity opens when the person shares their gifts without apologizing for being seen."
     },
     {
       "sign": "virgo",
-      "body": "Jupiter in Virgo in your chart may bring forth growth through service and meticulous work. You have an enhanced ability to improve your surroundings and can nd fulllment and luck in your uest for eciency and health."
+      "body": "Jupiter in Virgo grows through service, craft, health, refinement, and practical improvement. Opportunity opens when usefulness becomes devotion rather than perfectionism."
     },
     {
       "sign": "libra",
-      "body": "If Jupiter is in Libra, you're blessed with a keen sense of balance and diplomacy. Opportunities might abound in partnerships and social settings, and you're likely to excel in situations that reuire compromise, negotiation, or artistic sense."
+      "body": "Jupiter in Libra grows through partnership, fairness, art, diplomacy, and social intelligence. Opportunity opens through cooperation, balance, and wise relationship choices."
     },
     {
       "sign": "scorpio",
-      "body": "Jupiter in Scorpio suests a depth o emotional understanding and transformative potential. You can gain wisdom and luck through exploring the hidden realms of life, delving deep into matters of shared resources, or investigating the mysteries of existence. 258"
+      "body": "Jupiter in Scorpio grows through depth, trust, intimacy, shared resources, and the courage to face what is hidden. Opportunity opens through emotional honesty and transformation."
     },
     {
       "sign": "sagittarius",
-      "body": "As Jupiter rules Sagittarius, here it expresses its most expansive and adventurous tendencies. Your horizon is broadened through travel, higher learning, or philosophical exploration. You may nd yourself drawn to uests for truth and meaning, and the universe oen rewards your optimism and wanderlust."
+      "body": "Jupiter in Sagittarius grows through travel, study, faith, teaching, and the search for truth. Opportunity opens when the person follows meaning and lets experience become wisdom."
     },
     {
       "sign": "capricorn",
-      "body": "With Jupiter in Capricorn, it rewards patience, discipline, and ambition. You can nd success through hard work, good organization, and the pursuit o long - term goals. Your leadership skills and business acumen are enhanced, oen leading to professional growth."
+      "body": "Jupiter in Capricorn grows through discipline, structure, responsibility, and long-range ambition. Opportunity opens when optimism is paired with patience and a real plan."
     },
     {
       "sign": "aquarius",
-      "body": "With Jupiter in Aquarius, you're blessed with visionary insight and a knack for innovative thinking. You might excel in teamwork and community - based projects, and your interests in humanitarian or technological elds could bring unexpected opportunities."
+      "body": "Jupiter in Aquarius grows through community, innovation, friendship, systems thinking, and future-oriented ideals. Opportunity opens when individual vision serves a wider field."
     },
     {
       "sign": "pisces",
-      "body": "Finally, Jupiter in Pisces heightens your empathy, intuition, and spiritual inclinations. You may nd luck and expansion through artistic pursuits, acts o compassion, or spiritual exploration. Your understanding of the interconnectedness of all beings may serve as a source of wisdom and inspiration."
+      "body": "Jupiter in Pisces grows through compassion, imagination, spiritual openness, art, and trust in what cannot be measured. Opportunity opens through empathy and inspired surrender with boundaries."
     }
   ],
   "source": {
-    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
-    "pages": [
-      258,
-      259
-    ]
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
   },
   "voiceNeutral": true,
   "status": "DRAFT"
