@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "venus",
   "house": "12",
-  "plainTranslation": "Someone's Venus in the other's House 12: brings love and values into the private, hidden, and unconscious.",
+  "plainTranslation": "Their Venus in your 12th house can feel tender, secret, or hard to place. Love may live in the imagination before it becomes a clear agreement. Keep the affection honest and visible enough that it does not turn into longing for something unnamed.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

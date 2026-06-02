@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "saturn",
   "house": "12",
-  "plainTranslation": "Someone's Saturn in the other's House 12: brings structure into the private, hidden, and unconscious.",
+  "plainTranslation": "Their Saturn in your 12th house can press on hidden fears, loneliness, guilt, or old survival patterns. They may become a serious mirror for what you avoid. Move carefully; responsibility is useful only when it does not become invisible burden.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }
