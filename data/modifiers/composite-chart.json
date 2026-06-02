@@ -16,7 +16,7 @@
     "Weight hard Saturn, Uranus, Neptune, and Pluto contacts carefully because they can describe real strain, instability, fog, or power dynamics.",
     "For relationship summaries, prefer concrete language: purpose, daily emotional climate, communication, affection, conflict, commitment, and repair."
   ],
-  "note": "Expanded from approved project composite and relationship source material. Source files were not copied into the repository.",
+  "note": "Expanded from approved project composite, relationship, and marquee source material. Source files were not copied into the repository.",
   "classes": {
     "readingOrder": [
       "Read each natal chart first to understand the people in the relationship.",
@@ -81,32 +81,32 @@
     "interpretations": {
       "planetsInHouses": {
         "sun": {
-          "1": "Your identity as a couple lives right out front; people see the two of you as a unit. The sense of 'us' is strong here. Decide together what that 'us' actually stands for.",
-          "2": "Security and what you build together matter most here. Money and shared values are part of the bond, not separate from it. Keep your priorities lined up.",
-          "3": "You connect through talking - ideas, daily back-and-forth, the running conversation. That exchange is the glue. Keep it going.",
-          "4": "Home and your private life are the core of this. You're building a foundation together. Protect the home base; it's where the relationship actually lives.",
-          "5": "Fun, romance, and creativity light the two of you up; you play well together, often around a project or kids. Enjoy it fully - and build the longevity elsewhere.",
-          "6": "You bond through doing - shared work, daily routine, the useful stuff. It's grounded and real. Just don't let it quietly become all chores.",
-          "7": "The partnership itself is the point here; you're built to be a couple. Balance and fairness matter. Watch the open conflict - it shows up in plain sight.",
-          "8": "Intimacy and intensity run deep; you transform each other. It's a powerful bond. Work with the shared resources and the power between you with care.",
-          "9": "Growth, beliefs, and a bit of adventure drive this; you expand each other's world. Travel, learn, keep reaching. Keep meaning at the center.",
-          "10": "Public role and shared goals define you; you're seen as a unit out in the world. Ambition bonds you. Mind the work-life balance.",
-          "11": "Friendship and shared hopes are the base here - you're allies first. Community matters to this. Build toward the things you both want.",
-          "12": "This runs private, behind the scenes; you retreat into each other. The bond is real but quiet, not built for display. Watch for secrecy or isolation creeping in."
+          "1": "Composite Sun in the 1st: the relationship is its own strong, visible, self-defined entity. Gift: a clear, confident identity as a couple. Watch: so focused on itself it turns insular.",
+          "2": "Composite Sun in the 2nd: centers on building security, resources, and shared values. Gift: it makes something tangible and stable. Watch: money and possessions standing in for emotional connection.",
+          "3": "Composite Sun in the 3rd: lives through communication, learning, and daily exchange. Gift: you genuinely talk and think together. Watch: staying mental and busy, light on depth.",
+          "4": "Composite Sun in the 4th: about home, family, and a private emotional base. Gift: deep roots and belonging. Watch: turning so inward it withdraws from the world.",
+          "5": "Composite Sun in the 5th: about romance, creativity, play, and joy. Gift: it stays fun, expressive, and alive. Watch: trouble shifting from playmate to life-partner mode.",
+          "6": "Composite Sun in the 6th: runs on shared work, routine, health, and being useful to each other. Gift: a functional, supportive daily life. Watch: it becomes a to-do list and loses romance.",
+          "7": "Composite Sun in the 7th: centrally about partnership - being a committed couple is the point. Gift: a strong sense of 'we'. Watch: losing individual identity inside the union.",
+          "8": "Composite Sun in the 8th: about intimacy, depth, shared resources, and transformation. Gift: it changes you both at the core. Watch: power struggles and intensity that overwhelms.",
+          "9": "Composite Sun in the 9th: about growth, adventure, study, and expanding horizons. Gift: you make each other bigger. Watch: drifting if the shared adventure stalls.",
+          "10": "Composite Sun in the 10th: a public-facing relationship - visible, ambitious, seen as a couple. Gift: shared purpose and standing. Watch: image and achievement crowding out private warmth.",
+          "11": "Composite Sun in the 11th: friendship-based, social, and future-facing. Gift: genuine companionship and shared goals. Watch: feeling more like friends than lovers.",
+          "12": "Composite Sun in the 12th: a private, hidden, or spiritual core - much of it lives behind closed doors. Gift: a soulful, intimate undertone. Watch: secrecy, escapism, or a bond that hides from daylight."
         },
         "moon": {
-          "1": "Feelings show openly here; you're emotionally attuned, and the couple feels things as a pair. Honor the moods instead of managing them away.",
-          "2": "Emotional security ties to stability and resources; you need a safe base to feel okay. Build it. Comfort and money carry real feeling here.",
-          "3": "You bond through emotional talk - feelings get voiced, daily. Keep communicating. Going quiet is what hurts this one.",
-          "4": "Home is the emotional heart of you two; you nurture each other there. It's a strong domestic bond. Protect the private life.",
-          "5": "Feelings come out through play and romance; you enjoy each other emotionally, often around kids or creativity. Keep it warm.",
-          "6": "Emotions tie to daily care here; you show love by tending to each other. Watch the over-worrying. Don't fuss when you mean to feel.",
-          "7": "Feelings center on the partnership itself; you need each other, emotionally and openly. Balance the giving with the getting.",
-          "8": "The emotional intimacy here is deep and intense; you merge feelings. It's powerful, sometimes possessive. Build the trust slowly.",
-          "9": "Feelings expand through shared beliefs and horizons; you grow emotionally together. Travel and meaning feed you both.",
-          "10": "Emotions tie to public life and goals; you support each other's standing. Keep the private warmth alive alongside it.",
-          "11": "You bond as emotional friends; the comfort comes partly through community. Stay close, and stay social.",
-          "12": "A quiet, private emotional bond; you feel each other under the surface. Watch for the buried feelings. Bring them up before they calcify."
+          "1": "Composite Moon in the 1st: the relationship wears its feelings openly - emotion shapes its whole identity. Gift: warmth and emotional honesty. Watch: moods running the relationship.",
+          "2": "Composite Moon in the 2nd: emotional security comes through stability, money, and comfort. Gift: a grounded, safe feeling. Watch: leaning on material security to feel loved.",
+          "3": "Composite Moon in the 3rd: feels close through talking and daily contact. Gift: emotional communication. Watch: needing constant contact to feel secure.",
+          "4": "Composite Moon in the 4th: the emotional heart is home and family - its most natural placement. Gift: deep belonging and nurturing. Watch: over-attachment and withdrawing into the nest.",
+          "5": "Composite Moon in the 5th: emotions flow through romance, play, and creativity. Gift: affectionate, fun, expressive. Watch: emotional drama and needing constant romance.",
+          "6": "Composite Moon in the 6th: you feel close through caretaking and daily routines. Gift: nurturing through small acts. Watch: worry, fussing, and love that turns into chores.",
+          "7": "Composite Moon in the 7th: emotional security comes from the partnership itself. Gift: feeling met and paired. Watch: emotional dependency on the relationship for stability.",
+          "8": "Composite Moon in the 8th: emotions run deep, intimate, and intense. Gift: deep, almost bottomless emotional bonding. Watch: jealousy, possessiveness, and emotional power plays.",
+          "9": "Composite Moon in the 9th: feels good when it's growing, exploring, or learning together. Gift: optimism and shared adventure. Watch: restlessness and needing constant novelty.",
+          "10": "Composite Moon in the 10th: emotions are tied to the relationship's public life and direction. Gift: a shared sense of purpose. Watch: feelings managed for appearances; private warmth neglected.",
+          "11": "Composite Moon in the 11th: emotional closeness comes through friendship and shared hopes. Gift: easy companionship. Watch: feeling like friends more than intimate partners.",
+          "12": "Composite Moon in the 12th: the emotional life is private, deep, and partly unconscious. Gift: a soulful, intuitive bond. Watch: hidden feelings, secrets, and emotional escapism."
         },
         "mercury": {
           "1": "Communication defines you; you talk constantly, and people know you for the rapport. Keep it open.",
@@ -123,32 +123,32 @@
           "12": "Private, often unspoken communication; you sense each other. Watch for what's left unsaid. Voice it."
         },
         "venus": {
-          "1": "Love is central and visible here; you're openly affectionate, and the couple radiates warmth. Keep showing it.",
-          "2": "Pleasure ties to security and money; you enjoy building together. Shared comfort is part of the bond.",
-          "3": "Affection flows through talk; you charm each other. Keep the sweet words coming.",
-          "4": "Love centers on home; you make a cozy nest together. Domestic warmth bonds you.",
-          "5": "Romance, fun, and creativity; you delight each other. It's a strong romantic and playful bond. Enjoy it.",
-          "6": "Love shows up through daily care; you serve each other in small acts. Don't lose the romance to the routine.",
-          "7": "Love centers on the partnership itself; you're built for affection and balance. The relationship focus is strong.",
-          "8": "Deep, intense, sometimes possessive love; you merge intimately. The attraction is powerful. Build the trust.",
-          "9": "Love expands through shared adventure; you enjoy growing together. Travel and beliefs feed the romance.",
-          "10": "Affection ties to your public image; you're admired as a couple. Keep the private warmth alive too.",
-          "11": "Love grows out of friendship; you're affectionate allies first. Social warmth bonds you.",
-          "12": "Private, hidden affection; the love runs quietly deep. Watch for the feelings you don't express."
+          "1": "Composite Venus in the 1st: the relationship radiates warmth and attraction - it looks and feels loving. Gift: charm and easy affection. Watch: prioritizing how it looks over how it works.",
+          "2": "Composite Venus in the 2nd: love is expressed through comfort, gifts, security, and shared pleasures. Gift: a stable, sensual bond. Watch: love measured in money and things.",
+          "3": "Composite Venus in the 3rd: affection flows through words, wit, and everyday sweetness. Gift: loving communication. Watch: charm that stays light and avoids deeper feeling.",
+          "4": "Composite Venus in the 4th: love centers on home - a warm, beautiful, comforting private life. Gift: domestic harmony. Watch: coziness that avoids the hard conversations.",
+          "5": "Composite Venus in the 5th: love is romantic, playful, and creative - one of the warmest placements. Gift: lasting romance and fun. Watch: needing the honeymoon feeling to last forever.",
+          "6": "Composite Venus in the 6th: affection shows up through care, service, and daily kindness. Gift: love in the small acts. Watch: love reduced to usefulness.",
+          "7": "Composite Venus in the 7th: love and partnership beautifully aligned - a natural couple. Gift: harmony and genuine partnership. Watch: avoiding conflict to preserve the harmony.",
+          "8": "Composite Venus in the 8th: love is deep and intense - bonded through vulnerability, sometimes money or sex. Gift: deep, intimate closeness. Watch: possessiveness and jealousy.",
+          "9": "Composite Venus in the 9th: love grows through adventure, learning, and shared beliefs. Gift: an expansive, exciting bond. Watch: love cooling when the adventure pauses.",
+          "10": "Composite Venus in the 10th: affection is visible and often tied to status or public life. Gift: a couple others admire. Watch: image standing in for intimacy.",
+          "11": "Composite Venus in the 11th: love is friendly, easygoing, and socially connected. Gift: genuine liking and companionship. Watch: more friendship than passion.",
+          "12": "Composite Venus in the 12th: love is tender, private, and easy to idealize - sometimes secret. Gift: a soulful, compassionate bond. Watch: loving the fantasy, or hiding the love."
         },
         "mars": {
-          "1": "Energy and drive are visible here; you're an active, assertive couple. Watch the open friction. Aim the energy somewhere.",
-          "2": "You push or clash over money and values; the drive is toward security. Channel it - don't fight over the resources.",
-          "3": "Mental and verbal energy runs high; you debate hard. Keep the arguments productive.",
-          "4": "Energy centers on home; you build, or you fight, on the domestic front. Don't turn the house into a battleground.",
-          "5": "Drive shows up in play, romance, sex - passionate and competitive. Keep it fun, not combative.",
-          "6": "Energy pours into work and routine; you hustle together. Watch the irritation over chores.",
-          "7": "Conflict and drive center on the partnership; passionate, but argumentative. Fight fair.",
-          "8": "Intense sexual and transformative energy; the power runs hot. Watch the control and the jealousy.",
-          "9": "Drive expands through beliefs and travel; you pursue goals together. Keep the adventure aligned.",
-          "10": "Ambition drives the public role; you push toward status together. Mind the competitiveness between you.",
-          "11": "Energy goes into shared goals and groups; you act as allies. Keep the drive collaborative.",
-          "12": "Hidden or suppressed energy; anger can go underground here. Bring the conflict into the open."
+          "1": "Composite Mars in the 1st: the relationship is energetic, assertive, and forceful - it acts boldly. Gift: drive and presence. Watch: aggression and conflict spilling into its identity.",
+          "2": "Composite Mars in the 2nd: energy goes into building security and earning. Gift: you work hard for what you want. Watch: fights about money and possessions.",
+          "3": "Composite Mars in the 3rd: the drive shows up in communication - lively, direct, sometimes combative. Gift: passionate exchange. Watch: arguments and sharp words.",
+          "4": "Composite Mars in the 4th: energy and friction center on home and family. Gift: you build and defend your domestic life fiercely. Watch: tension and conflict in the private space.",
+          "5": "Composite Mars in the 5th: drive goes into romance, sex, and creative play. Gift: strong physical chemistry and fun. Watch: competitiveness and drama in the romance.",
+          "6": "Composite Mars in the 6th: energy goes into work, routines, and getting things done. Gift: a productive, capable team. Watch: bickering over chores and daily friction.",
+          "7": "Composite Mars in the 7th: the drive is aimed at the partnership - passionate, and prone to open conflict. Gift: you fight for the relationship. Watch: the relationship as a battleground.",
+          "8": "Composite Mars in the 8th: powerful sexual and emotional intensity - deep drive, deep heat. Gift: passion and transformative energy. Watch: power struggles and jealousy.",
+          "9": "Composite Mars in the 9th: energy goes into adventure, growth, and shared causes. Gift: you pursue big things together. Watch: clashing beliefs and restless conflict.",
+          "10": "Composite Mars in the 10th: drive aimed at ambition, status, and public goals. Gift: a couple that achieves. Watch: competition between you, or fighting in public view.",
+          "11": "Composite Mars in the 11th: energy goes into shared goals, friends, and causes. Gift: you mobilize toward the future together. Watch: friction within the wider social circle.",
+          "12": "Composite Mars in the 12th: the drive runs hidden - passion and anger both work below the surface. Gift: quiet, private intensity. Watch: passive conflict and buried resentment."
         },
         "jupiter": {
           "1": "Optimism and confidence are visible; you expand each other, and the couple feels lucky. Don't overpromise.",
@@ -246,7 +246,7 @@
           "conjunction": "Optimism and warmth expand between you; you draw out each other's confidence. It's a generous, good-feeling bond. Just keep your promises a little smaller than your hopes.",
           "sextile": "Growth is on the table whenever you say yes to it. Doors open for the two of you together. Walk through; they don't stay open forever.",
           "trine": "Luck and generosity come easily here, and you feel bigger as a pair. It's a warm, steady base. Stay awake in it - ease can slide into excess.",
-          "square": "You inflate each other's hopes, and the promises start outrunning reality. Let the optimism stay - just hand it a plan. Check the actual numbers.",
+          "square": "You inflate each other's hopes, and the promises start outrunning reality. Let the optimism stay - just give it a plan. Check the actual numbers.",
           "opposition": "One of you reaches too far, one pulls back, and you tug between excess and caution. Neither of you is wrong. Find the middle before you overcommit."
         },
         "sun_saturn": {
@@ -526,6 +526,50 @@
           "square": "Illusion meets control, and confusion mixes with power. Get clear. Set down the manipulation.",
           "opposition": "One dissolves, one controls, and the pull is subtle. Stay honest. Share the power."
         }
+      },
+      "planetsInSigns": {
+        "sun": {
+          "aries": "Composite Sun in Aries: the relationship runs on action, independence, and heat - energized by starting and doing things together. Gift: drive and aliveness. Watch: impatience, competition, and burning hot then cold.",
+          "taurus": "Composite Sun in Taurus: built on stability, sensuality, and steady comfort. Gift: durability and ease. Watch: stubbornness and getting stuck in a rut neither will break.",
+          "gemini": "Composite Sun in Gemini: lives on conversation, curiosity, and mental spark. Gift: never boring, always something to say. Watch: staying in the head, restlessness, skating the surface.",
+          "cancer": "Composite Sun in Cancer: about emotional closeness, nurturing, and building a home. Gift: deep care and belonging. Watch: moodiness, clinging, and retreating into the shell when hurt.",
+          "leo": "Composite Sun in Leo: warm, expressive, and proud - it wants to be a couple that shines. Gift: generosity, romance, fun. Watch: ego clashes and a need for attention that competes with intimacy.",
+          "virgo": "Composite Sun in Virgo: practical, devoted, and improvement-minded - you care for each other through the details. Gift: usefulness and reliability. Watch: criticism, fussing, and love expressed only as fixing.",
+          "libra": "Composite Sun in Libra: about partnership itself - balance, fairness, harmony, beauty. Gift: a true sense of 'we'. Watch: conflict-avoidance and keeping the peace at the cost of honesty.",
+          "scorpio": "Composite Sun in Scorpio: intense, private, and transformative - all-or-nothing depth. Gift: deep bonding and fierce loyalty. Watch: jealousy, power struggles, and control.",
+          "sagittarius": "Composite Sun in Sagittarius: about freedom, adventure, growth, and honesty. Gift: expansion and fun. Watch: restlessness, over-promising, and dodging commitment.",
+          "capricorn": "Composite Sun in Capricorn: serious, committed, and goal-oriented - built for the long haul. Gift: durability and shared ambition. Watch: coldness, all-work-no-play, and duty over warmth.",
+          "aquarius": "Composite Sun in Aquarius: independent, unconventional, and friendship-based. Gift: freedom and acceptance. Watch: detachment and avoiding emotional depth.",
+          "pisces": "Composite Sun in Pisces: romantic, compassionate, and spiritually attuned - soft boundaries between you. Gift: tenderness and imagination. Watch: idealization, escapism, and losing the line between you."
+        },
+        "moon": {
+          "aries": "Composite Moon in Aries: emotions run hot and fast - quick to feel, quick to react. Gift: passion and honesty about feelings. Watch: flared tempers and impatience with softer needs.",
+          "taurus": "Composite Moon in Taurus: emotionally steady, sensual, and security-seeking. Gift: calm, reliable comfort. Watch: emotional stubbornness and resistance to change.",
+          "gemini": "Composite Moon in Gemini: feelings get processed through talking and thinking. Gift: you discuss emotions openly. Watch: rationalizing feelings instead of feeling them.",
+          "cancer": "Composite Moon in Cancer: deeply nurturing and home-centered, with strong emotions. Gift: deep care and a real sense of safety. Watch: moodiness and over-protectiveness.",
+          "leo": "Composite Moon in Leo: emotions are warm, generous, and expressive - the relationship needs to feel special. Gift: affection and romance. Watch: drama and needing constant reassurance.",
+          "virgo": "Composite Moon in Virgo: feelings show up as care, helpfulness, and attention to needs. Gift: practical devotion. Watch: anxiety and picking at small things instead of naming the feeling.",
+          "libra": "Composite Moon in Libra: the relationship needs harmony and fairness to feel okay. Gift: emotional balance and consideration. Watch: burying conflict to keep the peace.",
+          "scorpio": "Composite Moon in Scorpio: emotions run deep, intense, and private - strong bonding, strong undercurrents. Gift: fierce intimacy and loyalty. Watch: jealousy, secrecy, and emotional control.",
+          "sagittarius": "Composite Moon in Sagittarius: emotionally easygoing, optimistic, and freedom-loving. Gift: lightness and room to breathe. Watch: dodging deep feeling and needing too much space.",
+          "capricorn": "Composite Moon in Capricorn: emotions are contained and serious, shown through commitment more than words. Gift: dependable steadiness. Watch: coldness and difficulty being tender.",
+          "aquarius": "Composite Moon in Aquarius: emotionally independent, friendly, and a bit detached. Gift: acceptance and space. Watch: avoiding emotional closeness.",
+          "pisces": "Composite Moon in Pisces: emotionally merged, empathic, and dreamy. Gift: deep compassion and attunement. Watch: blurred boundaries, moodiness, and escapism."
+        }
+      },
+      "ascendantSigns": {
+        "aries": "Composite Ascendant in Aries: comes across as bold, energetic, and direct - people feel its charge. Gift: a dynamic, alive presence. Watch: reading as combative or impulsive.",
+        "taurus": "Composite Ascendant in Taurus: reads as stable, warm, and grounded. Gift: a reassuring, solid presence. Watch: seeming stuck or resistant to change.",
+        "gemini": "Composite Ascendant in Gemini: comes across as lively, talkative, and curious. Gift: a fun, engaging vibe. Watch: reading as flighty or surface-level.",
+        "cancer": "Composite Ascendant in Cancer: feels nurturing, protective, and home-centered. Gift: a caring, safe presence. Watch: seeming closed-off or moody to outsiders.",
+        "leo": "Composite Ascendant in Leo: presents as warm, confident, and a little theatrical - a couple that's noticed. Gift: magnetic and generous. Watch: reading as showy or attention-seeking.",
+        "virgo": "Composite Ascendant in Virgo: comes across as modest, capable, and considerate. Gift: a helpful, grounded vibe. Watch: seeming reserved or overly careful.",
+        "libra": "Composite Ascendant in Libra: reads as gracious, balanced, and attractive - a classic lovely couple. Gift: charm and ease. Watch: seeming conflict-averse or image-focused.",
+        "scorpio": "Composite Ascendant in Scorpio: gives off intensity, magnetism, and mystery. Gift: a compelling, powerful presence. Watch: reading as guarded or intimidating.",
+        "sagittarius": "Composite Ascendant in Sagittarius: feels open, adventurous, and fun-loving. Gift: an easygoing, expansive vibe. Watch: seeming flaky or commitment-shy.",
+        "capricorn": "Composite Ascendant in Capricorn: reads as serious, mature, and put-together. Gift: a respectable, solid presence. Watch: seeming cold or all-business.",
+        "aquarius": "Composite Ascendant in Aquarius: comes across as unique, independent, and a bit unconventional. Gift: an open, original vibe. Watch: reading as detached or hard to pin down.",
+        "pisces": "Composite Ascendant in Pisces: feels soft, dreamy, and compassionate. Gift: a gentle, romantic presence. Watch: seeming vague, boundary-less, or hard to read."
       }
     },
     "aspectLogic": {
@@ -584,6 +628,16 @@
         "Do not let chemistry override safety, consent, repair, or lived behavior.",
         "When the composite shows intensity, explain the pressure and return agency to the user."
       ]
+    },
+    "marqueePlacements": {
+      "scope": "Composite Sun and Moon by sign and house; Composite Venus and Mars by house; Composite Ascendant by sign.",
+      "policy": "Use after natal capacity and synastry. Composite placement text describes the relationship field, not a verdict about whether the relationship should continue.",
+      "status": "DRAFT",
+      "counts": {
+        "signs": 24,
+        "houses": 48,
+        "ascendantSigns": 12
+      }
     }
   },
   "weighting": [
