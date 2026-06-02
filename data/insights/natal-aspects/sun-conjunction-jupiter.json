@@ -1,0 +1,48 @@
+{
+  "id": "sun-conjunction-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive Or Excessive",
+  "summary": "Your identity wants room. Growth, belief, appetite, and confidence are part of how you meet life.",
+  "body": "Sun conjunction Jupiter describes a generous, future-facing sense of self. You may be drawn toward big meaning, wide experience, learning, travel, teaching, or leadership. Confidence can come naturally when you believe in the direction, and people may experience you as encouraging or larger than the immediate situation. The shadow is overpromising, assuming things will work out, or mistaking size for truth. The gift is growth with heart. The work is giving your optimism enough discipline to become real.",
+  "gift": "Confidence, generosity, vision, faith, and the ability to help people see a wider possibility.",
+  "shadow": "Excess, entitlement, overreach, and skipping details because the larger story feels exciting.",
+  "integration": "Let hope become practice. Your best opportunities grow when enthusiasm is paired with follow-through.",
+  "do": [
+    "Choose the bigger path and define the next step",
+    "Share encouragement responsibly",
+    "Check details before expanding"
+  ],
+  "dont": [
+    "Promise from excitement alone",
+    "Confuse confidence with accuracy",
+    "Use optimism to avoid repair"
+  ],
+  "lifeAreas": [
+    "identity",
+    "growth",
+    "work"
+  ],
+  "tags": [
+    "confidence",
+    "optimism",
+    "belief",
+    "leadership",
+    "expansion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

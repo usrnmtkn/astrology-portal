@@ -1,0 +1,48 @@
+{
+  "id": "sun-square-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Proven Or Pressured",
+  "summary": "You may feel that confidence has to be earned. The result can be discipline, but also a private fear of not measuring up.",
+  "body": "Sun square Saturn describes a person who learns identity through pressure, standards, and time. You may grow up feeling watched, corrected, or compared against a bar that keeps moving. This can make you serious about your work and careful with your authority, but it can also turn self-expression into a test you are always preparing for. The gift is earned confidence. The growth is letting effort support your life instead of making worth depend on constant proof.",
+  "gift": "Discipline, accountability, long-range focus, and the ability to build something durable from patient effort.",
+  "shadow": "Fear of failure, harsh self-judgment, delayed confidence, and treating rest as something you have to deserve.",
+  "integration": "Let responsibility become a path to self-respect, not a verdict on your value. You are allowed to grow into authority without carrying every old standard forward.",
+  "do": [
+    "Set standards that are clear and humane",
+    "Track evidence of growth",
+    "Let small wins count"
+  ],
+  "dont": [
+    "Make perfection the price of visibility",
+    "Confuse caution with wisdom every time",
+    "Treat joy as a distraction from becoming serious"
+  ],
+  "lifeAreas": [
+    "identity",
+    "work",
+    "growth"
+  ],
+  "tags": [
+    "discipline",
+    "authority",
+    "confidence",
+    "pressure",
+    "self-respect"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
