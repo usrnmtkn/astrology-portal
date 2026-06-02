@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-capricorn",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "capricorn",
+  "oppositeSign": "cancer",
+  "title": "New Moon in Capricorn",
+  "tldr": "A seed point for structure, ambition, responsibility, boundaries, time, and the legacy built through real effort.",
+  "theme": "Capricorn is a cardinal earth sign ruled traditionally by Saturn. This New Moon begins work around structure, ambition, responsibility, boundaries, time, and the legacy built through real effort.",
+  "shadow": "achievement at the cost of humanity, measuring worth only by output, or choosing success over softness",
+  "integration": "building something durable without abandoning the life it is meant to support",
+  "twoWeekArc": {
+    "from": "New Moon in Capricorn",
+    "to": "Full Moon in Cancer",
+    "teaching": "This arc reveals where success was chosen over softness.",
+    "appPrompt": "Begin with Capricorn; watch what the Cancer Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Capricorn",
+    "to": "Full Moon in Capricorn",
+    "teaching": "Foundation to legacy",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Saturn kamea, black tourmaline, salt, elm, oil lantern or candle, and water.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Capricorn. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through structure, ambition, responsibility, boundaries, time, and the legacy built through real effort, without repeating the shadow of achievement at the cost of humanity, measuring worth only by output, or choosing success over softness?",
+  "tarotPrompt": "What first action will help this Capricorn intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Capricorn's structure, ambition, responsibility, boundaries, time, and the legacy built through real effort."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

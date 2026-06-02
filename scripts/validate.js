@@ -122,6 +122,13 @@ const entryShapes = {
     types: { id: "string", kind: "string", risingSign: "string", ruler: "string", modernCoRuler: "string", modernLens: "string", house: "number", tldr: "string", meaning: "string", business: "string", shadow: "string", advice: "string", readNext: "string" },
     enums: { kind: ["chart-ruler-rising", "chart-ruler-house"] }
   },
+  lunation: {
+    schemaFile: "lunation.schema.json",
+    required: ["id", "kind", "phase", "sign", "title", "tldr", "theme", "twoWeekArc", "sixMonthArc", "ritual", "journalPrompt", "risingSignIntention", "policy", "voiceNeutral", "status"],
+    optional: ["oppositeSign", "shadow", "integration", "tarotPrompt", "sourceNote"],
+    types: { id: "string", kind: "string", phase: "string", sign: "string", oppositeSign: "string", title: "string", tldr: "string", theme: "string", shadow: "string", integration: "string", twoWeekArc: "object", sixMonthArc: "object", ritual: "object", journalPrompt: "string", tarotPrompt: "string", risingSignIntention: "object", policy: "string", sourceNote: "string" },
+    enums: { kind: ["new-moon", "full-moon"], phase: ["new", "full"] }
+  },
   content: {
     schemaFile: "content.schema.json",
     required: ["id", "kind", "title", "sections", "voiceNeutral", "status"],
@@ -411,6 +418,9 @@ function validateAll() {
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "chart-rulers"))) {
     validateEntryFile(filePath, "chartRuler", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "lunations"))) {
+    validateEntryFile(filePath, "lunation", errors);
   }
   for (const dir of ["guides", "frameworks", "templates", "correspondences", "synastry"]) {
     for (const filePath of listJsonFiles(path.join(dataRoot, dir))) {

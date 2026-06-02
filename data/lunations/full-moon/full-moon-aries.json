@@ -1,0 +1,111 @@
+{
+  "id": "full-moon-aries",
+  "kind": "full-moon",
+  "phase": "full",
+  "sign": "aries",
+  "oppositeSign": "libra",
+  "title": "Full Moon in Aries",
+  "tldr": "A culmination and release point for the Aries / Libra axis.",
+  "theme": "This Full Moon illuminates courage, direct action, self-trust, and clean beginnings through the Aries side of the axis, while the Sun in Libra asks for integration rather than extremes.",
+  "shadow": "bulldozing without checking direction, reacting before listening, or confusing urgency with truth",
+  "integration": "commanding your life without making every room a battlefield",
+  "twoWeekArc": {
+    "from": "New Moon in Libra",
+    "to": "Full Moon in Aries",
+    "teaching": "This arc reveals where compromise crossed into self-betrayal.",
+    "appPrompt": "Name what the last two weeks revealed. Release the pattern that blocks the Aries / Libra balance point."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Aries",
+    "to": "Full Moon in Aries",
+    "teaching": "Courage to command",
+    "appPrompt": "Look back to the same-sign New Moon. What took root because you tended it, and what grew because the soil was left untended?"
+  },
+  "ritual": {
+    "function": "illumination, release, cleansing, integration, and completion",
+    "timing": "Use after the exact Full Moon when possible. Keep eclipse lunations under the separate witness protocol, not ordinary release ritual.",
+    "materials": "Mars kamea, red or orange candle, bloodstone or garnet, basil, water, incense, and a simple symbol of courage.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what is complete, what is ready to be released, and how the higher expression of Aries can be embodied without rejecting Libra."
+  },
+  "journalPrompt": "What am I ready to release from the shadow of Aries, and what balance with Libra is asking to be lived now?",
+  "tarotPrompt": "What truth is this Aries Full Moon revealing that I can no longer avoid?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Release the stale pattern in self, body, identity, and how you meet life and integrate the Aries / Libra axis with more honesty."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Release the stale pattern in rest, release, solitude, hidden patterns, and spiritual repair and integrate the Aries / Libra axis with more honesty."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Release the stale pattern in friendship, community, networks, hopes, and future vision and integrate the Aries / Libra axis with more honesty."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Release the stale pattern in career, visibility, authority, and public contribution and integrate the Aries / Libra axis with more honesty."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Release the stale pattern in belief, travel, study, publishing, and wider meaning and integrate the Aries / Libra axis with more honesty."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Release the stale pattern in shared resources, intimacy, trust, grief, and transformation and integrate the Aries / Libra axis with more honesty."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Release the stale pattern in partnerships, clients, commitments, and mirrors and integrate the Aries / Libra axis with more honesty."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Release the stale pattern in daily rhythm, work, health, service, and maintenance and integrate the Aries / Libra axis with more honesty."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Release the stale pattern in creativity, joy, romance, pleasure, and children and integrate the Aries / Libra axis with more honesty."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Release the stale pattern in home, roots, family, and emotional foundations and integrate the Aries / Libra axis with more honesty."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Release the stale pattern in communication, learning, siblings, and daily movement and integrate the Aries / Libra axis with more honesty."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Release the stale pattern in money, values, resources, and self-worth and integrate the Aries / Libra axis with more honesty."
+    }
+  },
+  "policy": "Full Moon ritual guidance is optional app content. Do not frame release work as coercive, guaranteed, or appropriate for eclipse ritual.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

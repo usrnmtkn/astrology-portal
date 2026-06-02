@@ -1,0 +1,111 @@
+{
+  "id": "full-moon-scorpio",
+  "kind": "full-moon",
+  "phase": "full",
+  "sign": "scorpio",
+  "oppositeSign": "taurus",
+  "title": "Full Moon in Scorpio",
+  "tldr": "A culmination and release point for the Scorpio / Taurus axis.",
+  "theme": "This Full Moon illuminates depth, trust, release, intimacy, shared resources, and honest transformation through the Scorpio side of the axis, while the Sun in Taurus asks for integration rather than extremes.",
+  "shadow": "control disguised as strength, testing people instead of telling the truth, or holding on until it hurts",
+  "integration": "letting what is expired complete so real intimacy has room",
+  "twoWeekArc": {
+    "from": "New Moon in Taurus",
+    "to": "Full Moon in Scorpio",
+    "teaching": "This arc exposes where accepting less has been disguised as patience.",
+    "appPrompt": "Name what the last two weeks revealed. Release the pattern that blocks the Scorpio / Taurus balance point."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Scorpio",
+    "to": "Full Moon in Scorpio",
+    "teaching": "Release to renewal",
+    "appPrompt": "Look back to the same-sign New Moon. What took root because you tended it, and what grew because the soil was left untended?"
+  },
+  "ritual": {
+    "function": "illumination, release, cleansing, integration, and completion",
+    "timing": "Use after the exact Full Moon when possible. Keep eclipse lunations under the separate witness protocol, not ordinary release ritual.",
+    "materials": "Mars kamea, red candle, bloodstone or garnet, basil, water, incense, and a symbol of release.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what is complete, what is ready to be released, and how the higher expression of Scorpio can be embodied without rejecting Taurus."
+  },
+  "journalPrompt": "What am I ready to release from the shadow of Scorpio, and what balance with Taurus is asking to be lived now?",
+  "tarotPrompt": "What truth is this Scorpio Full Moon revealing that I can no longer avoid?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Release the stale pattern in shared resources, intimacy, trust, grief, and transformation and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Release the stale pattern in partnerships, clients, commitments, and mirrors and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Release the stale pattern in daily rhythm, work, health, service, and maintenance and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Release the stale pattern in creativity, joy, romance, pleasure, and children and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Release the stale pattern in home, roots, family, and emotional foundations and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Release the stale pattern in communication, learning, siblings, and daily movement and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Release the stale pattern in money, values, resources, and self-worth and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Release the stale pattern in self, body, identity, and how you meet life and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Release the stale pattern in rest, release, solitude, hidden patterns, and spiritual repair and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Release the stale pattern in friendship, community, networks, hopes, and future vision and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Release the stale pattern in career, visibility, authority, and public contribution and integrate the Scorpio / Taurus axis with more honesty."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Release the stale pattern in belief, travel, study, publishing, and wider meaning and integrate the Scorpio / Taurus axis with more honesty."
+    }
+  },
+  "policy": "Full Moon ritual guidance is optional app content. Do not frame release work as coercive, guaranteed, or appropriate for eclipse ritual.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

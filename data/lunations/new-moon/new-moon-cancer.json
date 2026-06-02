@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-cancer",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "cancer",
+  "oppositeSign": "capricorn",
+  "title": "New Moon in Cancer",
+  "tldr": "A seed point for protection, emotional honesty, home, belonging, and the private life that supports the public one.",
+  "theme": "Cancer is a cardinal water sign ruled traditionally by Moon. This New Moon begins work around protection, emotional honesty, home, belonging, and the private life that supports the public one.",
+  "shadow": "caretaking as avoidance of your own needs, or protecting yourself until connection cannot reach you",
+  "integration": "creating safety that does not become isolation",
+  "twoWeekArc": {
+    "from": "New Moon in Cancer",
+    "to": "Full Moon in Capricorn",
+    "teaching": "This arc shows where protection became a wall instead of a home.",
+    "appPrompt": "Begin with Cancer; watch what the Capricorn Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Cancer",
+    "to": "Full Moon in Cancer",
+    "teaching": "Protection to belonging",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Luna kamea, silver or white candle, lavender, water, and incense.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Cancer. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through protection, emotional honesty, home, belonging, and the private life that supports the public one, without repeating the shadow of caretaking as avoidance of your own needs, or protecting yourself until connection cannot reach you?",
+  "tarotPrompt": "What first action will help this Cancer intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Cancer's protection, emotional honesty, home, belonging, and the private life that supports the public one."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
