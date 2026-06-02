@@ -1,0 +1,47 @@
+{
+  "id": "uranus-conjunction-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Original And Intense",
+  "summary": "Freedom and disruption merge power and transformation. This concentrated pattern asks you to use originality and depth with awareness.",
+  "body": "Freedom and disruption merge power and transformation. This concentrated pattern asks you to use originality and depth with awareness. Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through freedom and disruption, power and transformation, and the choices you make when instability or control starts running the room.",
+  "gift": "The gift is originality, depth, and a more conscious way to work with freedom and disruption and power and transformation.",
+  "shadow": "The shadow is instability, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let freedom and disruption and power and transformation cooperate without making either one carry the whole story. Transformative, disruptive, generational themes.",
+  "do": [
+    "Name how freedom and disruption and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn originality and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let instability make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of freedom and disruption or power and transformation"
+  ],
+  "lifeAreas": [
+    "friends",
+    "growth",
+    "power"
+  ],
+  "tags": [
+    "uranus",
+    "pluto",
+    "conjunction",
+    "originality",
+    "depth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "conjunction",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "sun-opposition-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible Across Driven",
+  "summary": "Identity mirror drive and anger. This polarized pattern asks you to use confidence and courage with awareness.",
+  "body": "Identity mirror drive and anger. This polarized pattern asks you to use confidence and courage with awareness. Rejected aggression gets projected outward or erupts as a short fuse, often with defiance of authority. The energy has to be learned and channeled rather than cut off. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through identity, drive and anger, and the choices you make when ego defense or reactivity starts running the room.",
+  "gift": "The gift is confidence, courage, and a more conscious way to work with identity and drive and anger.",
+  "shadow": "The shadow is ego defense, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and drive and anger cooperate without making either one carry the whole story. Initiative and drive; the cost is friction with authority and a tendency to force things.",
+  "do": [
+    "Name how identity and drive and anger are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn confidence and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of identity or drive and anger"
+  ],
+  "lifeAreas": [
+    "identity",
+    "work",
+    "power"
+  ],
+  "tags": [
+    "sun",
+    "mars",
+    "opposition",
+    "confidence",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "opposition",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

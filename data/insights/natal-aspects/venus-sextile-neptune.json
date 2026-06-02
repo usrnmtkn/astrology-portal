@@ -1,0 +1,47 @@
+{
+  "id": "venus-sextile-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic With Inspired",
+  "summary": "Love and values support imagination and longing. This cooperative pattern asks you to use relational grace and compassion with awareness.",
+  "body": "Love and values support imagination and longing. This cooperative pattern asks you to use relational grace and compassion with awareness. Refined aesthetic and tender, imaginative affection. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through love and values, imagination and longing, and the choices you make when approval seeking or confusion starts running the room.",
+  "gift": "The gift is relational grace, compassion, and a more conscious way to work with love and values and imagination and longing.",
+  "shadow": "The shadow is approval seeking, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and imagination and longing cooperate without making either one carry the whole story. Real artistic gifts; guard against unrealistic expectations of people and outcomes.",
+  "do": [
+    "Name how love and values and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn relational grace and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of love and values or imagination and longing"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "neptune",
+    "sextile",
+    "relational-grace",
+    "compassion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "sextile",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

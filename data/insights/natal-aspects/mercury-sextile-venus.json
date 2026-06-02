@@ -1,0 +1,48 @@
+{
+  "id": "mercury-sextile-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive With Magnetic",
+  "summary": "Thinking and speech support love and values. This cooperative pattern asks you to use clear thinking and relational grace with awareness.",
+  "body": "Thinking and speech support love and values. This cooperative pattern asks you to use clear thinking and relational grace with awareness. Smooth, pleasant, persuasive communication. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through thinking and speech, love and values, and the choices you make when mental noise or approval seeking starts running the room.",
+  "gift": "The gift is clear thinking, relational grace, and a more conscious way to work with thinking and speech and love and values.",
+  "shadow": "The shadow is mental noise, approval seeking, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and love and values cooperate without making either one carry the whole story. Diplomacy, the arts, and any work where pleasant, persuasive expression matters.",
+  "do": [
+    "Name how thinking and speech and love and values are both involved",
+    "Use the easy opening deliberately",
+    "Turn clear thinking and relational grace into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of thinking and speech or love and values"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "love"
+  ],
+  "tags": [
+    "mercury",
+    "venus",
+    "sextile",
+    "clear-thinking",
+    "relational-grace"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "love-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

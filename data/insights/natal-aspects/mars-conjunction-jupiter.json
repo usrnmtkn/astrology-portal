@@ -1,0 +1,47 @@
+{
+  "id": "mars-conjunction-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven And Expansive",
+  "summary": "Drive and anger merge growth and belief. This concentrated pattern asks you to use courage and optimism with awareness.",
+  "body": "Drive and anger merge growth and belief. This concentrated pattern asks you to use courage and optimism with awareness. Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through drive and anger, growth and belief, and the choices you make when reactivity or overreach starts running the room.",
+  "gift": "The gift is courage, optimism, and a more conscious way to work with drive and anger and growth and belief.",
+  "shadow": "The shadow is reactivity, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and growth and belief cooperate without making either one carry the whole story. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "do": [
+    "Name how drive and anger and growth and belief are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of drive and anger or growth and belief"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "jupiter",
+    "conjunction",
+    "courage",
+    "optimism"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "conjunction",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

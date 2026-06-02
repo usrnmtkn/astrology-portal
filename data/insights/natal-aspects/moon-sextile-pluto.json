@@ -1,0 +1,48 @@
+{
+  "id": "moon-sextile-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive With Intense",
+  "summary": "Emotional needs support power and transformation. This cooperative pattern asks you to use emotional intelligence and depth with awareness.",
+  "body": "Emotional needs support power and transformation. This cooperative pattern asks you to use emotional intelligence and depth with awareness. Emotional depth and resilience that can be drawn on deliberately. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through emotional needs, power and transformation, and the choices you make when mood-driven reaction or control starts running the room.",
+  "gift": "The gift is emotional intelligence, depth, and a more conscious way to work with emotional needs and power and transformation.",
+  "shadow": "The shadow is mood-driven reaction, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and power and transformation cooperate without making either one carry the whole story. Emotional intensity: depth is an asset, volatility a liability.",
+  "do": [
+    "Name how emotional needs and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or power and transformation"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "power"
+  ],
+  "tags": [
+    "moon",
+    "pluto",
+    "sextile",
+    "emotional-intelligence",
+    "depth"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "sextile",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

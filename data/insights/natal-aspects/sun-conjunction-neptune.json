@@ -1,0 +1,47 @@
+{
+  "id": "sun-conjunction-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible And Inspired",
+  "summary": "Identity merge imagination and longing. This concentrated pattern asks you to use confidence and compassion with awareness.",
+  "body": "Identity merge imagination and longing. This concentrated pattern asks you to use confidence and compassion with awareness. Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through identity, imagination and longing, and the choices you make when ego defense or confusion starts running the room.",
+  "gift": "The gift is confidence, compassion, and a more conscious way to work with identity and imagination and longing.",
+  "shadow": "The shadow is ego defense, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and imagination and longing cooperate without making either one carry the whole story. Creative or service-oriented directions; guard against self-deception and being played.",
+  "do": [
+    "Name how identity and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn confidence and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of identity or imagination and longing"
+  ],
+  "lifeAreas": [
+    "identity",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "sun",
+    "neptune",
+    "conjunction",
+    "confidence",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "moon-trine-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Through Steady",
+  "summary": "Emotional needs flow with discipline and limits. This fluid pattern asks you to use emotional intelligence and maturity with awareness.",
+  "body": "Emotional needs flow with discipline and limits. This fluid pattern asks you to use emotional intelligence and maturity with awareness. Emotional steadiness and staying power. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through emotional needs, discipline and limits, and the choices you make when mood-driven reaction or fear starts running the room.",
+  "gift": "The gift is emotional intelligence, maturity, and a more conscious way to work with emotional needs and discipline and limits.",
+  "shadow": "The shadow is mood-driven reaction, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and discipline and limits cooperate without making either one carry the whole story. Dependable under pressure; the risk is grinding joylessly.",
+  "do": [
+    "Name how emotional needs and discipline and limits are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or discipline and limits"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "work"
+  ],
+  "tags": [
+    "moon",
+    "saturn",
+    "trine",
+    "emotional-intelligence",
+    "maturity"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

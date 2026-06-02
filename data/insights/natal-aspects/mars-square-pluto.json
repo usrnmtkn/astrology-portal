@@ -1,0 +1,47 @@
+{
+  "id": "mars-square-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Or Intense",
+  "summary": "Drive and anger press against power and transformation. This frictional pattern asks you to use courage and depth with awareness.",
+  "body": "Drive and anger press against power and transformation. This frictional pattern asks you to use courage and depth with awareness. Volcanic temper and a tendency to destroy work before it's finished. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through drive and anger, power and transformation, and the choices you make when reactivity or control starts running the room.",
+  "gift": "The gift is courage, depth, and a more conscious way to work with drive and anger and power and transformation.",
+  "shadow": "The shadow is reactivity, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and power and transformation cooperate without making either one carry the whole story. Formidable drive; temper and overkill are the dangers.",
+  "do": [
+    "Name how drive and anger and power and transformation are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn courage and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of drive and anger or power and transformation"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "pluto",
+    "square",
+    "courage",
+    "depth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "square",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

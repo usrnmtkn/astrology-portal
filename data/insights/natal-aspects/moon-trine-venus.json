@@ -1,0 +1,48 @@
+{
+  "id": "moon-trine-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Through Magnetic",
+  "summary": "Emotional needs flow with love and values. This fluid pattern asks you to use emotional intelligence and relational grace with awareness.",
+  "body": "Emotional needs flow with love and values. This fluid pattern asks you to use emotional intelligence and relational grace with awareness. Naturally charming and emotionally generous. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through emotional needs, love and values, and the choices you make when mood-driven reaction or approval seeking starts running the room.",
+  "gift": "The gift is emotional intelligence, relational grace, and a more conscious way to work with emotional needs and love and values.",
+  "shadow": "The shadow is mood-driven reaction, approval seeking, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and love and values cooperate without making either one carry the whole story. Likable and warm; watch indulgence and shaky money instincts.",
+  "do": [
+    "Name how emotional needs and love and values are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and relational grace into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or love and values"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "love"
+  ],
+  "tags": [
+    "moon",
+    "venus",
+    "trine",
+    "emotional-intelligence",
+    "relational-grace"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "love-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

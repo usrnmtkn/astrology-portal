@@ -1,0 +1,48 @@
+{
+  "id": "saturn-opposition-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Steady Across Inspired",
+  "summary": "Discipline and limits mirror imagination and longing. This polarized pattern asks you to use maturity and compassion with awareness.",
+  "body": "Discipline and limits mirror imagination and longing. This polarized pattern asks you to use maturity and compassion with awareness. Expecting the worst, anxiety, and worry that mostly never materializes. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through discipline and limits, imagination and longing, and the choices you make when fear or confusion starts running the room.",
+  "gift": "The gift is maturity, compassion, and a more conscious way to work with discipline and limits and imagination and longing.",
+  "shadow": "The shadow is fear, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let discipline and limits and imagination and longing cooperate without making either one carry the whole story. Disciplined vision realized over time; the task is managing fear.",
+  "do": [
+    "Name how discipline and limits and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn maturity and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let fear make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of discipline and limits or imagination and longing"
+  ],
+  "lifeAreas": [
+    "work",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "saturn",
+    "neptune",
+    "opposition",
+    "maturity",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "opposition",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

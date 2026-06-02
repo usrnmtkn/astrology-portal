@@ -1,0 +1,47 @@
+{
+  "id": "mercury-trine-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive Through Inspired",
+  "summary": "Thinking and speech flow with imagination and longing. This fluid pattern asks you to use clear thinking and compassion with awareness.",
+  "body": "Thinking and speech flow with imagination and longing. This fluid pattern asks you to use clear thinking and compassion with awareness. Inspired ideation and a feel for the unspoken. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through thinking and speech, imagination and longing, and the choices you make when mental noise or confusion starts running the room.",
+  "gift": "The gift is clear thinking, compassion, and a more conscious way to work with thinking and speech and imagination and longing.",
+  "shadow": "The shadow is mental noise, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and imagination and longing cooperate without making either one carry the whole story. Creative ideation; verify the details before acting on them.",
+  "do": [
+    "Name how thinking and speech and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn clear thinking and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of thinking and speech or imagination and longing"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "spirituality"
+  ],
+  "tags": [
+    "mercury",
+    "neptune",
+    "trine",
+    "clear-thinking",
+    "compassion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "trine",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
