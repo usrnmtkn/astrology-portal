@@ -4205,6 +4205,8 @@ blockquote {
   --surface-soft-app: rgba(255, 255, 255, 0.68);
   --ink-app: #1a1a1a;
   --muted-app: #8c8c89;
+  --wheel-glyph: #000000;
+  --sky-row-glyph-size: 19px;
   --line-app: rgba(20, 20, 20, 0.08);
   --line-strong-app: rgba(20, 20, 20, 0.14);
   --radius-app: 20px;
@@ -4225,6 +4227,7 @@ blockquote {
   --surface-soft-app: rgba(26, 26, 26, 0.62);
   --ink-app: #ececec;
   --muted-app: #8e8e8b;
+  --wheel-glyph: #ffffff;
   --line-app: rgba(255, 255, 255, 0.08);
   --line-strong-app: rgba(255, 255, 255, 0.15);
   background:
@@ -6708,10 +6711,10 @@ html,
 }
 
 .sky-pl-glyph {
-  color: var(--wheel-glyph, var(--muted-app));
+  color: var(--wheel-glyph, #000000);
   flex: 0 0 24px;
   font-family: var(--font-symbol);
-  font-size: 19px;
+  font-size: var(--sky-row-glyph-size, 19px);
   line-height: 1;
   padding-top: 1px;
   text-align: center;
@@ -10504,6 +10507,196 @@ html,
 .app-shell .aspect-list p {
   font-size: var(--type-copy) !important;
   line-height: 1.45 !important;
+}
+
+/* Shared compact aspect rows for Sky and You. */
+.app-shell .aspect-section {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.app-shell .aspect-section-label {
+  margin: 0;
+}
+
+.app-shell .aspect-row-card {
+  margin-top: 0;
+  max-width: none;
+  overflow: hidden;
+  padding: 0;
+}
+
+.app-shell .aspect-row-card .aspects-heading {
+  border-bottom: 1px solid var(--line-app);
+  padding: 26px 34px 24px;
+}
+
+.app-shell .aspect-row-card .aspects-heading span {
+  color: var(--muted-app);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.app-shell .aspect-row-list {
+  background: color-mix(in srgb, var(--surface-app) 94%, transparent);
+  display: block;
+}
+
+.app-shell .aspect-row {
+  align-items: start;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line-app);
+  color: var(--ink-app);
+  display: grid;
+  gap: clamp(18px, 2.3vw, 28px);
+  grid-template-columns: clamp(82px, 8vw, 112px) minmax(0, 1fr) minmax(42px, auto);
+  min-height: 0;
+  padding: clamp(24px, 3vw, 34px) clamp(26px, 4vw, 40px);
+  text-align: left;
+  width: 100%;
+}
+
+.app-shell .aspect-row:first-child {
+  border-top: 0;
+}
+
+.app-shell .aspect-row-button {
+  cursor: pointer;
+  font: inherit;
+  transition: background 160ms ease;
+}
+
+.app-shell .aspect-row-button:hover {
+  background: color-mix(in srgb, var(--surface-app) 78%, var(--ink-app) 4%);
+}
+
+.app-shell .aspect-row-button:focus-visible {
+  background: color-mix(in srgb, var(--surface-app) 76%, #5b82d8 8%);
+  outline: 3px solid color-mix(in srgb, #5b82d8 58%, transparent);
+  outline-offset: -3px;
+}
+
+.app-shell .aspect-row-glyphs {
+  align-items: center;
+  color: var(--wheel-glyph, #000000);
+  display: flex;
+  font-family: var(--font-symbol);
+  font-size: var(--sky-row-glyph-size, 19px);
+  gap: 12px;
+  letter-spacing: 0;
+  line-height: 1;
+  min-width: 0;
+  padding-top: 3px;
+  white-space: nowrap;
+}
+
+.app-shell .aspect-row-glyphs span {
+  display: inline-block;
+  min-width: 0.72em;
+  text-align: center;
+}
+
+.app-shell .aspect-row-copy {
+  display: block;
+  min-width: 0;
+}
+
+.app-shell .aspect-row-copy h3 {
+  color: var(--ink-app);
+  font-family: var(--font-ui);
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.16;
+  margin: 0;
+}
+
+.app-shell .aspect-row-copy p {
+  color: var(--muted-app);
+  font-family: var(--font-detail);
+  font-size: clamp(17px, 1.65vw, 20px);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.45;
+  margin: 8px 0 0;
+}
+
+.app-shell .aspect-row-meta {
+  align-items: end;
+  color: var(--muted-app);
+  display: inline-flex;
+  flex-direction: column;
+  font-family: var(--font-detail);
+  font-size: clamp(17px, 1.7vw, 20px);
+  font-weight: 500;
+  gap: 8px;
+  justify-self: end;
+  letter-spacing: 0;
+  line-height: 1.15;
+  min-width: 38px;
+  padding-top: 5px;
+  white-space: nowrap;
+}
+
+.app-shell .aspect-row-dot {
+  background: currentColor;
+  border-radius: 999px;
+  display: inline-block;
+  height: 9px;
+  opacity: 0.86;
+  width: 9px;
+}
+
+.app-shell.theme-dark .aspect-row-button:hover {
+  background: color-mix(in srgb, var(--surface-app) 78%, #ffffff 6%);
+}
+
+@media (max-width: 760px) {
+  .app-shell .aspect-row-card .aspects-heading {
+    padding: 22px 22px 18px;
+  }
+
+  .app-shell .aspect-row {
+    gap: 14px;
+    grid-template-columns: 72px minmax(0, 1fr) minmax(32px, auto);
+    padding: 22px 18px;
+  }
+
+  .app-shell .aspect-row-glyphs {
+    font-size: var(--sky-row-glyph-size, 19px);
+    gap: 8px;
+  }
+
+  .app-shell .aspect-row-copy h3 {
+    font-size: 18px;
+  }
+
+  .app-shell .aspect-row-copy p {
+    font-size: 16px;
+    line-height: 1.42;
+  }
+
+  .app-shell .aspect-row-meta {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell .aspect-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .app-shell .aspect-row-glyphs {
+    grid-column: 1 / -1;
+    padding-top: 0;
+  }
 }
 
 /* Create-chart and auth modals: compact, prototype-scale forms. */

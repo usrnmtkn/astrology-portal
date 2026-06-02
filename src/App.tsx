@@ -2228,6 +2228,40 @@ function aspectGlyph(type: string) {
   return glyphs[type] ?? "·";
 }
 
+function pointGlyph(point: string) {
+  const glyphs: Record<string, string> = {
+    Sun: "☉",
+    Moon: "☽",
+    Mercury: "☿",
+    Venus: "♀",
+    Mars: "♂",
+    Jupiter: "♃",
+    Saturn: "♄",
+    Uranus: "♅",
+    Neptune: "♆",
+    Pluto: "♇",
+    "True Node": "☊",
+    Ascendant: "↑",
+    Midheaven: "MC"
+  };
+
+  return glyphs[point] ?? point.slice(0, 1);
+}
+
+function wholeDegreeOrb(orb: number) {
+  return `${Math.round(orb)}°`;
+}
+
+function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: string }) {
+  return (
+    <span className="aspect-row-glyphs" aria-hidden="true">
+      <span>{pointGlyph(from)}</span>
+      <span>{aspectGlyph(aspect)}</span>
+      <span>{pointGlyph(to)}</span>
+    </span>
+  );
+}
+
 function formatDegree(degree: number) {
   return degree.toFixed(2);
 }
@@ -3030,41 +3064,20 @@ function aspectTone(type: string) {
 
 function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspects"]; onOpenDetail: (detail: SkyDetail) => void }) {
   return (
-    <section className="aspects-card" aria-label="Active aspects">
-      <div className="aspects-heading">
-        <span>Active aspects</span>
-      </div>
-      <div className="aspect-list">
-        {aspects.map((aspect) => {
-          const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
+    <section className="aspect-section" aria-label="Aspects">
+      <span className="eyebrow section-label aspect-section-label">Aspects</span>
+      <div className="aspects-card aspect-row-card">
+        <div className="aspect-row-list">
+          {aspects.map((aspect) => {
+            const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
 
-          return (
-          <article
-            key={`${aspect.from}-${aspect.to}`}
-            tabIndex={0}
-            role="button"
-            aria-label={`Read more about ${title}`}
-            onClick={() => onOpenDetail({
-              glyph: aspectGlyph(aspect.type),
-              kicker: "Today's aspect",
-              title,
-              meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
-              body: [
-                aspect.meaning,
-                <>
-                  <strong>{aspect.from}</strong> and <strong>{aspect.to}</strong> are in a {aspect.type} today. The smaller the orb, the more exact the contact feels.
-                </>,
-                aspectTone(aspect.type) === "Flow"
-                  ? "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day."
-                  : aspectTone(aspect.type) === "Friction"
-                    ? "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it."
-                    : "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore."
-              ]
-            })}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onOpenDetail({
+            return (
+              <button
+                type="button"
+                className="aspect-row aspect-row-button"
+                key={`${aspect.from}-${aspect.to}`}
+                aria-label={`Read more about ${title}`}
+                onClick={() => onOpenDetail({
                   glyph: aspectGlyph(aspect.type),
                   kicker: "Today's aspect",
                   title,
@@ -3080,20 +3093,21 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
                         ? "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it."
                         : "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore."
                   ]
-                });
-              }
-            }}
-          >
-            <div className="glyph aspect-symbol" aria-hidden="true">{aspectGlyph(aspect.type)}</div>
-            <div className="aspect-copy">
-              <span>{aspect.type}</span>
-              <strong>{aspect.from} {aspect.type} {aspect.to}</strong>
-              <p>{aspect.meaning}</p>
-            </div>
-            <div className="aspect-orb">{aspect.orb.toFixed(1)}°</div>
-          </article>
-        );
-        })}
+                })}
+              >
+                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                <div className="aspect-row-copy">
+                  <h3>{title}</h3>
+                  <p>{aspect.meaning}</p>
+                </div>
+                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                  <span className="aspect-row-dot" aria-hidden="true" />
+                  <span>{wholeDegreeOrb(aspect.orb)}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -4608,21 +4622,20 @@ function ProfileView({
           {natalAspectRows.length > 0 && (
             <>
               <span className="eyebrow section-label">Aspects in your chart</span>
-              <div className="list you-aspects-list natal-aspects-list" aria-label="Aspects in your chart">
+              <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects in your chart">
                 {natalAspectRows.map((aspect) => (
                   <div
-                    className="aspect aspect-static"
+                    className="aspect-row aspect-row-static"
                     key={`${aspect.from}-${aspect.type}-${aspect.to}`}
                   >
-                    <span className="ag" aria-hidden="true">
-                      {aspectGlyph(aspect.type)}
-                    </span>
-                    <span className="ab">
-                      <h4>{aspect.from} {aspect.type} {aspect.to}</h4>
+                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                    <span className="aspect-row-copy">
+                      <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
                       <p>{aspect.meaning}</p>
                     </span>
-                    <span className="am">
-                      <span className="orb">{aspect.orb.toFixed(1)}°</span>
+                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                      <span className="aspect-row-dot" aria-hidden="true" />
+                      <span>{wholeDegreeOrb(aspect.orb)}</span>
                     </span>
                   </div>
                 ))}
@@ -4644,23 +4657,22 @@ function ProfileView({
             </section>
           )}
           {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
-            <div className="list you-aspects-list" aria-label="Today’s aspects to your chart">
+            <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
               {aspectRows.map((transit) => (
                 <button
                   type="button"
-                  className="aspect"
+                  className="aspect-row aspect-row-button"
                   key={transit.id}
                   onClick={() => setSelectedTransitId(transit.id)}
                 >
-                  <span className="ag" aria-hidden="true">
-                    {transit.glyph}
-                  </span>
-                  <span className="ab">
-                    <h4>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h4>
+                  <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
+                  <span className="aspect-row-copy">
+                    <h3>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h3>
                     <p>{transit.note}</p>
                   </span>
-                  <span className="am">
-                    <span className="orb">{transit.orb}</span>
+                  <span className="aspect-row-meta" aria-label={`${transit.orb} orb`}>
+                    <span className="aspect-row-dot" aria-hidden="true" />
+                    <span>{transit.orb}</span>
                   </span>
                 </button>
               ))}
