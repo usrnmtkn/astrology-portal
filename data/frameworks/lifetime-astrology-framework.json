@@ -1,0 +1,49 @@
+{
+  "id": "lifetime-astrology-framework",
+  "kind": "framework",
+  "title": "Lifetime Astrology Framework",
+  "sections": [
+    {
+      "id": "definition",
+      "heading": "Definition",
+      "body": "Lifetime astrology is an optional developmental age-mapping lens. It maps a life arc onto the natal chart so chart positions correspond to broad life periods. Treat it as a standalone interpretive method, not as a universal rule and not as the same thing as transits, progressions, returns, or time-lord timing."
+    },
+    {
+      "id": "separate-from-transits",
+      "heading": "Separate From Transits",
+      "body": "Do not merge this framework into daily check-ins, transit-to-natal lookup, current-sky transit work, synastry, or composite readings. Transits read current sky against the natal chart. This framework reads a fixed developmental map through the natal chart. They are different engines and should stay separate."
+    },
+    {
+      "id": "core-idea",
+      "heading": "Core Idea",
+      "body": "The whole life arc, beginning before birth and continuing through later life, is mapped through the twelve houses on a compressed developmental scale. Early life receives more interpretive space, while later life compresses. The house gives the life period, the sign gives the quality of that period, and planets in the house describe catalytic people, pressures, or events associated with that age band."
+    },
+    {
+      "id": "method-rules",
+      "heading": "Method Rules",
+      "body": "Use this only as conceptual guidance unless the app has a properly implemented calculator for the method. The Ascendant marks birth and the birth environment. The sign in a house sets the tone for that developmental period. Planets in a house intensify and complicate the period. More planets in a house can indicate a more eventful or layered period. Planetary symbolism can describe people present around that time, but should not be treated as literal certainty."
+    },
+    {
+      "id": "octaves",
+      "heading": "Octaves",
+      "body": "The framework can be organized into four broad octaves: gestation, childhood, maturity, and a transpersonal later-life octave. Gestation describes prenatal and inherited conditions. Childhood describes early development, family, learning, play, and rules. Maturity describes adult partnership, work, building, and social role. The transpersonal octave describes later-life consciousness beyond purely personal milestones."
+    },
+    {
+      "id": "illustrative-anchors",
+      "heading": "Illustrative Anchors",
+      "body": "Illustrative anchors may be used only to explain the principle, not as a full timing table. Example: an early-life sign quality may be read around infancy, while a house associated with work, routine, learning, and bodily maintenance may describe adolescence into early adulthood. Do not publish exact age tables from these notes."
+    },
+    {
+      "id": "calculator-warning",
+      "heading": "Calculator Warning",
+      "body": "Do not implement a lifetime-age calculator from this framework alone. The precise age-to-house formula, tables, and calculation rules belong to the underlying method and are not reproduced here. If the app ever supports this feature, it needs a separate implementation task with verified calculation rules."
+    },
+    {
+      "id": "app-policy",
+      "heading": "App Policy",
+      "body": "If surfaced, present this as an optional developmental reading, clearly separate from transits and current timing. Keep it non-deterministic: describe themes, developmental periods, and reflective questions. Do not claim one exact event must have happened at a given age, and do not use it for medical, legal, financial, or safety claims."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
