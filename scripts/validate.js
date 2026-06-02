@@ -129,6 +129,27 @@ const entryShapes = {
     types: { id: "string", kind: "string", phase: "string", sign: "string", oppositeSign: "string", title: "string", tldr: "string", theme: "string", shadow: "string", integration: "string", twoWeekArc: "object", sixMonthArc: "object", ritual: "object", journalPrompt: "string", tarotPrompt: "string", risingSignIntention: "object", policy: "string", sourceNote: "string" },
     enums: { kind: ["new-moon", "full-moon"], phase: ["new", "full"] }
   },
+  synastryAspect: {
+    schemaFile: "synastry-aspect.schema.json",
+    required: ["id", "kind", "planetA", "planetB", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
+    optional: ["note"],
+    types: { id: "string", kind: "string", planetA: "string", planetB: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string" },
+    enums: { kind: ["interaspect"] }
+  },
+  synastryPointContact: {
+    schemaFile: "synastry-point-contact.schema.json",
+    required: ["id", "kind", "contact", "plainTranslation", "policy", "voiceNeutral", "status"],
+    optional: ["note"],
+    types: { id: "string", kind: "string", contact: "string", plainTranslation: "string", policy: "string", note: "string" },
+    enums: { kind: ["point-contact"] }
+  },
+  synastryHouseOverlay: {
+    schemaFile: "synastry-house-overlay.schema.json",
+    required: ["id", "kind", "planet", "house", "plainTranslation", "policy", "voiceNeutral", "status"],
+    optional: ["note"],
+    types: { id: "string", kind: "string", planet: "string", house: "string", plainTranslation: "string", policy: "string", note: "string" },
+    enums: { kind: ["house-overlay"] }
+  },
   content: {
     schemaFile: "content.schema.json",
     required: ["id", "kind", "title", "sections", "voiceNeutral", "status"],
@@ -422,10 +443,22 @@ function validateAll() {
   for (const filePath of listJsonFiles(path.join(dataRoot, "lunations"))) {
     validateEntryFile(filePath, "lunation", errors);
   }
-  for (const dir of ["guides", "frameworks", "templates", "correspondences", "synastry"]) {
+  for (const filePath of listJsonFiles(path.join(dataRoot, "synastry", "aspects"))) {
+    validateEntryFile(filePath, "synastryAspect", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "synastry", "point-contacts"))) {
+    validateEntryFile(filePath, "synastryPointContact", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "synastry", "house-overlays"))) {
+    validateEntryFile(filePath, "synastryHouseOverlay", errors);
+  }
+  for (const dir of ["guides", "frameworks", "templates", "correspondences"]) {
     for (const filePath of listJsonFiles(path.join(dataRoot, dir))) {
       validateEntryFile(filePath, "content", errors);
     }
+  }
+  for (const filePath of listDirectJsonFiles(path.join(dataRoot, "synastry"))) {
+    validateEntryFile(filePath, "content", errors);
   }
 
   return errors;

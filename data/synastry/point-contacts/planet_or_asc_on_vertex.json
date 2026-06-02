@@ -1,0 +1,10 @@
+{
+  "id": "planet_or_asc_on_vertex",
+  "kind": "point-contact",
+  "contact": "vertex",
+  "plainTranslation": "Someone's planet or rising sign hitting your Vertex - a sensitive point tied to charged, out-of-nowhere meetings - makes the encounter feel unusually charged. Strong pull, fast. Common in romantic charts. Feels charged, which is a feeling, not a contract.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry feature notes. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
