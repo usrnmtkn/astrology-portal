@@ -2980,7 +2980,7 @@ function PlacementView({ positions, onOpenDetail }: { positions: PlanetPosition[
         <span>What is up there today, and what it actually means down here.</span>
       </div>
 
-      <div className="placement-toggle" role="tablist" aria-label="Placement view">
+      <div className="app-tabs placement-tabs" role="tablist" aria-label="Placement view">
         <button
           className={placementMode === "table" ? "active" : ""}
           onClick={() => setPlacementMode("table")}
@@ -4479,7 +4479,7 @@ function ProfileView({
         </div>
       </div>
 
-      <div className="seg subtabs you-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
+      <div className="app-tabs profile-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
         <button
           type="button"
           role="tab"
@@ -4496,7 +4496,7 @@ function ProfileView({
           className={profileTab === "chart" ? "on active" : ""}
           onClick={() => setProfileTab("chart")}
         >
-          Chart
+          Natal Chart
         </button>
       </div>
 

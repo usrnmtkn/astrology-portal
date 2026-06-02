@@ -2585,6 +2585,76 @@ button {
   max-width: 680px;
 }
 
+.app-tabs {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line-app, rgba(20, 20, 20, 0.12));
+  display: flex;
+  gap: 30px;
+  margin: 26px 0 28px;
+  min-height: 48px;
+  overflow-x: auto;
+  padding: 0;
+  scrollbar-width: none;
+}
+
+.app-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.app-tabs button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--muted-app, #6e7673);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.1;
+  min-height: 48px;
+  padding: 0 2px 14px;
+  position: relative;
+  text-align: left;
+}
+
+.app-tabs button::after {
+  background: transparent;
+  border-radius: 999px;
+  bottom: -1px;
+  content: "";
+  height: 3px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.app-tabs button:is(.active, .on, [aria-selected="true"]) {
+  color: var(--ink-app, #1a1a1a);
+}
+
+.app-tabs button:is(.active, .on, [aria-selected="true"])::after {
+  background: currentColor;
+}
+
+.app-tabs button:focus-visible {
+  outline: 3px solid color-mix(in srgb, #5b82d8 58%, transparent);
+  outline-offset: 3px;
+}
+
+.profile-tabs {
+  margin: 34px 0 36px;
+}
+
+.placement-tabs {
+  margin: 24px 0 22px;
+}
+
+.theme-dark .app-tabs {
+  border-bottom-color: color-mix(in srgb, var(--line-app) 72%, transparent);
+}
+
 .placement-toggle {
   border: 2px solid #1a1613;
   border-radius: 999px;
@@ -10072,7 +10142,7 @@ html,
   font-variant-numeric: normal;
 }
 
-.app-shell :is(.brand-wordmark, .brand-text, .nav-link, .nav-item, .top-nav, .theme-toggle, .menu-toggle, .menu-popover, .menu-popover button, .popover-menu, .popover-menu button, .primary-cta, .secondary-cta, .auth-button, .join-button, .login-button, .tab-toggle button, .segmented button, .you-tabs button, .screen-title, .page-title, .today-hero h1, .account-page h1, .settings-page h1) {
+.app-shell :is(.brand-wordmark, .brand-text, .nav-link, .nav-item, .top-nav, .theme-toggle, .menu-toggle, .menu-popover, .menu-popover button, .popover-menu, .popover-menu button, .primary-cta, .secondary-cta, .auth-button, .join-button, .login-button, .tab-toggle button, .segmented button, .app-tabs button, .screen-title, .page-title, .today-hero h1, .account-page h1, .settings-page h1) {
   font-family: var(--font-ui) !important;
 }
 
@@ -10294,15 +10364,4 @@ html,
   .app-shell.mode-profile .profile-layout .you-empty-state p {
     font-size: 14px !important;
   }
-}
-
-/* Keep the active You section segment visibly selected after profile overrides. */
-.app-shell.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs button:is(.on, .active, [aria-selected="true"]) {
-  background: #1a1c1b !important;
-  color: #ffffff !important;
-}
-
-.app-shell.theme-dark.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs button:is(.on, .active, [aria-selected="true"]) {
-  background: #f1eee8 !important;
-  color: #111312 !important;
 }
