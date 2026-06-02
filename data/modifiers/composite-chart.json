@@ -16,7 +16,7 @@
     "Weight hard Saturn, Uranus, Neptune, and Pluto contacts carefully because they can describe real strain, instability, fog, or power dynamics.",
     "For relationship summaries, prefer concrete language: purpose, daily emotional climate, communication, affection, conflict, commitment, and repair."
   ],
-  "note": "Merged with approved project composite-chart knowledge JSON v2. Source files were not copied into the repository.",
+  "note": "Expanded from approved project composite and relationship source material. Source files were not copied into the repository.",
   "classes": {
     "readingOrder": [
       "Read each natal chart first to understand the people in the relationship.",
@@ -561,7 +561,30 @@
       "houseEntries": 120,
       "version": "v2"
     },
-    "voiceStyle": "Warm, second-person, embodied. Names the felt quality, then lands a clear prescriptive cue. Plain English, no mystical filler."
+    "voiceStyle": "Warm, second-person, embodied. Names the felt quality, then lands a clear prescriptive cue. Plain English, no mystical filler.",
+    "expandedReadingPrompts": {
+      "priorityOrder": [
+        "Start with Composite Sun, Moon, Ascendant, Venus, Mars, and Saturn before reading outer-planet drama.",
+        "Name the relationship climate first: purpose, daily emotional tone, communication, affection, conflict, commitment, and repair.",
+        "Treat hard outer-planet contacts as pressure signatures, not proof that the relationship is special or permanent.",
+        "Read the composite chart after natal capacity and synastry so the shared pattern does not erase the two actual people."
+      ],
+      "coreQuestions": {
+        "sun": "What is this relationship organized around, and does that purpose still fit both people?",
+        "moon": "What does the relationship feel like on an ordinary day, not only during high emotion?",
+        "venus": "How does affection move here, and does it stay warm when the relationship is under stress?",
+        "mars": "Where does conflict go, and can the pair act without turning on each other?",
+        "saturn": "What is the relationship asking both people to carry, and is the weight chosen or imposed?",
+        "neptune": "Where is compassion real, and where is the pair protecting a fantasy from facts?",
+        "pluto": "Where does intensity transform, and where does it start to control?"
+      },
+      "compositeCautions": [
+        "Do not treat a heavy composite as proof of obligation.",
+        "Do not treat an easy composite as proof of maturity.",
+        "Do not let chemistry override safety, consent, repair, or lived behavior.",
+        "When the composite shows intensity, explain the pressure and return agency to the user."
+      ]
+    }
   },
   "weighting": [
     "Composite Sun, Moon, Ascendant, Venus, Mars, and Saturn carry the first layer of relationship meaning.",

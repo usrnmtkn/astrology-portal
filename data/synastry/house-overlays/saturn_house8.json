@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "saturn",
   "house": "8",
-  "plainTranslation": "Someone's Saturn in the other's House 8: brings structure into intimacy, shared resources, and transformation.",
+  "plainTranslation": "Their Saturn in your 8th house tests trust, shared resources, intimacy, and vulnerability. This can build a durable container for depth over time. It can also freeze openness if fear, debt, or control goes unnamed.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }
