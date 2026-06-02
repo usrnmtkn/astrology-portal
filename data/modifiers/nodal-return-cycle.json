@@ -1,0 +1,78 @@
+{
+  "id": "nodal-return-cycle",
+  "schema": "modifier/nodal-return-cycle",
+  "appliesTo": [
+    "lunar-nodes",
+    "north-node",
+    "south-node",
+    "life-cycle",
+    "eclipse",
+    "timing"
+  ],
+  "summary": "Nodal Return and Nodal Reversal are developmental checkpoints in the lunar node cycle, asking whether the person is moving toward growth or repeating the familiar pattern.",
+  "body": "Use Nodal Return and Nodal Reversal as node-axis timing context. The return reactivates the natal North/South Node storyline; the reversal brings the transiting North Node to the natal South Node and can make familiar patterns especially compelling. Read the natal node sign and house axis first, then check eclipses, progressions, return charts, and close planet or angle contacts.",
+  "definition": "The lunar nodes regress through the zodiac and return to the natal nodal axis about every 18.6 years. The reversal occurs around the halfway point of that cycle.",
+  "appUsage": [
+    "Use exact node position for timing; ages are approximate.",
+    "Read North Node and South Node together as one axis.",
+    "Weight up if an eclipse, angle, Sun, Moon, chart ruler, Venus, Mars, or Saturn is involved.",
+    "Do not describe nodal cycles as fixed outcomes."
+  ],
+  "note": "Distilled from project nodal cycle material. Source file was not copied into the repository.",
+  "classes": {
+    "cycleFacts": {
+      "regression": "The lunar nodes move backward through the zodiac at about 1.5 deg/year.",
+      "returnPeriod": "The North Node returns to its natal place every ~18.6 years, so returns land near ages 18-19, 37, 56, and 74-75.",
+      "metonic": "A related 19-year eclipse return (Metonic) repeats an eclipse on nearly the same day and degree."
+    },
+    "milestones": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "nodal_return",
+        "aspect": "conjunction",
+        "ages": [
+          "~18-19",
+          "~37",
+          "~56",
+          "~74-75"
+        ],
+        "phase": "return",
+        "plainTranslation": "The axis of your life direction re-activates: North Node (where you're growing toward) against South Node (where you've come from). A checkpoint on direction, often landing alongside the launch or redirection of a whole life chapter.",
+        "guidance": "Reassess whether you're moving toward growth or sliding back into the familiar."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "nodal_reversal",
+        "aspect": "opposition",
+        "ages": [
+          "~9",
+          "~28",
+          "~46",
+          "~65"
+        ],
+        "phase": "half",
+        "plainTranslation": "Nodal reversal: the transiting nodes sit opposite your natal axis (the transiting North Node on your natal South Node). The familiar past pulls hard. A halfway course-check.",
+        "guidance": "Notice the pull backward and choose your direction consciously."
+      }
+    ],
+    "relationshipToEclipses": {
+      "metonicCycle": "A related 19-year eclipse return (Metonic) repeats an eclipse on nearly the same day and degree.",
+      "rule": "Eclipse contacts are strongest when they fall near the natal nodal axis, angles, Sun, Moon, chart ruler, Venus, Mars, or Saturn and repeat another active timing theme."
+    }
+  },
+  "prohibitions": [
+    "Do not call nodal return a guaranteed turning point without supporting testimony.",
+    "Do not tell users a nodal contact proves a relationship must happen or continue.",
+    "Do not use nodal house readings without accurate birth time."
+  ],
+  "weighting": [
+    "Exact nodal return/reversal is stronger than age estimate.",
+    "Eclipse on natal node or angle increases relevance.",
+    "Repeated node contacts across synastry, progressions, returns, and transits increase relevance.",
+    "Nodes describe developmental pressure and timing, not fixed outcome."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
