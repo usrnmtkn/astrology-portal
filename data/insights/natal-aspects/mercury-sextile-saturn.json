@@ -1,0 +1,46 @@
+{
+  "id": "mercury-sextile-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive With Steady",
+  "summary": "Thinking and speech support discipline and limits. This cooperative pattern asks you to use clear thinking and maturity with awareness.",
+  "body": "Thinking and speech support discipline and limits. This cooperative pattern asks you to use clear thinking and maturity with awareness. Rigor, depth, and thoroughness. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through thinking and speech, discipline and limits, and the choices you make when mental noise or fear starts running the room.",
+  "gift": "The gift is clear thinking, maturity, and a more conscious way to work with thinking and speech and discipline and limits.",
+  "shadow": "The shadow is mental noise, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and discipline and limits cooperate without making either one carry the whole story. Thorough and exacting, with little patience for small talk.",
+  "do": [
+    "Name how thinking and speech and discipline and limits are both involved",
+    "Use the easy opening deliberately",
+    "Turn clear thinking and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of thinking and speech or discipline and limits"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work"
+  ],
+  "tags": [
+    "mercury",
+    "saturn",
+    "sextile",
+    "clear-thinking",
+    "maturity"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

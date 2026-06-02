@@ -1,0 +1,47 @@
+{
+  "id": "neptune-square-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Inspired Or Intense",
+  "summary": "Imagination and longing press against power and transformation. This frictional pattern asks you to use compassion and depth with awareness.",
+  "body": "Imagination and longing press against power and transformation. This frictional pattern asks you to use compassion and depth with awareness. Collective illusion fused with destructive power. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through imagination and longing, power and transformation, and the choices you make when confusion or control starts running the room.",
+  "gift": "The gift is compassion, depth, and a more conscious way to work with imagination and longing and power and transformation.",
+  "shadow": "The shadow is confusion, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let imagination and longing and power and transformation cooperate without making either one carry the whole story. Generational and collective; minimal personal day-to-day meaning.",
+  "do": [
+    "Name how imagination and longing and power and transformation are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn compassion and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let confusion make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of imagination and longing or power and transformation"
+  ],
+  "lifeAreas": [
+    "spirituality",
+    "creativity",
+    "power"
+  ],
+  "tags": [
+    "neptune",
+    "pluto",
+    "square",
+    "compassion",
+    "depth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "square",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

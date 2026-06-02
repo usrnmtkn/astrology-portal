@@ -1,0 +1,46 @@
+{
+  "id": "mercury-opposition-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive Across Steady",
+  "summary": "Thinking and speech mirror discipline and limits. This polarized pattern asks you to use clear thinking and maturity with awareness.",
+  "body": "Thinking and speech mirror discipline and limits. This polarized pattern asks you to use clear thinking and maturity with awareness. Brooding and mental heaviness; the remedy is keeping the mind on useful work. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through thinking and speech, discipline and limits, and the choices you make when mental noise or fear starts running the room.",
+  "gift": "The gift is clear thinking, maturity, and a more conscious way to work with thinking and speech and discipline and limits.",
+  "shadow": "The shadow is mental noise, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and discipline and limits cooperate without making either one carry the whole story. Thorough and exacting, with little patience for small talk.",
+  "do": [
+    "Name how thinking and speech and discipline and limits are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn clear thinking and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of thinking and speech or discipline and limits"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work"
+  ],
+  "tags": [
+    "mercury",
+    "saturn",
+    "opposition",
+    "clear-thinking",
+    "maturity"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "opposition",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

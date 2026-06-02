@@ -1,0 +1,48 @@
+{
+  "id": "sun-sextile-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible With Intense",
+  "summary": "Identity support power and transformation. This cooperative pattern asks you to use confidence and depth with awareness.",
+  "body": "Identity support power and transformation. This cooperative pattern asks you to use confidence and depth with awareness. Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through identity, power and transformation, and the choices you make when ego defense or control starts running the room.",
+  "gift": "The gift is confidence, depth, and a more conscious way to work with identity and power and transformation.",
+  "shadow": "The shadow is ego defense, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and power and transformation cooperate without making either one carry the whole story. Real influence; the intensity tends to polarize people.",
+  "do": [
+    "Name how identity and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn confidence and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of identity or power and transformation"
+  ],
+  "lifeAreas": [
+    "identity",
+    "power",
+    "growth"
+  ],
+  "tags": [
+    "sun",
+    "pluto",
+    "sextile",
+    "confidence",
+    "depth"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "sextile",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

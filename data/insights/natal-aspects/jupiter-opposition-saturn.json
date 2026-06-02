@@ -1,0 +1,47 @@
+{
+  "id": "jupiter-opposition-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive Across Steady",
+  "summary": "Growth and belief mirror discipline and limits. This polarized pattern asks you to use optimism and maturity with awareness.",
+  "body": "Growth and belief mirror discipline and limits. This polarized pattern asks you to use optimism and maturity with awareness. Lurching between extremes, from let-loose to grind, without a steady middle. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through growth and belief, discipline and limits, and the choices you make when overreach or fear starts running the room.",
+  "gift": "The gift is optimism, maturity, and a more conscious way to work with growth and belief and discipline and limits.",
+  "shadow": "The shadow is overreach, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and discipline and limits cooperate without making either one carry the whole story. Balancing risk against prudence; unmanaged, it reads as inconsistency.",
+  "do": [
+    "Name how growth and belief and discipline and limits are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn optimism and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of growth and belief or discipline and limits"
+  ],
+  "lifeAreas": [
+    "growth",
+    "work"
+  ],
+  "tags": [
+    "jupiter",
+    "saturn",
+    "opposition",
+    "optimism",
+    "maturity"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

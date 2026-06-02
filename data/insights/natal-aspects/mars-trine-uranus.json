@@ -1,0 +1,47 @@
+{
+  "id": "mars-trine-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Through Original",
+  "summary": "Drive and anger flow with freedom and disruption. This fluid pattern asks you to use courage and originality with awareness.",
+  "body": "Drive and anger flow with freedom and disruption. This fluid pattern asks you to use courage and originality with awareness. Quick, original action and inventive problem-solving. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through drive and anger, freedom and disruption, and the choices you make when reactivity or instability starts running the room.",
+  "gift": "The gift is courage, originality, and a more conscious way to work with drive and anger and freedom and disruption.",
+  "shadow": "The shadow is reactivity, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and freedom and disruption cooperate without making either one carry the whole story. Innovative and fast; the cost is recklessness and volatility.",
+  "do": [
+    "Name how drive and anger and freedom and disruption are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of drive and anger or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "uranus",
+    "trine",
+    "courage",
+    "originality"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "trine",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

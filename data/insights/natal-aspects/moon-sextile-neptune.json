@@ -1,0 +1,47 @@
+{
+  "id": "moon-sextile-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive With Inspired",
+  "summary": "Emotional needs support imagination and longing. This cooperative pattern asks you to use emotional intelligence and compassion with awareness.",
+  "body": "Emotional needs support imagination and longing. This cooperative pattern asks you to use emotional intelligence and compassion with awareness. Imaginative and receptive; help seems to arrive from others. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through emotional needs, imagination and longing, and the choices you make when mood-driven reaction or confusion starts running the room.",
+  "gift": "The gift is emotional intelligence, compassion, and a more conscious way to work with emotional needs and imagination and longing.",
+  "shadow": "The shadow is mood-driven reaction, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and imagination and longing cooperate without making either one carry the whole story. Strong for imaginative work; protect boundaries and energy.",
+  "do": [
+    "Name how emotional needs and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or imagination and longing"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "spirituality"
+  ],
+  "tags": [
+    "moon",
+    "neptune",
+    "sextile",
+    "emotional-intelligence",
+    "compassion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "sextile",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

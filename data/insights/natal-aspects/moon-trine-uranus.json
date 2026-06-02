@@ -1,0 +1,47 @@
+{
+  "id": "moon-trine-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Through Original",
+  "summary": "Emotional needs flow with freedom and disruption. This fluid pattern asks you to use emotional intelligence and originality with awareness.",
+  "body": "Emotional needs flow with freedom and disruption. This fluid pattern asks you to use emotional intelligence and originality with awareness. Emotional independence and a quick, inventive instinct; at ease with change. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through emotional needs, freedom and disruption, and the choices you make when mood-driven reaction or instability starts running the room.",
+  "gift": "The gift is emotional intelligence, originality, and a more conscious way to work with emotional needs and freedom and disruption.",
+  "shadow": "The shadow is mood-driven reaction, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and freedom and disruption cooperate without making either one carry the whole story. Good for inventive moves and breaking stale routines; poor for steady, predictable handling.",
+  "do": [
+    "Name how emotional needs and freedom and disruption are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "friends"
+  ],
+  "tags": [
+    "moon",
+    "uranus",
+    "trine",
+    "emotional-intelligence",
+    "originality"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

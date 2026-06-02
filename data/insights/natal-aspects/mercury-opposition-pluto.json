@@ -1,0 +1,47 @@
+{
+  "id": "mercury-opposition-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive Across Intense",
+  "summary": "Thinking and speech mirror power and transformation. This polarized pattern asks you to use clear thinking and depth with awareness.",
+  "body": "Thinking and speech mirror power and transformation. This polarized pattern asks you to use clear thinking and depth with awareness. Communication turns coercive or obsessive. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through thinking and speech, power and transformation, and the choices you make when mental noise or control starts running the room.",
+  "gift": "The gift is clear thinking, depth, and a more conscious way to work with thinking and speech and power and transformation.",
+  "shadow": "The shadow is mental noise, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and power and transformation cooperate without making either one carry the whole story. Sales, persuasion, research, and anything requiring depth and force of message.",
+  "do": [
+    "Name how thinking and speech and power and transformation are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn clear thinking and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of thinking and speech or power and transformation"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "power"
+  ],
+  "tags": [
+    "mercury",
+    "pluto",
+    "opposition",
+    "clear-thinking",
+    "depth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "opposition",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

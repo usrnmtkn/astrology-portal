@@ -1,0 +1,47 @@
+{
+  "id": "mars-conjunction-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven And Steady",
+  "summary": "Drive and anger merge discipline and limits. This concentrated pattern asks you to use courage and maturity with awareness.",
+  "body": "Drive and anger merge discipline and limits. This concentrated pattern asks you to use courage and maturity with awareness. Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through drive and anger, discipline and limits, and the choices you make when reactivity or fear starts running the room.",
+  "gift": "The gift is courage, maturity, and a more conscious way to work with drive and anger and discipline and limits.",
+  "shadow": "The shadow is reactivity, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and discipline and limits cooperate without making either one carry the whole story. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "do": [
+    "Name how drive and anger and discipline and limits are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of drive and anger or discipline and limits"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "saturn",
+    "conjunction",
+    "courage",
+    "maturity"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "conjunction",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

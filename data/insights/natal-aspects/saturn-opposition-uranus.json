@@ -1,0 +1,48 @@
+{
+  "id": "saturn-opposition-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Steady Across Original",
+  "summary": "Discipline and limits mirror freedom and disruption. This polarized pattern asks you to use maturity and originality with awareness.",
+  "body": "Discipline and limits mirror freedom and disruption. This polarized pattern asks you to use maturity and originality with awareness. Restlessness fights control; each demands attention and sabotages the other until both are satisfied at once. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through discipline and limits, freedom and disruption, and the choices you make when fear or instability starts running the room.",
+  "gift": "The gift is maturity, originality, and a more conscious way to work with discipline and limits and freedom and disruption.",
+  "shadow": "The shadow is fear, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let discipline and limits and freedom and disruption cooperate without making either one carry the whole story. Innovation inside structure works; an either-or stance stalls.",
+  "do": [
+    "Name how discipline and limits and freedom and disruption are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn maturity and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let fear make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of discipline and limits or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "work",
+    "friends",
+    "growth"
+  ],
+  "tags": [
+    "saturn",
+    "uranus",
+    "opposition",
+    "maturity",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "opposition",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

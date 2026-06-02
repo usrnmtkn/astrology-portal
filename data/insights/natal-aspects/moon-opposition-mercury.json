@@ -1,0 +1,48 @@
+{
+  "id": "moon-opposition-mercury",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Across Perceptive",
+  "summary": "Emotional needs mirror thinking and speech. This polarized pattern asks you to use emotional intelligence and clear thinking with awareness.",
+  "body": "Emotional needs mirror thinking and speech. This polarized pattern asks you to use emotional intelligence and clear thinking with awareness. Gut instinct argues with logic. Either feelings go unspoken or they get said unfiltered, without being thought through. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through emotional needs, thinking and speech, and the choices you make when mood-driven reaction or mental noise starts running the room.",
+  "gift": "The gift is emotional intelligence, clear thinking, and a more conscious way to work with emotional needs and thinking and speech.",
+  "shadow": "The shadow is mood-driven reaction, mental noise, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and thinking and speech cooperate without making either one carry the whole story. Communication colored by mood; powerful when feeling and reasoning are integrated.",
+  "do": [
+    "Name how emotional needs and thinking and speech are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn emotional intelligence and clear thinking into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of emotional needs or thinking and speech"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "communication"
+  ],
+  "tags": [
+    "moon",
+    "mercury",
+    "opposition",
+    "emotional-intelligence",
+    "clear-thinking"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "mercury"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

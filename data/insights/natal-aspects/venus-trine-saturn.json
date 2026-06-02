@@ -1,0 +1,48 @@
+{
+  "id": "venus-trine-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic Through Steady",
+  "summary": "Love and values flow with discipline and limits. This fluid pattern asks you to use relational grace and maturity with awareness.",
+  "body": "Love and values flow with discipline and limits. This fluid pattern asks you to use relational grace and maturity with awareness. Committed, steady, and loyal in relationships and finances. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through love and values, discipline and limits, and the choices you make when approval seeking or fear starts running the room.",
+  "gift": "The gift is relational grace, maturity, and a more conscious way to work with love and values and discipline and limits.",
+  "shadow": "The shadow is approval seeking, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and discipline and limits cooperate without making either one carry the whole story. Loyal and hardworking; the risk is joyless striving and a belief that reward must be suffered for.",
+  "do": [
+    "Name how love and values and discipline and limits are both involved",
+    "Use the easy opening deliberately",
+    "Turn relational grace and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of love and values or discipline and limits"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "saturn",
+    "trine",
+    "relational-grace",
+    "maturity"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

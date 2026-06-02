@@ -1,0 +1,47 @@
+{
+  "id": "mars-conjunction-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven And Original",
+  "summary": "Drive and anger merge freedom and disruption. This concentrated pattern asks you to use courage and originality with awareness.",
+  "body": "Drive and anger merge freedom and disruption. This concentrated pattern asks you to use courage and originality with awareness. Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through drive and anger, freedom and disruption, and the choices you make when reactivity or instability starts running the room.",
+  "gift": "The gift is courage, originality, and a more conscious way to work with drive and anger and freedom and disruption.",
+  "shadow": "The shadow is reactivity, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and freedom and disruption cooperate without making either one carry the whole story. Innovative and fast; the cost is recklessness and volatility.",
+  "do": [
+    "Name how drive and anger and freedom and disruption are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of drive and anger or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "uranus",
+    "conjunction",
+    "courage",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "conjunction",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

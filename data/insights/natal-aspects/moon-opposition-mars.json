@@ -1,0 +1,48 @@
+{
+  "id": "moon-opposition-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Across Driven",
+  "summary": "Emotional needs mirror drive and anger. This polarized pattern asks you to use emotional intelligence and courage with awareness.",
+  "body": "Emotional needs mirror drive and anger. This polarized pattern asks you to use emotional intelligence and courage with awareness. Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through emotional needs, drive and anger, and the choices you make when mood-driven reaction or reactivity starts running the room.",
+  "gift": "The gift is emotional intelligence, courage, and a more conscious way to work with emotional needs and drive and anger.",
+  "shadow": "The shadow is mood-driven reaction, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and drive and anger cooperate without making either one carry the whole story. Drive powered by feeling; the work is managing reactivity.",
+  "do": [
+    "Name how emotional needs and drive and anger are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn emotional intelligence and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of emotional needs or drive and anger"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "work"
+  ],
+  "tags": [
+    "moon",
+    "mars",
+    "opposition",
+    "emotional-intelligence",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "sun-opposition-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible Across Expansive",
+  "summary": "Identity mirror growth and belief. This polarized pattern asks you to use confidence and optimism with awareness.",
+  "body": "Identity mirror growth and belief. This polarized pattern asks you to use confidence and optimism with awareness. The same confidence overreaches. Sooner or later the luck gets pushed too far. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through identity, growth and belief, and the choices you make when ego defense or overreach starts running the room.",
+  "gift": "The gift is confidence, optimism, and a more conscious way to work with identity and growth and belief.",
+  "shadow": "The shadow is ego defense, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and growth and belief cooperate without making either one carry the whole story. Confidence and opportunity, with overextension as the standing risk.",
+  "do": [
+    "Name how identity and growth and belief are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn confidence and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of identity or growth and belief"
+  ],
+  "lifeAreas": [
+    "identity",
+    "growth"
+  ],
+  "tags": [
+    "sun",
+    "jupiter",
+    "opposition",
+    "confidence",
+    "optimism"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "opposition",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
