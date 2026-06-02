@@ -92,6 +92,7 @@ function build() {
   const synastryAspects = loadEntries(path.join("synastry", "aspects"));
   const synastryPointContacts = loadEntries(path.join("synastry", "point-contacts"));
   const synastryHouseOverlays = loadEntries(path.join("synastry", "house-overlays"));
+  const insightCards = loadEntries("insights");
 
   const knowledge = {
     version: packageJson.version,
@@ -119,7 +120,8 @@ function build() {
     synastry,
     synastryAspects,
     synastryPointContacts,
-    synastryHouseOverlays
+    synastryHouseOverlays,
+    insightCards
   };
 
   const index = {
@@ -156,6 +158,7 @@ function build() {
   for (const entry of synastryAspects) addEntry(index, entry, "synastry/aspect");
   for (const entry of synastryPointContacts) addEntry(index, entry, "synastry/point-contact");
   for (const entry of synastryHouseOverlays) addEntry(index, entry, "synastry/house-overlay");
+  for (const entry of insightCards) addEntry(index, entry, `insight/${entry.kind}`);
 
   writeJson(path.join(distRoot, "knowledge.json"), knowledge);
   writeJson(path.join(distRoot, "knowledge.index.json"), index);
@@ -185,12 +188,13 @@ function build() {
     synastryAspects: synastryAspects.length,
     synastryPointContacts: synastryPointContacts.length,
     synastryHouseOverlays: synastryHouseOverlays.length,
+    insightCards: insightCards.length,
     indexedEntries: Object.keys(index.entries).length
   };
 
   console.log("Validation passed: all data files match their schemas.");
   console.log(`Built dist/knowledge.json version ${packageJson.version}.`);
-  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, indexedEntries=${counts.indexedEntries}`);
+  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, indexedEntries=${counts.indexedEntries}`);
 }
 
 build();
