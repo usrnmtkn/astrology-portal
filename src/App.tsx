@@ -2768,14 +2768,14 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
           <span className="sky-lunar-pill-icon" aria-hidden="true">☉</span>
           <span className="sky-lunar-pill-copy">
             <em>Sun</em>
-            <strong>{sun?.sign ?? "Current"} {formatBriefPlacementDegree(sun)}</strong>
+            <h3>{sun?.sign ?? "Current"} {formatBriefPlacementDegree(sun)}</h3>
           </span>
         </span>
         <span className="sky-lunar-pill">
           <span className="sky-lunar-pill-icon" aria-hidden="true">☽</span>
           <span className="sky-lunar-pill-copy">
             <em>Moon</em>
-            <strong>{moon?.sign ?? "Current"} {formatBriefPlacementDegree(moon)}</strong>
+            <h3>{moon?.sign ?? "Current"} {formatBriefPlacementDegree(moon)}</h3>
           </span>
         </span>
         <span className="sky-lunar-pill">
@@ -2784,7 +2784,7 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
           </span>
           <span className="sky-lunar-pill-copy">
             <em>Phase</em>
-            <strong>{sky.moonPhase}</strong>
+            <h3>{sky.moonPhase}</h3>
           </span>
         </span>
       </div>
