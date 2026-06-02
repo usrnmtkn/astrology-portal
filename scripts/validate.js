@@ -129,6 +129,13 @@ const entryShapes = {
     types: { id: "string", kind: "string", risingSign: "string", ruler: "string", modernCoRuler: "string", modernLens: "string", house: "number", tldr: "string", meaning: "string", business: "string", shadow: "string", advice: "string", readNext: "string" },
     enums: { kind: ["chart-ruler-rising", "chart-ruler-house"] }
   },
+  composite: {
+    schemaFile: "composite.schema.json",
+    required: ["id", "kind", "placementType", "plainTranslation", "policy", "voiceNeutral", "status"],
+    optional: ["planet", "sign", "house", "aspect", "note"],
+    types: { id: "string", kind: "string", placementType: "string", planet: "string", sign: "string", house: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string" },
+    enums: { kind: ["composite"], placementType: ["sign", "house", "aspect"] }
+  },
   lunation: {
     schemaFile: "lunation.schema.json",
     required: ["id", "kind", "phase", "sign", "title", "tldr", "theme", "twoWeekArc", "sixMonthArc", "ritual", "journalPrompt", "risingSignIntention", "policy", "voiceNeutral", "status"],
@@ -376,6 +383,17 @@ function validateEntryFile(filePath, kind, errors) {
   if (kind === "pointTransitHouse" && Number.isInteger(json.house) && (json.house < 1 || json.house > 12)) {
     errors.push(`${rel(filePath)}: field house must be between 1 and 12`);
   }
+  if (kind === "composite") {
+    if (json.placementType === "sign" && typeof json.sign !== "string") {
+      errors.push(`${rel(filePath)}: composite sign entries require field sign`);
+    }
+    if (json.placementType === "house" && typeof json.house !== "string") {
+      errors.push(`${rel(filePath)}: composite house entries require field house`);
+    }
+    if (json.placementType === "aspect" && typeof json.aspect !== "string") {
+      errors.push(`${rel(filePath)}: composite aspect entries require field aspect`);
+    }
+  }
 }
 
 function validateSource(filePath, source, errors) {
@@ -450,6 +468,9 @@ function validateAll() {
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "chart-rulers"))) {
     validateEntryFile(filePath, "chartRuler", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "composite"))) {
+    validateEntryFile(filePath, "composite", errors);
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "lunations"))) {
     validateEntryFile(filePath, "lunation", errors);

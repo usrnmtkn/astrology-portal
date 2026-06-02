@@ -4,9 +4,9 @@
   "transiting": "mercury",
   "natal": "venus",
   "aspect": "sextile",
-  "plainTranslation": "Mental activity opens a door in your love life and values - if you take it. Days.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "plainTranslation": "Ideas and affection cooperate. Easy, pleasant communication. A nice window for a kind message, a creative idea, or light negotiation.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
   "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

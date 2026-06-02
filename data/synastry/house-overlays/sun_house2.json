@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "sun",
   "house": "2",
-  "plainTranslation": "Someone's Sun in the other's House 2: brings identity into money, possessions, and what you value.",
+  "plainTranslation": "Their Sun in your 2nd house: they energize your sense of worth and your resources; you feel more valuable and capable of earning around them. Failure mode: self-worth or finances revolving around them. Let them boost you; keep your own ground.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

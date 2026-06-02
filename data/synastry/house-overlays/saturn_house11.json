@@ -3,9 +3,9 @@
   "kind": "house-overlay",
   "planet": "saturn",
   "house": "11",
-  "plainTranslation": "Someone's Saturn in the other's House 11: brings structure into friendships, community, and hopes.",
+  "plainTranslation": "Their Saturn in your 11th house: they bring commitment to your friendships and future; durable loyalty and shared goals, or a damper on your social life. Failure mode: feeling restricted in your circle. Build the future together; keep your other connections.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

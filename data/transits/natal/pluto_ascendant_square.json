@@ -1,0 +1,12 @@
+{
+  "id": "pluto_ascendant_square",
+  "kind": "transit-to-natal",
+  "transiting": "pluto",
+  "natal": "ascendant",
+  "aspect": "square",
+  "plainTranslation": "Pluto pressures how you present. Power struggles over your identity, a forced shedding of an old self, intensity others feel. Let go of what's done; don't grip or dominate to stay in control.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

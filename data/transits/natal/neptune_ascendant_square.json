@@ -1,0 +1,12 @@
+{
+  "id": "neptune_ascendant_square",
+  "kind": "transit-to-natal",
+  "transiting": "neptune",
+  "natal": "ascendant",
+  "aspect": "square",
+  "plainTranslation": "Neptune fogs how you present. Confusion about your image, mixed signals, feeling invisible or misread. Don't make identity decisions in the haze; wait for clearer light.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

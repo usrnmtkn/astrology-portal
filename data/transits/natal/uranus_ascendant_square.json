@@ -1,0 +1,12 @@
+{
+  "id": "uranus_ascendant_square",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "ascendant",
+  "aspect": "square",
+  "plainTranslation": "Uranus jolts how you present. Sudden urges to change everything, restlessness with your own image, erratic first impressions. Change deliberately; the itch to break out is easily overplayed.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

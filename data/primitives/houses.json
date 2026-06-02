@@ -40,7 +40,7 @@
     {
       "id": "6",
       "label": "6th House",
-      "plainTranslation": "Work, health, daily routine, service",
+      "plainTranslation": "Work, daily routine, service, illness, injury, health affliction",
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -82,7 +82,7 @@
     {
       "id": "12",
       "label": "12th House",
-      "plainTranslation": "The unconscious, solitude, hidden things, endings",
+      "plainTranslation": "The unconscious, solitude, hidden things, retreat, confinement, isolation",
       "voiceNeutral": true,
       "status": "DRAFT"
     }
