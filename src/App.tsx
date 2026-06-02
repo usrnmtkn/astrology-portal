@@ -144,6 +144,7 @@ type ProfilePersistencePayload = {
   preferences: {
     theme: UiTheme;
     sunriseOrbEnabled: boolean;
+    dyslexiaFriendlyFont: boolean;
     selectedLocation: LocationInput | null;
   };
   updatedAt: string;
@@ -152,6 +153,7 @@ type ProfilePersistencePayload = {
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
+const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
 const userProfileStorageKey = "tldrastro:userProfile";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const synodicMonthDays = 29.530588;
@@ -288,11 +290,13 @@ function createProfilePersistencePayload({
   profile,
   theme,
   sunriseOrbEnabled,
+  dyslexiaFriendlyFont,
   selectedLocation
 }: {
   profile: UserProfile;
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
+  dyslexiaFriendlyFont: boolean;
   selectedLocation: LocationInput | null;
 }): ProfilePersistencePayload {
   return {
@@ -301,6 +305,7 @@ function createProfilePersistencePayload({
     preferences: {
       theme,
       sunriseOrbEnabled,
+      dyslexiaFriendlyFont,
       selectedLocation
     },
     updatedAt: new Date().toISOString()
@@ -529,6 +534,14 @@ function getInitialSunriseOrb() {
     return window.localStorage.getItem(sunriseOrbStorageKey) !== "off";
   } catch {
     return true;
+  }
+}
+
+function getInitialDyslexiaFont() {
+  try {
+    return window.localStorage.getItem(dyslexiaFontStorageKey) === "on";
+  } catch {
+    return false;
   }
 }
 
@@ -1127,6 +1140,7 @@ export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
+  const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
@@ -1238,6 +1252,14 @@ export function App() {
   }, [sunriseOrbEnabled]);
 
   useEffect(() => {
+    try {
+      window.localStorage.setItem(dyslexiaFontStorageKey, dyslexiaFriendlyFont ? "on" : "off");
+    } catch {
+      return;
+    }
+  }, [dyslexiaFriendlyFont]);
+
+  useEffect(() => {
     if (!hasLocationPreference) {
       return;
     }
@@ -1271,6 +1293,7 @@ export function App() {
       profile: userProfile,
       theme,
       sunriseOrbEnabled,
+      dyslexiaFriendlyFont,
       selectedLocation: hasLocationPreference ? location : null
     });
     const serializedPayload = JSON.stringify(payload);
@@ -1297,6 +1320,7 @@ export function App() {
     userProfile,
     theme,
     sunriseOrbEnabled,
+    dyslexiaFriendlyFont,
     hasLocationPreference,
     location
   ]);
@@ -1414,6 +1438,7 @@ export function App() {
         if (isProfilePersistencePayload(persistedProfile)) {
           const remoteTheme = persistedProfile.preferences?.theme;
           const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
+          const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
           const remoteLocation = persistedProfile.preferences?.selectedLocation;
 
           setUserProfile(persistedProfile.profile);
@@ -1422,6 +1447,9 @@ export function App() {
           }
           if (typeof remoteSunriseOrb === "boolean") {
             setSunriseOrbEnabled(remoteSunriseOrb);
+          }
+          if (typeof remoteDyslexiaFont === "boolean") {
+            setDyslexiaFriendlyFont(remoteDyslexiaFont);
           }
           if (isLocationInput(remoteLocation)) {
             const nextLocation = withTimeZone(remoteLocation);
@@ -1738,7 +1766,7 @@ export function App() {
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
 
   return (
-    <main className={`app-shell theme-${theme} mode-${mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
+    <main className={`app-shell theme-${theme} mode-${mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
       {!isSignupMode && (
         <header className="topbar">
         <div className="brand">
@@ -1976,6 +2004,8 @@ export function App() {
                 sunriseOrbEnabled={sunriseOrbEnabled}
                 onThemeChange={setTheme}
                 onSunriseOrbChange={setSunriseOrbEnabled}
+                dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                onDyslexiaFontChange={setDyslexiaFriendlyFont}
                 onSignOut={async () => {
                   await signOutAuth();
                   setUserProfile(null);
@@ -1989,6 +2019,8 @@ export function App() {
                 sunriseOrbEnabled={sunriseOrbEnabled}
                 onThemeChange={setTheme}
                 onSunriseOrbChange={setSunriseOrbEnabled}
+                dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                onDyslexiaFontChange={setDyslexiaFriendlyFont}
                 onJoin={() => {
                   setAccountIntent("create");
                   setMode("profile");
@@ -2216,6 +2248,97 @@ function aspectGlyph(type: string) {
 
 function formatDegree(degree: number) {
   return degree.toFixed(2);
+}
+
+const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+
+const planetDignities: Record<string, Partial<Record<string, { label: string; tone: "good" | "weak" }>>> = {
+  Sun: {
+    Leo: { label: "Domicile", tone: "good" },
+    Aries: { label: "Exalted", tone: "good" },
+    Aquarius: { label: "Detriment", tone: "weak" },
+    Libra: { label: "Fall", tone: "weak" }
+  },
+  Moon: {
+    Cancer: { label: "Domicile", tone: "good" },
+    Taurus: { label: "Exalted", tone: "good" },
+    Capricorn: { label: "Detriment", tone: "weak" },
+    Scorpio: { label: "Fall", tone: "weak" }
+  },
+  Mercury: {
+    Gemini: { label: "Domicile", tone: "good" },
+    Virgo: { label: "Domicile", tone: "good" },
+    Sagittarius: { label: "Detriment", tone: "weak" },
+    Pisces: { label: "Fall", tone: "weak" }
+  },
+  Venus: {
+    Taurus: { label: "Domicile", tone: "good" },
+    Libra: { label: "Domicile", tone: "good" },
+    Pisces: { label: "Exalted", tone: "good" },
+    Aries: { label: "Detriment", tone: "weak" },
+    Scorpio: { label: "Detriment", tone: "weak" },
+    Virgo: { label: "Fall", tone: "weak" }
+  },
+  Mars: {
+    Aries: { label: "Domicile", tone: "good" },
+    Scorpio: { label: "Domicile", tone: "good" },
+    Capricorn: { label: "Exalted", tone: "good" },
+    Taurus: { label: "Detriment", tone: "weak" },
+    Libra: { label: "Detriment", tone: "weak" },
+    Cancer: { label: "Fall", tone: "weak" }
+  },
+  Jupiter: {
+    Sagittarius: { label: "Domicile", tone: "good" },
+    Pisces: { label: "Domicile", tone: "good" },
+    Cancer: { label: "Exalted", tone: "good" },
+    Gemini: { label: "Detriment", tone: "weak" },
+    Virgo: { label: "Detriment", tone: "weak" },
+    Capricorn: { label: "Fall", tone: "weak" }
+  },
+  Saturn: {
+    Capricorn: { label: "Domicile", tone: "good" },
+    Aquarius: { label: "Domicile", tone: "good" },
+    Libra: { label: "Exalted", tone: "good" },
+    Cancer: { label: "Detriment", tone: "weak" },
+    Leo: { label: "Detriment", tone: "weak" },
+    Aries: { label: "Fall", tone: "weak" }
+  },
+  Uranus: {
+    Aquarius: { label: "Natural", tone: "good" },
+    Taurus: { label: "Constrained", tone: "weak" }
+  },
+  Neptune: {
+    Pisces: { label: "Natural", tone: "good" },
+    Virgo: { label: "Constrained", tone: "weak" }
+  },
+  Pluto: {
+    Scorpio: { label: "Natural", tone: "good" },
+    Taurus: { label: "Constrained", tone: "weak" }
+  }
+};
+
+function placementDignity(position: PlanetPosition) {
+  return planetDignities[position.planet]?.[position.sign] ?? null;
+}
+
+function placementRangeLabel(position: PlanetPosition) {
+  return `${position.sign} 0°-30° · current degree ${formatDegree(position.degree)}°`;
+}
+
+function placementStatuses(position: PlanetPosition) {
+  const statuses: Array<{ label: string; tone: "muted" | "alert" }> = [];
+
+  if (position.motion === "retrograde") {
+    statuses.push({ label: "Retrograde", tone: "alert" });
+  }
+
+  if (position.degree >= 29) {
+    statuses.push({ label: "Last degree", tone: "alert" });
+  } else if (position.degree < 1) {
+    statuses.push({ label: "Fresh ingress", tone: "muted" });
+  }
+
+  return statuses;
 }
 
 function formatPlacementPosition(position: PlanetPosition) {
@@ -2986,63 +3109,68 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
 }
 
 function PlacementTable({ positions, onOpenDetail }: { positions: PlanetPosition[]; onOpenDetail: (detail: SkyDetail) => void }) {
-  return (
-    <div className="placement-table-wrap">
-      <table className="placement-table">
-        <thead>
-          <tr>
-            <th>Planet</th>
-            <th>Position</th>
-          </tr>
-        </thead>
-        <tbody>
-          {positions.map((position) => {
-            const title = `${position.planet} in ${position.sign}`;
-            const openDetail = () => onOpenDetail({
-              glyph: position.glyph,
-              kicker: "Placement",
-              title,
-              meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
-              body: [
-                <>
-                  <strong>{position.planet}</strong> is moving through <strong>{formatPlacementPosition(position)}</strong> in the current sky.
-                </>,
-                placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
-                `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
-              ]
-            });
+  const orderedPositions = placementPlanetOrder
+    .map((planet) => positions.find((position) => position.planet === planet))
+    .filter((position): position is PlanetPosition => Boolean(position));
 
-            return (
-            <tr
-              key={position.planet}
-              className={position.motion === "retrograde" ? "retrograde-row" : undefined}
-              tabIndex={0}
-              role="button"
+  return (
+    <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
+      <div className="placement-table">
+        {orderedPositions.map((position) => {
+          const title = `${position.planet} in ${position.sign}`;
+          const dignity = placementDignity(position);
+          const statuses = placementStatuses(position);
+          const openDetail = () => onOpenDetail({
+            glyph: position.glyph,
+            kicker: "Placement",
+            title,
+            meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
+            body: [
+              <>
+                <strong>{position.planet}</strong> is moving through <strong>{formatPlacementPosition(position)}</strong> in the current sky.
+              </>,
+              placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
+              `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
+            ]
+          });
+
+          return (
+            <div className="sky-pl-item" role="listitem" key={position.planet}>
+            <button
+              className={`sky-pl ${position.motion === "retrograde" ? "is-retrograde" : ""}`}
+              type="button"
               aria-label={`Read more about ${title}`}
               onClick={openDetail}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  openDetail();
-                }
-              }}
             >
-              <td>
-                <span className="table-glyph">{position.glyph}</span>
-                <strong>{position.planet}</strong>
-              </td>
-              <td className="position-cell">
-                <span className="position-sign">{position.sign}</span>
-                {" "}
-                {position.motion === "retrograde" ? <span className="retrograde-badge" aria-label="Retrograde">℞</span> : null}
-                {" "}
-                <span className="position-degree">{formatDegree(position.degree)}°</span>
-              </td>
-            </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              <span className="sky-pl-glyph" aria-hidden="true">{position.glyph}</span>
+              <span className="sky-pl-body">
+                <span className="sky-pl-main">
+                  <span className="sky-pl-title">{title}</span>
+                  <span className="sky-pl-degree">{formatDegree(position.degree)}°</span>
+                  {position.motion === "retrograde" ? <span className="sky-pl-rx" aria-label="Retrograde">℞</span> : null}
+                  {dignity ? (
+                    <span className={`spl-dig spl-dig-${dignity.tone}`}>
+                      {dignity.label}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="sky-pl-range">{placementRangeLabel(position)}</span>
+                {statuses.length > 0 ? (
+                  <span className="sky-pl-status" aria-label={`${position.planet} status`}>
+                    {statuses.map((status) => (
+                      <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
+                        {status.label}
+                      </span>
+                    ))}
+                  </span>
+                ) : null}
+              </span>
+              <ChevronRight className="sky-pl-chevron" aria-hidden="true" />
+            </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -3716,16 +3844,20 @@ function SettingsView({
   onUpdateProfile,
   theme,
   sunriseOrbEnabled,
+  dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
+  onDyslexiaFontChange,
   onSignOut
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
+  dyslexiaFriendlyFont: boolean;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
+  onDyslexiaFontChange: (enabled: boolean) => void;
   onSignOut: () => void | Promise<void>;
 }) {
   const primaryChart = profile.charts[0];
@@ -3936,6 +4068,16 @@ function SettingsView({
                   onChange={onSunriseOrbChange}
                 />
               </div>
+              <div className="settings-row settings-row-control">
+                <div>
+                  <span>Dyslexia-friendly font</span>
+                </div>
+                <SwitchControl
+                  checked={dyslexiaFriendlyFont}
+                  label="Toggle dyslexia-friendly font"
+                  onChange={onDyslexiaFontChange}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -3960,15 +4102,19 @@ function GuestSettingsView({
   theme,
   location,
   sunriseOrbEnabled,
+  dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
+  onDyslexiaFontChange,
   onJoin
 }: {
   theme: UiTheme;
   location: LocationInput;
   sunriseOrbEnabled: boolean;
+  dyslexiaFriendlyFont: boolean;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
+  onDyslexiaFontChange: (enabled: boolean) => void;
   onJoin: () => void;
 }) {
   return (
@@ -3998,6 +4144,16 @@ function GuestSettingsView({
                   checked={sunriseOrbEnabled}
                   label="Toggle sunrise orb"
                   onChange={onSunriseOrbChange}
+                />
+              </div>
+              <div className="settings-row settings-row-control">
+                <div>
+                  <span>Dyslexia-friendly font</span>
+                </div>
+                <SwitchControl
+                  checked={dyslexiaFriendlyFont}
+                  label="Toggle dyslexia-friendly font"
+                  onChange={onDyslexiaFontChange}
                 />
               </div>
             </div>
