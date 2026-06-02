@@ -11,12 +11,12 @@
   "definition": "Synastry compares two charts to read how two people interact and activate each other. It describes the connection and its dynamics; it does not decree the outcome. Read it as the meeting of two natal charts, not as a verdict.",
   "appUsage": [
     "Read each natal chart first, then synastry, then composite.",
-    "Use synastry to describe activation, friction, support, and timing; do not present it as destiny or a compatibility score.",
+    "Use synastry to describe activation, friction, support, and timing; do not present it as a fixed outcome or a compatibility score.",
     "Prioritize personal planets, luminaries, angles, tight interaspects, and house overlays.",
     "Downweight outer-planet, Chiron, and modern-point contacts between people of similar age unless they contact a personal planet or angle.",
     "Keep relationship guidance choice-centered and avoid telling users to stay in or leave a relationship based on charts alone."
   ],
-  "note": "Normalized from approved project synastry guidance.",
+  "note": "Expanded from approved project relationship and synastry source material. Source files were not copied into the repository.",
   "classes": {
     "synastryVsComposite": "Synastry = how the two individuals interact (the initial connection and its push-pull). Composite = how the relationship itself behaves as its own entity. Order of reading: each natal chart first, then synastry, then composite.",
     "method": [
@@ -27,11 +27,16 @@
       },
       {
         "step": 2,
+        "name": "Check the relationship promise",
+        "detail": "Before judging the comparison, identify what each chart is already asking for in partnership. Use the 1st/7th polarity, the ruler of the 7th, planets in or ruling the 7th, Venus, Mars, the Moon, and repeated natal aspect patterns. If the synastry gives a person something their own chart does not want or cannot receive, chemistry alone will not carry it."
+      },
+      {
+        "step": 3,
         "name": "Element balance",
         "detail": "Weigh the dominant element of each whole chart (not just the Suns). Fire-Fire stimulates but risks aggression; Fire-Air feeds and animates; Fire-Earth and Fire-Water need care; Earth-Earth steadies but can flatten; Air-Air connects mentally but drifts; Water-Water bonds deeply but can pool into moodiness; mixed pairs each ask the partners to lend what the other lacks."
       },
       {
-        "step": 3,
+        "step": 4,
         "name": "Planet overlays",
         "detail": "Place each person's planets into the other's houses to see which life areas they activate. The house person feels the contact in that area of life.",
         "planetInHouse": {
@@ -47,32 +52,68 @@
           "pluto": "brings depth and the pressure to transform",
           "chiron": "is where the partner can both wound and help heal"
         },
-        "toTheAscendant": "Benefic/personal contacts (Sun, Moon, Mercury, Venus, Jupiter) to a partner's Ascendant tend to feel good; Mars, Saturn, and the outers/Chiron are heavier to carry."
+        "toTheAscendant": "Benefic/personal contacts (Sun, Moon, Mercury, Venus, Jupiter) to a partner's Ascendant tend to feel good; Mars, Saturn, and the outers/Chiron are heavier to carry.",
+        "overlayRule": "Overlay meaning belongs first to the house person: the planet person brings a function, but the house person experiences where it lands. Read the overlay together with the planet's condition and aspects, because a planet in a partner's house can support, pressure, awaken, or irritate that house depending on the contact."
       },
       {
-        "step": 4,
+        "step": 5,
         "name": "Interaspects",
         "detail": "The aspects formed between one person's planets and the other's. Harmonious contacts ease the bond; tense ones bring friction but can add depth and growth, and a relationship with only easy aspects tends to go flat. An aspect must actually form by degree, not merely share an element.",
         "orbs": "About 2 to 3 degrees for conjunction, sextile, square, trine, and opposition; allow 1 to 2 degrees more for the luminaries."
       },
       {
-        "step": 5,
-        "name": "Karmic / fated-feeling indicators",
-        "detail": "Contacts traditionally read as karmic or fated (held as how the tradition interprets them, not as literal claims about past lives).",
+        "step": 6,
+        "name": "Cross-chart configurations",
+        "detail": "Check whether one person's planets complete or activate a major pattern in the other's chart. A partner can close a T-square, supply a missing leg of a grand cross, activate a yod, or complete an easy-flow pattern. These contacts often feel consequential because the relationship turns on a natal pattern that was already waiting for activation.",
+        "patterns": {
+          "tSquareCompletion": "One person's planet completes the missing leg of another person's square/opposition pattern, increasing pressure and making the unresolved conflict impossible to ignore.",
+          "grandTrineCompletion": "One person's planet completes an easy-flow triangle, bringing comfort and natural support, but sometimes reducing urgency to grow.",
+          "yodActivation": "One person's planet touches the apex or release point of another person's yod-like pattern, making the bond feel like a turning point or specialized growth demand.",
+          "samePlanetAspects": "Same-planet contacts are usually background rapport unless that planet rules a luminary, angle, or major relationship house."
+        }
+      },
+      {
+        "step": 7,
+        "name": "Turning-point indicators",
+        "detail": "Contacts sometimes read as karmic, ancestral, or turning-point material, but the product should keep this belief-neutral and describe the lived pattern instead of making literal claims about past lives.",
         "indicators": [
           "one person's planet conjunct the other's lunar node",
           "a node conjunct the partner's Ascendant",
           "one person's Saturn conjunct or in tight aspect to the other's planets (duty, durability, a sense of test)",
           "one person's planets falling in the other's 12th house",
-          "a planet or angle conjunct the partner's Vertex (a fated-feeling pull; Vertex-Ascendant is common)"
+          "a planet or angle conjunct the partner's Vertex (a turning-point pull; Vertex-Ascendant is common)"
         ]
       },
       {
-        "step": 6,
+        "step": 8,
         "name": "The astrological moment",
         "detail": "Read current transits and the coming year for both people. Timing conditions whether a bond forms, deepens, or strains, independent of the static synastry."
       }
     ],
+    "relationshipPromise": {
+      "definition": "The natal chart describes what a person is wired to seek, repeat, resist, or negotiate in partnership before any second chart enters the room.",
+      "readFrom": [
+        "1st and 7th house signs and rulers",
+        "planets in the 7th house and aspects to the 7th ruler",
+        "Venus for love language, pleasure, and attraction style",
+        "Mars for pursuit, desire, anger, and conflict style",
+        "Moon for attachment needs and daily emotional safety",
+        "Saturn contacts for fear, defense, commitment, and durability patterns",
+        "5th and 8th houses for romance, sex, shared resources, and psychological merging"
+      ],
+      "use": "Compare the synastry against each person's natal relationship promise. Strong contacts matter more when they answer a real natal need; they matter less when they only create temporary excitement."
+    },
+    "overlayPriority": {
+      "highSignalHouses": {
+        "1": "Identity, embodiment, attraction, immediate recognition, and how the house person feels seen or altered by the planet person.",
+        "4": "Home, family, memory, roots, emotional privacy, and whether the planet person feels safe or intrusive.",
+        "5": "Romance, pleasure, play, creativity, fertility themes, and whether the planet person wakes up joy or performance pressure.",
+        "7": "Partnership identity, commitment projection, open conflict, and the classic feeling of meeting the other half of an axis.",
+        "8": "Intimacy, sex, shared resources, debt, trust, vulnerability, and power dynamics.",
+        "10": "Public life, reputation, ambition, status, parent/authority themes, and life direction."
+      },
+      "interpretiveRule": "Overlay houses are not compatibility scores. They show the stage where the partner's planet acts. A beautiful planet in a difficult house can still feel loaded; a difficult planet in a useful house can become productive if both people handle it consciously."
+    },
     "keyInteraspects": {
       "sun-sun": "Shared core temperament. Harmonious aspects bring easy mutual respect and aligned goals; opposition attracts strongly; square and quincunx grate.",
       "sun-moon": "A classic compatibility contact, especially the conjunction: one person's core self meets the other's emotional nature. Hard aspects do not doom it.",
@@ -87,9 +128,32 @@
       "venus-uranus": "Instant, electric attraction; exciting but not inherently durable, and can cool as fast as it sparked.",
       "venus-neptune": "Tenderness and idealization; lovely but needs grounding so it does not slide into illusion.",
       "venus-pluto": "Magnetic, deep, sometimes compulsive attraction and strong bonding.",
+      "mars-saturn": "Drive meets restraint. It can build disciplined effort in practical or business bonds, but hard contacts can feel blocked, criticized, or sexually frustrated unless the couple has constructive outlets.",
+      "jupiter-uranus": "Growth meets freedom. It can make the bond generous, exciting, and spacious, but needs grounding so the relationship does not become all possibility and no container.",
+      "jupiter-pluto": "Expansion meets intensity. It can support shared ambition, business growth, or deep mutual transformation, but can also amplify control or excess.",
       "saturn-saturn": "A shared sense of responsibility; stabilizing for long bonds, while hard aspects test each other's security."
     },
-    "ethicalBoundary": "Synastry shows dynamics and potentials, not destiny. Do not frame abusive dynamics as lessons, ignore red flags, or create dependence on astrological validation."
+    "configurationLogic": {
+      "principle": "When two charts are combined, one person's planets can activate patterns that are quiet or incomplete in the other chart. Treat this as a major interpretive signal when the contact is tight and involves personal planets or angles.",
+      "readBeforeConclusion": [
+        "Does the partner complete a missing leg of an existing natal pattern?",
+        "Does the partner's planet hit the apex, release point, or most stressed planet in the natal configuration?",
+        "Does the configuration repeat relationship themes already shown by the 7th house, Venus, Mars, Moon, or Saturn?",
+        "Is the pattern supported by easy contacts, or only intensified by pressure contacts?"
+      ],
+      "warning": "A completed pattern can feel compelling without being healthy. Describe what gets activated and what skills are required; do not sell activation as proof of permanence."
+    },
+    "nodesAndAngles": {
+      "principle": "Nodes, Vertex, angles, and 12th-house overlays can describe relationships that feel consequential, familiar, unfinished, or strangely timed. Keep the language experiential and belief-neutral.",
+      "useWhen": [
+        "a node tightly contacts a partner's personal planet or angle",
+        "a partner's planet falls close to the Ascendant, Descendant, Midheaven, or IC",
+        "several personal planets fall in the 12th house",
+        "the Vertex is tightly contacted by a personal planet or angle"
+      ],
+      "avoid": "Do not promise a fixed outcome, past-life certainty, or spiritual obligation. The app should name the pull, the pattern, and the choices."
+    },
+    "ethicalBoundary": "Synastry shows dynamics and potentials, not fixed outcomes. Do not frame abusive dynamics as lessons, ignore red flags, or create dependence on astrological validation."
   },
   "weighting": [
     "Personal planets (Sun, Moon, Mercury, Venus, Mars), the luminaries, and the angles carry the most weight.",

@@ -9,6 +9,11 @@
       "body": "Before comparing two charts, read each person's natal relationship pattern. Synastry cannot override a person's own Moon needs, Venus style, Mars pursuit pattern, Saturn defenses, attachment habits, or unresolved relational wounds. A good match on paper still has to pass through the people living it."
     },
     {
+      "id": "relationship-promise",
+      "heading": "Relationship Promise",
+      "body": "Before asking whether two charts work together, identify what each chart is already seeking in partnership. Read the 1st/7th axis, the ruler of the 7th, planets in the 7th, Venus, Mars, the Moon, and Saturn. Synastry lands differently when it answers an actual natal need instead of only creating attraction."
+    },
+    {
       "id": "core-triad",
       "heading": "Core Triad",
       "body": "Begin comparison with Sun, Moon, and Ascendant. The Sun shows identity and life direction. The Moon shows emotional safety and instinctive needs. The Ascendant shows embodiment and immediate style. If these do not understand each other, later chemistry needs extra support."
@@ -21,12 +26,22 @@
     {
       "id": "house-overlays",
       "heading": "House Overlays",
-      "body": "House overlays show where one person lands in the other's life. A partner's planets in your 1st affect identity and embodiment; 4th affects home and roots; 5th affects pleasure and romance; 7th affects partnership; 8th affects intimacy and shared resources; 10th affects reputation and life direction."
+      "body": "House overlays show where one person lands in the other's life. A partner's planets in your 1st affect identity and embodiment; 4th affects home and roots; 5th affects pleasure and romance; 7th affects partnership; 8th affects intimacy and shared resources; 10th affects reputation and life direction. The house person feels the life area; the planet person supplies the function."
+    },
+    {
+      "id": "cross-chart-configurations",
+      "heading": "Cross-Chart Configurations",
+      "body": "After reading individual aspects, check whether the two charts create a larger pattern together. One person's planet can complete a T-square, activate a yod-like pressure point, supply a missing grand-trine leg, or make an existing natal pattern impossible to ignore. These contacts are high signal when tight and tied to personal planets or angles."
     },
     {
       "id": "saturn-and-durability",
       "heading": "Saturn And Durability",
-      "body": "Saturn contacts can indicate commitment, endurance, duty, and structure, but also inhibition, fear, coldness, delay, or burden. Do not romanticize Saturn as proof of longevity. Ask whether the Saturn person provides structure that supports the bond or pressure that makes affection shrink."
+      "body": "Saturn contacts can indicate commitment, endurance, duty, and structure, but also inhibition, fear, coldness, delay, or burden. Do not romanticize Saturn as proof of longevity. Ask whether the Saturn person provides structure that supports the bond or pressure that makes affection go cold."
+    },
+    {
+      "id": "nodes-vertex-and-12th",
+      "heading": "Nodes, Vertex, And 12th House",
+      "body": "Nodes, Vertex contacts, angle contacts, and 12th-house overlays can describe relationships that feel consequential, familiar, hidden, or unusually timed. Keep this language belief-neutral. Name the pull and the pattern; do not promise a fixed outcome, past-life certainty, or spiritual obligation."
     },
     {
       "id": "composite-chart",
