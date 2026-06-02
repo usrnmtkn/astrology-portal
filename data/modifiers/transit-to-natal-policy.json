@@ -8,6 +8,8 @@
     "daily-check-in",
     "aspect-policy"
   ],
+  "role": "policy",
+  "category": "transit",
   "summary": "Ordered transit-to-natal contacts use every transiting planet against a fixed natal planet or point, without same-moment elongation exclusions.",
   "body": "Use this policy for the app check-in layer. Same-moment aspect impossibilities do not apply here because the moving body can sweep the full zodiac against a natal placement fixed at birth.",
   "definition": "Transit-to-natal aspects are ordered contacts from a current sky body to a natal body or sensitive point.",

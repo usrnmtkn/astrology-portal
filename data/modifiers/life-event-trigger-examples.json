@@ -8,6 +8,8 @@
     "return-chart",
     "life-event"
   ],
+  "role": "example",
+  "category": "timing",
   "summary": "Example life-event categories that can become active when natal promise, progression, return chart emphasis, and transit triggers repeat the same theme.",
   "body": "Use these examples to translate timing testimony into plain-life language. They are not standalone predictions. The app should surface them only when multiple indicators repeat the same house topic, planet pair, or activated ruler.",
   "definition": "A life-event trigger is a repeated astrological testimony pattern that points toward a lived topic becoming active, such as relationship change, home movement, career decision, legal process, health caution, or financial restructuring.",

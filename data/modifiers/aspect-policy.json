@@ -9,6 +9,8 @@
     "natal",
     "current-sky"
   ],
+  "role": "policy",
+  "category": "aspect",
   "summary": "Aspect lookup must choose the correct regime first: same-moment pairs are canonicalized and have 11 impossible inner-planet aspects; transit-to-natal aspects are ordered and have no impossible exclusions.",
   "body": "Use this policy to prevent two different aspect regimes from being mixed. Same-moment aspects measure both bodies at one instant, so Sun, Mercury, and Venus elongation limits make 11 combinations impossible. Transit-to-natal aspects measure a moving transiting body against a fixed natal point, so every ordered planet-aspect-planet combination can occur and must not be filtered by same-moment exclusions.",
   "definition": "Lookup and validity policy for same-moment aspect files versus transit-to-natal aspect lookups.",

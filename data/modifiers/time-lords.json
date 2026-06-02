@@ -319,6 +319,8 @@
     "chart",
     "transit"
   ],
+  "role": "method",
+  "category": "traditional-timing",
   "summary": "Time-lord systems describe which natal topics and planets are activated during a life chapter.",
   "body": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord.",
   "note": "Expanded from approved predictive timing source material. Source files were not copied into the repository."

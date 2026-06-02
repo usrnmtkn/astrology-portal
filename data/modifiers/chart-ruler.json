@@ -66,6 +66,8 @@
   "appliesTo": [
     "chart"
   ],
+  "role": "method",
+  "category": "chart-ruler",
   "summary": "The chart ruler is the ruler of the rising sign and describes the steering planet of the life.",
   "body": "The chart ruler (lord of the Ascendant, lord of the chart) is the planet that rules the rising sign. It is the most personal significator of the native: the steering planet of the whole life. Where it sits and how well it is conditioned describes the direction and quality of the life."
 }

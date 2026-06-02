@@ -9,6 +9,8 @@
     "aspect",
     "transit"
   ],
+  "role": "metadata",
+  "category": "planet",
   "summary": "Ten-planet metadata for app display, speed weighting, and modern/traditional separation.",
   "body": "The app may track modern planets, but traditional chart-ruler and dignity language should stay anchored to the traditional seven unless a modern lens is explicitly selected.",
   "definition": "Planet metadata includes labels, classification, sect relevance, retrograde capability, and approximate daily speed.",

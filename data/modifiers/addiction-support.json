@@ -7,6 +7,8 @@
     "optional-support-layer",
     "recovery-support"
   ],
+  "role": "support",
+  "category": "safety",
   "summary": "Optional natal-chart support layer for addiction-pattern awareness, constructive channeling, and recovery-oriented reflection.",
   "body": "This content exists in the knowledge base for app-level optional use. It must never be surfaced as a default prediction, diagnosis, fate statement, or moral judgment. The app can keep this layer off unless the user explicitly enables sensitive support content.",
   "definition": "A non-diagnostic interpretive layer for noticing escapism, compulsion, numbing, avoidance, and recovery-support patterns in natal and transit context.",

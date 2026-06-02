@@ -1,6 +1,8 @@
 {
   "id": "chart-prep",
   "kind": "guide",
+  "role": "guide",
+  "category": "chart-prep",
   "title": "Chart Preparation",
   "sections": [
     {

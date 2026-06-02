@@ -1,6 +1,8 @@
 {
   "id": "predictive-trigger-method-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "predictive-timing",
   "title": "Predictive Trigger Method Framework",
   "sections": [
     {

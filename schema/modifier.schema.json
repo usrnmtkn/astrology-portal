@@ -9,6 +9,8 @@
     "appliesTo": { "type": "array", "items": { "type": "string" } },
     "summary": { "type": "string" },
     "body": { "type": "string" },
+    "role": { "type": "string" },
+    "category": { "type": "string" },
     "schema": { "type": "string" },
     "definition": { "type": "string" },
     "appUsage": {

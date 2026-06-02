@@ -1,6 +1,8 @@
 {
   "id": "traditional-transit-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "traditional-transit",
   "title": "Traditional Transit Framework",
   "sections": [
     {

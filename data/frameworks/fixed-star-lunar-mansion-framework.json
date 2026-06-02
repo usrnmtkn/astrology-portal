@@ -1,6 +1,8 @@
 {
   "id": "fixed-star-lunar-mansion-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "fixed-stars",
   "title": "Fixed Star And Lunar Mansion Framework",
   "sections": [
     {

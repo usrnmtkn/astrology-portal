@@ -1,6 +1,8 @@
 {
   "id": "body-astrology-framework",
   "kind": "framework",
+  "role": "correspondence",
+  "category": "body-symbolism",
   "title": "Body Astrology Framework",
   "sections": [
     {

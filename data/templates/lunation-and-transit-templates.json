@@ -1,6 +1,8 @@
 {
   "id": "lunation-and-transit-templates",
   "kind": "template",
+  "role": "template",
+  "category": "writing",
   "title": "Lunation and Transit Writing Templates",
   "sections": [
     {
@@ -8,15 +10,42 @@
       "heading": "Season Overview With Axis Work",
       "body": "Maintain this structure: start with shared themes before differences; include higher and lower vibrations for each sign; present the shadow of the Sun sign first, then Moon sign; create a visual spectrum with shadows on the ends and integration in the middle; end with an invitation for Full Moon work; emphasize unconditional love or the highest principle throughout; include practical guidance for recognizing and shifting shadow patterns; balance individual and collective perspectives; acknowledge all expressions have equal value; close with the ultimate truth of the axis.",
       "items": [
-        { "label": "Introduction and Shared Ground", "body": "State where the Moon and Sun are, introduce the axis, name shared values or mutual focus, and describe how both signs aim toward a similar end goal even if their approaches differ." },
-        { "label": "Unique Contributions", "body": "Break down what each sign offers in balance. Highlight how Sign 1 contributes to the whole and how Sign 2 complements it." },
-        { "label": "Common Challenges", "body": "Address how each sign's energy can lead to self-betrayal if misused. Name pretending, fitting in, or avoiding as blocks to integration." },
-        { "label": "Higher Vibrations", "body": "Define the highest expression of each sign and explain how they come together to create something greater." },
-        { "label": "Lower Vibrations", "body": "Clearly outline each sign's shadow, including behaviors, motivations, and patterns." },
-        { "label": "Integration Point", "body": "Describe the line of energy from one shadow extreme to the other and name the balanced midpoint." },
-        { "label": "Full Moon Opportunity", "body": "Tie it back to release and integration, naming a release focus for both signs' shadows." },
-        { "label": "Closing Axis Insight", "body": "End with an empowering reminder of the axis' ultimate teaching." },
-        { "label": "Season Altar Setup", "body": "Include sign side, opposite side, center bridge, what to call in, what to balance, kamea placement, practical substitution, and relevant location." }
+        {
+          "label": "Introduction and Shared Ground",
+          "body": "State where the Moon and Sun are, introduce the axis, name shared values or mutual focus, and describe how both signs aim toward a similar end goal even if their approaches differ."
+        },
+        {
+          "label": "Unique Contributions",
+          "body": "Break down what each sign offers in balance. Highlight how Sign 1 contributes to the whole and how Sign 2 complements it."
+        },
+        {
+          "label": "Common Challenges",
+          "body": "Address how each sign's energy can lead to self-betrayal if misused. Name pretending, fitting in, or avoiding as blocks to integration."
+        },
+        {
+          "label": "Higher Vibrations",
+          "body": "Define the highest expression of each sign and explain how they come together to create something greater."
+        },
+        {
+          "label": "Lower Vibrations",
+          "body": "Clearly outline each sign's shadow, including behaviors, motivations, and patterns."
+        },
+        {
+          "label": "Integration Point",
+          "body": "Describe the line of energy from one shadow extreme to the other and name the balanced midpoint."
+        },
+        {
+          "label": "Full Moon Opportunity",
+          "body": "Tie it back to release and integration, naming a release focus for both signs' shadows."
+        },
+        {
+          "label": "Closing Axis Insight",
+          "body": "End with an empowering reminder of the axis' ultimate teaching."
+        },
+        {
+          "label": "Season Altar Setup",
+          "body": "Include sign side, opposite side, center bridge, what to call in, what to balance, kamea placement, practical substitution, and relevant location."
+        }
       ]
     },
     {

@@ -75,6 +75,8 @@
     "planet",
     "transit"
   ],
+  "role": "policy",
+  "category": "modern-overlay",
   "summary": "Modern planets are used as modern overlays and never replace the traditional seven-planet rules.",
   "body": "Policy for using Uranus, Neptune, and Pluto. They are modern additions with no place in traditional doctrine; this rule keeps them useful without ever being labeled traditional."
 }

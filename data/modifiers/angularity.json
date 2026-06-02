@@ -39,6 +39,8 @@
     "placement",
     "transit"
   ],
+  "role": "modifier",
+  "category": "traditional-condition",
   "summary": "Angularity weights how strongly and quickly a planet acts by house position.",
   "body": "A planet's house position sets how strongly and quickly it acts. Angular planets are loud and active; cadent planets are quiet and slow."
 }

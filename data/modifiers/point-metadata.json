@@ -9,6 +9,8 @@
     "node",
     "modern-point"
   ],
+  "role": "metadata",
+  "category": "point",
   "summary": "Metadata for angles, lunar nodes, and optional modern points used by the app.",
   "body": "Points can be displayed and interpreted, but Chiron and Black Moon Lilith remain optional modern layers and should not be used in traditional dignity, sect, rulership, or time-lord logic.",
   "definition": "Point metadata describes non-planet chart factors used for display and interpretation weighting.",

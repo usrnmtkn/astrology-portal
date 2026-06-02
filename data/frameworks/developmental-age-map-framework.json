@@ -1,6 +1,8 @@
 {
   "id": "developmental-age-map-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "developmental",
   "title": "Developmental Age Map Framework",
   "sections": [
     {

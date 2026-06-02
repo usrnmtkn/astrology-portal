@@ -7,6 +7,8 @@
     "placement",
     "transit"
   ],
+  "role": "policy",
+  "category": "modern-points",
   "summary": "Chiron and Black Moon Lilith are modern secondary points that may appear in the same chart only when the user enables them.",
   "body": "Use Chiron and Black Moon Lilith as optional modern shadow-and-healing points. They can be displayed inside the same chart wheel and chart interpretation flow, but they are hidden by default behind a user-controlled toggle. They do not replace planets, rulers, dignity, sect, houses, or time-lord logic.",
   "definition": "Display and weighting policy for modern secondary points such as Chiron and Black Moon Lilith.",

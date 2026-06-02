@@ -11,6 +11,8 @@
     "developmental-age-map",
     "chiron"
   ],
+  "role": "example",
+  "category": "multi-domain",
   "summary": "Reusable possible-expression examples for translating astrology patterns into plain life scenarios without treating examples as predictions.",
   "body": "Use these scenarios as optional plain-language examples when repeated testimony supports a theme. They are not predictions, promises, diagnoses, or instructions. The app should phrase them as possible ways a pattern can show up.",
   "definition": "An example scenario is a plain-life illustration of how an astrological pattern may express, used only after the chart context supports the topic.",

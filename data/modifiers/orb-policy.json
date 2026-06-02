@@ -10,6 +10,8 @@
     "synastry",
     "composite-chart"
   ],
+  "role": "policy",
+  "category": "aspect",
   "summary": "Default aspect orb profiles for natal, transit, synastry, and composite interpretation.",
   "body": "Orbs control whether an aspect is active enough to read. Use wider allowances for natal patterns, tighter allowances for daily transits, and strict settings for midpoint-based composite charts.",
   "definition": "An orb is the permitted distance from exactness for an aspect to count as active.",
