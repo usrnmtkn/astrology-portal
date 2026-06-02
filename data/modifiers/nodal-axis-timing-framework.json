@@ -1,0 +1,251 @@
+{
+  "id": "nodal-axis-timing-framework",
+  "schema": "modifier/nodal-axis-timing-framework",
+  "appliesTo": [
+    "lunar-nodes",
+    "north-node",
+    "south-node",
+    "eclipse",
+    "transit",
+    "progression",
+    "synastry",
+    "life-cycle"
+  ],
+  "summary": "Framework for reading the lunar nodes as a developmental axis and timing trigger without turning them into deterministic fate.",
+  "body": "The lunar nodes are calculated points where the Moon's path crosses the ecliptic. Read them as an axis: the North Node describes growth medicine and unfamiliar development, while the South Node describes familiar skills, default patterns, and what can become repetitive when unconscious. In timing, nodal contacts often coincide with meetings, separations, thresholds, eclipses, and moments when the user must choose between the known pattern and the growth path.",
+  "definition": "The nodal axis is the polarity between the North Node and South Node. It is not a planet, but it can focus important developmental and timing themes when activated by transits, progressions, return charts, synastry, or eclipses.",
+  "appUsage": [
+    "Always read nodes as an axis, not as isolated points.",
+    "Use North Node language for growth, stretch, unfamiliar medicine, and choices that pull the user forward.",
+    "Use South Node language for familiarity, default strategy, inherited competence, comfort, repetition, and release.",
+    "Do not tell users that a nodal contact proves a guaranteed relationship or fixed life outcome.",
+    "Weight nodal contacts up when they involve angles, Sun, Moon, chart ruler, Venus, Mars, Saturn, or a repeated house topic.",
+    "House-based nodal interpretation requires accurate birth time.",
+    "Eclipse interpretation should include the sign/house axis, exact aspects to natal points, and the nearest nodal storyline."
+  ],
+  "note": "Distilled from approved project lunar node, predictive timing, and spiritual astrology source material. Source files were not copied into the repository.",
+  "classes": {
+    "coreAxis": {
+      "northNode": {
+        "plainMeaning": "Growth direction, unfamiliar medicine, and the qualities the user is learning to embody.",
+        "useWhen": [
+          "natal North Node sign or house",
+          "transiting planet conjunct natal North Node",
+          "transiting North Node conjunct a natal planet or angle",
+          "North Node eclipse contacts",
+          "synastry contacts to the North Node"
+        ],
+        "userLanguage": "This is not automatically comfortable, but it points toward the version of you that is becoming more alive."
+      },
+      "southNode": {
+        "plainMeaning": "Familiar pattern, default instinct, old competence, inherited habit, or a place where the user can over-rely on what already works.",
+        "useWhen": [
+          "natal South Node sign or house",
+          "transiting planet conjunct natal South Node",
+          "transiting South Node conjunct a natal planet or angle",
+          "South Node eclipse contacts",
+          "synastry contacts to the South Node"
+        ],
+        "userLanguage": "This can feel easy because it is known. Known is not the same as good for you forever."
+      }
+    },
+    "timingCycles": {
+      "nodalReturn": {
+        "cycle": "about 18.6 years",
+        "plainMeaning": "A developmental checkpoint when the transiting nodes return to the natal nodal axis.",
+        "examples": [
+          "A relationship, path, study, relocation, job, or identity pattern returns with new meaning.",
+          "The user may notice the same theme from the previous nodal cycle, but with more choice available.",
+          "Important people can enter or leave as the old pattern and new direction become visible."
+        ],
+        "readingRule": "Read the natal node sign/house first, then check which planets or angles are contacted by the return chart, eclipses, and current transits."
+      },
+      "nodalReversal": {
+        "cycle": "about 9.3 years after each nodal return",
+        "plainMeaning": "A midpoint check when transiting North Node contacts natal South Node and transiting South Node contacts natal North Node.",
+        "examples": [
+          "The user may be pulled strongly toward a familiar pattern so they can see whether it still serves them.",
+          "A person or opportunity can feel compelling because it activates both comfort and growth tension.",
+          "The cycle can ask for integration rather than a simple move forward."
+        ],
+        "readingRule": "Watch for reversals in relationship, work, home, belief, or identity patterns connected to the natal nodal houses."
+      },
+      "eclipseSeason": {
+        "cycle": "twice yearly eclipse seasons near the nodal axis",
+        "plainMeaning": "A period when the Sun, Moon, and nodes align, intensifying the house/sign axis being activated.",
+        "examples": [
+          "A choice, release, beginning, ending, or revelation clusters around the eclipse house axis.",
+          "Events can feel larger than ordinary lunations when the eclipse tightly contacts natal planets or angles.",
+          "The effect is strongest when the eclipse repeats an already active transit, progression, return, or profection theme."
+        ],
+        "readingRule": "Name the axis, exact natal contacts, and whether the eclipse leans North Node growth or South Node release. Do not recommend elaborate ritual work during eclipses."
+      }
+    },
+    "transitingNodeContacts": {
+      "angles": {
+        "ascendantDescendant": {
+          "northNodeOnAscendant": "A visibility and self-direction threshold. The user may feel more ready to initiate, be seen, or move independently, while partnership demands still require balance.",
+          "northNodeOnDescendant": "A relationship and client threshold. Important helpers, partners, agreements, or dependencies can become central, and the user may need to stop doing everything alone.",
+          "examples": [
+            "meeting a significant collaborator",
+            "relationship definition",
+            "personal launch",
+            "health or body focus",
+            "choice between self-direction and partnership responsibility"
+          ]
+        },
+        "mcIc": {
+          "northNodeOnMc": "A public-role threshold. Career growth, recognition, promotion, or a visible responsibility can increase while home/family needs ask for conscious care.",
+          "northNodeOnIc": "A home and roots threshold. Relocation, family support, private life, or emotional foundations can become more important while career assumptions are reviewed.",
+          "examples": [
+            "promotion or new role",
+            "move or property decision",
+            "family responsibility",
+            "parent or authority topic",
+            "reassessment of security foundations"
+          ]
+        }
+      },
+      "planets": {
+        "sun": {
+          "northNode": "Identity, confidence, leadership, and direction get a forward pull. Beneficial people or opportunities may appear when other indicators agree.",
+          "southNode": "A familiar identity pattern or old role may be ready for release, especially if it has limited vitality.",
+          "examples": [
+            "job or location change",
+            "recognition",
+            "new acquaintance opening a door",
+            "identity decision"
+          ]
+        },
+        "moon": {
+          "northNode": "Emotional growth, family support, public response, or caretaking themes become more active.",
+          "southNode": "Old family patterns, emotional defaults, or care dynamics may need release or more conscious handling.",
+          "examples": [
+            "home/family development",
+            "support from a woman or caretaker",
+            "birth or child-related focus",
+            "emotional threshold"
+          ]
+        },
+        "mercury": {
+          "northNode": "Messages, study, travel logistics, paperwork, youth topics, or negotiations can open movement.",
+          "southNode": "Old communication loops, unclear agreements, or logistical mistakes may need correction.",
+          "examples": [
+            "important conversation",
+            "contract or document",
+            "travel plan",
+            "vehicle or commuting issue",
+            "news that changes the schedule"
+          ]
+        },
+        "venus": {
+          "northNode": "Relationships, money, pleasure, beauty, children, celebration, or social support can become joining points.",
+          "southNode": "Old attachment patterns, overspending, comfort-seeking, or relational nostalgia may need clarity.",
+          "examples": [
+            "romance",
+            "marriage or celebration planning",
+            "birth or child-related gathering",
+            "financial gift or purchase",
+            "social reconnection"
+          ]
+        },
+        "mars": {
+          "northNode": "Action, courage, enterprise, and direct initiative can move quickly when aimed well.",
+          "southNode": "Haste, conflict, careless risk, mechanical trouble, or reactive anger may need restraint.",
+          "examples": [
+            "new venture",
+            "competition",
+            "conflict",
+            "traffic or machinery caution",
+            "urgent repair",
+            "physical exertion"
+          ]
+        },
+        "jupiter": {
+          "northNode": "Growth through teachers, law, travel, publishing, finances, education, or honorable support can expand.",
+          "southNode": "Overconfidence, excess, risky speculation, or a belief pattern may need correction.",
+          "examples": [
+            "long-distance move",
+            "publishing or teaching opportunity",
+            "financial expansion",
+            "legal or educational development",
+            "mentor support"
+          ]
+        },
+        "saturn": {
+          "northNode": "Durable commitments, professional progress, accountability, and long-term structures can form.",
+          "southNode": "Delay, authority pressure, duty, coldness, or a familiar fear pattern may need mature handling.",
+          "examples": [
+            "marriage or serious commitment",
+            "professional responsibility",
+            "authority figure",
+            "dental or health maintenance",
+            "elder or parent responsibility"
+          ]
+        },
+        "uranus": {
+          "northNode": "Sudden openings, liberation, unusual meetings, innovation, or reputation shifts can move the user forward.",
+          "southNode": "Disruption, rebellion, scandal risk, or unstable choices can repeat an old pattern if not handled consciously.",
+          "examples": [
+            "unexpected job change",
+            "sudden popularity",
+            "freedom decision",
+            "technology disruption",
+            "reputation shock"
+          ]
+        },
+        "neptune": {
+          "northNode": "Compassion, creativity, spirituality, and surrender can open when boundaries are also present.",
+          "southNode": "Confusion, deception, avoidance, leakage, theft, or substance-related themes need grounded care.",
+          "examples": [
+            "unclear agreement",
+            "lost item",
+            "water or leak issue",
+            "spiritual opening",
+            "boundary repair"
+          ]
+        },
+        "pluto": {
+          "northNode": "Deep psychological work, power reclamation, and restructuring can become unavoidable and transformative.",
+          "southNode": "Control, crisis bonding, compulsion, or power struggle can pull the user back into familiar intensity.",
+          "examples": [
+            "home or family restructuring",
+            "relationship power shift",
+            "financial entanglement",
+            "therapy or investigation",
+            "closure of a long-running issue"
+          ]
+        }
+      }
+    },
+    "synastry": {
+      "northNodeContacts": "A partner's planet on the user's North Node can feel activating, growth-oriented, and sometimes uncomfortable. It should be described as developmental pressure, not proof the relationship must last.",
+      "southNodeContacts": "A partner's planet on the user's South Node can feel immediate and familiar. It can show recognition and ease, but also regression or a pull back into known patterns.",
+      "saturnNodeContacts": "Saturn-node contacts can feel weighty, serious, binding, or consequential. Use safety-first language and do not frame heaviness as obligation.",
+      "policy": "Nodal synastry shows dynamics and developmental pressure, not certainty."
+    },
+    "displayPolicy": {
+      "chartDisplay": "Show lunar nodes in the main chart by default as calculated points, visually separate from planets.",
+      "interpretationWeight": "Do not let nodes outrank Sun, Moon, Ascendant, chart ruler, or repeated house/ruler themes unless the nodes are angular, tightly aspected, eclipsed, or repeated across techniques.",
+      "unknownBirthTime": "Node sign can usually be shown without birth time, but house and angle contacts require accurate birth time."
+    }
+  },
+  "prohibitions": [
+    "Do not call nodal contacts fixed outcomes.",
+    "Do not say a relationship is guaranteed because of node contacts.",
+    "Do not interpret nodes as planets.",
+    "Do not use nodes for dignity, sect, planetary condition, or rulership.",
+    "Do not predict serious health, safety, legal, pregnancy, custody, or relationship outcomes from a single nodal contact.",
+    "Do not expose source names, book titles, or author names in user-facing text."
+  ],
+  "weighting": [
+    "Node conjunct angle is high weight when birth time is accurate.",
+    "Node conjunct Sun, Moon, chart ruler, Venus, Mars, or Saturn is medium to high weight depending on orb and repetition.",
+    "Eclipse tightly conjunct a natal planet or angle is high weight.",
+    "Nodal return and reversal are life-cycle context, not standalone event guarantees.",
+    "A nodal contact in a Solar Return carries longer-range emphasis than the same contact in a Lunar Return.",
+    "Transiting planet to natal node and transiting node to natal planet can both time events; check the planet, house ruler, and return/progression context."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
