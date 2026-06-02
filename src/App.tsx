@@ -23,11 +23,13 @@ import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ep
 import {
   getAuthAccount,
   isAuthConfigured,
+  loadPersistedProfile,
   onAuthAccountChange,
   signInWithEmail,
   signInWithProvider,
   signOutAuth,
-  signUpWithEmail
+  signUpWithEmail,
+  upsertPersistedProfile
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
@@ -134,6 +136,17 @@ type SkyDetail = {
   title: string;
   meta: string;
   body: ReactNode[];
+};
+
+type ProfilePersistencePayload = {
+  version: 1;
+  profile: UserProfile;
+  preferences: {
+    theme: UiTheme;
+    sunriseOrbEnabled: boolean;
+    selectedLocation: LocationInput | null;
+  };
+  updatedAt: string;
 };
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
@@ -259,6 +272,39 @@ function isUserProfile(value: unknown): value is UserProfile {
     && typeof profile.name === "string"
     && typeof profile.email === "string"
     && Array.isArray(profile.charts);
+}
+
+function isProfilePersistencePayload(value: unknown): value is ProfilePersistencePayload {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const payload = value as Partial<ProfilePersistencePayload>;
+
+  return payload.version === 1 && isUserProfile(payload.profile);
+}
+
+function createProfilePersistencePayload({
+  profile,
+  theme,
+  sunriseOrbEnabled,
+  selectedLocation
+}: {
+  profile: UserProfile;
+  theme: UiTheme;
+  sunriseOrbEnabled: boolean;
+  selectedLocation: LocationInput | null;
+}): ProfilePersistencePayload {
+  return {
+    version: 1,
+    profile,
+    preferences: {
+      theme,
+      sunriseOrbEnabled,
+      selectedLocation
+    },
+    updatedAt: new Date().toISOString()
+  };
 }
 
 function isSignupForm(value: unknown): value is SignupForm {
@@ -1095,6 +1141,8 @@ export function App() {
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(createBlankTransitForm);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
+  const [remoteAccountId, setRemoteAccountId] = useState<string | null>(null);
+  const [remoteProfileReady, setRemoteProfileReady] = useState(false);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
@@ -1103,6 +1151,7 @@ export function App() {
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
+  const lastRemoteProfileSaveRef = useRef("");
   const [sky, setSky] = useState<SkySnapshot>(() => {
     const initialLocation = withTimeZone(initialLocationState.location);
 
@@ -1213,6 +1262,46 @@ export function App() {
   }, [userProfile]);
 
   useEffect(() => {
+    if (!remoteAccountId || !remoteProfileReady || !userProfile) {
+      return;
+    }
+
+    let cancelled = false;
+    const payload = createProfilePersistencePayload({
+      profile: userProfile,
+      theme,
+      sunriseOrbEnabled,
+      selectedLocation: hasLocationPreference ? location : null
+    });
+    const serializedPayload = JSON.stringify(payload);
+
+    if (serializedPayload === lastRemoteProfileSaveRef.current) {
+      return;
+    }
+
+    lastRemoteProfileSaveRef.current = serializedPayload;
+    upsertPersistedProfile(remoteAccountId, payload)
+      .catch((error) => {
+        if (!cancelled) {
+          lastRemoteProfileSaveRef.current = "";
+          console.warn("Supabase profile persistence failed; using local profile cache.", error);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    remoteAccountId,
+    remoteProfileReady,
+    userProfile,
+    theme,
+    sunriseOrbEnabled,
+    hasLocationPreference,
+    location
+  ]);
+
+  useEffect(() => {
     if (!userProfile) {
       return;
     }
@@ -1302,32 +1391,83 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
 
-    getAuthAccount()
-      .then((account) => {
-        if (cancelled || !account) {
+    async function applyAuthAccount(account: AuthAccount | null) {
+      if (!account) {
+        setRemoteAccountId(null);
+        setRemoteProfileReady(false);
+        lastRemoteProfileSaveRef.current = "";
+        return;
+      }
+
+      setRemoteAccountId(account.id);
+      setRemoteProfileReady(false);
+
+      const pendingForm = readPendingSignupForm();
+
+      try {
+        const persistedProfile = await loadPersistedProfile(account.id);
+
+        if (cancelled) {
           return;
         }
 
-        const pendingForm = readPendingSignupForm();
+        if (isProfilePersistencePayload(persistedProfile)) {
+          const remoteTheme = persistedProfile.preferences?.theme;
+          const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
+          const remoteLocation = persistedProfile.preferences?.selectedLocation;
 
+          setUserProfile(persistedProfile.profile);
+          if (remoteTheme === "light" || remoteTheme === "dark") {
+            setTheme(remoteTheme);
+          }
+          if (typeof remoteSunriseOrb === "boolean") {
+            setSunriseOrbEnabled(remoteSunriseOrb);
+          }
+          if (isLocationInput(remoteLocation)) {
+            const nextLocation = withTimeZone(remoteLocation);
+
+            setLocation(nextLocation);
+            setManualLocation(nextLocation.label);
+            setHasLocationPreference(true);
+          }
+        } else {
+          setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
+        }
+
+        clearPendingSignupForm();
+        setMode("profile");
+        setRemoteProfileReady(true);
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        console.warn("Supabase profile load failed; using local profile cache.", error);
         setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
         clearPendingSignupForm();
         setMode("profile");
+        setRemoteProfileReady(true);
+      }
+    }
+
+    getAuthAccount()
+      .then((account) => {
+        if (cancelled) {
+          return;
+        }
+
+        void applyAuthAccount(account);
       })
       .catch(() => {
         return;
       });
 
     const unsubscribe = onAuthAccountChange((account) => {
-      if (!account) {
+      if (cancelled) {
         return;
       }
 
-      const pendingForm = readPendingSignupForm();
-
-      setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
-      clearPendingSignupForm();
-      setMode("profile");
+      void applyAuthAccount(account);
     });
 
     return () => {
