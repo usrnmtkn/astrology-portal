@@ -16,7 +16,11 @@
       "The Lord of the Year's natal condition (house, sign, dignity, sect, aspects) sets the year's quality.",
       "That year, transits TO or FROM the Lord of the Year and TO the profected sign are the ones that fire; others are background.",
       "If the Lord of the Year is also currently transited by a malefic, weight the year's difficulty up; by a benefic, down.",
-      "A profection to a house activates the planets natally in that house and the planet ruling it."
+      "A profection to a house activates the planets natally in that house and the planet ruling it.",
+      "The profected sign is active in both the natal chart and the Solar Return chart for that year.",
+      "Planets natally in the profected sign are activated, but only the traditional seven planets can become Lord of the Year.",
+      "The Lord of the Year is the first transit filter: prioritize transits to the natal Lord of the Year, transits to the Solar Return Lord of the Year, transits made by the Lord of the Year, and transits through the profected sign.",
+      "Angular profection years (1st, 4th, 7th, 10th) are generally louder than cadent years, especially when the same sign or ruler is angular in the Solar Return."
     ],
     "houseTopics": {
       "1": "self, body, vitality, the year's overall direction",
@@ -231,7 +235,39 @@
         "status": "DRAFT"
       }
     ],
-    "sourceCaution": "Cycle table imported as DRAFT project material; verify against primary timing references before marking reviewed."
+    "sourceCaution": "Cycle table imported as DRAFT project material; verify against primary timing references before marking reviewed.",
+    "activationPriority": {
+      "highest": [
+        "Lord of the Year by natal condition and Solar Return condition",
+        "Planets in the profected natal sign",
+        "Solar Return planets in the profected sign or on Solar Return angles",
+        "Transits to or from the Lord of the Year",
+        "Transits and lunations through the profected sign, especially when they hit natal or Solar Return planets tightly"
+      ],
+      "supporting": [
+        "The other natal houses ruled by the Lord of the Year",
+        "The same modality signs as the profected sign, as supporting stakes around the year theme",
+        "Monthly profections for narrowing the active month inside the annual topic"
+      ],
+      "appRankingRule": "When a transit does not touch the Lord of the Year, the profected sign, an activated natal planet, or a Solar Return angle, rank it as background unless another timing method repeats the same topic."
+    },
+    "solarReturnBridge": {
+      "readOrder": [
+        "Find the profected house and Lord of the Year from the natal Ascendant using whole-sign houses.",
+        "Read the natal condition of the Lord of the Year: sign, house, dignity, sect, aspects, angularity, and houses ruled.",
+        "Read the Solar Return Ascendant, its ruler, angular planets, and the Solar Return house containing the profected sign.",
+        "Compare natal and Solar Return charts for close angle contacts and repeated planets or houses.",
+        "Use transits and lunations to time peaks only after the annual field is established."
+      ],
+      "bigYearSignals": [
+        "Solar Return Ascendant close to natal Ascendant or natal Midheaven.",
+        "Solar Return Ascendant in the same sign as a natal angle.",
+        "Lord of the Year angular, dignified, strongly configured, or repeatedly emphasized in the Solar Return.",
+        "The same planet, house topic, or aspect pattern repeats across natal chart, profection, Solar Return, and current transits.",
+        "A natal planet that is already prominent becomes angular or tightly contacted in the Solar Return."
+      ],
+      "caution": "Do not treat the Solar Return as a standalone prediction when it contradicts natal promise and the active time-lord context."
+    }
   },
   "zodiacalReleasing": {
     "definition": "Releases time from a Lot through the signs, each sign lasting its ruler's period-years, producing nested life chapters (L1 major, L2 sub, L3, L4).",
@@ -284,5 +320,6 @@
     "transit"
   ],
   "summary": "Time-lord systems describe which natal topics and planets are activated during a life chapter.",
-  "body": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord."
+  "body": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord.",
+  "note": "Expanded from approved predictive timing source material. Source files were not copied into the repository."
 }

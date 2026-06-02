@@ -42,6 +42,26 @@
       "id": "user-facing-translation",
       "heading": "User-Facing Translation",
       "body": "The app should not expose the full machinery unless the user asks for it. Translate agreement between techniques as plain confidence language: a background theme is active, a trigger is pressing it now, and the user's choices decide how consciously it is handled."
+    },
+    {
+      "id": "events-and-psychology-both-count",
+      "heading": "Events And Psychology Both Count",
+      "body": "A transit can describe an external event, an inner psychological shift, or both. The app should not force a false split between circumstances and inner process. Translate this as: the life area is activated, the pressure is real, and the visible form depends on context and choices."
+    },
+    {
+      "id": "annual-context-before-daily-trigger",
+      "heading": "Annual Context Before Daily Trigger",
+      "body": "Rank daily transits inside the yearly field. A transit is louder when it touches the Lord of the Year, the profected sign, a Solar Return angle, an angular natal planet, or a topic repeated by the Solar Return. A technically exact transit with no annual support should usually read as background."
+    },
+    {
+      "id": "cycle-stage-language",
+      "heading": "Cycle Stage Language",
+      "body": "Read repeated contacts as a cycle: conjunction begins or fuses the topic, waxing square tests it, opposition brings culmination or confrontation, waning square forces revision, and the next conjunction resets the storyline. This helps avoid treating every exact hit as isolated."
+    },
+    {
+      "id": "easy-and-hard-transits",
+      "heading": "Easy And Hard Transits",
+      "body": "Easy transits often require voluntary action or they pass quietly. Hard transits expose weak points, pressure stuck patterns, and force decisions where avoidance has built up. Do not call easy transits guaranteed blessings or hard transits guaranteed harm."
     }
   ],
   "voiceNeutral": true,

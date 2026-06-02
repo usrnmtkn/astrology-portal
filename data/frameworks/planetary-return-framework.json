@@ -32,6 +32,16 @@
       "id": "do-not-overpromise",
       "heading": "Do Not Overpromise",
       "body": "A return chart does not guarantee a single event. It gives a cycle field. Raise confidence only when the return chart repeats natal promise, progression, active transit, or time-lord testimony."
+    },
+    {
+      "id": "solar-return-big-year-signals",
+      "heading": "Solar Return Big Year Signals",
+      "body": "A Solar Return is more likely to describe a visible year when its Ascendant is close to a natal angle, when the Lord of the Year is prominent in the return, when return angles contact natal planets, or when the same planet and house topic repeat across natal chart, profection, return, and current transits."
+    },
+    {
+      "id": "solar-return-plus-profection",
+      "heading": "Solar Return Plus Profection",
+      "body": "For annual work, start with the profection and Lord of the Year, then read the Solar Return through that lens. The return chart may be read as its own chart, but the Lord of the Year, profected sign, and activated natal planets determine which parts of the return deserve the most weight."
     }
   ],
   "voiceNeutral": true,
