@@ -16,7 +16,7 @@
     "Weight hard Saturn, Uranus, Neptune, and Pluto contacts carefully because they can describe real strain, instability, fog, or power dynamics.",
     "For relationship summaries, prefer concrete language: purpose, daily emotional climate, communication, affection, conflict, commitment, and repair."
   ],
-  "note": "Expanded from approved project composite, relationship, and marquee source material. Source files were not copied into the repository.",
+  "note": "Expanded from approved project composite, relationship, marquee, and relationship-method source material. Source files were not copied into the repository.",
   "classes": {
     "readingOrder": [
       "Read each natal chart first to understand the people in the relationship.",
@@ -637,6 +637,55 @@
         "signs": 24,
         "houses": 48,
         "ascendantSigns": 12
+      }
+    },
+    "compositeExpansion": {
+      "planetsInCompositeChart": {
+        "scope": "Composite Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, nodes, Ascendant, and Midheaven as the relationship's shared field.",
+        "use": [
+          "Sun: central purpose and vitality of the relationship.",
+          "Moon: daily emotional climate and instinctive comfort pattern.",
+          "Mercury: communication, problem-solving, and the way the relationship thinks.",
+          "Venus: affection, pleasure, peace-making, taste, and social ease.",
+          "Mars: desire, conflict, initiative, anger, and sexual heat.",
+          "Jupiter: growth, shared faith, opportunity, humor, and excess.",
+          "Saturn: commitment, pressure, durability, duty, delay, and fear.",
+          "Uranus: freedom, disruption, unconventional rhythm, and instability.",
+          "Neptune: idealization, compassion, confusion, secrecy, and spiritual longing.",
+          "Pluto: intensity, power, compulsion, survival material, and transformation.",
+          "Nodes: shared growth direction and repeating relationship patterns, kept belief-neutral.",
+          "Angles: visible style, private foundation, partnership axis, and public direction of the bond."
+        ]
+      },
+      "compositeAspects": {
+        "scope": "Major aspects inside the composite chart, read as relationship dynamics rather than one person doing something to the other.",
+        "aspectOrder": [
+          "conjunction",
+          "opposition",
+          "square",
+          "trine",
+          "sextile"
+        ],
+        "method": [
+          "Start with Sun-Moon, Sun-Ascendant, Moon-Ascendant, Venus-Mars, Venus-Saturn, Mars-Saturn, and contacts from Saturn, Uranus, Neptune, or Pluto to personal planets.",
+          "Read conjunctions as fused relationship functions that become loud and hard to separate.",
+          "Read oppositions as polarities the relationship must learn to hold without assigning one side to one partner forever.",
+          "Read squares as recurring pressure that requires repair skills and conscious outlets.",
+          "Read trines as ease that supports the bond but can become passive if the relationship avoids growth.",
+          "Read sextiles as opportunities that need active use."
+        ],
+        "caution": "Composite aspects are not blame assignments. They describe the relationship field both people participate in."
+      },
+      "relationshipSynthesis": {
+        "order": [
+          "Summarize each natal relationship pattern.",
+          "Summarize the strongest synastry contacts and overlays.",
+          "Name the composite Sun, Moon, Ascendant, Venus, Mars, and Saturn story.",
+          "Add Uranus, Neptune, Pluto, nodes, and configurations only when they are tight or repeated.",
+          "Separate attraction from compatibility, compatibility from durability, and durability from health.",
+          "End with choices, repair needs, and the skills the relationship requires."
+        ],
+        "outputPolicy": "Never use the composite as a verdict. Give strengths, pressure points, and practical relationship skills."
       }
     }
   },

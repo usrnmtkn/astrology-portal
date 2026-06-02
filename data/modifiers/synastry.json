@@ -153,7 +153,145 @@
       ],
       "avoid": "Do not promise a fixed outcome, past-life certainty, or spiritual obligation. The app should name the pull, the pattern, and the choices."
     },
-    "ethicalBoundary": "Synastry shows dynamics and potentials, not fixed outcomes. Do not frame abusive dynamics as lessons, ignore red flags, or create dependence on astrological validation."
+    "ethicalBoundary": "Synastry shows dynamics and potentials, not fixed outcomes. Do not frame abusive dynamics as lessons, ignore red flags, or create dependence on astrological validation.",
+    "coverageMap": {
+      "houseOverlays": {
+        "scope": "Your planets in the other person's wheel: each planet is read through all 12 partner houses, with the house person treated as the one receiving the activation.",
+        "planets": [
+          "sun",
+          "moon",
+          "mercury",
+          "venus",
+          "mars",
+          "jupiter",
+          "saturn",
+          "uranus",
+          "neptune",
+          "pluto"
+        ],
+        "houses": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "use": "Use overlays to locate where the relationship becomes personal: identity, money, communication, home, romance, daily life, partnership, intimacy, worldview, public life, community, or hidden material.",
+        "caution": "Do not read an overlay as automatically good or bad. The planet's condition, aspects, and the house person's natal relationship promise decide whether the activation feels supportive, intrusive, useful, exciting, or heavy."
+      },
+      "interaspects": {
+        "scope": "Major contacts between Sun, Moon, Mercury, Venus, Mars, angles, Jupiter, Saturn, Uranus, Neptune, and Pluto.",
+        "aspects": [
+          "conjunction",
+          "sextile",
+          "trine",
+          "square",
+          "opposition"
+        ],
+        "priorities": [
+          "Luminary contacts describe identity and emotional safety.",
+          "Mercury contacts describe whether the people can understand each other and keep talking.",
+          "Venus and Mars contacts describe affection, attraction, pursuit, desire, conflict, and chemistry.",
+          "Angle contacts make the relationship immediately embodied and hard to ignore.",
+          "Jupiter contacts describe growth, generosity, shared confidence, and the risk of excess.",
+          "Saturn contacts describe durability, duty, restraint, fear, maturity, and whether the bond can carry real life.",
+          "Uranus, Neptune, and Pluto contacts describe disruption, idealization, intensity, compulsion, and transformation; weight them most when they touch a personal planet or angle."
+        ],
+        "caution": "Exact contact matters. A sign-based affinity can support rapport, but it is not the same as a degree-based interaspect."
+      },
+      "configurations": {
+        "scope": "T-squares, yods, grand trines, grand crosses, and other cross-chart patterns created when one person's planets activate the other's natal geometry.",
+        "use": "After individual aspects are read, look for the larger pattern. A relationship can feel important because it completes a pattern, not because every contact is easy.",
+        "caution": "A completed pattern can increase pressure as much as compatibility. Name the activation and the work it asks for."
+      },
+      "nodes": {
+        "scope": "Lunar nodes in synastry, especially tight contacts to personal planets, angles, Saturn, or the 12th-house layer.",
+        "use": "Use nodes for the relationship depth layer: familiarity, growth direction, old habits, timing, and the feeling that the connection opens a chapter.",
+        "caution": "Keep the language belief-neutral. Do not promise past-life certainty, spiritual obligation, or a fixed outcome."
+      }
+    },
+    "relationshipReadingChecklist": [
+      {
+        "step": 1,
+        "name": "Natal relationship capacity",
+        "check": "Read each person's Moon, Venus, Mars, Saturn, 1st/7th axis, 5th house, 8th house, and 7th ruler before comparing charts.",
+        "reason": "This shows what the person can receive, repeat, defend against, or ask for in relationship."
+      },
+      {
+        "step": 2,
+        "name": "Partnership promise",
+        "check": "Ask what each chart describes as partnership material before claiming compatibility.",
+        "reason": "A strong contact matters more when it answers a real natal partnership need."
+      },
+      {
+        "step": 3,
+        "name": "Immediate recognition",
+        "check": "Check Sun, Moon, Ascendant, Descendant, IC, MC, and planets on angles.",
+        "reason": "Angle and luminary contacts make the bond visible, embodied, and personally felt."
+      },
+      {
+        "step": 4,
+        "name": "Emotional and daily fit",
+        "check": "Prioritize Moon-Moon, Sun-Moon, Moon-Venus, Moon-Mars, Moon-Saturn, and Moon overlays.",
+        "reason": "Chemistry does not replace the daily emotional climate."
+      },
+      {
+        "step": 5,
+        "name": "Communication capacity",
+        "check": "Read Mercury contacts and 3rd-house overlays.",
+        "reason": "A lasting bond needs enough shared language to repair misunderstanding."
+      },
+      {
+        "step": 6,
+        "name": "Attraction and conflict",
+        "check": "Read Venus, Mars, 5th-house overlays, and 8th-house overlays together.",
+        "reason": "This separates attraction, affection, sexual heat, and psychological merging."
+      },
+      {
+        "step": 7,
+        "name": "Durability and strain",
+        "check": "Read Saturn contacts, Saturn overlays, hard Mars-Saturn, and hard Venus-Saturn before promising longevity.",
+        "reason": "Saturn can hold a bond together, but it can also make the bond feel cold, blocked, or obligatory."
+      },
+      {
+        "step": 8,
+        "name": "Growth and destabilizers",
+        "check": "Read Jupiter, Uranus, Neptune, and Pluto only after the personal planet story is clear.",
+        "reason": "These contacts add expansion, freedom, fog, and intensity, but they should not carry the whole reading unless tied to personal planets or angles."
+      },
+      {
+        "step": 9,
+        "name": "Configurations and nodes",
+        "check": "Check whether the two charts create T-squares, yods, grand trines, grand crosses, nodal contacts, Vertex contacts, or repeated 12th-house themes.",
+        "reason": "These show why the relationship feels like a turning point or pressure point."
+      },
+      {
+        "step": 10,
+        "name": "Composite synthesis",
+        "check": "Read the composite only after the natal and synastry layers are clear.",
+        "reason": "The composite describes the relationship field, not whether either person should stay in it."
+      }
+    ],
+    "interaspectFamilies": {
+      "sun": "Sun interaspects show how one person's identity, confidence, and life direction meet the other's planets or angles.",
+      "moon": "Moon interaspects show emotional safety, instinctive reaction, attachment patterns, and what daily life feels like together.",
+      "mercury": "Mercury interaspects show conversation, listening, learning, misunderstanding, repair, and whether the bond can stay mentally connected.",
+      "venus": "Venus interaspects show affection, ease, pleasure, attraction style, agreement, taste, and how love is offered or received.",
+      "mars": "Mars interaspects show pursuit, anger, desire, heat, competition, and whether action becomes teamwork or conflict.",
+      "angles": "Angle contacts show immediacy, embodiment, recognition, public/private impact, and the way one person alters the other's life direction or self-presentation.",
+      "jupiter": "Jupiter interaspects show growth, generosity, shared belief, humor, opportunity, and the risk of overpromising or excess.",
+      "saturn": "Saturn interaspects show commitment, tests, duty, restraint, maturity, endurance, fear, delay, and the bond's capacity to handle real life.",
+      "uranus": "Uranus interaspects show electricity, freedom, disruption, novelty, inconsistency, and the need for space or unconventional terms.",
+      "neptune": "Neptune interaspects show compassion, imagination, idealization, projection, confusion, spiritual longing, and the need for reality checks.",
+      "pluto": "Pluto interaspects show intensity, compulsion, power dynamics, psychological depth, transformation, and the need for clean boundaries."
+    }
   },
   "weighting": [
     "Personal planets (Sun, Moon, Mercury, Venus, Mars), the luminaries, and the angles carry the most weight.",
