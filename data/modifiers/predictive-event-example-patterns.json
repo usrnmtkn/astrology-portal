@@ -1,0 +1,314 @@
+{
+  "id": "predictive-event-example-patterns",
+  "schema": "modifier/predictive-event-example-patterns",
+  "appliesTo": [
+    "prediction",
+    "transit",
+    "progression",
+    "return-chart",
+    "life-event",
+    "timing"
+  ],
+  "summary": "Concrete example patterns for translating repeated timing testimony into plain life-event categories without promising a fixed outcome.",
+  "body": "Use these examples as interpretive labels when natal promise, progressions, returns, activated house rulers, and transits repeat the same theme. A single transit can describe pressure, mood, or opportunity; it should not be promoted into a concrete event unless other timing layers agree.",
+  "definition": "A predictive example pattern is a cluster of repeated indicators that points toward a life area becoming active enough to describe in plain language, such as relationship definition, career consequence, home movement, health maintenance, legal process, travel logistics, financial restructuring, or public visibility.",
+  "appUsage": [
+    "Surface these examples as possibilities, not verdicts.",
+    "Require repeated testimony before naming a concrete event category.",
+    "Prefer plain language: relationship definition, career pressure, home change, health maintenance, financial responsibility, legal paperwork, travel logistics, public visibility.",
+    "When the topic is sensitive, name the life area and recommend practical support rather than dramatizing the symbol.",
+    "Use planet examples to clarify the flavor of the event, and house examples to clarify the life area."
+  ],
+  "note": "Distilled from approved predictive, transit, spiritual astrology, and Saturn cycle reference material. Source files were not copied into the repository.",
+  "classes": {
+    "timingPrinciples": {
+      "innerAndOuter": "Slow planets describe the larger life phase. Faster planets can time the moment when the larger phase becomes visible through a conversation, decision, message, appointment, meeting, conflict, or public announcement.",
+      "threePassTransit": "When a slow planet makes three contacts, read the first pass as the issue appearing, the retrograde pass as review or complication, and the final pass as decision, integration, or consequence.",
+      "storedActivation": "A station, close outer-planet contact, return chart angle, or progressed contact can store pressure. A later fast trigger may coincide with the visible event.",
+      "eventDefinition": "An event can be external, internal, relational, bodily, legal, financial, or psychological. The app should not assume that a transit must produce an obvious outer incident.",
+      "multipleIndicators": "For a major event label, look for the same planet pair, house topic, ruler, angle, or return-chart emphasis repeating at least three times."
+    },
+    "planetEventExamples": {
+      "sun": {
+        "plainFocus": "Visibility, identity, vitality, leaders, authority figures, recognition, central decisions, and personal direction.",
+        "examples": [
+          "A public role, title, or reputation question comes into focus.",
+          "A leader, parent, manager, or authority figure becomes part of the story.",
+          "A decision about direction, confidence, or personal visibility can no longer stay vague."
+        ]
+      },
+      "moon": {
+        "plainFocus": "Home, family, emotional safety, body rhythms, care, movement, memory, and the immediate lived environment.",
+        "examples": [
+          "A home, family, caregiving, or domestic matter needs attention.",
+          "The body or emotional system responds before the mind has a full explanation.",
+          "A short-term timing trigger brings a larger pattern into the day-to-day."
+        ]
+      },
+      "mercury": {
+        "plainFocus": "Messages, paperwork, travel logistics, siblings, study, schedules, devices, agreements, and news.",
+        "examples": [
+          "A document, text, call, email, application, contract, or announcement becomes the trigger point.",
+          "Travel, commuting, school, scheduling, or device issues need practical handling.",
+          "The event becomes known through a message, meeting, report, or conversation."
+        ]
+      },
+      "venus": {
+        "plainFocus": "Relationships, money, ease, pleasure, value, aesthetics, gifts, social repair, and attraction.",
+        "examples": [
+          "A relationship softens, defines itself, asks for repair, or reveals the true state of affection.",
+          "A financial offer, purchase, gift, payment, pricing issue, or spending pattern becomes visible.",
+          "A choice about comfort, beauty, desire, or worth carries more weight than usual."
+        ]
+      },
+      "mars": {
+        "plainFocus": "Action, urgency, conflict, heat, inflammation, effort, competition, enterprise, tools, and accidents caused by haste.",
+        "examples": [
+          "A dispute, deadline, confrontation, repair, athletic push, or risky action forces movement.",
+          "The body needs caution around speed, inflammation, sharp tools, machinery, driving, or overexertion.",
+          "A business launch, bold ask, or competitive effort can move quickly if the aim is clean."
+        ]
+      },
+      "jupiter": {
+        "plainFocus": "Growth, protection, opportunity, teachers, law, publishing, travel, education, faith, and social support.",
+        "examples": [
+          "A legal, academic, publishing, travel, teaching, or certification matter expands.",
+          "Support can come through mentors, allies, institutions, or a door opening at the right time.",
+          "A joyful life event can become more likely when relationship, family, or 5th-house testimony agrees."
+        ]
+      },
+      "saturn": {
+        "plainFocus": "Time, limits, duty, authority, work, age, health maintenance, delay, structure, accountability, and consequence.",
+        "examples": [
+          "A job, commitment, debt, family duty, legal responsibility, or long-term obligation has to be handled seriously.",
+          "The body may ask for maintenance, pacing, treatment, rest, or a more realistic workload.",
+          "An authority figure, institution, boss, parent, mentor, or inner critic becomes part of the test."
+        ]
+      },
+      "uranus": {
+        "plainFocus": "Disruption, freedom, shock, innovation, breaks in routine, technology, nervous-system charge, and sudden reversals.",
+        "examples": [
+          "A sudden change, cancellation, breakthrough, relocation impulse, technical disruption, or independence issue changes the plan.",
+          "The user may need more freedom or flexibility than the current structure allows.",
+          "If accident signatures repeat elsewhere, haste and electrical or mechanical risks deserve extra caution."
+        ]
+      },
+      "neptune": {
+        "plainFocus": "Confusion, surrender, uncertainty, porous boundaries, spirituality, art, secrecy, fog, fatigue, and quiet erosion.",
+        "examples": [
+          "A situation becomes unclear, idealized, hidden, delayed, or hard to define.",
+          "Work, health, relationship, or money boundaries may blur unless the user asks direct questions.",
+          "Creative, spiritual, and compassionate openings are stronger when practical safeguards are present."
+        ]
+      },
+      "pluto": {
+        "plainFocus": "Power, pressure, control, exposure, obsession, survival patterns, buried material, and deep restructuring.",
+        "examples": [
+          "A control dynamic, power struggle, financial entanglement, intense attachment, or hidden issue surfaces.",
+          "A role, relationship, habit, or system may need deep restructuring rather than cosmetic adjustment.",
+          "When practical indicators agree, the event can involve institutions, shared resources, therapy, investigation, or crisis management."
+        ]
+      }
+    },
+    "houseEventExamples": {
+      "1": "Body, identity, appearance, autonomy, personal launch, self-direction, and how the user meets the world.",
+      "2": "Income, cash flow, possessions, pricing, debt prevention, earning strategy, spending patterns, and self-worth.",
+      "3": "Messages, siblings, neighbors, paperwork, short travel, commuting, school, scheduling, devices, and daily logistics.",
+      "4": "Home, family, parents, property, living situation, privacy, roots, moving, renovation, and emotional foundation.",
+      "5": "Children, dating, creativity, pleasure, pregnancy-related topics, artistic risks, play, and personal joy.",
+      "6": "Workload, coworkers, service, routines, health maintenance, appointments, recovery, burnout, and daily systems.",
+      "7": "Marriage, partnership, clients, open conflict, contracts, negotiations, commitment talks, and relationship definition.",
+      "8": "Shared money, taxes, debt, loans, inheritance, intimacy, trust, therapy, crisis support, and power exchange.",
+      "9": "Law, higher education, teaching, publishing, long-distance travel, immigration, faith, worldview, and formal learning.",
+      "10": "Career, reputation, public role, bosses, parents, achievement, leadership, visibility, and long-term contribution.",
+      "11": "Friends, networks, audience, groups, community, collaborators, future plans, and collective commitments.",
+      "12": "Rest, retreat, hidden matters, closure, hospitalization or institutional settings, therapy, spiritual practice, and private burdens."
+    },
+    "exampleClusters": {
+      "relationshipDefinition": {
+        "plainMeaning": "A relationship, client bond, legal agreement, or partnership status needs definition.",
+        "lookFor": [
+          "7th house or 7th ruler activated",
+          "Venus, Moon, Saturn, or Mars repeating the same relationship theme",
+          "Return chart emphasis on the 7th house or relationship planets",
+          "A fast trigger from Moon, Mercury, Venus, Mars, or Sun timing the conversation or decision"
+        ],
+        "examples": [
+          "Commitment talk",
+          "Separation talk",
+          "Marriage planning",
+          "Client contract",
+          "Boundary negotiation",
+          "Repair conversation"
+        ]
+      },
+      "careerConsequence": {
+        "plainMeaning": "Work, visibility, responsibility, leadership, or reputation becomes concrete.",
+        "lookFor": [
+          "10th house, MC, 10th ruler, Sun, Saturn, or Jupiter activated",
+          "Return planet angular or connected to the 10th",
+          "Progressed Sun, Moon, Saturn, or chart ruler repeating the career topic",
+          "Mercury or Sun timing an announcement, meeting, interview, or public result"
+        ],
+        "examples": [
+          "Promotion review",
+          "Job change",
+          "Resignation",
+          "Public launch",
+          "Leadership pressure",
+          "Authority conflict",
+          "Professional recognition"
+        ]
+      },
+      "homeAndRelocation": {
+        "plainMeaning": "The living situation, family structure, property, or sense of roots becomes active.",
+        "lookFor": [
+          "4th house, IC, 4th ruler, Moon, Mars, Saturn, or Uranus activated",
+          "3rd/4th/9th house repetition for movement or relocation",
+          "Return chart angular Moon, Mars, Saturn, Uranus, or 4th ruler",
+          "Mercury or Moon timing paperwork, calls, showings, travel, or family conversations"
+        ],
+        "examples": [
+          "Move",
+          "Lease or mortgage issue",
+          "Renovation",
+          "Family restructuring",
+          "Caregiving shift",
+          "Property repair",
+          "Change in private life"
+        ]
+      },
+      "healthMaintenanceAndBodyStress": {
+        "plainMeaning": "The body, workload, stress level, or care routines need attention.",
+        "lookFor": [
+          "1st, 6th, or 12th house activated",
+          "Sun, Moon, Mars, Saturn, Neptune, or chart ruler under repeated stress",
+          "Return chart emphasis on health houses or angular Mars/Saturn",
+          "Fast triggers timing appointments, symptoms, recovery decisions, or workload changes"
+        ],
+        "examples": [
+          "Medical appointment",
+          "Recovery period",
+          "Burnout check",
+          "Inflammation caution",
+          "Sleep or rest deficit",
+          "Workload adjustment",
+          "Body maintenance plan"
+        ]
+      },
+      "legalEducationAndDocuments": {
+        "plainMeaning": "Formal paperwork, legal process, school, publishing, certification, travel, or institutional approval is active.",
+        "lookFor": [
+          "3rd, 7th, or 9th house activated",
+          "Mercury, Jupiter, Saturn, or the relevant house ruler emphasized",
+          "Return chart repetition of documents, law, education, travel, or institutional settings",
+          "Mercury timing the message, filing, signature, result, or appointment"
+        ],
+        "examples": [
+          "Contract",
+          "Court date",
+          "Application",
+          "Certification",
+          "Publication",
+          "Immigration step",
+          "Travel paperwork",
+          "Institutional decision"
+        ]
+      },
+      "moneyAndSharedResources": {
+        "plainMeaning": "Personal income, debt, shared money, taxes, loans, assets, or financial boundaries become active.",
+        "lookFor": [
+          "2nd or 8th house activated",
+          "Venus, Jupiter, Saturn, Mars, Pluto, or financial house rulers emphasized",
+          "Return chart repetition of money houses",
+          "Mercury, Venus, Mars, or Moon timing a payment, bill, agreement, dispute, or purchase"
+        ],
+        "examples": [
+          "Raise negotiation",
+          "Client payment",
+          "Budget restructuring",
+          "Debt plan",
+          "Tax issue",
+          "Loan or credit decision",
+          "Shared expense talk",
+          "Asset purchase or sale"
+        ]
+      },
+      "suddenBreakOrCourseCorrection": {
+        "plainMeaning": "A plan changes quickly because the current structure cannot hold the user's need for freedom, truth, or adaptation.",
+        "lookFor": [
+          "Uranus, Mars, Mercury, angles, or mutable/cardinal house topics activated",
+          "Return chart emphasis on Uranus or a fast planet on an angle",
+          "Progressed Moon or chart ruler contacting Uranus, Mars, or Mercury",
+          "Fast trigger timing the call, disruption, accident-prone moment, technical problem, or sudden decision"
+        ],
+        "examples": [
+          "Schedule disruption",
+          "Technical failure",
+          "Sudden travel change",
+          "Break from a role",
+          "Unexpected conversation",
+          "Liberating decision",
+          "Need for accident-prevention caution"
+        ]
+      },
+      "spiritualOrPrivateRetreat": {
+        "plainMeaning": "The user may need quiet, closure, spiritual practice, therapy, recovery, grief support, or a private container.",
+        "lookFor": [
+          "12th house, Neptune, Saturn, Moon, South Node, or progressed balsamic/New phase themes activated",
+          "Return chart emphasis on hidden houses or retreat settings",
+          "Progressed Moon phase transition repeating the closure theme",
+          "Fast triggers timing withdrawal, rest, therapy, journaling, or a private conversation"
+        ],
+        "examples": [
+          "Therapy focus",
+          "Retreat",
+          "Private recovery",
+          "Restorative pause",
+          "Ending a draining pattern",
+          "Spiritual practice",
+          "Behind-the-scenes preparation"
+        ]
+      }
+    },
+    "saturnReturnExamples": {
+      "firstReturn": [
+        "Changing jobs because the old path was built around other people's expectations.",
+        "Defining a relationship instead of letting ambiguity carry the weight.",
+        "Facing debt, undercharging, unstable work, or money avoidance with a real plan.",
+        "Separating inherited authority from inner authority.",
+        "Choosing a long-term craft, credential, business, or vocation and accepting the repetition it requires.",
+        "Building boundaries with family, bosses, institutions, or partners."
+      ],
+      "secondReturn": [
+        "Revising the meaning of usefulness, work, health, aging, and legacy.",
+        "Moving from proving competence into mentoring, teaching, simplifying, or building something that outlasts the user.",
+        "Choosing a next vocation or retirement structure based on truth instead of social expectation.",
+        "Taking the body seriously as a partner in the next chapter.",
+        "Letting completed responsibilities become complete instead of carrying them out of habit."
+      ],
+      "retrogradeReturn": [
+        "First pass names the work.",
+        "Retrograde pass reviews why the old structure exists.",
+        "Final pass asks for a decision, commitment, or real-world adjustment."
+      ]
+    }
+  },
+  "prohibitions": [
+    "Do not predict a specific event from one transit.",
+    "Do not use these examples to diagnose health conditions.",
+    "Do not present legal, pregnancy, custody, safety, financial, or relationship outcomes as guaranteed.",
+    "Do not use fear-based language to force urgency.",
+    "Do not expose source names or book titles in user-facing text."
+  ],
+  "weighting": [
+    "Use examples only when repeated testimony supports them.",
+    "Angular contacts and activated rulers carry more weight than background aspects.",
+    "Progressions describe the life chapter; transits describe timing pressure.",
+    "Return charts describe the field for the year, month, or planetary cycle.",
+    "Fast planets can time the day, message, meeting, or decision only when a larger pattern is already active.",
+    "The same planet pair repeating across natal, progressed, return, and transit layers should be weighted up."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
