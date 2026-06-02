@@ -42,6 +42,16 @@
       "id": "sixth-house-place",
       "heading": "6th House Place",
       "body": "Traditionally, the 6th is Bad Fortune: cadent, weak, in aversion to the Ascendant, and associated with illness, injury, toil, accidents, and subordinates. It is the joy of Mars. Joy is a strength condition, not a softening; a planet in its joy does its job more, and Mars's job here includes sickness and strain."
+    },
+    {
+      "id": "transit-ranking-order",
+      "heading": "Transit Ranking Order",
+      "body": "For traditional timing, transits are last in the ranking stack: natal promise first, then time-lord context, then Solar Return or other annual chart, then real-time transit trigger. This does not make transits unimportant; it explains why some exact transits are loud and others are barely felt."
+    },
+    {
+      "id": "traditional-seven-only-for-time-lords",
+      "heading": "Traditional Seven Only For Time Lords",
+      "body": "Only the seven visible planets can serve as time-lords in profection-style timing. Uranus, Neptune, Pluto, Chiron, Lilith, and other modern points may describe modern overlay themes, but they do not rule the year, hold dignity, or become time-lords."
     }
   ],
   "voiceNeutral": true,
