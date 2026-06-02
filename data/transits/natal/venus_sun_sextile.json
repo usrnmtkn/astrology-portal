@@ -1,0 +1,12 @@
+{
+  "id": "venus_sun_sextile",
+  "kind": "transit-to-natal",
+  "transiting": "venus",
+  "natal": "sun",
+  "aspect": "sextile",
+  "plainTranslation": "Warmth and attraction opens a door in your identity and direction - if you take it. Days.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

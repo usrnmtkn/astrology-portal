@@ -1,0 +1,12 @@
+{
+  "id": "A-mars_B-neptune_sextile",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "neptune",
+  "aspect": "sextile",
+  "plainTranslation": "A's drive meets B's dreams. The sextile supports them, if you act on it.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "venus_house4",
+  "kind": "house-overlay",
+  "planet": "venus",
+  "house": "4",
+  "plainTranslation": "Someone's Venus in the other's House 4: brings love and values into home, family, and your private foundation.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

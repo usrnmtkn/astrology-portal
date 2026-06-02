@@ -1,0 +1,12 @@
+{
+  "id": "A-moon_B-mars_conjunction",
+  "kind": "interaspect",
+  "planetA": "moon",
+  "planetB": "mars",
+  "aspect": "conjunction",
+  "plainTranslation": "A's feelings meets B's drive. The conjunction fuses them - intense and inseparable.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "pluto_saturn_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "pluto",
+  "natal": "saturn",
+  "aspect": "opposition",
+  "plainTranslation": "Deep transformation shows up in your structures and commitments, often through other people. Years - background, not a daily event.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
