@@ -7,6 +7,7 @@ Standalone shared content package for astrological meaning. This repository is t
 - `data/` is meaning: authored JSON only, one editable entry per file where possible.
 - `voice/` is voice: rendering constraints, profiles, banned words, and prompt stubs. It does not contain astrology meaning.
 - `scripts/` is build tooling: validation and compilation only. No astrology interpretation lives in code.
+- `engine/timing/` is optional app logic: profection context and transit ranking only. It does not contain authored meaning or voice.
 - `dist/` is generated output. Apps consume `dist/`, never `data/`.
 
 Authoring shape and shipping shape are intentionally different. Human authors edit small JSON files in `data/`; `npm run build` validates and compiles those files into versioned static files under `dist/`.
@@ -29,6 +30,22 @@ import index from "@yourorg/astro-knowledge/index";
 const location = index.entries["mars-square-saturn"];
 // location.file === "entries/mars-square-saturn.json"
 ```
+
+The optional timing engine can rank already-computed transit candidates before the app looks up meaning:
+
+```js
+import { buildAnnualTimingContext, rankTransits } from "@yourorg/astro-knowledge/timing-engine";
+
+const timing = buildAnnualTimingContext({
+  birthDate: "1994-04-12",
+  currentDate: "2026-06-02",
+  ascendantSign: "scorpio"
+});
+
+const rankedTransits = rankTransits(activeTransits, timing);
+```
+
+The timing engine does not calculate planets or write interpretations. It only helps the app decide which available transit meanings deserve priority for a specific user.
 
 ## Adding An Entry
 
