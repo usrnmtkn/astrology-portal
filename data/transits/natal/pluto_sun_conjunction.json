@@ -1,0 +1,12 @@
+{
+  "id": "pluto_sun_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "pluto",
+  "natal": "sun",
+  "aspect": "conjunction",
+  "plainTranslation": "A deep transformation of who you are. Intense, sometimes a crisis, ultimately a rebuild. Let the old self go; watch power struggles.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "saturn_sun_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "saturn",
+  "natal": "sun",
+  "aspect": "opposition",
+  "plainTranslation": "Limits and hard truths arrive through authority or others. You meet your own restrictions in the mirror. Hold the line that matters; loosen the rest.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal core material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

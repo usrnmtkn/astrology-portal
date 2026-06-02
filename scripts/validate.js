@@ -54,6 +54,13 @@ const entryShapes = {
     optional: ["tldr", "traditional", "modern", "cyclic", "composedFrom", "provenance"],
     types: { id: "string", transiting: "string", aspect: "string", other: "string", base: "string", business: "string", shadow: "string", arcApplying: "string", arcSeparating: "string", tldr: "string", traditional: "string", modern: "string", cyclic: "object", composedFrom: "array:string", provenance: "object" }
   },
+  transitNatal: {
+    schemaFile: "transit-natal.schema.json",
+    required: ["id", "kind", "transiting", "natal", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
+    optional: ["note"],
+    types: { id: "string", kind: "string", transiting: "string", natal: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string" },
+    enums: { kind: ["transit-to-natal"] }
+  },
   transitHouse: {
     schemaFile: "transit-house.schema.json",
     required: ["id", "kind", "transiting", "house", "tldr", "body", "business", "shadow", "advice", "source", "voiceNeutral", "status"],
@@ -409,6 +416,9 @@ function validateAll() {
   }
   for (const filePath of listDirectJsonFiles(path.join(dataRoot, "transits"))) {
     validateEntryFile(filePath, "transit", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "transits", "natal"))) {
+    validateEntryFile(filePath, "transitNatal", errors);
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "transits", "house"))) {
     validateEntryFile(filePath, "transitHouse", errors);
