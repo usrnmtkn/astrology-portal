@@ -1,3 +1,139 @@
 {
-  "bannedWords": []
+  "bannedWords": [
+    {
+      "term": "reckoning",
+      "reason": "Overused dramatic reveal language.",
+      "useInstead": [
+        "accounting",
+        "clarifying moment",
+        "honest review",
+        "turning point"
+      ]
+    },
+    {
+      "term": "profound",
+      "reason": "Overused spiritual emphasis.",
+      "useInstead": [
+        "deep",
+        "significant",
+        "meaningful",
+        "far-reaching"
+      ]
+    },
+    {
+      "term": "whisper",
+      "reason": "Overused mystical softness.",
+      "useInstead": [
+        "signal",
+        "quiet cue",
+        "subtle pull"
+      ]
+    },
+    {
+      "term": "tapestry",
+      "reason": "Overused metaphor.",
+      "useInstead": [
+        "pattern",
+        "structure",
+        "story"
+      ]
+    },
+    {
+      "term": "weave",
+      "reason": "Overused metaphor.",
+      "useInstead": [
+        "connect",
+        "build",
+        "bring together"
+      ]
+    },
+    {
+      "term": "woven",
+      "reason": "Overused metaphor.",
+      "useInstead": [
+        "connected",
+        "built",
+        "held together"
+      ]
+    },
+    {
+      "term": "self-erasure",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "self-abandonment",
+        "betraying your needs",
+        "disappearing inside someone else's needs"
+      ]
+    },
+    {
+      "term": "truth bomb",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "hard truth",
+        "clear truth",
+        "direct truth"
+      ]
+    },
+    {
+      "term": "permission slip",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "permission",
+        "choice",
+        "opening"
+      ]
+    },
+    {
+      "term": "performing normalcy",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "pretending to be normal",
+        "living inside someone else's design"
+      ]
+    },
+    {
+      "term": "voice shakes",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "even when it feels uncomfortable",
+        "even when it costs you comfort"
+      ]
+    },
+    {
+      "term": "self-punishment",
+      "reason": "Banned phrasing.",
+      "useInstead": [
+        "self-harm",
+        "turning pain back on yourself"
+      ]
+    },
+    {
+      "term": "death",
+      "reason": "Avoid for endings unless literally required; use rebirth language carefully.",
+      "useInstead": [
+        "ending",
+        "completion",
+        "release",
+        "rebirth"
+      ]
+    },
+    {
+      "term": "die",
+      "reason": "Avoid for endings unless literally required.",
+      "useInstead": [
+        "end",
+        "complete",
+        "release"
+      ]
+    },
+    {
+      "term": "dying",
+      "reason": "Avoid for endings unless literally required.",
+      "useInstead": [
+        "ending",
+        "completing",
+        "being released"
+      ]
+    }
+  ]
 }

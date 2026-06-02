@@ -1,3 +1,24 @@
 {
-  "bannedConstructions": []
+  "bannedConstructions": [
+    {
+      "pattern": "This isn't about [surface], it's about [deeper meaning]",
+      "reason": "Overused contrast-reveal construction.",
+      "useInstead": "State the real issue directly."
+    },
+    {
+      "pattern": "not as punishment, but as foundation",
+      "reason": "Overused contrast-reveal construction.",
+      "useInstead": "Name the function without the formula."
+    },
+    {
+      "pattern": "This challenge is actually preparing you for",
+      "reason": "Spiritual bypassing risk.",
+      "useInstead": "Name the challenge and the choice available."
+    },
+    {
+      "pattern": "What feels like limitation is really liberation",
+      "reason": "Overused reversal construction.",
+      "useInstead": "Describe the pressure and the practical opening separately."
+    }
+  ]
 }

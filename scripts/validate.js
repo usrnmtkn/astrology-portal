@@ -5,6 +5,7 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const dataRoot = path.join(root, "data");
+const voiceRoot = path.join(root, "voice");
 const schemaRoot = path.join(root, "schema");
 const VALID_STATUSES = new Set(["TODO", "DRAFT", "REVIEWED", "LIVE"]);
 
@@ -424,6 +425,60 @@ function listDirectJsonFiles(dir) {
     .sort();
 }
 
+function flattenText(value) {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(flattenText).join(" ");
+  if (value && typeof value === "object") return Object.values(value).map(flattenText).join(" ");
+  return "";
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function validateVoicePolicy(errors) {
+  const bannedWordsPath = path.join(voiceRoot, "banned-words.json");
+  if (!fs.existsSync(bannedWordsPath)) return;
+
+  let bannedWords;
+  try {
+    bannedWords = readJson(bannedWordsPath).bannedWords || [];
+  } catch (error) {
+    errors.push(error.message);
+    return;
+  }
+
+  if (!Array.isArray(bannedWords)) {
+    errors.push("voice/banned-words.json: bannedWords must be an array");
+    return;
+  }
+
+  const checks = [];
+  for (const [index, entry] of bannedWords.entries()) {
+    if (typeof entry === "string") {
+      checks.push({ term: entry, pattern: new RegExp(`\\b${escapeRegExp(entry)}\\b`, "i") });
+      continue;
+    }
+    if (!entry || typeof entry !== "object" || typeof entry.term !== "string") {
+      errors.push(`voice/banned-words.json: bannedWords[${index}] must be a string or object with term`);
+      continue;
+    }
+    checks.push({ term: entry.term, pattern: new RegExp(`\\b${escapeRegExp(entry.term)}\\b`, "i") });
+  }
+
+  if (checks.length === 0) return;
+
+  for (const filePath of listJsonFiles(dataRoot)) {
+    const json = readJson(filePath);
+    const text = flattenText(json);
+    for (const check of checks) {
+      if (check.pattern.test(text)) {
+        errors.push(`${rel(filePath)}: contains banned voice term "${check.term}"`);
+      }
+    }
+  }
+}
+
 function validateAll() {
   const errors = [];
 
@@ -492,6 +547,7 @@ function validateAll() {
   for (const filePath of listDirectJsonFiles(path.join(dataRoot, "synastry"))) {
     validateEntryFile(filePath, "content", errors);
   }
+  validateVoicePolicy(errors);
 
   return errors;
 }
