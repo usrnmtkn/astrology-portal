@@ -1,12 +1,12 @@
 {
-  "id": "lifetime-astrology-framework",
+  "id": "developmental-age-map-framework",
   "kind": "framework",
-  "title": "Lifetime Astrology Framework",
+  "title": "Developmental Age Map Framework",
   "sections": [
     {
       "id": "definition",
       "heading": "Definition",
-      "body": "Lifetime astrology is an optional developmental age-mapping lens. It maps a life arc onto the natal chart so chart positions correspond to broad life periods. Treat it as a standalone interpretive method, not as a universal rule and not as the same thing as transits, progressions, returns, or time-lord timing."
+      "body": "Developmental age mapping is an optional lens that maps a life arc onto the natal chart so chart positions correspond to broad life periods. Treat it as a standalone interpretive method, not as a universal rule and not as the same thing as transits, progressions, returns, or time-lord timing."
     },
     {
       "id": "separate-from-transits",
@@ -36,7 +36,7 @@
     {
       "id": "calculator-warning",
       "heading": "Calculator Warning",
-      "body": "Do not implement a lifetime-age calculator from this framework alone. The precise age-to-house formula, tables, and calculation rules belong to the underlying method and are not reproduced here. If the app ever supports this feature, it needs a separate implementation task with verified calculation rules."
+      "body": "Do not implement an age-map calculator from this framework alone. The precise age-to-house formula, tables, and calculation rules belong to the underlying method and are not reproduced here. If the app ever supports this feature, it needs a separate implementation task with verified calculation rules."
     },
     {
       "id": "app-policy",
