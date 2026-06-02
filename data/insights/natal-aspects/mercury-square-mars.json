@@ -1,0 +1,48 @@
+{
+  "id": "mercury-square-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Sharp Or Combative",
+  "summary": "Your mind can move like a blade. Fast words, fast decisions, and fast irritation may arrive together.",
+  "body": "Mercury square Mars describes mental heat and verbal speed. You may debate, decide, defend, or challenge quickly, especially when something feels inefficient or dishonest. This aspect can make you a strong advocate, strategist, critic, or problem-solver. It can also make words come out harsher than intended or turn disagreement into attack. The gift is decisive intelligence. The growth is learning when sharpness clarifies and when it only cuts.",
+  "gift": "Quick thinking, direct speech, strategic argument, and the courage to name what needs action.",
+  "shadow": "Argumentativeness, impatience, verbal aggression, and reacting before listening is complete.",
+  "integration": "Let the mind stay fast while the mouth takes one breath. Precision is stronger than verbal force.",
+  "do": [
+    "Ask one more question before arguing",
+    "Use direct language with a clear purpose",
+    "Channel mental heat into solving the problem"
+  ],
+  "dont": [
+    "Win the sentence and lose the person",
+    "Treat interruption as efficiency",
+    "Use sarcasm when you mean anger"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "power"
+  ],
+  "tags": [
+    "speech",
+    "anger",
+    "debate",
+    "strategy",
+    "impatience"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

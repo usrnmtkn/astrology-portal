@@ -1,0 +1,48 @@
+{
+  "id": "jupiter-square-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Growing Or Holding Back",
+  "summary": "Part of you wants expansion; another part wants proof, timing, and control. Progress may come through negotiating both.",
+  "body": "Jupiter square Saturn describes tension between faith and caution, increase and restraint, opportunity and responsibility. You may swing between big ambition and self-doubt, or feel that every opening comes with a test attached. This aspect can make growth more deliberate and durable when both sides are respected. The gift is mature expansion. The growth is not letting fear shrink the vision or optimism ignore the work.",
+  "gift": "Strategic growth, responsible ambition, patience, and the ability to turn vision into structure.",
+  "shadow": "Stop-start momentum, scarcity thinking, overcorrection, and mistrusting opportunity until it has nearly passed.",
+  "integration": "Give the dream a structure and the structure a reason to live. Expansion works best when it has a container.",
+  "do": [
+    "Plan growth in measurable stages",
+    "Let caution refine the opportunity",
+    "Check whether delay is wisdom or fear"
+  ],
+  "dont": [
+    "Shrink the goal to avoid disappointment",
+    "Ignore limits because hope feels urgent",
+    "Treat every setback as a final answer"
+  ],
+  "lifeAreas": [
+    "growth",
+    "work",
+    "money"
+  ],
+  "tags": [
+    "ambition",
+    "discipline",
+    "growth",
+    "timing",
+    "responsibility"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "square",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "core-traits"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

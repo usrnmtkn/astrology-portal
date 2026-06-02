@@ -1,0 +1,48 @@
+{
+  "id": "sun-square-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Or Combative",
+  "summary": "Your life force comes with heat. You may need challenge, movement, and honest outlets for anger.",
+  "body": "Sun square Mars describes strong will, competitiveness, and a body that wants to act. You may feel most alive when there is something to push against, build, defend, or win. This aspect can give courage and initiative, but it can also make ordinary friction feel personal. The gift is direct life force. The growth is learning to use heat without turning every difference into a fight for identity.",
+  "gift": "Courage, vitality, initiative, and the ability to act decisively when something matters.",
+  "shadow": "Irritability, defensiveness, impatience, and making conflict the proof that you are alive.",
+  "integration": "Give your drive a worthy target. Movement, competition, and honest assertion help the fire become useful instead of reactive.",
+  "do": [
+    "Move before you argue",
+    "Name what you are defending",
+    "Choose a challenge that builds strength"
+  ],
+  "dont": [
+    "Turn feedback into combat",
+    "Mistake irritation for clarity",
+    "Use force when directness would be enough"
+  ],
+  "lifeAreas": [
+    "identity",
+    "work",
+    "health"
+  ],
+  "tags": [
+    "drive",
+    "anger",
+    "conflict",
+    "courage",
+    "assertion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "shadow-work",
+    "career-patterns"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
