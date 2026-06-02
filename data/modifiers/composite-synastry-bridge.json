@@ -1,0 +1,47 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "composite-synastry-bridge",
+  "schema": "modifier/composite-synastry-bridge",
+  "appliesTo": [
+    "composite-chart",
+    "synastry",
+    "relationship-reading"
+  ],
+  "summary": "Composite and synastry are separate relationship layers and must not share lookup keys or interpretation rules.",
+  "body": "Synastry describes how two people activate each other. Composite describes the relationship as its own symbolic chart. The app should present these as related but distinct layers.",
+  "definition": "A bridge policy for keeping relationship comparison and relationship-midpoint interpretation separate in data and UI.",
+  "appUsage": [
+    "Present synastry first for person-to-person dynamics, then composite for the relationship container.",
+    "Do not reuse same-moment composite exclusions for ordered synastry lookups.",
+    "Do not reuse ordered synastry files for composite midpoint charts."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "policy": "composite_synastry_bridge",
+    "version": 1,
+    "notes": [
+      {
+        "topic": "different questions",
+        "note": "Synastry asks how two people affect each other (two charts compared). Composite asks what the relationship itself is like (one derived chart). Use synastry for chemistry and friction, composite for the shared entity."
+      },
+      {
+        "topic": "regime",
+        "note": "Composite is same-moment (midpoints), so it inherits the elongation exclusions in aspect_policy.json. Synastry compares two independent charts, so it has no exclusions and is ordered. Do not share a lookup path between them."
+      },
+      {
+        "topic": "order",
+        "note": "Composite pairs are unordered (canonical order, deduped). Synastry pairs are ordered (A->B != B->A). Composite has 214 valid aspect cells; synastry has 500."
+      },
+      {
+        "topic": "reuse",
+        "note": "Composite blurbs describe a couple as a unit; synastry blurbs describe one person's planet acting on another's. The text does not transfer between them. Keep separate corpora."
+      },
+      {
+        "topic": "precedence",
+        "note": "When both exist for a pair, present synastry first (the felt interaction) and composite second (the shape of the bond). Never average or merge the two readings."
+      }
+    ],
+    "status": "DRAFT"
+  }
+}
