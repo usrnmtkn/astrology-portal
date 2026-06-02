@@ -1,0 +1,11 @@
+{
+  "id": "neptune_house11",
+  "kind": "house-overlay",
+  "planet": "neptune",
+  "house": "11",
+  "plainTranslation": "Someone's Neptune in the other's House 11: brings dreams into friendships, community, and hopes.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

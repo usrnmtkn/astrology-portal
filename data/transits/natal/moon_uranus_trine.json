@@ -1,0 +1,12 @@
+{
+  "id": "moon_uranus_trine",
+  "kind": "transit-to-natal",
+  "transiting": "moon",
+  "natal": "uranus",
+  "aspect": "trine",
+  "plainTranslation": "Shifting feeling flows easily through your need for freedom. Hours.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal planet. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

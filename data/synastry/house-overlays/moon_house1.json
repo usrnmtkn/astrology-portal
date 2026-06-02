@@ -1,0 +1,11 @@
+{
+  "id": "moon_house1",
+  "kind": "house-overlay",
+  "planet": "moon",
+  "house": "1",
+  "plainTranslation": "Someone's Moon in the other's House 1: brings feelings into your identity, body, and how you meet the world.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

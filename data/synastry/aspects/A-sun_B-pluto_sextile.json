@@ -1,0 +1,12 @@
+{
+  "id": "A-sun_B-pluto_sextile",
+  "kind": "interaspect",
+  "planetA": "sun",
+  "planetB": "pluto",
+  "aspect": "sextile",
+  "plainTranslation": "A's identity meets B's depth and power. The sextile supports them, if you act on it.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
