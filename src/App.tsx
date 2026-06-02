@@ -2447,6 +2447,16 @@ function SkyWheel({
     };
   }
 
+  function arcPath(startAngle: number, endAngle: number, distance: number) {
+    const delta = ((endAngle - startAngle + 540) % 360) - 180;
+    const resolvedEndAngle = startAngle + delta;
+    const start = point(startAngle, distance);
+    const end = point(resolvedEndAngle, distance);
+    const sweep = delta >= 0 ? 1 : 0;
+
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${distance} ${distance} 0 0 ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+
   function angleForLongitude(longitude: number) {
     if (isNatalWheel) {
       return 180 - normalizedAngle(longitude - ascendantLongitude);
@@ -2510,10 +2520,27 @@ function SkyWheel({
         className: string;
       } => Boolean(aspect)
     );
+  const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
+  const signLabelPaths = signs.map((sign, index) => {
+    const isLong = sign.length >= 9;
+    const inset = isLong ? 0.3 : 3.8;
+
+    return {
+      sign,
+      isLong,
+      id: `sign-label-path-${showHouses ? "houses" : "sky"}-${sign.toLowerCase()}`,
+      path: arcPath(angleForLongitude(index * 30 + inset), angleForLongitude(index * 30 + 30 - inset), signLabelRadius)
+    };
+  });
 
   return (
     <svg className="sky-wheel" viewBox="0 0 600 600" role="img" aria-label="Planet positions">
       <title>Current zodiac wheel</title>
+      <defs>
+        {signLabelPaths.map(({ id, path }) => (
+          <path id={id} key={id} d={path} />
+        ))}
+      </defs>
       <g className="wheel-rings">
         <circle cx={center} cy={center} r={radius.outer} />
         <circle cx={center} cy={center} r={radius.signInner} />
@@ -2547,16 +2574,19 @@ function SkyWheel({
       </g>
 
       <g className="sign-labels">
-        {signs.map((sign, index) => {
-          const labelAngle = angleForLongitude(index * 30 + 15);
-          const p = point(labelAngle, 254);
+        {signLabelPaths.map(({ sign, id, isLong }) => {
+          const className = isLong ? "sign-label-long" : undefined;
           return (
-            <g key={sign} transform={`rotate(${labelAngle + 90} ${p.x} ${p.y})`}>
-              <text className="sign-label-halo" x={p.x} y={p.y}>
-                {sign}
+            <g key={sign} className={className}>
+              <text className="sign-label-halo">
+                <textPath href={`#${id}`} startOffset="50%">
+                  {sign}
+                </textPath>
               </text>
-              <text x={p.x} y={p.y}>
-                {sign}
+              <text>
+                <textPath href={`#${id}`} startOffset="50%">
+                  {sign}
+                </textPath>
               </text>
             </g>
           );
