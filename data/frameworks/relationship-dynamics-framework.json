@@ -1,0 +1,298 @@
+{
+  "id": "relationship-dynamics-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "relationship-dynamics",
+  "title": "Relationship Dynamics Framework",
+  "sections": [
+    {
+      "id": "purpose",
+      "heading": "Purpose",
+      "body": "Use this as a question-led entry point for relationship readings. It maps common client concerns such as communication, conflict, affection, silence, withdrawal, stress, and support to the chart signatures that can explain the pattern. It complements bond-type and composite work by answering how the relationship functions in daily life."
+    },
+    {
+      "id": "ethics",
+      "heading": "Ethics",
+      "body": "Keep the reading agency-forward. The chart explains a tendency, not a verdict on the person. Silence and withdrawal should be read constructively and with nuance, never pathologized. Do not romanticize control, coercion, contempt, or repeated harm. This framework reads coping and support style, not mental health. It is not diagnostic, and style-matching is not a substitute for real support or professional help when someone is struggling."
+    },
+    {
+      "id": "communication",
+      "heading": "Communication",
+      "body": "For questions like why the people do not understand each other or why talking goes wrong, read each person's Mercury by sign, element, and aspects; Mercury-to-Mercury contacts; Mercury-Saturn; Mercury-Mars; Mercury-Neptune; and 3rd-house overlays. Name the style difference as a mismatch to manage, not a fault.",
+      "items": [
+        {
+          "label": "Fire Mercury",
+          "body": "Direct, fast, blunt, and enthusiastic. Says it as it comes, sometimes before thinking. Needs room to be direct without every direct statement being read as aggression."
+        },
+        {
+          "label": "Earth Mercury",
+          "body": "Practical, concrete, measured, and specific. Slow to speak, means what is said, and wants useful conversation. Needs patience and clear examples."
+        },
+        {
+          "label": "Air Mercury",
+          "body": "Verbal, social, idea-driven, and curious. Processes by talking, comparing, and debating. Can over-talk feelings and needs mental engagement."
+        },
+        {
+          "label": "Water Mercury",
+          "body": "Emotional, intuitive, indirect, and tone-sensitive. Communicates through feeling as much as words. May hint or go quiet rather than state needs plainly, and needs emotional safety to open."
+        },
+        {
+          "label": "Mercury-Mercury",
+          "body": "Harmonious contacts can show easy conversation and similar mental rhythm. Hard contacts can show different wavelengths, talking past each other, or needing translation before either person feels understood."
+        },
+        {
+          "label": "Mercury-Saturn",
+          "body": "Saturn can sound critical, withholding, or shutting down, while Mercury may feel unheard or belittled. At its best, this contact supports serious listening and precise language."
+        },
+        {
+          "label": "Mercury-Mars",
+          "body": "Stimulating, sharp, and fast. Conversation can become argument quickly. Useful for honesty and momentum, difficult when either person uses words as weapons."
+        },
+        {
+          "label": "Mercury-Neptune",
+          "body": "Intuitive, gentle, imaginative, or confusing. People may hear what they hope was said instead of what was actually said, so clarity needs to be checked directly."
+        }
+      ]
+    },
+    {
+      "id": "conflict",
+      "heading": "Conflict",
+      "body": "For repeating fights, read each person's Mars by sign, element, and aspects; Mars-to-Mars contacts; Mars-Mercury; Mars-Saturn; Mars-Pluto; and the hard aspects between the charts. Many recurring fights are style clashes rather than bad faith, but charts should never be used to excuse cruelty.",
+      "items": [
+        {
+          "label": "Fire Mars",
+          "body": "Fights hot and fast: direct, loud, immediate, and often over quickly. Can intimidate cooler or slower conflict styles."
+        },
+        {
+          "label": "Earth Mars",
+          "body": "Fights slowly and stubbornly: digs in, holds the position, and may resist moving until there is a practical reason. Watch stonewalling and grudges."
+        },
+        {
+          "label": "Air Mars",
+          "body": "Fights through words, logic, and argument. Can detach, rationalize, or focus on winning the point while missing the emotional cost."
+        },
+        {
+          "label": "Water Mars",
+          "body": "Fights indirectly or protectively: withdraws, goes quiet, absorbs hurt, or lets conflict move underground. Watch unspoken resentment and passive resistance."
+        },
+        {
+          "label": "Mars-Mars",
+          "body": "Harmonious contacts can show compatible energy and conflict rhythm. Hard contacts can show friction, competition, impatience, and clashes of will."
+        },
+        {
+          "label": "Mars-Saturn",
+          "body": "One person's drive meets the other's restraint, control, caution, or fear. This can build discipline, but it can also feel like constant blockage or suppression."
+        },
+        {
+          "label": "Mars-Pluto",
+          "body": "Intense, magnetic, and forceful. Can show deep drive and transformation, but it must be watched for power struggles, control battles, or escalation."
+        }
+      ]
+    },
+    {
+      "id": "affection",
+      "heading": "Affection",
+      "body": "For questions about how someone shows love or why someone does not feel loved, read Venus for how love is offered, the Moon for what is needed to feel emotionally safe, and Mars for pursuit and desire. A Venus-Moon mismatch can create the feeling of being unloved even when affection is present.",
+      "items": [
+        {
+          "label": "Fire Venus",
+          "body": "Shows love through pursuit, passion, enthusiasm, play, and bold gestures. Needs aliveness and visible desire."
+        },
+        {
+          "label": "Earth Venus",
+          "body": "Shows love through reliability, touch, care, consistency, and practical support. Needs steadiness and embodied proof."
+        },
+        {
+          "label": "Air Venus",
+          "body": "Shows love through words, wit, social connection, shared ideas, and playful exchange. Needs conversation and mental rapport."
+        },
+        {
+          "label": "Water Venus",
+          "body": "Shows love through emotional attunement, nurturing, protection, devotion, and deep feeling. Needs safety and tenderness."
+        },
+        {
+          "label": "Venus-Moon",
+          "body": "One person's way of loving meets, misses, or complicates the other's emotional needs. This is one of the clearest signatures for whether affection feels received."
+        },
+        {
+          "label": "Venus-Venus",
+          "body": "Shows shared values, taste, affection style, and ease around pleasure. Hard contacts can still attract, but the people may want different expressions of love."
+        },
+        {
+          "label": "Venus-Mars",
+          "body": "Shows chemistry, pursuit, desire, and attraction. Important for spark, but chemistry should not be treated as compatibility by itself."
+        },
+        {
+          "label": "Venus-Saturn",
+          "body": "Love may be shown through commitment, duty, loyalty, or endurance rather than warmth. This can be stabilizing, but it can also feel withheld."
+        }
+      ]
+    },
+    {
+      "id": "silence-and-avoidance",
+      "heading": "Silence And Avoidance",
+      "body": "For questions about silence or withdrawal, read Saturn contacts, especially Moon-Saturn and Mercury-Saturn; water Moon or Mars; fixed signs; 12th-house overlays; Neptune contacts; Moon-Uranus; and hard Moon-Saturn. Silence rarely means only one thing. Read the signature before assuming rejection.",
+      "items": [
+        {
+          "label": "Saturn-Heavy Silence",
+          "body": "The person may go quiet under stress to self-protect, manage fear, or avoid vulnerability. This is often overwhelm or fear rather than indifference, though it still needs accountability."
+        },
+        {
+          "label": "Water Moon Or Mars",
+          "body": "The person may process internally and withdraw in order to feel before speaking. Pressure can make the withdrawal stronger. Time and emotional safety matter."
+        },
+        {
+          "label": "Fixed Sign Silence",
+          "body": "Fixed signs can hold a position for a long time. Taurus may shut down through stubbornness, while Scorpio may withdraw energy as protection or control."
+        },
+        {
+          "label": "12th House Or Neptune",
+          "body": "The person may retreat inward, become hard to reach, blur the issue, or disappear into avoidance. The reading should separate genuine sensitivity from evasion."
+        },
+        {
+          "label": "Avoidant Pattern",
+          "body": "Moon-Uranus and hard Moon-Saturn can pull back precisely when closeness increases. Name the pattern without labeling the person as the pattern."
+        }
+      ]
+    },
+    {
+      "id": "work-stress",
+      "heading": "Work Stress",
+      "body": "For questions about how to support a partner or friend dealing with work pressure, read Saturn for responsibility and pressure, Mars for drive and burnout, the 6th house for daily work, the 10th house for career and ambition, and the Sun for how much identity is tied to achievement.",
+      "items": [
+        {
+          "label": "Fire Coping",
+          "body": "Pressure makes the person want to act, push through, and regain momentum. Support works best when it helps them channel action rather than simply telling them to slow down."
+        },
+        {
+          "label": "Earth Coping",
+          "body": "The person buckles down, gets practical, carries the load stoically, and may not say how heavy it feels. Support works best through practical help and noticing what they will not mention."
+        },
+        {
+          "label": "Air Coping",
+          "body": "The person needs to talk it out, compare options, and understand the situation. Support works best through clear conversation and helping them stop spinning in analysis."
+        },
+        {
+          "label": "Water Coping",
+          "body": "The person takes stress personally and feels it deeply. Support works best through reassurance first and problem-solving second."
+        },
+        {
+          "label": "Saturn-Strong Work Stress",
+          "body": "Capricorn emphasis, 10th-house emphasis, or hard Saturn aspects can show high standards, fear of failure, and silent pressure. The person needs permission not to be perfect, not more pressure."
+        },
+        {
+          "label": "Mars-Stressed Work Stress",
+          "body": "Hard Mars signatures can show overwork, burnout, irritability, and a body that needs to discharge pressure. Rest and movement both matter."
+        },
+        {
+          "label": "6th-House Emphasis",
+          "body": "The person may tie identity to usefulness and competence, so a work problem can feel like personal failure rather than a schedule issue."
+        },
+        {
+          "label": "Sun-10th Or Capricorn Sun",
+          "body": "Achievement may sit close to the person's core identity. Career setbacks can hit the self, not just the calendar."
+        }
+      ]
+    },
+    {
+      "id": "stress-and-coping",
+      "heading": "Stress And Coping",
+      "body": "For questions about how someone copes with stress and what actually helps, read the Moon for the real soothing language, dominant element for baseline coping, Saturn for internalized pressure, Mars for discharge, 12th-house or Neptune emphasis for retreat and escape patterns, and modality for how stress is held or moved.",
+      "items": [
+        {
+          "label": "Fire Stress",
+          "body": "Stress is burned off through action and movement. A project, exercise, or physical outlet usually helps more than sitting still."
+        },
+        {
+          "label": "Earth Stress",
+          "body": "Stress settles through routine, the body, and practical order. A walk, a meal, one concrete fix, or steady presence can help."
+        },
+        {
+          "label": "Air Stress",
+          "body": "Stress moves through thinking, talking, and naming the problem. A good conversation and a wider perspective can help."
+        },
+        {
+          "label": "Water Stress",
+          "body": "Stress needs to be felt through in safety. Gentle presence, no pressure, and permission to retreat and return can help."
+        },
+        {
+          "label": "Moon Language",
+          "body": "The Moon shows how the person is actually soothed. Comfort the person in their language, not yours: a Cancer Moon may need care and home, a Capricorn Moon may need competence restored, and an Aquarius Moon may need space."
+        },
+        {
+          "label": "Saturn-Heavy Coping",
+          "body": "The person may internalize stress, carry it alone, and ask for help late. Reassure them that support is not weakness."
+        },
+        {
+          "label": "Mars-Heavy Coping",
+          "body": "Stress may show as irritability, urgency, or restlessness. Physical discharge helps before emotional processing can land."
+        },
+        {
+          "label": "12th House Or Neptune Coping",
+          "body": "The person may escape, numb out, disappear inward, or blur the problem. Gentle re-grounding matters more than force."
+        },
+        {
+          "label": "Modality",
+          "body": "Fixed signs hold stress and release slowly. Mutable signs scatter, worry, and adapt. Cardinal signs want to act on the problem."
+        }
+      ]
+    },
+    {
+      "id": "how-to-support",
+      "heading": "How To Support",
+      "body": "Before supporting someone, read what they need rather than projecting what would help you. The reliable move across every chart is to ask whether they want help thinking it through or whether they simply need to vent.",
+      "items": [
+        {
+          "label": "Solve",
+          "body": "Fire, earth, and Mars-strong charts often want help fixing the problem. Offer ideas, action, and practical next steps."
+        },
+        {
+          "label": "Listen",
+          "body": "Water, Moon-led, and water-Mercury charts often need to feel understood before advice will land. Reflect and validate first."
+        },
+        {
+          "label": "Space",
+          "body": "Aquarius, Uranus-strong, and avoidant-pattern signatures may need room to handle the pressure alone. Check in lightly without crowding."
+        },
+        {
+          "label": "Presence",
+          "body": "Cancer or Taurus Moons and earth-water charts may need someone simply there. Show up without making fixing the price of support."
+        }
+      ]
+    },
+    {
+      "id": "feedback-and-advice",
+      "heading": "Feedback And Advice",
+      "body": "For questions about how someone takes advice or criticism, read Mercury for how they process input, Saturn for sensitivity to criticism and authority, Mars for defensiveness, and fixed-sign emphasis for resistance. Match how input is given to how the person can actually receive it.",
+      "items": [
+        {
+          "label": "Saturn-Sensitive",
+          "body": "Hard Saturn to the Sun, Moon, or Mercury can make criticism land loudly because the person is often already self-critical. Start with what is working."
+        },
+        {
+          "label": "Mars-Strong Or Fire",
+          "body": "The person can become defensive or combative if feedback feels like an attack. Frame input as being on their side."
+        },
+        {
+          "label": "Fixed Signs",
+          "body": "Taurus, Leo, Scorpio, and Aquarius signatures may resist being told what to do. Offer, ask, and leave room for choice."
+        },
+        {
+          "label": "Mutable Or Air",
+          "body": "The person may be open to input, sometimes too open. Help them filter advice rather than absorb every opinion."
+        },
+        {
+          "label": "Mercury-Saturn",
+          "body": "The person may take ideas seriously but feel judged quickly. Be precise, kind, and specific."
+        }
+      ]
+    },
+    {
+      "id": "app-usage",
+      "heading": "App Usage",
+      "body": "Use this framework to route user-facing relationship questions into the right knowledge: communication to Mercury and 3rd-house overlays, conflict to Mars and hard aspects, affection to Venus-Moon-Mars, silence to Saturn, water signatures, fixed signatures, Neptune, Uranus, and 12th-house overlays, work stress to Saturn-Mars-6th-10th-Sun signatures, and support style to Moon, element, Saturn, and Mars. Phrase outputs as translation and choice, not diagnosis."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
