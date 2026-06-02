@@ -1,6 +1,8 @@
 {
   "id": "asteroid-synastry-policy",
   "kind": "framework",
+  "role": "policy",
+  "category": "relationship",
   "title": "Asteroid Synastry Policy",
   "sections": [
     {
@@ -21,7 +23,7 @@
     {
       "id": "karmic-language-boundary",
       "heading": "Karmic Language Boundary",
-      "body": "Avoid deterministic language such as soul debt, destined suffering, or proof of a past-life bond. If nodal, Saturn, Vertex, Chiron, or asteroid contacts feel fated, phrase them as intensity, recognition, unfinished emotional pattern, or developmental pressure rather than proof that the relationship must continue."
+      "body": "Avoid deterministic language such as soul debt, required suffering, or proof of a past-life bond. If nodal, Saturn, Vertex, Chiron, or asteroid contacts feel consequential, phrase them as intensity, recognition, unfinished emotional pattern, or developmental pressure rather than proof that the relationship must continue."
     },
     {
       "id": "safety",

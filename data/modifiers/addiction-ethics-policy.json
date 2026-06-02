@@ -7,8 +7,10 @@
     "natal-chart",
     "recovery-support"
   ],
+  "role": "policy",
+  "category": "safety",
   "summary": "Safety and ethics policy for any addiction-pattern or recovery-support content in the knowledge base.",
-  "body": "Addiction-related astrology content is sensitive, optional, and non-clinical. It must be framed as pattern awareness with constructive support, never as diagnosis, destiny, shame, or medical guidance.",
+  "body": "Addiction-related astrology content is sensitive, optional, and non-clinical. It must be framed as pattern awareness with constructive support, never as diagnosis, inevitability, shame, or medical guidance.",
   "definition": "A review policy governing how addiction-support interpretations can be authored, reviewed, and surfaced.",
   "appUsage": [
     "Require human review before changing any addiction-support status beyond DRAFT.",
@@ -26,11 +28,11 @@
       "Agency first. The person, not the planets, is the author of change."
     ],
     "prohibitedFramings": [
-      "Any 'your chart dooms you to addiction' or fated/inevitable framing.",
+      "Any 'your chart dooms you to addiction' or inevitable framing.",
       "Romanticizing, glamorizing, or normalizing substance use or any addictive behavior.",
       "Moralizing, shame, or blame.",
       "Using astrology to delay, substitute for, or argue against professional treatment.",
-      "Dwelling on or sensationalizing overdose deaths or specific named tragedies.",
+      "Dwelling on or sensationalizing overdose losses or specific named tragedies.",
       "Clinical or diagnostic claims about a person's mind, body, or substance use."
     ],
     "requiredFramings": [
@@ -46,11 +48,11 @@
     "reviewGate": "All addiction/recovery content stays DRAFT until reviewed against this policy. This policy needs human sign-off before any such content ships READY."
   },
   "prohibitions": [
-    "Any 'your chart dooms you to addiction' or fated/inevitable framing.",
+    "Any 'your chart dooms you to addiction' or inevitable framing.",
     "Romanticizing, glamorizing, or normalizing substance use or any addictive behavior.",
     "Moralizing, shame, or blame.",
     "Using astrology to delay, substitute for, or argue against professional treatment.",
-    "Dwelling on or sensationalizing overdose deaths or specific named tragedies.",
+    "Dwelling on or sensationalizing overdose losses or specific named tragedies.",
     "Clinical or diagnostic claims about a person's mind, body, or substance use."
   ],
   "weighting": [

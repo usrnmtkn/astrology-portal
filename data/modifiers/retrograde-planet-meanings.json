@@ -8,6 +8,8 @@
     "planet",
     "transit"
   ],
+  "role": "method",
+  "category": "retrograde",
   "summary": "Planet-specific retrograde metadata and plain-language meanings for planets that station retrograde.",
   "body": "Retrograde interpretation should stay planet-specific and should distinguish a natal retrograde signature from a temporary transit retrograde period.",
   "definition": "A retrograde is apparent backward motion from the observer perspective, used symbolically as review, return, delay, reversal, or internalization depending on planet and context.",

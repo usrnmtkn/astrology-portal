@@ -27,6 +27,8 @@
     "transit",
     "placement"
   ],
+  "role": "modifier",
+  "category": "traditional-condition",
   "summary": "Benefic and malefic contacts weight whether an indication resolves more easily or more harshly.",
   "body": "The master weighting rule. Benefics improve what they touch (bonification); malefics harm what they touch (maltreatment). This decides whether a given meaning resolves well or badly."
 }

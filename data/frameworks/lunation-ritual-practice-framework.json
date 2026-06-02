@@ -1,6 +1,8 @@
 {
   "id": "lunation-ritual-practice-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "ritual",
   "title": "Lunation Ritual Practice Framework",
   "sections": [
     {

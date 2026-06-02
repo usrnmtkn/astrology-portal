@@ -1,6 +1,8 @@
 {
   "id": "transit-sect-guide",
   "kind": "framework",
+  "role": "method",
+  "category": "traditional-transit",
   "title": "Transits Through the Houses, by Sect",
   "sections": [
     {
@@ -98,7 +100,7 @@
         },
         {
           "label": "8th house",
-          "body": "Attention drops below the surface, to shared money, intimacy, and what's hidden. *Experience:* a month of dealing with taxes, debts, an inheritance, or one honest reckoning."
+          "body": "Attention drops below the surface, to shared money, intimacy, and what's hidden. *Experience:* a month of dealing with taxes, debts, an inheritance, or one honest accounting."
         },
         {
           "label": "9th house (the Sun's joy)",
@@ -263,7 +265,7 @@
         },
         {
           "label": "8th house",
-          "body": "Force in deep and shared territory. *Experience (night):* you take decisive action on debt, a payout, or intimacy. *Experience (day):* a fight over money that isn't only yours, or a crisis that forces your hand."
+          "body": "Force in deep and shared territory. *Experience (night):* you take decisive action on debt, a payout, or intimacy. *Experience (day):* a fight over money that isn't only yours, or a crisis that forces a decision."
         },
         {
           "label": "9th house",
@@ -349,7 +351,7 @@
         },
         {
           "label": "2nd house",
-          "body": "A reckoning with money and worth. *Experience:* lean years that force discipline; done right, a stronger foundation; out of sect, real financial fear and scarcity."
+          "body": "An accounting with money and worth. *Experience:* lean years that force discipline; done right, a stronger foundation; out of sect, real financial fear and scarcity."
         },
         {
           "label": "3rd house",
@@ -373,7 +375,7 @@
         },
         {
           "label": "8th house",
-          "body": "A reckoning with shared money, debt, and mortality. *Experience:* paying off long-term obligations, settling an estate, or facing a fear directly; out of sect, real financial or emotional pressure from others."
+          "body": "An accounting with shared money, debt, and mortality. *Experience:* paying off long-term obligations, settling an estate, or facing a fear directly; out of sect, real financial or emotional pressure from others."
         },
         {
           "label": "9th house",
@@ -381,7 +383,7 @@
         },
         {
           "label": "10th house",
-          "body": "The career reckoning. *Experience (day):* you reach a peak through years of work, or build the position you'll hold for a long time. *Experience (night):* a fall, a loss of standing, or a job that costs more than it gives."
+          "body": "The career accounting. *Experience (day):* you reach a peak through years of work, or build the position you'll hold for a long time. *Experience (night):* a fall, a loss of standing, or a job that costs more than it gives."
         },
         {
           "label": "11th house",
@@ -389,7 +391,7 @@
         },
         {
           "label": "12th house (Saturn's joy)",
-          "body": "His strongest placement, and a deeply inward one. *Experience:* a season of solitude, endings, and quiet reckoning; out of sect, isolation and hidden burden; in sect, a profound clearing before a new cycle."
+          "body": "His strongest placement, and a deeply inward one. *Experience:* a season of solitude, endings, and quiet accounting; out of sect, isolation and hidden burden; in sect, a deep clearing before a new cycle."
         }
       ]
     },
@@ -483,7 +485,7 @@
         },
         {
           "label": "8th house",
-          "body": "The deep waters get deeper. *Experience:* dissolved boundaries in intimacy and shared money, profound or confusing."
+          "body": "The deep waters get deeper. *Experience:* dissolved boundaries in intimacy and shared money, deep or confusing."
         },
         {
           "label": "9th house",
@@ -506,7 +508,7 @@
     {
       "id": "pluto-no-traditional-sect",
       "heading": "PLUTO (no traditional sect)",
-      "body": "No place in the sect system. Modern house theme, flagged as modern. Pluto is power, depth, death, and rebirth, the slow pressure that destroys what's hollow and rebuilds it from the root. It can spend anywhere from 12 to 30 years in a house. Whatever it touches gets stripped to its core and remade. You don't experience this as an event so much as a long transformation you eventually realize happened.",
+      "body": "No place in the sect system. Modern house theme, flagged as modern. Pluto is power, depth, endings, and renewal, the slow pressure that dismantles what is hollow and rebuilds it from the root. It can spend anywhere from 12 to 30 years in a house. Whatever it touches gets stripped to its core and remade. You don't experience this as an event so much as a long transformation you eventually realize happened.",
       "items": [
         {
           "label": "1st house",
@@ -538,11 +540,11 @@
         },
         {
           "label": "8th house",
-          "body": "Pluto's deepest natural territory. *Experience:* a profound encounter with shared power, loss, and rebirth."
+          "body": "Pluto's deepest natural territory. *Experience:* a deep encounter with shared power, loss, and rebirth."
         },
         {
           "label": "9th house",
-          "body": "Beliefs are torn down and rebuilt. *Experience:* a worldview dies and a truer one takes its place."
+          "body": "Beliefs are torn down and rebuilt. *Experience:* a worldview ends and a truer one takes its place."
         },
         {
           "label": "10th house",

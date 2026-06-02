@@ -1,6 +1,8 @@
 {
   "id": "planetary-return-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "planetary-return",
   "title": "Planetary Return Framework",
   "sections": [
     {

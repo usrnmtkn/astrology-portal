@@ -1,6 +1,8 @@
 {
   "id": "transit-lifecycle-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "transit",
   "title": "Transit Lifecycle Framework",
   "sections": [
     {

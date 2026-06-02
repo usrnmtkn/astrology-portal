@@ -15,6 +15,8 @@
     "aspect",
     "transit"
   ],
+  "role": "modifier",
+  "category": "traditional-condition",
   "summary": "Reception describes whether planets can cooperate through dignity, especially across difficult aspects.",
   "body": "A planet receives another when the second sits in a sign or degree the first rules by dignity. Mutual reception is when each occupies the other's dignity; the two then cooperate and can act almost as if joined."
 }

@@ -1,6 +1,8 @@
 {
   "id": "traditional-method-guardrails",
   "kind": "framework",
+  "role": "policy",
+  "category": "traditional-method",
   "title": "Traditional Method Guardrails",
   "sections": [
     {

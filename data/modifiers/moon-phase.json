@@ -33,6 +33,8 @@
     "timing",
     "transit"
   ],
+  "role": "modifier",
+  "category": "timing-condition",
   "summary": "The Moon phase sets timing tone for initiation, growth, culmination, release, and void-of-course caution.",
   "body": "The Moon's phase (its angle to the Sun) sets the timing tone of a day: when to initiate, build, culminate, or release. It pairs with the cyclic waxing/waning model."
 }

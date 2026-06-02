@@ -7,8 +7,10 @@
     "life-cycle",
     "timing"
   ],
+  "role": "lifecycle",
+  "category": "planetary-return",
   "summary": "Saturn Return marks the renewal of the natal Saturn cycle, asking the person to upgrade their relationship with maturity, responsibility, structure, limits, authority, and long-term work.",
-  "body": "A Saturn Return occurs when transiting Saturn returns to the natal degree of Saturn. It is not automatically punishment or destiny. It is a life-cycle threshold where earlier models of responsibility, authority, discipline, fear, work, and commitment are tested against the life the person is actually building.",
+  "body": "A Saturn Return occurs when transiting Saturn returns to the natal degree of Saturn. It is not automatically punishment or a fixed outcome. It is a life-cycle threshold where earlier models of responsibility, authority, discipline, fear, work, and commitment are tested against the life the person is actually building.",
   "definition": "A Saturn Return is the conjunction of transiting Saturn to natal Saturn, beginning a new approximately 29.5-year Saturn cycle.",
   "appUsage": [
     "Use Saturn Return as a life-cycle feature, not as a daily transit blip.",
@@ -265,7 +267,7 @@
       ],
       "avoid": [
         "Do not promise catastrophe.",
-        "Do not call every hardship destiny.",
+        "Do not treat every hardship as cosmically required.",
         "Do not tell the user what decision to make based on Saturn alone.",
         "Do not romanticize suffering as proof of maturity.",
         "Do not reduce the return to career only."

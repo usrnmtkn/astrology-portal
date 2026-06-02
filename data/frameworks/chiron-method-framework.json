@@ -1,6 +1,8 @@
 {
   "id": "chiron-method-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "modern-point",
   "title": "Chiron Method Framework",
   "sections": [
     {

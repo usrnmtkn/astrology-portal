@@ -22,6 +22,8 @@
   "appliesTo": [
     "planet"
   ],
+  "role": "modifier",
+  "category": "planet-condition",
   "summary": "Retrograde motion turns a planet back through revision, delay, return, and reworking.",
   "body": "A planet that appears to move backward through the zodiac. Its themes turn inward, repeat, and revisit rather than advance."
 }

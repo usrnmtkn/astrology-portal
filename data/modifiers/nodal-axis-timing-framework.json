@@ -11,6 +11,8 @@
     "synastry",
     "life-cycle"
   ],
+  "role": "method",
+  "category": "nodes",
   "summary": "Framework for reading the lunar nodes as a developmental axis and timing trigger without turning them into deterministic fate.",
   "body": "The lunar nodes are calculated points where the Moon's path crosses the ecliptic. Read them as an axis: the North Node describes growth medicine and unfamiliar development, while the South Node describes familiar skills, default patterns, and what can become repetitive when unconscious. In timing, nodal contacts often coincide with meetings, separations, thresholds, eclipses, and moments when the user must choose between the known pattern and the growth path.",
   "definition": "The nodal axis is the polarity between the North Node and South Node. It is not a planet, but it can focus important developmental and timing themes when activated by transits, progressions, return charts, synastry, or eclipses.",

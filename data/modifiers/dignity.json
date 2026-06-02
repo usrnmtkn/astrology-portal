@@ -680,6 +680,8 @@
     "planet",
     "transit"
   ],
+  "role": "modifier",
+  "category": "traditional-condition",
   "summary": "Essential dignity describes how strongly or cleanly a planet can deliver its significations.",
   "body": "Essential dignity measures how at-home a planet is in the degree it occupies, from strongest (domicile, exaltation) to weakest (detriment, fall). Minor dignities (triplicity, bounds, decan) refine the weighting."
 }

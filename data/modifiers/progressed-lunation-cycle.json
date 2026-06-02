@@ -8,6 +8,8 @@
     "life-cycle",
     "timing"
   ],
+  "role": "method",
+  "category": "progression",
   "summary": "The progressed lunation cycle describes a roughly 29-30 year life-phase rhythm formed by the progressed Moon and progressed Sun.",
   "body": "Use this as a slow life-cycle layer, not a daily transit. The phase describes where the person is in a long arc of endings, beginnings, risk, visibility, sharing, revision, and release.",
   "definition": "A progressed lunation phase is measured by the angular separation between the progressed Moon and progressed Sun, mapped as an eight-phase cycle across the chart angles.",

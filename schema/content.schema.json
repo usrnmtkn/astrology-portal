@@ -9,6 +9,8 @@
     "kind": {
       "enum": ["guide", "framework", "template", "correspondence", "synastry"]
     },
+    "role": { "type": "string" },
+    "category": { "type": "string" },
     "title": { "type": "string" },
     "sections": {
       "type": "array",

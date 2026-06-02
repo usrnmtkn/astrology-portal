@@ -8,6 +8,8 @@
     "synastry",
     "relationship-reading"
   ],
+  "role": "method",
+  "category": "relationship",
   "summary": "Composite and synastry are separate relationship layers and must not share lookup keys or interpretation rules.",
   "body": "Synastry describes how two people activate each other. Composite describes the relationship as its own symbolic chart. The app should present these as related but distinct layers.",
   "definition": "A bridge policy for keeping relationship comparison and relationship-midpoint interpretation separate in data and UI.",

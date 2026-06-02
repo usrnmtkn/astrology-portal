@@ -48,6 +48,8 @@
     "chart",
     "planet"
   ],
+  "role": "modifier",
+  "category": "traditional-condition",
   "summary": "Sect distinguishes day charts from night charts and determines which benefic or malefic is most constructive or difficult.",
   "body": "Every chart belongs to one of two sects, day or night, set by whether the Sun is above or below the horizon. Each planet has its own sect affiliation, and a planet operates more comfortably when its sect matches the chart's."
 }

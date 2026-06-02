@@ -1,6 +1,8 @@
 {
   "id": "spiritual-chart-interpretation-framework",
   "kind": "framework",
+  "role": "method",
+  "category": "chart-interpretation",
   "title": "Spiritual Chart Interpretation Framework",
   "sections": [
     {

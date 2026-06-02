@@ -8,6 +8,8 @@
     "chart-ruler",
     "sign"
   ],
+  "role": "method",
+  "category": "rulership",
   "summary": "Traditional rulership remains primary; modern co-rulership is treated as an explicit secondary lens.",
   "body": "When naming a chart ruler or sign ruler, use the traditional ruler. Modern planets may inform interpretation only when clearly framed as a modern lens.",
   "definition": "A normalized table of traditional rulership and modern co-rulership relationships.",

@@ -30,6 +30,8 @@
     "planet",
     "sun"
   ],
+  "role": "modifier",
+  "category": "planet-condition",
   "summary": "Solar phase describes whether a planet is strengthened, obscured, or hidden by proximity to the Sun.",
   "body": "A planet's condition relative to the Sun. Proximity to the Sun's rays weakens most planets by hiding them, except at the exact center, where the planet is strengthened."
 }
