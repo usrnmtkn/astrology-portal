@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
+import { approvedVoiceOrKnowledgeFallback, aspectContentId } from "./content/registry";
+import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
   getAuthAccount,
@@ -136,6 +138,7 @@ type SkyDetail = {
   title: string;
   meta: string;
   body: ReactNode[];
+  content?: ContentBundle;
 };
 
 type ProfilePersistencePayload = {
@@ -3071,6 +3074,9 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
         <div className="aspect-row-list">
           {aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
+            const content = approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to));
+            const rowSummary = content.summary ?? aspect.meaning;
+            const detailBody = content.body ?? aspect.meaning;
 
             return (
               <button
@@ -3083,8 +3089,9 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
                   kicker: "Today's aspect",
                   title,
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
+                  content: content.bundle,
                   body: [
-                    aspect.meaning,
+                    detailBody,
                     <>
                       <strong>{aspect.from}</strong> and <strong>{aspect.to}</strong> are in a {aspect.type} today. The smaller the orb, the more exact the contact feels.
                     </>,
@@ -3099,7 +3106,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                 <div className="aspect-row-copy">
                   <h3>{title}</h3>
-                  <p>{aspect.meaning}</p>
+                  <p>{rowSummary}</p>
                 </div>
                 <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                   <span className="aspect-row-dot" aria-hidden="true" />
@@ -4613,22 +4620,27 @@ function ProfileView({
             <>
               <span className="eyebrow section-label">Aspects in your chart</span>
               <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects in your chart">
-                {natalAspectRows.map((aspect) => (
-                  <div
-                    className="aspect-row aspect-row-static"
-                    key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                  >
-                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                    <span className="aspect-row-copy">
-                      <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                      <p>{aspect.meaning}</p>
-                    </span>
-                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{wholeDegreeOrb(aspect.orb)}</span>
-                    </span>
-                  </div>
-                ))}
+                {natalAspectRows.map((aspect) => {
+                  const content = approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to));
+                  const rowSummary = content.summary ?? aspect.meaning;
+
+                  return (
+                    <div
+                      className="aspect-row aspect-row-static"
+                      key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                    >
+                      <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                      <span className="aspect-row-copy">
+                        <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+                        <p>{rowSummary}</p>
+                      </span>
+                      <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                        <span className="aspect-row-dot" aria-hidden="true" />
+                        <span>{wholeDegreeOrb(aspect.orb)}</span>
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
@@ -4648,24 +4660,29 @@ function ProfileView({
           )}
           {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
             <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
-              {aspectRows.map((transit) => (
-                <button
-                  type="button"
-                  className="aspect-row aspect-row-button"
-                  key={transit.id}
-                  onClick={() => setSelectedTransitId(transit.id)}
-                >
-                  <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
-                  <span className="aspect-row-copy">
-                    <h3>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h3>
-                    <p>{transit.note}</p>
-                  </span>
-                  <span className="aspect-row-meta" aria-label={`${transit.orb} orb`}>
-                    <span className="aspect-row-dot" aria-hidden="true" />
-                    <span>{transit.orb}</span>
-                  </span>
-                </button>
-              ))}
+              {aspectRows.map((transit) => {
+                const content = approvedVoiceOrKnowledgeFallback(aspectContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+                const rowSummary = content.summary ?? transit.note;
+
+                return (
+                  <button
+                    type="button"
+                    className="aspect-row aspect-row-button"
+                    key={transit.id}
+                    onClick={() => setSelectedTransitId(transit.id)}
+                  >
+                    <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
+                    <span className="aspect-row-copy">
+                      <h3>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h3>
+                      <p>{rowSummary}</p>
+                    </span>
+                    <span className="aspect-row-meta" aria-label={`${transit.orb} orb`}>
+                      <span className="aspect-row-dot" aria-hidden="true" />
+                      <span>{transit.orb}</span>
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           )}
           {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (

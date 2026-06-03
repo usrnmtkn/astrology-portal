@@ -1,0 +1,22 @@
+{
+  "conjunction": {
+    "angle": 0,
+    "keywords": ["fusion", "intensification", "inseparability", "shared field"]
+  },
+  "square": {
+    "angle": 90,
+    "keywords": ["friction", "pressure", "adjustment", "activation"]
+  },
+  "trine": {
+    "angle": 120,
+    "keywords": ["flow", "ease", "cooperation", "natural movement"]
+  },
+  "opposition": {
+    "angle": 180,
+    "keywords": ["polarity", "mirroring", "tension", "integration"]
+  },
+  "sextile": {
+    "angle": 60,
+    "keywords": ["opportunity", "cooperation", "useful opening", "support"]
+  }
+}
