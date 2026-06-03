@@ -239,6 +239,40 @@ function build() {
     voiceContent
   });
 
+  const synastryKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    planetary,
+    points,
+    synastry,
+    synastryAspects,
+    synastryPointContacts,
+    synastryHouseOverlays,
+    frameworks: frameworks.filter((entry) => [
+      "synastry-composite-method-framework",
+      "relationship-dynamics-framework",
+      "synastry-bond-types-framework",
+      "asteroid-synastry-policy"
+    ].includes(entry.id)),
+    voiceProfiles,
+    voiceContent
+  });
+
+  const compositeKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    planetary,
+    points,
+    composite,
+    frameworks: frameworks.filter((entry) => [
+      "synastry-composite-method-framework",
+      "relationship-dynamics-framework",
+      "composite-synthesis-examples"
+    ].includes(entry.id)),
+    voiceProfiles,
+    voiceContent
+  });
+
   const webKnowledge = withBundleMetadata(packageJson, generatedAt, {
     primitives,
     pairs,
@@ -297,6 +331,8 @@ function build() {
   writeJson(path.join(distRoot, "sky.json"), skyKnowledge);
   writeJson(path.join(distRoot, "natal.json"), natalKnowledge);
   writeJson(path.join(distRoot, "relationships.json"), relationshipKnowledge);
+  writeJson(path.join(distRoot, "synastry.json"), synastryKnowledge);
+  writeJson(path.join(distRoot, "composite.json"), compositeKnowledge);
   writeJson(path.join(distRoot, "web.json"), webKnowledge);
   writeJson(path.join(distRoot, "knowledge.index.json"), index);
 

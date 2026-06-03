@@ -25,7 +25,7 @@ flowchart TD
     GENERATED["generated/\nVoice-rendered content\nreviewed per profile"]
     ENGINE["engine/timing/\nRanking helpers only\nno authored meaning"]
     SCRIPTS["scripts/build.js\nValidate and compile"]
-    DIST["dist/\nknowledge.json full bundle\nsky.json\nnatal.json\nrelationships.json\nweb.json\nknowledge.index.json\nentries/*.json"]
+    DIST["dist/\nknowledge.json full bundle\nsky.json\nnatal.json\nrelationships.json\nsynastry.json\ncomposite.json\nweb.json\nknowledge.index.json\nentries/*.json"]
   end
 
   subgraph APP["tldrastro app"]
@@ -68,6 +68,8 @@ Most surfaces should import a smaller domain bundle:
 import skyKnowledge from "@tldr/astro-knowledge/sky";
 import natalKnowledge from "@tldr/astro-knowledge/natal";
 import relationshipKnowledge from "@tldr/astro-knowledge/relationships";
+import synastryKnowledge from "@tldr/astro-knowledge/synastry";
+import compositeKnowledge from "@tldr/astro-knowledge/composite";
 ```
 
 The current web registry imports `@tldr/astro-knowledge/web`, a compatibility bundle for the existing app surfaces. It excludes synastry and composite material while the UI is still wired through one registry.
@@ -76,7 +78,9 @@ Bundle intent:
 
 - `sky.json`: current sky, planetary weather, lunations, and transit framework material.
 - `natal.json`: natal placements, angles, chart rulers, point placements, point aspects, and insight cards.
-- `relationships.json`: synastry and composite material.
+- `relationships.json`: combined relationship compatibility bundle for consumers that need both synastry and composite.
+- `synastry.json`: chart-to-chart contacts, overlays, bond types, and synastry policy material.
+- `composite.json`: relationship-as-its-own-chart material and composite synthesis examples.
 - `web.json`: the smaller bundle the current website needs until route-level lazy loading is introduced.
 - `knowledge.json`: full compatibility bundle.
 
