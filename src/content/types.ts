@@ -53,7 +53,7 @@ export type Interpretation = {
 
 export type KnowledgeItem = {
   id: string;
-  type: "natal-aspect" | "transit-to-natal" | "planet-pair" | "placement" | "primitive";
+  type: "natal-aspect" | "current-sky-aspect" | "transit-to-natal" | "planet-pair" | "placement" | "primitive";
   sourceFactors: SourceFactors;
   surfaceTags?: ContentSurface[];
   contentAreas?: ContentArea[];

@@ -66,6 +66,40 @@ type CanonicalTransitNatal = {
   status?: string;
 };
 
+type CanonicalSkyTransit = {
+  id: string;
+  transiting: string;
+  aspect: string;
+  other: string;
+  tldr?: string;
+  traditional?: string;
+  modern?: string;
+  business?: string;
+  shadow?: string;
+  arcApplying?: string;
+  arcSeparating?: string;
+  base?: string;
+  cyclic?: {
+    meaning?: string;
+  };
+  status?: string;
+};
+
+type CanonicalPlacement = {
+  id: string;
+  kind: string;
+  planet?: string;
+  point?: string;
+  key?: string | number;
+  house?: string | number;
+  tldr?: string;
+  body?: string;
+  gift?: string;
+  challenge?: string;
+  note?: string;
+  status?: string;
+};
+
 type CanonicalVoiceContent = VoiceContentItem & {
   path?: string;
 };
@@ -73,7 +107,9 @@ type CanonicalVoiceContent = VoiceContentItem & {
 type CanonicalKnowledgeBundle = {
   primitives: Record<string, CanonicalPrimitiveEntry[]>;
   insightCards: CanonicalInsightCard[];
+  transits: CanonicalSkyTransit[];
   transitNatal: CanonicalTransitNatal[];
+  placements: CanonicalPlacement[];
   voiceContent: CanonicalVoiceContent[];
 };
 
@@ -179,7 +215,7 @@ export const surfaceRules: Record<ContentSurface, SurfaceRule> = {
   daily_forecast: {
     surface: "daily_forecast",
     label: "Daily Forecast",
-    eligibleTypes: ["transit-to-natal", "placement"],
+    eligibleTypes: ["current-sky-aspect", "transit-to-natal", "placement"],
     preferredAreas: ["daily-life", "emotions", "relationships", "career"],
     preferredPlanets: ["moon", "sun", "mercury", "venus", "mars", "saturn", "jupiter"],
     preferredHouses: [],
@@ -191,7 +227,7 @@ export const surfaceRules: Record<ContentSurface, SurfaceRule> = {
   behind_forecast: {
     surface: "behind_forecast",
     label: "Behind Forecast",
-    eligibleTypes: ["transit-to-natal", "placement", "primitive"],
+    eligibleTypes: ["current-sky-aspect", "transit-to-natal", "placement", "primitive"],
     preferredAreas: ["daily-life", "emotions", "relationships", "career", "growth"],
     preferredPlanets: ["moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"],
     preferredHouses: [],
@@ -203,7 +239,7 @@ export const surfaceRules: Record<ContentSurface, SurfaceRule> = {
   areas_of_life: {
     surface: "areas_of_life",
     label: "Areas Of Life",
-    eligibleTypes: ["transit-to-natal", "placement"],
+    eligibleTypes: ["current-sky-aspect", "transit-to-natal", "placement"],
     preferredAreas: ["home", "career", "love", "money", "health", "friendship", "daily-life"],
     preferredPlanets: ["moon", "venus", "mars", "jupiter", "saturn"],
     preferredHouses: ["1", "2", "4", "5", "6", "7", "8", "10", "11", "12"],
@@ -215,7 +251,7 @@ export const surfaceRules: Record<ContentSurface, SurfaceRule> = {
   transit_detail: {
     surface: "transit_detail",
     label: "Transit Detail",
-    eligibleTypes: ["transit-to-natal"],
+    eligibleTypes: ["current-sky-aspect", "transit-to-natal"],
     preferredAreas: ["daily-life", "emotions", "relationships", "career", "growth"],
     preferredPlanets: ["moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"],
     preferredHouses: [],
@@ -239,7 +275,7 @@ export const surfaceRules: Record<ContentSurface, SurfaceRule> = {
   admin_review: {
     surface: "admin_review",
     label: "Admin Review",
-    eligibleTypes: ["natal-aspect", "transit-to-natal", "planet-pair", "placement", "primitive"],
+    eligibleTypes: ["natal-aspect", "current-sky-aspect", "transit-to-natal", "planet-pair", "placement", "primitive"],
     preferredAreas: [],
     preferredPlanets: [],
     preferredHouses: [],
@@ -405,6 +441,95 @@ function canonicalTransitToKnowledgeItem(transit: CanonicalTransitNatal): Knowle
   };
 }
 
+function canonicalSkyTransitToKnowledgeItem(transit: CanonicalSkyTransit): KnowledgeItem {
+  return {
+    id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
+    type: "current-sky-aspect",
+    sourceFactors: {
+      planetA: transit.transiting,
+      aspect: transit.aspect,
+      planetB: transit.other
+    },
+    surfaceTags: ["daily_forecast", "behind_forecast", "areas_of_life", "transit_detail"],
+    contentAreas: uniqueValues([
+      ...(contentAreasByPlanet[transit.transiting] ?? []),
+      ...(contentAreasByPlanet[transit.other] ?? []),
+      "daily-life" as ContentArea
+    ]),
+    priority: hardAspects.has(transit.aspect) ? 70 : 55,
+    intensity: hardAspects.has(transit.aspect) ? 4 : 3,
+    knowledgeBasis: {
+      [transit.transiting]: planetPrimitiveMap[transit.transiting]?.keywords ?? [],
+      [transit.aspect]: aspectPrimitiveMap[transit.aspect]?.keywords ?? [],
+      [transit.other]: planetPrimitiveMap[transit.other]?.keywords ?? []
+    },
+    interpretation: {
+      coreTheme: transit.tldr ?? transit.id,
+      displaySummary: transit.tldr ?? transit.business ?? transit.base ?? transit.modern,
+      detailParagraphs: [
+        transit.modern,
+        transit.traditional,
+        transit.cyclic?.meaning,
+        transit.arcApplying,
+        transit.arcSeparating
+      ].filter((value): value is string => Boolean(value)),
+      livedExperience: transit.base ?? transit.modern ?? transit.tldr ?? transit.id,
+      gift: transit.business ?? "",
+      challenge: transit.shadow ?? ""
+    },
+    sources: [
+      "data/transits",
+      "data/primitives/planets.json",
+      "data/primitives/aspects.json"
+    ],
+    status: reviewStatus(transit.status, "SOURCE_BACKED")
+  };
+}
+
+function canonicalPlacementToKnowledgeItem(placement: CanonicalPlacement): KnowledgeItem {
+  const planet = placement.planet ?? placement.point;
+  const sign = placement.kind === "sign" && typeof placement.key === "string" ? placement.key : undefined;
+  const house = placement.kind === "house" ? String(placement.house ?? placement.key ?? "") : undefined;
+
+  return {
+    id: placement.id,
+    type: "placement",
+    sourceFactors: {
+      planetA: planet,
+      sign,
+      house
+    },
+    surfaceTags: ["chart_profile", "natal_insights", "daily_forecast", "behind_forecast", "areas_of_life"],
+    contentAreas: uniqueValues([
+      ...(planet ? contentAreasByPlanet[planet] ?? [] : []),
+      ...(house ? contentAreasByHouse[house] ?? [] : []),
+      "daily-life" as ContentArea
+    ]),
+    priority: planet && ["sun", "moon", "ascendant"].includes(planet) ? 75 : 45,
+    intensity: planet && ["sun", "moon", "ascendant"].includes(planet) ? 4 : 2,
+    knowledgeBasis: {
+      ...(planet ? { [planet]: planetPrimitiveMap[planet]?.keywords ?? [] } : {}),
+      ...(sign ? { [sign]: signPrimitiveMap[sign]?.keywords ?? [] } : {})
+    },
+    interpretation: {
+      coreTheme: placement.tldr ?? placement.id,
+      displaySummary: placement.tldr ?? placement.body,
+      detailParagraphs: [
+        placement.gift,
+        placement.challenge,
+        placement.note
+      ].filter((value): value is string => Boolean(value)),
+      livedExperience: placement.body ?? placement.tldr ?? placement.id,
+      gift: placement.gift ?? "",
+      challenge: placement.challenge ?? ""
+    },
+    sources: [
+      `data/placements/${placement.kind}`
+    ],
+    status: reviewStatus(placement.status, "SOURCE_BACKED")
+  };
+}
+
 const planetPrimitiveMap = normalizePrimitiveMap(canonicalKnowledge.primitives.planet);
 const aspectPrimitiveMap = normalizePrimitiveMap(canonicalKnowledge.primitives.aspect);
 const signPrimitiveMap = normalizeSignMap(canonicalKnowledge.primitives.sign);
@@ -547,9 +672,20 @@ const contentAreasByHouse: Record<string, ContentArea[]> = {
 const hardAspects = new Set(["square", "opposition"]);
 const softAspects = new Set(["trine", "sextile"]);
 
+const canonicalPlacementItems = canonicalKnowledge.placements.map(canonicalPlacementToKnowledgeItem);
+const placementAliasItems = canonicalPlacementItems
+  .filter((item) => item.sourceFactors.planetA && item.sourceFactors.sign)
+  .map((item) => ({
+    ...item,
+    id: placementContentId(item.sourceFactors.planetA ?? "", item.sourceFactors.sign ?? "")
+  }));
+
 const knowledgeCore = [
   ...canonicalKnowledge.insightCards.map(canonicalInsightToKnowledgeItem),
-  ...canonicalKnowledge.transitNatal.map(canonicalTransitToKnowledgeItem)
+  ...canonicalKnowledge.transits.map(canonicalSkyTransitToKnowledgeItem),
+  ...canonicalKnowledge.transitNatal.map(canonicalTransitToKnowledgeItem),
+  ...canonicalPlacementItems,
+  ...placementAliasItems
 ] as KnowledgeItem[];
 
 const voiceContent = canonicalKnowledge.voiceContent as VoiceContentItem[];
@@ -679,6 +815,10 @@ function knownKnowledgeItems() {
 
 export function aspectContentId(planetA: string, aspect: string, planetB: string) {
   return `${normalizeIdPart(planetA)}-${normalizeIdPart(aspect)}-${normalizeIdPart(planetB)}`;
+}
+
+export function currentSkyAspectContentId(planetA: string, aspect: string, planetB: string) {
+  return `sky-${aspectContentId(planetA, aspect, planetB)}`;
 }
 
 export function placementContentId(planet: string, sign: string) {
