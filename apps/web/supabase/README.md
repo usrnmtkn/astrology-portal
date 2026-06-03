@@ -2,6 +2,10 @@
 
 Migrations for TLDR astro's Supabase database live here.
 
+## Profile Persistence
+
+`migrations/20260603190000_harden_profiles_and_invites.sql` adds the base `user_profiles` table used by the web app for remote profile/preferences persistence, with user-scoped row level security.
+
 ## Manual Charts + Social Invites
 
 `migrations/20260603010000_manual_charts_social_invites.sql` adds:
@@ -10,6 +14,8 @@ Migrations for TLDR astro's Supabase database live here.
 - `connections`: relationship records between a user and either another account or a manual chart.
 - `invites`: email, SMS, and social-link invites that can convert a manual chart into a real account connection.
 - `accept_invite(invite_token)`: an authenticated RPC for accepting an invite after signup/sign-in.
+
+`migrations/20260603190000_harden_profiles_and_invites.sql` also hardens invite ownership checks and invite acceptance so linked manual charts/connections must belong to the inviter and cannot be claimed twice.
 
 Intended flow:
 

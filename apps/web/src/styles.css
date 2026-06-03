@@ -5351,90 +5351,6 @@ blockquote {
   }
 }
 
-
-/* Opaque pop-over menu surface. */
-.site-menu,
-.theme-dark .site-menu {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  background: #ffffff;
-  border-color: rgba(26, 28, 27, 0.1);
-  color: #1a1c1b;
-}
-
-.site-menu button,
-.site-menu-gift,
-.theme-dark .site-menu button,
-.theme-dark .site-menu-gift,
-.theme-dark .site-menu-gift strong {
-  color: #1a1c1b;
-}
-
-.site-menu svg,
-.site-menu-gift span,
-.theme-dark .site-menu svg,
-.theme-dark .site-menu-gift span {
-  color: #7d827e;
-}
-
-.site-menu .site-menu-signout,
-.site-menu .site-menu-signout svg,
-.theme-dark .site-menu .site-menu-signout,
-.theme-dark .site-menu .site-menu-signout svg {
-  color: #b8554b;
-}
-
-
-/* Guest auth buttons in pop-over menu. */
-.site-menu-auth {
-  border-top: 1px solid rgba(26, 28, 27, 0.1);
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-  padding-top: 18px;
-}
-
-.site-menu .site-menu-auth button,
-.theme-dark .site-menu .site-menu-auth button {
-  align-items: center;
-  border-radius: 18px;
-  display: inline-flex;
-  font-family: var(--font-sans);
-  font-size: 1.05rem;
-  font-weight: 700;
-  justify-content: center;
-  letter-spacing: 0;
-  min-height: 58px;
-  padding: 0 22px;
-  text-transform: none;
-}
-
-.site-menu .site-menu-join,
-.theme-dark .site-menu .site-menu-join {
-  background: #ffffff;
-  border: 2px solid #a9bde7;
-  color: #5b82d8;
-}
-
-.site-menu .site-menu-login,
-.theme-dark .site-menu .site-menu-login {
-  background: #f7f7f6;
-  border: 1px solid rgba(26, 28, 27, 0.12);
-  color: #1a1c1b;
-}
-
-.site-menu .site-menu-join:hover,
-.theme-dark .site-menu .site-menu-join:hover {
-  background: #f8fbff;
-  border-color: #8fa9e0;
-}
-
-.site-menu .site-menu-login:hover,
-.theme-dark .site-menu .site-menu-login:hover {
-  background: #efefed;
-}
-
-
 /* Reference-inspired motion and Sky detail reading states. */
 .site-nav button svg {
   transform-origin: 50% 50%;
@@ -6801,62 +6717,48 @@ html,
   }
 }
 
-.site-menu {
-  background: #ffffff;
-  background-color: #ffffff;
-  background-image: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  opacity: 1;
-}
-
-.theme-dark .site-menu {
-  background: #1a1a1a;
-  background-color: #1a1a1a;
-  background-image: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  opacity: 1;
-}
-
+/* Final auth and pop-over menu contrast pass. */
 .site-menu,
-.site-menu button,
-.site-menu .site-menu-login,
-.theme-dark .site-menu .site-menu-login {
-  color: #1a1a1a;
+.theme-dark .site-menu {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--surface-app);
+  background-image: none;
+  border-color: var(--line-app);
+  color: var(--ink-app);
+  opacity: 1;
 }
 
-.theme-dark .site-menu,
-.theme-dark .site-menu button {
-  color: #f4f2ee;
+.site-menu button,
+.site-menu-gift,
+.theme-dark .site-menu button,
+.theme-dark .site-menu-gift,
+.theme-dark .site-menu-gift strong {
+  color: var(--ink-app);
 }
 
 .site-menu svg,
-.theme-dark .site-menu svg {
-  color: #8c8c89;
+.site-menu-gift span,
+.theme-dark .site-menu svg,
+.theme-dark .site-menu-gift span {
+  color: var(--faint-app);
 }
 
-.theme-dark .site-menu {
-  border-color: rgba(255, 255, 255, 0.12);
+.site-menu .site-menu-signout,
+.site-menu .site-menu-signout svg,
+.theme-dark .site-menu .site-menu-signout,
+.theme-dark .site-menu .site-menu-signout svg {
+  color: #b8554b;
 }
 
-.theme-dark .site-menu .site-menu-join,
-.theme-dark .site-menu .site-menu-login {
-  box-shadow: none;
-  color: #f4f2ee;
+.site-menu-auth {
+  border-top: 1px solid var(--line-app);
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 18px;
 }
 
-.theme-dark .site-menu .site-menu-join {
-  background: #242424;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.theme-dark .site-menu .site-menu-login {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-}
-
-/* Final auth/menu contrast pass. Keep this after the duplicate menu rules above. */
 .auth-mode .signup-heading p,
 .auth-mode .signup-heading h3,
 .auth-mode .signup-story h2,
@@ -6957,8 +6859,18 @@ html,
 
 .site-menu .site-menu-auth button,
 .theme-dark .site-menu .site-menu-auth button {
+  align-items: center;
   border-radius: 18px;
+  display: inline-flex;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
   font-weight: var(--fw-bold);
+  justify-content: center;
+  letter-spacing: 0;
+  min-height: 58px;
+  padding: 0 22px;
+  text-align: center;
+  text-transform: none;
 }
 
 .site-menu .site-menu-join {
