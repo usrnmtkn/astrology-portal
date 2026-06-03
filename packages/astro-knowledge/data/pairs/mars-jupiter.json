@@ -1,0 +1,24 @@
+{
+  "id": "mars-jupiter",
+  "planetA": "mars",
+  "planetB": "jupiter",
+  "traditional": "Action and heat combined with growth and fortune. One benefic, one malefic: the benefic tempers the malefic.",
+  "modern": {
+    "blend": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness.",
+    "harmonious": "High energy directed toward real accomplishment.",
+    "hard": "Shortened temper and patience, and energy scattered across one ill-considered pursuit after another.",
+    "business": "Big drive and ambition; focus is what turns it into results rather than waste."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness.",
+  "harmonious": "High energy directed toward real accomplishment.",
+  "hard": "Shortened temper and patience, and energy scattered across one ill-considered pursuit after another.",
+  "business": "Big drive and ambition; focus is what turns it into results rather than waste."
+}

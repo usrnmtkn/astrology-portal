@@ -1,0 +1,30 @@
+{
+  "id": "moon-square-venus",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "venus",
+  "tldr": "the Moon square Venus.",
+  "traditional": "the Moon square Venus: a hard contact. The body, home, and daily needs works against love, money, and pleasure \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty. Psychologically the square is inner tension to integrate: Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for feeling against connection, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the feeling/connection form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Likable and warm; watch indulgence and shaky money instincts.",
+  "shadow": "Moodiness and over-need collides with indulgence and vanity; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:moon-venus",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty. Psychologically the square is inner tension to integrate: Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause. The growth is owning both sides instead of splitting them."
+}

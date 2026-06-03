@@ -1,0 +1,29 @@
+{
+  "id": "sun-opposition-moon",
+  "transiting": "sun",
+  "aspect": "opposition",
+  "other": "moon",
+  "tldr": "Sun opposition the Moon.",
+  "traditional": "Sun opposition the Moon: a hard contact. The body, home, and daily needs works against vitality, authority, and recognition — obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Psychologically the opposition is inner tension to integrate: Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and selfhood reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness.",
+  "shadow": "Moodiness and over-need collides with egotism and needing to be the center; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:sun-moon",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Psychologically the opposition is inner tension to integrate: Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled. The growth is owning both sides instead of splitting them."
+}

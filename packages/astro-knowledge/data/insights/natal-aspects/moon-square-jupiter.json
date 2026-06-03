@@ -1,0 +1,48 @@
+{
+  "id": "moon-square-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Or Expansive",
+  "summary": "Emotional needs press against growth and belief. This frictional pattern asks you to use emotional intelligence and optimism with awareness.",
+  "body": "Emotional needs press against growth and belief. This frictional pattern asks you to use emotional intelligence and optimism with awareness. Emotional and physical excess; overindulgence and overcommitment. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through emotional needs, growth and belief, and the choices you make when mood-driven reaction or overreach starts running the room.",
+  "gift": "The gift is emotional intelligence, optimism, and a more conscious way to work with emotional needs and growth and belief.",
+  "shadow": "The shadow is mood-driven reaction, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and growth and belief cooperate without making either one carry the whole story. Warmth and generosity that draw people in; watch the tendency to overextend.",
+  "do": [
+    "Name how emotional needs and growth and belief are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn emotional intelligence and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of emotional needs or growth and belief"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "growth"
+  ],
+  "tags": [
+    "moon",
+    "jupiter",
+    "square",
+    "emotional-intelligence",
+    "optimism"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "square",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

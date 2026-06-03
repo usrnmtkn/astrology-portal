@@ -1,0 +1,12 @@
+{
+  "id": "mars_mars_sextile",
+  "kind": "transit-to-natal",
+  "transiting": "mars",
+  "natal": "mars",
+  "aspect": "sextile",
+  "plainTranslation": "Your energy is well-supported and easy to direct. Stamina and initiative come naturally. Good day for physical effort and getting things done.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

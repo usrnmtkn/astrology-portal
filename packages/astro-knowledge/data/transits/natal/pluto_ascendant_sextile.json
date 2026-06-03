@@ -1,0 +1,12 @@
+{
+  "id": "pluto_ascendant_sextile",
+  "kind": "transit-to-natal",
+  "transiting": "pluto",
+  "natal": "ascendant",
+  "aspect": "sextile",
+  "plainTranslation": "Pluto supports a quiet transformation of your presence. Room to shed an outgrown image and step into more authentic power. Change at your own pace; it sticks.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "mars_house2",
+  "kind": "house-overlay",
+  "planet": "mars",
+  "house": "2",
+  "plainTranslation": "Their Mars in your 2nd house: they energize your earning and your values; motivation around money, or friction over it. Failure mode: fights about resources, or pressure on your spending. Let them spark your drive to build; keep money talk clean.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

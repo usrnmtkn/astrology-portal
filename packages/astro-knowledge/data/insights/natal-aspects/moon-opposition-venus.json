@@ -1,0 +1,48 @@
+{
+  "id": "moon-opposition-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Across Magnetic",
+  "summary": "Emotional needs mirror love and values. This polarized pattern asks you to use emotional intelligence and relational grace with awareness.",
+  "body": "Emotional needs mirror love and values. This polarized pattern asks you to use emotional intelligence and relational grace with awareness. Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through emotional needs, love and values, and the choices you make when mood-driven reaction or approval seeking starts running the room.",
+  "gift": "The gift is emotional intelligence, relational grace, and a more conscious way to work with emotional needs and love and values.",
+  "shadow": "The shadow is mood-driven reaction, approval seeking, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and love and values cooperate without making either one carry the whole story. Likable and warm; watch indulgence and shaky money instincts.",
+  "do": [
+    "Name how emotional needs and love and values are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn emotional intelligence and relational grace into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of emotional needs or love and values"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "love"
+  ],
+  "tags": [
+    "moon",
+    "venus",
+    "opposition",
+    "emotional-intelligence",
+    "relational-grace"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "love-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

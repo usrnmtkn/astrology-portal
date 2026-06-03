@@ -1,0 +1,12 @@
+{
+  "id": "A-mars_B-saturn_conjunction",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "saturn",
+  "aspect": "conjunction",
+  "plainTranslation": "Drive meets brake. The Mars person pushes; the Saturn person structures, slows, or stops. At best, Saturn turns Mars's raw energy into disciplined, lasting work. At worst, the Mars person feels constantly blocked and criticized while the Saturn person feels they're minding a loose cannon. Failure mode: Saturn controlling Mars, or chronic frustration. Build something together; don't let one police the other's drive.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

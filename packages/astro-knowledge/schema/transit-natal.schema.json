@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/transit-natal.schema.json",
+  "title": "Transit To Natal Entry",
+  "type": "object",
+  "required": ["id", "kind", "transiting", "natal", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string", "enum": ["transit-to-natal"] },
+    "transiting": { "type": "string" },
+    "natal": { "type": "string" },
+    "aspect": { "type": "string" },
+    "plainTranslation": { "type": "string" },
+    "policy": { "type": "string" },
+    "note": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "type": "string", "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

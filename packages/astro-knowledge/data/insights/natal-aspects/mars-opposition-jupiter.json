@@ -1,0 +1,48 @@
+{
+  "id": "mars-opposition-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Across Expansive",
+  "summary": "Drive and anger mirror growth and belief. This polarized pattern asks you to use courage and optimism with awareness.",
+  "body": "Drive and anger mirror growth and belief. This polarized pattern asks you to use courage and optimism with awareness. Shortened temper and patience, and energy scattered across one ill-considered pursuit after another. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through drive and anger, growth and belief, and the choices you make when reactivity or overreach starts running the room.",
+  "gift": "The gift is courage, optimism, and a more conscious way to work with drive and anger and growth and belief.",
+  "shadow": "The shadow is reactivity, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and growth and belief cooperate without making either one carry the whole story. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "do": [
+    "Name how drive and anger and growth and belief are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn courage and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of drive and anger or growth and belief"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "jupiter",
+    "opposition",
+    "courage",
+    "optimism"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

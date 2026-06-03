@@ -1,0 +1,48 @@
+{
+  "id": "sun-opposition-moon",
+  "kind": "natal-aspect",
+  "displayTitle": "Pulled Between Selves",
+  "summary": "What you want to become and what helps you feel safe may not always point in the same direction.",
+  "body": "Sun opposition Moon describes a life organized around contrast: public identity on one side, private needs on the other. You may feel split between confidence and sensitivity, visibility and retreat, ambition and belonging. Other people can become mirrors for this tension, showing you the part of yourself you are not yet holding directly. The gift is awareness. You can learn to see both sides clearly and make choices that do not require one part of you to exile the other.",
+  "gift": "Strong self-awareness, relational insight, and the ability to understand opposing needs without collapsing them into one answer.",
+  "shadow": "Projection, inner push-pull, relying on others to carry the side of yourself you avoid.",
+  "integration": "Let identity and need negotiate. You do not have to choose between becoming visible and staying emotionally honest.",
+  "do": [
+    "Name both needs before choosing",
+    "Watch what other people seem to trigger in you",
+    "Build a life with room for public purpose and private repair"
+  ],
+  "dont": [
+    "Let relationships decide who you are",
+    "Treat emotional needs as obstacles to purpose",
+    "Perform certainty when you are divided"
+  ],
+  "lifeAreas": [
+    "identity",
+    "emotions",
+    "family"
+  ],
+  "tags": [
+    "selfhood",
+    "needs",
+    "relationships",
+    "projection",
+    "integration"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "opposition",
+      "planetB": "moon"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "emotional-needs",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

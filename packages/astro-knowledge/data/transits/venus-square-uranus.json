@@ -1,0 +1,30 @@
+{
+  "id": "venus-square-uranus",
+  "transiting": "venus",
+  "aspect": "square",
+  "other": "uranus",
+  "tldr": "Venus square Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Psychologically the square is inner tension to integrate: Erratic affections, sudden attractions and ruptures, and a refusal to be tied down. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for connection against disruption, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the connection/disruption form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Good for fresh, original creative and social moves; unreliable for steady commitments.",
+  "shadow": "Indulgence and vanity collides with instability for its own sake; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:venus-uranus",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Psychologically the square is inner tension to integrate: Erratic affections, sudden attractions and ruptures, and a refusal to be tied down. The growth is owning both sides instead of splitting them."
+}

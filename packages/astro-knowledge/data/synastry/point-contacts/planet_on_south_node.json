@@ -1,0 +1,10 @@
+{
+  "id": "planet_on_south_node",
+  "kind": "point-contact",
+  "contact": "south_node",
+  "plainTranslation": "Someone's planet on your South Node - your comfort zone, the already-familiar - feels like you've known them for years inside ten minutes. Instant, easy, regressive. The recognition is real. So is the pull backward. Comfort isn't the same as good for you.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry feature notes. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

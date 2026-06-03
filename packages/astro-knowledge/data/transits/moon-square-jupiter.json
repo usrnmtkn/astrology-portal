@@ -1,0 +1,30 @@
+{
+  "id": "moon-square-jupiter",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "jupiter",
+  "tldr": "the Moon square Jupiter.",
+  "traditional": "the Moon square Jupiter: a hard contact. The body, home, and daily needs works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Psychologically the square is inner tension to integrate: Emotional and physical excess; overindulgence and overcommitment. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for feeling against growth, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the feeling/growth form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Warmth and generosity that draw people in; watch the tendency to overextend.",
+  "shadow": "Moodiness and over-need collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:moon-jupiter",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Psychologically the square is inner tension to integrate: Emotional and physical excess; overindulgence and overcommitment. The growth is owning both sides instead of splitting them."
+}

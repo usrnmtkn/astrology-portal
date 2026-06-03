@@ -1,0 +1,29 @@
+{
+  "id": "mars-opposition-saturn",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "saturn",
+  "tldr": "Mars opposition Saturn.",
+  "traditional": "Mars opposition Saturn: a hard contact. Action, conflict, and heat works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas. Two malefics in a hard aspect: handle with care, and worse when either is out of sect.",
+  "modern": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Psychologically the opposition is inner tension to integrate: Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Drive and limit reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "shadow": "Anger and recklessness collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mars-saturn",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Psychologically the opposition is inner tension to integrate: Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The growth is owning both sides instead of splitting them."
+}

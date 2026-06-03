@@ -1,0 +1,29 @@
+{
+  "id": "mars-opposition-jupiter",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "jupiter",
+  "tldr": "Mars opposition Jupiter.",
+  "traditional": "Mars opposition Jupiter: a hard contact. Action, conflict, and heat works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas. The benefic Jupiter tempers the malefic Mars.",
+  "modern": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Psychologically the opposition is inner tension to integrate: Shortened temper and patience, and energy scattered across one ill-considered pursuit after another. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Drive and growth reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "shadow": "Anger and recklessness collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mars-jupiter",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. Psychologically the opposition is inner tension to integrate: Shortened temper and patience, and energy scattered across one ill-considered pursuit after another. The growth is owning both sides instead of splitting them."
+}

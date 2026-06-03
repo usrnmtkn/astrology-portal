@@ -1,0 +1,12 @@
+{
+  "id": "sun_saturn_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "sun",
+  "natal": "saturn",
+  "aspect": "conjunction",
+  "plainTranslation": "Vitality and focus arrives full-force in your structures and commitments. Days.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

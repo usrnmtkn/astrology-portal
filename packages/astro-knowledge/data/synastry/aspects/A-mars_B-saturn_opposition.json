@@ -1,0 +1,12 @@
+{
+  "id": "A-mars_B-saturn_opposition",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "saturn",
+  "aspect": "opposition",
+  "plainTranslation": "Drive faces control head-on. The Mars person wants to act now; the Saturn person wants to wait and plan. Push-pull over pace, ambition, and authority, each accusing the other of the opposite flaw. Failure mode: a stalemate of force against resistance. Meet in the middle; you each hold what the other lacks.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

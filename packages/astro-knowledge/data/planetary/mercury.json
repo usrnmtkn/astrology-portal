@@ -1,0 +1,63 @@
+{
+  "id": "mercury",
+  "planet": "mercury",
+  "title": "Mercury Meaning",
+  "overview": "Mercury describes thought, speech, learning, translation, commerce, movement, humor, and the way a person makes connections between ideas. It shows how information is gathered, sorted, questioned, explained, and exchanged.",
+  "cycle": "Mercury usually spends about two to four weeks in a sign, though retrograde cycles can extend its stay. Its sign describes mental style and communication; its house shows where the mind stays busy and where messages need to move.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Mercury in Aries thinks quickly, speaks directly, and prefers decisive language. This placement learns by acting and may need to slow down long enough to hear the reply."
+    },
+    {
+      "sign": "taurus",
+      "body": "Mercury in Taurus thinks carefully, speaks plainly, and trusts what can be tested. This placement needs time to decide, but once the mind is made up it tends to hold steady."
+    },
+    {
+      "sign": "gemini",
+      "body": "Mercury in Gemini is curious, agile, verbal, and quick to connect ideas. This placement learns through variety, conversation, comparison, and mental movement."
+    },
+    {
+      "sign": "cancer",
+      "body": "Mercury in Cancer thinks through feeling, memory, and emotional context. Communication is intuitive and protective, and words land best when safety is present."
+    },
+    {
+      "sign": "leo",
+      "body": "Mercury in Leo communicates with warmth, confidence, creativity, and dramatic presence. This placement speaks best when the message has heart and personal meaning."
+    },
+    {
+      "sign": "virgo",
+      "body": "Mercury in Virgo analyzes, edits, improves, and notices what others miss. This placement communicates with precision and is strongest when its discernment serves repair rather than worry."
+    },
+    {
+      "sign": "libra",
+      "body": "Mercury in Libra thinks relationally and weighs multiple sides before speaking. This placement is skilled at mediation, diplomacy, aesthetics, and fair-minded conversation."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Mercury in Scorpio investigates beneath the surface and prefers meaningful conversation over empty noise. This placement notices subtext and can speak with penetrating honesty."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Mercury in Sagittarius thinks broadly, speaks candidly, and looks for meaning behind the facts. This placement needs truth, perspective, and room for big questions."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Mercury in Capricorn thinks strategically, practically, and with respect for consequences. This placement communicates best through structure, planning, and clear purpose."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Mercury in Aquarius thinks independently, experimentally, and collectively. This placement is drawn to systems, future possibilities, unusual ideas, and social patterns."
+    },
+    {
+      "sign": "pisces",
+      "body": "Mercury in Pisces thinks through image, feeling, symbol, and intuition. This placement communicates with imagination and empathy, but needs grounding when details matter."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

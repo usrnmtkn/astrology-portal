@@ -1,0 +1,48 @@
+{
+  "id": "sun-trine-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Original Or Unpredictable",
+  "summary": "Your identity grows through difference. You may feel most alive when you are allowed to move in your own pattern.",
+  "body": "Sun trine Uranus describes a natural link between self-expression and originality. You may adapt quickly, think independently, and feel comfortable taking paths that do not need broad approval. Others may experience you as refreshing, inventive, or hard to categorize. The gift is freedom with confidence. The shadow is assuming that independence means you never need continuity, commitment, or feedback. The growth is letting your uniqueness become reliable enough to build with.",
+  "gift": "Originality, independence, adaptability, and the courage to express a future-facing self.",
+  "shadow": "Restlessness, detachment, inconsistency, and dismissing ordinary commitments as limitations.",
+  "integration": "Let freedom become a practice, not only a reaction. Your difference has more impact when it can be trusted over time.",
+  "do": [
+    "Follow the unusual idea and give it structure",
+    "Choose communities that respect independence",
+    "Let feedback sharpen the invention"
+  ],
+  "dont": [
+    "Leave just because something becomes familiar",
+    "Treat consistency as proof of boredom",
+    "Use uniqueness to avoid intimacy"
+  ],
+  "lifeAreas": [
+    "identity",
+    "friends",
+    "growth"
+  ],
+  "tags": [
+    "originality",
+    "freedom",
+    "innovation",
+    "community",
+    "self-expression"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "trine",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth",
+    "career-patterns"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

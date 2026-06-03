@@ -1,0 +1,12 @@
+{
+  "id": "moon_moon_square",
+  "kind": "transit-to-natal",
+  "transiting": "moon",
+  "natal": "moon",
+  "aspect": "square",
+  "plainTranslation": "The day's mood grinds against your emotional needs. Restless, a little off, easily unsettled. Ride it out; don't make decisions from the dip.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

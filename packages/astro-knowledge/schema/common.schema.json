@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/common.schema.json",
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"]
+    },
+    "entryMeta": {
+      "type": "object",
+      "required": ["voiceNeutral", "status"],
+      "properties": {
+        "voiceNeutral": { "const": true },
+        "status": { "$ref": "#/$defs/status" }
+      }
+    },
+    "placeholderString": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

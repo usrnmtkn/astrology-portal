@@ -1,0 +1,327 @@
+{
+  "id": "time-lords",
+  "schema": "modifier/time-lords",
+  "definition": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord.",
+  "annualProfections": {
+    "definition": "Each year of life advances the focus one whole sign from the Ascendant. The ruler of the profected sign is the Lord of the Year.",
+    "computation": {
+      "profectedHouse": "(age mod 12) + 1 # age 0 = 1st house",
+      "profectedSign": "the sign that many whole signs from the natal Ascendant, counterclockwise",
+      "lordOfYear": "the domicile ruler of the profected sign (use dignity.domicile)",
+      "monthly": "from the annual profected sign, advance one sign per ~month (12 over the year) for the Lord of the Month",
+      "daily": "subdivide the month the same way for a Lord of the Day"
+    },
+    "interpretationRules": [
+      "The year's topics are read from the profected house (see houseTopics).",
+      "The Lord of the Year's natal condition (house, sign, dignity, sect, aspects) sets the year's quality.",
+      "That year, transits TO or FROM the Lord of the Year and TO the profected sign are the ones that fire; others are background.",
+      "If the Lord of the Year is also currently transited by a malefic, weight the year's difficulty up; by a benefic, down.",
+      "A profection to a house activates the planets natally in that house and the planet ruling it.",
+      "The profected sign is active in both the natal chart and the Solar Return chart for that year.",
+      "Planets natally in the profected sign are activated, but only the traditional seven planets can become Lord of the Year.",
+      "The Lord of the Year is the first transit filter: prioritize transits to the natal Lord of the Year, transits to the Solar Return Lord of the Year, transits made by the Lord of the Year, and transits through the profected sign.",
+      "Angular profection years (1st, 4th, 7th, 10th) are generally louder than cadent years, especially when the same sign or ruler is angular in the Solar Return."
+    ],
+    "houseTopics": {
+      "1": "self, body, vitality, the year's overall direction",
+      "2": "money, resources, livelihood, movable goods",
+      "3": "siblings, neighbors, short trips, daily communication, learning",
+      "4": "home, family, parents, foundations, property, endings",
+      "5": "children, creativity, pleasure, romance, speculation",
+      "6": "work, routine, health, illness, injury, affliction, subordinates, daily grind",
+      "7": "marriage, partners, clients, open enemies, one-to-one dealings",
+      "8": "shared resources, debt, other people's money, crisis, mortality, major transition",
+      "9": "travel, foreigners, higher learning, religion, philosophy, publishing",
+      "10": "career, action, reputation, public standing, authority",
+      "11": "friends, allies, groups, patrons, hopes and goals, gains",
+      "12": "seclusion, isolation, confinement, loss, hidden things, self-undoing, hidden enemies, retreat"
+    },
+    "method": {
+      "rule": "Each year of life, the focus advances one whole sign/house from the Ascendant. Age 0 = 1st house; the cycle repeats every 12 years (age mod 12 + 1 = the profected house).",
+      "timeLord": "The ruler of the profected house is that year's time-lord. Watch where that planet sits by sign and house, and what transits it receives, for the year's dominant theme.",
+      "activation": "The sign on the profected house and its ruler color the year; transits to the time-lord are emphasized."
+    },
+    "yearCycle": [
+      {
+        "ageMod12": 0,
+        "profectedHouse": 1,
+        "exampleAges": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "theme": "self, body, vitality, the year's overall tone",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 1,
+        "profectedHouse": 2,
+        "exampleAges": [
+          1,
+          13,
+          25,
+          37,
+          49,
+          61,
+          73
+        ],
+        "theme": "money, resources, what you value",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 2,
+        "profectedHouse": 3,
+        "exampleAges": [
+          2,
+          14,
+          26,
+          38,
+          50,
+          62,
+          74
+        ],
+        "theme": "communication, siblings, local life, learning",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 3,
+        "profectedHouse": 4,
+        "exampleAges": [
+          3,
+          15,
+          27,
+          39,
+          51,
+          63,
+          75
+        ],
+        "theme": "home, family, roots, property",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 4,
+        "profectedHouse": 5,
+        "exampleAges": [
+          4,
+          16,
+          28,
+          40,
+          52,
+          64,
+          76
+        ],
+        "theme": "creativity, romance, children, pleasure",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 5,
+        "profectedHouse": 6,
+        "exampleAges": [
+          5,
+          17,
+          29,
+          41,
+          53,
+          65,
+          77
+        ],
+        "theme": "work, health, routine, service",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 6,
+        "profectedHouse": 7,
+        "exampleAges": [
+          6,
+          18,
+          30,
+          42,
+          54,
+          66,
+          78
+        ],
+        "theme": "partnership, marriage, open relationships, others",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 7,
+        "profectedHouse": 8,
+        "exampleAges": [
+          7,
+          19,
+          31,
+          43,
+          55,
+          67,
+          79
+        ],
+        "theme": "shared resources, intimacy, debt, transformation",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 8,
+        "profectedHouse": 9,
+        "exampleAges": [
+          8,
+          20,
+          32,
+          44,
+          56,
+          68,
+          80
+        ],
+        "theme": "travel, study, beliefs, the bigger picture",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 9,
+        "profectedHouse": 10,
+        "exampleAges": [
+          9,
+          21,
+          33,
+          45,
+          57,
+          69,
+          81
+        ],
+        "theme": "career, reputation, public role, authority",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 10,
+        "profectedHouse": 11,
+        "exampleAges": [
+          10,
+          22,
+          34,
+          46,
+          58,
+          70,
+          82
+        ],
+        "theme": "friends, groups, hopes, community",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "ageMod12": 11,
+        "profectedHouse": 12,
+        "exampleAges": [
+          11,
+          23,
+          35,
+          47,
+          59,
+          71,
+          83
+        ],
+        "theme": "retreat, the hidden, endings, the unconscious",
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      }
+    ],
+    "sourceCaution": "Cycle table imported as DRAFT project material; verify against primary timing references before marking reviewed.",
+    "activationPriority": {
+      "highest": [
+        "Lord of the Year by natal condition and Solar Return condition",
+        "Planets in the profected natal sign",
+        "Solar Return planets in the profected sign or on Solar Return angles",
+        "Transits to or from the Lord of the Year",
+        "Transits and lunations through the profected sign, especially when they hit natal or Solar Return planets tightly"
+      ],
+      "supporting": [
+        "The other natal houses ruled by the Lord of the Year",
+        "The same modality signs as the profected sign, as supporting stakes around the year theme",
+        "Monthly profections for narrowing the active month inside the annual topic"
+      ],
+      "appRankingRule": "When a transit does not touch the Lord of the Year, the profected sign, an activated natal planet, or a Solar Return angle, rank it as background unless another timing method repeats the same topic."
+    },
+    "solarReturnBridge": {
+      "readOrder": [
+        "Find the profected house and Lord of the Year from the natal Ascendant using whole-sign houses.",
+        "Read the natal condition of the Lord of the Year: sign, house, dignity, sect, aspects, angularity, and houses ruled.",
+        "Read the Solar Return Ascendant, its ruler, angular planets, and the Solar Return house containing the profected sign.",
+        "Compare natal and Solar Return charts for close angle contacts and repeated planets or houses.",
+        "Use transits and lunations to time peaks only after the annual field is established."
+      ],
+      "bigYearSignals": [
+        "Solar Return Ascendant close to natal Ascendant or natal Midheaven.",
+        "Solar Return Ascendant in the same sign as a natal angle.",
+        "Lord of the Year angular, dignified, strongly configured, or repeatedly emphasized in the Solar Return.",
+        "The same planet, house topic, or aspect pattern repeats across natal chart, profection, Solar Return, and current transits.",
+        "A natal planet that is already prominent becomes angular or tightly contacted in the Solar Return."
+      ],
+      "caution": "Do not treat the Solar Return as a standalone prediction when it contradicts natal promise and the active time-lord context."
+    }
+  },
+  "zodiacalReleasing": {
+    "definition": "Releases time from a Lot through the signs, each sign lasting its ruler's period-years, producing nested life chapters (L1 major, L2 sub, L3, L4).",
+    "source": "Valens",
+    "lots": {
+      "spirit": "career, action, mind, reputation, the volitional life",
+      "fortune": "body, circumstance, health, material conditions"
+    },
+    "periodYears": {
+      "saturn": 30,
+      "jupiter": 12,
+      "mars": 15,
+      "sun": 19,
+      "venus": 8,
+      "mercury": 20,
+      "moon": 25
+    },
+    "signPeriodYears": {
+      "aries": 15,
+      "taurus": 8,
+      "gemini": 20,
+      "cancer": 25,
+      "leo": 19,
+      "virgo": 20,
+      "libra": 8,
+      "scorpio": 15,
+      "sagittarius": 12,
+      "capricorn": 30,
+      "aquarius": 30,
+      "pisces": 12
+    },
+    "signPeriodNote": "Each sign's L1 length equals its ruler's period-years (Cancer=Moon 25, Leo=Sun 19, etc.). L2 subdivides that span through all twelve signs in order.",
+    "mechanics": [
+      "Start L1 at the sign of the Lot; advance through signs in order, each lasting its signPeriodYears.",
+      "Within each L1, run L2 through all twelve signs, each L2 lasting its own signPeriodYears, scaled into the L1 span.",
+      "'Loosing of the bond': when an L2 run completes the zodiac and would pass the sign opposite its start, it jumps to that opposite sign instead. Marks a major turning point.",
+      "Peak periods: L2 periods whose sign is angular (1st/4th/7th/10th) to the Lot of Fortune are high-activity 'peak' times; signs in aversion to the Lot are low/quiet."
+    ],
+    "interpretationRules": [
+      "Read Spirit-based ZR for career and chosen action; Fortune-based for body, health, and circumstance.",
+      "The current L1/L2 ruling sign and its lord describe the chapter's theme; the lord's natal condition sets its quality.",
+      "Treat MVP use as advisory background ('what season of life'), not a daily trigger."
+    ],
+    "note": "Advanced; structured here for later. Not required for the daily MVP, but the period numbers and peak rule are enough to compute chapters."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "chart",
+    "transit"
+  ],
+  "role": "method",
+  "category": "traditional-timing",
+  "summary": "Time-lord systems describe which natal topics and planets are activated during a life chapter.",
+  "body": "Time-lord systems answer 'why now' by dividing a life into chapters, each governed by a planet whose natal condition colors that span. Transits only matter when they activate the period's lord.",
+  "note": "Expanded from approved predictive timing source material. Source files were not copied into the repository."
+}

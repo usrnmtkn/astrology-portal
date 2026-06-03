@@ -1,0 +1,12 @@
+{
+  "id": "jupiter_ascendant_trine",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "ascendant",
+  "aspect": "trine",
+  "plainTranslation": "Jupiter flows into your presence. Optimistic, expansive, well-received. A lucky stretch for visibility, new ventures, and backing yourself.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

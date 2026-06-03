@@ -1,0 +1,29 @@
+{
+  "id": "saturn-conjunction-uranus",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "uranus",
+  "tldr": "Saturn conjunction Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Order meets disruption. The clash of the established and the radical, the structured and the new. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of limit and disruption is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Innovation inside structure works; an either-or stance stalls.",
+  "shadow": "Fear and rigidity fused with instability for its own sake, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:saturn-uranus",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Order meets disruption. The clash of the established and the radical, the structured and the new. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

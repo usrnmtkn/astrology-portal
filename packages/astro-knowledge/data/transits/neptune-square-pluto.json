@@ -1,0 +1,30 @@
+{
+  "id": "neptune-square-pluto",
+  "transiting": "neptune",
+  "aspect": "square",
+  "other": "pluto",
+  "tldr": "Neptune square Pluto.",
+  "traditional": "No classical doctrine: Neptune, Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. Psychologically the square is inner tension to integrate: Collective illusion fused with destructive power. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for imagination against power, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the imagination/power form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Generational and collective; minimal personal day-to-day meaning.",
+  "shadow": "Illusion and escapism collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:neptune-pluto",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. Psychologically the square is inner tension to integrate: Collective illusion fused with destructive power. The growth is owning both sides instead of splitting them."
+}

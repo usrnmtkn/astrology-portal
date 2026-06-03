@@ -1,0 +1,12 @@
+{
+  "id": "A-venus_B-venus_square",
+  "kind": "interaspect",
+  "planetA": "venus",
+  "planetB": "venus",
+  "aspect": "square",
+  "plainTranslation": "Clashing values or styles of affection. You want different things from love, or show it in ways the other doesn't read. Failure mode: each feeling unappreciated in their own language. Learn how the other gives and wants love - the clash is workable with translation.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

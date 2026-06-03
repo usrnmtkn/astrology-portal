@@ -1,0 +1,12 @@
+{
+  "id": "sun_ascendant_sextile",
+  "kind": "transit-to-natal",
+  "transiting": "sun",
+  "natal": "ascendant",
+  "aspect": "sextile",
+  "plainTranslation": "The Sun supports your presence. You come across warm and capable. A good window to put yourself forward and be seen.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

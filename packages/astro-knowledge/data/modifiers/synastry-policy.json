@@ -1,0 +1,65 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "synastry-policy",
+  "schema": "modifier/synastry-policy",
+  "appliesTo": [
+    "synastry",
+    "relationship-reading",
+    "interaspect",
+    "house-overlay"
+  ],
+  "role": "policy",
+  "category": "relationship",
+  "summary": "Synastry readings compare one chart against another with ordered interaspects, house overlays, and explicit ethical boundaries.",
+  "body": "Synastry shows relationship dynamics, pressure points, attraction patterns, and growth requirements. It does not decide whether someone should stay, leave, commit, or excuse harmful behavior.",
+  "definition": "Synastry is the comparison of Person A placements to Person B placements and houses.",
+  "appUsage": [
+    "Use ordered keys because Person A to Person B can read differently than Person B to Person A.",
+    "Separate interaspect interpretation from house overlay interpretation.",
+    "Show strengths and challenges without deterministic language.",
+    "Escalate serious relationship safety concerns to non-astrological support language."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "policy": "synastry",
+    "version": 1,
+    "interaspects": {
+      "ordered": true,
+      "keyFormat": "A-{planetA}_B-{planetB}_{aspect}",
+      "rationale": "Two independent charts, not co-measured, so no elongation exclusions. Order matters for interpretation: A's Venus on B's Mars differs from B's Venus on A's Mars. 10x10 ordered pairs x 5 aspects = 500.",
+      "exclusions": "none"
+    },
+    "houseOverlays": {
+      "rationale": "One person's planet falls in the other's house, coloring that life area. Stored once as planet-in-house and applied in both directions (A-in-B and B-in-A) by the app.",
+      "keyFormat": "{planet}_house{n}"
+    },
+    "ethics": {
+      "principles": [
+        "Descriptive, not deterministic. A chart shows tendencies and pressures, never fate or a compatibility verdict.",
+        "Hard aspects name areas of work and growth, never doom or proof of incompatibility.",
+        "Both people are free agents. Readings support choice, never obligation to stay or go."
+      ],
+      "prohibitedFramings": [
+        "Predetermined-bond language that pressures someone to stay.",
+        "Framing jealousy, control, isolation, surveillance, or coercion as romantic, required, or owed.",
+        "Karmic-debt framing that casts suffering as deserved or unavoidable.",
+        "Clinical or diagnostic claims about either person's mind or health.",
+        "Any 'you'll never do better' or scarcity messaging."
+      ],
+      "requiredFramings": [
+        "Name the dynamic, then offer something the people can actually do with it.",
+        "Treat difficulty as workable and optional, not a sentence."
+      ],
+      "safety": "If a user describes abuse, control, or fear, the product surfaces support options rather than an astrological explanation. Astrology never rationalizes harm.",
+      "consent": "Synastry uses a second person's birth data. Assume that person has not consented to being analyzed; keep output about the dynamic, not a verdict on them.",
+      "reviewGate": "All relationship content stays DRAFT until reviewed against this policy. This policy itself needs human sign-off before any synastry content ships READY."
+    },
+    "status": "DRAFT"
+  },
+  "prohibitions": [
+    "Do not call abusive dynamics soul work, required growth, or proof of a bond.",
+    "Do not tell a user to stay in or leave a relationship based on charts alone.",
+    "Do not use compatibility language that removes choice, agency, or context."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "A-moon_B-sun_sextile",
+  "kind": "interaspect",
+  "planetA": "moon",
+  "planetB": "sun",
+  "aspect": "sextile",
+  "plainTranslation": "The Moon person can support the Sun person's direction, and the Sun person can give the Moon person a clear place to respond from. The warmth is available, but it wants small choices: checking in, noticing moods, and making room for both identity and need.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

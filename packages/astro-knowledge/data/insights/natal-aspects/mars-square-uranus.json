@@ -1,0 +1,48 @@
+{
+  "id": "mars-square-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Restless Or Unstoppable",
+  "summary": "Your drive moves fast, and your nervous system does not like being handled. When pressure builds, you may break pattern before you explain yourself.",
+  "body": "Mars square Uranus describes a person with sharp ignition: quick reactions, a strong need for autonomy, and a low tolerance for being boxed in. You may act before the room has caught up, especially when you feel controlled, delayed, or underestimated. At its best, this aspect gives courage, speed, originality, and the ability to move when everyone else freezes. The growth is learning the difference between a clean act of freedom and a reflexive strike against anything that feels like a limit.",
+  "gift": "Fast, original action; courage under pressure; the ability to interrupt stale patterns and move toward a freer option.",
+  "shadow": "Impulsiveness, volatility, unnecessary risk, and fighting the constraint before checking whether it is real.",
+  "integration": "Give your body a direct outlet and your choices a short pause. You do not need to become tame; you need enough timing to make your freedom effective.",
+  "do": [
+    "Move your body before making high-stakes decisions",
+    "Name the rule you are resisting",
+    "Choose one clean action instead of five reactive ones"
+  ],
+  "dont": [
+    "Mistake urgency for truth",
+    "Start a conflict just to feel unstuck",
+    "Treat every request as a threat to your independence"
+  ],
+  "lifeAreas": [
+    "identity",
+    "work",
+    "power"
+  ],
+  "tags": [
+    "independence",
+    "impulse",
+    "risk",
+    "anger",
+    "breakthrough"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "square",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

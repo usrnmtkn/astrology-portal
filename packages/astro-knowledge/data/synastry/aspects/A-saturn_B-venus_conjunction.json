@@ -1,0 +1,12 @@
+{
+  "id": "A-saturn_B-venus_conjunction",
+  "kind": "interaspect",
+  "planetA": "saturn",
+  "planetB": "venus",
+  "aspect": "conjunction",
+  "plainTranslation": "The Saturn person makes the Venus person's love feel serious, committed, and consequential. It can be loyal and long-lasting, but it may also feel cool, conditional, or hard to relax inside. Affection has to be shown, not assumed.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "sun-jupiter",
+  "planetA": "sun",
+  "planetB": "jupiter",
+  "traditional": "Vitality and authority combined with growth and fortune.",
+  "modern": {
+    "blend": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate.",
+    "harmonious": "Genuine confidence and opportunity; doors open more readily.",
+    "hard": "The same confidence overreaches. Sooner or later the luck gets pushed too far.",
+    "business": "Confidence and opportunity, with overextension as the standing risk."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate.",
+  "harmonious": "Genuine confidence and opportunity; doors open more readily.",
+  "hard": "The same confidence overreaches. Sooner or later the luck gets pushed too far.",
+  "business": "Confidence and opportunity, with overextension as the standing risk."
+}

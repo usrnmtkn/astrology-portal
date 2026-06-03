@@ -1,0 +1,29 @@
+{
+  "id": "sun-opposition-uranus",
+  "transiting": "sun",
+  "aspect": "opposition",
+  "other": "uranus",
+  "tldr": "the Sun opposition Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the opposition is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking people to no purpose. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Selfhood and disruption reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Suited to independent or innovative work where you aren't boxed in.",
+  "shadow": "Egotism and needing to be the center collides with instability for its own sake; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:sun-uranus",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the opposition is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking people to no purpose. The growth is owning both sides instead of splitting them."
+}

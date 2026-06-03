@@ -1,0 +1,24 @@
+{
+  "id": "sun-venus",
+  "planetA": "sun",
+  "planetB": "venus",
+  "traditional": "Vitality and authority combined with love, money, and pleasure.",
+  "modern": {
+    "blend": "Identity blended with charm, pleasure, and a sense of value. Sociability and taste become part of how you show up. Only the conjunction is possible, as Venus stays close to the Sun.",
+    "harmonious": "Adds likability, aesthetic sense, and ease with people.",
+    "hard": "Can tip toward vanity, indulgence, or coasting on charm.",
+    "business": "Tends to be well-liked in the work and to 'look good' doing it."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity blended with charm, pleasure, and a sense of value. Sociability and taste become part of how you show up. Only the conjunction is possible, as Venus stays close to the Sun.",
+  "harmonious": "Adds likability, aesthetic sense, and ease with people.",
+  "hard": "Can tip toward vanity, indulgence, or coasting on charm.",
+  "business": "Tends to be well-liked in the work and to 'look good' doing it."
+}

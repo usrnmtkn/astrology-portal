@@ -1,0 +1,29 @@
+{
+  "id": "sun-conjunction-moon",
+  "transiting": "sun",
+  "aspect": "conjunction",
+  "other": "moon",
+  "tldr": "Sun conjunction the Moon.",
+  "traditional": "Sun conjunct the Moon: the body, home, and daily needs fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
+  "modern": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of feeling and selfhood is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness.",
+  "shadow": "Moodiness and over-need fused with egotism and needing to be the center, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-moon",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

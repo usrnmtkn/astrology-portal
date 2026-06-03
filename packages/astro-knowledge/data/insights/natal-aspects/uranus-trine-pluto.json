@@ -1,0 +1,47 @@
+{
+  "id": "uranus-trine-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Original Through Intense",
+  "summary": "Freedom and disruption flow with power and transformation. This fluid pattern asks you to use originality and depth with awareness.",
+  "body": "Freedom and disruption flow with power and transformation. This fluid pattern asks you to use originality and depth with awareness. Fast, effective adaptation to change. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through freedom and disruption, power and transformation, and the choices you make when instability or control starts running the room.",
+  "gift": "The gift is originality, depth, and a more conscious way to work with freedom and disruption and power and transformation.",
+  "shadow": "The shadow is instability, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let freedom and disruption and power and transformation cooperate without making either one carry the whole story. Transformative, disruptive, generational themes.",
+  "do": [
+    "Name how freedom and disruption and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn originality and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let instability make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of freedom and disruption or power and transformation"
+  ],
+  "lifeAreas": [
+    "friends",
+    "growth",
+    "power"
+  ],
+  "tags": [
+    "uranus",
+    "pluto",
+    "trine",
+    "originality",
+    "depth"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "trine",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

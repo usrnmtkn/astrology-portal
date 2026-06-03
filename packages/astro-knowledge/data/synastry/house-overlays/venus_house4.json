@@ -1,0 +1,11 @@
+{
+  "id": "venus_house4",
+  "kind": "house-overlay",
+  "planet": "venus",
+  "house": "4",
+  "plainTranslation": "Their Venus in your 4th house: they bring warmth and beauty into your private life; being home with them feels good. Failure mode: cozy enough to avoid the harder questions. Enjoy the comfort; keep talking about the future, not just the nest.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

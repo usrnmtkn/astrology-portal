@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/point-aspect.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "point", "aspect", "planet", "tldr", "body", "business", "shadow", "policy", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "enum": ["natal"] },
+    "point": { "type": "string" },
+    "aspect": { "type": "string" },
+    "planet": { "type": "string" },
+    "tldr": { "type": "string" },
+    "body": { "type": "string" },
+    "business": { "type": "string" },
+    "shadow": { "type": "string" },
+    "policy": { "type": "string" },
+    "note": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

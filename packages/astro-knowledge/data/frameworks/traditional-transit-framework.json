@@ -1,0 +1,66 @@
+{
+  "id": "traditional-transit-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "traditional-transit",
+  "title": "Traditional Transit Framework",
+  "sections": [
+    {
+      "id": "do-not-flatten-transits",
+      "heading": "Do Not Flatten Transits",
+      "body": "Do not treat a transit through a natal house as a simple planet-in-house event formula if the output is being labeled traditional. Four things tune a transit through a natal house: whole-sign houses, time-lord activation, sect, and dignity."
+    },
+    {
+      "id": "whole-sign-houses",
+      "heading": "Whole-Sign Houses",
+      "body": "In whole-sign houses, a house is the entire sign counted from the rising sign. The 2nd house is the entire sign after the rising sign. A planet enters that house when it crosses the sign boundary, not when it crosses a quadrant degree cusp."
+    },
+    {
+      "id": "house-system-policy",
+      "heading": "House System Policy",
+      "body": "Default transit framing uses whole-sign houses because it best fits the traditional spine and the interpretive data assumes one house equals one whole sign. Keep house-transit entries keyed only by house number so the meaning data stays system-agnostic. The calculation engine may also compute Placidus or another quadrant system as a user option, but that mapping choice belongs to the engine, not the authored entry."
+    },
+    {
+      "id": "activators-not-events",
+      "heading": "Transits Are Activators",
+      "body": "A transiting planet lights up the topics of the place it occupies, but the volume comes from time-lord context. Annual profection and zodiacal releasing determine whether the transit is central or background. Mars crossing the 2nd in a year profected to the 2nd, or when Mars is the time-lord, is a real event. A routine pass in an unrelated year is background noise."
+    },
+    {
+      "id": "sect",
+      "heading": "Sect Sets The Baseline",
+      "body": "Day chart means the Sun was above the horizon at birth. Night chart means the Sun was below the horizon. Sect changes the behavior of benefics and malefics. Mars is more constructive in a night chart and more difficult in a day chart. Venus is more constructive in a night chart and still benefic but less cleanly supportive in a day chart."
+    },
+    {
+      "id": "dignity",
+      "heading": "Dignity Sets The Strength",
+      "body": "The transiting planet's sign condition modifies the reading as much as sect does, and sect and dignity stack. Domicile and exaltation strengthen delivery. Detriment and fall weaken or distort delivery. A debilitated benefic underdelivers. A dignified malefic does its damage efficiently. The house tells the topic; sect and dignity together describe how it goes."
+    },
+    {
+      "id": "modern-overlays",
+      "heading": "Modern Overlays",
+      "body": "There is no traditional Neptune in the seven-planet system. Neptune was discovered in 1846. A product may use Neptune, but Neptune transit content must be labeled as a modern overlay rather than traditional technique."
+    },
+    {
+      "id": "sixth-house-place",
+      "heading": "6th House Place",
+      "body": "The 6th is the place of the health affliction itself: illness, injury, disease, accidents, bodily strain, toil, labor, and subordinates. It is cadent, weak, in aversion to the Ascendant, and associated with Bad Fortune. It is also the joy of Mars. Joy is a strength condition, not a softening; a planet in its joy does its job more, and Mars's job here includes sickness and strain. Do not confuse the 6th with the isolating experience around treatment or confinement; that belongs to the 12th."
+    },
+    {
+      "id": "twelfth-house-place",
+      "heading": "12th House Place",
+      "body": "The 12th describes isolation, retreat, confinement, hidden burdens, and being separated from ordinary life. In health-related timing, the 6th describes the illness, injury, or affliction itself, while the 12th describes the isolating experience that can surround hospitalization, quarantine, institutional care, or being kept apart from the usual world. Keep this distinction descriptive and non-diagnostic."
+    },
+    {
+      "id": "transit-ranking-order",
+      "heading": "Transit Ranking Order",
+      "body": "For traditional timing, transits are last in the ranking stack: natal promise first, then time-lord context, then Solar Return or other annual chart, then real-time transit trigger. This does not make transits unimportant; it explains why some exact transits are loud and others are barely felt."
+    },
+    {
+      "id": "traditional-seven-only-for-time-lords",
+      "heading": "Traditional Seven Only For Time Lords",
+      "body": "Only the seven visible planets can serve as time-lords in profection-style timing. Uranus, Neptune, Pluto, Chiron, Lilith, and other modern points may describe modern overlay themes, but they do not rule the year, hold dignity, or become time-lords."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

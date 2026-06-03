@@ -1,0 +1,12 @@
+{
+  "id": "moon_mars_square",
+  "kind": "composite",
+  "placementType": "aspect",
+  "plainTranslation": "Composite Moon square Mars: feelings and drive clash; the relationship runs hot, prone to friction and hurt. Work: fight clean; don't let irritation become the default tone.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from approved project composite chart material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED",
+  "planet": "moon-mars",
+  "aspect": "square"
+}

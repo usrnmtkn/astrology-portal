@@ -1,0 +1,48 @@
+{
+  "id": "venus-square-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic Or Driven",
+  "summary": "Love and values press against drive and anger. This frictional pattern asks you to use relational grace and courage with awareness.",
+  "body": "Love and values press against drive and anger. This frictional pattern asks you to use relational grace and courage with awareness. Bad timing in romance, indecision, and friction between wanting and acting. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through love and values, drive and anger, and the choices you make when approval seeking or reactivity starts running the room.",
+  "gift": "The gift is relational grace, courage, and a more conscious way to work with love and values and drive and anger.",
+  "shadow": "The shadow is approval seeking, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and drive and anger cooperate without making either one carry the whole story. Charm plus initiative; manage the push-pull between attraction and aggression.",
+  "do": [
+    "Name how love and values and drive and anger are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn relational grace and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of love and values or drive and anger"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "mars",
+    "square",
+    "relational-grace",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

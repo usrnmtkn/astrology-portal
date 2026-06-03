@@ -1,0 +1,12 @@
+{
+  "id": "moon_venus_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "moon",
+  "natal": "venus",
+  "aspect": "opposition",
+  "plainTranslation": "Your need for comfort meets harmony, often through others. Brief emotional give-and-take. Offer warmth without abandoning your own needs.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

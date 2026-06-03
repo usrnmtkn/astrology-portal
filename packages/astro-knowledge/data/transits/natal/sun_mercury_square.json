@@ -1,0 +1,12 @@
+{
+  "id": "sun_mercury_square",
+  "kind": "transit-to-natal",
+  "transiting": "sun",
+  "natal": "mercury",
+  "aspect": "square",
+  "plainTranslation": "Your purpose presses on your thinking. Mental restlessness, decisions that feel forced. Slow the mind; the choice is clearer than the noise suggests.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

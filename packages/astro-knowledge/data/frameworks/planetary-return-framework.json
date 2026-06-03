@@ -1,0 +1,51 @@
+{
+  "id": "planetary-return-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "planetary-return",
+  "title": "Planetary Return Framework",
+  "sections": [
+    {
+      "id": "return-definition",
+      "heading": "Return Definition",
+      "body": "A planetary return occurs when a transiting planet returns to its natal position. Treat the return chart as a cycle map for that planet's topics: closure of one cycle, beginning of the next, and a concentrated preview of how that planet will operate until the next return."
+    },
+    {
+      "id": "planet-specific-scope",
+      "heading": "Planet-Specific Scope",
+      "body": "Each return speaks through its planet. Solar returns emphasize vitality, identity, visibility, and annual direction. Lunar returns emphasize emotional climate and monthly movement. Mercury returns emphasize decisions, communication, study, commerce, travel, and logistics. Venus returns emphasize love, money, pleasure, aesthetics, and social ease. Mars returns emphasize action, conflict, stamina, risk, enterprise, and the body. Jupiter and Saturn returns describe larger multi-year developmental arcs."
+    },
+    {
+      "id": "read-like-a-chart",
+      "heading": "Read Like A Chart",
+      "body": "Read the return chart as a chart, but keep the return planet central. Prioritize the return Ascendant, angular planets, the return planet's house and aspects, house rulers, repeated natal themes, and close contacts to natal planets or angles."
+    },
+    {
+      "id": "timing-with-transits",
+      "heading": "Timing With Transits",
+      "body": "The return chart describes the cycle; later transits to the return chart can time when its promises become active. This is especially useful for solar, lunar, Mercury, Venus, Mars, Jupiter, and Saturn return cycles."
+    },
+    {
+      "id": "retrograde-return-series",
+      "heading": "Retrograde Return Series",
+      "body": "Retrograde planets can create more than one return in a short span. Treat a three-pass return as a sequence: first contact introduces the cycle issue, retrograde contact reviews or reverses it, final direct contact commits the outcome or direction."
+    },
+    {
+      "id": "do-not-overpromise",
+      "heading": "Do Not Overpromise",
+      "body": "A return chart does not guarantee a single event. It gives a cycle field. Raise confidence only when the return chart repeats natal promise, progression, active transit, or time-lord testimony."
+    },
+    {
+      "id": "solar-return-big-year-signals",
+      "heading": "Solar Return Big Year Signals",
+      "body": "A Solar Return is more likely to describe a visible year when its Ascendant is close to a natal angle, when the Lord of the Year is prominent in the return, when return angles contact natal planets, or when the same planet and house topic repeat across natal chart, profection, return, and current transits."
+    },
+    {
+      "id": "solar-return-plus-profection",
+      "heading": "Solar Return Plus Profection",
+      "body": "For annual work, start with the profection and Lord of the Year, then read the Solar Return through that lens. The return chart may be read as its own chart, but the Lord of the Year, profected sign, and activated natal planets determine which parts of the return deserve the most weight."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

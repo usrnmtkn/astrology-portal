@@ -1,0 +1,566 @@
+{
+  "id": "transit-sect-guide",
+  "kind": "framework",
+  "role": "method",
+  "category": "traditional-transit",
+  "title": "Transits Through the Houses, by Sect",
+  "sections": [
+    {
+      "id": "transits-through-the-houses-by-sect",
+      "heading": "Transits Through the Houses, by Sect",
+      "body": "A working reference for every planet moving through every house, written with traditional mechanics underneath and plain language on top. Each entry tells you what the transit activates, how sect shifts the reading, and one concrete life experience you might actually have under it.\n\n## How sect works (read this first)\n\nYour chart is either a **day chart** (Sun above the horizon at birth) or a **night chart** (Sun below it). That single fact sorts the planets into two teams and decides who helps you and who leans on you.\n\n- **Day team:** Sun, Jupiter, Saturn\n- **Night team:** Moon, Venus, Mars\n- **Mercury** switches sides depending on whether it rises before the Sun (day-leaning) or sets after it (night-leaning)\n- **Uranus, Neptune, Pluto** have no sect. They were found centuries after this system was built. Any \"sect\" reading for them is a modern guess wearing old clothes, so this guide flags them and gives the house theme without pretending otherwise.\n\nThe rule that matters:\n\n- A **benefic in sect** (Jupiter by day, Venus by night) gives cleanly. A benefic out of sect still helps, but messier, more indulgent, less to keep.\n- A **malefic in sect** (Saturn by day, Mars by night) presses on you for a reason. It builds, disciplines, or clears. A **malefic out of sect** (Mars by day, Saturn by night) is the harder version. Same topic, sharper teeth.\n\nSo before you read any single placement: are you a day chart or a night chart? That tells you which of the two readings below is yours.\n\n## How long each transit lasts in a house\n\nRough whole-sign durations, longer if the planet stations or retrogrades back in.\n\n- Moon: about 2 to 2.5 days\n- Sun: about a month\n- Mercury: 2 to 3 weeks\n- Venus: 3 to 5 weeks\n- Mars: 6 to 7 weeks\n- Jupiter: about a year\n- Saturn: about 2.5 years\n- Uranus: about 7 years\n- Neptune: about 14 years\n- Pluto: 12 to 30 years"
+    },
+    {
+      "id": "the-moon",
+      "heading": "THE MOON",
+      "body": "The Moon is the body's planet, the planet of mood, appetite, and what you need rather than what you want. It moves fast, so its transits are weather, not climate. It rules the **night team** and feels most at home in a night chart. Its joy is the **3rd house**. When the Moon passes through a house, that area of life gets emotionally loud for a day or two, then quiets again. Don't make permanent decisions on a Moon transit. Just notice what it surfaces.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "The day turns inward and physical. You feel everything more, read every room, want comfort more than achievement. *Experience:* you wake up tender for no clear reason and need the day to go gently, which it usually won't."
+        },
+        {
+          "label": "2nd house",
+          "body": "Money and security become a feeling, not a spreadsheet. You either nest and stock up or fret about whether you have enough. *Experience:* you find yourself buying groceries you don't need because a full fridge feels like safety."
+        },
+        {
+          "label": "3rd house (the Moon's joy)",
+          "body": "This is the Moon at ease. Talking, texting, errands, and the people right around you all flow. *Experience:* a long catch-up call with a sibling or neighbor that leaves you settled."
+        },
+        {
+          "label": "4th house",
+          "body": "Home pulls hard. You want to be where your roots are, near family or the version of family you've built. *Experience:* you cancel plans to stay in and cook, and it's the right call."
+        },
+        {
+          "label": "5th house",
+          "body": "Pleasure, play, and the heart get easy access. Romance, kids, making things. *Experience:* an unplanned creative night, or an evening with someone that feels light and warm."
+        },
+        {
+          "label": "6th house",
+          "body": "Mood meets the to-do list and the body's small complaints. You're sensitive to overwork and to what you eat. *Experience:* you notice you're running ragged and finally rest, or your stomach tells you the truth your schedule won't."
+        },
+        {
+          "label": "7th house",
+          "body": "You feel the other person. Partnership, one-on-ones, and what you need from them all rise. *Experience:* a conversation with your partner or closest collaborator that finally gets to the feeling under the logistics."
+        },
+        {
+          "label": "8th house",
+          "body": "Deeper, heavier water. Shared money, intimacy, fear, the things you don't say in daylight. *Experience:* a late night where something private and unprocessed comes up and asks to be felt."
+        },
+        {
+          "label": "9th house",
+          "body": "The mood wants out and up. Travel, learning, big-picture meaning, a change of scene. *Experience:* a sudden craving to book a trip or pick up the book that reframes how you see things."
+        },
+        {
+          "label": "10th house",
+          "body": "Your feelings go public. You're visible, and you care more than usual how you're seen. *Experience:* a work moment where your mood is on display, for better or worse."
+        },
+        {
+          "label": "11th house",
+          "body": "The heart turns to friends, groups, and what you're hoping for. *Experience:* a friend reaches out at exactly the right moment, or you feel held by your people."
+        },
+        {
+          "label": "12th house",
+          "body": "Retreat. You want to disappear, rest, and let the day be quiet and unwitnessed. *Experience:* you protect your alone time fiercely and feel restored by it, or you feel low and don't know why."
+        }
+      ]
+    },
+    {
+      "id": "the-sun",
+      "heading": "THE SUN",
+      "body": "The Sun is vitality, attention, and where your light goes this month. It leads the **day team** and is strongest in a day chart. Its joy is the **9th house**. As it moves through a house, it spotlights that area: you spend energy there, you're seen there, and the topic asks to be central for about thirty days. The Sun doesn't break things. It illuminates them.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "Your season. Energy and visibility return to you personally. *Experience:* the weeks around your birthday, when you feel most yourself and people orient toward you."
+        },
+        {
+          "label": "2nd house",
+          "body": "Focus lands on income, resources, and what you value. *Experience:* a month where money is simply the main subject, earning it, counting it, deciding what's worth it."
+        },
+        {
+          "label": "3rd house",
+          "body": "Communication, learning, and the local world light up. *Experience:* a busy stretch of conversations, short trips, and small ideas adding up."
+        },
+        {
+          "label": "4th house",
+          "body": "The light goes home and to your foundations. Lower energy, more private. *Experience:* a month where family and the place you live quietly run your attention."
+        },
+        {
+          "label": "5th house",
+          "body": "Creativity, romance, and play take center stage. *Experience:* a project or a person who makes you feel alive gets your best hours."
+        },
+        {
+          "label": "6th house",
+          "body": "Work, health, and routine become the job of the month. *Experience:* you put your head down, fix your systems, and tend the body you've been ignoring."
+        },
+        {
+          "label": "7th house",
+          "body": "The spotlight moves to your closest relationships. *Experience:* a partner, client, or rival becomes the defining figure of the month."
+        },
+        {
+          "label": "8th house",
+          "body": "Attention drops below the surface, to shared money, intimacy, and what's hidden. *Experience:* a month of dealing with taxes, debts, an inheritance, or one honest accounting."
+        },
+        {
+          "label": "9th house (the Sun's joy)",
+          "body": "The Sun at full strength. Travel, study, belief, expansion. *Experience:* a trip, a course, or a shift in worldview that opens the window."
+        },
+        {
+          "label": "10th house",
+          "body": "Peak visibility. Career and reputation get the year's strongest light. *Experience:* you're recognized, promoted, or simply seen doing the work that matters."
+        },
+        {
+          "label": "11th house",
+          "body": "Friends, networks, and long-range hopes take focus. *Experience:* a community, team, or goal pulls your energy and pays it back."
+        },
+        {
+          "label": "12th house",
+          "body": "The light goes underground before your new season begins. Rest, reflection, closure. *Experience:* a quiet, draining month where you wrap things up and prepare without much to show yet."
+        }
+      ]
+    },
+    {
+      "id": "mercury",
+      "heading": "MERCURY",
+      "body": "Mercury is the mind, the messenger, the planet of talking, thinking, writing, and moving information around. It's the switch-hitter of sect: **day-leaning when it rises before the Sun, night-leaning when it sets after.** Either way it's neutral, it takes color from what it touches. Its joy is the **1st house**. Through a house it speeds up thinking and communication about that topic, and when it retrogrades there, expect the rethink, the delay, and the second draft.",
+      "items": [
+        {
+          "label": "1st house (Mercury's joy)",
+          "body": "You think out loud and define yourself in words. *Experience:* you finally articulate something about who you are that you've only felt before."
+        },
+        {
+          "label": "2nd house",
+          "body": "The mind turns to money. Budgets, rates, the math of your worth. *Experience:* you sit down and actually run the numbers you've been avoiding."
+        },
+        {
+          "label": "3rd house",
+          "body": "Mercury's home turf. Messages, errands, learning, and chatter all accelerate. *Experience:* an inbox-and-errands week, fast and a little scattered."
+        },
+        {
+          "label": "4th house",
+          "body": "Thinking goes home. Family talks, paperwork about property, sorting the past. *Experience:* a conversation with a parent, or finally organizing the document drawer."
+        },
+        {
+          "label": "5th house",
+          "body": "Playful, expressive thinking. Flirtation, creative writing, talking with kids. *Experience:* the words come easy for the thing you're making, or a fun back-and-forth with someone you like."
+        },
+        {
+          "label": "6th house",
+          "body": "The mind meets the task list and the body's data. Detail work, scheduling, health questions. *Experience:* you finally book the appointment and read the lab results properly."
+        },
+        {
+          "label": "7th house",
+          "body": "Talking it through with the other person. Negotiation, contracts, the relationship conversation. *Experience:* you hash out terms, or finally say the thing the partnership needed said."
+        },
+        {
+          "label": "8th house",
+          "body": "The mind goes deep and private. Research, shared finances, uncomfortable truths. *Experience:* you investigate something thoroughly, or have one direct talk about money or intimacy."
+        },
+        {
+          "label": "9th house",
+          "body": "Big-picture thinking. Study, travel plans, beliefs, the long view. *Experience:* you map out a trip or get genuinely absorbed in learning something large."
+        },
+        {
+          "label": "10th house",
+          "body": "Public, professional thinking. Presentations, your reputation in words. *Experience:* you pitch, post, or speak and your ideas land in front of the people who matter."
+        },
+        {
+          "label": "11th house",
+          "body": "Networked thinking. Group chats, planning with friends, future goals on paper. *Experience:* a group conversation that turns a vague hope into an actual plan."
+        },
+        {
+          "label": "12th house",
+          "body": "The mind goes quiet and inward, sometimes foggy. Reflection, things unsaid, behind-the-scenes thinking. *Experience:* you process privately, journal, or realize what you've been quietly turning over for weeks."
+        }
+      ]
+    },
+    {
+      "id": "venus",
+      "heading": "VENUS",
+      "body": "Venus is the planet of love, pleasure, value, beauty, and ease. She's the **benefic of the night team.**\n\n- **Night chart: Venus is in sect.** Her gifts arrive clean and useful. Real connection, real gain, lasting beauty.\n- **Day chart: Venus is out of sect.** Still kind, but tilted toward indulgence and pleasure over substance. Easy to overspend, overindulge, or chase the nice feeling past its usefulness.\n\nHer joy is the **5th house.** Through a house she sweetens that topic and draws good things toward it.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "You become more magnetic and at ease in your own skin. *Experience (night):* people are warmer to you and you like how you look and move. *Experience (day):* same charm, plus a stronger pull to indulge or spend on appearance."
+        },
+        {
+          "label": "2nd house",
+          "body": "Money and self-worth get a lift. *Experience (night):* income arrives smoothly and you feel worth what you charge. *Experience (day):* money comes, and so does the urge to spend it on comfort the moment it lands."
+        },
+        {
+          "label": "3rd house",
+          "body": "Sweetness in everyday talk and the local world. *Experience:* easy, affectionate conversations and pleasant small outings; out of sect, more gossip and pleasant distraction."
+        },
+        {
+          "label": "4th house",
+          "body": "Warmth at home. *Experience (night):* genuine comfort with family, or you make your space beautiful and it lasts. *Experience (day):* you redecorate or host on impulse and overshoot the budget."
+        },
+        {
+          "label": "5th house (Venus's joy)",
+          "body": "Venus at her best. Romance, creativity, pleasure, children. *Experience (night):* a real romance or a creative project that flows and feeds you. *Experience (day):* a thrilling but possibly shallow fling, or fun that runs your wallet."
+        },
+        {
+          "label": "6th house",
+          "body": "Ease at work and in the body. *Experience:* a pleasant stretch on the job, kinder routines, attention to wellness; out of sect, comfort-eating or skipping the discipline that helps."
+        },
+        {
+          "label": "7th house",
+          "body": "The relationship house, strongly favorable. *Experience (night):* partnership deepens, or a meaningful connection forms. *Experience (day):* attraction and harmony, but watch for choosing pleasant over right."
+        },
+        {
+          "label": "8th house",
+          "body": "Sweetness in deep and shared territory. *Experience (night):* intimacy strengthens, or shared money goes your way, a loan, a payout, support. *Experience (day):* the same gains, with a pull toward dependence or spending what isn't fully yours."
+        },
+        {
+          "label": "9th house",
+          "body": "Pleasure in travel, learning, and the wider world. *Experience:* a trip that feeds you, a teacher or idea you fall for; out of sect, escapism dressed as adventure."
+        },
+        {
+          "label": "10th house",
+          "body": "Charm reaches your public and career. *Experience (night):* you're well-liked at work and it advances you. *Experience (day):* popularity and goodwill, sometimes more flattery than progress."
+        },
+        {
+          "label": "11th house",
+          "body": "Warmth among friends and within groups. *Experience:* a friendship deepens, or your community brings something good; out of sect, social spending and over-pleasing."
+        },
+        {
+          "label": "12th house",
+          "body": "Quiet, private, or hidden affection. *Experience:* a secret comfort, solitary pleasure, or a love kept offstage; out of sect, an indulgence you hide for a reason."
+        }
+      ]
+    },
+    {
+      "id": "mars",
+      "heading": "MARS",
+      "body": "Mars is drive, heat, conflict, and the will to act. He's the **malefic of the night team.**\n\n- **Night chart: Mars is in sect.** The heat works for you. Courage, decisive action, hard effort that builds.\n- **Day chart: Mars is out of sect.** This is the harder Mars. Anger, accident, conflict, rashness, things cut or burned. The same fire, but more likely to scorch.\n\nHis joy is the **6th house.** Through a house he activates and agitates that topic and asks for an outlet.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "Energy and assertion flood the self and body. *Experience (night):* you start things, move fast, and feel powerful. *Experience (day):* short temper, rushed steps, and the kind of week the bumped shin and the snapped reply happen."
+        },
+        {
+          "label": "2nd house",
+          "body": "Force aimed at money and worth. *Experience (night):* you push hard to earn and chase what's owed. *Experience (day):* impulse spending, money fights, or property damaged or lost."
+        },
+        {
+          "label": "3rd house",
+          "body": "Sharp, fast communication. *Experience (night):* you say the hard thing and win the point. *Experience (day):* arguments with siblings or neighbors, or a careless message you can't take back."
+        },
+        {
+          "label": "4th house",
+          "body": "Heat at home and in the roots. *Experience (night):* you tackle a household project or clear old family ground. *Experience (day):* tension under your own roof, or a fight with a parent."
+        },
+        {
+          "label": "5th house",
+          "body": "Drive in romance, sex, and creativity. *Experience (night):* bold creative output and strong attraction. *Experience (day):* a reckless fling, a creative burnout, or conflict over a child."
+        },
+        {
+          "label": "6th house (Mars's joy)",
+          "body": "Mars at home, which is why this is the place of labor and illness. *Experience (night):* you grind through real work and your body holds up to it. *Experience (day):* overwork to the point of injury, a flare-up, or friction with coworkers."
+        },
+        {
+          "label": "7th house",
+          "body": "Conflict and heat aimed at partners. *Experience (night):* you confront a relationship issue directly and clear it. *Experience (day):* open conflict, a breakup fight, or a legal opponent who comes at you."
+        },
+        {
+          "label": "8th house",
+          "body": "Force in deep and shared territory. *Experience (night):* you take decisive action on debt, a payout, or intimacy. *Experience (day):* a fight over money that isn't only yours, or a crisis that forces a decision."
+        },
+        {
+          "label": "9th house",
+          "body": "Drive aimed outward and upward. *Experience (night):* you push a trip, a course, or a belief into motion. *Experience (day):* a travel mishap, or a heated clash over ideology."
+        },
+        {
+          "label": "10th house",
+          "body": "Ambition and conflict go public. *Experience (night):* you make an aggressive, well-timed career move. *Experience (day):* a clash with a boss, or a reputational fight you didn't plan."
+        },
+        {
+          "label": "11th house",
+          "body": "Heat among friends and groups. *Experience (night):* you rally people toward a shared goal. *Experience (day):* a falling-out with a friend or a fracture in the group."
+        },
+        {
+          "label": "12th house",
+          "body": "Force turned inward or hidden. *Experience (night):* you quietly do the unseen work that clears the way. *Experience (day):* self-sabotage, hidden enemies surfacing, or anger you can't locate the source of."
+        }
+      ]
+    },
+    {
+      "id": "jupiter",
+      "heading": "JUPITER",
+      "body": "Jupiter is growth, opportunity, faith, and generosity, the planet that says yes and makes things bigger. He's the **benefic of the day team.**\n\n- **Day chart: Jupiter is in sect.** His blessing lands solid and grounded. Real opportunity, real expansion you can build on.\n- **Night chart: Jupiter is out of sect.** Still lucky, but looser. Promises that overshoot, excess, growth without enough discipline behind it.\n\nHis joy is the **11th house.** He spends about a year per house, so this is a theme for the year, not the week.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "A year of personal expansion and confidence. *Experience:* you grow into a bigger version of yourself; out of sect, you overpromise or overextend who you are."
+        },
+        {
+          "label": "2nd house",
+          "body": "A year of financial opportunity. *Experience (day):* income and resources genuinely grow. *Experience (night):* money comes and goes just as freely, more flow than savings."
+        },
+        {
+          "label": "3rd house",
+          "body": "Growth through learning, communication, and your local world. *Experience:* a course, a writing project, or a new circle that expands your mind."
+        },
+        {
+          "label": "4th house",
+          "body": "Expansion at home and in the family. *Experience:* a move to more space, a growing household, or healing in the family line."
+        },
+        {
+          "label": "5th house",
+          "body": "A generous year for love, creativity, and children. *Experience:* a fertile creative run, a real romance, or a pregnancy or new bond with a child."
+        },
+        {
+          "label": "6th house",
+          "body": "Growth through work and improved health. *Experience:* a better job, a bigger role, or finally getting your wellbeing on track; out of sect, taking on more work than is good for you."
+        },
+        {
+          "label": "7th house",
+          "body": "Expansion through partnership. *Experience:* a marriage, a major business partnership, or a relationship that lifts your whole year."
+        },
+        {
+          "label": "8th house",
+          "body": "Benefit through shared and deep resources. *Experience:* support from someone else's money, an inheritance, a payout, or genuine intimacy growing."
+        },
+        {
+          "label": "9th house",
+          "body": "Jupiter loves it here. A year of travel, study, and meaning. *Experience:* a journey, a degree, or a belief that reorganizes your life for the better."
+        },
+        {
+          "label": "10th house",
+          "body": "Career expansion and public growth. *Experience:* a promotion, recognition, or a step up in status that defines the year."
+        },
+        {
+          "label": "11th house (Jupiter's joy)",
+          "body": "His strongest, luckiest placement. Friends, allies, and hopes realized. *Experience:* the right people show up, a community lifts you, and a long-held goal moves within reach."
+        },
+        {
+          "label": "12th house",
+          "body": "Growth that happens behind the scenes. *Experience:* spiritual or inner development, quiet support, or a hidden blessing you only understand later; out of sect, escapism that calls itself growth."
+        }
+      ]
+    },
+    {
+      "id": "saturn",
+      "heading": "SATURN",
+      "body": "Saturn is time, limit, discipline, and consequence, the planet that says no, slow down, and earn it. He's the **malefic of the day team.**\n\n- **Day chart: Saturn is in sect.** The hard version that's actually on your side. Structure, maturity, a long task that pays off if you do it right.\n- **Night chart: Saturn is out of sect.** The heavier version. Loss, delay, fear, isolation, weight that feels like it's against you.\n\nHis joy is the **12th house.** He spends about 2.5 years per house, so this is a long season, not a moment.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "A serious chapter for the self and body. *Experience (day):* you mature, take responsibility, and rebuild on firmer ground. *Experience (night):* you feel aged, restricted, and heavily tested in who you are."
+        },
+        {
+          "label": "2nd house",
+          "body": "An accounting with money and worth. *Experience:* lean years that force discipline; done right, a stronger foundation; out of sect, real financial fear and scarcity."
+        },
+        {
+          "label": "3rd house",
+          "body": "Discipline in thinking and communication. *Experience:* serious study or focused work, or a hard quiet in your daily exchanges."
+        },
+        {
+          "label": "4th house",
+          "body": "Weight on home and the roots. *Experience:* responsibility for an aging parent, a heavy stretch at home, or rebuilding your foundation slowly."
+        },
+        {
+          "label": "5th house",
+          "body": "A sober chapter for joy, creativity, and children. *Experience (day):* you commit seriously to a creative discipline or to parenting. *Experience (night):* pleasure feels far off, or there's strain around children or romance."
+        },
+        {
+          "label": "6th house",
+          "body": "Hard, steady work and health attention. *Experience:* a demanding job that builds your skill, or a health issue that demands discipline; out of sect, chronic strain or burnout."
+        },
+        {
+          "label": "7th house",
+          "body": "A test of commitment in relationships. *Experience (day):* a serious commitment or a partnership that matures under pressure. *Experience (night):* distance, a breakup, or the loneliness inside a relationship."
+        },
+        {
+          "label": "8th house",
+          "body": "An accounting with shared money, debt, and mortality. *Experience:* paying off long-term obligations, settling an estate, or facing a fear directly; out of sect, real financial or emotional pressure from others."
+        },
+        {
+          "label": "9th house",
+          "body": "Discipline in belief and the long view. *Experience:* serious study, a degree, or a hard re-examination of what you believe; restricted travel or a tested worldview."
+        },
+        {
+          "label": "10th house",
+          "body": "The career accounting. *Experience (day):* you reach a peak through years of work, or build the position you'll hold for a long time. *Experience (night):* a fall, a loss of standing, or a job that costs more than it gives."
+        },
+        {
+          "label": "11th house",
+          "body": "Pruning of friendships and goals. *Experience:* you lose some friends and keep the real ones; long-held hopes get tested for whether they were ever truly yours."
+        },
+        {
+          "label": "12th house (Saturn's joy)",
+          "body": "His strongest placement, and a deeply inward one. *Experience:* a season of solitude, endings, and quiet accounting; out of sect, isolation and hidden burden; in sect, a deep clearing before a new cycle."
+        }
+      ]
+    },
+    {
+      "id": "uranus-no-traditional-sect",
+      "heading": "URANUS (no traditional sect)",
+      "body": "Uranus has no place in the sect system. What follows is the modern reading of the house theme, flagged as modern. Uranus is sudden change, disruption, freedom, and the lightning that breaks a stuck pattern. It spends about 7 years per house, so it's the long slow shock that rearranges that area of life. Wherever it goes, it loosens what was fixed.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "You reinvent yourself, sometimes overnight. *Experience:* a radical change in identity, look, or direction that surprises even you."
+        },
+        {
+          "label": "2nd house",
+          "body": "Income and values get unstable then liberated. *Experience:* an unconventional income source replaces the steady one you lost."
+        },
+        {
+          "label": "3rd house",
+          "body": "Sudden shifts in thinking and your local world. *Experience:* a breakthrough idea, or an abrupt change in your daily environment."
+        },
+        {
+          "label": "4th house",
+          "body": "Upheaval at home and in the family. *Experience:* an unexpected move, or a break from family expectations."
+        },
+        {
+          "label": "5th house",
+          "body": "Freedom in love, creativity, and self-expression. *Experience:* an unconventional romance or a creative leap that breaks your old style."
+        },
+        {
+          "label": "6th house",
+          "body": "Disruption to work and routine. *Experience:* you leave a rigid job, or your health forces a whole new way of living."
+        },
+        {
+          "label": "7th house",
+          "body": "Shock and freedom in partnership. *Experience:* a sudden union, a sudden split, or a relationship that has to become more open to survive."
+        },
+        {
+          "label": "8th house",
+          "body": "Upheaval in shared resources and the deep places. *Experience:* a sudden change in joint finances, or a transformation you didn't choose."
+        },
+        {
+          "label": "9th house",
+          "body": "Awakening in belief and worldview. *Experience:* a trip or idea that detonates your old certainties."
+        },
+        {
+          "label": "10th house",
+          "body": "A radical career turn. *Experience:* you walk away from the expected path, or get pulled into something unconventional and public."
+        },
+        {
+          "label": "11th house",
+          "body": "New, unconventional friends and goals. *Experience:* you find your real people, or your vision of the future flips."
+        },
+        {
+          "label": "12th house",
+          "body": "Disruption to the hidden and unconscious. *Experience:* sudden insight, or a buried thing surfaces and breaks loose."
+        }
+      ]
+    },
+    {
+      "id": "neptune-no-traditional-sect",
+      "heading": "NEPTUNE (no traditional sect)",
+      "body": "No place in the sect system, and the seven-planet tradition has no doctrine for it. This is the modern house theme, flagged as modern. Neptune is dissolving, dreaming, blurring, and longing, the planet that softens edges for better and worse. About 14 years per house. Wherever it moves, it fogs the boundaries and stirs the imagination and the confusion both.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "The sense of self blurs. *Experience:* you lose certainty about who you are, which opens you up and disorients you at once."
+        },
+        {
+          "label": "2nd house",
+          "body": "Money and worth get foggy. *Experience:* finances become hard to pin down, or you stop measuring worth in money at all."
+        },
+        {
+          "label": "3rd house",
+          "body": "Imagination floods daily thinking. *Experience:* heightened intuition and creativity, alongside scattered focus and missed details."
+        },
+        {
+          "label": "4th house",
+          "body": "The home and roots become dreamlike. *Experience:* an idealized or confusing family situation, or a longing for a home you can't quite find."
+        },
+        {
+          "label": "5th house",
+          "body": "Romance and creativity turn enchanted. *Experience:* an idealized love or an inspired creative period, with the risk of illusion."
+        },
+        {
+          "label": "6th house",
+          "body": "Work and health blur. *Experience:* hard-to-diagnose symptoms, lost focus at work, or service that means something deeper than the paycheck."
+        },
+        {
+          "label": "7th house",
+          "body": "Partners get idealized or hard to see clearly. *Experience:* a relationship full of longing and projection, soulful or deceptive or both."
+        },
+        {
+          "label": "8th house",
+          "body": "The deep waters get deeper. *Experience:* dissolved boundaries in intimacy and shared money, deep or confusing."
+        },
+        {
+          "label": "9th house",
+          "body": "Belief turns mystical. *Experience:* a spiritual awakening, or a worldview you can't quite prove but can't shake."
+        },
+        {
+          "label": "10th house",
+          "body": "The career path blurs. *Experience:* you lose the thread of your ambition, or you're drawn toward work with a spiritual or artistic pull."
+        },
+        {
+          "label": "11th house",
+          "body": "Hopes and groups get dreamy. *Experience:* an inspiring shared vision, or friends who turn out not to be what you imagined."
+        },
+        {
+          "label": "12th house",
+          "body": "Neptune's modern home. *Experience:* deep retreat, spiritual immersion, or a long fog you only understand looking back."
+        }
+      ]
+    },
+    {
+      "id": "pluto-no-traditional-sect",
+      "heading": "PLUTO (no traditional sect)",
+      "body": "No place in the sect system. Modern house theme, flagged as modern. Pluto is power, depth, endings, and renewal, the slow pressure that dismantles what is hollow and rebuilds it from the root. It can spend anywhere from 12 to 30 years in a house. Whatever it touches gets stripped to its core and remade. You don't experience this as an event so much as a long transformation you eventually realize happened.",
+      "items": [
+        {
+          "label": "1st house",
+          "body": "Total reinvention of the self. *Experience:* you become almost unrecognizable to who you were, through a long, sometimes painful rebirth."
+        },
+        {
+          "label": "2nd house",
+          "body": "A deep transformation of money and worth. *Experience:* you rebuild your entire relationship to security from the ground up."
+        },
+        {
+          "label": "3rd house",
+          "body": "Your mind and your local world transform. *Experience:* obsessive study, or a complete change in how and what you think."
+        },
+        {
+          "label": "4th house",
+          "body": "The roots get excavated. *Experience:* deep family patterns surface and finally break, or home is rebuilt from nothing."
+        },
+        {
+          "label": "5th house",
+          "body": "Power and intensity in love and creativity. *Experience:* an all-consuming romance or creative obsession that changes you."
+        },
+        {
+          "label": "6th house",
+          "body": "Work and health transform at the root. *Experience:* a complete overhaul of how you work or care for your body, often forced."
+        },
+        {
+          "label": "7th house",
+          "body": "Relationships are reborn through power and intensity. *Experience:* a relationship that transforms you completely, or ends so you can."
+        },
+        {
+          "label": "8th house",
+          "body": "Pluto's deepest natural territory. *Experience:* a deep encounter with shared power, loss, and rebirth."
+        },
+        {
+          "label": "9th house",
+          "body": "Beliefs are torn down and rebuilt. *Experience:* a worldview ends and a truer one takes its place."
+        },
+        {
+          "label": "10th house",
+          "body": "Power and reinvention in public life. *Experience:* you rise to real influence, or lose a position so you can build a deeper one."
+        },
+        {
+          "label": "11th house",
+          "body": "Friendships and goals transform. *Experience:* your community and your vision of the future are completely remade."
+        },
+        {
+          "label": "12th house",
+          "body": "The hidden depths transform. *Experience:* a long descent and return, ego dissolved and rebuilt, mostly out of public view. ## Using this in the product Two build notes carry over from the engine spec. First, sect is a chart-level constant, so resolve day-versus-night once at chart creation and let it pick the in-sect or out-of-sect line for Venus, Mars, Jupiter, and Saturn automatically. Second, the outer-planet sections are flagged as modern on purpose. Keep that flag in the user-facing copy if the product anywhere claims a traditional lineage, or the seven-planet purists will catch it."
+        }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

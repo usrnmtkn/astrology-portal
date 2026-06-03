@@ -1,0 +1,90 @@
+{
+  "kind": "house",
+  "note": "Structural house labels and plain-language topic translations. Interpretive prose lives in placements and transit entries, not here.",
+  "entries": [
+    {
+      "id": "1",
+      "label": "1st House",
+      "plainTranslation": "Self, body, identity, first impressions",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "2",
+      "label": "2nd House",
+      "plainTranslation": "Money, possessions, resources, values",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "3",
+      "label": "3rd House",
+      "plainTranslation": "Communication, siblings, short trips, local environment",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "4",
+      "label": "4th House",
+      "plainTranslation": "Home, family, roots, private life",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "5",
+      "label": "5th House",
+      "plainTranslation": "Creativity, romance, children, play, self-expression",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "6",
+      "label": "6th House",
+      "plainTranslation": "Work, daily routine, service, illness, injury, health affliction",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "7",
+      "label": "7th House",
+      "plainTranslation": "Partnership, marriage, open relationships, one-to-one others",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "8",
+      "label": "8th House",
+      "plainTranslation": "Shared resources, intimacy, transformation, inheritance",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "9",
+      "label": "9th House",
+      "plainTranslation": "Beliefs, higher education, travel, philosophy",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "10",
+      "label": "10th House",
+      "plainTranslation": "Career, public role, reputation, authority",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "11",
+      "label": "11th House",
+      "plainTranslation": "Friendships, groups, hopes, community",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "12",
+      "label": "12th House",
+      "plainTranslation": "The unconscious, solitude, hidden things, retreat, confinement, isolation",
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    }
+  ]
+}

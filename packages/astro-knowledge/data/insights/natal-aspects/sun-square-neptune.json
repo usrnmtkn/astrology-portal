@@ -1,0 +1,48 @@
+{
+  "id": "sun-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Inspired Or Unclear",
+  "summary": "Your identity may be porous, imaginative, and hard to define in simple terms. You need meaning, but also edges.",
+  "body": "Sun square Neptune describes a selfhood shaped by imagination, sensitivity, and longing. You may sense possibilities beyond ordinary roles, but you may also struggle with projection, unclear direction, or trying to become what others need you to be. This aspect can support art, service, spirituality, and compassion, especially when identity has a grounded container. The gift is inspiration. The growth is choosing a life that can hold mystery without dissolving your agency.",
+  "gift": "Imagination, compassion, spiritual sensitivity, creative vision, and the ability to soften rigid identities.",
+  "shadow": "Confusion, avoidance, idealization, weak boundaries, and losing direction in someone else's expectation.",
+  "integration": "Let meaning guide you without making you disappear. A clear no can protect the very sensitivity that makes your yes powerful.",
+  "do": [
+    "Define the next concrete step",
+    "Use creativity to clarify identity",
+    "Practice boundaries before resentment builds"
+  ],
+  "dont": [
+    "Let uncertainty become drift",
+    "Confuse sacrifice with purpose",
+    "Let someone else name who you are"
+  ],
+  "lifeAreas": [
+    "identity",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "imagination",
+    "identity",
+    "boundaries",
+    "purpose",
+    "sensitivity"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "saturn_mars_square",
+  "kind": "transit-to-natal",
+  "transiting": "saturn",
+  "natal": "mars",
+  "aspect": "square",
+  "plainTranslation": "Effort hits walls. Frustration, fatigue, forced patience. Channel it into one focused task; don't force what won't move.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

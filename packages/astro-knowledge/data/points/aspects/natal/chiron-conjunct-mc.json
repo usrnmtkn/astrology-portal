@@ -1,0 +1,15 @@
+{
+  "id": "chiron-conjunct-mc",
+  "kind": "natal",
+  "point": "chiron",
+  "aspect": "conjunction",
+  "planet": "mc",
+  "tldr": "Chiron conjunct Midheaven.",
+  "body": "The wound is public, tied to career and standing; your calling often grows directly out of the hurt.",
+  "business": "You mentor others from having struggled in plain view.",
+  "shadow": "Overbuilding status to cover the wound, or sabotaging your own visibility.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

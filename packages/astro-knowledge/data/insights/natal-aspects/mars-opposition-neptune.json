@@ -1,0 +1,48 @@
+{
+  "id": "mars-opposition-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Across Inspired",
+  "summary": "Drive and anger mirror imagination and longing. This polarized pattern asks you to use courage and compassion with awareness.",
+  "body": "Drive and anger mirror imagination and longing. This polarized pattern asks you to use courage and compassion with awareness. Misdirected effort: setting off one way and ending up another, with energy quietly draining away. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through drive and anger, imagination and longing, and the choices you make when reactivity or confusion starts running the room.",
+  "gift": "The gift is courage, compassion, and a more conscious way to work with drive and anger and imagination and longing.",
+  "shadow": "The shadow is reactivity, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and imagination and longing cooperate without making either one carry the whole story. Inspiring and persuasive; keep the aim concrete or the drive dissipates.",
+  "do": [
+    "Name how drive and anger and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn courage and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of drive and anger or imagination and longing"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "neptune",
+    "opposition",
+    "courage",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

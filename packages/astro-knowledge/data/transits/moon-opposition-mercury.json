@@ -1,0 +1,29 @@
+{
+  "id": "moon-opposition-mercury",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "mercury",
+  "tldr": "the Moon opposition Mercury.",
+  "traditional": "the Moon opposition Mercury: a hard contact. The body, home, and daily needs works against communication, commerce, and contracts \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Emotion meets mind. How feeling and thinking inform each other, and how readily the inner life gets put into words. Psychologically the opposition is inner tension to integrate: Gut instinct argues with logic. Either feelings go unspoken or they get said unfiltered, without being thought through. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and thinking reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Communication colored by mood; powerful when feeling and reasoning are integrated.",
+  "shadow": "Moodiness and over-need collides with scattered overthinking; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:moon-mercury",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets mind. How feeling and thinking inform each other, and how readily the inner life gets put into words. Psychologically the opposition is inner tension to integrate: Gut instinct argues with logic. Either feelings go unspoken or they get said unfiltered, without being thought through. The growth is owning both sides instead of splitting them."
+}

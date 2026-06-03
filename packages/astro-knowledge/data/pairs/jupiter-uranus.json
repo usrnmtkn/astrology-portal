@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-uranus",
+  "planetA": "jupiter",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought.",
+    "harmonious": "Seen as forward-thinking and ahead of the curve; you get away with it.",
+    "hard": "Seen as eccentric or a crank, no matter the merit of the idea.",
+    "business": "Innovative thinking whose reception depends heavily on how it's framed."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought.",
+  "harmonious": "Seen as forward-thinking and ahead of the curve; you get away with it.",
+  "hard": "Seen as eccentric or a crank, no matter the merit of the idea.",
+  "business": "Innovative thinking whose reception depends heavily on how it's framed."
+}

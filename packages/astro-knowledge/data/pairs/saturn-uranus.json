@@ -1,0 +1,24 @@
+{
+  "id": "saturn-uranus",
+  "planetA": "saturn",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Order meets disruption. The clash of the established and the radical, the structured and the new.",
+    "harmonious": "You naturally do the new thing in a disciplined way, and the old thing with a fresh twist.",
+    "hard": "Restlessness fights control; each demands attention and sabotages the other until both are satisfied at once.",
+    "business": "Innovation inside structure works; an either-or stance stalls."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Order meets disruption. The clash of the established and the radical, the structured and the new.",
+  "harmonious": "You naturally do the new thing in a disciplined way, and the old thing with a fresh twist.",
+  "hard": "Restlessness fights control; each demands attention and sabotages the other until both are satisfied at once.",
+  "business": "Innovation inside structure works; an either-or stance stalls."
+}

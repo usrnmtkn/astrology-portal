@@ -1,0 +1,12 @@
+{
+  "id": "uranus_ascendant_trine",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "ascendant",
+  "aspect": "trine",
+  "plainTranslation": "Uranus flows into your presence with easy originality. A natural window to update your image and express what's different about you. Innovate; it lands.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

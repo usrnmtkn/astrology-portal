@@ -1,0 +1,46 @@
+{
+  "id": "jupiter-opposition-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive Across Original",
+  "summary": "Growth and belief mirror freedom and disruption. This polarized pattern asks you to use optimism and originality with awareness.",
+  "body": "Growth and belief mirror freedom and disruption. This polarized pattern asks you to use optimism and originality with awareness. Seen as eccentric or a crank, no matter the merit of the idea. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through growth and belief, freedom and disruption, and the choices you make when overreach or instability starts running the room.",
+  "gift": "The gift is optimism, originality, and a more conscious way to work with growth and belief and freedom and disruption.",
+  "shadow": "The shadow is overreach, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and freedom and disruption cooperate without making either one carry the whole story. Innovative thinking whose reception depends heavily on how it's framed.",
+  "do": [
+    "Name how growth and belief and freedom and disruption are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn optimism and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of growth and belief or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "growth",
+    "friends"
+  ],
+  "tags": [
+    "jupiter",
+    "uranus",
+    "opposition",
+    "optimism",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

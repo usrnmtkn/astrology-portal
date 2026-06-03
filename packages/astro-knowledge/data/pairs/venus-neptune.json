@@ -1,0 +1,24 @@
+{
+  "id": "venus-neptune",
+  "planetA": "venus",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism.",
+    "harmonious": "Refined aesthetic and tender, imaginative affection.",
+    "hard": "Seeing what you want to see in love, idealizing people, and the disillusionment that follows.",
+    "business": "Real artistic gifts; guard against unrealistic expectations of people and outcomes."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism.",
+  "harmonious": "Refined aesthetic and tender, imaginative affection.",
+  "hard": "Seeing what you want to see in love, idealizing people, and the disillusionment that follows.",
+  "business": "Real artistic gifts; guard against unrealistic expectations of people and outcomes."
+}

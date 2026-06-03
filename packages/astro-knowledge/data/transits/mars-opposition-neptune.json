@@ -1,0 +1,29 @@
+{
+  "id": "mars-opposition-neptune",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "neptune",
+  "tldr": "Mars opposition Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull. Psychologically the opposition is inner tension to integrate: Misdirected effort: setting off one way and ending up another, with energy quietly draining away. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Drive and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Inspiring and persuasive; keep the aim concrete or the drive dissipates.",
+  "shadow": "Anger and recklessness collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mars-neptune",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull. Psychologically the opposition is inner tension to integrate: Misdirected effort: setting off one way and ending up another, with energy quietly draining away. The growth is owning both sides instead of splitting them."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "mars_moon_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "mars",
+  "natal": "moon",
+  "aspect": "opposition",
+  "plainTranslation": "Your needs and your drive pull opposite ways, often via someone close. Emotional friction, defensiveness. Name what you feel instead of attacking; the heat is information, not an order.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

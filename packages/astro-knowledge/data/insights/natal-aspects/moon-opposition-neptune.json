@@ -1,0 +1,48 @@
+{
+  "id": "moon-opposition-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Across Inspired",
+  "summary": "Emotional needs mirror imagination and longing. This polarized pattern asks you to use emotional intelligence and compassion with awareness.",
+  "body": "Emotional needs mirror imagination and longing. This polarized pattern asks you to use emotional intelligence and compassion with awareness. Emotional boundaries dissolve, leaving you drained by others or lost in daydream. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through emotional needs, imagination and longing, and the choices you make when mood-driven reaction or confusion starts running the room.",
+  "gift": "The gift is emotional intelligence, compassion, and a more conscious way to work with emotional needs and imagination and longing.",
+  "shadow": "The shadow is mood-driven reaction, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and imagination and longing cooperate without making either one carry the whole story. Strong for imaginative work; protect boundaries and energy.",
+  "do": [
+    "Name how emotional needs and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn emotional intelligence and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of emotional needs or imagination and longing"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "spirituality"
+  ],
+  "tags": [
+    "moon",
+    "neptune",
+    "opposition",
+    "emotional-intelligence",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

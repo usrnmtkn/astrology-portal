@@ -1,0 +1,12 @@
+{
+  "id": "mercury_venus_trine",
+  "kind": "transit-to-natal",
+  "transiting": "mercury",
+  "natal": "venus",
+  "aspect": "trine",
+  "plainTranslation": "Words and warmth align. Diplomatic, creative, charming on the page and in person. Good for art, social plans, and gentle honesty.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

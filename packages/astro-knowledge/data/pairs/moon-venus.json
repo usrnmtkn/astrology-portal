@@ -1,0 +1,24 @@
+{
+  "id": "moon-venus",
+  "planetA": "moon",
+  "planetB": "venus",
+  "traditional": "The body and daily needs combined with love, money, and pleasure.",
+  "modern": {
+    "blend": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty.",
+    "harmonious": "Naturally charming and emotionally generous.",
+    "hard": "Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause.",
+    "business": "Likable and warm; watch indulgence and shaky money instincts."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Feelings meet charm and pleasure. Warmth is expressed instinctively, with a strong love of comfort and beauty.",
+  "harmonious": "Naturally charming and emotionally generous.",
+  "hard": "Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause.",
+  "business": "Likable and warm; watch indulgence and shaky money instincts."
+}

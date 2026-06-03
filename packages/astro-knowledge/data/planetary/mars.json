@@ -1,0 +1,63 @@
+{
+  "id": "mars",
+  "planet": "mars",
+  "title": "Mars Meaning",
+  "overview": "Mars describes action, desire, anger, courage, conflict, heat, pursuit, boundaries, and the way a person uses force. It shows how effort is mobilized, how a person fights for what matters, and where raw energy needs direction.",
+  "cycle": "Mars usually spends about six to seven weeks in a sign, though retrograde cycles can keep it in one sign for several months. Its sign describes action style and conflict style; its house shows where drive, friction, and initiative concentrate.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Mars in Aries acts quickly, directly, and with strong initiative. This placement has clean ignition, but needs a worthy outlet so courage does not become needless conflict."
+    },
+    {
+      "sign": "taurus",
+      "body": "Mars in Taurus acts slowly but persistently. This placement builds momentum through endurance, but can become immovable when anger has nowhere honest to go."
+    },
+    {
+      "sign": "gemini",
+      "body": "Mars in Gemini acts through words, ideas, movement, and quick decisions. This placement is mentally sharp and versatile, but needs focus so energy does not scatter."
+    },
+    {
+      "sign": "cancer",
+      "body": "Mars in Cancer acts protectively and emotionally. This placement fights for home, family, and safety, but must watch indirect anger when needs are not named."
+    },
+    {
+      "sign": "leo",
+      "body": "Mars in Leo acts with pride, warmth, creativity, and dramatic force. This placement needs a stage for courage and a purpose that lets effort feel personal."
+    },
+    {
+      "sign": "virgo",
+      "body": "Mars in Virgo acts through precision, improvement, service, and practical skill. This placement is effective when focused on useful work, but can turn heat into criticism."
+    },
+    {
+      "sign": "libra",
+      "body": "Mars in Libra acts through strategy, negotiation, aesthetics, and the pursuit of fairness. This placement fights best when it knows what it wants and stops outsourcing the decision."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Mars in Scorpio acts with depth, intensity, patience, and controlled force. This placement can endure pressure and move with precision, but must watch control as a defense."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Mars in Sagittarius acts through conviction, movement, risk, and the pursuit of truth. This placement needs a horizon, but must make sure belief is embodied in action."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Mars in Capricorn acts with discipline, strategy, endurance, and respect for results. This placement can build real power through patience and directed effort."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Mars in Aquarius acts through principle, innovation, independence, and group-minded change. This placement needs a cause and the freedom to move differently."
+    },
+    {
+      "sign": "pisces",
+      "body": "Mars in Pisces acts through intuition, compassion, imagination, and subtle timing. This placement needs spiritual or creative purpose, plus boundaries strong enough to keep energy from leaking."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

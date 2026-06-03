@@ -1,0 +1,30 @@
+{
+  "id": "jupiter-square-saturn",
+  "transiting": "jupiter",
+  "aspect": "square",
+  "other": "saturn",
+  "tldr": "Jupiter square Saturn.",
+  "traditional": "Jupiter square Saturn: a hard contact. Growth, fortune, and patronage works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas. The benefic Jupiter tempers the malefic Saturn.",
+  "modern": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the square is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for growth against limit, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the growth/limit form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Balancing risk against prudence; unmanaged, it reads as inconsistency.",
+  "shadow": "Excess and overreach collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:jupiter-saturn",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the square is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them."
+}

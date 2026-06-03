@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/primitive.schema.json",
+  "oneOf": [
+    {
+      "title": "Planet Collection",
+      "type": "object",
+      "required": ["kind", "entries"],
+      "properties": {
+        "kind": { "const": "planet" },
+        "note": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "governs", "verb", "tempo", "shadow", "voiceNeutral", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "governs": { "type": "array", "items": { "type": "string" } },
+              "verb": { "type": "string" },
+              "tempo": { "type": "string" },
+              "shadow": { "type": "string" },
+              "nature": { "type": "string" },
+              "sect": { "type": "string" },
+              "element": { "type": "array", "items": { "type": "string" } },
+              "gender": { "type": "string" },
+              "voiceNeutral": { "const": true },
+              "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Aspect Collection",
+      "type": "object",
+      "required": ["kind", "entries"],
+      "properties": {
+        "kind": { "const": "aspect" },
+        "note": { "type": "string" },
+        "provenance": { "type": "object" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "dynamic", "arc", "applyingMeaning", "separatingMeaning", "voiceNeutral", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "aliases": { "type": "array", "items": { "type": "string" } },
+              "angle": { "type": "number" },
+              "major": { "type": "boolean" },
+              "dynamic": { "type": "string" },
+              "arc": { "type": ["number", "string"] },
+              "nature": { "type": "string" },
+              "applyingMeaning": { "type": "string" },
+              "separatingMeaning": { "type": "string" },
+              "tradition": { "type": "string" },
+              "traditional": { "type": "object" },
+              "cyclic": { "type": "object" },
+              "voiceNeutral": { "const": true },
+              "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "House Collection",
+      "type": "object",
+      "required": ["kind", "entries"],
+      "properties": {
+        "kind": { "const": "house" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "plainTranslation", "voiceNeutral", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "plainTranslation": { "type": "string" },
+              "voiceNeutral": { "const": true },
+              "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Sign Collection",
+      "type": "object",
+      "required": ["kind", "entries"],
+      "properties": {
+        "kind": { "const": "sign" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "element", "mode", "traditionalRuler", "keywords", "voiceNeutral", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "element": { "enum": ["fire", "earth", "air", "water"] },
+              "mode": { "enum": ["cardinal", "fixed", "mutable"] },
+              "traditionalRuler": { "type": "string" },
+              "modernRuler": { "type": "string" },
+              "keywords": { "type": "array", "items": { "type": "string" } },
+              "voiceNeutral": { "const": true },
+              "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Dignity Collection",
+      "type": "object",
+      "required": ["kind", "entries"],
+      "properties": {
+        "kind": { "const": "dignity" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "planet", "dignity", "signs", "voiceNeutral", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "planet": { "type": "string" },
+              "dignity": { "enum": ["domicile", "exaltation", "detriment", "fall"] },
+              "signs": { "type": "array", "items": { "type": "string" } },
+              "voiceNeutral": { "const": true },
+              "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

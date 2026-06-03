@@ -1,0 +1,121 @@
+{
+  "id": "aspect-cycle",
+  "schema": "modifier/aspect-cycle",
+  "appliesTo": [
+    "aspect",
+    "transit",
+    "natal-chart",
+    "synastry",
+    "composite-chart",
+    "progression"
+  ],
+  "role": "method",
+  "category": "aspect",
+  "summary": "Aspect cycle language reads each aspect as a phase in an unfolding planetary relationship rather than a fixed good-or-bad verdict.",
+  "body": "An aspect is not a fixed verdict. It is a phase in the ongoing cycle between two planets, from conjunction as the seed of a new cycle, through opposition as full visibility, and back to the next conjunction. The same angle can mean different things depending on whether it is waxing or waning.",
+  "definition": "A process-oriented aspect method that reads planetary aspects as cycle phases, with waxing aspects building outward and waning aspects distributing, questioning, integrating, and releasing.",
+  "appUsage": [
+    "Layer this onto existing transit, natal, synastry, and composite aspect interpretations.",
+    "Use waxing or waning phase to refine the task of the aspect without replacing the base meaning.",
+    "For user-facing copy, translate waxing contacts as building, developing, acting, and testing form.",
+    "Translate waning contacts as sharing, integrating, questioning, completing, and releasing.",
+    "Do not turn aspect type alone into a fixed positive or negative verdict."
+  ],
+  "note": "Imported from approved project aspect-cycle material. Source files were not copied into the repository.",
+  "classes": {
+    "coreReframe": "An aspect is not a fixed good-or-bad verdict. It is a phase in the ongoing cycle of relationship between two planets, from conjunction as the seed of a new cycle through opposition as full visibility and back to the next conjunction. The same angle can mean different things depending on where it falls in that cycle.",
+    "hemicycles": {
+      "waxing": "From conjunction to opposition. Energy builds outward: instinctive, action-driven, developing the impulse. The question is: how do I grow and build this?",
+      "waning": "From opposition back to conjunction. Energy is shared and released: conscious, meaning-driven, distributing and releasing what was realized. The question is: what does this mean, and what do I release?",
+      "howToTell": "Compare the two planets. If the faster planet is 0 to 180 degrees ahead of the slower one, moving toward the opposition, the aspect is waxing. From 180 back toward 360, it is waning."
+    },
+    "vocabularyNote": "In the waning half of the cycle, release and releasing are accurate terms, as in the lunar cycle's waning phases.",
+    "majorAspects": [
+      {
+        "aspect": "conjunction",
+        "angle": 0,
+        "phase": "beginning / seed",
+        "plainTranslation": "Conjunction, 0 degrees: the seed of a new cycle. The two energies fuse into a single fresh impulse, instinctive and not yet conscious. A beginning full of potential that you act on before you fully understand it."
+      },
+      {
+        "aspect": "sextile",
+        "angle": 60,
+        "phase": "opportunity through effort",
+        "waxing": "Build something with the opening.",
+        "waning": "Share and release what you have already developed.",
+        "plainTranslation": "Sextile, 60 degrees: an opening that asks for effort. The two energies can cooperate, but not on their own; you have to take the opportunity."
+      },
+      {
+        "aspect": "square",
+        "angle": 90,
+        "phase": "crisis and turning point",
+        "waxing": "Crisis in action: building structure against resistance, the hard push to make something real.",
+        "waning": "Crisis in consciousness: questioning whether what you built still has meaning, and releasing what is outgrown.",
+        "plainTranslation": "Square, 90 degrees: a crisis and turning point that demands action. The same 90 degrees points in different directions depending on whether it is waxing or waning."
+      },
+      {
+        "aspect": "trine",
+        "angle": 120,
+        "phase": "ease and flow",
+        "waxing": "The impulse finds its first comfortable form.",
+        "waning": "Sharing and releasing what was realized, with a risk of coasting.",
+        "plainTranslation": "Trine, 120 degrees: ease and natural flow; the energies cooperate without friction. The gift is fluency; the trap is taking it for granted."
+      },
+      {
+        "aspect": "opposition",
+        "angle": 180,
+        "phase": "culmination / full awareness",
+        "plainTranslation": "Opposition, 180 degrees: the peak of the cycle. The two energies face each other and become fully conscious, often through other people or outside events. Fulfillment, or a confrontation that forces clarity."
+      }
+    ],
+    "minorAspects": [
+      {
+        "aspect": "quintile",
+        "angle": 72,
+        "plainTranslation": "Quintile, 72 degrees: the creative, individual stamp; the unique style someone brings to something."
+      },
+      {
+        "aspect": "septile",
+        "angle": 51.43,
+        "plainTranslation": "Septile, about 51 degrees: an inspired thread; a sense of being moved by something beyond ordinary logic."
+      },
+      {
+        "aspect": "novile",
+        "angle": 40,
+        "plainTranslation": "Novile, 40 degrees: gestation; something developing privately before it is ready to show."
+      }
+    ],
+    "examples": [
+      {
+        "id": "ex_waxing_vs_waning_square",
+        "focus": "waxing vs waning square, Mars-Saturn",
+        "plainTranslation": "A waxing Mars-Saturn square is a crisis of action: pushing drive against hard limits and building discipline the hard way. A waning Mars-Saturn square is a crisis of consciousness: questioning whether the structure that was built still serves, and beginning to release it. Same 90 degrees, different tasks."
+      },
+      {
+        "id": "ex_conjunction_vs_opposition",
+        "focus": "conjunction vs opposition, Sun-Jupiter",
+        "plainTranslation": "The conjunction is a fresh, instinctive urge to grow, fused with identity and acted on before it is understood. The opposition is that same growth made visible and tested through circumstances or other people, where it can finally be seen more objectively."
+      },
+      {
+        "id": "ex_sextile_opportunity",
+        "focus": "sextile as opportunity, Mercury-Venus",
+        "plainTranslation": "The opening is there for graceful, warm communication, but it stays potential until used. Unlike a trine, it will not flow on its own."
+      }
+    ],
+    "integration": "A lens layered on the existing aspect corpora: transit, synastry, and composite. It does not replace them; it adds the waxing or waning distinction and the phase reading. It is consistent with progressed lunation cycle logic, where the same cycle is applied to the Sun and Moon."
+  },
+  "prohibitions": [
+    "Do not use aspect type alone as a fixed good-or-bad verdict.",
+    "Do not let waxing or waning phase override the planet pair, aspect type, house context, dignity, sect, or timing testimony.",
+    "Do not apply same-moment aspect exclusions to transit-to-natal lookup."
+  ],
+  "weighting": [
+    "Use aspect-cycle phase as a refinement layer after the base interpretation is selected.",
+    "Waxing aspects emphasize development, action, outward growth, and form-building.",
+    "Waning aspects emphasize integration, distribution, meaning, completion, and release.",
+    "Oppositions describe peak visibility and full awareness in the cycle.",
+    "Conjunctions describe cycle beginnings and fused potential."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

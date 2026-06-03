@@ -1,0 +1,46 @@
+{
+  "id": "jupiter-sextile-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive With Inspired",
+  "summary": "Growth and belief support imagination and longing. This cooperative pattern asks you to use optimism and compassion with awareness.",
+  "body": "Growth and belief support imagination and longing. This cooperative pattern asks you to use optimism and compassion with awareness. Imaginative ideas that turn out to have practical application. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through growth and belief, imagination and longing, and the choices you make when overreach or confusion starts running the room.",
+  "gift": "The gift is optimism, compassion, and a more conscious way to work with growth and belief and imagination and longing.",
+  "shadow": "The shadow is overreach, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and imagination and longing cooperate without making either one carry the whole story. Inspired vision; test it against logic before committing.",
+  "do": [
+    "Name how growth and belief and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn optimism and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of growth and belief or imagination and longing"
+  ],
+  "lifeAreas": [
+    "growth",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "jupiter",
+    "neptune",
+    "sextile",
+    "optimism",
+    "compassion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "sextile",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

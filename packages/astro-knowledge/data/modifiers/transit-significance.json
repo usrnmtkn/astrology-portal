@@ -1,0 +1,165 @@
+{
+  "id": "transit-significance",
+  "schema": "modifier/transit-significance",
+  "appliesTo": [
+    "transit-to-natal",
+    "daily-check-in",
+    "year-ahead",
+    "transit-ranking",
+    "eclipse-priority"
+  ],
+  "role": "method",
+  "category": "transit-ranking",
+  "summary": "Selection and ranking guidance for deciding which active transits matter most before interpretation is looked up.",
+  "body": "Use this as the transit significance layer. It ranks active contacts before meaning is rendered. It does not interpret the transit itself; once a transit is selected, the app should look up the appropriate transit-to-natal, transit-house, or event-example content.",
+  "definition": "Transit significance is the weighting process that prioritizes active transits by transiting body, aspect, natal target, tightness, applying or separating motion, angularity, natal emphasis, and larger timing context.",
+  "appUsage": [
+    "Compute candidate active transits first, then rank them by significance rather than tightest orb alone.",
+    "Use the numeric model as a tunable starting point, not a fixed doctrine.",
+    "Select top transits per product lane, such as Business, Creative, and Self.",
+    "Always interpret the selected transit through natal promise, house context, and broader timing testimony.",
+    "Do not let a high score become a deterministic event prediction."
+  ],
+  "note": "Imported from approved project transit-significance material. Source file was not copied into the repository.",
+  "classes": {
+    "scoringModel": {
+      "note": "Weights are a proposed starting model. Relative priority is meaningful; exact numbers should be calibrated against real app output.",
+      "formula": "score = bodyWeight * aspectWeight * targetWeight * tightnessFactor * applyingFactor",
+      "transitingBodyWeight": {
+        "pluto": 10,
+        "neptune": 9,
+        "uranus": 9,
+        "saturn": 8,
+        "jupiter": 6,
+        "mars": 4,
+        "sun": 3,
+        "venus": 3,
+        "mercury": 2,
+        "moon": 1
+      },
+      "aspectWeight": {
+        "conjunction": 10,
+        "opposition": 8,
+        "square": 8,
+        "trine": 5,
+        "sextile": 4
+      },
+      "targetWeight": {
+        "sun": 10,
+        "moon": 10,
+        "ascendant": 9,
+        "mc": 9,
+        "descendant": 9,
+        "ic": 9,
+        "mercury": 6,
+        "venus": 6,
+        "mars": 6,
+        "nodes": 5,
+        "jupiter": 4,
+        "saturn": 4,
+        "chiron": 4,
+        "uranus": 3,
+        "neptune": 3,
+        "pluto": 3
+      },
+      "natalEmphasisBonus": "Multiply the target weight by about 1.3 when the natal point is heavily aspected, angular, close to an angle, chart-ruling, or otherwise repeated in the chart.",
+      "tightnessFactor": {
+        "exact0To1Degree": 1,
+        "within3Degrees": 0.7,
+        "within5Degrees": 0.4,
+        "beyondProfile": 0
+      },
+      "applyingFactor": {
+        "applying": 1.2,
+        "separating": 0.9,
+        "note": "Applying aspects are building and should rank above separating aspects with otherwise similar testimony."
+      }
+    },
+    "priorityFlags": {
+      "slowPlanetOnAngle": "When Saturn, Uranus, Neptune, or Pluto conjoins Ascendant, IC, Descendant, or MC, flag the window around exact as a major period even if ordinary scoring would rank another transit higher.",
+      "outerPlanetSignOrHouseChange": "Flag when Jupiter, Saturn, Uranus, Neptune, or Pluto changes sign or enters a new natal house. Treat this as a shift of background theme, not one isolated event.",
+      "importantNatalTargets": [
+        "Sun",
+        "Moon",
+        "Ascendant",
+        "IC",
+        "Descendant",
+        "MC",
+        "chart ruler",
+        "sect light",
+        "heavily aspected natal planet",
+        "planet close to an angle",
+        "activated time lord"
+      ]
+    },
+    "eclipseRules": {
+      "countsWhen": "Prioritize eclipses within about 4 degrees of conjunction, square, or opposition to the Sun, Moon, an angle, or a heavily emphasized natal planet.",
+      "nodeFlavor": {
+        "northNode": "Opening, appetite, increase, invitation, or directional pull.",
+        "southNode": "Release, reduction, completion, letting go, or draining away."
+      },
+      "lunarVsSolar": "Lunar eclipses often land emotionally and are felt most strongly in the days before exact. Solar eclipses are more likely to describe external or event-like shifts when the chart repeats the theme.",
+      "cyclePrompts": [
+        "What themes were active about 9 to 10 years ago?",
+        "What themes were active about 18 years ago?",
+        "What themes were active about 19 years ago?"
+      ]
+    },
+    "yearAheadChecklist": [
+      "Solar Return and the house occupied by the return Sun.",
+      "Sun crossing Ascendant, IC, Descendant, and MC as annual power days.",
+      "Mercury, Venus, and Mars retrogrades by natal house.",
+      "New Moons and Full Moons by natal house.",
+      "Planetary returns, especially Mars, Jupiter, Saturn, and Uranus.",
+      "Jupiter through Pluto sign changes and natal house changes.",
+      "Jupiter through Pluto conjunctions, squares, and oppositions to natal Sun, Moon, Mercury, Venus, Mars, Ascendant, or Midheaven.",
+      "Eclipses by natal house and by aspect to natal planets or angles."
+    ],
+    "criticalAgeWindows": {
+      "note": "Use as quick shared-cycle context only. For full meaning, read the specific lifecycle files.",
+      "windows": [
+        {
+          "age": "~14",
+          "theme": "Pressure to plan ahead and meet limits more consciously."
+        },
+        {
+          "age": "~21",
+          "theme": "Early independence push and claiming more of one's own life."
+        },
+        {
+          "age": "28-30",
+          "theme": "Saturn Return: maturity, responsibility, structure, authority, and consequence."
+        },
+        {
+          "age": "35-42",
+          "theme": "Midlife reorientation, including Uranus opposition themes of freedom and course correction."
+        },
+        {
+          "age": "55-60",
+          "theme": "Reassessment, simplification, and preparation for a new phase, including the second Saturn Return window."
+        }
+      ],
+      "outerOnAngleOrLuminaryQuickRead": {
+        "uranus": "Independence, breakthrough, disruption, or a break from the old pattern.",
+        "neptune": "Yearning, dissolution, uncertainty, enchantment, or porous boundaries.",
+        "pluto": "Confrontation with pressure, power, exposure, or unavoidable reality.",
+        "saturn": "Reassessment of whether a structure, commitment, or burden is worth keeping."
+      }
+    }
+  },
+  "prohibitions": [
+    "Do not interpret from the score alone.",
+    "Do not turn a high-ranking transit into a guaranteed event.",
+    "Do not let outer-planet background contacts dominate daily check-ins unless they are tight, angular, repeated, or hitting personal planets.",
+    "Do not rank eclipses as important unless they contact a meaningful natal point or house topic."
+  ],
+  "weighting": [
+    "Angles, Sun, Moon, chart ruler, sect light, and activated time lords outrank background contacts.",
+    "Applying aspects rank higher than separating aspects when other factors are similar.",
+    "Tightness matters, but exactness alone is not enough if the natal target is low-relevance.",
+    "Slow planets on angles can describe major periods and deserve priority flags.",
+    "Daily lanes should select the strongest few transits rather than overloading the user with every active contact."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

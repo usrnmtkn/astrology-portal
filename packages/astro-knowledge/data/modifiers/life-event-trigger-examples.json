@@ -1,0 +1,165 @@
+{
+  "id": "life-event-trigger-examples",
+  "schema": "modifier/life-event-trigger-examples",
+  "appliesTo": [
+    "prediction",
+    "transit",
+    "progression",
+    "return-chart",
+    "life-event"
+  ],
+  "role": "example",
+  "category": "timing",
+  "summary": "Example life-event categories that can become active when natal promise, progression, return chart emphasis, and transit triggers repeat the same theme.",
+  "body": "Use these examples to translate timing testimony into plain-life language. They are not standalone predictions. The app should surface them only when multiple indicators repeat the same house topic, planet pair, or activated ruler.",
+  "definition": "A life-event trigger is a repeated astrological testimony pattern that points toward a lived topic becoming active, such as relationship change, home movement, career decision, legal process, health caution, or financial restructuring.",
+  "appUsage": [
+    "Never present a listed event as guaranteed from one transit.",
+    "Require at least three reinforcing indicators before raising an event category to high confidence.",
+    "Show the user the plain category first, then the supporting signals if they want detail.",
+    "Use sensitive language for health, safety, pregnancy, custody, legal, and relationship topics.",
+    "When serious risk is implied, recommend practical care, professional support, or real-world caution instead of dramatic prediction."
+  ],
+  "note": "Distilled from approved predictive astrology reference material. Source files were not copied into the repository.",
+  "classes": {
+    "confidenceRule": {
+      "low": "One indicator describes a theme, not an event.",
+      "medium": "Two indicators repeating the same topic show an active pattern worth watching.",
+      "high": "Three or more indicators repeating the same topic can be presented as a likely life area of focus, still without promising a specific outcome."
+    },
+    "eventCategories": {
+      "relationshipCommitmentOrSeparation": {
+        "plainMeaning": "Partnership status, commitment talks, marriage, divorce, separation, or defining the relationship.",
+        "commonSignals": [
+          "7th house, 7th ruler, Venus, Moon, Saturn, or relationship angles activated",
+          "Return chart emphasis on 7th house or angular Venus/Saturn",
+          "Progressed Moon, Venus, Sun, or 7th ruler making close contacts",
+          "Transits repeating the same Venus/Saturn/Moon/7th-house theme"
+        ],
+        "userLanguage": "The relationship question is not background noise right now. The chart repeats partnership, commitment, definition, and consequence."
+      },
+      "childrenPregnancyAndCustody": {
+        "plainMeaning": "Children, pregnancy news, custody decisions, childcare obligations, or major developments involving a child.",
+        "commonSignals": [
+          "5th house, 5th ruler, Moon, Venus, Jupiter, or nodal contacts activated",
+          "Solar and Lunar Return charts repeating 5th-house or family themes",
+          "Legal houses joining 5th-house testimony for custody or court decisions",
+          "Moon timing a return-chart angle or activated 5th-house point"
+        ],
+        "userLanguage": "Children, care, family responsibility, or the future of a child may be part of the active storyline."
+      },
+      "homeMovePropertyAndFamily": {
+        "plainMeaning": "Moving, buying or selling property, changes in household structure, family developments, or domestic upheaval.",
+        "commonSignals": [
+          "4th house, 4th ruler, Moon, Mars, Saturn, or IC activated",
+          "Solar Return or Lunar Return emphasis on 3rd, 4th, or 9th houses",
+          "Moon-Mars patterns linked to domestic uprooting or relocation",
+          "Transit trigger to return-chart IC, Moon, Mars, or 4th ruler"
+        ],
+        "userLanguage": "Home is not just scenery here. The chart repeats movement, roots, property, family, or the structure of private life."
+      },
+      "careerJobAndPublicRole": {
+        "plainMeaning": "Career move, promotion, job change, public recognition, responsibility shift, or authority encounter.",
+        "commonSignals": [
+          "10th house, 10th ruler, MC, Sun, Saturn, Jupiter, or chart ruler activated",
+          "Return chart Sun or return planet angular",
+          "Progressed contacts to the MC, 10th ruler, Sun, Saturn, or Jupiter",
+          "Transits crossing return-chart angles or repeating career-house testimony"
+        ],
+        "userLanguage": "The public-life question is active: work, visibility, authority, reputation, or the next role you are being asked to occupy."
+      },
+      "moneyDebtAndSharedResources": {
+        "plainMeaning": "Income changes, financial strain or consolidation, debt, shared money, inheritance, taxes, or partner resources.",
+        "commonSignals": [
+          "2nd or 8th house, their rulers, Venus, Jupiter, Saturn, Pluto, or Mars activated",
+          "Return chart emphasis on financial houses",
+          "Saturn in a money house showing consolidation, responsibility, or temporary drain",
+          "Jupiter or Venus showing opportunity only when supported by the rest of the chart"
+        ],
+        "userLanguage": "Money is asking for structure. This can describe gain, expense, debt management, shared resources, or a clearer relationship with value."
+      },
+      "legalCourtAndFormalDecision": {
+        "plainMeaning": "Court dates, legal rulings, contracts, formal agreements, immigration, publishing, higher education, or institutional decisions.",
+        "commonSignals": [
+          "9th house, 7th house, 3rd house, Mercury, Jupiter, Saturn, or relevant house rulers activated",
+          "Solar and Lunar Returns repeating 7th/9th/3rd-house themes",
+          "Mercury, Jupiter, or Saturn angular or tied to return-chart angles",
+          "Moon timing an activated return angle on the decision date"
+        ],
+        "userLanguage": "A formal decision, agreement, document, legal matter, or institutional process may be part of the active field."
+      },
+      "vehicleTravelAndLogistics": {
+        "plainMeaning": "Vehicle purchase or repair, travel, paperwork, commuting changes, shipping, technology, or scheduling problems.",
+        "commonSignals": [
+          "Mercury return or Mercury-heavy return chart",
+          "3rd or 9th house, Mercury, Mars, Uranus, or return-chart angles activated",
+          "Mercury retrograde or Mercury station repeating a transit/progression theme",
+          "Mars adding urgency, mechanical stress, or accident-prone haste"
+        ],
+        "userLanguage": "Logistics need attention: transport, documents, messages, devices, schedules, and the choices that keep daily life moving."
+      },
+      "newEnterpriseAndActionRisk": {
+        "plainMeaning": "Launching a business, starting a project, taking a risk, beginning training, or acting on a plan.",
+        "commonSignals": [
+          "Mars return or Mars strongly angular in a return chart",
+          "Mars, Sun, Jupiter, 1st house, 10th house, or 2nd house activated",
+          "Progressed Mars or Sun tied to natal or return-chart angles",
+          "Transiting Mars crossing a return angle or triggering the project planet"
+        ],
+        "userLanguage": "The chart supports movement, but it also asks for aim. Start the thing with a plan so heat becomes momentum instead of mess."
+      },
+      "healthCautionAndBodyStress": {
+        "plainMeaning": "Health maintenance, fatigue, inflammation, recovery needs, medical appointments, accidents, or body stress.",
+        "commonSignals": [
+          "6th house, 12th house, Ascendant, Sun, Moon, Mars, Saturn, Neptune, or chart ruler under repeated stress",
+          "Mars-Moon contacts repeating across progressions, returns, or transits",
+          "Return charts emphasizing 6th/12th houses or malefic angularity",
+          "Transiting Mars or Saturn triggering a natal or progressed health-sensitive pattern"
+        ],
+        "userLanguage": "The body is part of the message. Slow down, get support, handle the practical care, and do not treat stress signals as background noise."
+      },
+      "lossClosureAndMajorTransition": {
+        "plainMeaning": "A chapter closing, role ending, grief process, retirement, withdrawal, or major transition that changes the life structure.",
+        "commonSignals": [
+          "12th house, 8th house, 4th house, Saturn, Pluto, Neptune, progressed lunation endings, or return-chart closure signatures activated",
+          "Balsamic or New phase in progressed lunation cycle",
+          "Saturn Return or progressed phase boundary overlapping a transit trigger",
+          "Repeated testimony involving endings, retreat, release, or private restructuring"
+        ],
+        "userLanguage": "Something may be completing. That does not make the next step visible yet. Treat closure as real work, not as failure."
+      },
+      "publicPeakAndVisibility": {
+        "plainMeaning": "Public culmination, recognition, exposure, announcement, launch, reputation moment, or visible result.",
+        "commonSignals": [
+          "MC, 10th house, Sun, Full phase, Jupiter, Saturn, or return planet angular",
+          "Progressed Full Moon or solar return emphasis on the 10th",
+          "Lunar Return matching Solar Return themes for the event month",
+          "Transiting Moon, Sun, or return planet crossing return-chart angles"
+        ],
+        "userLanguage": "The work is visible now. This can feel like achievement, exposure, pressure, or a result that cannot stay private."
+      }
+    },
+    "timingTools": {
+      "solarReturn": "Describes the major yearly field. Look for angular planets, repeated natal themes, and the houses of the return Sun, Moon, and Ascendant.",
+      "lunarReturn": "Times the month when yearly themes peak. A Lunar Return that closely repeats the Solar Return often marks the most eventful four-week period.",
+      "planetaryReturn": "Maps a planet-specific cycle. Track the return planet through the return chart for peaks in that planet's topics.",
+      "progressedChart": "Shows the life chapter currently developing. Use transits to time when the progressed theme becomes active.",
+      "transitingMoon": "Useful for short timing when it crosses return-chart angles or triggers an already active configuration."
+    }
+  },
+  "prohibitions": [
+    "Do not predict a specific event from one indicator.",
+    "Do not use health or safety examples to diagnose, frighten, or replace professional support.",
+    "Do not present relationship, pregnancy, custody, legal, or financial outcomes as guaranteed.",
+    "Do not expose technical confidence scoring as a verdict; translate it as theme strength."
+  ],
+  "weighting": [
+    "High confidence requires at least three repeating indicators.",
+    "Angular contacts in return charts are stronger than cadent background contacts.",
+    "A Lunar Return repeating the Solar Return can time the peak month of a yearly theme.",
+    "Return planet transits through its own return chart can time planet-specific events.",
+    "The transiting Moon can time the day only when a larger pattern is already active."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

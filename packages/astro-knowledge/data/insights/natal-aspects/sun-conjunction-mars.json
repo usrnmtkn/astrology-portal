@@ -1,0 +1,48 @@
+{
+  "id": "sun-conjunction-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible And Driven",
+  "summary": "Identity merge drive and anger. This concentrated pattern asks you to use confidence and courage with awareness.",
+  "body": "Identity merge drive and anger. This concentrated pattern asks you to use confidence and courage with awareness. Identity meets drive and aggression. Energy, assertion, and the will to act become central to the sense of self. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through identity, drive and anger, and the choices you make when ego defense or reactivity starts running the room.",
+  "gift": "The gift is confidence, courage, and a more conscious way to work with identity and drive and anger.",
+  "shadow": "The shadow is ego defense, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and drive and anger cooperate without making either one carry the whole story. Initiative and drive; the cost is friction with authority and a tendency to force things.",
+  "do": [
+    "Name how identity and drive and anger are both involved",
+    "Use the easy opening deliberately",
+    "Turn confidence and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of identity or drive and anger"
+  ],
+  "lifeAreas": [
+    "identity",
+    "work",
+    "power"
+  ],
+  "tags": [
+    "sun",
+    "mars",
+    "conjunction",
+    "confidence",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

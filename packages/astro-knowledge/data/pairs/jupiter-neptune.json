@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-neptune",
+  "planetA": "jupiter",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Expansion meets imagination. Idealism and vision on a large scale.",
+    "harmonious": "Imaginative ideas that turn out to have practical application.",
+    "hard": "Gullibility and wishful thinking mistaken for reality.",
+    "business": "Inspired vision; test it against logic before committing."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Expansion meets imagination. Idealism and vision on a large scale.",
+  "harmonious": "Imaginative ideas that turn out to have practical application.",
+  "hard": "Gullibility and wishful thinking mistaken for reality.",
+  "business": "Inspired vision; test it against logic before committing."
+}

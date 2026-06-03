@@ -1,0 +1,12 @@
+{
+  "id": "jupiter_mercury_square",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "mercury",
+  "aspect": "square",
+  "plainTranslation": "You overstate or overpromise. Scattered optimism. Pin down the facts before you commit.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-taurus",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "taurus",
+  "oppositeSign": "scorpio",
+  "title": "New Moon in Taurus",
+  "tldr": "A seed point for value, steadiness, embodiment, money, and what is worth protecting.",
+  "theme": "Taurus is a fixed earth sign ruled traditionally by Venus. This New Moon begins work around value, steadiness, embodiment, money, and what is worth protecting.",
+  "shadow": "staying in stale situations because they are comfortable, or mistaking possession for security",
+  "integration": "building stability that can hold change instead of resisting it",
+  "twoWeekArc": {
+    "from": "New Moon in Taurus",
+    "to": "Full Moon in Scorpio",
+    "teaching": "This arc exposes where accepting less has been disguised as patience.",
+    "appPrompt": "Begin with Taurus; watch what the Scorpio Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Taurus",
+    "to": "Full Moon in Taurus",
+    "teaching": "Value to harvest",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Venus kamea, green or white candle, rose quartz, copper, peridot, roses, water, and incense.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Taurus. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through value, steadiness, embodiment, money, and what is worth protecting, without repeating the shadow of staying in stale situations because they are comfortable, or mistaking possession for security?",
+  "tarotPrompt": "What first action will help this Taurus intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Taurus's value, steadiness, embodiment, money, and what is worth protecting."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

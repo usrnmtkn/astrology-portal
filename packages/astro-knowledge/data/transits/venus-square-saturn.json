@@ -1,0 +1,30 @@
+{
+  "id": "venus-square-saturn",
+  "transiting": "venus",
+  "aspect": "square",
+  "other": "saturn",
+  "tldr": "Venus square Saturn.",
+  "traditional": "Venus square Saturn: a hard contact. Love, money, and pleasure works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas. The benefic Venus tempers the malefic Saturn.",
+  "modern": "Affection and value meet limit. Loyalty, restraint in pleasure and love, and a strong sense of obligation. Psychologically the square is inner tension to integrate: Difficulty enjoying success, fear of loss, blocked rewards, and free-floating guilt. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for connection against limit, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the connection/limit form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Loyal and hardworking; the risk is joyless striving and a belief that reward must be suffered for.",
+  "shadow": "Indulgence and vanity collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:venus-saturn",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Affection and value meet limit. Loyalty, restraint in pleasure and love, and a strong sense of obligation. Psychologically the square is inner tension to integrate: Difficulty enjoying success, fear of loss, blocked rewards, and free-floating guilt. The growth is owning both sides instead of splitting them."
+}

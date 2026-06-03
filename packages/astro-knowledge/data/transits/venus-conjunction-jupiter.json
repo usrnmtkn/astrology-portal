@@ -1,0 +1,29 @@
+{
+  "id": "venus-conjunction-jupiter",
+  "transiting": "venus",
+  "aspect": "conjunction",
+  "other": "jupiter",
+  "tldr": "Venus conjunction Jupiter.",
+  "traditional": "Venus conjunct Jupiter: love, money, and pleasure fused with growth, fortune, and patronage. The two act as one and the combined significations are hard to separate. Two benefics: among the easiest contacts, though it can incline to excess.",
+  "modern": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of connection and growth is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Likable and fortunate; the missing ingredient is discipline.",
+  "shadow": "Indulgence and vanity fused with excess and overreach, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:venus-jupiter",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

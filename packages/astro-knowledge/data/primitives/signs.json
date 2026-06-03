@@ -1,0 +1,126 @@
+{
+  "kind": "sign",
+  "note": "Structural zodiac sign facts. traditionalRuler is the primary ruler used by default; modernRuler is present for explicitly labeled modern-lens surfaces only.",
+  "entries": [
+    {
+      "id": "aries",
+      "element": "fire",
+      "mode": "cardinal",
+      "traditionalRuler": "mars",
+      "modernRuler": "mars",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "taurus",
+      "element": "earth",
+      "mode": "fixed",
+      "traditionalRuler": "venus",
+      "modernRuler": "venus",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "gemini",
+      "element": "air",
+      "mode": "mutable",
+      "traditionalRuler": "mercury",
+      "modernRuler": "mercury",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "cancer",
+      "element": "water",
+      "mode": "cardinal",
+      "traditionalRuler": "moon",
+      "modernRuler": "moon",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "leo",
+      "element": "fire",
+      "mode": "fixed",
+      "traditionalRuler": "sun",
+      "modernRuler": "sun",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "virgo",
+      "element": "earth",
+      "mode": "mutable",
+      "traditionalRuler": "mercury",
+      "modernRuler": "mercury",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "libra",
+      "element": "air",
+      "mode": "cardinal",
+      "traditionalRuler": "venus",
+      "modernRuler": "venus",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "scorpio",
+      "element": "water",
+      "mode": "fixed",
+      "traditionalRuler": "mars",
+      "modernRuler": "pluto",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "sagittarius",
+      "element": "fire",
+      "mode": "mutable",
+      "traditionalRuler": "jupiter",
+      "modernRuler": "jupiter",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "capricorn",
+      "element": "earth",
+      "mode": "cardinal",
+      "traditionalRuler": "saturn",
+      "modernRuler": "saturn",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "aquarius",
+      "element": "air",
+      "mode": "fixed",
+      "traditionalRuler": "saturn",
+      "modernRuler": "uranus",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    },
+    {
+      "id": "pisces",
+      "element": "water",
+      "mode": "mutable",
+      "traditionalRuler": "jupiter",
+      "modernRuler": "neptune",
+      "keywords": [],
+      "voiceNeutral": true,
+      "status": "DRAFT"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "saturn-square-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Structured Or Uncontainable",
+  "summary": "You may feel pulled between stability and disruption. Part of you builds the wall; part of you needs a door.",
+  "body": "Saturn square Uranus describes tension between order and freedom, continuity and change. You may resist being trapped by systems while also needing structure to feel competent and secure. This can create periodic breakpoints: holding too tightly until something snaps, or changing too abruptly because the old form became unbearable. The gift is reform. The growth is learning how to update structures before they have to be broken.",
+  "gift": "Reform, innovation, resilience, and the ability to build structures that can adapt.",
+  "shadow": "Rigidity followed by rupture, fear of change, rebellion without a plan, and distrust of both authority and instability.",
+  "integration": "Design freedom into the system. The best structure is not a cage; it is a form that can flex without collapsing.",
+  "do": [
+    "Make one practical update before pressure peaks",
+    "Question rules without discarding every container",
+    "Build routines with intentional flexibility"
+  ],
+  "dont": [
+    "Wait until you have to explode",
+    "Call every structure oppression",
+    "Use control to avoid uncertainty"
+  ],
+  "lifeAreas": [
+    "work",
+    "growth",
+    "power"
+  ],
+  "tags": [
+    "freedom",
+    "structure",
+    "change",
+    "reform",
+    "pressure"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "square",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

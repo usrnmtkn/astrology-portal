@@ -1,0 +1,41 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "transit-to-natal-policy",
+  "schema": "modifier/transit-to-natal-policy",
+  "appliesTo": [
+    "transit-to-natal",
+    "daily-check-in",
+    "aspect-policy"
+  ],
+  "role": "policy",
+  "category": "transit",
+  "summary": "Ordered transit-to-natal contacts use every transiting planet against a fixed natal planet or point, without same-moment elongation exclusions.",
+  "body": "Use this policy for the app check-in layer. Same-moment aspect impossibilities do not apply here because the moving body can sweep the full zodiac against a natal placement fixed at birth.",
+  "definition": "Transit-to-natal aspects are ordered contacts from a current sky body to a natal body or sensitive point.",
+  "appUsage": [
+    "Use ordered keys in the form transiting_natal_aspect.",
+    "Do not apply same-moment impossibility filters to transit-to-natal lookups.",
+    "For daily check-ins, gather in-orb contacts and prioritize tightness, speed, chart relevance, and user-facing weight.",
+    "Keep outer-planet contacts contextual unless they are tight, repeated, angular, or hitting a personal planet."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "version": 1,
+    "ordered": true,
+    "keyFormat": "{transiting}_{natal}_{aspect}",
+    "rationale": "A transiting body sweeps the whole zodiac against a fixed natal point. The two are NOT co-measured, so the same-moment elongation exclusions do NOT apply. Every transiting->natal->aspect combination is valid.",
+    "exclusions": "none",
+    "orbProfile": "transit",
+    "selection": "For the daily check-in, gather all in-orb transit->natal contacts, then pick the tightest by |separation - aspectAngle|. Lane assignment (Business/Creative/Self) is downstream of selection.",
+    "applyingSeparating": "Compare transiting speed and direction to the aspect angle. Applying (tightening) reads as building; separating (loosening) reads as fading. Retrograde reverses the direction of approach.",
+    "cautions": [
+      "Moon transits resolve in hours; treat as same-day texture, not multi-day themes.",
+      "Outer-planet transits (Saturn->Pluto) stay in orb for weeks to years; they are background, not daily weather.",
+      "Angle and node transits require an accurate birth time; degrade gracefully if time is unknown."
+    ]
+  },
+  "prohibitions": [
+    "Do not filter transit-to-natal contacts through same-moment elongation impossibilities."
+  ]
+}

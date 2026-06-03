@@ -1,0 +1,29 @@
+{
+  "id": "moon-opposition-neptune",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "neptune",
+  "tldr": "the Moon opposition Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Feelings meet imagination and dissolution. A need for escape and reverie, high sensitivity, and compassion. Psychologically the opposition is inner tension to integrate: Emotional boundaries dissolve, leaving you drained by others or lost in daydream. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Strong for imaginative work; protect boundaries and energy.",
+  "shadow": "Moodiness and over-need collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:moon-neptune",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet imagination and dissolution. A need for escape and reverie, high sensitivity, and compassion. Psychologically the opposition is inner tension to integrate: Emotional boundaries dissolve, leaving you drained by others or lost in daydream. The growth is owning both sides instead of splitting them."
+}

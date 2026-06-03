@@ -1,0 +1,24 @@
+{
+  "id": "uranus-neptune",
+  "planetA": "uranus",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Uranus, Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Disruption meets imagination. A generational signature: radical ideals and visionary change.",
+    "harmonious": "Visionary ideals expressed in livable ways.",
+    "hard": "Idealism that destabilizes more than it builds.",
+    "business": "Generational and visionary themes rather than a personal day-to-day read."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Disruption meets imagination. A generational signature: radical ideals and visionary change.",
+  "harmonious": "Visionary ideals expressed in livable ways.",
+  "hard": "Idealism that destabilizes more than it builds.",
+  "business": "Generational and visionary themes rather than a personal day-to-day read."
+}

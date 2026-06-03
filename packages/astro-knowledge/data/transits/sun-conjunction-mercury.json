@@ -1,0 +1,29 @@
+{
+  "id": "sun-conjunction-mercury",
+  "transiting": "sun",
+  "aspect": "conjunction",
+  "other": "mercury",
+  "tldr": "Sun conjunction Mercury.",
+  "traditional": "Sun conjunct Mercury: communication, commerce, and contracts fused with vitality, authority, and recognition. The two act as one and the combined significations are hard to separate.",
+  "modern": "Identity fused with mind and communication. Self-expression runs through ideas and speech. Only the conjunction is possible, since Mercury never travels far from the Sun. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of thinking and selfhood is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Strong for pitching, writing, and putting your own thinking forward in your own voice.",
+  "shadow": "Scattered overthinking fused with egotism and needing to be the center, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-mercury",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity fused with mind and communication. Self-expression runs through ideas and speech. Only the conjunction is possible, since Mercury never travels far from the Sun. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

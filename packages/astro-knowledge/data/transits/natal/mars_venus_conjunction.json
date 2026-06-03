@@ -1,0 +1,12 @@
+{
+  "id": "mars_venus_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "mars",
+  "natal": "venus",
+  "aspect": "conjunction",
+  "plainTranslation": "Energy fires up your love life and desires. Passion, attraction, the urge to pursue. Hot and impulsive. Good for romance and going after what you want, bad for rash spending.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

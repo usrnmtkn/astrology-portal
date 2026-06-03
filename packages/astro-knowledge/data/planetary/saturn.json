@@ -1,0 +1,63 @@
+{
+  "id": "saturn",
+  "planet": "saturn",
+  "title": "Saturn Meaning",
+  "overview": "Saturn describes structure, limits, discipline, responsibility, time, mastery, consequences, and the work of becoming reliable. It shows where life asks for maturity, where fear can harden into defense, and where sustained effort can become earned authority.",
+  "cycle": "Saturn spends about two and a half to three years in each sign, with variation due to retrograde motion. Its sign describes the style of discipline and testing; its house shows where effort, delay, responsibility, and mastery concentrate.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Saturn in Aries learns maturity through courage, self-command, and responsible action. The work is to lead without impulsiveness and assert the self without turning every move into a fight."
+    },
+    {
+      "sign": "taurus",
+      "body": "Saturn in Taurus learns maturity through resources, stability, patience, and self-worth. The work is to build security without becoming trapped by fear of loss."
+    },
+    {
+      "sign": "gemini",
+      "body": "Saturn in Gemini learns maturity through speech, learning, listening, and mental discipline. The work is to trust the mind while taking communication seriously."
+    },
+    {
+      "sign": "cancer",
+      "body": "Saturn in Cancer learns maturity through care, family, emotional boundaries, and the creation of safety. The work is to protect without closing the heart."
+    },
+    {
+      "sign": "leo",
+      "body": "Saturn in Leo learns maturity through creativity, visibility, confidence, and the right use of pride. The work is to be seen without making recognition the measure of worth."
+    },
+    {
+      "sign": "virgo",
+      "body": "Saturn in Virgo learns maturity through service, health, craft, and daily discipline. The work is to refine without turning improvement into self-harm."
+    },
+    {
+      "sign": "libra",
+      "body": "Saturn in Libra learns maturity through partnership, fairness, commitment, and balanced judgment. The work is to build relationships that are honest, reciprocal, and structurally sound."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Saturn in Scorpio learns maturity through trust, shared resources, intimacy, endings, and emotional honesty. The work is to face depth without using control as armor."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Saturn in Sagittarius learns maturity through belief, study, truth, and lived wisdom. The work is to test convictions against reality and embody the philosophy being taught."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Saturn in Capricorn learns maturity through discipline, structure, leadership, and long-range responsibility. The work is to build with integrity rather than proving worth through achievement alone."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Saturn in Aquarius learns maturity through community, systems, boundaries, and social responsibility. The work is to serve the collective without hiding behind detachment."
+    },
+    {
+      "sign": "pisces",
+      "body": "Saturn in Pisces learns maturity through compassion, faith, imagination, and spiritual boundaries. The work is to give form to sensitivity without drifting away from reality."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

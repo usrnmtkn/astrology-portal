@@ -1,0 +1,29 @@
+{
+  "id": "mercury-conjunction-saturn",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "saturn",
+  "tldr": "Mercury conjunction Saturn.",
+  "traditional": "Mercury conjunct Saturn: communication, commerce, and contracts fused with limitation, delay, and hard structure. The two act as one and the combined significations are hard to separate.",
+  "modern": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of thinking and limit is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Thorough and exacting, with little patience for small talk.",
+  "shadow": "Scattered overthinking fused with fear and rigidity, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mercury-saturn",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

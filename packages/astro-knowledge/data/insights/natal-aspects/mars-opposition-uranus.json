@@ -1,0 +1,48 @@
+{
+  "id": "mars-opposition-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Across Original",
+  "summary": "Drive and anger mirror freedom and disruption. This polarized pattern asks you to use courage and originality with awareness.",
+  "body": "Drive and anger mirror freedom and disruption. This polarized pattern asks you to use courage and originality with awareness. Accident-proneness, a temper that goes off like a shot, and unpredictable tactics that either win big or backfire fast. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through drive and anger, freedom and disruption, and the choices you make when reactivity or instability starts running the room.",
+  "gift": "The gift is courage, originality, and a more conscious way to work with drive and anger and freedom and disruption.",
+  "shadow": "The shadow is reactivity, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and freedom and disruption cooperate without making either one carry the whole story. Innovative and fast; the cost is recklessness and volatility.",
+  "do": [
+    "Name how drive and anger and freedom and disruption are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn courage and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of drive and anger or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "uranus",
+    "opposition",
+    "courage",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

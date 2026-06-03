@@ -1,0 +1,12 @@
+{
+  "id": "A-jupiter_B-venus_opposition",
+  "kind": "interaspect",
+  "planetA": "jupiter",
+  "planetB": "venus",
+  "aspect": "opposition",
+  "plainTranslation": "A's growth meets B's love and values. The opposition pulls them into push-and-pull.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

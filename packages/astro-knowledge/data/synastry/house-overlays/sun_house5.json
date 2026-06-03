@@ -1,0 +1,11 @@
+{
+  "id": "sun_house5",
+  "kind": "house-overlay",
+  "planet": "sun",
+  "house": "5",
+  "plainTranslation": "Their Sun in your 5th house: they light up your playful, romantic, creative side. Dating them is fun and you feel more alive. Failure mode: it stays fun and never deepens past play. Enjoy the romance; build the rest elsewhere.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "sun-conjunction-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Charming Or Approval-Seeking",
+  "summary": "Identity and attraction sit close together. Being liked, valued, and aesthetically aligned may matter more than you admit.",
+  "body": "Sun conjunction Venus describes a person whose self-expression is tied to beauty, affection, taste, and connection. You may naturally look for harmony, style, pleasure, and social warmth, and others may experience you as attractive, graceful, or easy to enjoy. The gift is radiance through relationship and creative presence. The shadow is over-identifying with being liked or softening your truth to preserve approval. The growth is letting charm serve authenticity instead of replacing it.",
+  "gift": "Warmth, grace, creative presence, social ease, and the ability to make identity feel inviting.",
+  "shadow": "Approval-seeking, conflict avoidance, vanity, and confusing being desired with being known.",
+  "integration": "Let beauty express who you are, not cover what you are afraid to say. Real harmony can include a clear preference.",
+  "do": [
+    "State what you want before smoothing the room",
+    "Use taste as self-expression",
+    "Let affection be sincere instead of strategic"
+  ],
+  "dont": [
+    "Trade truth for likability",
+    "Assume rejection means you have lost value",
+    "Make peace at the cost of self-respect"
+  ],
+  "lifeAreas": [
+    "identity",
+    "love",
+    "creativity"
+  ],
+  "tags": [
+    "charm",
+    "beauty",
+    "approval",
+    "values",
+    "self-expression"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "love-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/placement.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "planet", "key", "tldr", "body", "gift", "challenge", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "enum": ["sign", "house"] },
+    "planet": { "type": "string" },
+    "key": { "type": ["string", "number"] },
+    "tldr": { "type": "string" },
+    "body": { "type": "string" },
+    "gift": { "type": "string" },
+    "challenge": { "type": "string" },
+    "note": { "type": "string" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "pages"],
+      "properties": {
+        "title": { "type": "string" },
+        "pages": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

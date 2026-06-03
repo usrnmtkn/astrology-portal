@@ -1,0 +1,12 @@
+{
+  "id": "saturn_ascendant_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "saturn",
+  "natal": "ascendant",
+  "aspect": "conjunction",
+  "plainTranslation": "Saturn lands on how you show up, a long, serious reset of your image and body. You may feel heavier, older, more visible, or more alone. Build a stronger, realer presentation; it's construction, not punishment.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

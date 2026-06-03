@@ -1,0 +1,48 @@
+{
+  "id": "venus-trine-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Romantic Or Idealizing",
+  "summary": "Beauty, tenderness, fantasy, and devotion can open easily for you. The heart wants something enchanted.",
+  "body": "Venus trine Neptune describes a receptive, imaginative love nature. You may be moved by art, music, spiritual connection, compassion, and relationships that feel softened by meaning. This can make you deeply romantic and creatively inspired, but it can also blur discernment when you want someone to match the dream. The gift is grace and sensitivity. The growth is letting beauty stay connected to truth, reciprocity, and the ordinary behaviors that make love trustworthy.",
+  "gift": "Romance, compassion, creative taste, devotion, and the ability to sense beauty in subtle places.",
+  "shadow": "Idealization, blurred standards, rescuing, and falling for potential instead of presence.",
+  "integration": "Let enchantment be welcome, then ask what is actually happening. Real love can hold beauty and clarity at the same time.",
+  "do": [
+    "Notice whether care is mutual",
+    "Make art from longing",
+    "Let fantasy inspire without replacing reality"
+  ],
+  "dont": [
+    "Ignore inconsistency because the feeling is beautiful",
+    "Turn compassion into rescue",
+    "Mistake mystery for intimacy"
+  ],
+  "lifeAreas": [
+    "love",
+    "creativity",
+    "spirituality"
+  ],
+  "tags": [
+    "romance",
+    "beauty",
+    "idealization",
+    "compassion",
+    "art"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "relationship-bonds",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

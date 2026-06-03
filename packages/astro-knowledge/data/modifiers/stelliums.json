@@ -1,0 +1,295 @@
+{
+  "id": "stelliums",
+  "schema": "modifier/stelliums",
+  "appliesTo": [
+    "natal-chart",
+    "chart-pattern",
+    "placement",
+    "timing"
+  ],
+  "role": "modifier",
+  "category": "chart-pattern",
+  "summary": "Stelliums concentrate three or more planetary drives into one sign, house, or tight conjunction pattern.",
+  "body": "A stellium is three or more planets clustered within about 30 degrees, falling in one sign, one house, or both. It concentrates and intensifies one area of life. Read the sign for style, the house for life area, and the planets for the drives packed together.",
+  "definition": "Three or more planets clustered within about 30 degrees, falling in one sign and/or one house. A triple conjunction is three planets in tight conjunction.",
+  "appUsage": [
+    "Detect sign stelliums by counting three or more planets in the same sign.",
+    "Detect house stelliums by counting three or more planets in the same house when birth time is accurate.",
+    "Treat stelliums as chart-pattern emphasis, not as a replacement for Sun, Moon, Ascendant, chart ruler, sect, dignity, or house rulership.",
+    "Read generational-only stelliums as background unless they are angular or tied to a personal planet.",
+    "Use the opposite sign or house as a balancing prompt when the stellium area is over-emphasized."
+  ],
+  "note": "Imported from approved project stellium material. Source files and named-person examples were not copied into the repository.",
+  "classes": {
+    "definition": {
+      "what": "Three or more planets clustered within about 30 degrees, falling in one sign and/or one house. A triple conjunction is three planets in tight conjunction.",
+      "twoKinds": "By sign, where the planets share a sign, and by house, where the planets share a house. Often both are true at once.",
+      "effect": "A stellium concentrates and intensifies one area of life. It can become one of the defining features of a chart."
+    },
+    "method": [
+      "The sign sets the style of the concentrated energy.",
+      "The house sets the life area where it plays out.",
+      "The planets involved are the specific drives packed together; each one wants attention.",
+      "The challenge is integration: the planets compete like a room full of strong personalities, and the area can be over-emphasized while its opposite is neglected.",
+      "The growth is to mature the cluster into a concentrated strength, so the area becomes a major life theme and a source of mastery."
+    ],
+    "polarityNote": "The house and sign opposite the stellium are often underdeveloped and benefit from conscious attention.",
+    "bySign": [
+      {
+        "id": "stellium_aries",
+        "sign": "aries",
+        "plainTranslation": "A stellium in Aries pours major energy into drive, initiative, and selfhood. Gift: tremendous force to start and lead. Watch: impatience, self-focus, and burning out from going too hard.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_taurus",
+        "sign": "taurus",
+        "plainTranslation": "A stellium in Taurus concentrates on stability, resources, and the senses. Gift: persistence and the power to build something lasting. Watch: stubbornness and resistance to change.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_gemini",
+        "sign": "gemini",
+        "plainTranslation": "A stellium in Gemini floods the mind with communication, curiosity, and learning. Gift: a fast, versatile, articulate mind. Watch: scattered focus and living in the head.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_cancer",
+        "sign": "cancer",
+        "plainTranslation": "A stellium in Cancer concentrates on feeling, home, and care. Gift: deep emotional intelligence and a gift for nurturing. Watch: moodiness, over-attachment, and retreating.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_leo",
+        "sign": "leo",
+        "plainTranslation": "A stellium in Leo pours energy into self-expression, creativity, and being seen. Gift: magnetism, warmth, and creative power. Watch: ego, drama, and needing the spotlight.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_virgo",
+        "sign": "virgo",
+        "plainTranslation": "A stellium in Virgo concentrates on analysis, craft, and service. Gift: precision, skill, and genuine usefulness. Watch: perfectionism, criticism, and anxiety over details.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_libra",
+        "sign": "libra",
+        "plainTranslation": "A stellium in Libra focuses on relationship, balance, and beauty. Gift: a talent for connection, fairness, and harmony. Watch: indecision, people-pleasing, and losing yourself in others.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_scorpio",
+        "sign": "scorpio",
+        "plainTranslation": "A stellium in Scorpio concentrates on depth, intensity, and transformation. Gift: power, focus, and the ability to go where others won't. Watch: obsession, control, and all-or-nothing extremes.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_sagittarius",
+        "sign": "sagittarius",
+        "plainTranslation": "A stellium in Sagittarius pours energy into meaning, freedom, and the big picture. Gift: vision, optimism, and a drive to grow. Watch: restlessness, overreach, and dodging the details.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_capricorn",
+        "sign": "capricorn",
+        "plainTranslation": "A stellium in Capricorn concentrates on ambition, structure, and achievement. Gift: discipline and the capacity to build serious, lasting things. Watch: workaholism, coldness, and worth tied to output.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_aquarius",
+        "sign": "aquarius",
+        "plainTranslation": "A stellium in Aquarius focuses on innovation, ideas, and the collective. Gift: originality and a vision ahead of its time. Watch: detachment, contrarianism, and living in theory.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_pisces",
+        "sign": "pisces",
+        "plainTranslation": "A stellium in Pisces concentrates on imagination, sensitivity, and the unseen. Gift: deep empathy, creativity, and intuition. Watch: escapism, blurred boundaries, and overwhelm.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      }
+    ],
+    "byHouse": [
+      {
+        "id": "stellium_house1",
+        "house": 1,
+        "plainTranslation": "A stellium in the 1st house concentrates on identity and self; your presence is unusually strong and defining. Gift: a powerful sense of self. Watch: self-absorption and forgetting others exist.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house2",
+        "house": 2,
+        "plainTranslation": "A stellium in the 2nd house intensifies money, values, and self-worth; building security becomes a central theme. Gift: a talent for creating value. Watch: tying worth to what you own.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house3",
+        "house": 3,
+        "plainTranslation": "A stellium in the 3rd house floods communication, learning, and daily connection; the mind and immediate environment dominate. Gift: a sharp, communicative mind. Watch: mental overload and scattered energy.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house4",
+        "house": 4,
+        "plainTranslation": "A stellium in the 4th house concentrates on home, family, and roots; your foundation carries enormous weight. Gift: deep roots and a strong base. Watch: living in the past and difficulty leaving the nest.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house5",
+        "house": 5,
+        "plainTranslation": "A stellium in the 5th house pours energy into creativity, romance, and self-expression; play and creation are central. Gift: huge creative output and vitality. Watch: drama and chasing the next thrill.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house6",
+        "house": 6,
+        "plainTranslation": "A stellium in the 6th house intensifies work, health, and daily routine; being useful and refining your craft dominate. Gift: capacity for skilled, devoted work. Watch: overwork, worry, and self-criticism.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house7",
+        "house": 7,
+        "plainTranslation": "A stellium in the 7th house concentrates on partnership and one-to-one relationships; other people are a defining theme. Gift: a gift for relating and collaboration. Watch: losing yourself in others and dependence.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house8",
+        "house": 8,
+        "plainTranslation": "A stellium in the 8th house intensifies intimacy, shared resources, and transformation; depth, power, and merging are central. Gift: capacity for deep bonding and rebirth. Watch: power struggles, control, and crisis.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house9",
+        "house": 9,
+        "plainTranslation": "A stellium in the 9th house pours energy into meaning, learning, travel, and belief; the search for the bigger picture dominates. Gift: vision and a drive to expand. Watch: restlessness and chasing the horizon.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house10",
+        "house": 10,
+        "plainTranslation": "A stellium in the 10th house concentrates on career, status, and public role; your work in the world is a defining theme. Gift: ambition and the capacity to achieve. Watch: identity swallowed by career.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house11",
+        "house": 11,
+        "plainTranslation": "A stellium in the 11th house intensifies community, friendships, and future goals; the collective and your hopes dominate. Gift: a talent for networks and shared vision. Watch: losing the personal in the group.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      },
+      {
+        "id": "stellium_house12",
+        "house": 12,
+        "plainTranslation": "A stellium in the 12th house concentrates on the inner, hidden, and spiritual; the unconscious carries great weight. Gift: a rich inner life and compassion. Watch: escapism, isolation, and self-undoing.",
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "origin": "composed"
+      }
+    ],
+    "illustrativeExamples": {
+      "note": "Original demonstrations of the reading method, composed from planet, sign, and house meanings. Named-person sample charts are not included.",
+      "howToRead": "Name the planets, the sign, and the house, then state the integrated gift and the watch-out.",
+      "generationalVsPersonal": "A stellium made only of slow outer planets is shared by a whole generation. It becomes personal when it sits on an angle or aspects a personal planet: Sun, Moon, Mercury, Venus, or Mars.",
+      "examples": [
+        {
+          "id": "ex_sun_mercury_venus_gemini_3h",
+          "combo": "Sun, Mercury, Venus in Gemini, 3rd house",
+          "plainTranslation": "Identity, thinking, and love all concentrated in communication. Gift: a magnetic communicator whose whole self runs through words and connection. Watch: living in the head and mistaking talking for relating.",
+          "voiceNeutral": true,
+          "status": "DRAFT",
+          "origin": "composed"
+        },
+        {
+          "id": "ex_moon_venus_mars_5h",
+          "combo": "Moon, Venus, Mars in the 5th house",
+          "plainTranslation": "Feeling, love, and drive packed into creativity and romance. Gift: enormous creative and romantic vitality. Watch: emotional drama and chasing the next thrill.",
+          "voiceNeutral": true,
+          "status": "DRAFT",
+          "origin": "composed"
+        },
+        {
+          "id": "ex_mars_saturn_pluto_scorpio",
+          "combo": "Mars, Saturn, Pluto in Scorpio",
+          "plainTranslation": "Drive, discipline, and intensity stacked in the most intense sign. Gift: formidable, unstoppable focus. Watch: control, all-or-nothing extremes, and burnout when it stays unintegrated.",
+          "voiceNeutral": true,
+          "status": "DRAFT",
+          "origin": "composed"
+        },
+        {
+          "id": "ex_sun_jupiter_uranus_10h",
+          "combo": "Sun, Jupiter, Uranus in the 10th house",
+          "plainTranslation": "Identity, expansion, and innovation aimed at career and public role. Gift: a bold, original public path. Watch: career swallowing the rest of life, and restlessness with anything stable.",
+          "voiceNeutral": true,
+          "status": "DRAFT",
+          "origin": "composed"
+        },
+        {
+          "id": "ex_mercury_venus_neptune_pisces_12h",
+          "combo": "Mercury, Venus, Neptune in Pisces, 12th house",
+          "plainTranslation": "Mind, love, and imagination dissolved together in the hidden house. Gift: deep artistic and compassionate sensitivity. Watch: escapism and blurred boundaries between self and others.",
+          "voiceNeutral": true,
+          "status": "DRAFT",
+          "origin": "composed"
+        }
+      ]
+    }
+  },
+  "prohibitions": [
+    "Do not treat a stellium as automatically stronger than every other chart factor.",
+    "Do not ignore the individual planets involved.",
+    "Do not use house stelliums without accurate birth time.",
+    "Do not over-personalize a generational outer-planet cluster unless it contacts an angle or personal planet."
+  ],
+  "weighting": [
+    "Weight up when the stellium includes Sun, Moon, Ascendant ruler, or multiple personal planets.",
+    "Weight up when the stellium is angular or tied to the chart ruler.",
+    "Weight down when the cluster is only slow outer planets and does not contact personal points.",
+    "Use the opposite sign or house as an integration prompt."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

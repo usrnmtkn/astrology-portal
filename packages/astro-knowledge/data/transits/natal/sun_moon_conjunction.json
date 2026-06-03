@@ -1,0 +1,12 @@
+{
+  "id": "sun_moon_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "sun",
+  "natal": "moon",
+  "aspect": "conjunction",
+  "plainTranslation": "Light hits your feelings. Mood and purpose align; emotions are visible and energized. Good for honoring what you need out loud. Let the day warm your inner life.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

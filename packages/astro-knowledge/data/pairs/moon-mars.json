@@ -1,0 +1,24 @@
+{
+  "id": "moon-mars",
+  "planetA": "moon",
+  "planetB": "mars",
+  "traditional": "The body and daily needs combined with action and heat.",
+  "modern": {
+    "blend": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them.",
+    "harmonious": "Emotional energy fuels getting things done; lively, active imagination.",
+    "hard": "Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling.",
+    "business": "Drive powered by feeling; the work is managing reactivity."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Emotion meets drive and aggression. Feelings are energized and the instinct is to act on them.",
+  "harmonious": "Emotional energy fuels getting things done; lively, active imagination.",
+  "hard": "Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling.",
+  "business": "Drive powered by feeling; the work is managing reactivity."
+}

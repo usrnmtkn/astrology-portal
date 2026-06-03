@@ -1,0 +1,29 @@
+{
+  "id": "mercury-opposition-saturn",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "saturn",
+  "tldr": "Mercury opposition Saturn.",
+  "traditional": "Mercury opposition Saturn: a hard contact. Communication, commerce, and contracts works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. Psychologically the opposition is inner tension to integrate: Brooding and mental heaviness; the remedy is keeping the mind on useful work. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Thinking and limit reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Thorough and exacting, with little patience for small talk.",
+  "shadow": "Scattered overthinking collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mercury-saturn",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. Psychologically the opposition is inner tension to integrate: Brooding and mental heaviness; the remedy is keeping the mind on useful work. The growth is owning both sides instead of splitting them."
+}

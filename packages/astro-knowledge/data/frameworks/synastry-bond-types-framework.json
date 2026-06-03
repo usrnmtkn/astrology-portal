@@ -1,0 +1,103 @@
+{
+  "id": "synastry-bond-types-framework",
+  "kind": "framework",
+  "title": "Synastry Bond Types Framework",
+  "role": "relationship-synthesis-method",
+  "category": "synastry",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Name what the relationship is FOR, not a list of contacts. A bond type is only real when several signatures point to it; one aspect is not a bond. Most real relationships are a blend of two or three types."
+    },
+    {
+      "id": "bond-types",
+      "heading": "Bond Types",
+      "body": "A bond type needs multiple signatures. Most relationships blend two or three types.",
+      "items": [
+        {
+          "label": "The Spark (chemistry)",
+          "body": "Core signatures: Venus-Mars, Mars-Mars, Sun-Mars contacts; 5th-house overlays. What it is for: passion, attraction, feeling alive. The work: Chemistry is not compatibility. Enjoy it for what it is, or build something underneath it; heat alone says nothing about whether you can live together."
+        },
+        {
+          "label": "The Build (partnership)",
+          "body": "Core signatures: supportive Saturn-Sun/Venus, Sun-Moon, 7th-house overlays. What it is for: lasting commitment and structure. The work: Durability over excitement. Keep warmth inside the structure so commitment doesn't curdle into duty."
+        },
+        {
+          "label": "The Mirror (recognition)",
+          "body": "Core signatures: Sun-Moon, Moon-Moon, Sun-Ascendant, strong luminary overlays. What it is for: feeling deeply seen and at home. The work: Being recognized isn't the same as a workable relationship. Don't mistake familiarity for ease."
+        },
+        {
+          "label": "The Crucible (intense / transformative)",
+          "body": "Core signatures: Pluto contacts (Pluto-Venus/Moon/Sun), 8th-house overlays. What it is for: depth, transformation, being changed by each other. The work: Intensity is not compatibility. The depth is real and high-stakes; watch for control, and let it transform you without dominating you."
+        },
+        {
+          "label": "The Fated (karmic)",
+          "body": "Core signatures: Saturn, South Node, Vertex, and nodal contacts. What it is for: a sense of fated-feeling significance, recognition, unfinished business. The work: 'Fated' is a feeling, not a contract. Honor the pull; remember you still choose whether to stay."
+        },
+        {
+          "label": "The Teacher (growth)",
+          "body": "Core signatures: Jupiter and Saturn contacts, 9th-house overlays, node links. What it is for: growth, expansion, maturing one another. The work: Peers, not pedestals. The lesson goes both ways or it becomes a power gap."
+        },
+        {
+          "label": "The Ease (friendship)",
+          "body": "Core signatures: harmonious Mercury and Venus contacts, 11th-house overlays, shared air. What it is for: companionship and easy liking. The work: Ease can lack heat. Fine if that's what you both want; honest if it isn't."
+        },
+        {
+          "label": "The Grind (friction)",
+          "body": "Core signatures: squares and oppositions, Mars-Saturn, Mercury-Mars. What it is for: challenge and growth through abrasion. The work: Friction can be generative or corrosive; the difference is mutual respect. If it's all wear and no spark, name it."
+        }
+      ]
+    },
+    {
+      "id": "attachment-lens",
+      "heading": "Attachment Lens",
+      "body": "A supplementary psychological lens, framed as analogues, not clinical diagnosis. Read the Moon, Venus, and Saturn contacts as the bond's attachment tone.",
+      "items": [
+        {
+          "label": "secure_analogue",
+          "body": "harmonious Moon and Venus contacts; Saturn offering steady support rather than restriction. The bond feels safe and consistent."
+        },
+        {
+          "label": "anxious_analogue",
+          "body": "Moon-Pluto, Moon-Mars, Venus-Saturn hard contacts. Craving closeness while fearing loss; push-pull and testing."
+        },
+        {
+          "label": "avoidant_analogue",
+          "body": "Moon-Uranus, hard Moon-Saturn, distancing Saturn. Needing space, pulling back when things get close, discomfort with dependence."
+        }
+      ]
+    },
+    {
+      "id": "ethics",
+      "heading": "Ethics",
+      "body": "Synastry describes the pull, not the outcome. A bond type needs multiple indicators, never one aspect. Intensity isn't compatibility; fated is a feeling, not a contract; never romanticize control or coercion. Every type carries its work, so the reading stays agency-forward."
+    },
+    {
+      "id": "examples",
+      "heading": "Examples",
+      "body": "Use these as synthesis patterns, not verdicts.",
+      "items": [
+        {
+          "label": "Example 1",
+          "body": "Most bonds blend: Venus-Mars (spark) plus supportive Saturn-Sun (build) is a chemistry-and-commitment bond, the rarer combination that's both exciting and durable. Read both, not one."
+        },
+        {
+          "label": "Example 2",
+          "body": "A Pluto-heavy, 8th-house-overlay bond is the Crucible type: it will change both people. That is not the same as easy or good. The work is keeping depth from turning into control."
+        },
+        {
+          "label": "Example 3",
+          "body": "South Node plus Saturn contacts make a Fated bond: it feels like you've met before and can't quite leave. Honor the feeling, remember it's a feeling, and choose on purpose."
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "heading": "Integration",
+      "body": "Reads from synastry_aspects (and the marquee), synastry_house_overlays, synastry_features, and the composite work; the synthesisExamples in composite_chart_marquee show how to layer the composite on top."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

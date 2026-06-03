@@ -1,0 +1,48 @@
+{
+  "id": "moon-conjunction-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Intense Or Protective",
+  "summary": "Your feelings run deep, even when you keep them private. Emotional safety may require truth, loyalty, and real trust.",
+  "body": "Moon conjunction Pluto describes an emotional nature with depth, instinct, and strong memory. You may sense what is hidden, track shifts in tone, and protect yourself before you can explain why. Family history, early attachment, or private survival patterns may carry extra weight. The gift is emotional honesty and resilience. The growth is learning that intensity does not have to become control, and protection does not have to keep care out.",
+  "gift": "Emotional depth, loyalty, instinctive perception, and the capacity to transform old patterns into real self-knowledge.",
+  "shadow": "Control, secrecy, emotional extremes, and scanning for threat even when care is available.",
+  "integration": "Let your instincts speak, then let the present moment answer. Trust becomes possible when protection includes choice.",
+  "do": [
+    "Name the feeling under the reaction",
+    "Choose relationships that can hold honesty",
+    "Give old emotional patterns a current reality check"
+  ],
+  "dont": [
+    "Use silence to test loyalty",
+    "Assume intensity means danger",
+    "Make control the only way to feel safe"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "family",
+    "power"
+  ],
+  "tags": [
+    "intensity",
+    "attachment",
+    "memory",
+    "control",
+    "trust"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "conjunction",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "shadow-work",
+    "core-traits"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

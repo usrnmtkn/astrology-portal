@@ -1,0 +1,47 @@
+{
+  "id": "saturn-trine-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Steady Through Inspired",
+  "summary": "Discipline and limits flow with imagination and longing. This fluid pattern asks you to use maturity and compassion with awareness.",
+  "body": "Discipline and limits flow with imagination and longing. This fluid pattern asks you to use maturity and compassion with awareness. Dreams worked patiently into something real. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through discipline and limits, imagination and longing, and the choices you make when fear or confusion starts running the room.",
+  "gift": "The gift is maturity, compassion, and a more conscious way to work with discipline and limits and imagination and longing.",
+  "shadow": "The shadow is fear, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let discipline and limits and imagination and longing cooperate without making either one carry the whole story. Disciplined vision realized over time; the task is managing fear.",
+  "do": [
+    "Name how discipline and limits and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn maturity and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let fear make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of discipline and limits or imagination and longing"
+  ],
+  "lifeAreas": [
+    "work",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "saturn",
+    "neptune",
+    "trine",
+    "maturity",
+    "compassion"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "trine",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

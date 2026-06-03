@@ -1,0 +1,15 @@
+{
+  "id": "chiron-conjunct-moon",
+  "kind": "natal",
+  "point": "chiron",
+  "aspect": "conjunction",
+  "planet": "moon",
+  "tldr": "Chiron conjunct Moon.",
+  "body": "The wound sits in the emotional core, close to your feelings and easily touched, often rooted in early care.",
+  "business": "Deeply attuned to others' pain and able to sit with it.",
+  "shadow": "Emotional rawness, or caretaking others to avoid your own ache.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "mercury-trine-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Big Picture Or Too Broad",
+  "summary": "Your mind wants meaning. You may understand best when facts connect to a larger story.",
+  "body": "Mercury trine Jupiter describes an expansive intelligence. You may learn through context, teach naturally, speak with encouragement, or move easily between detail and principle. This aspect can support writing, study, strategy, travel, publishing, humor, and persuasive explanation. The shadow is assuming the big picture is enough and skipping the fine print. The gift is wisdom in language. The growth is letting accuracy strengthen your vision instead of slowing it down.",
+  "gift": "Teaching, broad thinking, humor, optimism, and the ability to make complex ideas feel approachable.",
+  "shadow": "Overgeneralizing, missing details, talking past the question, and trusting confidence more than evidence.",
+  "integration": "Let the vision stay wide and the facts stay checked. The best idea becomes stronger when it can survive specifics.",
+  "do": [
+    "Translate ideas into useful language",
+    "Check the key detail before presenting",
+    "Use optimism to open the conversation"
+  ],
+  "dont": [
+    "Skip evidence because the story feels right",
+    "Overpromise what the idea can do",
+    "Mistake volume for understanding"
+  ],
+  "lifeAreas": [
+    "communication",
+    "growth",
+    "work"
+  ],
+  "tags": [
+    "teaching",
+    "optimism",
+    "meaning",
+    "learning",
+    "strategy"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "trine",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

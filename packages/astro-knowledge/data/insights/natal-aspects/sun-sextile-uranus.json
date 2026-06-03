@@ -1,0 +1,47 @@
+{
+  "id": "sun-sextile-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible With Original",
+  "summary": "Identity support freedom and disruption. This cooperative pattern asks you to use confidence and originality with awareness.",
+  "body": "Identity support freedom and disruption. This cooperative pattern asks you to use confidence and originality with awareness. Originality that reads as brilliance or healthy independence. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through identity, freedom and disruption, and the choices you make when ego defense or instability starts running the room.",
+  "gift": "The gift is confidence, originality, and a more conscious way to work with identity and freedom and disruption.",
+  "shadow": "The shadow is ego defense, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and freedom and disruption cooperate without making either one carry the whole story. Suited to independent or innovative work where you aren't boxed in.",
+  "do": [
+    "Name how identity and freedom and disruption are both involved",
+    "Use the easy opening deliberately",
+    "Turn confidence and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of identity or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "identity",
+    "friends",
+    "growth"
+  ],
+  "tags": [
+    "sun",
+    "uranus",
+    "sextile",
+    "confidence",
+    "originality"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "sextile",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "saturn-conjunction-pluto",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "pluto",
+  "tldr": "Saturn conjunction Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of limit and power is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Able to carry punishing, transformative work; the risk is harshness.",
+  "shadow": "Fear and rigidity fused with control and obsession, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:saturn-pluto",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

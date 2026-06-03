@@ -1,0 +1,29 @@
+{
+  "id": "moon-opposition-pluto",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "pluto",
+  "tldr": "the Moon opposition Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Psychologically the opposition is inner tension to integrate: Emotional power struggles, jealousy, and compulsion. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and power reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Emotional intensity: depth is an asset, volatility a liability.",
+  "shadow": "Moodiness and over-need collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:moon-pluto",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Psychologically the opposition is inner tension to integrate: Emotional power struggles, jealousy, and compulsion. The growth is owning both sides instead of splitting them."
+}

@@ -1,0 +1,48 @@
+{
+  "id": "saturn-conjunction-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Steady And Intense",
+  "summary": "Discipline and limits merge power and transformation. This concentrated pattern asks you to use maturity and depth with awareness.",
+  "body": "Discipline and limits merge power and transformation. This concentrated pattern asks you to use maturity and depth with awareness. Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through discipline and limits, power and transformation, and the choices you make when fear or control starts running the room.",
+  "gift": "The gift is maturity, depth, and a more conscious way to work with discipline and limits and power and transformation.",
+  "shadow": "The shadow is fear, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let discipline and limits and power and transformation cooperate without making either one carry the whole story. Able to carry punishing, transformative work; the risk is harshness.",
+  "do": [
+    "Name how discipline and limits and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn maturity and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let fear make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of discipline and limits or power and transformation"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "growth"
+  ],
+  "tags": [
+    "saturn",
+    "pluto",
+    "conjunction",
+    "maturity",
+    "depth"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "conjunction",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
