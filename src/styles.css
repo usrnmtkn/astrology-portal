@@ -7842,105 +7842,6 @@ html,
   width: 100%;
 }
 
-.app-shell.mode-profile .profile-layout .you-page .card.identity.you-summary-card.you-signature-card {
-  background:
-    radial-gradient(circle at 10% 18%, rgba(240, 205, 235, 0.5), transparent 31%),
-    var(--surface-app);
-  border: 1px solid var(--line-app);
-  border-radius: 34px;
-  box-shadow:
-    0 18px 46px rgba(28, 34, 32, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  margin: 0 auto;
-  max-width: 760px;
-  min-height: 0;
-  overflow: visible;
-  padding: 0;
-  width: 100%;
-}
-
-.app-shell.theme-dark.mode-profile .profile-layout .you-page .card.identity.you-summary-card.you-signature-card {
-  background:
-    radial-gradient(circle at 8% 0%, rgba(88, 36, 50, 0.28), transparent 34%),
-    rgba(28, 28, 27, 0.96);
-  box-shadow: none;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .card.identity.you-summary-card.you-signature-card::before {
-  display: none;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .you-signature-card .id-head {
-  align-items: center;
-  gap: 22px;
-  min-height: 118px;
-  padding: 22px 34px;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .you-signature-card .you-profile-avatar.av.lg {
-  background: radial-gradient(115% 115% at 28% 18%, #4e4e4d 0%, #1a1a19 72%);
-  border: 6px solid color-mix(in srgb, var(--surface-app) 92%, transparent);
-  border-radius: 50%;
-  box-shadow:
-    0 10px 26px rgba(22, 22, 20, 0.16),
-    0 0 0 1px var(--line-app);
-  color: #fff;
-  flex: 0 0 78px;
-  font-family: var(--font-mono);
-  font-size: 25px;
-  font-weight: 800;
-  height: 78px;
-  width: 78px;
-}
-
-.app-shell.theme-dark.mode-profile .profile-layout .you-page .you-signature-card .you-profile-avatar.av.lg {
-  background: radial-gradient(115% 115% at 28% 18%, #f5f1eb 0%, #d9d2c8 72%);
-  color: #171716;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .you-signature-card .identity .who h2,
-.app-shell.mode-profile .profile-layout .you-page .you-signature-card .who h2 {
-  color: var(--ink-app);
-  font-family: var(--font-mono);
-  font-size: clamp(28px, 3.4vw, 34px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  margin: 0;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .signature-chips {
-  align-items: center;
-  color: var(--muted-app);
-  display: flex;
-  flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: clamp(17px, 2.2vw, 20px);
-  gap: 18px;
-  line-height: 1.2;
-  margin-top: 14px;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .signature-chips > span {
-  align-items: center;
-  display: inline-flex;
-  gap: 8px;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .signature-chips > span > span {
-  color: var(--ink-app);
-  font-family: "Noto Sans Symbols", "Segoe UI Symbol", serif;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .bigthree {
-  display: none;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs {
-  margin: 14px auto 2px;
-  max-width: 760px;
-}
-
 .app-shell.mode-profile .profile-layout .you-page .natal-wheel {
   margin: 0 auto;
   max-width: 800px;
@@ -8114,19 +8015,6 @@ html,
 }
 
 @media (max-width: 720px) {
-  .app-shell.mode-profile .profile-layout .you-page .you-signature-card .id-head {
-    align-items: flex-start;
-    flex-direction: row;
-    padding: 20px 22px;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page .you-signature-card .you-profile-avatar.av.lg {
-    flex-basis: 66px;
-    font-size: 21px;
-    height: 66px;
-    width: 66px;
-  }
-
   .app-shell.mode-profile .profile-layout .you-page .you-signatures-main,
   .app-shell.mode-profile .profile-layout .you-page .elemental-balance {
     padding-left: 22px;
@@ -8249,7 +8137,6 @@ html,
   font-family: "Noto Sans Symbols", "Segoe UI Symbol", serif;
 }
 
-.app-shell.mode-profile .profile-layout .you-page .seg.subtabs.you-tabs,
 .app-shell.mode-profile .profile-layout .you-page .you-signatures-card,
 .app-shell.mode-profile .profile-layout .you-page .list.you-list-card,
 .app-shell.mode-profile .profile-layout .you-page .list.you-aspects-list,
@@ -8607,13 +8494,12 @@ html,
   margin: 0;
 }
 
-.app-shell :is(.brand-wordmark, .brand-text, .nav-link, .nav-item, .top-nav, .theme-toggle, .menu-toggle, .menu-popover, .menu-popover button, .popover-menu, .popover-menu button, .primary-cta, .secondary-cta, .auth-button, .join-button, .login-button, .tab-toggle button, .segmented button, .app-tabs button, .screen-title, .page-title, .today-hero h1, .account-page h1, .settings-page h1) {
+.app-shell :is(.brand-wordmark, .theme-toggle, .menu-toggle, .site-menu button, .site-menu-auth button, .app-tabs button, .today-hero h1, .account-page h1, .settings-page h1) {
   font-family: var(--font-ui);
 }
 
 .app-shell.mode-profile .profile-layout .you-profile-copy h2,
 .app-shell.mode-profile .profile-layout .you-page .you-profile-copy h2,
-.app-shell.mode-profile .profile-layout .you-page .you-signature-card .who h2,
 .app-shell.mode-profile .profile-layout .you-profile-card h2 {
   font-family: var(--font-ui);
   font-size: clamp(22px, 2.4vw, 28px);
@@ -8622,7 +8508,7 @@ html,
   line-height: 1.1;
 }
 
-.app-shell.mode-profile .profile-layout :is(.you-profile-status, .you-signature-row, .you-profile-copy p, .signature-chips, .you-page .you-profile-copy p) {
+.app-shell.mode-profile .profile-layout :is(.you-profile-status, .you-signature-row, .you-profile-copy p, .you-page .you-profile-copy p) {
   font-family: var(--font-detail);
   font-size: var(--type-small);
   font-weight: 500;
@@ -8636,7 +8522,7 @@ html,
   font-weight: 700;
 }
 
-.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crt, .aspect .ab h4, .you-signatures-main h3, .big-three-row strong, .you-list-card .chart-row strong) {
+.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crt, .aspect .ab h4, .you-signatures-main h3, .you-list-card .chart-row strong) {
   font-family: var(--font-ui);
   font-size: var(--type-row-title);
   font-weight: 600;
@@ -8644,7 +8530,7 @@ html,
   line-height: 1.25;
 }
 
-.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crs, .aspect .ab p, .you-signatures-main p, .big-three-row span, .you-list-card .chart-row span) {
+.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crs, .aspect .ab p, .you-signatures-main p, .you-list-card .chart-row span) {
   font-family: var(--font-detail);
   font-size: var(--type-description);
   font-weight: 500;
@@ -8970,24 +8856,6 @@ html,
     grid-column: 1 / -1;
     padding-top: 0;
   }
-}
-
-/* Create-chart and auth modals. */
-.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal, .auth-card, .auth-panel) :is(h1, h2, h3) {
-  font-family: var(--font-ui);
-  font-size: clamp(28px, 4vw, 38px);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.05;
-}
-
-.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal, .auth-card, .auth-panel) :is(p, label, input, button, select) {
-  font-family: var(--font-detail);
-}
-
-.app-shell :is(.chart-setup-modal, .chart-form-modal, .setup-modal, .create-chart-modal) :is(p, label) {
-  font-size: var(--type-copy);
-  line-height: 1.55;
 }
 
 /* Shared component primitives. */
