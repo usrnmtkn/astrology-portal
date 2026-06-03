@@ -41,6 +41,44 @@ function loadDirectEntries(dir) {
   return listDirectJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
 }
 
+function loadJsonTree(relativeDir) {
+  const absoluteDir = path.join(root, relativeDir);
+  if (!fs.existsSync(absoluteDir)) return [];
+
+  return listJsonFiles(absoluteDir).map((filePath) => ({
+    path: path.relative(root, filePath),
+    ...readJson(filePath)
+  }));
+}
+
+function loadVoiceProfiles() {
+  const voiceRoot = path.join(root, "voice");
+  if (!fs.existsSync(voiceRoot)) return {};
+
+  const profiles = {};
+  for (const voiceId of fs.readdirSync(voiceRoot)) {
+    const voiceDir = path.join(voiceRoot, voiceId);
+    if (!fs.statSync(voiceDir).isDirectory()) continue;
+
+    const styleGuidePath = path.join(voiceDir, "style-guide.md");
+    profiles[voiceId] = {
+      voiceId,
+      styleGuide: fs.existsSync(styleGuidePath) ? fs.readFileSync(styleGuidePath, "utf8") : "",
+      bannedPhrases: fs.existsSync(path.join(voiceDir, "banned-phrases.json"))
+        ? readJson(path.join(voiceDir, "banned-phrases.json"))
+        : [],
+      examples: fs.existsSync(path.join(voiceDir, "examples.json"))
+        ? readJson(path.join(voiceDir, "examples.json"))
+        : [],
+      toneConfig: fs.existsSync(path.join(voiceDir, "tone-config.json"))
+        ? readJson(path.join(voiceDir, "tone-config.json"))
+        : {}
+    };
+  }
+
+  return profiles;
+}
+
 function safeCategory(category) {
   return category.replace(/[^a-z0-9-]/gi, "_");
 }
@@ -93,6 +131,8 @@ function build() {
   const synastryPointContacts = loadEntries(path.join("synastry", "point-contacts"));
   const synastryHouseOverlays = loadEntries(path.join("synastry", "house-overlays"));
   const insightCards = loadEntries("insights");
+  const voiceProfiles = loadVoiceProfiles();
+  const voiceContent = loadJsonTree("generated");
 
   const knowledge = {
     version: packageJson.version,
@@ -121,7 +161,9 @@ function build() {
     synastryAspects,
     synastryPointContacts,
     synastryHouseOverlays,
-    insightCards
+    insightCards,
+    voiceProfiles,
+    voiceContent
   };
 
   const index = {
@@ -159,6 +201,7 @@ function build() {
   for (const entry of synastryPointContacts) addEntry(index, entry, "synastry/point-contact");
   for (const entry of synastryHouseOverlays) addEntry(index, entry, "synastry/house-overlay");
   for (const entry of insightCards) addEntry(index, entry, `insight/${entry.kind}`);
+  for (const entry of voiceContent) addEntry(index, entry, `voice-content/${entry.voiceId ?? "unknown"}`);
 
   writeJson(path.join(distRoot, "knowledge.json"), knowledge);
   writeJson(path.join(distRoot, "knowledge.index.json"), index);
@@ -189,12 +232,14 @@ function build() {
     synastryPointContacts: synastryPointContacts.length,
     synastryHouseOverlays: synastryHouseOverlays.length,
     insightCards: insightCards.length,
+    voiceProfiles: Object.keys(voiceProfiles).length,
+    voiceContent: voiceContent.length,
     indexedEntries: Object.keys(index.entries).length
   };
 
   console.log("Validation passed: all data files match their schemas.");
   console.log(`Built dist/knowledge.json version ${packageJson.version}.`);
-  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, indexedEntries=${counts.indexedEntries}`);
+  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, indexedEntries=${counts.indexedEntries}`);
 }
 
 build();

@@ -6,11 +6,51 @@ Standalone shared content package for astrological meaning. This repository is t
 
 - `data/` is meaning: authored JSON only, one editable entry per file where possible.
 - `voice/` is voice: rendering constraints, profiles, banned words, and prompt stubs. It does not contain astrology meaning.
+- `generated/` is voice-rendered content: approved output created from `data/` plus a voice profile.
 - `scripts/` is build tooling: validation and compilation only. No astrology interpretation lives in code.
 - `engine/timing/` is optional app logic: profection context and transit ranking only. It does not contain authored meaning or voice.
 - `dist/` is generated output. Apps consume `dist/`, never `data/`.
 
 Authoring shape and shipping shape are intentionally different. Human authors edit small JSON files in `data/`; `npm run build` validates and compiles those files into versioned static files under `dist/`.
+
+## Knowledge Flow
+
+Keep this diagram updated whenever the knowledge package structure or app consumption path changes.
+
+```mermaid
+flowchart TD
+  subgraph KB["astro-knowledge package"]
+    DATA["data/\nSource-backed astrology meaning\nJSON entries"]
+    VOICE["voice/\nTone profiles, style guides,\nbanned phrases, examples"]
+    GENERATED["generated/\nVoice-rendered content\nreviewed per profile"]
+    ENGINE["engine/timing/\nRanking helpers only\nno authored meaning"]
+    SCRIPTS["scripts/build.js\nValidate and compile"]
+    DIST["dist/\nknowledge.json\nknowledge.index.json\nentries/*.json"]
+  end
+
+  subgraph APP["tldrastro app"]
+    IMPORT["src/content/registry.ts\nimports @yourorg/astro-knowledge"]
+    SURFACES["Surface selectors\nCore Traits, Love Patterns,\nCareer Patterns, Forecasts"]
+    UI["React views\nrender selected knowledge\nand approved voice content"]
+  end
+
+  DATA --> SCRIPTS
+  VOICE --> SCRIPTS
+  GENERATED --> SCRIPTS
+  ENGINE --> DIST
+  SCRIPTS --> DIST
+  DIST --> IMPORT
+  IMPORT --> SURFACES
+  SURFACES --> UI
+```
+
+### Ownership Rules
+
+- Put source-backed astrology meaning in `data/`.
+- Put tone, style, and prompt constraints in `voice/`.
+- Put reviewed voice output in `generated/`.
+- Put selection, ranking, and UI logic in the consuming app.
+- Do not copy `astro-knowledge` into an app repo. Apps should import `@yourorg/astro-knowledge`.
 
 ## Offline Consumption
 
