@@ -10,11 +10,14 @@ import {
   MapPin,
   Moon,
   Pencil,
+  Plus,
   Settings,
   Sparkles,
   Star,
   Sun,
+  Trash2,
   User,
+  Users,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -34,13 +37,20 @@ import {
   upsertPersistedProfile
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
+import {
+  createManualChart,
+  deleteManualChart,
+  listManualCharts,
+  updateManualChart
+} from "./services/manualCharts";
+import type { ManualChart, ManualChartInput } from "./services/manualCharts";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PlacementMode = "paragraph" | "table";
-type PortalMode = AccountMode | "profile" | "account" | "settings";
+type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -102,6 +112,17 @@ type TransitForm = {
   currentLocation: string;
   currentLocationData: LocationInput | null;
   chartDate: string;
+};
+
+type ManualChartForm = {
+  displayName: string;
+  relationshipType: string;
+  birthDate: string;
+  birthTime: string;
+  birthTimeUnknown: boolean;
+  birthPlace: string;
+  birthLocation: LocationInput | null;
+  notes: string;
 };
 
 type TransitItem = {
@@ -218,6 +239,17 @@ const defaultTransitForm: TransitForm = {
   currentLocation: "",
   currentLocationData: null,
   chartDate: new Date().toISOString().slice(0, 10)
+};
+
+const defaultManualChartForm: ManualChartForm = {
+  displayName: "",
+  relationshipType: "friend",
+  birthDate: "",
+  birthTime: "12:00",
+  birthTimeUnknown: false,
+  birthPlace: "",
+  birthLocation: null,
+  notes: ""
 };
 
 const defaultChartSettings: ChartSettings = {
@@ -680,6 +712,74 @@ function formatProfileBirthDateLong(value: string) {
     year: "numeric",
     timeZone: "UTC"
   }).format(date);
+}
+
+function twentyFourHourTimeToDisplay(value: string) {
+  const [, rawHour = "", rawMinute = ""] = value.match(/^(\d{1,2}):(\d{2})/) ?? [];
+  const hour = Number(rawHour);
+
+  if (!rawHour || Number.isNaN(hour)) {
+    return "12:00 PM";
+  }
+
+  const meridiem = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+
+  return `${hour12}:${rawMinute || "00"} ${meridiem}`;
+}
+
+function displayTimeToTwentyFourHour(value: string | null | undefined) {
+  if (!value) {
+    return "12:00";
+  }
+
+  const [, rawHour = "", rawMinute = "00", meridiem = "AM"] = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i) ?? [];
+  const hour = Number(rawHour);
+
+  if (!rawHour || Number.isNaN(hour)) {
+    return value.slice(0, 5);
+  }
+
+  const hour24 = meridiem.toUpperCase() === "PM"
+    ? (hour % 12) + 12
+    : hour % 12;
+
+  return `${String(hour24).padStart(2, "0")}:${rawMinute}`;
+}
+
+function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
+  if (!chart) {
+    return defaultManualChartForm;
+  }
+
+  return {
+    displayName: chart.displayName,
+    relationshipType: chart.relationshipType || "friend",
+    birthDate: chart.birthDate,
+    birthTime: displayTimeToTwentyFourHour(chart.birthTime),
+    birthTimeUnknown: chart.birthTimeUnknown,
+    birthPlace: chart.birthPlace,
+    birthLocation: chart.birthLocation,
+    notes: chart.notes ?? ""
+  };
+}
+
+function manualChartBigThree(chart: ManualChart) {
+  if (!chart.natalChart) {
+    return {
+      sun: zodiacFromBirthDate(chart.birthDate),
+      moon: "Moon pending",
+      rising: chart.birthTimeUnknown ? "Rising pending" : "Rising pending"
+    };
+  }
+
+  return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
+}
+
+function manualChartSubtitle(chart: ManualChart) {
+  const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+
+  return `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -1160,7 +1260,7 @@ export function App() {
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
-  const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
+  const isProfileMode = mode === "profile" || mode === "friends" || mode === "account" || mode === "settings";
 
   useEffect(() => {
     if (!cityPickerOpen) {
@@ -1770,14 +1870,24 @@ export function App() {
             <span>Sky</span>
           </button>
           {userProfile && (
-            <button
-              className={`account-nav ${mode === "profile" ? "active" : ""}`}
-              type="button"
-              onClick={() => setMode("profile")}
-            >
-              <SmileNavIcon />
-              <span>You</span>
-            </button>
+            <>
+              <button
+                className={`account-nav ${mode === "profile" ? "active" : ""}`}
+                type="button"
+                onClick={() => setMode("profile")}
+              >
+                <SmileNavIcon />
+                <span>You</span>
+              </button>
+              <button
+                className={mode === "friends" ? "active" : ""}
+                type="button"
+                onClick={() => setMode("friends")}
+              >
+                <Users size={18} aria-hidden="true" />
+                <span>Friends</span>
+              </button>
+            </>
           )}
         </nav>
 
@@ -1968,6 +2078,9 @@ export function App() {
                 }}
               />
             )
+          )}
+          {mode === "friends" && userProfile && (
+            <ManualChartsPanel profile={userProfile} />
           )}
 {mode === "account" && userProfile && (
   <AccountView
@@ -4711,6 +4824,316 @@ function ProfileView({
           )}
         </div>
       )}
+    </section>
+  );
+}
+
+function ManualChartsPanel({ profile }: { profile: UserProfile }) {
+  const [charts, setCharts] = useState<ManualChart[]>([]);
+  const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
+  const [editingChartId, setEditingChartId] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
+  const [message, setMessage] = useState("");
+  const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setStatus("loading");
+    listManualCharts(profile.id)
+      .then((nextCharts) => {
+        if (!cancelled) {
+          setCharts(nextCharts);
+          setMessage("");
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setMessage(error instanceof Error ? error.message : "Could not load manual charts.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setStatus("idle");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile.id]);
+
+  function resetForm(nextMessage = "") {
+    setForm(defaultManualChartForm);
+    setEditingChartId(null);
+    setMessage(nextMessage);
+  }
+
+  function editChart(chart: ManualChart) {
+    setEditingChartId(chart.id);
+    setForm(manualChartFormFromChart(chart));
+    setMessage("");
+  }
+
+  function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
+    setForm({ ...form, [key]: value });
+  }
+
+  async function saveManualChart(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const displayName = form.displayName.trim();
+    const birthDate = form.birthDate;
+    const birthPlace = form.birthPlace.trim();
+    const birthLocation = birthPlace
+      ? form.birthLocation?.label === birthPlace
+        ? withTimeZone(form.birthLocation)
+        : locationFromLabel(birthPlace)
+      : null;
+
+    if (!displayName || !birthDate || !birthPlace || !birthLocation) {
+      setMessage("Add a name, birth date, and birth place.");
+      return;
+    }
+
+    if (!form.birthTimeUnknown && !form.birthTime) {
+      setMessage("Add a birth time, or mark it unknown.");
+      return;
+    }
+
+    setStatus("saving");
+    setMessage("");
+
+    try {
+      const birthTimeForChart = form.birthTimeUnknown
+        ? "12:00 PM"
+        : twentyFourHourTimeToDisplay(form.birthTime);
+      const natalChart = await getAstrodienstSky(
+        birthLocation,
+        zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone)
+      );
+      const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
+      const input: ManualChartInput = {
+        displayName,
+        firstName,
+        lastName: lastNameParts.join(" ") || null,
+        relationshipType: form.relationshipType || "friend",
+        birthDate,
+        birthTime: form.birthTimeUnknown ? null : form.birthTime,
+        birthTimeUnknown: form.birthTimeUnknown,
+        birthPlace: birthLocation.label,
+        birthLocation,
+        natalChart,
+        notes: form.notes.trim() || null
+      };
+      const savedChart = editingChartId
+        ? await updateManualChart(profile.id, editingChartId, input)
+        : await createManualChart(profile.id, input);
+
+      setCharts((currentCharts) => {
+        const nextCharts = editingChartId
+          ? currentCharts.map((chart) => chart.id === savedChart.id ? savedChart : chart)
+          : [...currentCharts, savedChart];
+
+        return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+      });
+      resetForm(editingChartId ? "Manual chart updated." : "Manual chart created.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not save manual chart.");
+    } finally {
+      setStatus("idle");
+    }
+  }
+
+  async function removeChart(chart: ManualChart) {
+    setStatus("deleting");
+    setMessage("");
+
+    try {
+      await deleteManualChart(profile.id, chart.id);
+      setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
+      if (editingChartId === chart.id) {
+        resetForm();
+      }
+      setMessage("Manual chart deleted.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not delete manual chart.");
+    } finally {
+      setStatus("idle");
+    }
+  }
+
+  return (
+    <section className="friends-page manual-charts-pane" aria-label="Friends">
+      <div className="friends-page-heading">
+        <h2>friends.</h2>
+      </div>
+      <span className="eyebrow section-label">Manual natal charts</span>
+      <section className="manual-chart-workspace" aria-label="Manual natal chart CRUD">
+        <form className="manual-chart-form" onSubmit={saveManualChart}>
+          <div className="manual-chart-form-heading">
+            <div>
+              <h3>{editingChart ? "Edit chart" : "Add a chart"}</h3>
+              <p>{editingChart ? editingChart.displayName : "Create a natal chart from birth details."}</p>
+            </div>
+            {editingChart && (
+              <button type="button" onClick={() => resetForm()}>
+                Cancel
+              </button>
+            )}
+          </div>
+
+          <label className="signup-field">
+            <span>Name</span>
+            <div>
+              <input
+                value={form.displayName}
+                onChange={(event) => updateField("displayName", event.target.value)}
+                placeholder="Their name"
+              />
+            </div>
+          </label>
+
+          <label className="signup-field">
+            <span>Relationship</span>
+            <div>
+              <select
+                value={form.relationshipType}
+                onChange={(event) => updateField("relationshipType", event.target.value)}
+                aria-label="Relationship type"
+              >
+                <option value="friend">Friend</option>
+                <option value="family">Family</option>
+                <option value="partner">Partner</option>
+                <option value="work">Work</option>
+                <option value="event">Event</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </label>
+
+          <div className="manual-chart-grid">
+            <label className="signup-field">
+              <span>Birth date</span>
+              <div>
+                <input
+                  type="date"
+                  value={form.birthDate}
+                  onChange={(event) => updateField("birthDate", event.target.value)}
+                />
+              </div>
+            </label>
+
+            <label className="signup-field">
+              <span>Birth time</span>
+              <div>
+                <input
+                  type="time"
+                  value={form.birthTime}
+                  disabled={form.birthTimeUnknown}
+                  onChange={(event) => updateField("birthTime", event.target.value)}
+                />
+              </div>
+            </label>
+          </div>
+
+          <label className="unknown-time manual-chart-unknown-time">
+            <input
+              type="checkbox"
+              checked={form.birthTimeUnknown}
+              onChange={(event) => updateField("birthTimeUnknown", event.target.checked)}
+            />
+            <span>I don't know their birth time.</span>
+          </label>
+
+          <CitySearchField
+            label="Birth place"
+            value={form.birthPlace}
+            onChange={(value) => {
+              setForm({ ...form, birthPlace: value, birthLocation: null });
+            }}
+            onSelect={(suggestion) => {
+              setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
+            }}
+            placeholder="Manhattan, NY"
+            className="signup-city-search manual-chart-city-search"
+          />
+
+          <label className="signup-field">
+            <span>Notes</span>
+            <div>
+              <textarea
+                value={form.notes}
+                onChange={(event) => updateField("notes", event.target.value)}
+                placeholder="Optional context"
+                rows={3}
+              />
+            </div>
+          </label>
+
+          {message && <p className="manual-chart-message">{message}</p>}
+
+          <button className="manual-chart-save" type="submit" disabled={status === "saving" || status === "deleting"}>
+            <Plus size={18} aria-hidden="true" />
+            {status === "saving" ? "Saving..." : editingChart ? "Save chart" : "Add chart"}
+          </button>
+        </form>
+
+        <section className="manual-chart-list" aria-label="Saved manual charts">
+          <div className="manual-chart-list-heading">
+            <span>Saved charts</span>
+            <strong>{charts.length}</strong>
+          </div>
+          {status === "loading" && (
+            <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
+              <span>Charts</span>
+              <h3>Loading manual charts.</h3>
+              <p>Saved friends and charts will appear here.</p>
+            </section>
+          )}
+          {status !== "loading" && charts.length === 0 && (
+            <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
+              <span>Charts</span>
+              <h3>No manual charts yet.</h3>
+              <p>Add someone's birth details to compare transits, chart signatures, and future compatibility.</p>
+            </section>
+          )}
+          {charts.length > 0 && (
+            <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
+              {charts.map((chart) => {
+                const bigThree = manualChartBigThree(chart);
+
+                return (
+                  <div className="manual-chart-row chart-row" key={chart.id}>
+                    <span className="manual-chart-avatar" aria-hidden="true">
+                      {profileInitials(chart.displayName, chart.displayName)}
+                    </span>
+                    <span className="crb">
+                      <span className="crt">{chart.displayName}</span>
+                      <span className="crs">{manualChartSubtitle(chart)}</span>
+                      <span className="manual-chart-signatures">
+                        <span>☉ {bigThree.sun}</span>
+                        <span>☽ {bigThree.moon}</span>
+                        <span>↑ {bigThree.rising}</span>
+                      </span>
+                    </span>
+                    <span className="manual-chart-actions">
+                      <button type="button" onClick={() => editChart(chart)}>
+                        <Pencil size={17} aria-hidden="true" />
+                        <span>Edit</span>
+                      </button>
+                      <button type="button" className="manual-chart-delete" onClick={() => removeChart(chart)}>
+                        <Trash2 size={17} aria-hidden="true" />
+                        <span>Delete</span>
+                      </button>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </section>
     </section>
   );
 }
