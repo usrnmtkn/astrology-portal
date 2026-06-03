@@ -611,6 +611,64 @@ const currentSkySignStyle: Record<string, string> = {
   virgo: "discernment, repair, usefulness, and careful attention"
 };
 
+const currentSkyPlanetProcess: Record<string, string> = {
+  jupiter: "growth and perspective",
+  mars: "energy and conflict",
+  mercury: "thinking and communication",
+  moon: "the emotional tone",
+  neptune: "imagination and uncertainty",
+  pluto: "pressure and transformation",
+  saturn: "responsibility and limits",
+  sun: "attention and vitality",
+  "true-node": "the directional pull of the moment",
+  uranus: "change and disruption",
+  venus: "connection, desire, and pleasure"
+};
+
+const currentSkySignQuality: Record<string, string> = {
+  aquarius: "a more detached, future-facing quality",
+  aries: "a sharper, more immediate quality",
+  cancer: "a more protective, memory-driven quality",
+  capricorn: "a more contained and practical quality",
+  gemini: "a quicker, more curious quality",
+  leo: "a more expressive and visible quality",
+  libra: "a more relational and comparative quality",
+  pisces: "a more porous and imaginative quality",
+  sagittarius: "a broader, more restless quality",
+  scorpio: "a more private and emotionally intense quality",
+  taurus: "a steadier and more embodied quality",
+  virgo: "a more precise and observant quality"
+};
+
+const currentSkySignObservation: Record<string, string> = {
+  aquarius: "Aquarius tends to notice patterns, systems, and the space needed to think clearly",
+  aries: "Aries tends to move quickly toward what feels urgent or alive",
+  cancer: "Cancer tends to notice what feels safe, familiar, or emotionally loaded",
+  capricorn: "Capricorn tends to look for structure, proof, and the next responsible step",
+  gemini: "Gemini tends to follow questions, conversations, and fast-moving information",
+  leo: "Leo tends to draw attention toward expression, pride, and the wish to be seen clearly",
+  libra: "Libra tends to notice balance, tension, and the social meaning of each choice",
+  pisces: "Pisces tends to blur edges, heighten feeling, and make imagination easier to access",
+  sagittarius: "Sagittarius tends to look for meaning, movement, and a wider horizon",
+  scorpio: "Scorpio tends to notice what is hidden, charged, or difficult to say plainly",
+  taurus: "Taurus tends to return attention to the body, the senses, and what feels reliable",
+  virgo: "Virgo tends to notice what needs sorting, repairing, or more careful attention"
+};
+
+const currentSkyPlanetOutcome: Record<string, string> = {
+  jupiter: "the mood may tilt toward possibility, but also toward exaggeration if the details are skipped",
+  mars: "reactions may come faster, especially where desire, frustration, or competition is already present",
+  mercury: "conversations may carry more meaning than they first reveal",
+  moon: "feelings may be easier to read through small choices, habits, and immediate needs",
+  neptune: "clarity may soften, making intuition stronger but facts a little harder to pin down",
+  pluto: "small moments may feel more charged when control, trust, or pressure is already involved",
+  saturn: "limits may feel more noticeable, especially where something needs patience or a firmer container",
+  sun: "the day may ask for attention to what is visible, active, and ready to be named",
+  "true-node": "certain choices may feel newly relevant, even before their meaning is fully clear",
+  uranus: "plans may shift quickly, especially where something has become too fixed",
+  venus: "taste, affection, money, and attraction may become easier to notice"
+};
+
 const pointAliases: Record<string, string> = {
   "north-node": "true-node"
 };
@@ -639,11 +697,11 @@ const rowPhraseByAspect: Record<string, string> = {
 };
 
 const detailPhraseByAspect: Record<string, string> = {
-  conjunction: "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore.",
-  opposition: "This aspect tends to ask for integration. It can be useful when you name both sides instead of forcing one to win.",
-  sextile: "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day.",
-  square: "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it.",
-  trine: "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day."
+  conjunction: "These two themes are close together, so they may feel harder to separate. What usually runs in the background can become more obvious.",
+  opposition: "These two themes may pull in different directions. The tension can make each side easier to see.",
+  sextile: "These two themes can support each other, but the opening may be subtle. A small choice or conversation can make the connection easier to use.",
+  square: "These two themes can rub against each other. The friction may point to an adjustment that has been waiting for attention.",
+  trine: "These two themes can move together with less resistance. The ease may be quiet, but it can make the day feel more coherent."
 };
 
 function generatedAspectDisplaySummary(planetAId: string, aspectId: string, planetBId: string, planetAThemes: string[], planetBThemes: string[]) {
@@ -656,7 +714,7 @@ function generatedAspectDisplaySummary(planetAId: string, aspectId: string, plan
 
 function generatedAspectDetailParagraphs(planetAName: string, aspectId: string, planetBName: string) {
   return [
-    `${planetAName} and ${planetBName} are in a ${aspectId} today. The smaller the orb, the more exact the contact feels.`,
+    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, bringing their themes into the same weather system.`,
     detailPhraseByAspect[aspectId] ?? detailPhraseByAspect.conjunction
   ];
 }
@@ -687,19 +745,12 @@ function displaySignName(id: string) {
 function currentSkyPlacementBody(placement: CanonicalPlacement, planetId: string, signId: string) {
   const planetName = displayPlanetName(planetId);
   const signName = displaySignName(signId);
-  const topic = currentSkyPlanetTopic[planetId] ?? `${planetName.toLowerCase()} topics`;
-  const style = currentSkySignStyle[signId] ?? `${signName}'s style`;
-  const sourceBody = cleanDisplayText(placement.body)
-    .replace(/\s*\([^)]*traditional dignity[^)]*\)\.?/gi, "")
-    .replace(/\bYou are here to\b/g, "This transit favors")
-    .replace(/\byou\b/gi, "people")
-    .trim();
+  const process = currentSkyPlanetProcess[planetId] ?? currentSkyPlanetTopic[planetId] ?? `${planetName.toLowerCase()} themes`;
+  const quality = currentSkySignQuality[signId] ?? currentSkySignStyle[signId] ?? `${signName}'s style`;
+  const observation = currentSkySignObservation[signId] ?? `${signName} gives the moment a distinct style`;
+  const outcome = currentSkyPlanetOutcome[planetId] ?? `${process} may become easier to notice`;
 
-  if (placement.status === "REVIEWED" || placement.status === "APPROVED" || placement.status === "LIVE") {
-    return sourceBody || `Right now, ${planetName} in ${signName} brings ${topic} through ${style}.`;
-  }
-
-  return `Right now, ${planetName} in ${signName} brings ${topic} through ${style}. This describes the atmosphere of the moment, not a permanent trait.`;
+  return `As ${planetName} moves through ${signName}, ${process} takes on ${quality}. ${observation}, so ${outcome}.`;
 }
 
 function currentSkyPlacementToKnowledgeItem(placement: CanonicalPlacement): KnowledgeItem | null {
