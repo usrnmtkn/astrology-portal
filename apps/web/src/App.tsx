@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { approvedVoiceOrKnowledgeFallback, aspectContentId, currentSkyAspectContentId, placementContentId } from "./content/registry";
 import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
@@ -161,6 +160,66 @@ type SkyDetail = {
   body: ReactNode[];
   content?: ContentBundle;
 };
+
+type LazyContentRegistry = Pick<
+  typeof import("./content/registry"),
+  "approvedVoiceOrKnowledgeFallback" | "aspectContentId" | "currentSkyAspectContentId" | "placementContentId"
+>;
+
+type ContentFallback = {
+  bundle: ContentBundle;
+  summary: string | null;
+  body: string | null;
+  detailParagraphs: string[];
+};
+
+let loadedContentRegistry: LazyContentRegistry | null = null;
+
+function normalizeContentIdPart(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function aspectContentId(planetA: string, aspect: string, planetB: string) {
+  if (loadedContentRegistry) {
+    return loadedContentRegistry.aspectContentId(planetA, aspect, planetB);
+  }
+
+  return `${normalizeContentIdPart(planetA)}-${normalizeContentIdPart(aspect)}-${normalizeContentIdPart(planetB)}`;
+}
+
+function currentSkyAspectContentId(planetA: string, aspect: string, planetB: string) {
+  if (loadedContentRegistry) {
+    return loadedContentRegistry.currentSkyAspectContentId(planetA, aspect, planetB);
+  }
+
+  return `sky-${aspectContentId(planetA, aspect, planetB)}`;
+}
+
+function placementContentId(planet: string, sign: string) {
+  if (loadedContentRegistry) {
+    return loadedContentRegistry.placementContentId(planet, sign);
+  }
+
+  return `${normalizeContentIdPart(planet)}-in-${normalizeContentIdPart(sign)}`;
+}
+
+function approvedVoiceOrKnowledgeFallback(id: string): ContentFallback {
+  if (loadedContentRegistry) {
+    return loadedContentRegistry.approvedVoiceOrKnowledgeFallback(id);
+  }
+
+  return {
+    bundle: {
+      id,
+      knowledge: null,
+      voice: null,
+      status: "INCOMPLETE"
+    },
+    summary: null,
+    body: null,
+    detailParagraphs: []
+  };
+}
 
 type ProfilePersistencePayload = {
   version: 1;
@@ -1373,10 +1432,32 @@ export function App() {
     return getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
   });
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
+  const [, setContentRegistryVersion] = useState(0);
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isProfileMode = mode === "profile" || mode === "friends" || mode === "account" || mode === "settings";
+
+  useEffect(() => {
+    let cancelled = false;
+
+    import("./content/registry")
+      .then((registry) => {
+        if (cancelled) {
+          return;
+        }
+
+        loadedContentRegistry = registry;
+        setContentRegistryVersion((version) => version + 1);
+      })
+      .catch((error) => {
+        console.warn("Astro knowledge registry failed to load; using local sky copy fallbacks.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!cityPickerOpen) {

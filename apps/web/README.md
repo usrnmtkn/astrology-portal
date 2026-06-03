@@ -48,8 +48,8 @@ Keep this diagram updated whenever the package structure, dependency path, or co
 flowchart LR
   KB["packages/astro-knowledge\nsource-backed data, voice profiles,\ngenerated voice content"]
   BUILD["npm run build:knowledge\ncreates dist/sky.json, dist/natal.json,\ndist/relationships.json, dist/web.json,\ndist/knowledge.json, and index files"]
-  PACKAGE["@tldr/astro-knowledge/web\ncurrent website compatibility import"]
-  REGISTRY["src/content/registry.ts\nnormalizes knowledge and voice items"]
+  PACKAGE["@tldr/astro-knowledge/web\ncurrent website compatibility bundle"]
+  REGISTRY["src/content/registry.ts\nlazy-loaded after the app shell\nnormalizes knowledge and voice items"]
   SURFACES["content surfaces\ncore traits, love patterns,\ncareer patterns, forecasts"]
   UI["React app UI"]
 
@@ -61,3 +61,5 @@ flowchart LR
 ```
 
 Run commands from the monorepo root. The root build compiles the knowledge package first, then builds this app against that generated package output.
+
+The website lazy-loads `src/content/registry.ts` from `App.tsx` so the first HTML response and main app module do not preload the knowledge bundle. Keep new source-backed surfaces behind dynamic imports unless their content is required for the first paint.
