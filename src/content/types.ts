@@ -10,6 +10,8 @@ export type SourceFactors = {
 
 export type Interpretation = {
   coreTheme: string;
+  displaySummary?: string;
+  detailParagraphs?: string[];
   livedExperience: string;
   gift: string;
   challenge: string;

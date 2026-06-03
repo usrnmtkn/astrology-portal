@@ -7951,17 +7951,42 @@ html,
   width: 100%;
 }
 
+.app-shell.mode-profile .profile-layout .you-page .list.you-list-card {
+  display: block;
+  padding-top: 0;
+}
+
 .app-shell.mode-profile .profile-layout .you-page .chart-row {
+  align-items: start;
+  border-top: 1px solid var(--line-app);
+  display: grid;
+  gap: var(--sky-row-gap, 13px);
+  grid-template-columns: 24px minmax(0, 1fr);
   padding: var(--sky-row-padding-block, 13px) var(--sky-row-padding-inline, 20px);
 }
 
+.app-shell.mode-profile .profile-layout .you-page .chart-row:first-child {
+  border-top: 0;
+}
+
 .app-shell.mode-profile .profile-layout .you-page .chart-row .crg {
-  flex-basis: 24px;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 24px;
+  padding-top: 2px;
   font-size: var(--sky-row-glyph-size, 19px);
+}
+
+.app-shell.mode-profile .profile-layout .you-page .chart-row .crb {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
 }
 
 .app-shell.mode-profile .profile-layout .you-page .chart-row .crt,
 .app-shell.mode-profile .profile-layout .you-page .aspect .ab h4 {
+  display: block;
   font-family: var(--font-ui);
   font-size: var(--sky-row-title-size, 16px);
   font-weight: var(--sky-row-title-weight, 600);
@@ -7971,6 +7996,7 @@ html,
 
 .app-shell.mode-profile .profile-layout .you-page .chart-row .crs,
 .app-shell.mode-profile .profile-layout .you-page .aspect .ab p {
+  display: block;
   font-family: var(--font-detail);
   font-size: var(--sky-row-subline-size, 12.5px);
   font-weight: var(--sky-row-subline-weight, 400);
@@ -8493,7 +8519,7 @@ html,
   line-height: 1.25;
 }
 
-.app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crs, .aspect .ab p, .you-signatures-main p, .you-list-card .chart-row span) {
+.app-shell.mode-profile .profile-layout .you-page :is(.aspect .ab p, .you-signatures-main p) {
   font-family: var(--font-detail);
   font-size: var(--type-description);
   font-weight: 500;
@@ -8940,13 +8966,22 @@ html,
   line-height: 1.35;
 }
 
-.app-shell :is(.aspect-row-copy p, .chart-row .crs, .aspect .ab p, .retro-copy, .you-signatures-main p) {
+.app-shell :is(.aspect-row-copy p, .aspect .ab p, .retro-copy, .you-signatures-main p) {
   color: color-mix(in srgb, var(--ink-app) 68%, var(--muted-app));
   font-family: var(--font-detail);
   font-size: var(--type-description);
   font-weight: var(--fw-regular);
   letter-spacing: 0;
   line-height: 1.45;
+}
+
+.app-shell .chart-row .crs {
+  color: var(--muted-app);
+  font-family: var(--font-detail);
+  font-size: var(--sky-row-subline-size, 12.5px);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  line-height: 1.35;
 }
 
 .app-shell .aspect-section {
