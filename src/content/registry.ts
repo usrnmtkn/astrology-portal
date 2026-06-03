@@ -1,4 +1,4 @@
-import knowledgeBundle from "@yourorg/astro-knowledge";
+import knowledgeBundle from "./astro-knowledge.json";
 import type {
   ContentArea,
   ContentBundle,
@@ -366,6 +366,28 @@ function contentAreasFromStrings(values: string[] = []): ContentArea[] {
   return values.filter((value): value is ContentArea => allowed.has(value as ContentArea));
 }
 
+function cleanDisplayText(value: string | undefined | null) {
+  return value?.replace(/\s*\u2014\s*/g, " - ").trim() ?? "";
+}
+
+function cleanParagraphs(values: Array<string | undefined | null>) {
+  const seen = new Set<string>();
+  const paragraphs: string[] = [];
+
+  for (const value of values) {
+    const paragraph = cleanDisplayText(value);
+
+    if (!paragraph || seen.has(paragraph)) {
+      continue;
+    }
+
+    seen.add(paragraph);
+    paragraphs.push(paragraph);
+  }
+
+  return paragraphs;
+}
+
 function canonicalInsightToKnowledgeItem(card: CanonicalInsightCard): KnowledgeItem {
   const factor = card.sourceFactors?.[0] ?? {};
 
@@ -387,12 +409,12 @@ function canonicalInsightToKnowledgeItem(card: CanonicalInsightCard): KnowledgeI
       ...(factor.planetB ? { [factor.planetB]: planetPrimitiveMap[factor.planetB]?.keywords ?? [] } : {})
     },
     interpretation: {
-      coreTheme: card.summary ?? card.id,
-      displaySummary: card.summary,
-      detailParagraphs: [card.body, card.integration].filter((value): value is string => Boolean(value)),
-      livedExperience: card.body ?? card.summary ?? card.id,
-      gift: card.gift ?? "",
-      challenge: card.shadow ?? ""
+      coreTheme: cleanDisplayText(card.summary) || card.id,
+      displaySummary: cleanDisplayText(card.summary),
+      detailParagraphs: cleanParagraphs([card.body, card.integration]),
+      livedExperience: cleanDisplayText(card.body) || cleanDisplayText(card.summary) || card.id,
+      gift: cleanDisplayText(card.gift),
+      challenge: cleanDisplayText(card.shadow)
     },
     sources: [
       "data/insights/natal-aspects",
@@ -425,10 +447,10 @@ function canonicalTransitToKnowledgeItem(transit: CanonicalTransitNatal): Knowle
       [transit.natal]: planetPrimitiveMap[transit.natal]?.keywords ?? []
     },
     interpretation: {
-      coreTheme: transit.plainTranslation,
-      displaySummary: transit.plainTranslation,
-      detailParagraphs: [transit.policy, transit.note].filter((value): value is string => Boolean(value)),
-      livedExperience: transit.plainTranslation,
+      coreTheme: cleanDisplayText(transit.plainTranslation),
+      displaySummary: cleanDisplayText(transit.plainTranslation),
+      detailParagraphs: cleanParagraphs([transit.policy, transit.note]),
+      livedExperience: cleanDisplayText(transit.plainTranslation),
       gift: "",
       challenge: ""
     },
@@ -464,18 +486,18 @@ function canonicalSkyTransitToKnowledgeItem(transit: CanonicalSkyTransit): Knowl
       [transit.other]: planetPrimitiveMap[transit.other]?.keywords ?? []
     },
     interpretation: {
-      coreTheme: transit.tldr ?? transit.id,
-      displaySummary: transit.tldr ?? transit.business ?? transit.base ?? transit.modern,
-      detailParagraphs: [
+      coreTheme: cleanDisplayText(transit.tldr) || transit.id,
+      displaySummary: cleanDisplayText(transit.tldr) || cleanDisplayText(transit.business) || cleanDisplayText(transit.base) || cleanDisplayText(transit.modern),
+      detailParagraphs: cleanParagraphs([
         transit.modern,
         transit.traditional,
         transit.cyclic?.meaning,
         transit.arcApplying,
         transit.arcSeparating
-      ].filter((value): value is string => Boolean(value)),
-      livedExperience: transit.base ?? transit.modern ?? transit.tldr ?? transit.id,
-      gift: transit.business ?? "",
-      challenge: transit.shadow ?? ""
+      ]),
+      livedExperience: cleanDisplayText(transit.base) || cleanDisplayText(transit.modern) || cleanDisplayText(transit.tldr) || transit.id,
+      gift: cleanDisplayText(transit.business),
+      challenge: cleanDisplayText(transit.shadow)
     },
     sources: [
       "data/transits",
@@ -512,16 +534,16 @@ function canonicalPlacementToKnowledgeItem(placement: CanonicalPlacement): Knowl
       ...(sign ? { [sign]: signPrimitiveMap[sign]?.keywords ?? [] } : {})
     },
     interpretation: {
-      coreTheme: placement.tldr ?? placement.id,
-      displaySummary: placement.tldr ?? placement.body,
-      detailParagraphs: [
+      coreTheme: cleanDisplayText(placement.tldr) || placement.id,
+      displaySummary: cleanDisplayText(placement.tldr) || cleanDisplayText(placement.body),
+      detailParagraphs: cleanParagraphs([
         placement.gift,
         placement.challenge,
         placement.note
-      ].filter((value): value is string => Boolean(value)),
-      livedExperience: placement.body ?? placement.tldr ?? placement.id,
-      gift: placement.gift ?? "",
-      challenge: placement.challenge ?? ""
+      ]),
+      livedExperience: cleanDisplayText(placement.body) || cleanDisplayText(placement.tldr) || placement.id,
+      gift: cleanDisplayText(placement.gift),
+      challenge: cleanDisplayText(placement.challenge)
     },
     sources: [
       `data/placements/${placement.kind}`
@@ -1013,21 +1035,24 @@ export function approvedVoiceOrKnowledgeFallback(id: string, voiceId = defaultVo
   if (bundle.status === "READY" && bundle.voice) {
     return {
       bundle,
-      summary: bundle.voice.summary,
-      body: bundle.voice.body,
-      detailParagraphs: [bundle.voice.body, ...detailParagraphs]
+      summary: cleanDisplayText(bundle.voice.summary),
+      body: cleanDisplayText(bundle.voice.body),
+      detailParagraphs: cleanParagraphs([bundle.voice.body, ...detailParagraphs])
     };
   }
 
   if (bundle.knowledge) {
+    const summary = cleanDisplayText(bundle.knowledge.interpretation.displaySummary) || cleanDisplayText(bundle.knowledge.interpretation.coreTheme);
+    const body = cleanDisplayText(bundle.knowledge.interpretation.livedExperience);
+
     return {
       bundle,
-      summary: bundle.knowledge.interpretation.displaySummary ?? bundle.knowledge.interpretation.coreTheme,
-      body: bundle.knowledge.interpretation.livedExperience,
-      detailParagraphs: [
-        bundle.knowledge.interpretation.livedExperience,
+      summary,
+      body,
+      detailParagraphs: cleanParagraphs([
+        body,
         ...detailParagraphs
-      ]
+      ])
     };
   }
 
