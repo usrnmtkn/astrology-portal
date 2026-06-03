@@ -9749,8 +9749,7 @@ html,
   }
 }
 
-/* Final Friends access override. Keeps the Friends entry visible in every header/menu variant. */
-.topbar-actions .friends-toggle,
+/* Final Friends menu override. Keeps the overflow entry visible in every header variant. */
 .site-menu .site-menu-friends {
   align-items: center !important;
   display: inline-flex !important;
@@ -9760,34 +9759,6 @@ html,
   visibility: visible !important;
 }
 
-.topbar-actions .friends-toggle {
-  background: var(--surface-app);
-  border: 1px solid var(--line-app);
-  border-radius: 999px;
-  color: var(--ink-app);
-  flex: 0 0 auto;
-  font: var(--fw-semibold) 14px / 1 var(--font-ui);
-  min-height: 38px;
-  padding: 0 14px;
-}
-
-.topbar-actions .friends-toggle.active {
-  background: var(--ink-app);
-  border-color: var(--ink-app);
-  color: var(--surface-app);
-}
-
 .site-menu .site-menu-friends {
   width: 100%;
-}
-
-@media (max-width: 560px) {
-  .topbar-actions .friends-toggle {
-    min-height: 36px;
-    padding: 0 10px;
-  }
-
-  .topbar-actions .friends-toggle span {
-    display: none;
-  }
 }
