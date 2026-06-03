@@ -1,0 +1,18 @@
+{
+  "id": "venus-saturn",
+  "type": "planet-pair",
+  "sourceFactors": {
+    "planetA": "venus",
+    "planetB": "saturn"
+  },
+  "interpretation": {
+    "coreTheme": "Pleasure, affection, and value meet time, restraint, and commitment.",
+    "livedExperience": "Love may feel more trustworthy when it is consistent, proven, and willing to stay.",
+    "gift": "Loyalty, discernment, durability, and care that can mature.",
+    "challenge": "Affection may feel conditional, delayed, or easier to give than receive."
+  },
+  "sources": [
+    "data/primitives/planets.json"
+  ],
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,50 @@
+{
+  "sun": {
+    "name": "Sun",
+    "keywords": ["identity", "vitality", "visibility", "purpose", "will", "self-expression"]
+  },
+  "moon": {
+    "name": "Moon",
+    "keywords": ["feelings", "needs", "rhythm", "memory", "belonging", "instinct"]
+  },
+  "mercury": {
+    "name": "Mercury",
+    "keywords": ["thinking", "language", "questions", "commerce", "pattern recognition", "movement"]
+  },
+  "venus": {
+    "name": "Venus",
+    "keywords": ["love", "pleasure", "value", "ease", "attraction", "harmony"]
+  },
+  "mars": {
+    "name": "Mars",
+    "keywords": ["drive", "action", "conflict", "desire", "courage", "heat"]
+  },
+  "jupiter": {
+    "name": "Jupiter",
+    "keywords": ["growth", "belief", "confidence", "generosity", "meaning", "expansion"]
+  },
+  "saturn": {
+    "name": "Saturn",
+    "keywords": ["time", "restraint", "commitment", "responsibility", "structure", "maturity"]
+  },
+  "uranus": {
+    "name": "Uranus",
+    "keywords": ["change", "disruption", "liberation", "awakening", "experimentation", "surprise"]
+  },
+  "neptune": {
+    "name": "Neptune",
+    "keywords": ["imagination", "dreams", "dissolution", "sensitivity", "longing", "spirituality"]
+  },
+  "pluto": {
+    "name": "Pluto",
+    "keywords": ["power", "depth", "transformation", "compulsion", "release", "regeneration"]
+  },
+  "true-node": {
+    "name": "True Node",
+    "keywords": ["direction", "growth edge", "future pull", "encounter", "development", "orientation"]
+  },
+  "ascendant": {
+    "name": "Ascendant",
+    "keywords": ["presentation", "body", "identity", "first impression", "approach", "interface"]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "aries": {
+    "name": "Aries",
+    "element": "Fire",
+    "modality": "Cardinal"
+  },
+  "libra": {
+    "name": "Libra",
+    "element": "Air",
+    "modality": "Cardinal"
+  }
+}
