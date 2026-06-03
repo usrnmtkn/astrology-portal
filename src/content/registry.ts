@@ -91,11 +91,15 @@ type CanonicalPlacement = {
   planet?: string;
   point?: string;
   key?: string | number;
+  sign?: string;
   house?: string | number;
   tldr?: string;
   body?: string;
   gift?: string;
   challenge?: string;
+  business?: string;
+  shadow?: string;
+  policy?: string;
   note?: string;
   status?: string;
 };
@@ -110,6 +114,7 @@ type CanonicalKnowledgeBundle = {
   transits: CanonicalSkyTransit[];
   transitNatal: CanonicalTransitNatal[];
   placements: CanonicalPlacement[];
+  pointPlacements: CanonicalPlacement[];
   voiceContent: CanonicalVoiceContent[];
 };
 
@@ -464,6 +469,9 @@ function canonicalTransitToKnowledgeItem(transit: CanonicalTransitNatal): Knowle
 }
 
 function canonicalSkyTransitToKnowledgeItem(transit: CanonicalSkyTransit): KnowledgeItem {
+  const body = cleanDisplayText(transit.modern) || cleanDisplayText(transit.base) || cleanDisplayText(transit.tldr) || transit.id;
+  const summary = cleanDisplayText(transit.tldr) || cleanDisplayText(transit.business) || body;
+
   return {
     id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
     type: "current-sky-aspect",
@@ -486,16 +494,10 @@ function canonicalSkyTransitToKnowledgeItem(transit: CanonicalSkyTransit): Knowl
       [transit.other]: planetPrimitiveMap[transit.other]?.keywords ?? []
     },
     interpretation: {
-      coreTheme: cleanDisplayText(transit.tldr) || transit.id,
-      displaySummary: cleanDisplayText(transit.tldr) || cleanDisplayText(transit.business) || cleanDisplayText(transit.base) || cleanDisplayText(transit.modern),
-      detailParagraphs: cleanParagraphs([
-        transit.modern,
-        transit.traditional,
-        transit.cyclic?.meaning,
-        transit.arcApplying,
-        transit.arcSeparating
-      ]),
-      livedExperience: cleanDisplayText(transit.base) || cleanDisplayText(transit.modern) || cleanDisplayText(transit.tldr) || transit.id,
+      coreTheme: summary,
+      displaySummary: summary,
+      detailParagraphs: cleanParagraphs([transit.cyclic?.meaning]),
+      livedExperience: body,
       gift: cleanDisplayText(transit.business),
       challenge: cleanDisplayText(transit.shadow)
     },
@@ -580,6 +582,39 @@ function sentenceStart(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+const currentSkyPlanetTopic: Record<string, string> = {
+  jupiter: "growth, opportunity, and perspective",
+  mars: "energy, conflict, and momentum",
+  mercury: "thinking, communication, and decisions",
+  moon: "the emotional weather",
+  neptune: "imagination, longing, and uncertainty",
+  pluto: "power, pressure, and deep change",
+  saturn: "limits, responsibility, and structure",
+  sun: "attention, vitality, and the tone of the season",
+  "true-node": "the directional pull of the moment",
+  uranus: "change, disruption, and new patterns",
+  venus: "connection, pleasure, money, and desire"
+};
+
+const currentSkySignStyle: Record<string, string> = {
+  aquarius: "systems, distance, community, and principled change",
+  aries: "directness, heat, initiative, and urgency",
+  cancer: "memory, protection, belonging, and emotional context",
+  capricorn: "structure, restraint, responsibility, and practical next steps",
+  gemini: "curiosity, language, connection, and fast-moving information",
+  leo: "visibility, warmth, pride, and creative expression",
+  libra: "balance, comparison, relationship, and social intelligence",
+  pisces: "imagination, compassion, surrender, and porous boundaries",
+  sagittarius: "belief, movement, honesty, and the larger horizon",
+  scorpio: "depth, privacy, intensity, and emotional truth",
+  taurus: "stability, embodiment, pleasure, and simple values",
+  virgo: "discernment, repair, usefulness, and careful attention"
+};
+
+const pointAliases: Record<string, string> = {
+  "north-node": "true-node"
+};
+
 const rowThemeByPlanet: Record<string, string> = {
   ascendant: "presence",
   jupiter: "growth",
@@ -643,6 +678,76 @@ function generatedPlacementDetailParagraphs(planetName: string, signName: string
 
 function displayPlanetName(id: string) {
   return planetPrimitiveMap[id]?.name ?? titleizePrimitive(id);
+}
+
+function displaySignName(id: string) {
+  return signPrimitiveMap[id]?.name ?? titleizePrimitive(id);
+}
+
+function currentSkyPlacementBody(placement: CanonicalPlacement, planetId: string, signId: string) {
+  const planetName = displayPlanetName(planetId);
+  const signName = displaySignName(signId);
+  const topic = currentSkyPlanetTopic[planetId] ?? `${planetName.toLowerCase()} topics`;
+  const style = currentSkySignStyle[signId] ?? `${signName}'s style`;
+  const sourceBody = cleanDisplayText(placement.body)
+    .replace(/\s*\([^)]*traditional dignity[^)]*\)\.?/gi, "")
+    .replace(/\bYou are here to\b/g, "This transit favors")
+    .replace(/\byou\b/gi, "people")
+    .trim();
+
+  if (placement.status === "REVIEWED" || placement.status === "APPROVED" || placement.status === "LIVE") {
+    return sourceBody || `Right now, ${planetName} in ${signName} brings ${topic} through ${style}.`;
+  }
+
+  return `Right now, ${planetName} in ${signName} brings ${topic} through ${style}. This describes the atmosphere of the moment, not a permanent trait.`;
+}
+
+function currentSkyPlacementToKnowledgeItem(placement: CanonicalPlacement): KnowledgeItem | null {
+  const sourcePlanet = placement.planet ?? placement.point;
+  const planet = sourcePlanet ? pointAliases[sourcePlanet] ?? sourcePlanet : undefined;
+  const sign = placement.kind === "sign"
+    ? typeof placement.key === "string"
+      ? placement.key
+      : placement.sign
+    : undefined;
+
+  if (!planet || !sign) {
+    return null;
+  }
+
+  const body = currentSkyPlacementBody(placement, planet, sign);
+
+  return {
+    id: placementContentId(planet, sign),
+    type: "placement",
+    sourceFactors: {
+      planetA: planet,
+      sign
+    },
+    surfaceTags: ["daily_forecast", "behind_forecast", "areas_of_life"],
+    contentAreas: uniqueValues([
+      ...(contentAreasByPlanet[planet] ?? []),
+      "daily-life" as ContentArea
+    ]),
+    priority: ["sun", "moon"].includes(planet) ? 75 : 45,
+    intensity: ["sun", "moon"].includes(planet) ? 4 : 2,
+    knowledgeBasis: {
+      [planet]: planetPrimitiveMap[planet]?.keywords ?? [],
+      [sign]: signPrimitiveMap[sign]?.keywords ?? []
+    },
+    interpretation: {
+      coreTheme: `${displayPlanetName(planet)} in ${displaySignName(sign)}`,
+      displaySummary: body,
+      detailParagraphs: [],
+      livedExperience: body,
+      gift: "",
+      challenge: ""
+    },
+    sources: [
+      `data/placements/${placement.kind}`
+    ],
+    status: reviewStatus(placement.status, "SOURCE_BACKED")
+  };
 }
 
 function knowledgeDetailParagraphs(item: KnowledgeItem) {
