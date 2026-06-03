@@ -2528,8 +2528,13 @@ button {
 }
 
 .planet-marker:hover .planet-tooltip,
-.planet-marker:focus-visible .planet-tooltip {
+.planet-marker:focus-visible .planet-tooltip,
+.planet-tooltip.planet-tooltip-active {
   opacity: 1;
+}
+
+.planet-tooltips {
+  pointer-events: none;
 }
 
 .planet-marker:focus-visible .planet-hit-area {

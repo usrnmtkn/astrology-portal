@@ -2752,6 +2752,10 @@ function SkyWheel({
   const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
+  const tooltipWidth = 214;
+  const tooltipLineHeight = 18;
+  const tooltipPaddingY = 12;
+  const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
@@ -2770,10 +2774,23 @@ function SkyWheel({
         : arcPath(startAngle, endAngle, signLabelRadius)
     };
   });
+  const activeTooltipPosition = activeTooltipPlanet
+    ? positions.find((position) => position.planet === activeTooltipPlanet)
+    : null;
+
+  function tooltipDetails(position: PlanetPosition) {
+    const marker = point(planetAngle(position), radius.planet);
+    const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
+    const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
+    const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
+    const x = marker.x > center ? marker.x - tooltipWidth - 18 : marker.x + 18;
+    const y = Math.min(Math.max(marker.y - height / 2, 18), 600 - height - 18);
+
+    return { lines, height, x, y };
+  }
 
   return (
     <svg className="sky-wheel" viewBox="0 0 600 600" role="img" aria-label="Planet positions">
-      <title>Current zodiac wheel</title>
       <defs>
         {signLabelPaths.map(({ id, path }) => (
           <path id={id} key={id} d={path} />
@@ -2844,7 +2861,6 @@ function SkyWheel({
                 x2={b.x}
                 y2={b.y}
               />
-              <title>{from.planet} {type} {to.planet}, {orb.toFixed(1)}° orb</title>
             </g>
           );
         })}
@@ -2913,17 +2929,7 @@ function SkyWheel({
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
           const label = point(planetAngle(position), radius.planet - 22);
-          const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
-          const tooltipLines = [placementLine, ...aspectTooltipLines(position, aspects)];
-          const tooltipWidth = 214;
-          const tooltipLineHeight = 18;
-          const tooltipPaddingY = 12;
-          const tooltipHeight = tooltipPaddingY * 2 + tooltipLines.length * tooltipLineHeight;
-          const tooltipX = marker.x > center ? marker.x - tooltipWidth - 18 : marker.x + 18;
-          const tooltipY = Math.min(
-            Math.max(marker.y - tooltipHeight / 2, 18),
-            600 - tooltipHeight - 18
-          );
+          const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
             <g
@@ -2932,6 +2938,10 @@ function SkyWheel({
               tabIndex={0}
               role="img"
               aria-label={tooltipLines.join(". ")}
+              onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
+              onFocus={() => setActiveTooltipPlanet(position.planet)}
+              onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
+              onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
             >
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
               <circle cx={marker.x} cy={marker.y} r="18" className="planet-hit-area" />
@@ -2941,11 +2951,22 @@ function SkyWheel({
               <text x={label.x} y={label.y} className="planet-degree">
                 {Math.floor(position.degree)}°
               </text>
-              <g className="planet-tooltip" transform={`translate(${tooltipX} ${tooltipY})`} aria-hidden="true">
-                <rect width={tooltipWidth} height={tooltipHeight} rx="12" />
-                {tooltipLines.map((line, index) => (
+            </g>
+          );
+        })}
+      </g>
+
+      {activeTooltipPosition && (
+        <g className="planet-tooltips" aria-hidden="true">
+          {(() => {
+            const { lines, height, x, y } = tooltipDetails(activeTooltipPosition);
+
+            return (
+              <g className="planet-tooltip planet-tooltip-active" transform={`translate(${x} ${y})`}>
+                <rect width={tooltipWidth} height={height} rx="12" />
+                {lines.map((line, index) => (
                   <text
-                    key={`${position.planet}-tooltip-${line}`}
+                    key={`${activeTooltipPosition.planet}-tooltip-${line}`}
                     x="14"
                     y={tooltipPaddingY + 13 + index * tooltipLineHeight}
                     className={index === 0 ? "planet-tooltip-title" : undefined}
@@ -2954,10 +2975,10 @@ function SkyWheel({
                   </text>
                 ))}
               </g>
-            </g>
-          );
-        })}
-      </g>
+            );
+          })()}
+        </g>
+      )}
     </svg>
   );
 }
