@@ -1919,10 +1919,16 @@ export function App() {
           {menuOpen && (
             <nav className="site-menu" aria-label="Site menu">
               {userProfile && (
-                <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
-                  <User size={20} aria-hidden="true" />
-                  <span>Account</span>
-                </button>
+                <>
+                  <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
+                    <User size={20} aria-hidden="true" />
+                    <span>Account</span>
+                  </button>
+                  <button type="button" onClick={() => { setMode("friends"); setMenuOpen(false); }}>
+                    <Users size={20} aria-hidden="true" />
+                    <span>Friends</span>
+                  </button>
+                </>
               )}
               <button type="button" onClick={() => { setMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />

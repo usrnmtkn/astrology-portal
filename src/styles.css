@@ -5137,7 +5137,7 @@ blockquote {
 
 /* Keep all header controls inside the single navigation pill. */
 .topbar {
-  --nav-width: clamp(640px, 76vw, 760px);
+  --nav-width: clamp(720px, 82vw, 860px);
   display: flex;
   gap: 12px;
 }
@@ -5145,10 +5145,12 @@ blockquote {
 .topbar .brand,
 .topbar-actions {
   flex: 1 1 0;
+  min-width: 0;
 }
 
 .site-nav {
   flex: 0 0 auto;
+  min-width: max-content;
 }
 
 .topbar-actions {
@@ -5159,6 +5161,15 @@ blockquote {
   .topbar {
     --nav-width: calc(100vw - 24px);
     display: flex;
+    gap: 8px;
+  }
+
+  .site-nav {
+    gap: 4px;
+  }
+
+  .site-nav button {
+    padding-inline: 9px;
   }
 }
 
@@ -5284,11 +5295,13 @@ blockquote {
 
 .topbar .brand {
   flex: 1 1 0;
+  min-width: 0;
   order: 1;
 }
 
 .site-nav {
   flex: 0 0 auto;
+  min-width: max-content;
   order: 2;
 }
 
@@ -5300,12 +5313,41 @@ blockquote {
 }
 
 @media (max-width: 560px) {
+  .topbar {
+    gap: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .topbar .brand {
+    flex: 0 1 auto;
+  }
+
   .site-nav button span {
     display: inline;
   }
 
+  .site-nav button {
+    font-size: 0.78rem;
+    gap: 4px;
+    padding-inline: 6px;
+  }
+
   .topbar .brand-wordmark {
     display: flex;
+  }
+
+  .topbar-actions {
+    flex: 0 0 auto;
+    gap: 4px;
+    min-width: auto;
+  }
+
+  .theme-toggle,
+  .menu-toggle {
+    flex-basis: 36px;
+    height: 36px;
+    width: 36px;
   }
 }
 
