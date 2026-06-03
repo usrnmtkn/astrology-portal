@@ -2465,7 +2465,7 @@ function SkyWheel({
   const center = 300;
   const radius = {
     outer: 284,
-    signInner: 226,
+    signInner: 240,
     planet: 190,
     aspect: 150,
     house: 112,
