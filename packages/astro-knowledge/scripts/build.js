@@ -96,6 +96,14 @@ function addEntry(index, entry, category) {
   writeJson(path.join(distRoot, file), entry);
 }
 
+function withBundleMetadata(packageJson, generatedAt, collections) {
+  return {
+    version: packageJson.version,
+    generatedAt,
+    ...collections
+  };
+}
+
 function build() {
   const errors = validateAll();
   if (errors.length > 0) {
@@ -134,9 +142,8 @@ function build() {
   const voiceProfiles = loadVoiceProfiles();
   const voiceContent = loadJsonTree("generated");
 
-  const knowledge = {
-    version: packageJson.version,
-    generatedAt: new Date().toISOString(),
+  const generatedAt = new Date().toISOString();
+  const knowledge = withBundleMetadata(packageJson, generatedAt, {
     primitives,
     pairs,
     transits,
@@ -164,7 +171,90 @@ function build() {
     insightCards,
     voiceProfiles,
     voiceContent
-  };
+  });
+
+  const skyKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    transits,
+    planetary,
+    points,
+    pointTransitHouses,
+    placements,
+    pointPlacements,
+    modifiers,
+    lunations,
+    frameworks: frameworks.filter((entry) => [
+      "traditional-transit-framework",
+      "lunar-cycle-framework",
+      "transit-lifecycle-framework",
+      "predictive-trigger-method-framework",
+      "transit-sect-guide"
+    ].includes(entry.id)),
+    templates,
+    voiceProfiles,
+    voiceContent
+  });
+
+  const natalKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    planetary,
+    points,
+    pointPlacements,
+    pointAspects,
+    placements,
+    angles,
+    modifiers,
+    chartRulers,
+    insightCards,
+    frameworks: frameworks.filter((entry) => [
+      "natal-synthesis-framework",
+      "body-astrology-framework",
+      "chiron-method-framework",
+      "developmental-age-map-framework"
+    ].includes(entry.id)),
+    voiceProfiles,
+    voiceContent
+  });
+
+  const relationshipKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    planetary,
+    points,
+    synastry,
+    synastryAspects,
+    synastryPointContacts,
+    synastryHouseOverlays,
+    composite,
+    frameworks: frameworks.filter((entry) => [
+      "synastry-composite-method-framework",
+      "relationship-dynamics-framework",
+      "synastry-bond-types-framework",
+      "asteroid-synastry-policy",
+      "composite-synthesis-examples"
+    ].includes(entry.id)),
+    voiceProfiles,
+    voiceContent
+  });
+
+  const webKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives,
+    pairs,
+    transits,
+    transitNatal,
+    planetary,
+    points,
+    pointPlacements,
+    placements,
+    angles,
+    modifiers,
+    chartRulers,
+    insightCards,
+    voiceProfiles,
+    voiceContent
+  });
 
   const index = {
     version: packageJson.version,
@@ -204,6 +294,10 @@ function build() {
   for (const entry of voiceContent) addEntry(index, entry, `voice-content/${entry.voiceId ?? "unknown"}`);
 
   writeJson(path.join(distRoot, "knowledge.json"), knowledge);
+  writeJson(path.join(distRoot, "sky.json"), skyKnowledge);
+  writeJson(path.join(distRoot, "natal.json"), natalKnowledge);
+  writeJson(path.join(distRoot, "relationships.json"), relationshipKnowledge);
+  writeJson(path.join(distRoot, "web.json"), webKnowledge);
   writeJson(path.join(distRoot, "knowledge.index.json"), index);
 
   const counts = {

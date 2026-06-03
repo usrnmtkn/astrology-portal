@@ -40,15 +40,15 @@ The first build uses deterministic sample data so the product can be designed an
 
 ## Knowledge Base Integration
 
-The app does not own astrology source material. The source of truth lives in the monorepo package at `packages/astro-knowledge` and is imported as `@tldr/astro-knowledge`.
+The app does not own astrology source material. The source of truth lives in the monorepo package at `packages/astro-knowledge`. Import the smallest domain bundle that matches the surface instead of the full package.
 
 Keep this diagram updated whenever the package structure, dependency path, or content selection flow changes.
 
 ```mermaid
 flowchart LR
   KB["packages/astro-knowledge\nsource-backed data, voice profiles,\ngenerated voice content"]
-  BUILD["npm run build:knowledge\ncreates dist/knowledge.json\nand dist/knowledge.index.json"]
-  PACKAGE["@tldr/astro-knowledge\nworkspace package import"]
+  BUILD["npm run build:knowledge\ncreates dist/sky.json, dist/natal.json,\ndist/relationships.json, dist/web.json,\ndist/knowledge.json, and index files"]
+  PACKAGE["@tldr/astro-knowledge/web\ncurrent website compatibility import"]
   REGISTRY["src/content/registry.ts\nnormalizes knowledge and voice items"]
   SURFACES["content surfaces\ncore traits, love patterns,\ncareer patterns, forecasts"]
   UI["React app UI"]
