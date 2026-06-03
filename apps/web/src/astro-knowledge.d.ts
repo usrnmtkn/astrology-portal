@@ -18,6 +18,16 @@ declare module "@tldr/astro-knowledge/relationships" {
   export default knowledge;
 }
 
+declare module "@tldr/astro-knowledge/synastry" {
+  const knowledge: unknown;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/composite" {
+  const knowledge: unknown;
+  export default knowledge;
+}
+
 declare module "@tldr/astro-knowledge/web" {
   const knowledge: unknown;
   export default knowledge;

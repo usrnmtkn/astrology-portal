@@ -47,7 +47,7 @@ Keep this diagram updated whenever the package structure, dependency path, or co
 ```mermaid
 flowchart LR
   KB["packages/astro-knowledge\nsource-backed data, voice profiles,\ngenerated voice content"]
-  BUILD["npm run build:knowledge\ncreates dist/sky.json, dist/natal.json,\ndist/relationships.json, dist/web.json,\ndist/knowledge.json, and index files"]
+  BUILD["npm run build:knowledge\ncreates domain bundles for sky,\nnatal, synastry, composite,\nrelationships, web, and index files"]
   PACKAGE["@tldr/astro-knowledge/web\ncurrent website compatibility bundle"]
   REGISTRY["src/content/registry.ts\nlazy-loaded after the app shell\nnormalizes knowledge and voice items"]
   SURFACES["content surfaces\ncore traits, love patterns,\ncareer patterns, forecasts"]
