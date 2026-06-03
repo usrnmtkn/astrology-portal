@@ -6208,6 +6208,31 @@ html,
   line-height: 1.5;
 }
 
+.retro-dates,
+.retro-shadow-lines {
+  color: var(--muted-app);
+  font-family: var(--font-ui);
+  font-size: 0.94rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.retro-shadow-lines {
+  display: grid;
+  gap: 2px;
+}
+
+.retro-shadow-lines:empty {
+  display: none;
+}
+
+.retrograde-detail-line {
+  color: var(--ink-app);
+  display: block;
+  font-weight: var(--fw-semibold);
+}
+
 .theme-dark .retro {
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }

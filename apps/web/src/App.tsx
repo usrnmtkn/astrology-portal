@@ -2258,7 +2258,7 @@ export function App() {
             <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
             <SkyCards sky={sky} />
-            <RetrogradeCallout positions={sky.positions} onOpenDetail={setSelectedSkyDetail} />
+            <RetrogradeCallout positions={sky.positions} generatedAt={sky.generatedAt} onOpenDetail={setSelectedSkyDetail} />
           </section>
         )}
 
@@ -3178,6 +3178,126 @@ function moonPhaseTldr(phase: string) {
   return summaries[phase] ?? "The Moon is setting the emotional weather. Notice what rises, softens, and asks for care.";
 }
 
+type RetrogradeWindow = {
+  planet: string;
+  preShadowStart?: string;
+  retrogradeStart: string;
+  retrogradeEnd: string;
+  postShadowEnd?: string;
+  shadows?: "standard" | "not-applicable";
+};
+
+const retrogradeWindows: RetrogradeWindow[] = [
+  {
+    planet: "Jupiter",
+    preShadowStart: "2025-08-17",
+    retrogradeStart: "2025-11-11",
+    retrogradeEnd: "2026-03-11",
+    postShadowEnd: "2026-06-06"
+  },
+  {
+    planet: "Pluto",
+    preShadowStart: "2026-01-12",
+    retrogradeStart: "2026-05-06",
+    retrogradeEnd: "2026-10-16",
+    postShadowEnd: "2027-02-07"
+  },
+  {
+    planet: "True Node",
+    retrogradeStart: "2026-05-11",
+    retrogradeEnd: "2026-06-07",
+    shadows: "not-applicable"
+  },
+  {
+    planet: "True Node",
+    retrogradeStart: "2026-06-08",
+    retrogradeEnd: "2026-06-19",
+    shadows: "not-applicable"
+  },
+  {
+    planet: "Saturn",
+    preShadowStart: "2026-04-20",
+    retrogradeStart: "2026-07-26",
+    retrogradeEnd: "2026-12-10",
+    postShadowEnd: "2027-03-15"
+  },
+  {
+    planet: "Uranus",
+    preShadowStart: "2026-05-25",
+    retrogradeStart: "2026-09-10",
+    retrogradeEnd: "2027-02-08",
+    postShadowEnd: "2027-05-26"
+  },
+  {
+    planet: "Neptune",
+    preShadowStart: "2026-03-16",
+    retrogradeStart: "2026-07-07",
+    retrogradeEnd: "2026-12-12",
+    postShadowEnd: "2027-04-02"
+  },
+  {
+    planet: "Jupiter",
+    preShadowStart: "2026-09-17",
+    retrogradeStart: "2026-12-13",
+    retrogradeEnd: "2027-04-13",
+    postShadowEnd: "2027-07-11"
+  }
+];
+
+function dateOnly(value: string | Date) {
+  const date = typeof value === "string" ? new Date(`${value.slice(0, 10)}T00:00:00Z`) : value;
+
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
+function formatRetrogradeDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function formatRetrogradeDateRange(start: string, end: string) {
+  return `${formatRetrogradeDate(start)} - ${formatRetrogradeDate(end)}`;
+}
+
+function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
+  const currentDay = dateOnly(generatedAt);
+
+  return retrogradeWindows.find((window) => {
+    if (window.planet !== position.planet) {
+      return false;
+    }
+
+    return currentDay >= dateOnly(window.retrogradeStart) && currentDay <= dateOnly(window.retrogradeEnd);
+  }) ?? retrogradeWindows.find((window) => window.planet === position.planet);
+}
+
+function retrogradeTimelineLines(window?: RetrogradeWindow) {
+  if (!window) {
+    return ["Retrograde dates are being calculated for this cycle."];
+  }
+
+  if (window.shadows === "not-applicable") {
+    return [
+      `Retrograde: ${formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd)}`,
+      "Pre-shadow: not used for lunar nodes",
+      "Post-shadow: not used for lunar nodes"
+    ];
+  }
+
+  return [
+    `Pre-shadow: ${window.preShadowStart ? formatRetrogradeDate(window.preShadowStart) : "not available"}`,
+    `Retrograde: ${formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd)}`,
+    `Post-shadow: ${window.postShadowEnd ? formatRetrogradeDate(window.postShadowEnd) : "not available"}`
+  ];
+}
+
+function retrogradeCardRange(window?: RetrogradeWindow) {
+  if (!window) {
+    return "Dates calculating";
+  }
+
+  return `Retrograde ${formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd)}`;
+}
+
 function SkyCards({ sky }: { sky: SkySnapshot }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
@@ -3219,9 +3339,11 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
 
 function RetrogradeCallout({
   positions,
+  generatedAt,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
+  generatedAt: string;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const retrogrades = positions.filter((position) => position.motion === "retrograde");
@@ -3237,7 +3359,12 @@ function RetrogradeCallout({
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
-          const detailParagraphs = retrogradeDetailBody(position);
+          const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
+          const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+          const detailParagraphs = [
+            ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
+            ...retrogradeDetailBody(position)
+          ];
 
           return (
             <button
@@ -3263,6 +3390,12 @@ function RetrogradeCallout({
                   <em>now</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
+                <span className="retro-dates">{retrogradeCardRange(retrogradeWindow)}</span>
+                <span className="retro-shadow-lines">
+                  {timelineLines.filter((line) => line.startsWith("Pre-shadow") || line.startsWith("Post-shadow")).map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </span>
                 <span className="retro-copy">Review, refine, revisit. This planet is asking for a second look.</span>
               </span>
             </button>
