@@ -22,6 +22,7 @@
   --text-reading: 16.5px;
   --text-body: 16px;
   --text-body-sm: 15px;
+  --text-description: 15px;
   --text-label: 15px;
   --text-meta: 13px;
   --text-caption: 12.5px;
@@ -30,6 +31,7 @@
   --type-label: var(--text-eyebrow);
   --type-small: var(--text-meta);
   --type-copy: var(--text-caption);
+  --type-description: var(--text-description);
   --type-row-title: var(--text-body);
   --type-section-title: var(--text-h3);
   --type-card-title: var(--text-h2);
@@ -5791,6 +5793,8 @@ blockquote {
   --line-app: rgba(20, 20, 20, 0.08);
   --line-strong-app: rgba(20, 20, 20, 0.14);
   --accent-app: #5c83d8;
+  --alert-app: #7c3aed;
+  --retrograde-app: var(--alert-app);
   --warn-app: #b45309;
   --error-app: #b42318;
   --radius-app: 28px;
@@ -5844,6 +5848,8 @@ html,
   --line-app: rgba(255, 255, 255, 0.09);
   --line-strong-app: rgba(255, 255, 255, 0.16);
   --accent-app: #9fb8ff;
+  --alert-app: #a78bfa;
+  --retrograde-app: var(--alert-app);
   background:
     radial-gradient(62% 54% at 0% 0%, rgba(94, 34, 52, 0.48) 0%, transparent 57%),
     radial-gradient(58% 52% at 100% 0%, rgba(49, 69, 122, 0.46) 0%, transparent 59%),
@@ -6131,36 +6137,36 @@ html,
 
 .retro-badge {
   align-items: center;
-  background: var(--glyph-orb-app);
-  border: 1px solid var(--line-app);
+  background: color-mix(in srgb, var(--surface-app) 82%, var(--retrograde-app) 14%);
+  border: 1px solid color-mix(in srgb, var(--retrograde-app) 24%, var(--line-app));
   border-radius: 50%;
-  color: var(--ink-app);
+  color: var(--retrograde-app);
   display: inline-flex;
   flex: 0 0 auto;
   font-family: var(--font-symbol);
-  font-size: var(--sky-row-glyph-size, 19px);
-  height: 46px;
+  font-size: 30px;
+  height: 56px;
   justify-content: center;
   line-height: 1;
   position: relative;
-  width: 46px;
+  width: 56px;
 }
 
 .retro-badge .rx {
   align-items: center;
-  background: var(--ink-app);
+  background: var(--retrograde-app);
   border-radius: 50%;
   color: var(--surface-app);
   display: inline-flex;
   font-family: var(--font-symbol);
-  font-size: var(--text-micro);
-  height: 19px;
+  font-size: 12px;
+  height: 21px;
   justify-content: center;
   line-height: 1;
   position: absolute;
   right: -3px;
   top: -3px;
-  width: 19px;
+  width: 21px;
 }
 
 .retro-main {
@@ -6196,9 +6202,10 @@ html,
 }
 
 .retro-copy {
-  color: var(--muted-app);
-  font-size: var(--text-body-sm);
-  line-height: 1.55;
+  color: color-mix(in srgb, var(--ink-app) 68%, var(--muted-app));
+  font-size: var(--type-description);
+  font-weight: var(--fw-regular);
+  line-height: 1.5;
 }
 
 .theme-dark .retro {
@@ -6322,11 +6329,11 @@ html,
 }
 
 .sky-pl.is-retrograde {
-  background: color-mix(in srgb, var(--surface-app) 86%, #8b5cf6 8%);
+  background: color-mix(in srgb, var(--surface-app) 86%, var(--retrograde-app) 8%);
 }
 
 .sky-pl.is-retrograde:hover {
-  background: color-mix(in srgb, var(--surface-app) 80%, #8b5cf6 12%);
+  background: color-mix(in srgb, var(--surface-app) 80%, var(--retrograde-app) 12%);
 }
 
 .sky-pl-main {
@@ -6372,7 +6379,7 @@ html,
 }
 
 .sky-pl-rx {
-  color: var(--alert-app, #b7791f);
+  color: var(--retrograde-app);
   font-family: var(--font-symbol);
   font-weight: 700;
 }
@@ -6440,7 +6447,7 @@ html,
 }
 
 .spl-status-alert {
-  color: var(--alert-app, #b7791f);
+  color: var(--retrograde-app);
 }
 
 .sky-pl-chevron {
@@ -6461,7 +6468,7 @@ html,
 }
 
 .theme-dark .sky-pl.is-retrograde {
-  background: color-mix(in srgb, var(--surface-app) 80%, #8b5cf6 16%);
+  background: color-mix(in srgb, var(--surface-app) 80%, var(--retrograde-app) 16%);
 }
 
 .theme-dark .spl-dig-good {
@@ -8502,19 +8509,19 @@ html,
 }
 
 .app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge {
-  background: var(--glyph-orb-app);
-  border-color: var(--line-app);
-  color: var(--ink-app);
+  background: color-mix(in srgb, var(--surface-app) 82%, var(--retrograde-app) 14%);
+  border-color: color-mix(in srgb, var(--retrograde-app) 24%, var(--line-app));
+  color: var(--retrograde-app);
 }
 
 .app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge .rx {
-  background: var(--ink-app);
+  background: var(--retrograde-app);
   color: var(--surface-app);
 }
 
 .app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro .retro-badge span.rx,
 .app-shell:not(.mode-profile):not(.mode-account):not(.mode-settings):not(.auth-mode) button.retro:is(:hover, :focus, :focus-visible, :focus-within, :active) .retro-badge span.rx {
-  background: var(--ink-app);
+  background: var(--retrograde-app);
   color: var(--surface-app);
 }
 
@@ -8639,7 +8646,7 @@ html,
 
 .app-shell.mode-profile .profile-layout .you-page :is(.chart-row .crs, .aspect .ab p, .you-signatures-main p, .big-three-row span, .you-list-card .chart-row span) {
   font-family: var(--font-detail);
-  font-size: var(--type-copy);
+  font-size: var(--type-description);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.5;
@@ -8885,13 +8892,13 @@ html,
 }
 
 .app-shell .aspect-row-copy p {
-  color: var(--muted-app);
+  color: color-mix(in srgb, var(--ink-app) 68%, var(--muted-app));
   font-family: var(--font-detail);
-  font-size: var(--sky-row-subline-size, 12.5px);
-  font-weight: var(--sky-row-subline-weight, 400);
+  font-size: var(--type-description);
+  font-weight: var(--fw-regular);
   letter-spacing: 0;
-  line-height: 1.35;
-  margin: 4px 0 0;
+  line-height: 1.45;
+  margin: 5px 0 0;
 }
 
 .app-shell .aspect-row-meta {
@@ -8945,8 +8952,8 @@ html,
   }
 
   .app-shell .aspect-row-copy p {
-    font-size: var(--sky-row-subline-size, 12.5px);
-    line-height: 1.35;
+    font-size: var(--type-description);
+    line-height: 1.45;
   }
 
   .app-shell .aspect-row-meta {
@@ -9075,7 +9082,7 @@ html,
   outline: none;
 }
 
-.app-shell :is(.sky-pl-glyph, .aspect-row-glyphs, .chart-row .crg, .retro-badge) {
+.app-shell :is(.sky-pl-glyph, .aspect-row-glyphs, .chart-row .crg) {
   color: var(--wheel-glyph, var(--ink-app));
   font-family: var(--font-glyph);
   font-size: var(--sky-row-glyph-size, 19px);
@@ -9093,13 +9100,22 @@ html,
   line-height: var(--sky-row-line-height, 1.3);
 }
 
-.app-shell :is(.sky-pl-range, .spl-range, .aspect-row-copy p, .chart-row .crs, .aspect .ab p) {
+.app-shell :is(.sky-pl-range, .spl-range) {
   color: var(--muted-app);
   font-family: var(--font-detail);
   font-size: var(--sky-row-subline-size, 12.5px);
   font-weight: var(--fw-regular);
   letter-spacing: 0;
   line-height: 1.35;
+}
+
+.app-shell :is(.aspect-row-copy p, .chart-row .crs, .aspect .ab p, .retro-copy, .you-signatures-main p) {
+  color: color-mix(in srgb, var(--ink-app) 68%, var(--muted-app));
+  font-family: var(--font-detail);
+  font-size: var(--type-description);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  line-height: 1.45;
 }
 
 .app-shell .aspect-section {
