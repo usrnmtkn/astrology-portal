@@ -1,0 +1,35 @@
+{
+  "id": "composite-synthesis-examples",
+  "kind": "framework",
+  "title": "Composite Synthesis Examples",
+  "role": "relationship-synthesis-method",
+  "category": "synastry-composite",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Synastry shows the attraction and friction between two individuals; the composite shows what the third thing they create is like to be inside. Always read both."
+    },
+    {
+      "id": "examples",
+      "heading": "Examples",
+      "body": "Use these as synthesis patterns, not verdicts.",
+      "items": [
+        {
+          "label": "Example 1",
+          "body": "Easy synastry, hard composite: instant Venus-Mars chemistry between them, but a composite Moon square Saturn. Read it as: the attraction is real and personal, yet the relationship itself runs heavy and reserved. Chemistry is not the same as an easy relationship."
+        },
+        {
+          "label": "Example 2",
+          "body": "Hard synastry, supportive composite: their Mars-Saturn synastry is full of friction, but the composite has Sun in the 7th and a Venus trine. Read it as: they rub each other the wrong way personally, yet the bond they build is steady and partnership-oriented. Worth the friction."
+        },
+        {
+          "label": "Example 3",
+          "body": "Doubled theme: Pluto-heavy synastry and a Pluto-charged composite. Intensity and transformation define both the attraction and the relationship itself; the theme is unavoidable. Take it seriously and watch for control on both levels."
+        }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

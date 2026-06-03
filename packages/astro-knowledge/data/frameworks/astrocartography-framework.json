@@ -1,0 +1,203 @@
+{
+  "id": "astrocartography-framework",
+  "kind": "framework",
+  "role": "future-feature",
+  "category": "locational-astrology",
+  "title": "Astrocartography Framework",
+  "sections": [
+    {
+      "id": "definition",
+      "heading": "Definition",
+      "body": "Astrocartography projects the natal chart onto a world map. Each planet forms lines showing where it was angular at birth. Near a line, that planet's symbolism tends to be louder in the person's experience of that place."
+    },
+    {
+      "id": "angles",
+      "heading": "Four Angles",
+      "body": "The Ascendant line emphasizes identity, body, vitality, and how the person shows up. The Midheaven line emphasizes career, public role, visibility, and reputation. The Descendant line emphasizes relationships, projection, and the people the person meets. The IC line emphasizes home, roots, privacy, family, and emotional foundation."
+    },
+    {
+      "id": "proximity",
+      "heading": "Proximity",
+      "body": "Effects are strongest close to the line and more diffuse with distance. Where two lines cross or closely overlap, both planets should be considered active. The app should compute distance and line intersections separately from this interpretive file."
+    },
+    {
+      "id": "non-deterministic-policy",
+      "heading": "Non-Deterministic Policy",
+      "body": "A line describes what a location may amplify; it does not guarantee events or define a fixed outcome. Heavier lines such as Mars, Saturn, Neptune, or Pluto should not be framed as places to avoid. They should be described as places that ask more of the person in a specific way."
+    },
+    {
+      "id": "app-policy",
+      "heading": "App Policy",
+      "body": "Keep astrocartography behind a later optional feature. Do not surface this in the main chart, daily transits, synastry, or timing engine until map calculation and rendering are implemented. When released, require exact birth date, time, and location, and label the result as locational astrology."
+    },
+    {
+      "id": "line-meanings",
+      "heading": "Line Meanings",
+      "body": "Use these as short interpretive anchors for planet-angle combinations. The voice layer may expand or soften them later.",
+      "items": [
+        {
+          "label": "Sun Ascendant",
+          "body": "Visibility, vitality, confidence, and self-expression are amplified. Strong for being seen and leading. Watch for inflated ego."
+        },
+        {
+          "label": "Sun Midheaven",
+          "body": "Career, reputation, leadership, and recognition are emphasized. Strong for public visibility. Watch for tying identity too tightly to status."
+        },
+        {
+          "label": "Sun Descendant",
+          "body": "Relationships bring visibility and may revolve around prominent or confident people. Watch for outshining or being outshone."
+        },
+        {
+          "label": "Sun IC",
+          "body": "Home, roots, and belonging become central. Strong for building a base that feels personally affirming. Watch for making home the whole world."
+        },
+        {
+          "label": "Moon Ascendant",
+          "body": "Feelings sit close to the surface, and people read the person more easily. Strong for familiarity and intuition. Watch for moods steering the day."
+        },
+        {
+          "label": "Moon Midheaven",
+          "body": "Emotional life and public life intertwine. The person may be known for care, nurture, responsiveness, or feeling. Watch for managing emotions for appearances."
+        },
+        {
+          "label": "Moon Descendant",
+          "body": "Relationships feel nurturing, familiar, and emotionally important. Strong for family-style bonds. Watch for dependency."
+        },
+        {
+          "label": "Moon IC",
+          "body": "A strong home-feeling line, often linked with comfort, roots, memory, and belonging. Watch for clinging to safety."
+        },
+        {
+          "label": "Mercury Ascendant",
+          "body": "Thinking, speech, curiosity, and networking sharpen. Strong for learning and connection. Watch for mental overload."
+        },
+        {
+          "label": "Mercury Midheaven",
+          "body": "Career runs through communication, ideas, writing, trade, analysis, or teaching. Watch for spreading attention too thin."
+        },
+        {
+          "label": "Mercury Descendant",
+          "body": "Relationships develop through conversation, shared ideas, negotiation, and intellectual exchange. Watch for staying in the head."
+        },
+        {
+          "label": "Mercury IC",
+          "body": "Home life becomes busy with conversation, movement, learning, or writing. Watch for restlessness in private life."
+        },
+        {
+          "label": "Venus Ascendant",
+          "body": "Charm, beauty, affection, ease, and social warmth are amplified. Strong for love, pleasure, and style. Watch for coasting on charm."
+        },
+        {
+          "label": "Venus Midheaven",
+          "body": "Public life gains grace and appeal. Work may involve art, beauty, money, design, or relationships. Watch for image over substance."
+        },
+        {
+          "label": "Venus Descendant",
+          "body": "Partnership, affection, attraction, and harmony are emphasized. Strong for love and social ease. Watch for avoiding necessary conflict."
+        },
+        {
+          "label": "Venus IC",
+          "body": "Home can feel beautiful, comfortable, and loving. Strong for domestic pleasure. Watch for comfort that avoids growth."
+        },
+        {
+          "label": "Mars Ascendant",
+          "body": "Drive, heat, courage, and assertion rise. Strong for action and physical vitality. Watch for haste, friction, and a shorter fuse."
+        },
+        {
+          "label": "Mars Midheaven",
+          "body": "Ambition, competition, and professional drive intensify. Strong for bold career moves. Watch for conflict and burnout."
+        },
+        {
+          "label": "Mars Descendant",
+          "body": "Relationships run hot, with both chemistry and friction. Strong for passion and directness. Watch for power struggles."
+        },
+        {
+          "label": "Mars IC",
+          "body": "Energy and sometimes tension concentrate in home and family life. Strong for building a base. Watch for conflict at home."
+        },
+        {
+          "label": "Jupiter Ascendant",
+          "body": "Confidence, expansion, opportunity, and goodwill increase. Strong for growth and openness. Watch for overconfidence."
+        },
+        {
+          "label": "Jupiter Midheaven",
+          "body": "Career and reputation can grow through opportunity, mentorship, publishing, teaching, or visibility. Watch for overreach."
+        },
+        {
+          "label": "Jupiter Descendant",
+          "body": "Relationships bring generosity, access, teaching, growth, or open doors. Watch for overpromising."
+        },
+        {
+          "label": "Jupiter IC",
+          "body": "Home and roots feel abundant and expansive. Strong for building a larger base. Watch for overextending."
+        },
+        {
+          "label": "Saturn Ascendant",
+          "body": "Life feels more serious, disciplined, and demanding. Strong for maturity and self-command. Watch for loneliness or reading weight as failure."
+        },
+        {
+          "label": "Saturn Midheaven",
+          "body": "Career requires patience, endurance, responsibility, and long-range building. Strong for lasting work. Watch for pressure and never-enough thinking."
+        },
+        {
+          "label": "Saturn Descendant",
+          "body": "Relationships become serious, tested, committed, or delayed. Strong for durable bonds. Watch for coldness or isolation."
+        },
+        {
+          "label": "Saturn IC",
+          "body": "Home and roots carry weight, duty, or history. Strong for building a durable foundation. Watch for heaviness in private life."
+        },
+        {
+          "label": "Uranus Ascendant",
+          "body": "Freedom, originality, reinvention, and instability increase. Strong for breakthroughs. Watch for restlessness and abrupt change."
+        },
+        {
+          "label": "Uranus Midheaven",
+          "body": "Career can turn toward innovation, independence, disruption, or unconventional work. Watch for instability and burning bridges."
+        },
+        {
+          "label": "Uranus Descendant",
+          "body": "Relationships become unusual, fast-forming, freedom-seeking, or changeable. Watch for sudden exits."
+        },
+        {
+          "label": "Uranus IC",
+          "body": "Home life may become unconventional, mobile, experimental, or unsettled. Watch for rootlessness."
+        },
+        {
+          "label": "Neptune Ascendant",
+          "body": "Imagination, sensitivity, spiritual seeking, and porous identity increase. Strong for art and compassion. Watch for confusion and losing edges."
+        },
+        {
+          "label": "Neptune Midheaven",
+          "body": "Career may involve art, healing, image, service, or inspiration, but direction can blur. Watch for confusion about the path."
+        },
+        {
+          "label": "Neptune Descendant",
+          "body": "Relationships can feel romantic, compassionate, idealized, or hard to define. Watch for projection and disillusionment."
+        },
+        {
+          "label": "Neptune IC",
+          "body": "Home becomes dreamy, private, spiritual, creative, or hard to ground. Watch for escapism and unclear footing."
+        },
+        {
+          "label": "Pluto Ascendant",
+          "body": "Intensity, power, privacy, and deep personal change are amplified. Strong for reinvention. Watch for control struggles."
+        },
+        {
+          "label": "Pluto Midheaven",
+          "body": "Career can involve influence, pressure, depth work, crisis work, or transformation. Watch for ruthless dynamics."
+        },
+        {
+          "label": "Pluto Descendant",
+          "body": "Relationships become intense, transformative, magnetic, or all-or-nothing. Watch for obsession and power struggles."
+        },
+        {
+          "label": "Pluto IC",
+          "body": "Home and roots undergo deep change or private excavation. Strong for rebuilding from the foundation. Watch for control dynamics at home."
+        }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

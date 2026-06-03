@@ -1,0 +1,46 @@
+{
+  "id": "sun-sextile-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Visible With Expansive",
+  "summary": "Identity support growth and belief. This cooperative pattern asks you to use confidence and optimism with awareness.",
+  "body": "Identity support growth and belief. This cooperative pattern asks you to use confidence and optimism with awareness. Genuine confidence and opportunity; doors open more readily. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through identity, growth and belief, and the choices you make when ego defense or overreach starts running the room.",
+  "gift": "The gift is confidence, optimism, and a more conscious way to work with identity and growth and belief.",
+  "shadow": "The shadow is ego defense, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let identity and growth and belief cooperate without making either one carry the whole story. Confidence and opportunity, with overextension as the standing risk.",
+  "do": [
+    "Name how identity and growth and belief are both involved",
+    "Use the easy opening deliberately",
+    "Turn confidence and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let ego defense make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of identity or growth and belief"
+  ],
+  "lifeAreas": [
+    "identity",
+    "growth"
+  ],
+  "tags": [
+    "sun",
+    "jupiter",
+    "sextile",
+    "confidence",
+    "optimism"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "sextile",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

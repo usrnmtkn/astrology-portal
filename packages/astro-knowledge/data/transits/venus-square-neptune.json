@@ -1,0 +1,30 @@
+{
+  "id": "venus-square-neptune",
+  "transiting": "venus",
+  "aspect": "square",
+  "other": "neptune",
+  "tldr": "Venus square Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. Psychologically the square is inner tension to integrate: Seeing what you want to see in love, idealizing people, and the disillusionment that follows. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for connection against imagination, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the connection/imagination form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Real artistic gifts; guard against unrealistic expectations of people and outcomes.",
+  "shadow": "Indulgence and vanity collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:venus-neptune",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. Psychologically the square is inner tension to integrate: Seeing what you want to see in love, idealizing people, and the disillusionment that follows. The growth is owning both sides instead of splitting them."
+}

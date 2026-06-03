@@ -1,0 +1,24 @@
+{
+  "id": "mercury-mars",
+  "planetA": "mercury",
+  "planetB": "mars",
+  "traditional": "Communication and commerce combined with action and heat.",
+  "modern": {
+    "blend": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate.",
+    "harmonious": "Quick, incisive thinking and confident argument.",
+    "hard": "Arguments and verbal aggression; the mind never switches off.",
+    "business": "Fast, cutting thinking; the task is channeling the edge productively."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate.",
+  "harmonious": "Quick, incisive thinking and confident argument.",
+  "hard": "Arguments and verbal aggression; the mind never switches off.",
+  "business": "Fast, cutting thinking; the task is channeling the edge productively."
+}

@@ -1,0 +1,48 @@
+{
+  "id": "moon-opposition-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Attached Or Untethered",
+  "summary": "You need closeness, but you may also need sudden space. Emotional security has to leave room for your nervous system.",
+  "body": "Moon opposition Uranus describes a person whose emotional life can change quickly. You may love people deeply and still feel crowded by predictability, expectation, or too much need in the room. Early instability can make your body expect interruption, or your own rhythms may be irregular and hard to domesticate. The gift is emotional originality and the ability to refresh stale patterns. The growth is learning to ask for space before you disappear or provoke distance.",
+  "gift": "Emotional independence, originality, adaptability, and the ability to break inherited patterns.",
+  "shadow": "Sudden withdrawal, restlessness, inconsistency, and confusing safety with escape.",
+  "integration": "Build bonds that can breathe. Space works best when it is named, not acted out as distance.",
+  "do": [
+    "Ask for room before you reach your limit",
+    "Notice what kind of closeness your body can actually tolerate",
+    "Create rituals that are flexible instead of rigid"
+  ],
+  "dont": [
+    "Make unpredictability your proof of freedom",
+    "Leave people guessing about your needs",
+    "Treat every emotional request as pressure"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "family"
+  ],
+  "tags": [
+    "independence",
+    "nervous-system",
+    "attachment",
+    "space",
+    "change"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "relationship-bonds",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

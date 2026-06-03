@@ -1,0 +1,12 @@
+{
+  "id": "neptune_ascendant_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "neptune",
+  "natal": "ascendant",
+  "aspect": "conjunction",
+  "plainTranslation": "Neptune dissolves the edges of how you appear, a long, hazy reshaping of your image and sense of self. More impressionable, harder to pin down, easily idealized or mis-seen. Stay connected to something real; don't lose your outline.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

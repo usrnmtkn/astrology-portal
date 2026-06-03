@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/synastry-house-overlay.schema.json",
+  "title": "Synastry House Overlay Entry",
+  "type": "object",
+  "required": ["id", "kind", "planet", "house", "plainTranslation", "policy", "voiceNeutral", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string", "enum": ["house-overlay"] },
+    "planet": { "type": "string" },
+    "house": { "type": "string" },
+    "plainTranslation": { "type": "string" },
+    "policy": { "type": "string" },
+    "note": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "type": "string", "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

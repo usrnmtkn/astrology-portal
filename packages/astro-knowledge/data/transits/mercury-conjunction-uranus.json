@@ -1,0 +1,29 @@
+{
+  "id": "mercury-conjunction-uranus",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "uranus",
+  "tldr": "Mercury conjunction Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of thinking and disruption is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Strong for innovation, problem-solving, and tech; weak for routine detail and steady communication.",
+  "shadow": "Scattered overthinking fused with instability for its own sake, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mercury-uranus",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

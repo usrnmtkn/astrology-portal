@@ -1,0 +1,12 @@
+{
+  "id": "mars_sun_trine",
+  "kind": "transit-to-natal",
+  "transiting": "mars",
+  "natal": "sun",
+  "aspect": "trine",
+  "plainTranslation": "Energy flows straight into your sense of self. Confident, capable, physically charged. A strong day to act on your goals; the effort pays back cleanly.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

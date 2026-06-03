@@ -1,0 +1,48 @@
+{
+  "id": "saturn-trine-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Enduring Or Unyielding",
+  "summary": "You can handle pressure with unusual composure. When you commit, you may become difficult to move.",
+  "body": "Saturn trine Pluto describes structural power: discipline, persistence, and the ability to work with difficult realities over time. You may understand that real change requires patience, strategy, and contact with what most people avoid. This aspect can support leadership, repair, research, crisis work, and long-term building. The shadow is rigidity: becoming so committed to control, efficiency, or survival that softness feels irrelevant. The gift is lasting transformation. The growth is letting power include flexibility.",
+  "gift": "Endurance, strategy, crisis competence, and the ability to rebuild from the foundation up.",
+  "shadow": "Rigidity, emotional austerity, control habits, and trusting pressure more than ease.",
+  "integration": "Use discipline to create freedom, not only containment. Strong structures should protect life, not replace it.",
+  "do": [
+    "Commit to the long repair",
+    "Use strategy before force",
+    "Let trusted people help carry weight"
+  ],
+  "dont": [
+    "Make survival your only measure of success",
+    "Hold control after the crisis has passed",
+    "Dismiss softness as inefficiency"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "growth"
+  ],
+  "tags": [
+    "endurance",
+    "strategy",
+    "control",
+    "rebuilding",
+    "authority"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "trine",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

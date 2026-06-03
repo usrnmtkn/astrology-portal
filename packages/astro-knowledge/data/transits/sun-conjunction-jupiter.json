@@ -1,0 +1,29 @@
+{
+  "id": "sun-conjunction-jupiter",
+  "transiting": "sun",
+  "aspect": "conjunction",
+  "other": "jupiter",
+  "tldr": "the Sun conjunction Jupiter.",
+  "traditional": "the Sun conjunct Jupiter: vitality, authority, and recognition fused with growth, fortune, and patronage. The two act as one and the combined significations are hard to separate.",
+  "modern": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of selfhood and growth is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Confidence and opportunity, with overextension as the standing risk.",
+  "shadow": "Egotism and needing to be the center fused with excess and overreach, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-jupiter",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

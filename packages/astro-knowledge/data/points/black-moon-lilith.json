@@ -1,0 +1,15 @@
+{
+  "id": "black-moon-lilith",
+  "kind": "point",
+  "aliases": [
+    "lilith",
+    "bml"
+  ],
+  "type": "calculated point / mean lunar apogee",
+  "orbit": "Approximately 9 years through the zodiac; roughly 9 months per sign.",
+  "core": "The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed.",
+  "note": "Read psychologically around autonomy and refusal to comply, not as fate or as a lurid archetype.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "moon-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Or Saturated",
+  "summary": "Your emotional field is porous. You may absorb moods, images, and expectations before you know what belongs to you.",
+  "body": "Moon square Neptune describes deep sensitivity, imagination, and emotional permeability. You may feel what is unspoken and respond to atmospheres faster than facts. This can make you compassionate and creatively receptive, but it can also blur boundaries, idealize people, or pull you toward escape when feelings become too much. The gift is emotional intuition. The growth is learning to protect your softness with clear reality checks and simple routines.",
+  "gift": "Compassion, imagination, subtle perception, and the ability to meet emotion with tenderness.",
+  "shadow": "Confusion, projection, porous boundaries, avoidance, and mistaking fantasy for emotional safety.",
+  "integration": "Keep the sensitivity, but give it containers. Sleep, food, solitude, honest naming, and grounded people help your intuition stay clean.",
+  "do": [
+    "Check facts before acting on a mood",
+    "Create quiet recovery time",
+    "Name what is yours and what you may be absorbing"
+  ],
+  "dont": [
+    "Make excuses for people who keep blurring your boundaries",
+    "Use fantasy to avoid a direct need",
+    "Treat compassion as a reason to ignore your own limits"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "sensitivity",
+    "intuition",
+    "boundaries",
+    "imagination",
+    "escape"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

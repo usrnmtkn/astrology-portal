@@ -1,0 +1,48 @@
+{
+  "id": "mars-trine-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Bold Or Overconfident",
+  "summary": "Your action grows when you believe in the direction. Courage and momentum can arrive together.",
+  "body": "Mars trine Jupiter describes confident action, physical enthusiasm, and a strong appetite for growth. You may move quickly when a goal feels meaningful, and your courage can inspire others to try more than they thought they could. This aspect supports enterprise, athletics, advocacy, travel, leadership, and work that requires momentum. The shadow is overreach: assuming energy will cover the details or taking a risk because the mood says yes. The gift is brave expansion. The growth is letting judgment steer the engine.",
+  "gift": "Courage, motivation, enterprise, confidence, and the ability to act on opportunity.",
+  "shadow": "Overconfidence, impatience, excess risk, and skipping preparation because momentum feels good.",
+  "integration": "Let enthusiasm move you, then give it a plan. The best leap still needs a landing place.",
+  "do": [
+    "Act when purpose is clear",
+    "Pair confidence with preparation",
+    "Use momentum to help others move too"
+  ],
+  "dont": [
+    "Assume luck replaces skill",
+    "Take the biggest risk just because it is available",
+    "Turn excitement into pressure"
+  ],
+  "lifeAreas": [
+    "work",
+    "growth",
+    "identity"
+  ],
+  "tags": [
+    "courage",
+    "momentum",
+    "risk",
+    "leadership",
+    "opportunity"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "trine",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

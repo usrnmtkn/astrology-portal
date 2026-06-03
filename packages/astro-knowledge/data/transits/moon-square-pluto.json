@@ -1,0 +1,30 @@
+{
+  "id": "moon-square-pluto",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "pluto",
+  "tldr": "the Moon square Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Psychologically the square is inner tension to integrate: Emotional power struggles, jealousy, and compulsion. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for feeling against power, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the feeling/power form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Emotional intensity: depth is an asset, volatility a liability.",
+  "shadow": "Moodiness and over-need collides with control and obsession; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:moon-pluto",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Psychologically the square is inner tension to integrate: Emotional power struggles, jealousy, and compulsion. The growth is owning both sides instead of splitting them."
+}

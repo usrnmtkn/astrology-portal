@@ -1,0 +1,47 @@
+{
+  "id": "mars-opposition-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven Across Steady",
+  "summary": "Drive and anger mirror discipline and limits. This polarized pattern asks you to use courage and maturity with awareness.",
+  "body": "Drive and anger mirror discipline and limits. This polarized pattern asks you to use courage and maturity with awareness. Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through drive and anger, discipline and limits, and the choices you make when reactivity or fear starts running the room.",
+  "gift": "The gift is courage, maturity, and a more conscious way to work with drive and anger and discipline and limits.",
+  "shadow": "The shadow is reactivity, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and discipline and limits cooperate without making either one carry the whole story. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "do": [
+    "Name how drive and anger and discipline and limits are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn courage and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of drive and anger or discipline and limits"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "saturn",
+    "opposition",
+    "courage",
+    "maturity"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

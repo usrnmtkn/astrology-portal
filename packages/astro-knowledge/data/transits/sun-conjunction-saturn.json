@@ -1,0 +1,29 @@
+{
+  "id": "sun-conjunction-saturn",
+  "transiting": "sun",
+  "aspect": "conjunction",
+  "other": "saturn",
+  "tldr": "the Sun conjunction Saturn.",
+  "traditional": "the Sun conjunct Saturn: vitality, authority, and recognition fused with limitation, delay, and hard structure. The two act as one and the combined significations are hard to separate.",
+  "modern": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of selfhood and limit is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Disciplined and reliable; the risk is self-limiting caution and joyless striving.",
+  "shadow": "Egotism and needing to be the center fused with fear and rigidity, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-saturn",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

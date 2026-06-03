@@ -1,0 +1,47 @@
+{
+  "id": "jupiter-opposition-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive Across Inspired",
+  "summary": "Growth and belief mirror imagination and longing. This polarized pattern asks you to use optimism and compassion with awareness.",
+  "body": "Growth and belief mirror imagination and longing. This polarized pattern asks you to use optimism and compassion with awareness. Gullibility and wishful thinking mistaken for reality. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through growth and belief, imagination and longing, and the choices you make when overreach or confusion starts running the room.",
+  "gift": "The gift is optimism, compassion, and a more conscious way to work with growth and belief and imagination and longing.",
+  "shadow": "The shadow is overreach, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and imagination and longing cooperate without making either one carry the whole story. Inspired vision; test it against logic before committing.",
+  "do": [
+    "Name how growth and belief and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn optimism and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of growth and belief or imagination and longing"
+  ],
+  "lifeAreas": [
+    "growth",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "jupiter",
+    "neptune",
+    "opposition",
+    "optimism",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

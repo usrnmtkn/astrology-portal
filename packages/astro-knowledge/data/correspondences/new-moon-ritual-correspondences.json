@@ -1,0 +1,66 @@
+{
+  "id": "new-moon-ritual-correspondences",
+  "kind": "correspondence",
+  "role": "correspondence",
+  "category": "ritual",
+  "title": "New Moon Ritual Correspondences by Sign",
+  "sections": [
+    {
+      "id": "sign-correspondences",
+      "heading": "Sign Correspondences",
+      "body": "Use these correspondences for New Moon ritual suggestions by sign.",
+      "items": [
+        {
+          "label": "Aries",
+          "body": "Mars kamea, red/orange candles, bloodstone, garnet, basil, skull symbol, oil lantern, chalice of water, incense. Themes: courage, action, fresh starts."
+        },
+        {
+          "label": "Taurus",
+          "body": "Venus kamea, green/white candles, rose quartz, copper, peridot, roses, chalice of water, incense. Themes: grounding, financial stability, pleasure."
+        },
+        {
+          "label": "Gemini",
+          "body": "Mercury kamea, yellow/white candles, agate, clear quartz, caduceus imagery, feather, chalice of water. Themes: communication, writing, networking."
+        },
+        {
+          "label": "Cancer",
+          "body": "Luna kamea, silver/white candles, lavender, chalice of water, incense. Themes: home, emotional healing, ancestral work."
+        },
+        {
+          "label": "Leo",
+          "body": "Sun kamea, golden/yellow candles, garnet, bay leaves, salt, feather, chalice of water. Themes: self-confidence, leadership, joy."
+        },
+        {
+          "label": "Virgo",
+          "body": "Mercury kamea, yellow/white candles, agate, clear quartz, feather, chalice of water. Themes: organization, health, service."
+        },
+        {
+          "label": "Libra",
+          "body": "Venus kamea, pink/white candles, rose quartz, copper, peridot, roses, chalice of water, incense. Themes: relationships, balance, harmony."
+        },
+        {
+          "label": "Scorpio",
+          "body": "Mars kamea, red candles, bloodstone, garnet, basil, skull symbol, oil lantern, chalice of water, incense. Themes: transformation, shadow work, passion."
+        },
+        {
+          "label": "Sagittarius",
+          "body": "Jupiter kamea, yellow/white candles, citrine, turquoise, green jasper, chalice of water, incense. Themes: expansion, truth-seeking, travel."
+        },
+        {
+          "label": "Capricorn",
+          "body": "Saturn kamea, black tourmaline, salt, elm, oil lantern, chalice of water. Themes: ambition, structure, legacy."
+        },
+        {
+          "label": "Aquarius",
+          "body": "Saturn kamea, black tourmaline, salt, elm, oil lantern, feather, chalice of water. Themes: innovation, community, independence."
+        },
+        {
+          "label": "Pisces",
+          "body": "Jupiter kamea, yellow/white candles, citrine, turquoise, green jasper, chalice of water, incense. Themes: dreams, intuition, compassion."
+        }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

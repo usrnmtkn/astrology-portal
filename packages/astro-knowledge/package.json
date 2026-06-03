@@ -1,0 +1,24 @@
+{
+  "name": "@tldr/astro-knowledge",
+  "version": "0.1.0",
+  "description": "Standalone astrology knowledge-base bundle for web and React Native consumers.",
+  "main": "dist/knowledge.json",
+  "files": [
+    "dist",
+    "engine/timing",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dist/knowledge.json",
+    "./index": "./dist/knowledge.index.json",
+    "./entries/*": "./dist/entries/*.json",
+    "./timing-engine": "./engine/timing/index.js"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "build": "node scripts/build.js",
+    "test:timing": "node scripts/test-timing-engine.js"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

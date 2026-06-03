@@ -1,0 +1,82 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "retrograde-planet-meanings",
+  "schema": "modifier/retrograde-planet-meanings",
+  "appliesTo": [
+    "retrograde",
+    "planet",
+    "transit"
+  ],
+  "role": "method",
+  "category": "retrograde",
+  "summary": "Planet-specific retrograde metadata and plain-language meanings for planets that station retrograde.",
+  "body": "Retrograde interpretation should stay planet-specific and should distinguish a natal retrograde signature from a temporary transit retrograde period.",
+  "definition": "A retrograde is apparent backward motion from the observer perspective, used symbolically as review, return, delay, reversal, or internalization depending on planet and context.",
+  "appUsage": [
+    "Do not mark the Sun or Moon retrograde.",
+    "Use planet-specific meanings instead of one generic retrograde paragraph.",
+    "For daily transit UI, show pre-shadow and post-shadow only when the app has reliable date data."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "retrogrades": {
+      "mercury-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mercury-retrograde",
+        "planet": "mercury",
+        "plainTranslation": "review of thinking, plans, and messages; recheck details and communications"
+      },
+      "venus-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "venus-retrograde",
+        "planet": "venus",
+        "plainTranslation": "review of values, money, and relationships; revisit rather than initiate"
+      },
+      "mars-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mars-retrograde",
+        "planet": "mars",
+        "plainTranslation": "review of drive and how energy is spent; effort turns inward, frustration possible"
+      },
+      "jupiter-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "jupiter-retrograde",
+        "planet": "jupiter",
+        "plainTranslation": "review of beliefs and where growth is sought; inner expansion over outer"
+      },
+      "saturn-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "saturn-retrograde",
+        "planet": "saturn",
+        "plainTranslation": "review of commitments and structures; tighten or release responsibilities"
+      },
+      "uranus-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "uranus-retrograde",
+        "planet": "uranus",
+        "plainTranslation": "review of where change and freedom are needed; internal restlessness"
+      },
+      "neptune-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "neptune-retrograde",
+        "planet": "neptune",
+        "plainTranslation": "review of ideals and illusions; clearer sight on what was fogged"
+      },
+      "pluto-retrograde": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "pluto-retrograde",
+        "planet": "pluto",
+        "plainTranslation": "review of power and control; transformation works beneath the surface"
+      }
+    }
+  }
+}

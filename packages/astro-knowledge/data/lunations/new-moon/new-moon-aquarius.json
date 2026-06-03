@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-aquarius",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "aquarius",
+  "oppositeSign": "leo",
+  "title": "New Moon in Aquarius",
+  "tldr": "A seed point for future vision, community, individuation, innovation, and the courage to belong without disappearing.",
+  "theme": "Aquarius is a fixed air sign ruled traditionally by Saturn. This New Moon begins work around future vision, community, individuation, innovation, and the courage to belong without disappearing.",
+  "shadow": "detachment disguised as enlightenment, rebellion without responsibility, or selling a version of yourself you do not believe in",
+  "integration": "changing the system without abandoning your own aliveness",
+  "twoWeekArc": {
+    "from": "New Moon in Aquarius",
+    "to": "Full Moon in Leo",
+    "teaching": "This arc asks whether you can serve the collective without erasing your own spark.",
+    "appPrompt": "Begin with Aquarius; watch what the Leo Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Aquarius",
+    "to": "Full Moon in Aquarius",
+    "teaching": "Innovation to revolution",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Saturn kamea, black tourmaline, salt, elm, feather, candle, and water.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Aquarius. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through future vision, community, individuation, innovation, and the courage to belong without disappearing, without repeating the shadow of detachment disguised as enlightenment, rebellion without responsibility, or selling a version of yourself you do not believe in?",
+  "tarotPrompt": "What first action will help this Aquarius intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Aquarius's future vision, community, individuation, innovation, and the courage to belong without disappearing."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

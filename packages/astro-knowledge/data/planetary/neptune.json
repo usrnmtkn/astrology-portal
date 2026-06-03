@@ -1,0 +1,63 @@
+{
+  "id": "neptune",
+  "planet": "neptune",
+  "title": "Neptune Meaning",
+  "overview": "Neptune is a modern interpretive planet associated with dreams, imagination, spirituality, compassion, dissolution, idealization, confusion, and the softening of boundaries. It does not replace traditional rulership logic, but it can describe where certainty blurs and longing becomes powerful.",
+  "cycle": "Neptune takes about 165 years to complete the zodiac and spends roughly 14 years in each sign. Its sign is generational; its house and aspects show where inspiration, sensitivity, projection, disillusionment, and spiritual or creative longing gather.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Neptune in Aries describes a generation seeking inspiration through independence, action, and spiritual courage. The dream is personal freedom; the risk is confusing impulse with calling."
+    },
+    {
+      "sign": "taurus",
+      "body": "Neptune in Taurus describes a generation seeking inspiration through nature, the body, art, value, and the material world. The dream is sacred simplicity; the risk is glamorizing security."
+    },
+    {
+      "sign": "gemini",
+      "body": "Neptune in Gemini describes a generation seeking inspiration through language, media, thought, and exchange. The dream is imaginative connection; the risk is confusion through too many voices."
+    },
+    {
+      "sign": "cancer",
+      "body": "Neptune in Cancer describes a generation seeking inspiration through home, ancestry, care, and emotional belonging. The dream is spiritual refuge; the risk is idealizing the past."
+    },
+    {
+      "sign": "leo",
+      "body": "Neptune in Leo describes a generation seeking inspiration through creativity, performance, romance, and personal radiance. The dream is inspired self-expression; the risk is confusing attention with love."
+    },
+    {
+      "sign": "virgo",
+      "body": "Neptune in Virgo describes a generation seeking inspiration through service, healing, craft, and practical devotion. The dream is meaningful usefulness; the risk is trying to perfect what needs compassion."
+    },
+    {
+      "sign": "libra",
+      "body": "Neptune in Libra describes a generation seeking inspiration through partnership, beauty, peace, and justice. The dream is ideal relationship; the risk is seeing harmony where truth has been avoided."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Neptune in Scorpio describes a generation seeking inspiration through depth, intimacy, mystery, psychology, and hidden power. The dream is total transformation; the risk is glamorizing intensity."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Neptune in Sagittarius describes a generation seeking inspiration through belief, travel, philosophy, and spiritual exploration. The dream is ultimate meaning; the risk is mistaking certainty for wisdom."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Neptune in Capricorn describes a generation seeking inspiration through structure, ambition, institutions, and public purpose. The dream is meaningful authority; the risk is disillusionment with systems."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Neptune in Aquarius describes a generation seeking inspiration through technology, community, social ideals, and collective imagination. The dream is a better future; the risk is idealizing the group."
+    },
+    {
+      "sign": "pisces",
+      "body": "Neptune in Pisces describes a generation seeking inspiration through compassion, art, spirituality, and collective feeling. The dream is unity; the risk is losing boundaries in the longing to merge."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

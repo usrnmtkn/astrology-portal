@@ -1,0 +1,30 @@
+{
+  "id": "mercury-trine-saturn",
+  "transiting": "mercury",
+  "aspect": "trine",
+  "other": "saturn",
+  "tldr": "Mercury trine Saturn.",
+  "traditional": "Mercury trine Saturn: a soft contact. Communication, commerce, and contracts supports limitation, delay, and hard structure \u2014 cooperation and favorable conditions in these areas.",
+  "modern": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. The trine makes this a natural strength: Rigor, depth, and thoroughness. The growth edge is not to coast on the ease.",
+  "cyclic": {
+    "phase": "Waxing / waning trine",
+    "waxing": "Thinking and limit flow together with ease; respond to the opportunity.",
+    "waning": "Distribute and give transmissible form to what thinking and limit have realized."
+  },
+  "business": "An opening in this area. Thorough and exacting, with little patience for small talk.",
+  "shadow": "The ease lets scattered overthinking and fear and rigidity go unchecked, or the opening pass unused.",
+  "arcApplying": "Ease and support build and arrive on their own.",
+  "arcSeparating": "The ease withdraws; the flow passes, used or not.",
+  "composedFrom": [
+    "pair:mercury-saturn",
+    "aspect:trine"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. The trine makes this a natural strength: Rigor, depth, and thoroughness. The growth edge is not to coast on the ease."
+}

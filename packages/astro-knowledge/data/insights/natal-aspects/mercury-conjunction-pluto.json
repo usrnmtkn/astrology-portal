@@ -1,0 +1,48 @@
+{
+  "id": "mercury-conjunction-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Piercing Or Fixated",
+  "summary": "Your mind looks under the surface. Small talk may bore you because you are tracking motive, pattern, and what is not being said.",
+  "body": "Mercury conjunction Pluto describes investigative intelligence. You may think intensely, speak with force, and notice hidden layers in conversation. This can make you persuasive, strategic, and gifted at research, therapy, writing, or any work that requires getting beneath appearances. The shadow is fixation: repeating the same thought, interrogating instead of asking, or using language to control the room. The gift is truth-seeking. The growth is letting insight stay clean, precise, and humane.",
+  "gift": "Research ability, psychological insight, persuasive speech, and the courage to name what others avoid.",
+  "shadow": "Suspicion, obsession, verbal pressure, and using information as leverage.",
+  "integration": "Let the question be strong without turning it into an interrogation. Truth lands better when it does not need to dominate.",
+  "do": [
+    "Use your focus for research and repair",
+    "Ask before going deeper",
+    "Give intense thoughts a place to land outside the conversation"
+  ],
+  "dont": [
+    "Assume every gap is a secret",
+    "Use precision to corner someone",
+    "Mistake mental control for clarity"
+  ],
+  "lifeAreas": [
+    "communication",
+    "power",
+    "work"
+  ],
+  "tags": [
+    "research",
+    "truth",
+    "focus",
+    "persuasion",
+    "suspicion"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "conjunction",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

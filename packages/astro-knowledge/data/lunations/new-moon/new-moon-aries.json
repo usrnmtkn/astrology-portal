@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-aries",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "aries",
+  "oppositeSign": "libra",
+  "title": "New Moon in Aries",
+  "tldr": "A seed point for courage, direct action, self-trust, and clean beginnings.",
+  "theme": "Aries is a cardinal fire sign ruled traditionally by Mars. This New Moon begins work around courage, direct action, self-trust, and clean beginnings.",
+  "shadow": "bulldozing without checking direction, reacting before listening, or confusing urgency with truth",
+  "integration": "commanding your life without making every room a battlefield",
+  "twoWeekArc": {
+    "from": "New Moon in Aries",
+    "to": "Full Moon in Libra",
+    "teaching": "The right people support your growth when you stop minimizing the beginning to protect everyone else.",
+    "appPrompt": "Begin with Aries; watch what the Libra Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Aries",
+    "to": "Full Moon in Aries",
+    "teaching": "Courage to command",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Mars kamea, red or orange candle, bloodstone or garnet, basil, water, incense, and a simple symbol of courage.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Aries. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through courage, direct action, self-trust, and clean beginnings, without repeating the shadow of bulldozing without checking direction, reacting before listening, or confusing urgency with truth?",
+  "tarotPrompt": "What first action will help this Aries intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Aries's courage, direct action, self-trust, and clean beginnings."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Aries's courage, direct action, self-trust, and clean beginnings."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

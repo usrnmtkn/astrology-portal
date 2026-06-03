@@ -1,0 +1,147 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "planet-metadata",
+  "schema": "modifier/planet-metadata",
+  "appliesTo": [
+    "planet",
+    "ephemeris",
+    "aspect",
+    "transit"
+  ],
+  "role": "metadata",
+  "category": "planet",
+  "summary": "Ten-planet metadata for app display, speed weighting, and modern/traditional separation.",
+  "body": "The app may track modern planets, but traditional chart-ruler and dignity language should stay anchored to the traditional seven unless a modern lens is explicitly selected.",
+  "definition": "Planet metadata includes labels, classification, sect relevance, retrograde capability, and approximate daily speed.",
+  "appUsage": [
+    "Use modern flagging to keep outer planets contextual rather than primary in traditional logic.",
+    "Use speed hints to help rank daily transit weight.",
+    "Do not name outer planets as traditional rulers in user-facing ruler text."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "planets": {
+      "sun": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "sun",
+        "label": "Sun",
+        "modern": false,
+        "classification": "luminary",
+        "sect": "diurnal",
+        "retrogradeCapable": false,
+        "approxDegPerDay": 0.99,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "moon": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "moon",
+        "label": "Moon",
+        "modern": false,
+        "classification": "luminary",
+        "sect": "nocturnal",
+        "retrogradeCapable": false,
+        "approxDegPerDay": 13.18,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "mercury": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mercury",
+        "label": "Mercury",
+        "modern": false,
+        "classification": "personal",
+        "sect": "variable",
+        "retrogradeCapable": true,
+        "approxDegPerDay": 1.38,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "venus": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "venus",
+        "label": "Venus",
+        "modern": false,
+        "classification": "personal",
+        "sect": "nocturnal",
+        "retrogradeCapable": true,
+        "approxDegPerDay": 1.2,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "mars": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mars",
+        "label": "Mars",
+        "modern": false,
+        "classification": "personal",
+        "sect": "nocturnal",
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.52,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "jupiter": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "jupiter",
+        "label": "Jupiter",
+        "modern": false,
+        "classification": "social",
+        "sect": "diurnal",
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.083,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "saturn": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "saturn",
+        "label": "Saturn",
+        "modern": false,
+        "classification": "social",
+        "sect": "diurnal",
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.034,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "uranus": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "uranus",
+        "label": "Uranus",
+        "modern": true,
+        "classification": "transpersonal",
+        "sect": null,
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.012,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "neptune": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "neptune",
+        "label": "Neptune",
+        "modern": true,
+        "classification": "transpersonal",
+        "sect": null,
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.006,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      },
+      "pluto": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "pluto",
+        "label": "Pluto",
+        "modern": true,
+        "classification": "transpersonal",
+        "sect": null,
+        "retrogradeCapable": true,
+        "approxDegPerDay": 0.004,
+        "speedNote": "Approximate mean motion for fast/slow ordering and rough applying/separating logic. Use the live ephemeris speed for exact timing."
+      }
+    }
+  }
+}

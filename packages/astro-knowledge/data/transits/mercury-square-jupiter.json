@@ -1,0 +1,30 @@
+{
+  "id": "mercury-square-jupiter",
+  "transiting": "mercury",
+  "aspect": "square",
+  "other": "jupiter",
+  "tldr": "Mercury square Jupiter.",
+  "traditional": "Mercury square Jupiter: a hard contact. Communication, commerce, and contracts works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Psychologically the square is inner tension to integrate: Exaggeration, and swinging between getting lost in detail and ignoring it entirely. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for thinking against growth, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the thinking/growth form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Strong for pairing vision with persuasion; watch overstatement.",
+  "shadow": "Scattered overthinking collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:mercury-jupiter",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Psychologically the square is inner tension to integrate: Exaggeration, and swinging between getting lost in detail and ignoring it entirely. The growth is owning both sides instead of splitting them."
+}

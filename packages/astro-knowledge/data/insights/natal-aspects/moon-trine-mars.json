@@ -1,0 +1,48 @@
+{
+  "id": "moon-trine-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Sensitive Through Driven",
+  "summary": "Emotional needs flow with drive and anger. This fluid pattern asks you to use emotional intelligence and courage with awareness.",
+  "body": "Emotional needs flow with drive and anger. This fluid pattern asks you to use emotional intelligence and courage with awareness. Emotional energy fuels getting things done; lively, active imagination. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through emotional needs, drive and anger, and the choices you make when mood-driven reaction or reactivity starts running the room.",
+  "gift": "The gift is emotional intelligence, courage, and a more conscious way to work with emotional needs and drive and anger.",
+  "shadow": "The shadow is mood-driven reaction, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let emotional needs and drive and anger cooperate without making either one carry the whole story. Drive powered by feeling; the work is managing reactivity.",
+  "do": [
+    "Name how emotional needs and drive and anger are both involved",
+    "Use the easy opening deliberately",
+    "Turn emotional intelligence and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let mood-driven reaction make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of emotional needs or drive and anger"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "home",
+    "work"
+  ],
+  "tags": [
+    "moon",
+    "mars",
+    "trine",
+    "emotional-intelligence",
+    "courage"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,45 @@
+{
+  "id": "jupiter-conjunction-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive And Original",
+  "summary": "Growth and belief merge freedom and disruption. This concentrated pattern asks you to use optimism and originality with awareness.",
+  "body": "Growth and belief merge freedom and disruption. This concentrated pattern asks you to use optimism and originality with awareness. Expansion meets disruption. Attraction to unconventional ideas and systems of thought. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through growth and belief, freedom and disruption, and the choices you make when overreach or instability starts running the room.",
+  "gift": "The gift is optimism, originality, and a more conscious way to work with growth and belief and freedom and disruption.",
+  "shadow": "The shadow is overreach, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and freedom and disruption cooperate without making either one carry the whole story. Innovative thinking whose reception depends heavily on how it's framed.",
+  "do": [
+    "Name how growth and belief and freedom and disruption are both involved",
+    "Use the easy opening deliberately",
+    "Turn optimism and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of growth and belief or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "growth",
+    "friends"
+  ],
+  "tags": [
+    "jupiter",
+    "uranus",
+    "conjunction",
+    "optimism",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "conjunction",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

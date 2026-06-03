@@ -1,0 +1,222 @@
+{
+  "id": "example-scenarios",
+  "schema": "modifier/example-scenarios",
+  "appliesTo": [
+    "transit-to-natal",
+    "timing",
+    "relationship-reading",
+    "synastry",
+    "composite",
+    "progressed-lunation",
+    "developmental-age-map",
+    "chiron"
+  ],
+  "role": "example",
+  "category": "multi-domain",
+  "summary": "Reusable possible-expression examples for translating astrology patterns into plain life scenarios without treating examples as predictions.",
+  "body": "Use these scenarios as optional plain-language examples when repeated testimony supports a theme. They are not predictions, promises, diagnoses, or instructions. The app should phrase them as possible ways a pattern can show up.",
+  "definition": "An example scenario is a plain-life illustration of how an astrological pattern may express, used only after the chart context supports the topic.",
+  "appUsage": [
+    "Surface examples as 'this can look like' language, not 'this will happen' language.",
+    "Require repeated testimony before naming concrete event categories.",
+    "Keep sensitive topics broad and practical, especially health, safety, pregnancy, legal, financial, and relationship outcomes.",
+    "Use examples to clarify the life area, not to override user agency.",
+    "Do not expose source names or source files in user-facing text."
+  ],
+  "note": "Distilled from approved project resources and existing knowledge-base gaps. Source files were not copied into the repository.",
+  "classes": {
+    "transitToNatal": {
+      "use": "Use these when a transit-to-natal contact is supported by house activation, natal promise, return chart emphasis, or repeated timing testimony.",
+      "examplesByFunction": {
+        "conversationOrMessage": [
+          "A text, call, email, meeting, application, result, or announcement becomes the trigger point.",
+          "A misunderstanding needs repair through direct language.",
+          "A decision becomes real once it is written, signed, sent, or said out loud."
+        ],
+        "relationshipPressure": [
+          "A relationship asks for definition, boundaries, repair, or a more honest agreement.",
+          "Attraction and compatibility need to be separated instead of treated as the same thing.",
+          "The user may need to name what they want instead of waiting for the other person to guess."
+        ],
+        "careerVisibility": [
+          "A role, title, client, boss, public result, or reputation issue comes into focus.",
+          "The user may be asked to lead, be seen, explain their work, or accept more responsibility.",
+          "A private effort becomes visible enough to need structure."
+        ],
+        "moneyResources": [
+          "A payment, invoice, rate, debt, shared expense, purchase, or budget issue needs attention.",
+          "The user may need to price their work, ask for compensation, or stop avoiding a money conversation.",
+          "A resource pattern becomes concrete enough to plan around."
+        ],
+        "homeFamily": [
+          "A home, family, moving, property, repair, caregiving, or privacy issue becomes active.",
+          "The user's emotional foundation may need practical support rather than more analysis.",
+          "A family pattern may become visible through a current logistical problem."
+        ],
+        "bodyStress": [
+          "The user's body, energy, sleep, workload, or stress level asks for practical care.",
+          "A schedule or responsibility may need to be adjusted so the body is not carrying the whole cost.",
+          "If the user has a health concern, the example should direct them toward licensed support instead of interpretation."
+        ],
+        "privateClosure": [
+          "A draining pattern, hidden burden, grief process, therapy theme, rest need, or private ending comes forward.",
+          "The user may need quiet, withdrawal, journaling, support, or a container for what is ending.",
+          "Closure may be the work even before the next chapter is visible."
+        ]
+      }
+    },
+    "developmentalAgeMap": {
+      "use": "Use these only for the optional developmental age map feature, never for current transits or exact prediction.",
+      "examplesByOctave": {
+        "gestation": [
+          "Inherited family conditions, prenatal atmosphere, origin stories, and the circumstances surrounding arrival.",
+          "Themes that feel older than conscious memory and may be explored symbolically rather than literally."
+        ],
+        "childhood": [
+          "Home, school, caregivers, siblings, early rules, play, belonging, and the first lessons about safety.",
+          "A house period may describe the environment the child learned to adapt to, not a verdict about the child."
+        ],
+        "maturity": [
+          "Partnership, work, public role, money, responsibility, family-building, and adult identity formation.",
+          "Planets in the mapped period can describe pressures, people, or events that shape the adult path."
+        ],
+        "laterLife": [
+          "Legacy, simplification, mentoring, spiritual reflection, contribution, memory, and meaning beyond achievement.",
+          "Later-life themes should be presented as reflection points, not as fixed outcomes."
+        ]
+      }
+    },
+    "compositeChart": {
+      "use": "Use these to explain what a composite pattern can feel like inside the relationship field.",
+      "examplesByPattern": {
+        "moonSaturnHard": [
+          "Emotional closeness may be tied to duty, timing, distance, family responsibility, or fear of needing too much.",
+          "The bond can feel loyal but heavy unless warmth is practiced on purpose."
+        ],
+        "venusUranusHard": [
+          "Affection can spark quickly and then need space just as quickly.",
+          "The relationship may need unconventional agreements, flexible timing, or honest room for independence."
+        ],
+        "marsSaturnHard": [
+          "One part of the relationship pushes while another blocks, delays, critiques, or fears the consequence.",
+          "Desire, conflict, work, or momentum may need structure before it can move cleanly."
+        ],
+        "neptunePersonalHard": [
+          "Idealization, rescue, secrecy, confusion, or blurred expectations can cloud what is actually happening.",
+          "The relationship needs direct questions, practical agreements, and reality checks."
+        ],
+        "plutoPersonalHard": [
+          "Intensity, attachment, control, jealousy, or survival patterns may become part of the relationship climate.",
+          "Clean boundaries matter more than the magnetism."
+        ]
+      }
+    },
+    "synastry": {
+      "use": "Use these when close interaspects or overlays repeat a relationship theme.",
+      "examplesByScenario": {
+        "twelfthHouseOverlay": [
+          "The connection may work under the surface through projection, secrecy, dreams, compassion, avoidance, or unspoken emotional charge.",
+          "The user may feel the person even when the relationship is not clearly defined."
+        ],
+        "saturnContact": [
+          "The Saturn person may stabilize, mentor, delay, judge, test, or structure the other person's planet.",
+          "This can support commitment, but it can also feel cold or unequal if one person becomes the authority."
+        ],
+        "venusMarsChemistry": [
+          "The spark may be obvious before compatibility is proven.",
+          "Attraction can open the door, but daily emotional safety and communication decide whether the bond can live there."
+        ],
+        "nodesOrVertex": [
+          "The contact may feel like a turning point, familiar pattern, or relationship that arrives with unusual timing.",
+          "Name the pull without calling it proof that the relationship must last."
+        ],
+        "fourthHouseOverlay": [
+          "The planet person can touch the house person's home, family memory, privacy, and emotional roots.",
+          "This can feel deeply safe or unexpectedly exposing."
+        ],
+        "seventhHouseOverlay": [
+          "The house person may experience the planet person as partner material, mirror, client, opponent, or someone who forces relationship definition.",
+          "Projection is common; the app should separate recognition from commitment."
+        ],
+        "eighthHouseOverlay": [
+          "The bond may activate trust, sex, shared resources, debt, vulnerability, grief, therapy, or power dynamics.",
+          "Intensity is not enough; the relationship needs consent, clarity, and boundaries."
+        ],
+        "tenthHouseOverlay": [
+          "The planet person may affect the house person's career, public role, ambition, reputation, or authority path.",
+          "Support and pressure can arrive together."
+        ]
+      }
+    },
+    "progressedLunation": {
+      "use": "Use these as phase examples for the progressed lunation cycle.",
+      "examplesByPhase": {
+        "new": [
+          "A private reset, seed, withdrawal, or new inner orientation begins before the outside life has proof.",
+          "The user may feel less visible while a new chapter gathers roots."
+        ],
+        "crescent": [
+          "The new direction needs protection, repetition, and small proof.",
+          "Old habits may test whether the user will keep feeding the seed."
+        ],
+        "firstQuarter": [
+          "A decision, challenge, conflict, or action point forces the new direction into motion.",
+          "The user may need to choose movement before certainty."
+        ],
+        "gibbous": [
+          "Refinement, skill-building, editing, adjustment, and service to the larger aim become central.",
+          "The user may need to improve the system without turning improvement into self-attack."
+        ],
+        "full": [
+          "Visibility, culmination, result, public recognition, relationship mirroring, or full awareness arrives.",
+          "The user sees what the cycle has become and what it costs to maintain."
+        ],
+        "disseminating": [
+          "Teaching, sharing, distribution, mentoring, publishing, or giving the harvest away becomes important.",
+          "The question becomes who benefits from what the user has learned."
+        ],
+        "lastQuarter": [
+          "Revision, release, disillusionment, restructuring, and value clarification become necessary.",
+          "The user may need to stop maintaining a form that no longer carries the meaning."
+        ],
+        "balsamic": [
+          "Closure, retreat, grief, quiet preparation, spiritual practice, and behind-the-scenes completion take priority.",
+          "The next cycle is not ready to be forced yet."
+        ]
+      }
+    },
+    "chiron": {
+      "use": "Use these only in the optional shadow and healing layer, especially when Chiron touches a personal planet or angle.",
+      "examplesByHouse": {
+        "1": "Identity, body, visibility, and the right to exist as oneself.",
+        "2": "Worth, money, stability, value, and the fear of never having enough.",
+        "3": "Voice, learning, siblings, early school experience, and being understood.",
+        "4": "Home, family, belonging, roots, privacy, and emotional safety.",
+        "5": "Creativity, joy, romance, children, play, and the fear of being seen.",
+        "6": "Work, usefulness, routines, body symbolism, service, and over-functioning.",
+        "7": "Partnership, rejection, being chosen, projection, and healing through relationship.",
+        "8": "Trust, intimacy, shared resources, grief, control, vulnerability, and deep repair.",
+        "9": "Belief, meaning, faith, education, travel, and rebuilding a worldview.",
+        "10": "Public role, authority, legitimacy, career, reputation, and earned confidence.",
+        "11": "Belonging, friendship, groups, community, exclusion, and making room for outsiders.",
+        "12": "Hidden wounds, inherited sorrow, solitude, spiritual sensitivity, and what needs a safe container."
+      }
+    }
+  },
+  "prohibitions": [
+    "Do not treat examples as predictions.",
+    "Do not use examples to diagnose medical, mental health, legal, financial, or safety outcomes.",
+    "Do not include source names, source titles, or copied source text.",
+    "Do not surface exact developmental age tables or proprietary formulas.",
+    "Do not make past-life framing mandatory or literal."
+  ],
+  "weighting": [
+    "Use examples only after the main interpretation is grounded.",
+    "For timing, require repeated testimony before examples become concrete.",
+    "For relationships, separate attraction, compatibility, durability, and health.",
+    "For body-related topics, keep examples symbolic and direct users to licensed support when needed.",
+    "For optional lenses, label the lens clearly before showing examples."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

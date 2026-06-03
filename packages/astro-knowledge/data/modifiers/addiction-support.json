@@ -1,0 +1,169 @@
+{
+  "id": "addiction-support",
+  "schema": "modifier/addiction-support",
+  "appliesTo": [
+    "natal-chart",
+    "natal-placement",
+    "optional-support-layer",
+    "recovery-support"
+  ],
+  "role": "support",
+  "category": "safety",
+  "summary": "Optional natal-chart support layer for addiction-pattern awareness, constructive channeling, and recovery-oriented reflection.",
+  "body": "This content exists in the knowledge base for app-level optional use. It must never be surfaced as a default prediction, diagnosis, fate statement, or moral judgment. The app can keep this layer off unless the user explicitly enables sensitive support content.",
+  "definition": "A non-diagnostic interpretive layer for noticing escapism, compulsion, numbing, avoidance, and recovery-support patterns in natal and transit context.",
+  "appUsage": [
+    "Default this layer off at the app level unless the product intentionally enables sensitive support content.",
+    "Show safety framing before any addiction-pattern interpretation.",
+    "Pair every pattern with a constructive channel and a support-oriented next step.",
+    "Do not attach this content to a user as an identity label.",
+    "If a user indicates active crisis, risk, or current struggle, lead with support resources and care language before astrology."
+  ],
+  "note": "Imported from the project support bundle. Source files were not copied into the repository.",
+  "classes": {
+    "version": 1,
+    "framing": {
+      "notDeterministic": "No placement causes or predicts addiction. These are lenses for self-reflection, not verdicts or fate.",
+      "notDiagnostic": "This is not a clinical or medical assessment. Astrology does not diagnose and does not replace professional care.",
+      "orientation": "Every signature is paired with a constructive channel and a pointer toward real support. The energy is workable; the goal is awareness plus action, not labeling.",
+      "governedBy": "addiction_ethics_policy.json"
+    },
+    "signatures": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "neptune-prominent",
+        "factors": [
+          "neptune"
+        ],
+        "pattern": "Neptune themes (the urge to retreat from difficulty, to merge, to soften reality) can show up as escapism, avoidance, or numbing when life feels too sharp.",
+        "constructiveChannel": "Neptune's higher octave: creativity, music and art, meditation, spiritual practice, service, time near water or rest. Feed the longing for transcendence through inspiration, not anesthesia.",
+        "support": "Pair self-reflection with grounding routines and, where needed, professional or peer support."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "hard-neptune-aspects",
+        "factors": [
+          "neptune",
+          "square",
+          "opposition",
+          "conjunction"
+        ],
+        "pattern": "Hard aspects to Neptune can intensify fogginess, self-deception, and the pull to escape pain rather than face it.",
+        "constructiveChannel": "Name the story you are telling yourself and test whether it is true. Choose thoughtful release of feeling over repression and over acting out.",
+        "support": "These are good moments to lean on guidance rather than decide or 'sign on the dotted line' alone."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "neptune-8th-or-12th",
+        "factors": [
+          "neptune",
+          "house8",
+          "house12"
+        ],
+        "pattern": "Neptune emphasis in the 8th (shared depths, loss, vulnerability) or 12th (the hidden, solitude) can make anesthesia tempting where the material is painful.",
+        "constructiveChannel": "Bring the hidden into the open with a trusted person or practice; let the depth be felt and metabolized rather than dissolved.",
+        "support": "Spiritual or psychological guidance noticeably lowers the pull toward avoidance and self-destructive habit here."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "moon-neptune",
+        "factors": [
+          "moon",
+          "neptune"
+        ],
+        "pattern": "Moon-Neptune contacts can blur emotional needs, so comfort gets sought in ways that soothe briefly but do not nourish.",
+        "constructiveChannel": "Identify the actual need under the urge, and meet it directly: rest, connection, creative expression, being heard."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "pluto-compulsion",
+        "factors": [
+          "pluto"
+        ],
+        "pattern": "Pluto themes can show up as compulsion, obsession, or the use of control to manage what feels overwhelming.",
+        "constructiveChannel": "Self-awareness is the lever. Naming the darker pattern honestly is what loosens its grip and opens transformation."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "south-node-12th-or-pisces",
+        "factors": [
+          "south_node",
+          "house12",
+          "pisces"
+        ],
+        "pattern": "A long-standing pull toward dissolution, withdrawal, or escape, with a default wish to leave the world rather than be in it.",
+        "constructiveChannel": "The growth direction is the opposite: come back into the body, build routine, focus on the here and now, be of service, value the small concrete details."
+      }
+    ],
+    "turningPointTransits": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "uranus-to-neptune",
+        "factors": [
+          "uranus",
+          "neptune"
+        ],
+        "plainTranslation": "Transiting Uranus to natal Neptune can awaken someone to the cost of denial. The sources frame it as a possible 'rock bottom' turn that, used well, helps break free of self-destructive patterns. Uranus is the liberating influence here."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "uranus-to-pluto",
+        "factors": [
+          "uranus",
+          "pluto"
+        ],
+        "plainTranslation": "Transiting Uranus to natal Pluto can break a compulsive grip. Self-awareness becomes the key to leaving self-defeating behavior behind."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "saturn-structure",
+        "factors": [
+          "saturn"
+        ],
+        "plainTranslation": "Saturn contacts and the Saturn return support recovery through structure: routine, accountability, sustained effort, and a long view. (See saturn_return.json.)"
+      }
+    ],
+    "constructiveChannels": [
+      "creative work and art",
+      "music",
+      "meditation and contemplative practice",
+      "spiritual community and ritual",
+      "service to others",
+      "time in nature and near water",
+      "grounding routine and the here-and-now",
+      "being heard by a trusted person"
+    ],
+    "note": "The recurring image in the sources: meet the longing Neptune carries with genuine connection and meaning ('spirit'), not with substances ('spirits'). Inspiration is the cure for the same energy that, untended, becomes escape.",
+    "displayPolicy": {
+      "defaultVisibility": "off",
+      "surface": "optional sensitive support layer",
+      "userControl": "app-level toggle",
+      "weighting": "secondary; never the primary natal interpretation",
+      "reviewRequired": true
+    }
+  },
+  "prohibitions": [
+    "Do not state or imply that a chart causes, predicts, proves, or excuses addiction.",
+    "Do not diagnose substance use, behavioral addiction, mental health conditions, or recovery status.",
+    "Do not romanticize, glamorize, normalize, or sensationalize substance use or self-destructive behavior.",
+    "Do not provide instructions, sourcing, dosing, concealment methods, or how-to content relating to substances.",
+    "Do not use astrology to delay, replace, or argue against professional treatment or peer support."
+  ],
+  "weighting": [
+    "Use only as a secondary optional layer after the main natal interpretation.",
+    "Weight Neptune, Pluto, 8th house, 12th house, Pisces, South Node, and relevant hard aspects only as reflective signatures, not conclusions.",
+    "Weight up only when multiple signatures repeat and the user has opted into sensitive support content.",
+    "For active transits, frame Uranus and Saturn contacts as possible turning-point support, not guaranteed events."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

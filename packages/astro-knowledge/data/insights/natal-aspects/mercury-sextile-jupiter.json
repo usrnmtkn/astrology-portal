@@ -1,0 +1,47 @@
+{
+  "id": "mercury-sextile-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive With Expansive",
+  "summary": "Thinking and speech support growth and belief. This cooperative pattern asks you to use clear thinking and optimism with awareness.",
+  "body": "Thinking and speech support growth and belief. This cooperative pattern asks you to use clear thinking and optimism with awareness. Fluid shifting between generalities and specifics; the conjunction here generally reads as easy. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through thinking and speech, growth and belief, and the choices you make when mental noise or overreach starts running the room.",
+  "gift": "The gift is clear thinking, optimism, and a more conscious way to work with thinking and speech and growth and belief.",
+  "shadow": "The shadow is mental noise, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and growth and belief cooperate without making either one carry the whole story. Strong for pairing vision with persuasion; watch overstatement.",
+  "do": [
+    "Name how thinking and speech and growth and belief are both involved",
+    "Use the easy opening deliberately",
+    "Turn clear thinking and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of thinking and speech or growth and belief"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "growth"
+  ],
+  "tags": [
+    "mercury",
+    "jupiter",
+    "sextile",
+    "clear-thinking",
+    "optimism"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

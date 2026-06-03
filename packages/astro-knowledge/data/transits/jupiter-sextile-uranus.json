@@ -1,0 +1,30 @@
+{
+  "id": "jupiter-sextile-uranus",
+  "transiting": "jupiter",
+  "aspect": "sextile",
+  "other": "uranus",
+  "tldr": "Jupiter sextile Uranus.",
+  "traditional": "No classical doctrine: Uranus is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought. The sextile makes this a natural strength: Seen as forward-thinking and ahead of the curve; you get away with it. The growth edge is not to coast on the ease.",
+  "cyclic": {
+    "phase": "Waxing / waning sextile",
+    "waxing": "A chance to organize growth and disruption into a new form; it must be actively taken up.",
+    "waning": "Reorganize and share what growth and disruption have taught; communicate the insight."
+  },
+  "business": "An opening in this area. Innovative thinking whose reception depends heavily on how it's framed.",
+  "shadow": "The ease lets excess and overreach and instability for its own sake go unchecked, or the opening pass unused.",
+  "arcApplying": "A supportive opening becomes available; offered, not automatic.",
+  "arcSeparating": "The opening closes; unused, it passes.",
+  "composedFrom": [
+    "pair:jupiter-uranus",
+    "aspect:sextile"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Expansion meets disruption. Attraction to unconventional ideas and systems of thought. The sextile makes this a natural strength: Seen as forward-thinking and ahead of the curve; you get away with it. The growth edge is not to coast on the ease."
+}

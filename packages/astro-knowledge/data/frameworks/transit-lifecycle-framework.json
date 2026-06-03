@@ -1,0 +1,41 @@
+{
+  "id": "transit-lifecycle-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "transit",
+  "title": "Transit Lifecycle Framework",
+  "sections": [
+    {
+      "id": "transits-are-processes",
+      "heading": "Transits Are Processes",
+      "body": "A transit is not a single prediction point. It describes a timed process in which natal symbolism is activated, pressured, clarified, or given an opportunity to express. The exact date is the peak of the contact, but the meaning usually develops before and after exactitude."
+    },
+    {
+      "id": "natal-promise-first",
+      "heading": "Natal Promise First",
+      "body": "Read every transit through the natal chart it activates. A transit to a planet repeats, challenges, or develops that planet's natal condition, dignity, house topics, aspects, and existing patterns. A difficult transit does not create a theme from nothing; it stresses what is already in the chart and life."
+    },
+    {
+      "id": "inner-and-outer-event",
+      "heading": "Inner And Outer Event",
+      "body": "Transits can show external events, psychological shifts, or both. Treat the inner movement as part of the event, not as a lesser substitute for concrete manifestation. User-facing text should describe likely lived pressures and choices without claiming that one specific external event must happen."
+    },
+    {
+      "id": "hard-and-soft-aspects",
+      "heading": "Hard And Soft Aspects",
+      "body": "Hard aspects are not automatically bad, and soft aspects are not automatically useful. Squares and oppositions often force awareness, decision, rupture, or effort. Trines and sextiles can bring ease, support, and openings, but they can also pass unused if the person does not act."
+    },
+    {
+      "id": "timing-window",
+      "heading": "Timing Window",
+      "body": "For direct hits, rank the exact pass highest. Applying contacts describe the build-up and the pressure coming into focus. Separating contacts describe integration, aftermath, and consequences. Retrograde cycles can create three-part stories: first contact, review or reversal, and final integration."
+    },
+    {
+      "id": "priority-stack",
+      "heading": "Priority Stack",
+      "body": "Weight transits by personal relevance: angles and chart ruler first, then Sun and Moon, then personal planets, then sect light and time-lord activations, then outer-planet background. Down-weight generic outer-planet contacts unless they touch personal planets, angles, chart ruler, or activated time-lord points."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

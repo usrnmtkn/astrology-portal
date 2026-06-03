@@ -1,0 +1,24 @@
+{
+  "id": "moon-mercury",
+  "planetA": "moon",
+  "planetB": "mercury",
+  "traditional": "The body and daily needs combined with communication and commerce.",
+  "modern": {
+    "blend": "Emotion meets mind. How feeling and thinking inform each other, and how readily the inner life gets put into words.",
+    "harmonious": "Thought and communication flow; expression is instinctive and fluent.",
+    "hard": "Gut instinct argues with logic. Either feelings go unspoken or they get said unfiltered, without being thought through.",
+    "business": "Communication colored by mood; powerful when feeling and reasoning are integrated."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Emotion meets mind. How feeling and thinking inform each other, and how readily the inner life gets put into words.",
+  "harmonious": "Thought and communication flow; expression is instinctive and fluent.",
+  "hard": "Gut instinct argues with logic. Either feelings go unspoken or they get said unfiltered, without being thought through.",
+  "business": "Communication colored by mood; powerful when feeling and reasoning are integrated."
+}

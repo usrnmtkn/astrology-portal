@@ -1,0 +1,24 @@
+{
+  "id": "moon-saturn",
+  "planetA": "moon",
+  "planetB": "saturn",
+  "traditional": "The body and daily needs combined with limitation and structure.",
+  "modern": {
+    "blend": "Emotion meets limit and duty. Emotional reserve, seriousness, and a habit of bracing for the worst.",
+    "harmonious": "Emotional steadiness and staying power.",
+    "hard": "Coldness or distance, pessimism, and a sense of deprivation. Useful work is the standard remedy.",
+    "business": "Dependable under pressure; the risk is grinding joylessly."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Emotion meets limit and duty. Emotional reserve, seriousness, and a habit of bracing for the worst.",
+  "harmonious": "Emotional steadiness and staying power.",
+  "hard": "Coldness or distance, pessimism, and a sense of deprivation. Useful work is the standard remedy.",
+  "business": "Dependable under pressure; the risk is grinding joylessly."
+}

@@ -1,0 +1,11 @@
+{
+  "id": "mercury_house7",
+  "kind": "house-overlay",
+  "planet": "mercury",
+  "house": "7",
+  "plainTranslation": "Someone's Mercury in the other's House 7: brings mind into partnership and one-to-one relationships.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

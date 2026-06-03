@@ -1,0 +1,24 @@
+{
+  "id": "sun-moon",
+  "planetA": "sun",
+  "planetB": "moon",
+  "traditional": "Vitality and authority combined with the body and daily needs.",
+  "modern": {
+    "blend": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need.",
+    "harmonious": "Outer and inner self move easily together. Steady, consistent, at ease with oneself, though it can lack a charge of its own.",
+    "hard": "Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled.",
+    "business": "Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need.",
+  "harmonious": "Outer and inner self move easily together. Steady, consistent, at ease with oneself, though it can lack a charge of its own.",
+  "hard": "Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled.",
+  "business": "Self-direction reads as either steady and integrated, or as internal conflict that undercuts decisiveness."
+}

@@ -1,0 +1,47 @@
+{
+  "id": "uranus-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Original Or Inspired",
+  "summary": "Freedom and disruption press against imagination and longing. This frictional pattern asks you to use originality and compassion with awareness.",
+  "body": "Freedom and disruption press against imagination and longing. This frictional pattern asks you to use originality and compassion with awareness. Idealism that destabilizes more than it builds. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through freedom and disruption, imagination and longing, and the choices you make when instability or confusion starts running the room.",
+  "gift": "The gift is originality, compassion, and a more conscious way to work with freedom and disruption and imagination and longing.",
+  "shadow": "The shadow is instability, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let freedom and disruption and imagination and longing cooperate without making either one carry the whole story. Generational and visionary themes rather than a personal day-to-day read.",
+  "do": [
+    "Name how freedom and disruption and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn originality and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let instability make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of freedom and disruption or imagination and longing"
+  ],
+  "lifeAreas": [
+    "friends",
+    "growth",
+    "spirituality"
+  ],
+  "tags": [
+    "uranus",
+    "neptune",
+    "square",
+    "originality",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

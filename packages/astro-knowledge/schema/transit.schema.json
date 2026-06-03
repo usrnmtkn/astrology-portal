@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/transit.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "transiting", "aspect", "other", "base", "business", "shadow", "arcApplying", "arcSeparating", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "transiting": { "type": "string" },
+    "aspect": { "type": "string" },
+    "other": { "type": "string" },
+    "tldr": { "type": "string" },
+    "traditional": { "type": "string" },
+    "modern": { "type": "string" },
+    "cyclic": { "type": "object" },
+    "base": { "type": "string" },
+    "business": { "type": "string" },
+    "shadow": { "type": "string" },
+    "arcApplying": { "type": "string" },
+    "arcSeparating": { "type": "string" },
+    "composedFrom": { "type": "array", "items": { "type": "string" } },
+    "provenance": { "type": "object" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

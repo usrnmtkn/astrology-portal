@@ -1,0 +1,63 @@
+{
+  "id": "moon",
+  "planet": "moon",
+  "title": "Moon Meaning",
+  "overview": "The Moon describes emotional needs, instinctive reactions, memory, body rhythms, caretaking patterns, and what helps a person feel safe enough to respond rather than defend. It shows the private self: how feelings move, how comfort is sought, and what kind of environment supports steadiness.",
+  "cycle": "The Moon travels through the zodiac in about 27.3 days and changes signs roughly every two to two and a half days. Its sign describes emotional style; its house shows where the person seeks safety, familiarity, and nourishment.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Moon in Aries feels quickly and responds directly. Emotional safety comes through autonomy, honest action, and the freedom to move instead of waiting for permission."
+    },
+    {
+      "sign": "taurus",
+      "body": "Moon in Taurus seeks emotional steadiness through comfort, touch, routine, and reliable surroundings. Feelings settle when life feels simple, embodied, and materially secure."
+    },
+    {
+      "sign": "gemini",
+      "body": "Moon in Gemini processes feelings through language, movement, curiosity, and mental variety. Emotional regulation often comes from naming the feeling and talking it through."
+    },
+    {
+      "sign": "cancer",
+      "body": "Moon in Cancer is deeply responsive, protective, and tied to home, memory, and belonging. Emotional safety comes through care, privacy, and trusted bonds."
+    },
+    {
+      "sign": "leo",
+      "body": "Moon in Leo needs warmth, affection, play, and heartfelt recognition. Feelings want expression, and emotional safety grows when joy and loyalty are present."
+    },
+    {
+      "sign": "virgo",
+      "body": "Moon in Virgo processes emotions through order, usefulness, observation, and practical care. Safety comes from rhythm, repair, and knowing what can be done next."
+    },
+    {
+      "sign": "libra",
+      "body": "Moon in Libra seeks emotional balance through harmony, fairness, beauty, and relational attunement. Safety grows when conflict can be addressed without losing respect."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Moon in Scorpio feels intensely and needs emotional honesty, privacy, and trust. Safety comes from depth, loyalty, and the freedom to name what is usually hidden."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Moon in Sagittarius needs freedom, movement, humor, meaning, and room to breathe. Emotional safety grows when life still feels open and the story can keep expanding."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Moon in Capricorn seeks emotional safety through competence, structure, responsibility, and self-command. Feelings may be private, but they are not absent."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Moon in Aquarius needs space, perspective, friendship, and respect for individuality. Emotional safety grows when feelings can be understood without being crowded."
+    },
+    {
+      "sign": "pisces",
+      "body": "Moon in Pisces feels through empathy, imagination, atmosphere, and spiritual sensitivity. Safety comes through gentleness, creative release, and boundaries that keep compassion from becoming overwhelm."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

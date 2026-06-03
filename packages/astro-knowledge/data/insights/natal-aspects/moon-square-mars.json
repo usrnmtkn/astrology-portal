@@ -1,0 +1,48 @@
+{
+  "id": "moon-square-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Reactive Or Brave",
+  "summary": "Feeling and action can collide quickly. When something touches a need, your body may be ready to defend it.",
+  "body": "Moon square Mars describes emotional heat, protective instincts, and a fast path between feeling and reaction. You may be brave on behalf of people you love, but also quick to irritation when tired, hungry, hurt, or crowded. Anger can cover vulnerability, especially when needs feel exposed. The gift is fierce care and emotional courage. The growth is learning to pause long enough to know what the feeling is asking for before action takes over.",
+  "gift": "Protectiveness, courage, direct emotional energy, and the ability to act when care requires defense.",
+  "shadow": "Reactivity, impatience, defensive anger, and fighting when what you need is comfort or space.",
+  "integration": "Treat anger as a messenger, not the whole message. Your needs deserve action, but they also deserve accuracy.",
+  "do": [
+    "Check hunger, exhaustion, and overstimulation",
+    "Name the hurt before launching the defense",
+    "Use movement to discharge heat"
+  ],
+  "dont": [
+    "Make the first reaction the final truth",
+    "Punish people for not reading your needs",
+    "Confuse urgency with emotional honesty"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "family",
+    "health"
+  ],
+  "tags": [
+    "anger",
+    "needs",
+    "protection",
+    "reactivity",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "square",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "shadow-work",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

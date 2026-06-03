@@ -1,0 +1,29 @@
+{
+  "id": "mercury-opposition-mars",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "mars",
+  "tldr": "Mercury opposition Mars.",
+  "traditional": "Mercury opposition Mars: a hard contact. Communication, commerce, and contracts works against action, conflict, and heat \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. Psychologically the opposition is inner tension to integrate: Arguments and verbal aggression; the mind never switches off. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Thinking and drive reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Fast, cutting thinking; the task is channeling the edge productively.",
+  "shadow": "Scattered overthinking collides with anger and recklessness; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:mercury-mars",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. Psychologically the opposition is inner tension to integrate: Arguments and verbal aggression; the mind never switches off. The growth is owning both sides instead of splitting them."
+}

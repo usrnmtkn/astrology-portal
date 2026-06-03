@@ -1,0 +1,133 @@
+{
+  "id": "jupiter-return-cycle",
+  "schema": "modifier/planetary-life-cycle",
+  "appliesTo": [
+    "jupiter",
+    "planetary-return",
+    "life-cycle",
+    "timing",
+    "transit"
+  ],
+  "role": "lifecycle",
+  "category": "planetary-return",
+  "summary": "Jupiter Return opens a new roughly 12-year growth cycle around the natal Jupiter house, sign, aspects, and topics Jupiter rules in the chart.",
+  "body": "Use Jupiter Return as a growth-cycle marker, not a guaranteed event. The return, squares, and opposition describe phases of expansion, course correction, perspective, consolidation, and renewed faith. Weight the cycle up when Jupiter is prominent by natal condition, chart rulership, current profection, or repeated transit/progression testimony.",
+  "definition": "Jupiter Return occurs when transiting Jupiter returns to the natal Jupiter degree, beginning a new approximately 12-year Jupiter cycle.",
+  "appUsage": [
+    "Compute exact Jupiter Return timing by degree rather than age alone.",
+    "Read natal Jupiter house, sign, dignity, aspects, and ruled houses before giving examples.",
+    "Treat ages as approximate cycle landmarks only.",
+    "Use the milestone guidance as plain-language support, not a prediction by itself."
+  ],
+  "note": "Distilled from project cycle material. Source file was not copied into the repository.",
+  "classes": {
+    "cycleFacts": {
+      "period": "about 12 years",
+      "meaning": "Each return begins a new 12-year growth cycle in the life area of your natal Jupiter (its house, sign, and aspects). It feels like stepping off a familiar edge into the unknown.",
+      "note": "Jupiter transits land harder if your Sun, Moon, or Ascendant is in Sagittarius or Pisces."
+    },
+    "milestones": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "return",
+        "aspect": "conjunction",
+        "ages": [
+          12,
+          24,
+          36,
+          48,
+          60,
+          72,
+          84
+        ],
+        "phase": "return",
+        "plainTranslation": "A new 12-year growth cycle opens in the area of life your natal Jupiter governs. Part of you wants to push past your comfort zone and expand.",
+        "guidance": "Say yes to the new adventure. Read natal Jupiter's house and sign for where it opens."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "waxing_square",
+        "aspect": "square",
+        "ages": [
+          3,
+          15,
+          27,
+          39,
+          51,
+          63,
+          75
+        ],
+        "phase": "waxing",
+        "plainTranslation": "The adventure that began at the last return comes into focus. Time to take an active role in steering it.",
+        "guidance": "Pick a direction and channel the energy into it."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "opposition",
+        "aspect": "opposition",
+        "ages": [
+          6,
+          18,
+          30,
+          42,
+          54,
+          66,
+          78
+        ],
+        "phase": "full",
+        "plainTranslation": "The low point of the cycle. Take a long look at your progress; the breaks may not be coming, even if you've done everything right. The gift is perspective and optimism.",
+        "guidance": "Reassess honestly, keep faith, adjust course."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "waning_square",
+        "aspect": "square",
+        "ages": [
+          9,
+          21,
+          33,
+          45,
+          57,
+          69,
+          81
+        ],
+        "phase": "waning",
+        "plainTranslation": "Pressure to refine and complete what this cycle started, before the next return resets it. (Derived by cycle structure.)",
+        "guidance": "Consolidate. Finish what you began."
+      }
+    ],
+    "technique": {
+      "name": "Jupiter Return Series",
+      "note": "For a finer read, cast charts for Jupiter reaching your natal Jupiter degree in each sign across the year. The one whose rising sign matches the return chart marks the most significant sub-period."
+    },
+    "weighting": {
+      "higherWhen": [
+        "Jupiter rules the Ascendant, Sun, Moon, MC, or an activated profected house.",
+        "Natal Jupiter is angular or tightly aspecting a luminary or chart ruler.",
+        "The return repeats an active 9th, 10th, 11th, 2nd, or 5th house theme.",
+        "A Solar Return or progression emphasizes Jupiter at the same time."
+      ],
+      "lowerWhen": [
+        "No natal or timing layer repeats the Jupiter theme.",
+        "The return is present but cadent/background and not contacting key natal points."
+      ]
+    }
+  },
+  "prohibitions": [
+    "Do not promise luck, money, marriage, travel, or success from Jupiter Return alone.",
+    "Do not treat age estimates as exact timing.",
+    "Do not ignore dignity, house placement, sect, or time-lord context."
+  ],
+  "weighting": [
+    "Exact degree return is stronger than age estimate.",
+    "Natal Jupiter condition determines how cleanly the growth opens.",
+    "Time-lord activation makes the return more eventful.",
+    "Squares and opposition are cycle checkpoints, not bad outcomes by default."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

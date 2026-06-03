@@ -1,0 +1,48 @@
+{
+  "id": "jupiter-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Faithful Or Inflated",
+  "summary": "Your hope is large, and your imagination can make possibility feel close. Discernment keeps the vision from floating away.",
+  "body": "Jupiter square Neptune describes big faith, spiritual longing, and a powerful imagination for what life could become. You may be drawn toward ideals, art, mysticism, rescue, or stories that promise meaning beyond the ordinary. This can inspire generosity and vision, but it can also blur judgment, inflate expectations, or make disappointment harder when reality arrives. The gift is inspired belief. The growth is learning to test the dream without killing it.",
+  "gift": "Vision, compassion, spiritual openness, imagination, and the ability to inspire hope.",
+  "shadow": "Overidealism, escapism, vague promises, and believing the feeling before checking the foundation.",
+  "integration": "Give the dream a budget, a timeline, and honest witnesses. Faith becomes stronger when it can meet reality without collapsing.",
+  "do": [
+    "Ground vision in one concrete commitment",
+    "Ask what the promise requires",
+    "Let inspiration be checked by trusted feedback"
+  ],
+  "dont": [
+    "Confuse longing with guidance",
+    "Rescue people to prove the ideal",
+    "Ignore practical limits because the story feels meaningful"
+  ],
+  "lifeAreas": [
+    "growth",
+    "spirituality",
+    "creativity"
+  ],
+  "tags": [
+    "faith",
+    "vision",
+    "idealism",
+    "discernment",
+    "hope"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work",
+    "core-traits"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

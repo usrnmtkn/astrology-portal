@@ -1,0 +1,12 @@
+{
+  "id": "uranus_mars_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "mars",
+  "aspect": "opposition",
+  "plainTranslation": "Your drive collides with disruption through others. Steer the charge into action, not a fight.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

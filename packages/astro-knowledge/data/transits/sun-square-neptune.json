@@ -1,0 +1,30 @@
+{
+  "id": "sun-square-neptune",
+  "transiting": "sun",
+  "aspect": "square",
+  "other": "neptune",
+  "tldr": "the Sun square Neptune.",
+  "traditional": "No classical doctrine: Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. Psychologically the square is inner tension to integrate: Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for selfhood against imagination, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the selfhood/imagination form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Creative or service-oriented directions; guard against self-deception and being played.",
+  "shadow": "Egotism and needing to be the center collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:sun-neptune",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. Psychologically the square is inner tension to integrate: Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy. The growth is owning both sides instead of splitting them."
+}

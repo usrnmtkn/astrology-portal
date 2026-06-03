@@ -1,0 +1,11 @@
+{
+  "id": "jupiter_house8",
+  "kind": "house-overlay",
+  "planet": "jupiter",
+  "house": "8",
+  "plainTranslation": "Someone's Jupiter in the other's House 8: brings growth into intimacy, shared resources, and transformation.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from project-authored synastry house overlay matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

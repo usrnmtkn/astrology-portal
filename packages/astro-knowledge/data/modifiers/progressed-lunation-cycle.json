@@ -1,0 +1,179 @@
+{
+  "id": "progressed-lunation-cycle",
+  "schema": "modifier/progressed-lunation-cycle",
+  "appliesTo": [
+    "progression",
+    "progressed-moon",
+    "progressed-sun",
+    "life-cycle",
+    "timing"
+  ],
+  "role": "method",
+  "category": "progression",
+  "summary": "The progressed lunation cycle describes a roughly 29-30 year life-phase rhythm formed by the progressed Moon and progressed Sun.",
+  "body": "Use this as a slow life-cycle layer, not a daily transit. The phase describes where the person is in a long arc of endings, beginnings, risk, visibility, sharing, revision, and release.",
+  "definition": "A progressed lunation phase is measured by the angular separation between the progressed Moon and progressed Sun, mapped as an eight-phase cycle across the chart angles.",
+  "appUsage": [
+    "Use as a life-phase feature with multi-year timing, not a daily notification trigger.",
+    "Calculate the phase from progressed Moon to progressed Sun separation; do not infer it from age alone.",
+    "Anchor interpretive framing to the IC, Descendant, MC, and Ascendant wave described in the framework.",
+    "Pair with Saturn Return when timing overlaps: progressed lunation describes what is ripening emotionally, while Saturn Return asks what structure can hold it.",
+    "Keep language non-fatalistic. A phase describes developmental weather, not a guaranteed event."
+  ],
+  "note": "Voiced from project-authored progressed lunation notes. Source file was not copied into the repository.",
+  "classes": {
+    "version": 1,
+    "framework": {
+      "anchor": "The cycle is anchored to the IC, not 0 Aries. The eight phases map onto the chart's four angles as a wave: New Moon at the IC (bottom), First Quarter at the Descendant, Full Moon at the MC (top), Last Quarter at the Ascendant.",
+      "houseProgression": "New Moon = 4th, Crescent = 5th-6th, First Quarter = 7th-8th, Gibbous = 9th, Full Moon = 10th, Disseminating = 11th-12th, Last Quarter = 1st-3rd, Balsamic = end of the 3rd into a new cycle."
+    },
+    "cycleFacts": {
+      "fullCycleYears": "about 29-30",
+      "perPhaseYears": "about 3.5-4",
+      "rate": "Progressed Moon moves about 13 degrees/year, progressed Sun about 1 degree/year; the Sun-Moon separation opens and closes over the full cycle.",
+      "timing": "Where you start depends on your natal lunar phase. Born near a New Moon, you hit your progressed New Moon in your mid-to-late twenties. Born near the Balsamic phase, you hit it early in life.",
+      "note": "This slow rhythm frames even long outer-planet transits. The progressed New Moon can land like an ending-and-renewal, close in feel to a heavy Pluto transit."
+    },
+    "relatedCycles": "Pairs with saturn_return.json: the progressed lunar return (what makes you happy) often precedes the Saturn return's call to build on it.",
+    "phases": [
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "new_moon",
+        "order": 1,
+        "name": "Progressed New Moon",
+        "degreeRange": [
+          0,
+          44
+        ],
+        "approxYears": 3.5,
+        "angleHouse": "IC / 4th house",
+        "plainTranslation": "Beginning and ending in the same breath. Something is over - a chapter, a job, an identity - and it can hurt. A seed goes in, but it is underground. You cannot see the new direction yet. The pull is home, roots, the quiet core.",
+        "guidance": "Do not force a direction. Let it stay murky. Go home, regroup, let the new self form before you name it."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "crescent",
+        "order": 2,
+        "name": "Progressed Crescent",
+        "degreeRange": [
+          45,
+          89
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "5th / 6th house",
+        "plainTranslation": "Time to move, even blind. The dream needs first steps. Everything is new and the learning curve is steep - new job, new role, new person, all unfamiliar.",
+        "guidance": "Start anyway. Take the risk, then do the boring work. Take help. Stop overthinking it."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "first_quarter",
+        "order": 3,
+        "name": "Progressed First Quarter",
+        "degreeRange": [
+          90,
+          134
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "Descendant / 7th / 8th house",
+        "plainTranslation": "A clean break. Independence, sometimes forced, usually through a test. Now you face other people - partners, rivals, the crowd. Weddings and divorces both cluster here.",
+        "guidance": "Take the risk. Pull in your allies. Face the judgment instead of dodging it."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "gibbous",
+        "order": 4,
+        "name": "Progressed Gibbous",
+        "degreeRange": [
+          135,
+          179
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "9th house (rising from the 8th)",
+        "plainTranslation": "Everything grows - ambition, stakes, feelings, problems. Your horizons widen. You reach higher, climbing toward a peak. The trap is overdoing it: overwork, overspend, burn out.",
+        "guidance": "Invest hard, watch the excess. You are building toward delivery, not there yet."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "full_moon",
+        "order": 5,
+        "name": "Progressed Full Moon",
+        "degreeRange": [
+          180,
+          224
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "MC / 10th house",
+        "plainTranslation": "The peak. Climax or anti-climax - a win or a letdown, and both go public. Maximum visibility, maximum clarity. Separation runs strong: distance from home, the urge to shed the old.",
+        "guidance": "See it clearly. Take the result, spend the energy, set new targets once it settles."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "disseminating",
+        "order": 6,
+        "name": "Progressed Disseminating",
+        "degreeRange": [
+          225,
+          269
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "11th / 12th house",
+        "plainTranslation": "The turn toward home. Share what you got - teach it, give it back, fold it into the group. You find your people and your niche. Or you sit with a loss and work through it.",
+        "guidance": "Spread the harvest. Build the network. Carry the lesson into ordinary life. Do not slide into hiding."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "last_quarter",
+        "order": 7,
+        "name": "Progressed Last Quarter",
+        "degreeRange": [
+          270,
+          314
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "Ascendant / 1st / 2nd / 3rd house",
+        "plainTranslation": "A wake-up call. Back from the crowd to yourself. Hard questions: who am I, what do I want, what is still undone. The fear points forward - that you left it too late.",
+        "guidance": "Cut the distractions. Focus. Do the undone thing while there's time."
+      },
+      {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "balsamic",
+        "order": 8,
+        "name": "Progressed Balsamic",
+        "degreeRange": [
+          315,
+          359
+        ],
+        "approxYears": 3.75,
+        "angleHouse": "3rd house / cycle's end",
+        "plainTranslation": "The world gets quieter and more concentrated. Supports fall away, dreams get shelved, energy dips. It is the release, the closing, the last word. It can also be a late harvest - the reward you waited years for, landing now.",
+        "guidance": "Let go of what is holding you back. Say the unsaid. Find closure. Protect the small new seed. Rest, and get support if you are running on empty."
+      }
+    ]
+  },
+  "prohibitions": [
+    "Do not use progressed lunation phase as a deterministic prediction of events.",
+    "Do not describe the Balsamic phase as failure, disappearance, or doom.",
+    "Do not use age alone when calculated progressions are available.",
+    "Do not collapse progressed lunation into ordinary New Moon or Full Moon ritual content."
+  ],
+  "weighting": [
+    "Exact progressed Sun-Moon separation determines the phase.",
+    "Phase changes are multi-year thresholds and deserve stronger weight near phase boundaries.",
+    "Angular phases are louder: New Moon near IC, First Quarter near Descendant, Full Moon near MC, Last Quarter near Ascendant.",
+    "Natal lunar phase changes when a person reaches each progressed phase; personalize timing from the natal chart."
+  ],
+  "orbs": {
+    "phaseRanges": "Use the eight 45-degree phase bands supplied in classes.phases.degreeRange.",
+    "thresholdWindow": "Give extra interpretive weight when the progressed Sun-Moon separation is within about 2 degrees of a phase boundary."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

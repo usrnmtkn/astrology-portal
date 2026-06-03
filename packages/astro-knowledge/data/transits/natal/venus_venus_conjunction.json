@@ -1,0 +1,12 @@
+{
+  "id": "venus_venus_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "venus",
+  "natal": "venus",
+  "aspect": "conjunction",
+  "plainTranslation": "Your love nature renews, a Venus return note. Attraction, pleasure, and what you value come into focus. A warm, social, indulgent window. Enjoy beauty and connection.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

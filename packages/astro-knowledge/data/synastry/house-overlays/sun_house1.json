@@ -1,0 +1,11 @@
+{
+  "id": "sun_house1",
+  "kind": "house-overlay",
+  "planet": "sun",
+  "house": "1",
+  "plainTranslation": "Their Sun in your 1st house: they see you clearly and you feel energized, even validated, around them. Strong mutual recognition - you become more yourself in their presence. Failure mode: you start acting out the version of you they reflect back. Let them see you; don't perform for the mirror.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

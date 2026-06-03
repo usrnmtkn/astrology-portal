@@ -1,0 +1,48 @@
+{
+  "id": "venus-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic Or Inspired",
+  "summary": "Love and values press against imagination and longing. This frictional pattern asks you to use relational grace and compassion with awareness.",
+  "body": "Love and values press against imagination and longing. This frictional pattern asks you to use relational grace and compassion with awareness. Seeing what you want to see in love, idealizing people, and the disillusionment that follows. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through love and values, imagination and longing, and the choices you make when approval seeking or confusion starts running the room.",
+  "gift": "The gift is relational grace, compassion, and a more conscious way to work with love and values and imagination and longing.",
+  "shadow": "The shadow is approval seeking, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and imagination and longing cooperate without making either one carry the whole story. Real artistic gifts; guard against unrealistic expectations of people and outcomes.",
+  "do": [
+    "Name how love and values and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn relational grace and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of love and values or imagination and longing"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "neptune",
+    "square",
+    "relational-grace",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

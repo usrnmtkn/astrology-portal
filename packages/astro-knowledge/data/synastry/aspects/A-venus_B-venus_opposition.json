@@ -1,0 +1,12 @@
+{
+  "id": "A-venus_B-venus_opposition",
+  "kind": "interaspect",
+  "planetA": "venus",
+  "planetB": "venus",
+  "aspect": "opposition",
+  "plainTranslation": "Opposite tastes and values that attract. You're drawn to what you don't share. Failure mode: friction over whose way is right. Treat the difference as range, not a referendum.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

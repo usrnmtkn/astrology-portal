@@ -1,0 +1,25 @@
+{
+  "id": "moon-uranus",
+  "planetA": "moon",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Emotional life meets disruption and the need for freedom. Feelings turn unpredictable, restless, and resistant to routine.",
+    "harmonious": "Emotional independence and a quick, inventive instinct; at ease with change.",
+    "hard": "Emotional volatility, sudden moods, and a recoil from anything that feels confining.",
+    "business": "Good for inventive moves and breaking stale routines; poor for steady, predictable handling."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "sourceNote": "Composed from planet primitives, not the pair cookbook (which omits Uranus-Moon/Mercury/Venus).",
+  "provenance": {
+    "traditional": "n/a (Uranus is a modern planet)",
+    "modern": "composed from planet primitives and modern outer-planet conventions; cookbook omits these pairs",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Emotional life meets disruption and the need for freedom. Feelings turn unpredictable, restless, and resistant to routine.",
+  "harmonious": "Emotional independence and a quick, inventive instinct; at ease with change.",
+  "hard": "Emotional volatility, sudden moods, and a recoil from anything that feels confining.",
+  "business": "Good for inventive moves and breaking stale routines; poor for steady, predictable handling."
+}

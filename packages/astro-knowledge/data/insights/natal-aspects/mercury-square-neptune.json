@@ -1,0 +1,48 @@
+{
+  "id": "mercury-square-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive Or Inspired",
+  "summary": "Thinking and speech press against imagination and longing. This frictional pattern asks you to use clear thinking and compassion with awareness.",
+  "body": "Thinking and speech press against imagination and longing. This frictional pattern asks you to use clear thinking and compassion with awareness. Slippery memory and blurred facts; what's real and what's imagined get confused. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through thinking and speech, imagination and longing, and the choices you make when mental noise or confusion starts running the room.",
+  "gift": "The gift is clear thinking, compassion, and a more conscious way to work with thinking and speech and imagination and longing.",
+  "shadow": "The shadow is mental noise, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and imagination and longing cooperate without making either one carry the whole story. Creative ideation; verify the details before acting on them.",
+  "do": [
+    "Name how thinking and speech and imagination and longing are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn clear thinking and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of thinking and speech or imagination and longing"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "spirituality"
+  ],
+  "tags": [
+    "mercury",
+    "neptune",
+    "square",
+    "clear-thinking",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

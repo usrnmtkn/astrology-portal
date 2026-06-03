@@ -1,0 +1,48 @@
+{
+  "id": "moon-conjunction-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Tender Or Too Accommodating",
+  "summary": "Comfort, affection, and emotional safety are closely linked. Love may need to feel gentle before it feels trustworthy.",
+  "body": "Moon conjunction Venus describes a soft bond between feeling and affection. You may seek beauty, sweetness, touch, harmony, and relational ease as forms of emotional regulation. This aspect can make you nurturing, charming, receptive, and loyal to what feels kind. The shadow is using pleasing or comfort to avoid conflict, or making your mood depend too much on being wanted. The gift is warmth. The growth is letting tenderness include honest needs.",
+  "gift": "Warmth, emotional charm, affection, hospitality, and the ability to make people feel welcome.",
+  "shadow": "People-pleasing, comfort-seeking, conflict avoidance, and confusing peace with emotional truth.",
+  "integration": "Let care be mutual. A loving atmosphere becomes stronger when your needs are named inside it.",
+  "do": [
+    "Ask for the comfort you actually need",
+    "Let affection include honesty",
+    "Create beauty without using it to hide tension"
+  ],
+  "dont": [
+    "Keep the peace by abandoning your feelings",
+    "Use sweetness to avoid a difficult conversation",
+    "Assume being wanted means being safe"
+  ],
+  "lifeAreas": [
+    "emotions",
+    "love",
+    "home"
+  ],
+  "tags": [
+    "tenderness",
+    "comfort",
+    "affection",
+    "harmony",
+    "needs"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "conjunction",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "emotional-needs",
+    "love-patterns",
+    "relationship-bonds"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

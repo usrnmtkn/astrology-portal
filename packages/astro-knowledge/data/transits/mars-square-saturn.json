@@ -1,0 +1,30 @@
+{
+  "id": "mars-square-saturn",
+  "transiting": "mars",
+  "aspect": "square",
+  "other": "saturn",
+  "tldr": "Mars square Saturn.",
+  "traditional": "Mars square Saturn: a hard contact. Action, conflict, and heat works against limitation, delay, and hard structure \u2014 obstruction, friction, and strained outcomes in these areas. Two malefics in a hard aspect: handle with care, and worse when either is out of sect.",
+  "modern": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Psychologically the square is inner tension to integrate: Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "First / Last Quarter",
+    "waxing": "Crisis of action: take conscious hold and build a durable form for drive against limit, or be thrown off course.",
+    "waning": "Crisis of meaning: break down the drive/limit form that has outlived its purpose and reorient toward the next cycle."
+  },
+  "business": "Friction in this area. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "shadow": "Anger and recklessness collides with fear and rigidity; forcing or splitting it instead of working it through.",
+  "arcApplying": "Friction builds toward a forced adjustment.",
+  "arcSeparating": "The crisis passes; what was restructured settles.",
+  "composedFrom": [
+    "pair:mars-saturn",
+    "aspect:square"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Psychologically the square is inner tension to integrate: Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The growth is owning both sides instead of splitting them."
+}

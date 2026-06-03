@@ -1,0 +1,41 @@
+{
+  "id": "fixed-star-lunar-mansion-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "fixed-stars",
+  "title": "Fixed Star And Lunar Mansion Framework",
+  "sections": [
+    {
+      "id": "stars-versus-planets",
+      "heading": "Stars Versus Planets",
+      "body": "Fixed stars should not be treated like fast-moving transits. Planets describe changing conditions because they move visibly through speed, brightness, station, retrograde, and aspect. Fixed stars are comparatively stable and work more like enduring points of potency, identity, and lineage. Use them as intensifiers and signature markers, not as ordinary daily-event triggers."
+    },
+    {
+      "id": "stellar-timing",
+      "heading": "Stellar Timing",
+      "body": "The core timing rule for fixed-star work is the Moon conjoining the star while the star-Moon contact is elevated, ideally culminating or near the highest point in the local sky. A secondary timing layer is the star's own local cycle: heliacal rising, culmination, and setting. These moments are location-dependent and drift slowly through precession, so a fixed-star calendar must be calculated for the user's place and date rather than hard-coded globally."
+    },
+    {
+      "id": "moon-as-mediator",
+      "heading": "Moon As Mediator",
+      "body": "The Moon is the primary carrier of stellar light into lived experience. For fixed-star timing, inspect the Moon's condition before using the star contact: phase, dignity, sect context, applying aspects, separation from malefics, void-of-course status, and angularity. A strong star contact carried by a damaged Moon should be down-weighted or treated as unstable."
+    },
+    {
+      "id": "star-identity",
+      "heading": "Star Identity",
+      "body": "Do not reduce a star to a single keyword. A useful fixed-star profile should include visual quality, constellation placement, nearby sky figures, yearly visibility cycle, major cultural names or myths with attribution, and associated planetary tones. The star's associated planets approximate its flavor; they do not replace the star's own identity."
+    },
+    {
+      "id": "lunar-mansions",
+      "heading": "Lunar Mansions",
+      "body": "Lunar mansions divide the Moon's path into daily segments and are a bridge between lunar timing and stellar material. Use them as a timing and symbolic layer, especially for lunar electional work. Keep a caveat: tropical mansion positions can drift away from the actual stars they originally described, so any star-specific work should prefer direct Moon-star contact over mansion label alone."
+    },
+    {
+      "id": "correspondence-use",
+      "heading": "Correspondence Use",
+      "body": "Traditional fixed-star lore often assigns stones, herbs, images, or sigils to major stars. Store those correspondences as optional support data when authored, but do not let correspondences stand in for interpretation. In the apps, fixed-star correspondences should support ritual or reflection features only after the astronomical contact and Moon condition are known."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "venus-conjunction-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic And Inspired",
+  "summary": "Love and values merge imagination and longing. This concentrated pattern asks you to use relational grace and compassion with awareness.",
+  "body": "Love and values merge imagination and longing. This concentrated pattern asks you to use relational grace and compassion with awareness. Love and value meet imagination. Heightened artistic sensibility and romantic idealism. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through love and values, imagination and longing, and the choices you make when approval seeking or confusion starts running the room.",
+  "gift": "The gift is relational grace, compassion, and a more conscious way to work with love and values and imagination and longing.",
+  "shadow": "The shadow is approval seeking, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and imagination and longing cooperate without making either one carry the whole story. Real artistic gifts; guard against unrealistic expectations of people and outcomes.",
+  "do": [
+    "Name how love and values and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn relational grace and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of love and values or imagination and longing"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "neptune",
+    "conjunction",
+    "relational-grace",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "conjunction",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

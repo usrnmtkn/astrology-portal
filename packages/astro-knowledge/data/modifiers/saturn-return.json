@@ -1,0 +1,311 @@
+{
+  "id": "saturn-return",
+  "schema": "modifier/saturn-return",
+  "appliesTo": [
+    "transit",
+    "natal-saturn",
+    "life-cycle",
+    "timing"
+  ],
+  "role": "lifecycle",
+  "category": "planetary-return",
+  "summary": "Saturn Return marks the renewal of the natal Saturn cycle, asking the person to upgrade their relationship with maturity, responsibility, structure, limits, authority, and long-term work.",
+  "body": "A Saturn Return occurs when transiting Saturn returns to the natal degree of Saturn. It is not automatically punishment or a fixed outcome. It is a life-cycle threshold where earlier models of responsibility, authority, discipline, fear, work, and commitment are tested against the life the person is actually building.",
+  "definition": "A Saturn Return is the conjunction of transiting Saturn to natal Saturn, beginning a new approximately 29.5-year Saturn cycle.",
+  "appUsage": [
+    "Use Saturn Return as a life-cycle feature, not as a daily transit blip.",
+    "Compute exact timing from transiting Saturn to natal Saturn. Do not rely on age alone.",
+    "Use age bands only as rough guidance: first return around 29-30, second around 58-60, third around 87-89.",
+    "Weight the natal Saturn sign, house, dignity, sect, retrograde condition, and natal aspects to Saturn as the core interpretive structure.",
+    "If Saturn stations within about 1-2 degrees of natal Saturn, treat the return period as louder and longer.",
+    "Do not frame Saturn Return as guaranteed crisis. Frame it as a maturity checkpoint where avoided structures become harder to ignore."
+  ],
+  "note": "Synthesized from approved project Saturn Return reference PDFs. Source files were not copied into the repository.",
+  "classes": {
+    "coreMeaning": {
+      "saturnFunction": "Saturn describes maturity, structure, discipline, limits, authority, responsibility, work, time, consequence, and the ability to build something durable.",
+      "returnFunction": "A return brings the planet's natal imprint back to full activation. For Saturn, the question is how the person has been using or avoiding Saturn's themes, and what must mature now.",
+      "upgradeFrame": "The return asks the person to stop living only from inherited models of authority and responsibility and to build a Saturn pattern that belongs to their own life."
+    },
+    "cycleMilestones": {
+      "waxingSquareOne": {
+        "ageRange": "6-8",
+        "phase": "first waxing square",
+        "meaning": "Early encounter with limits, rules, effort, authority, and consequences."
+      },
+      "firstOpposition": {
+        "ageRange": "13-15",
+        "phase": "first Saturn opposition",
+        "meaning": "Limits and authority become visible through confrontation. The person begins to see where external rules and inner resistance meet."
+      },
+      "waningSquareOne": {
+        "ageRange": "20-22",
+        "phase": "first waning square",
+        "meaning": "Pressure to test inherited expectations against adult choices. Early responsibility patterns begin to strain."
+      },
+      "firstReturn": {
+        "ageRange": "29-30",
+        "phase": "first Saturn Return",
+        "meaning": "The first full audit of maturity, work, authority, commitment, and life structure."
+      },
+      "waxingSquareTwo": {
+        "ageRange": "36-37",
+        "phase": "second waxing square",
+        "meaning": "Friction around how the post-return structure is actually working."
+      },
+      "secondOpposition": {
+        "ageRange": "43-45",
+        "phase": "second Saturn opposition",
+        "meaning": "Mid-cycle visibility. Weak spots in discipline, commitment, authority, and long-term direction become harder to deny."
+      },
+      "waningSquareTwo": {
+        "ageRange": "50-52",
+        "phase": "second waning square",
+        "meaning": "A later pressure point that asks what needs to be revised before the second return."
+      },
+      "secondReturn": {
+        "ageRange": "58-60",
+        "phase": "second Saturn Return",
+        "meaning": "A threshold of elderhood, legacy, usefulness, wisdom, age, bodily reality, and what the person is ready to contribute next."
+      },
+      "thirdReturn": {
+        "ageRange": "87-89",
+        "phase": "third Saturn Return",
+        "meaning": "A late-life threshold around completion, wisdom, embodiment of experience, and the final shape of Saturn's work."
+      }
+    },
+    "returns": {
+      "first": {
+        "ageRange": "29-30",
+        "theme": "Leaving inherited Saturn behind and building an adult structure that fits the person's real life.",
+        "questions": [
+          "Which responsibilities are actually mine?",
+          "Which rules did I inherit but never choose?",
+          "Where am I avoiding the work that would make me more free?",
+          "Where does fear pretend to be maturity?",
+          "What structure would let my life hold more truth?"
+        ],
+        "commonPressurePoints": [
+          "career direction",
+          "commitment and partnership",
+          "money and independence",
+          "family expectations",
+          "identity as an adult",
+          "limits, exhaustion, and consequences",
+          "inner critic and self-trust"
+        ]
+      },
+      "second": {
+        "ageRange": "58-60",
+        "theme": "Reviewing the life built after the first return and choosing what wisdom, authority, and legacy become now.",
+        "questions": [
+          "What have I built that still matters?",
+          "What responsibilities are complete?",
+          "What does age make more honest?",
+          "Where am I confusing usefulness with overwork?",
+          "What can I now teach, model, or pass on?"
+        ],
+        "commonPressurePoints": [
+          "legacy",
+          "health and aging",
+          "retirement or vocation changes",
+          "authority and mentorship",
+          "family role transitions",
+          "grief over paths not taken",
+          "simplifying life around what remains true"
+        ]
+      },
+      "third": {
+        "ageRange": "87-89",
+        "theme": "Late-life integration of Saturn's full arc: time, limits, wisdom, completion, and the durable shape of the life.",
+        "questions": [
+          "What has endured?",
+          "What wisdom has become embodied?",
+          "What is complete enough to release?",
+          "What still asks for dignity, structure, or care?"
+        ]
+      }
+    },
+    "whatToExpect": {
+      "feltTone": [
+        "A sense that the old way of doing adulthood no longer works.",
+        "Pressure to get realistic about time, energy, money, commitment, health, work, or family obligations.",
+        "A confrontation with consequences: not as punishment, but as information about what the current structure is producing.",
+        "A louder inner judge or critic, especially where the person learned harsh models of authority.",
+        "A desire to stop pretending and build something that can last.",
+        "A feeling of being asked to choose between staying loyal to inherited expectations and becoming accountable to the life that is actually true now."
+      ],
+      "outerExamples": [
+        "A job path, degree, business, or career identity stops feeling sustainable and demands a serious decision.",
+        "A relationship can no longer stay vague; commitment, boundaries, repair, or ending must be discussed honestly.",
+        "Family expectations become impossible to carry without resentment, forcing adult boundaries.",
+        "Money patterns become concrete: debt, unstable income, undercharging, overspending, or lack of planning needs structure.",
+        "The body makes the cost of stress, overwork, avoidance, or neglect harder to ignore.",
+        "A long-term project asks for discipline, repetition, and patience instead of inspiration alone.",
+        "Authority issues surface through bosses, parents, institutions, clients, mentors, legal systems, or the person's own inner authority.",
+        "The person realizes they have been rebelling against authority in a way that still lets authority define the shape of their life.",
+        "The person has to decide whether the thing they are working so hard for is actually worth the cost.",
+        "The person begins building a structure that looks boring from the outside but finally gives their life enough support to grow."
+      ],
+      "innerExamples": [
+        "Noticing that fear has been disguised as practicality.",
+        "Seeing that constant responsibility can be a way to avoid desire, grief, rest, or risk.",
+        "Realizing that harsh self-criticism was learned and does not have to be mistaken for discipline.",
+        "Separating useful accountability from shame.",
+        "Learning that maturity does not mean carrying everything alone.",
+        "Recognizing where ambition has been borrowed from family, culture, school, religion, or professional pressure.",
+        "Understanding that refusal to choose is still a choice with consequences.",
+        "Moving from 'I should' into 'I am willing to be responsible for this.'"
+      ],
+      "greenFlags": [
+        "The person becomes more honest without becoming cruel to themselves.",
+        "They simplify commitments instead of adding more obligations to prove they can cope.",
+        "They choose structure that supports life rather than structure that only performs competence.",
+        "They ask for help, mentorship, therapy, planning support, or practical guidance when needed.",
+        "They make decisions based on long-term reality rather than panic, shame, or outside approval.",
+        "They stop confusing delay with failure and start working with time."
+      ],
+      "redFlags": [
+        "Making a fear-based decision just to relieve pressure.",
+        "Treating burnout as proof of maturity.",
+        "Staying in a role, relationship, or family pattern only because it is familiar.",
+        "Rejecting every responsibility as control.",
+        "Overcorrecting into rigidity, isolation, cynicism, or emotional shutdown.",
+        "Letting the inner critic run the return instead of turning Saturn into a steadier internal authority."
+      ],
+      "howItCanFeelByReturn": {
+        "first": [
+          "Like the costume of adulthood no longer fits.",
+          "Like the life built from other people's rules is asking for payment.",
+          "Like career, partnership, money, and family choices suddenly have consequences that cannot be postponed.",
+          "Like the person must decide what kind of adult they are becoming, not just what they are escaping."
+        ],
+        "second": [
+          "Like the life already built is being audited for meaning, usefulness, and truth.",
+          "Like age and the body are no longer abstractions.",
+          "Like old definitions of productivity, success, beauty, responsibility, and usefulness need to be revised.",
+          "Like wisdom wants a form: mentoring, simplifying, teaching, legacy work, or a more honest next chapter."
+        ],
+        "third": [
+          "Like the remaining structure of life asks for dignity, care, completion, and truth.",
+          "Like time becomes less theoretical and more sacred.",
+          "Like the person is asked to honor what endured and release what no longer needs to be carried."
+        ]
+      }
+    },
+    "examplesByHouse": {
+      "1": "Identity, body, autonomy, and how the person carries adulthood become the test. Expect questions around self-definition, health, visibility, and whether the person is living as the author of their own life.",
+      "2": "Money, livelihood, values, possessions, and self-worth become the test. Expect budgeting, debt reality, earning strategy, pricing, material security, and the cost of under-valuing the self to become concrete.",
+      "3": "Communication, learning, siblings, daily movement, writing, and mental discipline become the test. Expect pressure to say things clearly, study seriously, finish writing or teaching work, or repair daily communication habits.",
+      "4": "Home, family, roots, parents, ancestry, privacy, and emotional foundations become the test. Expect family boundaries, housing decisions, caretaking roles, property, and the question of what home actually means.",
+      "5": "Creativity, romance, children, joy, risk, and self-expression become the test. Expect the person to take pleasure seriously, structure creative work, mature around dating or children, and stop postponing joy until everything is perfect.",
+      "6": "Work routines, labor, health, service, and maintenance become the test. Expect consequences around burnout, habits, employment conditions, body care, over-functioning, and whether daily life can sustain the person.",
+      "7": "Partnership, marriage, clients, contracts, and open conflict become the test. Expect relationship definitions, commitment talks, boundaries, legal agreements, and whether both people can meet adult responsibility.",
+      "8": "Shared resources, debt, taxes, intimacy, trust, grief, and power become the test. Expect serious conversations around money entanglement, vulnerability, inheritance, sex, therapy, control, or crisis repair.",
+      "9": "Belief, faith, education, travel, publishing, law, and worldview become the test. Expect the person to examine what they believe, what they are willing to study, and whether their philosophy can hold real life.",
+      "10": "Career, reputation, authority, public role, ambition, and legacy become the test. Expect professional consequences, leadership pressure, public accountability, parent/authority themes, and serious choices about contribution.",
+      "11": "Friends, networks, community, audience, hopes, and long-range plans become the test. Expect pruning of social circles, responsibility to community, or the need to build future goals with structure instead of fantasy.",
+      "12": "Solitude, hidden patterns, rest, endings, spirituality, and self-undoing become the test. Expect the person to confront avoidance, isolation, unconscious fear, secret burdens, and the need for disciplined retreat or healing."
+    },
+    "examplesBySign": {
+      "aries": "The return asks the person to mature initiative. Expect lessons around starting, anger, courage, independence, and acting with discipline instead of impulse or paralysis.",
+      "taurus": "The return asks the person to mature stability. Expect lessons around worth, survival fears, resources, stubbornness, patience, and choosing what is actually worth building.",
+      "gemini": "The return asks the person to mature attention and communication. Expect lessons around scattered information, writing, teaching, nervous loops, and committing the mind to a useful long-term purpose.",
+      "cancer": "The return asks the person to mature emotional responsibility. Expect lessons around family, protection, caretaking, vulnerability, and creating structure for feeling instead of shutting feeling down.",
+      "leo": "The return asks the person to mature visibility and creative power. Expect lessons around joy, pride, performance, leadership, creative discipline, and expressing the self without needing applause to survive.",
+      "virgo": "The return asks the person to mature craft, health, and discernment. Expect lessons around perfectionism, daily systems, body feedback, analysis, service, and separating improvement from self-attack.",
+      "libra": "The return asks the person to mature relationship and fairness. Expect lessons around boundaries, equality, compromise, resentment, commitment, and standing in the self while staying in connection.",
+      "scorpio": "The return asks the person to mature trust and depth. Expect lessons around intimacy, secrecy, power, shared resources, control, and learning which bonds are safe enough to open inside.",
+      "sagittarius": "The return asks the person to mature belief and expansion. Expect lessons around faith, study, risk, travel, teaching, truth, and choosing a philosophy that can survive contact with reality.",
+      "capricorn": "The return asks the person to mature ambition and authority. Expect lessons around achievement, respect, competence, work, long-term goals, and choosing the right mountain instead of climbing every one.",
+      "aquarius": "The return asks the person to mature freedom and individuation. Expect lessons around belonging, rebellion, community, originality, and creating freedom with enough structure to last.",
+      "pisces": "The return asks the person to mature surrender and discernment. Expect lessons around fantasy, faith, avoidance, spiritual longing, porous boundaries, and committing to truth rather than escape."
+    },
+    "timingMechanics": {
+      "exactReturn": "The exact return is transiting Saturn conjunct natal Saturn by degree.",
+      "orb": "Use a wider monitoring window for product messaging, but reserve exact language for close orb. Around 1 degree is strong; stations within about 1-2 degrees deserve special weight.",
+      "hitPatterns": {
+        "singleHit": "Saturn perfects the conjunction once. The return may feel concentrated.",
+        "threeHit": "Saturn crosses natal Saturn, retrogrades back, then crosses again direct. This often creates a beginning, review, and integration sequence.",
+        "stationNearNatalSaturn": "A station near natal Saturn lengthens the encounter and makes the theme harder to ignore."
+      },
+      "retrogradeReturnLogic": [
+        "First direct hit: Saturn names the work.",
+        "Retrograde pass or station: the person reviews why the pattern exists and where old authority models still run the show.",
+        "Final direct hit: the person commits to a more mature structure or faces the cost of avoiding it."
+      ]
+    },
+    "readingRules": {
+      "natalSaturnHouse": "The natal house of Saturn shows the life area where maturity, authority, discipline, fear, and durable skill are being developed.",
+      "natalSaturnSign": "The natal sign of Saturn shows the style and material of the lesson: how the person handles structure, limits, authority, and self-command.",
+      "dignity": "Dignity modifies how cleanly Saturn can do its work. Dignified Saturn can build with strength; debilitated Saturn may require more repair around fear, rigidity, avoidance, or harsh authority models.",
+      "sect": "Saturn is of the day sect. In day charts, Saturn is more constructive and legible. In night charts, Saturn can feel heavier or harsher and may need more conscious tempering.",
+      "retrogradeNatalSaturn": "Natal Saturn retrograde can point to internalized authority, delayed trust in one's own structure, or the need to reject borrowed definitions of maturity and build an inner authority.",
+      "natalAspectsToSaturn": "Natal aspects to Saturn show which parts of the psyche are pulled into the return. The return reactivates those relationships and asks Saturn to become a more useful advisor, not only a critic.",
+      "timeLords": "If Saturn is also activated by annual profection, zodiacal releasing, or another timing technique, weight the return up. If Saturn is not otherwise activated, still treat the exact return as significant because it is a life-cycle transit."
+    },
+    "aspectThemes": {
+      "sunSaturn": "Identity, confidence, visibility, authority, and the right to take up space mature through Saturn.",
+      "moonSaturn": "Emotional safety, need, family patterns, and the body's memory of responsibility mature through Saturn.",
+      "mercurySaturn": "Thinking, communication, planning, study, writing, and the inner critic mature through Saturn.",
+      "venusSaturn": "Worth, love, money, pleasure, commitment, and relational standards mature through Saturn.",
+      "marsSaturn": "Action, anger, drive, stamina, boundaries, and the ability to pace effort mature through Saturn.",
+      "jupiterSaturn": "Faith, growth, risk, belief, and possibility mature through Saturn's demand for realism.",
+      "uranusSaturn": "Freedom and structure must learn to cooperate instead of treating each other as enemies.",
+      "neptuneSaturn": "Dreams, surrender, spirituality, and porousness need containers that do not kill the vision.",
+      "plutoSaturn": "Power, control, survival strategies, and authority patterns are pressured into deeper integrity.",
+      "chironSaturn": "Old wounds around authority, shame, competence, or not being ready can become places of steadier self-support."
+    },
+    "voiceGuidance": {
+      "tone": "Direct, grounded, non-fatalistic, mature, compassionate without softening the accountability.",
+      "doSay": [
+        "This is a checkpoint.",
+        "The old structure is being tested.",
+        "You are not being punished; you are being asked to get honest.",
+        "Fear is information, not a final answer.",
+        "The work is to build a life that can actually hold you."
+      ],
+      "avoid": [
+        "Do not promise catastrophe.",
+        "Do not treat every hardship as cosmically required.",
+        "Do not tell the user what decision to make based on Saturn alone.",
+        "Do not romanticize suffering as proof of maturity.",
+        "Do not reduce the return to career only."
+      ]
+    },
+    "productSurfaces": {
+      "overviewCard": "Show age band, exact date range if calculated, natal Saturn sign and house, and the main life area being tested.",
+      "timeline": "Show first contact, retrograde contact, final contact, and station windows when present.",
+      "interpretation": "Blend natal Saturn sign, natal Saturn house, dignity, sect, retrograde condition, and natal Saturn aspects.",
+      "reflectionPrompts": [
+        "What responsibility have I outgrown?",
+        "Where am I still obeying an authority that no longer has authority over me?",
+        "What would become possible if I built a better structure?",
+        "What am I ready to take seriously without turning against myself?",
+        "What does maturity look like when it includes my actual needs?"
+      ]
+    }
+  },
+  "prohibitions": [
+    "Do not frame Saturn Return as guaranteed punishment, failure, divorce, job loss, or crisis.",
+    "Do not use Saturn Return alone to advise major life decisions.",
+    "Do not ignore natal Saturn house, sign, dignity, sect, retrograde condition, or aspects.",
+    "Do not treat second Saturn Return as simply a repeat of the first; it concerns age, wisdom, legacy, and the next chapter of usefulness.",
+    "Do not over-focus on career when the natal Saturn house points elsewhere."
+  ],
+  "weighting": [
+    "Exact conjunction of transiting Saturn to natal Saturn is the core trigger.",
+    "Station within about 1-2 degrees of natal Saturn increases weight and duration.",
+    "Natal Saturn house and sign carry more interpretive weight than generic age-band text.",
+    "Sect and dignity modify tone: constructive, heavy, blocked, efficient, or strained.",
+    "Natal aspects to Saturn identify which psychological functions are tested and matured during the return."
+  ],
+  "orbs": {
+    "monitoringWindow": "Use a broad window around the return for user awareness, but avoid exact-return language until close orb.",
+    "strong": "Within about 1 degree of natal Saturn.",
+    "station": "A station within about 1-2 degrees of natal Saturn deserves special emphasis.",
+    "exact": "Use ephemeris calculation for exact degree and minute when available."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

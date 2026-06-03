@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/point.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "type", "core", "policy", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "const": "point" },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "type": { "type": "string" },
+    "discovered": { "type": "integer" },
+    "orbit": { "type": "string" },
+    "core": { "type": "string" },
+    "keyTransit": { "type": "string" },
+    "note": { "type": "string" },
+    "policy": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

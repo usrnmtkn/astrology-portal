@@ -1,0 +1,48 @@
+{
+  "id": "mercury-square-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Brilliant Or Abrupt",
+  "summary": "Your mind moves in jumps. You may see the pattern quickly, then lose patience with everyone still reading the instructions.",
+  "body": "Mercury square Uranus describes a quick, original, disruptive mind. You may think in flashes, challenge assumptions, and make unusual connections without needing permission. This can make you inventive and ahead of the room, but it can also make communication sharp, scattered, or impatient. The gift is mental independence. The growth is learning to translate the spark so other people can use it too.",
+  "gift": "Original thinking, rapid insight, technical curiosity, and the courage to question stale ideas.",
+  "shadow": "Nervous overload, contrarian reflexes, interrupting, and changing direction before the thought has landed.",
+  "integration": "Let your mind move fast, then give the idea a second pass. Translation is not dilution; it is how the insight becomes useful.",
+  "do": [
+    "Write down flashes before debating them",
+    "Ask whether you want to clarify or provoke",
+    "Build pauses into fast conversations"
+  ],
+  "dont": [
+    "Treat boredom as proof that someone is wrong",
+    "Interrupt before the other person finishes",
+    "Discard structure just because it is familiar"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "identity"
+  ],
+  "tags": [
+    "originality",
+    "nerves",
+    "communication",
+    "invention",
+    "disruption"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

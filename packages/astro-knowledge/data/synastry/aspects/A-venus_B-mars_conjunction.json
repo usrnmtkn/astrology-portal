@@ -1,0 +1,12 @@
+{
+  "id": "A-venus_B-mars_conjunction",
+  "kind": "interaspect",
+  "planetA": "venus",
+  "planetB": "mars",
+  "aspect": "conjunction",
+  "plainTranslation": "The classic chemistry contact. The Venus person feels wanted and pursued; the Mars person feels the pull and goes after it. Physical, immediate, hard to sit still around each other. Failure mode: mistaking heat for foundation - the attraction is real but says nothing about whether you can live together. Enjoy the spark, build the rest deliberately, and check what's under it.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

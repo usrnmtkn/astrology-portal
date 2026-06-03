@@ -1,0 +1,51 @@
+{
+  "id": "chiron-method-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "modern-point",
+  "title": "Chiron Method Framework",
+  "sections": [
+    {
+      "id": "archetype",
+      "heading": "Archetype",
+      "body": "Chiron describes a tender, old hurt and the wisdom that can develop around it. It points to an area where a person may feel different, inadequate, exposed, or unusually sensitive, and where honest integration can become a source of compassion, guidance, and skill."
+    },
+    {
+      "id": "framing-rule",
+      "heading": "Framing Rule",
+      "body": "Always pair the wound with the healing path. Never frame the person as broken, doomed, defective, or permanently defined by the wound. Chiron describes sensitivity and integration work, not a fixed outcome."
+    },
+    {
+      "id": "houses-versus-signs",
+      "heading": "Houses Versus Signs",
+      "body": "Chiron by house is usually more personally specific because it shows where the wound gets lived: identity, money, voice, home, creativity, work, partnership, intimacy, meaning, public role, community, or hidden life. Chiron by sign is useful, but often more generational because Chiron spends uneven years in a sign. Weight sign text up when Chiron closely aspects a personal planet or angle."
+    },
+    {
+      "id": "modern-point-policy",
+      "heading": "Modern Point Policy",
+      "body": "Chiron is a modern point and should be secondary in weighting. Do not use it for dignity, sect, traditional rulership, time-lord logic, or primary chart-ruler logic. It becomes more important when it sits on an angle, aspects the Sun, Moon, Mercury, Venus, Mars, or chart angles, or repeats a theme already shown elsewhere in the chart."
+    },
+    {
+      "id": "symbolic-safety",
+      "heading": "Symbolic Safety",
+      "body": "Chiron placements are descriptive and non-deterministic. Health-house or body-related placements must be emotional and symbolic only, never medical. Do not use Chiron to diagnose, explain symptoms, suggest treatment, or tell a user what will happen to their body."
+    },
+    {
+      "id": "optional-evolutionary-lens",
+      "heading": "Optional Evolutionary Lens",
+      "body": "Some users read Chiron through an evolutionary or past-life lens: an old wound carried into this life, with this lifetime offering a chance to face and integrate the pattern. Present this only as an optional interpretive lens, never as literal fact. It can be useful even when the user treats it metaphorically."
+    },
+    {
+      "id": "evolutionary-house-themes",
+      "heading": "Evolutionary House Themes",
+      "body": "If the optional lens is enabled, keep the themes brief and belief-neutral. The 1st house suggests selfhood once denied; the 2nd, lack or worth; the 3rd, a silenced voice; the 4th, unsafe roots; the 5th, punished expression or love; the 6th, over-service or bodily hardship as symbolic material; the 7th, partnership betrayal or loss; the 8th, power, violation, trust, or loss; the 9th, broken faith or persecuted belief; the 10th, public shame or legitimacy; the 11th, exile from a group; the 12th, hidden or inherited sorrow. Do not present these as facts, memories, or proof."
+    },
+    {
+      "id": "app-display",
+      "heading": "App Display",
+      "body": "Show Chiron in an optional shadow and healing layer, with callouts when it touches personal planets or angles. Keep the language practical: what hurts, what pattern forms around it, what integration asks for, and what the person can offer others once the pattern is owned. Keep past-life or evolutionary framing behind an explicit optional lens."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

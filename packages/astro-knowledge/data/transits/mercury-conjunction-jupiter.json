@@ -1,0 +1,29 @@
+{
+  "id": "mercury-conjunction-jupiter",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "jupiter",
+  "tldr": "Mercury conjunction Jupiter.",
+  "traditional": "Mercury conjunct Jupiter: communication, commerce, and contracts fused with growth, fortune, and patronage. The two act as one and the combined significations are hard to separate.",
+  "modern": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of thinking and growth is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Strong for pairing vision with persuasion; watch overstatement.",
+  "shadow": "Scattered overthinking fused with excess and overreach, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:mercury-jupiter",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Mind meets expansion. Easy movement between the big picture and the fine detail, with an optimistic cast to communication. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

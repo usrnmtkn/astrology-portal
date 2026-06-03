@@ -1,0 +1,12 @@
+{
+  "id": "A-venus_B-saturn_conjunction",
+  "kind": "interaspect",
+  "planetA": "venus",
+  "planetB": "saturn",
+  "aspect": "conjunction",
+  "plainTranslation": "Love that's serious, loyal, and built to last - and can run short on warmth. The Saturn person commits and stabilizes; the Venus person may feel loved but not adored, or kept at a measured distance. Failure mode: confusing endurance with affection, or letting love feel like an obligation. Show affection actively and don't ration it; durable and warm are different things, and you want both.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

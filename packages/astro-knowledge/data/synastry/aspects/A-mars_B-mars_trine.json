@@ -1,0 +1,12 @@
+{
+  "id": "A-mars_B-mars_trine",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "mars",
+  "aspect": "trine",
+  "plainTranslation": "Drive and desire flow in sync. You move at the same pace, want similar things, and rarely step on each other. Failure mode: so frictionless it can lack tension. Enjoy the ease; keep some edge.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

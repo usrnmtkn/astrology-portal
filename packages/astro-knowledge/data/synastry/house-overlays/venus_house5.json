@@ -1,0 +1,11 @@
+{
+  "id": "venus_house5",
+  "kind": "house-overlay",
+  "planet": "venus",
+  "house": "5",
+  "plainTranslation": "Their Venus in your 5th house: pure romance - attraction, flirtation, delight. One of the best dating contacts going. Failure mode: all sparkle, no substance. Have the fun; check whether anything holds when the sparkle settles.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

@@ -1,0 +1,107 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "point-metadata",
+  "schema": "modifier/point-metadata",
+  "appliesTo": [
+    "point",
+    "angle",
+    "node",
+    "modern-point"
+  ],
+  "role": "metadata",
+  "category": "point",
+  "summary": "Metadata for angles, lunar nodes, and optional modern points used by the app.",
+  "body": "Points can be displayed and interpreted, but Chiron and Black Moon Lilith remain optional modern layers and should not be used in traditional dignity, sect, rulership, or time-lord logic.",
+  "definition": "Point metadata describes non-planet chart factors used for display and interpretation weighting.",
+  "appUsage": [
+    "Show Chiron and Black Moon Lilith only when the user enables the optional point layer.",
+    "Weight optional points up when they are angular or aspect a personal planet or angle.",
+    "Keep angles and lunar nodes separate from planets in UI grouping."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "points": {
+      "asc": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "asc",
+        "label": "Ascendant",
+        "type": "angle",
+        "plainTranslation": "the rising degree; self-presentation, body, approach (depends on exact birth time)",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "mc": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mc",
+        "label": "Midheaven",
+        "type": "angle",
+        "plainTranslation": "the culmination; public role, vocation, reputation (depends on exact birth time)",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "dsc": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "dsc",
+        "label": "Descendant",
+        "type": "angle",
+        "plainTranslation": "the setting degree; partnership, the other, what we seek in one-to-one bonds",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "ic": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "ic",
+        "label": "Imum Coeli",
+        "type": "angle",
+        "plainTranslation": "the lowest point; home, roots, private foundation, ancestry",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "north_node": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "north_node",
+        "label": "North Node",
+        "type": "node",
+        "plainTranslation": "direction of growth; the unfamiliar work this life leans toward",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "south_node": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "south_node",
+        "label": "South Node",
+        "type": "node",
+        "plainTranslation": "the familiar, already-developed pattern; comfort to move beyond",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "chiron": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "chiron",
+        "label": "Chiron",
+        "type": "body",
+        "plainTranslation": "the persistent wound and the capacity to help others with it",
+        "hasDignities": false,
+        "rulershipEligible": false
+      },
+      "lilith": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "lilith",
+        "label": "Black Moon Lilith",
+        "type": "point",
+        "plainTranslation": "the lunar apogee; instinct, refusal, what will not be tamed or shamed",
+        "hasDignities": false,
+        "rulershipEligible": false
+      }
+    }
+  }
+}

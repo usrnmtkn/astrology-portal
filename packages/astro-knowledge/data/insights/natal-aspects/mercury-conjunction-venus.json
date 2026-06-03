@@ -1,0 +1,48 @@
+{
+  "id": "mercury-conjunction-venus",
+  "kind": "natal-aspect",
+  "displayTitle": "Articulate Or Polished",
+  "summary": "Your words may reach for beauty, tact, and connection. You can make ideas easier to receive.",
+  "body": "Mercury conjunction Venus describes a mind with aesthetic and relational intelligence. You may speak with charm, write with rhythm, negotiate with grace, or notice how tone changes whether truth can land. This aspect can support art, design, language, music, mediation, sales, and social fluency. The shadow is over-polishing the message until the sharper truth disappears. The gift is graceful communication. The growth is letting pleasant language remain honest.",
+  "gift": "Tact, charm, artistic language, mediation, and the ability to make connection through words.",
+  "shadow": "People-pleasing speech, avoidance of conflict, flattery, and softening truth until it loses shape.",
+  "integration": "Use beauty to carry truth, not to hide it. A clear sentence can still be kind.",
+  "do": [
+    "Say the beautiful version of the true thing",
+    "Use tone intentionally",
+    "Let creative language sharpen meaning"
+  ],
+  "dont": [
+    "Compliment instead of answering",
+    "Make harmony more important than clarity",
+    "Edit your real preference out of the sentence"
+  ],
+  "lifeAreas": [
+    "communication",
+    "love",
+    "creativity"
+  ],
+  "tags": [
+    "language",
+    "charm",
+    "art",
+    "tact",
+    "harmony"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "conjunction",
+      "planetB": "venus"
+    }
+  ],
+  "collectionHints": [
+    "core-traits",
+    "love-patterns",
+    "career-patterns"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

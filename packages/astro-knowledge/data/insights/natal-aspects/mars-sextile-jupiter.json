@@ -1,0 +1,47 @@
+{
+  "id": "mars-sextile-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven With Expansive",
+  "summary": "Drive and anger support growth and belief. This cooperative pattern asks you to use courage and optimism with awareness.",
+  "body": "Drive and anger support growth and belief. This cooperative pattern asks you to use courage and optimism with awareness. High energy directed toward real accomplishment. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through drive and anger, growth and belief, and the choices you make when reactivity or overreach starts running the room.",
+  "gift": "The gift is courage, optimism, and a more conscious way to work with drive and anger and growth and belief.",
+  "shadow": "The shadow is reactivity, overreach, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and growth and belief cooperate without making either one carry the whole story. Big drive and ambition; focus is what turns it into results rather than waste.",
+  "do": [
+    "Name how drive and anger and growth and belief are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and optimism into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of drive and anger or growth and belief"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "jupiter",
+    "sextile",
+    "courage",
+    "optimism"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "sextile",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

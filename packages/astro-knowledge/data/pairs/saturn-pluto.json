@@ -1,0 +1,24 @@
+{
+  "id": "saturn-pluto",
+  "planetA": "saturn",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control.",
+    "harmonious": "Capacity for grueling, sustained, transformative effort.",
+    "hard": "Strict accountability and early, immediate retribution; severity and rigidity.",
+    "business": "Able to carry punishing, transformative work; the risk is harshness."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Limit meets power. Hard discipline, endurance under heavy pressure, real consequences, and control.",
+  "harmonious": "Capacity for grueling, sustained, transformative effort.",
+  "hard": "Strict accountability and early, immediate retribution; severity and rigidity.",
+  "business": "Able to carry punishing, transformative work; the risk is harshness."
+}

@@ -1,0 +1,63 @@
+{
+  "id": "venus",
+  "planet": "venus",
+  "title": "Venus Meaning",
+  "overview": "Venus describes attraction, affection, pleasure, beauty, social ease, values, money, taste, and the way a person gives and receives sweetness. It shows what feels desirable, what feels worth protecting, and how harmony is created or avoided.",
+  "cycle": "Venus usually spends about three to five weeks in a sign, though retrograde cycles can extend the stay. Its sign describes love style, values, and aesthetic preference; its house shows where connection, pleasure, and value-seeking become most visible.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Venus in Aries loves directly, boldly, and with appetite for pursuit. This placement needs aliveness, honesty, and the freedom to want what it wants without over-explaining desire."
+    },
+    {
+      "sign": "taurus",
+      "body": "Venus in Taurus loves through steadiness, touch, loyalty, pleasure, and material care. This placement needs consistency and a love that can be felt in the body."
+    },
+    {
+      "sign": "gemini",
+      "body": "Venus in Gemini loves through conversation, curiosity, wit, and mental connection. This placement needs variety, laughter, and a partner who keeps the mind awake."
+    },
+    {
+      "sign": "cancer",
+      "body": "Venus in Cancer loves protectively, tenderly, and through emotional memory. This placement needs trust, care, and a bond that feels like a safe place to land."
+    },
+    {
+      "sign": "leo",
+      "body": "Venus in Leo loves warmly, generously, creatively, and with a need for visible affection. This placement needs admiration, play, loyalty, and romance with heart."
+    },
+    {
+      "sign": "virgo",
+      "body": "Venus in Virgo loves through service, attention, repair, and thoughtful detail. This placement needs sincerity and may show devotion by noticing what would make life easier."
+    },
+    {
+      "sign": "libra",
+      "body": "Venus in Libra loves through reciprocity, beauty, fairness, and partnership. This placement needs mutuality and can create harmony without losing the ability to choose."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Venus in Scorpio loves intensely, privately, and with a need for emotional truth. This placement needs trust, depth, and relationships that can hold real vulnerability."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Venus in Sagittarius loves through honesty, adventure, humor, and shared meaning. This placement needs freedom and a bond that makes life feel wider."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Venus in Capricorn loves seriously, loyally, and through commitment that proves itself over time. This placement needs reliability, maturity, and shared long-term values."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Venus in Aquarius loves through friendship, ideals, freedom, and respect for difference. This placement needs space inside connection and a bond that can hold individuality."
+    },
+    {
+      "sign": "pisces",
+      "body": "Venus in Pisces loves compassionately, imaginatively, and with great emotional openness. This placement needs tenderness, inspiration, and boundaries that keep devotion from becoming self-loss."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

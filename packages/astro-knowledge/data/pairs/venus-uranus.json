@@ -1,0 +1,25 @@
+{
+  "id": "venus-uranus",
+  "planetA": "venus",
+  "planetB": "uranus",
+  "traditional": "No classical doctrine: Uranus is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention.",
+    "harmonious": "Exciting, unconventional bonds and an original aesthetic; freedom inside closeness.",
+    "hard": "Erratic affections, sudden attractions and ruptures, and a refusal to be tied down.",
+    "business": "Good for fresh, original creative and social moves; unreliable for steady commitments."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "sourceNote": "Composed from planet primitives, not the pair cookbook (which omits Uranus-Moon/Mercury/Venus).",
+  "provenance": {
+    "traditional": "n/a (Uranus is a modern planet)",
+    "modern": "composed from planet primitives and modern outer-planet conventions; cookbook omits these pairs",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention.",
+  "harmonious": "Exciting, unconventional bonds and an original aesthetic; freedom inside closeness.",
+  "hard": "Erratic affections, sudden attractions and ruptures, and a refusal to be tied down.",
+  "business": "Good for fresh, original creative and social moves; unreliable for steady commitments."
+}

@@ -1,0 +1,47 @@
+{
+  "id": "mercury-conjunction-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Perceptive And Inspired",
+  "summary": "Thinking and speech merge imagination and longing. This concentrated pattern asks you to use clear thinking and compassion with awareness.",
+  "body": "Thinking and speech merge imagination and longing. This concentrated pattern asks you to use clear thinking and compassion with awareness. Mind meets imagination. Strong imagination and intuitive, associative thinking. These drives sit close together, so the pattern may feel natural, immediate, and hard to separate. In practice, this can show up through thinking and speech, imagination and longing, and the choices you make when mental noise or confusion starts running the room.",
+  "gift": "The gift is clear thinking, compassion, and a more conscious way to work with thinking and speech and imagination and longing.",
+  "shadow": "The shadow is mental noise, confusion, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let thinking and speech and imagination and longing cooperate without making either one carry the whole story. Creative ideation; verify the details before acting on them.",
+  "do": [
+    "Name how thinking and speech and imagination and longing are both involved",
+    "Use the easy opening deliberately",
+    "Turn clear thinking and compassion into one concrete choice"
+  ],
+  "dont": [
+    "Let mental noise make the decision",
+    "Assume what feels natural is automatically balanced",
+    "Ignore the needs of thinking and speech or imagination and longing"
+  ],
+  "lifeAreas": [
+    "communication",
+    "work",
+    "spirituality"
+  ],
+  "tags": [
+    "mercury",
+    "neptune",
+    "conjunction",
+    "clear-thinking",
+    "compassion"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "conjunction",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "mars-sextile-saturn",
+  "kind": "natal-aspect",
+  "displayTitle": "Driven With Steady",
+  "summary": "Drive and anger support discipline and limits. This cooperative pattern asks you to use courage and maturity with awareness.",
+  "body": "Drive and anger support discipline and limits. This cooperative pattern asks you to use courage and maturity with awareness. Stamina and controlled, sustained effort. The connection is available when you choose to use it; it works best through deliberate practice. In practice, this can show up through drive and anger, discipline and limits, and the choices you make when reactivity or fear starts running the room.",
+  "gift": "The gift is courage, maturity, and a more conscious way to work with drive and anger and discipline and limits.",
+  "shadow": "The shadow is reactivity, fear, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let drive and anger and discipline and limits cooperate without making either one carry the whole story. Endurance and discipline; the friction is the constant start-stop of push against restraint.",
+  "do": [
+    "Name how drive and anger and discipline and limits are both involved",
+    "Use the easy opening deliberately",
+    "Turn courage and maturity into one concrete choice"
+  ],
+  "dont": [
+    "Let reactivity make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of drive and anger or discipline and limits"
+  ],
+  "lifeAreas": [
+    "work",
+    "power",
+    "health"
+  ],
+  "tags": [
+    "mars",
+    "saturn",
+    "sextile",
+    "courage",
+    "maturity"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "sextile",
+      "planetB": "saturn"
+    }
+  ],
+  "collectionHints": [
+    "career-patterns",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

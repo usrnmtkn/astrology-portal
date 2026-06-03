@@ -1,0 +1,147 @@
+{
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "id": "rulership-table",
+  "schema": "modifier/rulership-table",
+  "appliesTo": [
+    "rulership",
+    "chart-ruler",
+    "sign"
+  ],
+  "role": "method",
+  "category": "rulership",
+  "summary": "Traditional rulership remains primary; modern co-rulership is treated as an explicit secondary lens.",
+  "body": "When naming a chart ruler or sign ruler, use the traditional ruler. Modern planets may inform interpretation only when clearly framed as a modern lens.",
+  "definition": "A normalized table of traditional rulership and modern co-rulership relationships.",
+  "appUsage": [
+    "Use Mars for Scorpio, Saturn for Aquarius, and Jupiter for Pisces in ruler text.",
+    "Surface Pluto, Uranus, and Neptune only inside an explicitly labeled modern lens.",
+    "Do not let modern co-rulers alter dignity, sect, or time-lord logic."
+  ],
+  "note": "Imported from the project policy bundle; source file was not copied into the repo.",
+  "classes": {
+    "rulerships": {
+      "sun": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "sun",
+        "planet": "sun",
+        "traditionalRulerOf": [
+          "leo"
+        ],
+        "modernRulerOf": [
+          "leo"
+        ]
+      },
+      "moon": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "moon",
+        "planet": "moon",
+        "traditionalRulerOf": [
+          "cancer"
+        ],
+        "modernRulerOf": [
+          "cancer"
+        ]
+      },
+      "mercury": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mercury",
+        "planet": "mercury",
+        "traditionalRulerOf": [
+          "gemini",
+          "virgo"
+        ],
+        "modernRulerOf": [
+          "gemini",
+          "virgo"
+        ]
+      },
+      "venus": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "venus",
+        "planet": "venus",
+        "traditionalRulerOf": [
+          "taurus",
+          "libra"
+        ],
+        "modernRulerOf": [
+          "taurus",
+          "libra"
+        ]
+      },
+      "mars": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "mars",
+        "planet": "mars",
+        "traditionalRulerOf": [
+          "aries",
+          "scorpio"
+        ],
+        "modernRulerOf": [
+          "aries"
+        ]
+      },
+      "jupiter": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "jupiter",
+        "planet": "jupiter",
+        "traditionalRulerOf": [
+          "sagittarius",
+          "pisces"
+        ],
+        "modernRulerOf": [
+          "sagittarius"
+        ]
+      },
+      "saturn": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "saturn",
+        "planet": "saturn",
+        "traditionalRulerOf": [
+          "capricorn",
+          "aquarius"
+        ],
+        "modernRulerOf": [
+          "capricorn"
+        ]
+      },
+      "uranus": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "uranus",
+        "planet": "uranus",
+        "traditionalRulerOf": [],
+        "modernRulerOf": [
+          "aquarius"
+        ]
+      },
+      "neptune": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "neptune",
+        "planet": "neptune",
+        "traditionalRulerOf": [],
+        "modernRulerOf": [
+          "pisces"
+        ]
+      },
+      "pluto": {
+        "voiceNeutral": true,
+        "status": "DRAFT",
+        "id": "pluto",
+        "planet": "pluto",
+        "traditionalRulerOf": [],
+        "modernRulerOf": [
+          "scorpio"
+        ]
+      }
+    }
+  }
+}

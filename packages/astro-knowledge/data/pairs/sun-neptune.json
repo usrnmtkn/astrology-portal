@@ -1,0 +1,24 @@
+{
+  "id": "sun-neptune",
+  "planetA": "sun",
+  "planetB": "neptune",
+  "traditional": "No classical doctrine: Neptune is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal.",
+    "harmonious": "Imaginative and compassionate; creative and charitable directions come naturally.",
+    "hard": "Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy.",
+    "business": "Creative or service-oriented directions; guard against self-deception and being played."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal.",
+  "harmonious": "Imaginative and compassionate; creative and charitable directions come naturally.",
+  "hard": "Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy.",
+  "business": "Creative or service-oriented directions; guard against self-deception and being played."
+}

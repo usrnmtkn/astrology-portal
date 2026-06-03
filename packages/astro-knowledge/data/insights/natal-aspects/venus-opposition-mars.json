@@ -1,0 +1,48 @@
+{
+  "id": "venus-opposition-mars",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic Across Driven",
+  "summary": "Love and values mirror drive and anger. This polarized pattern asks you to use relational grace and courage with awareness.",
+  "body": "Love and values mirror drive and anger. This polarized pattern asks you to use relational grace and courage with awareness. Bad timing in romance, indecision, and friction between wanting and acting. The two sides may appear through contrast, projection, or relationships until you learn to hold both directly. In practice, this can show up through love and values, drive and anger, and the choices you make when approval seeking or reactivity starts running the room.",
+  "gift": "The gift is relational grace, courage, and a more conscious way to work with love and values and drive and anger.",
+  "shadow": "The shadow is approval seeking, reactivity, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let love and values and drive and anger cooperate without making either one carry the whole story. Charm plus initiative; manage the push-pull between attraction and aggression.",
+  "do": [
+    "Name how love and values and drive and anger are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn relational grace and courage into one concrete choice"
+  ],
+  "dont": [
+    "Let approval seeking make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of love and values or drive and anger"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "creativity"
+  ],
+  "tags": [
+    "venus",
+    "mars",
+    "opposition",
+    "relational-grace",
+    "courage"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "opposition",
+      "planetB": "mars"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "career-patterns",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

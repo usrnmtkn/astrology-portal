@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-sagittarius",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "sagittarius",
+  "oppositeSign": "gemini",
+  "title": "New Moon in Sagittarius",
+  "tldr": "A seed point for truth, faith, travel, teaching, perspective, and the message that grows from lived experience.",
+  "theme": "Sagittarius is a mutable fire sign ruled traditionally by Jupiter. This New Moon begins work around truth, faith, travel, teaching, perspective, and the message that grows from lived experience.",
+  "shadow": "philosophy without embodiment, certainty that stops listening, or escape dressed as freedom",
+  "integration": "living the wisdom you claim to believe",
+  "twoWeekArc": {
+    "from": "New Moon in Sagittarius",
+    "to": "Full Moon in Gemini",
+    "teaching": "This arc asks your story to update until it matches who you have become.",
+    "appPrompt": "Begin with Sagittarius; watch what the Gemini Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Sagittarius",
+    "to": "Full Moon in Sagittarius",
+    "teaching": "Journey to message",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Jupiter kamea, yellow or white candle, citrine, turquoise or green jasper, water, and incense.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Sagittarius. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through truth, faith, travel, teaching, perspective, and the message that grows from lived experience, without repeating the shadow of philosophy without embodiment, certainty that stops listening, or escape dressed as freedom?",
+  "tarotPrompt": "What first action will help this Sagittarius intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Sagittarius's truth, faith, travel, teaching, perspective, and the message that grows from lived experience."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

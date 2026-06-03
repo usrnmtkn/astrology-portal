@@ -1,0 +1,12 @@
+{
+  "id": "uranus_ascendant_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "uranus",
+  "natal": "ascendant",
+  "aspect": "conjunction",
+  "plainTranslation": "Uranus crosses your presence, a years-long reinvention of who you are and how you appear. Restless, ready to break the old image, sometimes abruptly. Let the new self emerge; don't blow things up just to feel free.",
+  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
+  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

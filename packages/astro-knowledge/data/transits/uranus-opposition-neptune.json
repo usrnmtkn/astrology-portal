@@ -1,0 +1,29 @@
+{
+  "id": "uranus-opposition-neptune",
+  "transiting": "uranus",
+  "aspect": "opposition",
+  "other": "neptune",
+  "tldr": "Uranus opposition Neptune.",
+  "traditional": "No classical doctrine: Uranus, Neptune is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Psychologically the opposition is inner tension to integrate: Idealism that destabilizes more than it builds. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Disruption and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Generational and visionary themes rather than a personal day-to-day read.",
+  "shadow": "Instability for its own sake collides with illusion and escapism; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:uranus-neptune",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Disruption meets imagination. A generational signature: radical ideals and visionary change. Psychologically the opposition is inner tension to integrate: Idealism that destabilizes more than it builds. The growth is owning both sides instead of splitting them."
+}

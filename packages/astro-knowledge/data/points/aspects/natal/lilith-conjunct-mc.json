@@ -1,0 +1,15 @@
+{
+  "id": "lilith-conjunct-mc",
+  "kind": "natal",
+  "point": "black-moon-lilith",
+  "aspect": "conjunction",
+  "planet": "mc",
+  "tldr": "Black Moon Lilith conjunct the Midheaven.",
+  "body": "The raw, autonomous self is bound up with your public role; you can't comfortably play a sanitized part and are pulled to work on your own terms, often as an outsider.",
+  "business": "A distinctive public voice that won't be managed.",
+  "shadow": "Clashes with authority, or quietly sabotaging your own standing to stay free.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

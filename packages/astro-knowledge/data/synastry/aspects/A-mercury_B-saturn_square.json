@@ -1,0 +1,12 @@
+{
+  "id": "A-mercury_B-saturn_square",
+  "kind": "interaspect",
+  "planetA": "mercury",
+  "planetB": "saturn",
+  "aspect": "square",
+  "plainTranslation": "Communication grinds against authority. The Mercury person feels criticized, doubted, or shut down; the Saturn person finds the other's thinking loose or unserious. Conversations go heavy or cold. Failure mode: the Saturn person belittling the Mercury person's mind. Workable if Saturn offers structure without judgment and Mercury hears rigor, not rejection.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

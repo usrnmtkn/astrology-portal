@@ -1,0 +1,12 @@
+{
+  "id": "A-mars_B-venus_conjunction",
+  "kind": "interaspect",
+  "planetA": "mars",
+  "planetB": "venus",
+  "aspect": "conjunction",
+  "plainTranslation": "The Mars person moves toward what the Venus person naturally attracts. Chemistry is immediate, physical, and hard to ignore. The risk is mistaking pursuit for compatibility, so check whether affection, repair, and basic respect exist after the heat settles.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

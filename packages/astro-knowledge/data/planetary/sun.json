@@ -1,0 +1,63 @@
+{
+  "id": "sun",
+  "planet": "sun",
+  "title": "Sun Meaning",
+  "overview": "The Sun describes core identity, vitality, creative force, visibility, and the part of the chart that wants to live with purpose. It shows what gives a person energy, what they are learning to embody, and where life asks them to act from the center rather than from imitation or approval-seeking.",
+  "cycle": "The Sun moves through the zodiac once each year, spending about one month in each sign. Its sign describes the style of identity and vitality; its house shows the life area where that identity seeks expression.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Sun in Aries expresses identity through courage, immediacy, initiative, and the willingness to begin. This placement needs movement, challenge, and room to act directly."
+    },
+    {
+      "sign": "taurus",
+      "body": "Sun in Taurus expresses identity through steadiness, embodiment, loyalty, and the building of lasting value. This placement needs stability, beauty, and a life that can be trusted by the senses."
+    },
+    {
+      "sign": "gemini",
+      "body": "Sun in Gemini expresses identity through curiosity, language, movement, and connection. This placement needs variety, conversation, learning, and room to keep asking better questions."
+    },
+    {
+      "sign": "cancer",
+      "body": "Sun in Cancer expresses identity through care, protection, memory, and emotional intelligence. This placement needs belonging, privacy, and a life rooted in what feels safe and meaningful."
+    },
+    {
+      "sign": "leo",
+      "body": "Sun in Leo expresses identity through creativity, warmth, visibility, and personal radiance. This placement needs joy, self-expression, and permission to be seen without performing for approval."
+    },
+    {
+      "sign": "virgo",
+      "body": "Sun in Virgo expresses identity through discernment, craft, service, repair, and attention to what can be improved. This placement needs useful work and a way to serve without reducing the self to flaws."
+    },
+    {
+      "sign": "libra",
+      "body": "Sun in Libra expresses identity through relationship, balance, beauty, fairness, and social awareness. This placement needs reciprocity and the courage to choose without disappearing into compromise."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Sun in Scorpio expresses identity through depth, emotional honesty, trust, and transformation. This placement needs real intimacy, privacy, and the strength to release control when truth is asking to surface."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Sun in Sagittarius expresses identity through meaning, movement, candor, learning, and the search for a wider horizon. This placement needs freedom, truth, and experience that becomes wisdom."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Sun in Capricorn expresses identity through discipline, responsibility, structure, and earned authority. This placement needs goals that matter and a path where effort can become legacy."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Sun in Aquarius expresses identity through originality, perspective, community, and future-minded change. This placement needs room to be different while staying connected to something larger than the self."
+    },
+    {
+      "sign": "pisces",
+      "body": "Sun in Pisces expresses identity through empathy, imagination, spiritual sensitivity, and porous awareness. This placement needs compassion, creative space, and boundaries strong enough to protect openness."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

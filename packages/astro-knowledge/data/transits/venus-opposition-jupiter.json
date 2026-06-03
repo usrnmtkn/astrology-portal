@@ -1,0 +1,29 @@
+{
+  "id": "venus-opposition-jupiter",
+  "transiting": "venus",
+  "aspect": "opposition",
+  "other": "jupiter",
+  "tldr": "Venus opposition Jupiter.",
+  "traditional": "Venus opposition Jupiter: a hard contact. Love, money, and pleasure works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas. Two benefics: among the easiest contacts, though it can incline to excess.",
+  "modern": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease. Psychologically the opposition is inner tension to integrate: Play-before-work and indulgence undercut accomplishment. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Connection and growth reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Likable and fortunate; the missing ingredient is discipline.",
+  "shadow": "Indulgence and vanity collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:venus-jupiter",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease. Psychologically the opposition is inner tension to integrate: Play-before-work and indulgence undercut accomplishment. The growth is owning both sides instead of splitting them."
+}

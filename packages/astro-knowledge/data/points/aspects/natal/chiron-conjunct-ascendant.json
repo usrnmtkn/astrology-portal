@@ -1,0 +1,15 @@
+{
+  "id": "chiron-conjunct-ascendant",
+  "kind": "natal",
+  "point": "chiron",
+  "aspect": "conjunction",
+  "planet": "ascendant",
+  "tldr": "Chiron conjunct Ascendant.",
+  "body": "The wound is visible; you may feel marked or exposed, as if others see the sore spot on sight.",
+  "business": "A natural healer-presence that puts wounded people at ease.",
+  "shadow": "Identifying with the injury, or armoring so thoroughly no one gets near it.",
+  "policy": "Modern point; secondary weighting only. Not used in dignity, sect, or time-lord logic, and never treated as a primary chart ruler. Weight up only when it aspects a personal planet or angle, or sits on an angle.",
+  "note": "Authored from supplied modern-point aspect file.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

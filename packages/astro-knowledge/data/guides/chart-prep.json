@@ -1,0 +1,26 @@
+{
+  "id": "chart-prep",
+  "kind": "guide",
+  "role": "guide",
+  "category": "chart-prep",
+  "title": "Chart Preparation",
+  "sections": [
+    {
+      "id": "what-you-need",
+      "heading": "What You'll Need",
+      "body": "Use exact birth date, time, and location. Use a free chart calculator such as mariesatori.com or astro.com. Keep a notebook for tracking insights."
+    },
+    {
+      "id": "birth-time-accuracy",
+      "heading": "Birth Time Accuracy Matters",
+      "body": "Even 4 minutes off can change your Rising sign. 2 hours off can shift house placements entirely. If unsure of time, request an official birth certificate from vital records."
+    },
+    {
+      "id": "no-birth-time",
+      "heading": "If You Don't Have Birth Time",
+      "body": "Use a noon chart for planetary signs only. Avoid house-based interpretations. Focus on Sun, Moon, and planetary sign placements."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

@@ -1,0 +1,158 @@
+{
+  "id": "natal-synthesis-framework",
+  "kind": "framework",
+  "title": "Natal Synthesis Framework",
+  "role": "natal-synthesis-method",
+  "category": "natal-chart",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Synthesis over enumeration. Instead of listing placements, name the two or three patterns the chart keeps producing. A through-line is only real when the chart says it more than one way; a single placement is a detail, not a pattern."
+    },
+    {
+      "id": "philosophy",
+      "heading": "Philosophy",
+      "body": "Anchored to the house stance (see stance_chart_story.json): the chart speaks clearly about the shape of the story, less clearly about the choices made within it, least clearly about the exact scenes. Name the shape; hold the choices open; never predict the scene."
+    },
+    {
+      "id": "factor-weights",
+      "heading": "Factor Weights",
+      "body": "Proposed, tunable. Mirrors the transit_significance scoring idea, applied to the natal chart to find what carries the most weight.",
+      "items": [
+        {
+          "label": "angularPlanet",
+          "body": "10"
+        },
+        {
+          "label": "luminary_sun_moon",
+          "body": "9"
+        },
+        {
+          "label": "chartRuler",
+          "body": "8"
+        },
+        {
+          "label": "heavilyAspected",
+          "body": "8"
+        },
+        {
+          "label": "stellium",
+          "body": "9"
+        },
+        {
+          "label": "tightHardAspect",
+          "body": "6"
+        },
+        {
+          "label": "dominantElementOrModality",
+          "body": "5"
+        },
+        {
+          "label": "dignityModifier",
+          "body": "multiply a factor up for domicile/exaltation, down for detriment/fall."
+        }
+      ]
+    },
+    {
+      "id": "repetition-rule",
+      "heading": "Repetition Rule",
+      "body": "A through-line must be echoed by at least two independent signatures (for example a sign emphasis AND a house emphasis AND/OR an aspect). This is the guardrail against over-reading one placement, the same logic as 'a synastry bond needs multiple indicators' and the generational-vs-personal stellium check."
+    },
+    {
+      "id": "method",
+      "heading": "Method",
+      "body": "Use this order to turn many natal factors into two or three through-lines.",
+      "items": [
+        {
+          "label": "Step 1",
+          "body": "Score every chart factor for emphasis using the weights above."
+        },
+        {
+          "label": "Step 2",
+          "body": "Group the high-weight factors by shared theme (element, principle, life-area, or keyword)."
+        },
+        {
+          "label": "Step 3",
+          "body": "Keep only themes the chart states two or more ways; these are the through-lines."
+        },
+        {
+          "label": "Step 4",
+          "body": "Name each plainly, in the second person, as a tendency."
+        },
+        {
+          "label": "Step 5",
+          "body": "Pair each with its choice point so it reads as a pattern you can work with, not a verdict."
+        }
+      ]
+    },
+    {
+      "id": "output-shape",
+      "heading": "Output Shape",
+      "body": "Through-lines: 2 to 3 maximum. Each through-line should include a name, what it is, evidence, and a choice point.",
+      "items": [
+        {
+          "label": "name",
+          "body": "a plain-language pattern, e.g. 'you keep depth and distance in the same hand'"
+        },
+        {
+          "label": "whatItIs",
+          "body": "the felt tendency in one or two sentences"
+        },
+        {
+          "label": "evidence",
+          "body": "the placements that say it (the repetition that makes it real)"
+        },
+        {
+          "label": "choicePoint",
+          "body": "the agency: what is learned and changeable here, and the decision it leaves you"
+        }
+      ]
+    },
+    {
+      "id": "honesty",
+      "heading": "Honesty Rules",
+      "body": "Keep natal synthesis descriptive and agency-forward.",
+      "items": [
+        {
+          "label": "shape_clear",
+          "body": "State the pattern with confidence; this is what a chart can show."
+        },
+        {
+          "label": "choices_held_open",
+          "body": "Always frame as a tendency plus a choice, never a fixed outcome."
+        },
+        {
+          "label": "scenes_not_predicted",
+          "body": "Never name specific future events; the chart does not speak clearly there."
+        }
+      ]
+    },
+    {
+      "id": "examples",
+      "heading": "Examples",
+      "body": "Use these as pattern examples, not fixed scripts.",
+      "items": [
+        {
+          "label": "Example 1",
+          "body": "Depth through-line: a Scorpio Sun, an 8th-house stellium, and Moon square Pluto all say the same thing three ways. You go deep and don't do surface; intimacy is high-stakes. The shape is real; the choice is whether depth becomes connection or control."
+        },
+        {
+          "label": "Example 2",
+          "body": "Freedom-versus-security through-line: Moon in Cancer (needs roots) opposed by Uranus (needs escape), with Aquarius rising. You're pulled between belonging and breaking free. The tension is built in; the work is holding both, not picking one."
+        },
+        {
+          "label": "Example 3",
+          "body": "Visibility through-line: Sun conjunct the Midheaven, a Leo emphasis, and a 10th-house stellium. You're built to be seen and to lead. The drive is real; the choice is whether you lead for recognition or for the work."
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "heading": "Integration",
+      "body": "Pulls evidence from planet_in_sign, planet_in_house, the aspect corpora, stelliums, chiron, nodal, and lilith; scores with the transit_significance approach; frames with stance_chart_story. It is the layer that turns the data into two or three things worth saying."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

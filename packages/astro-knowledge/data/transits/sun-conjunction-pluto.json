@@ -1,0 +1,29 @@
+{
+  "id": "sun-conjunction-pluto",
+  "transiting": "sun",
+  "aspect": "conjunction",
+  "other": "pluto",
+  "tldr": "the Sun conjunction Pluto.",
+  "traditional": "No classical doctrine: Pluto is a modern planet unknown to traditional astrology. Read from the modern and cyclic layers; treat this contact as a slow, generational background tone.",
+  "modern": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly.",
+  "cyclic": {
+    "phase": "New (seed)",
+    "meaning": "A new cycle of selfhood and power is sown: instinctive, full of potential, not yet conscious of itself."
+  },
+  "business": "Concentrated focus in this area. Real influence; the intensity tends to polarize people.",
+  "shadow": "Egotism and needing to be the center fused with control and obsession, with no distance to tell them apart.",
+  "arcApplying": "The two fuse and intensify as they close in.",
+  "arcSeparating": "The fused theme peaks and discharges.",
+  "composedFrom": [
+    "pair:sun-pluto",
+    "aspect:conjunction"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Fused, these drives are difficult to separate and ask to be consciously integrated rather than acted out blindly."
+}

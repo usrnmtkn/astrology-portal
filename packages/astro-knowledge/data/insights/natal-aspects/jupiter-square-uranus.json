@@ -1,0 +1,46 @@
+{
+  "id": "jupiter-square-uranus",
+  "kind": "natal-aspect",
+  "displayTitle": "Expansive Or Original",
+  "summary": "Growth and belief press against freedom and disruption. This frictional pattern asks you to use optimism and originality with awareness.",
+  "body": "Growth and belief press against freedom and disruption. This frictional pattern asks you to use optimism and originality with awareness. Seen as eccentric or a crank, no matter the merit of the idea. The friction makes the pattern noticeable, especially when pressure forces an adjustment. In practice, this can show up through growth and belief, freedom and disruption, and the choices you make when overreach or instability starts running the room.",
+  "gift": "The gift is optimism, originality, and a more conscious way to work with growth and belief and freedom and disruption.",
+  "shadow": "The shadow is overreach, instability, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let growth and belief and freedom and disruption cooperate without making either one carry the whole story. Innovative thinking whose reception depends heavily on how it's framed.",
+  "do": [
+    "Name how growth and belief and freedom and disruption are both involved",
+    "Pause before choosing the most familiar reaction",
+    "Turn optimism and originality into one concrete choice"
+  ],
+  "dont": [
+    "Let overreach make the decision",
+    "Treat tension as proof that something is wrong",
+    "Ignore the needs of growth and belief or freedom and disruption"
+  ],
+  "lifeAreas": [
+    "growth",
+    "friends"
+  ],
+  "tags": [
+    "jupiter",
+    "uranus",
+    "square",
+    "optimism",
+    "originality"
+  ],
+  "intensity": 4,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "square",
+      "planetB": "uranus"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

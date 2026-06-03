@@ -1,0 +1,63 @@
+{
+  "id": "pluto",
+  "planet": "pluto",
+  "title": "Pluto Meaning",
+  "overview": "Pluto is a modern interpretive planet associated with power, depth, compulsion, exposure, crisis, shadow material, transformation, and rebirth. It does not replace traditional rulership logic, but it can describe where hidden forces intensify and where a person is asked to change at the root.",
+  "cycle": "Pluto takes about 248 years to complete the zodiac and spends a variable amount of time in each sign because of its elliptical orbit. Its sign is generational; its house and aspects show where power dynamics, deep endings, repair, and rebirth tend to concentrate.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Pluto in Aries describes a generation transforming identity, courage, conflict, and the right to act. Power is confronted through independence and raw initiative."
+    },
+    {
+      "sign": "taurus",
+      "body": "Pluto in Taurus describes a generation transforming money, land, food, bodies, values, and survival. Power is confronted through attachment, possession, and material security."
+    },
+    {
+      "sign": "gemini",
+      "body": "Pluto in Gemini describes a generation transforming language, media, education, movement, and information. Power is confronted through ideas and the control of narrative."
+    },
+    {
+      "sign": "cancer",
+      "body": "Pluto in Cancer describes a generation transforming home, family, ancestry, belonging, and emotional inheritance. Power is confronted through memory and protection."
+    },
+    {
+      "sign": "leo",
+      "body": "Pluto in Leo describes a generation transforming creativity, leadership, fame, pleasure, and personal expression. Power is confronted through visibility and the need to be special."
+    },
+    {
+      "sign": "virgo",
+      "body": "Pluto in Virgo describes a generation transforming labor, health, service, systems, and methods of repair. Power is confronted through usefulness, efficiency, and bodily maintenance."
+    },
+    {
+      "sign": "libra",
+      "body": "Pluto in Libra describes a generation transforming partnership, law, beauty, justice, and social contracts. Power is confronted through relationship and the demand for balance."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Pluto in Scorpio describes a generation transforming intimacy, shared resources, taboo, psychology, and hidden power. Power is confronted through emotional truth and deep release."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Pluto in Sagittarius describes a generation transforming belief, education, travel, law, and global worldview. Power is confronted through truth claims and the meaning systems people live by."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Pluto in Capricorn describes a generation transforming institutions, authority, career, government, and social hierarchy. Power is confronted through structure and accountability."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Pluto in Aquarius describes a generation transforming technology, networks, community, social ideals, and collective power. Power is confronted through systems of belonging and exclusion."
+    },
+    {
+      "sign": "pisces",
+      "body": "Pluto in Pisces describes a generation transforming spirituality, art, compassion, escapism, and collective grief. Power is confronted through what dissolves, heals, or overwhelms."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

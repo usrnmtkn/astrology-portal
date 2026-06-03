@@ -1,0 +1,46 @@
+{
+  "id": "spiritual-chart-interpretation-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "chart-interpretation",
+  "title": "Spiritual Chart Interpretation Framework",
+  "sections": [
+    {
+      "id": "free-will-and-pattern",
+      "heading": "Free Will And Pattern",
+      "body": "The chart describes urges, patterns, inclinations, and developmental material. It does not remove choice. User-facing text should translate chart symbolism into awareness and agency: this is the pattern, this is how it can run unconsciously, and this is how the user can work with it."
+    },
+    {
+      "id": "interpretation-order",
+      "heading": "Interpretation Order",
+      "body": "Begin with the whole chart before details: element and mode balance, hemispheres and quadrants, angular emphasis, chart shape, luminaries, Ascendant and chart ruler, house rulers, then major aspects. Do not let a single placement dominate the reading unless the chart repeats it."
+    },
+    {
+      "id": "planet-as-function",
+      "heading": "Planet As Function",
+      "body": "Planets describe psychological functions: identity, emotion, thought, desire, action, growth, structure, change, imagination, and transformation. Signs describe style and temperament. Houses describe the life area. Aspects describe how functions cooperate, resist, pressure, or integrate."
+    },
+    {
+      "id": "houses-as-developmental-fields",
+      "heading": "Houses As Developmental Fields",
+      "body": "Houses should be read as fields of experience, not static labels. A planet in a house shows where that planetary function is being practiced, challenged, and made visible in life. Rulers connect one house topic to another and should be used for personalization."
+    },
+    {
+      "id": "moon-phases-and-nodes",
+      "heading": "Moon Phases And Nodes",
+      "body": "Natal Moon phase gives developmental tone: beginning, building, testing, culmination, sharing, revision, or release. The lunar nodes describe familiar patterns and growth direction. Do not make the nodes deterministic; use them to describe what is easy to repeat and what asks for development."
+    },
+    {
+      "id": "comparison-before-synastry",
+      "heading": "Comparison Before Synastry",
+      "body": "Before comparing charts, read each person's natal capacity for relationship. Then compare luminaries, Ascendant, personal planets, Saturn, nodes, house overlays, and repeated themes. A relationship reading should explain dynamics without assigning fate or obligation."
+    },
+    {
+      "id": "plain-language-spirituality",
+      "heading": "Plain-Language Spirituality",
+      "body": "Spiritual language should stay grounded. Translate symbolic material into lived questions: what pattern is being repeated, what skill is being developed, what responsibility belongs to the user, and what choice is available now."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

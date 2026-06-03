@@ -1,0 +1,48 @@
+{
+  "id": "venus-square-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Magnetic Or Guarded",
+  "summary": "Love does not stay casual for long. Desire, loyalty, fear, and control can gather in the same room.",
+  "body": "Venus square Pluto describes a relationship nature that feels deeply and protects itself intensely. You may crave bonds that are honest, consuming, and transformative, but you may also watch for betrayal before trust has had a chance to form. Attraction can pull up old survival patterns: testing, withholding, jealousy, secrecy, or the urge to make sure you are not the one with less power. The gift is devotion with real emotional range. The work is letting intimacy become mutual instead of turning love into a contest of leverage.",
+  "gift": "Deep devotion, emotional honesty, strong erotic presence, and the capacity to love through complexity.",
+  "shadow": "Jealousy, power struggles, testing loyalty, and confusing intensity with safety.",
+  "integration": "Let desire tell the truth without letting fear run the relationship. Choose bonds where vulnerability is shared, not extracted.",
+  "do": [
+    "Name what feels threatening before you test the other person",
+    "Practice receiving steadiness",
+    "Let attraction be information, not a command"
+  ],
+  "dont": [
+    "Confuse obsession with intimacy",
+    "Use silence to regain control",
+    "Stay where love requires constant proof"
+  ],
+  "lifeAreas": [
+    "love",
+    "sex",
+    "power"
+  ],
+  "tags": [
+    "desire",
+    "attachment",
+    "trust",
+    "jealousy",
+    "devotion"
+  ],
+  "intensity": 5,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "shadow-work",
+    "relationship-bonds"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

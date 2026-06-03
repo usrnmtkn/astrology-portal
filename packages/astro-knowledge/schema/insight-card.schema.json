@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/insight-card.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "displayTitle",
+    "summary",
+    "body",
+    "gift",
+    "shadow",
+    "integration",
+    "do",
+    "dont",
+    "lifeAreas",
+    "tags",
+    "intensity",
+    "sourceFactors",
+    "collectionHints",
+    "voiceNeutral",
+    "status"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "enum": ["natal-aspect"] },
+    "displayTitle": { "type": "string" },
+    "summary": { "type": "string" },
+    "body": { "type": "string" },
+    "gift": { "type": "string" },
+    "shadow": { "type": "string" },
+    "integration": { "type": "string" },
+    "do": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "dont": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "lifeAreas": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "identity",
+          "emotions",
+          "love",
+          "sex",
+          "money",
+          "work",
+          "home",
+          "family",
+          "friends",
+          "creativity",
+          "health",
+          "spirituality",
+          "power",
+          "communication",
+          "growth"
+        ]
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "intensity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "sourceFactors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "planetA", "aspect", "planetB"],
+        "properties": {
+          "type": { "enum": ["natal-aspect"] },
+          "planetA": { "type": "string" },
+          "aspect": { "type": "string" },
+          "planetB": { "type": "string" }
+        }
+      }
+    },
+    "collectionHints": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "core-traits",
+          "love-patterns",
+          "career-patterns",
+          "emotional-needs",
+          "shadow-work",
+          "relationship-bonds",
+          "personal-growth"
+        ]
+      }
+    },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

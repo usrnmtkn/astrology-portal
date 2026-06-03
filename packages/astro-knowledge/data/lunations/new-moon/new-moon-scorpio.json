@@ -1,0 +1,111 @@
+{
+  "id": "new-moon-scorpio",
+  "kind": "new-moon",
+  "phase": "new",
+  "sign": "scorpio",
+  "oppositeSign": "taurus",
+  "title": "New Moon in Scorpio",
+  "tldr": "A seed point for depth, trust, release, intimacy, shared resources, and honest transformation.",
+  "theme": "Scorpio is a fixed water sign ruled traditionally by Mars. This New Moon begins work around depth, trust, release, intimacy, shared resources, and honest transformation.",
+  "shadow": "control disguised as strength, testing people instead of telling the truth, or holding on until it hurts",
+  "integration": "letting what is expired complete so real intimacy has room",
+  "twoWeekArc": {
+    "from": "New Moon in Scorpio",
+    "to": "Full Moon in Taurus",
+    "teaching": "This arc shows where holding on too tightly pushes away what you want.",
+    "appPrompt": "Begin with Scorpio; watch what the Taurus Full Moon reveals about balance, response, and integration."
+  },
+  "sixMonthArc": {
+    "from": "New Moon in Scorpio",
+    "to": "Full Moon in Scorpio",
+    "teaching": "Release to renewal",
+    "appPrompt": "Track this intention for six months, then revisit what matured at the same-sign Full Moon."
+  },
+  "ritual": {
+    "function": "attraction, initiation, intention-setting, seed work",
+    "timing": "Set intentions only after the exact New Moon. The strongest window is the first 8 hours; use up to about 60 hours after exact when needed. Do not use this protocol for eclipses.",
+    "materials": "Mars kamea, red candle, bloodstone or garnet, basil, water, incense, and a symbol of release.",
+    "simpleSubstitution": "A white candle, water, paper, and a quiet place are enough.",
+    "action": "Write what you are calling in through Scorpio. Choose one small action that proves the intention has a place to land."
+  },
+  "journalPrompt": "Where am I ready to begin again through depth, trust, release, intimacy, shared resources, and honest transformation, without repeating the shadow of control disguised as strength, testing people instead of telling the truth, or holding on until it hurts?",
+  "tarotPrompt": "What first action will help this Scorpio intention take form?",
+  "risingSignIntention": {
+    "aries": {
+      "risingSign": "Aries",
+      "house": 8,
+      "houseTheme": "shared resources, intimacy, trust, grief, and transformation",
+      "intention": "Set an intention for shared resources, intimacy, trust, grief, and transformation through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "taurus": {
+      "risingSign": "Taurus",
+      "house": 7,
+      "houseTheme": "partnerships, clients, commitments, and mirrors",
+      "intention": "Set an intention for partnerships, clients, commitments, and mirrors through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "gemini": {
+      "risingSign": "Gemini",
+      "house": 6,
+      "houseTheme": "daily rhythm, work, health, service, and maintenance",
+      "intention": "Set an intention for daily rhythm, work, health, service, and maintenance through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "cancer": {
+      "risingSign": "Cancer",
+      "house": 5,
+      "houseTheme": "creativity, joy, romance, pleasure, and children",
+      "intention": "Set an intention for creativity, joy, romance, pleasure, and children through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "leo": {
+      "risingSign": "Leo",
+      "house": 4,
+      "houseTheme": "home, roots, family, and emotional foundations",
+      "intention": "Set an intention for home, roots, family, and emotional foundations through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "virgo": {
+      "risingSign": "Virgo",
+      "house": 3,
+      "houseTheme": "communication, learning, siblings, and daily movement",
+      "intention": "Set an intention for communication, learning, siblings, and daily movement through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "libra": {
+      "risingSign": "Libra",
+      "house": 2,
+      "houseTheme": "money, values, resources, and self-worth",
+      "intention": "Set an intention for money, values, resources, and self-worth through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "scorpio": {
+      "risingSign": "Scorpio",
+      "house": 1,
+      "houseTheme": "self, body, identity, and how you meet life",
+      "intention": "Set an intention for self, body, identity, and how you meet life through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "sagittarius": {
+      "risingSign": "Sagittarius",
+      "house": 12,
+      "houseTheme": "rest, release, solitude, hidden patterns, and spiritual repair",
+      "intention": "Set an intention for rest, release, solitude, hidden patterns, and spiritual repair through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "capricorn": {
+      "risingSign": "Capricorn",
+      "house": 11,
+      "houseTheme": "friendship, community, networks, hopes, and future vision",
+      "intention": "Set an intention for friendship, community, networks, hopes, and future vision through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "aquarius": {
+      "risingSign": "Aquarius",
+      "house": 10,
+      "houseTheme": "career, visibility, authority, and public contribution",
+      "intention": "Set an intention for career, visibility, authority, and public contribution through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    },
+    "pisces": {
+      "risingSign": "Pisces",
+      "house": 9,
+      "houseTheme": "belief, travel, study, publishing, and wider meaning",
+      "intention": "Set an intention for belief, travel, study, publishing, and wider meaning through Scorpio's depth, trust, release, intimacy, shared resources, and honest transformation."
+    }
+  },
+  "policy": "New Moon ritual guidance is optional app content. Keep eclipse logic separate and do not promise guaranteed outcomes.",
+  "sourceNote": "Synthesized from project-authored lunar cycle, ritual, correspondence, and axis frameworks. Source files were not copied into the repository.",
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

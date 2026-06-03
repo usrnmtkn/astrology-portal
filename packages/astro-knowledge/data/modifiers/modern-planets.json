@@ -1,0 +1,82 @@
+{
+  "id": "modern-planets",
+  "schema": "modifier/modern-planets",
+  "definition": "Policy for using Uranus, Neptune, and Pluto. They are modern additions with no place in traditional doctrine; this rule keeps them useful without ever being labeled traditional.",
+  "planets": {
+    "uranus": {
+      "governs": [
+        "disruption",
+        "independence",
+        "sudden change",
+        "innovation",
+        "technology",
+        "rebellion"
+      ]
+    },
+    "neptune": {
+      "governs": [
+        "imagination",
+        "dreams",
+        "idealism",
+        "dissolution",
+        "illusion",
+        "compassion",
+        "escapism"
+      ]
+    },
+    "pluto": {
+      "governs": [
+        "power",
+        "intensity",
+        "transformation",
+        "obsession",
+        "control",
+        "destruction and regeneration"
+      ]
+    }
+  },
+  "rulershipPolicy": {
+    "modernCoRulers": {
+      "scorpio": "pluto",
+      "aquarius": "uranus",
+      "pisces": "neptune"
+    },
+    "traditionalRulers": {
+      "scorpio": "mars",
+      "aquarius": "saturn",
+      "pisces": "jupiter"
+    },
+    "rule": "Use outer planets only as modern co-rulers or flavor lenses. They never replace the traditional rulers: Scorpio uses Mars, Aquarius uses Saturn, and Pisces uses Jupiter. The traditional ruler stays primary for user-facing rulership text, dignity, sect, chart-ruler, and time-lord computation."
+  },
+  "surfacePolicy": {
+    "default": "Do not name Uranus, Neptune, or Pluto as the ruler of a chart or sign in default user-facing text.",
+    "modernLens": "Outer planets may be surfaced only inside an explicitly labeled modern lens view.",
+    "interpretation": "Outer planets may inform flavor behind the scenes, but must not be weighted as primary rulers."
+  },
+  "prohibitions": [
+    "Never assign an outer planet a sect, a benefic/malefic class, or essential dignity.",
+    "Never include outers in dignity scoring, triplicity/bounds/decan, profection lords, or ZR.",
+    "Never label an outer planet's meaning as traditional; its readings live only in the modern and cyclic layers.",
+    "Do not let an outer planet override a clear traditional indication; it modulates, it does not rule."
+  ],
+  "weighting": [
+    "Outers move slowly, so a transit lasts months: frame it as a season or chapter, not a single day.",
+    "Count an outer transit as personally significant only when it (a) aspects a personal planet (Sun, Moon, Mercury, Venus, Mars) or an angle (ASC/MC) within a tight orb, (b) makes a hard aspect within ~2-3 degrees, or (c) is stationing.",
+    "Otherwise treat it as generational background and down-weight it in the daily read.",
+    "Prefer the cyclic (waxing/waning) layer for outer-to-outer contacts, which are generational by nature."
+  ],
+  "orbs": {
+    "dailyApp": "<=2-3 degrees for outers (tighter than personal planets)",
+    "station": "emphasize for the days around a station regardless of orb"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "appliesTo": [
+    "planet",
+    "transit"
+  ],
+  "role": "policy",
+  "category": "modern-overlay",
+  "summary": "Modern planets are used as modern overlays and never replace the traditional seven-planet rules.",
+  "body": "Policy for using Uranus, Neptune, and Pluto. They are modern additions with no place in traditional doctrine; this rule keeps them useful without ever being labeled traditional."
+}

@@ -1,0 +1,47 @@
+{
+  "id": "neptune-trine-pluto",
+  "kind": "natal-aspect",
+  "displayTitle": "Inspired Through Intense",
+  "summary": "Imagination and longing flow with power and transformation. This fluid pattern asks you to use compassion and depth with awareness.",
+  "body": "Imagination and longing flow with power and transformation. This fluid pattern asks you to use compassion and depth with awareness. Heightened collective vision. The pattern can flow easily, which is useful when it is conscious and easy to take for granted when it is not. In practice, this can show up through imagination and longing, power and transformation, and the choices you make when confusion or control starts running the room.",
+  "gift": "The gift is compassion, depth, and a more conscious way to work with imagination and longing and power and transformation.",
+  "shadow": "The shadow is confusion, control, and repeating the same pattern without noticing what it is trying to teach.",
+  "integration": "Let imagination and longing and power and transformation cooperate without making either one carry the whole story. Generational and collective; minimal personal day-to-day meaning.",
+  "do": [
+    "Name how imagination and longing and power and transformation are both involved",
+    "Use the easy opening deliberately",
+    "Turn compassion and depth into one concrete choice"
+  ],
+  "dont": [
+    "Let confusion make the decision",
+    "Take the talent for granted",
+    "Ignore the needs of imagination and longing or power and transformation"
+  ],
+  "lifeAreas": [
+    "spirituality",
+    "creativity",
+    "power"
+  ],
+  "tags": [
+    "neptune",
+    "pluto",
+    "trine",
+    "compassion",
+    "depth"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "trine",
+      "planetB": "pluto"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "shadow-work"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

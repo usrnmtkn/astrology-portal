@@ -1,0 +1,710 @@
+{
+  "id": "composite-chart",
+  "schema": "modifier/composite-chart",
+  "appliesTo": [
+    "composite",
+    "relationship-reading",
+    "synastry"
+  ],
+  "role": "method",
+  "category": "relationship",
+  "summary": "A composite chart describes the relationship as its own entity, including its shared purpose, emotional climate, communication pattern, affection style, conflict style, growth path, limits, instability, fog, intensity, and visible style.",
+  "body": "Use the composite chart after each natal chart and the synastry contacts. Synastry describes how two people activate each other; the composite describes the bond as a third pattern with its own center of gravity. Read it as a relationship climate, not as proof that a relationship should continue, end, or become permanent.",
+  "definition": "The composite chart is a relationship chart created from the midpoint structure of two natal charts. It is used to describe the shared field of the relationship rather than either person alone.",
+  "appUsage": [
+    "Read order: each natal relationship pattern, synastry contacts and overlays, then composite chart.",
+    "Use Composite Sun, Moon, Ascendant, Venus, Mars, and Saturn as the core relationship layer before outer-planet details.",
+    "Do not use a composite chart as a verdict. Present strengths, pressure points, and choices.",
+    "Weight hard Saturn, Uranus, Neptune, and Pluto contacts carefully because they can describe real strain, instability, fog, or power dynamics.",
+    "For relationship summaries, prefer concrete language: purpose, daily emotional climate, communication, affection, conflict, commitment, and repair."
+  ],
+  "note": "Expanded from approved project composite, relationship, marquee, and relationship-method source material. Source files were not copied into the repository.",
+  "classes": {
+    "readingOrder": [
+      "Read each natal chart first to understand the people in the relationship.",
+      "Read synastry next to identify activation, attraction, friction, and house overlays.",
+      "Read the composite chart last to describe the shared relationship pattern.",
+      "Separate chemistry from durability, and separate intensity from health."
+    ],
+    "coreFactors": {
+      "sun": "Purpose, identity, vitality, and the central reason the relationship organizes around.",
+      "moon": "Daily emotional climate, comfort needs, instinctive reactions, and how safe the relationship feels from the inside.",
+      "ascendant": "The relationship's visible style, first impression, and automatic way of meeting the world as a pair.",
+      "mercury": "Communication style, mental rhythm, problem-solving, and how the relationship talks itself through experience.",
+      "venus": "Affection, pleasure, ease, social grace, attraction, and what makes the relationship feel worth choosing.",
+      "mars": "Desire, conflict, action, sexual heat, initiative, anger, and how the relationship pushes or fights.",
+      "jupiter": "Growth, generosity, humor, opportunity, shared faith, and where the relationship can become larger than either person alone.",
+      "saturn": "Commitment, duty, structure, delay, fear, restraint, endurance, and the tests the relationship must handle honestly.",
+      "uranus": "Change, freedom, disruption, novelty, unconventional rhythm, and whether the relationship can tolerate instability.",
+      "neptune": "Compassion, imagination, idealization, spiritual longing, confusion, secrecy, sacrifice, and the need for realism.",
+      "pluto": "Intensity, transformation, compulsion, control, survival material, power exchange, and deep psychological pressure."
+    },
+    "houseMeanings": {
+      "1": "The relationship becomes highly visible and identity-forming. Watch for losing individual identity inside the bond.",
+      "2": "Shared values, money, assets, self-worth, and material security become central. Misaligned values can become stubborn conflict.",
+      "3": "Communication, mental rapport, daily exchange, siblings, neighbors, and movement become central. Emotional depth may need conscious effort.",
+      "4": "Home, family, roots, privacy, memory, and emotional foundation become central. Comfort helps, but staleness or subjectivity can creep in.",
+      "5": "Romance, fun, creativity, children, play, pleasure, and self-expression become central. Durability needs support from Saturn or committed houses.",
+      "6": "Daily work, service, health, maintenance, labor, and unequal effort become central. Resentment grows if one person carries too much.",
+      "7": "Partnership, equality, fairness, commitment, negotiation, and mutual recognition become central. This can support romantic or professional partnership.",
+      "8": "Intimacy, shared resources, debt, trust, transformation, crisis, and power dynamics become central. Watch control, domination, and emotional extremes.",
+      "9": "Beliefs, travel, learning, teaching, publishing, exploration, and shared worldview become central. The bond needs enough room to breathe.",
+      "10": "Career, reputation, visibility, status, goals, and public contribution become central. Emotional openness may need extra attention.",
+      "11": "Friendship, community, networks, shared dreams, groups, and future-building become central. A friendship base strengthens the bond.",
+      "12": "Hidden material, secrecy, sacrifice, subconscious patterns, retreat, and karmic-feeling unfinished business become central. Reality-checking is essential."
+    },
+    "aspectPrinciples": {
+      "conjunction": "Fuses the two functions and makes that theme loud in the relationship. It can create unity or enmeshment depending on the planets involved.",
+      "sextile": "Offers cooperation and opportunity. It helps, but the relationship still has to use the opening.",
+      "trine": "Creates ease and flow. It can soften conflict, but may also become passive if the relationship avoids needed work.",
+      "square": "Creates friction, pressure, and repeated activation. It demands skill, repair, and honesty rather than avoidance.",
+      "opposition": "Creates polarity and projection. The relationship must learn to hold both ends instead of making one person carry the uncomfortable side."
+    },
+    "aspectCautions": {
+      "sunMercury": "Composite Sun and Mercury are usually conjunction-only for major-aspect use because they stay close by astronomical relationship.",
+      "sunVenus": "Composite Sun and Venus are usually conjunction-only for major-aspect use because they stay close by astronomical relationship.",
+      "hardSunMoon": "Core purpose and emotional needs can pull against each other; the relationship needs balance between want and need.",
+      "hardSunMars": "High drive can become argument or combativeness without constructive outlets.",
+      "hardSunSaturn": "The bond can feel heavy, limiting, dutiful, or afraid to move. Durability is not automatically health.",
+      "hardSunUranus": "Instability and constant change can make the bond hard to ground.",
+      "hardSunNeptune": "Idealization, secrecy, rescue patterns, or unclear reality can distort the relationship.",
+      "hardSunPluto": "Power struggles, obsession, manipulation, or consuming intensity can dominate unless transformed consciously.",
+      "hardMoonSaturn": "Emotional safety may feel restricted by duty, fear, or withholding.",
+      "hardMoonNeptune": "Emotional fog, projection, or fantasy can make it difficult to tell what is actually happening.",
+      "hardVenusSaturn": "Affection can feel withheld, delayed, conditional, or burdened by responsibility.",
+      "hardVenusUranus": "Attraction can be exciting but inconsistent, with freedom needs disrupting closeness.",
+      "hardVenusNeptune": "Romance can slide into illusion, deception, or saving fantasies if not grounded.",
+      "hardMarsSaturn": "One part of the relationship pushes while another blocks, creating frustration unless effort is structured.",
+      "hardMarsNeptune": "Action can scatter, anger can go indirect, and desire can blur without clear agreements.",
+      "hardPlutoPersonal": "Contacts from Pluto to Sun, Moon, Mercury, Venus, or Mars intensify the bond but require strong boundaries around control and compulsion."
+    },
+    "ascendantUse": "Composite Ascendant describes how the relationship appears and reacts as a pair. Read the sign for style, the ruler for direction, and aspects to the Ascendant for how easily the relationship can inhabit that style.",
+    "ethicalBoundary": "Composite charts should never be used to justify staying in harmful dynamics. Intensity, karma language, or endurance indicators do not equal health.",
+    "interpretations": {
+      "planetsInHouses": {
+        "sun": {
+          "1": "Composite Sun in the 1st: the relationship is its own strong, visible, self-defined entity. Gift: a clear, confident identity as a couple. Watch: so focused on itself it turns insular.",
+          "2": "Composite Sun in the 2nd: centers on building security, resources, and shared values. Gift: it makes something tangible and stable. Watch: money and possessions standing in for emotional connection.",
+          "3": "Composite Sun in the 3rd: lives through communication, learning, and daily exchange. Gift: you genuinely talk and think together. Watch: staying mental and busy, light on depth.",
+          "4": "Composite Sun in the 4th: about home, family, and a private emotional base. Gift: deep roots and belonging. Watch: turning so inward it withdraws from the world.",
+          "5": "Composite Sun in the 5th: about romance, creativity, play, and joy. Gift: it stays fun, expressive, and alive. Watch: trouble shifting from playmate to life-partner mode.",
+          "6": "Composite Sun in the 6th: runs on shared work, routine, health, and being useful to each other. Gift: a functional, supportive daily life. Watch: it becomes a to-do list and loses romance.",
+          "7": "Composite Sun in the 7th: centrally about partnership - being a committed couple is the point. Gift: a strong sense of 'we'. Watch: losing individual identity inside the union.",
+          "8": "Composite Sun in the 8th: about intimacy, depth, shared resources, and transformation. Gift: it changes you both at the core. Watch: power struggles and intensity that overwhelms.",
+          "9": "Composite Sun in the 9th: about growth, adventure, study, and expanding horizons. Gift: you make each other bigger. Watch: drifting if the shared adventure stalls.",
+          "10": "Composite Sun in the 10th: a public-facing relationship - visible, ambitious, seen as a couple. Gift: shared purpose and standing. Watch: image and achievement crowding out private warmth.",
+          "11": "Composite Sun in the 11th: friendship-based, social, and future-facing. Gift: genuine companionship and shared goals. Watch: feeling more like friends than lovers.",
+          "12": "Composite Sun in the 12th: a private, hidden, or spiritual core - much of it lives behind closed doors. Gift: a soulful, intimate undertone. Watch: secrecy, escapism, or a bond that hides from daylight."
+        },
+        "moon": {
+          "1": "Composite Moon in the 1st: the relationship wears its feelings openly - emotion shapes its whole identity. Gift: warmth and emotional honesty. Watch: moods running the relationship.",
+          "2": "Composite Moon in the 2nd: emotional security comes through stability, money, and comfort. Gift: a grounded, safe feeling. Watch: leaning on material security to feel loved.",
+          "3": "Composite Moon in the 3rd: feels close through talking and daily contact. Gift: emotional communication. Watch: needing constant contact to feel secure.",
+          "4": "Composite Moon in the 4th: the emotional heart is home and family - its most natural placement. Gift: deep belonging and nurturing. Watch: over-attachment and withdrawing into the nest.",
+          "5": "Composite Moon in the 5th: emotions flow through romance, play, and creativity. Gift: affectionate, fun, expressive. Watch: emotional drama and needing constant romance.",
+          "6": "Composite Moon in the 6th: you feel close through caretaking and daily routines. Gift: nurturing through small acts. Watch: worry, fussing, and love that turns into chores.",
+          "7": "Composite Moon in the 7th: emotional security comes from the partnership itself. Gift: feeling met and paired. Watch: emotional dependency on the relationship for stability.",
+          "8": "Composite Moon in the 8th: emotions run deep, intimate, and intense. Gift: deep, almost bottomless emotional bonding. Watch: jealousy, possessiveness, and emotional power plays.",
+          "9": "Composite Moon in the 9th: feels good when it's growing, exploring, or learning together. Gift: optimism and shared adventure. Watch: restlessness and needing constant novelty.",
+          "10": "Composite Moon in the 10th: emotions are tied to the relationship's public life and direction. Gift: a shared sense of purpose. Watch: feelings managed for appearances; private warmth neglected.",
+          "11": "Composite Moon in the 11th: emotional closeness comes through friendship and shared hopes. Gift: easy companionship. Watch: feeling like friends more than intimate partners.",
+          "12": "Composite Moon in the 12th: the emotional life is private, deep, and partly unconscious. Gift: a soulful, intuitive bond. Watch: hidden feelings, secrets, and emotional escapism."
+        },
+        "mercury": {
+          "1": "Communication defines you; you talk constantly, and people know you for the rapport. Keep it open.",
+          "2": "You talk about money and values, and those practical conversations bond you. Plan the resources together.",
+          "3": "Heavy on talk, ideas, daily back-and-forth - you think alike here. Keep the dialogue lively.",
+          "4": "You communicate about home and roots; the private conversations matter most. Keep them honest.",
+          "5": "Playful, creative communication; you joke and make things together. Keep it light and expressive.",
+          "6": "You talk about work and routines - practical, useful exchange. Don't let the talk slide into nagging.",
+          "7": "Communication centers on the partnership; you negotiate and discuss your way through. Keep it fair and clear.",
+          "8": "Deep, probing conversations; you discuss the hidden stuff honestly. It's intense. Don't tip into interrogation.",
+          "9": "You talk about beliefs and big ideas; learning bonds you. Keep exploring together.",
+          "10": "You communicate about goals and status; the professional talk matters here. Stay aligned on the ambition.",
+          "11": "You talk as friends and allies; shared ideas hold the wider circle together. Keep planning.",
+          "12": "Private, often unspoken communication; you sense each other. Watch for what's left unsaid. Voice it."
+        },
+        "venus": {
+          "1": "Composite Venus in the 1st: the relationship radiates warmth and attraction - it looks and feels loving. Gift: charm and easy affection. Watch: prioritizing how it looks over how it works.",
+          "2": "Composite Venus in the 2nd: love is expressed through comfort, gifts, security, and shared pleasures. Gift: a stable, sensual bond. Watch: love measured in money and things.",
+          "3": "Composite Venus in the 3rd: affection flows through words, wit, and everyday sweetness. Gift: loving communication. Watch: charm that stays light and avoids deeper feeling.",
+          "4": "Composite Venus in the 4th: love centers on home - a warm, beautiful, comforting private life. Gift: domestic harmony. Watch: coziness that avoids the hard conversations.",
+          "5": "Composite Venus in the 5th: love is romantic, playful, and creative - one of the warmest placements. Gift: lasting romance and fun. Watch: needing the honeymoon feeling to last forever.",
+          "6": "Composite Venus in the 6th: affection shows up through care, service, and daily kindness. Gift: love in the small acts. Watch: love reduced to usefulness.",
+          "7": "Composite Venus in the 7th: love and partnership beautifully aligned - a natural couple. Gift: harmony and genuine partnership. Watch: avoiding conflict to preserve the harmony.",
+          "8": "Composite Venus in the 8th: love is deep and intense - bonded through vulnerability, sometimes money or sex. Gift: deep, intimate closeness. Watch: possessiveness and jealousy.",
+          "9": "Composite Venus in the 9th: love grows through adventure, learning, and shared beliefs. Gift: an expansive, exciting bond. Watch: love cooling when the adventure pauses.",
+          "10": "Composite Venus in the 10th: affection is visible and often tied to status or public life. Gift: a couple others admire. Watch: image standing in for intimacy.",
+          "11": "Composite Venus in the 11th: love is friendly, easygoing, and socially connected. Gift: genuine liking and companionship. Watch: more friendship than passion.",
+          "12": "Composite Venus in the 12th: love is tender, private, and easy to idealize - sometimes secret. Gift: a soulful, compassionate bond. Watch: loving the fantasy, or hiding the love."
+        },
+        "mars": {
+          "1": "Composite Mars in the 1st: the relationship is energetic, assertive, and forceful - it acts boldly. Gift: drive and presence. Watch: aggression and conflict spilling into its identity.",
+          "2": "Composite Mars in the 2nd: energy goes into building security and earning. Gift: you work hard for what you want. Watch: fights about money and possessions.",
+          "3": "Composite Mars in the 3rd: the drive shows up in communication - lively, direct, sometimes combative. Gift: passionate exchange. Watch: arguments and sharp words.",
+          "4": "Composite Mars in the 4th: energy and friction center on home and family. Gift: you build and defend your domestic life fiercely. Watch: tension and conflict in the private space.",
+          "5": "Composite Mars in the 5th: drive goes into romance, sex, and creative play. Gift: strong physical chemistry and fun. Watch: competitiveness and drama in the romance.",
+          "6": "Composite Mars in the 6th: energy goes into work, routines, and getting things done. Gift: a productive, capable team. Watch: bickering over chores and daily friction.",
+          "7": "Composite Mars in the 7th: the drive is aimed at the partnership - passionate, and prone to open conflict. Gift: you fight for the relationship. Watch: the relationship as a battleground.",
+          "8": "Composite Mars in the 8th: powerful sexual and emotional intensity - deep drive, deep heat. Gift: passion and transformative energy. Watch: power struggles and jealousy.",
+          "9": "Composite Mars in the 9th: energy goes into adventure, growth, and shared causes. Gift: you pursue big things together. Watch: clashing beliefs and restless conflict.",
+          "10": "Composite Mars in the 10th: drive aimed at ambition, status, and public goals. Gift: a couple that achieves. Watch: competition between you, or fighting in public view.",
+          "11": "Composite Mars in the 11th: energy goes into shared goals, friends, and causes. Gift: you mobilize toward the future together. Watch: friction within the wider social circle.",
+          "12": "Composite Mars in the 12th: the drive runs hidden - passion and anger both work below the surface. Gift: quiet, private intensity. Watch: passive conflict and buried resentment."
+        },
+        "jupiter": {
+          "1": "Optimism and confidence are visible; you expand each other, and the couple feels lucky. Don't overpromise.",
+          "2": "Growth ties to money and resources; you prosper together. Watch the overspending.",
+          "3": "Ideas and learning expand; you grow through talking. Keep exploring - and don't exaggerate.",
+          "4": "Home and family expand; you build abundance at the base. Don't overextend the household.",
+          "5": "Fun, romance, creativity flourish; you enjoy life together, generously. Don't overdo it.",
+          "6": "Work and routine improve; you grow through service. Watch the urge to take on too much.",
+          "7": "The partnership itself expands; it's generous and warm, a lucky relationship. Keep it real.",
+          "8": "Shared resources and intimacy grow; you transform abundantly. Watch the excess and the risk.",
+          "9": "Beliefs, travel, and growth flourish; you expand each other's world. It's a strong, adventurous bond.",
+          "10": "Public success and reputation grow; you achieve together. Keep the ambition grounded.",
+          "11": "Friendships and hopes expand; you grow through community. It's a generous social bond.",
+          "12": "Hidden growth and quiet faith; you expand privately. Watch for blind optimism."
+        },
+        "saturn": {
+          "1": "The couple feels serious and well-defined; built to last, and heavy with it. Add lightness on purpose. Don't over-restrict the 'us.'",
+          "2": "Security and money carry weight; you build slowly. Watch the scarcity thinking. Plan - don't fear.",
+          "3": "Communication gets serious, or it blocks up; talk carefully here. Don't shut each other down.",
+          "4": "Home carries duty and weight; you build solid roots. Don't let the house feel cold.",
+          "5": "Fun and romance get restrained; play can feel like work. Loosen up. Make room for joy.",
+          "6": "Routine and work dominate; you're disciplined together. Don't let the duty crowd out the warmth.",
+          "7": "The partnership is serious and committed; built to last, and demanding. Keep it warm.",
+          "8": "Intimacy and shared resources carry weight; trust builds slowly here. Be patient with the depth.",
+          "9": "Beliefs and growth get serious; you learn carefully. Don't close off the adventure.",
+          "10": "The public role carries responsibility; you build status slowly. Mind the pressure.",
+          "11": "Friendships and goals get serious; you commit to the circle slowly. Build ties that last.",
+          "12": "Hidden fears and restrictions; doubt runs underground here. Name the anxieties. Don't isolate."
+        },
+        "uranus": {
+          "1": "The couple is unconventional and electric; you break the mold together. It's exciting, and unstable. Build some footing.",
+          "2": "Money and values shift unpredictably; income or priorities change. Stay flexible. Don't gamble it all.",
+          "3": "Communication is quick and erratic; you spark ideas off each other. Keep up - don't whiplash one another.",
+          "4": "Home life is unconventional, maybe unstable; you may move often. Build flexible roots.",
+          "5": "Romance and play are exciting and erratic - unpredictable fun. Keep it interesting, not chaotic.",
+          "6": "Routines keep getting disrupted; you both hate the mundane. Build flexible structure.",
+          "7": "The partnership itself is unconventional; freedom-focused. Define the rules your own way.",
+          "8": "Intimacy is intense and unpredictable; sudden shifts. Stay open. Don't bolt.",
+          "9": "Beliefs and travel are adventurous; you break norms together. Keep exploring.",
+          "10": "The public role is unconventional; you stand out as a pair. Embrace the difference - stay stable enough to hold it.",
+          "11": "Friendships and goals are progressive; you break ground socially. It's a strong, free community bond.",
+          "12": "Hidden restlessness and sudden insight; change brews quietly. Watch for the abrupt shifts."
+        },
+        "neptune": {
+          "1": "The couple carries a dreamy, idealized image; you inspire each other. Watch the illusion. See each other clearly.",
+          "2": "Money and values get blurry; the finances need watching. Stay grounded. Don't drift on the resources.",
+          "3": "Communication is intuitive, sometimes vague; you sense each other. Confirm what was actually said.",
+          "4": "Home is a sanctuary, or a fog; the domestic life gets idealized. Keep the roots real.",
+          "5": "Romance is dreamy and idealized - creative and tender. Don't lose the real person in the picture.",
+          "6": "Routines get hazy; work or health needs attention here. Stay practical. Don't drift on the daily stuff.",
+          "7": "The partnership is idealized; romantic, but unclear. See each other as you actually are.",
+          "8": "Intimacy runs deep and dissolving; the boundaries blur. Stay grounded inside the bond.",
+          "9": "Beliefs and dreams expand; a spiritual or idealistic bond. Keep one foot on the ground.",
+          "10": "The public image is glamorous, or unclear; the reputation gets idealized. Stay authentic.",
+          "11": "Friendships and hopes are idealistic; you dream big socially. Reality-check the group.",
+          "12": "A deep, dreamy, almost unconscious bond; subtle and quiet. Watch for escapism."
+        },
+        "pluto": {
+          "1": "The couple transforms each other deeply; the presence is intense. It's powerful, and it can turn controlling. Watch the dynamics.",
+          "2": "Money and values carry power here; control over resources surfaces. Share - don't dominate.",
+          "3": "Communication runs deep and intense; you probe each other. Don't use words to control.",
+          "4": "Home and roots transform; an intense domestic bond. Watch the power struggles at the base.",
+          "5": "Romance and creativity run intense - passionate, possessive. Don't let the love become control.",
+          "6": "Work and routine carry power; intense daily dynamics. Share the load and the control.",
+          "7": "The partnership transforms you both; powerful, intense. Watch the domination.",
+          "8": "Deep intimacy and transformation - this is the core power zone. An intense bond. Build trust, drop the control.",
+          "9": "Beliefs transform deeply; you change each other's worldview. Don't force the conversion.",
+          "10": "The public role carries power; ambitious, intense. Watch the power plays inside the goals.",
+          "11": "Friendships and goals transform; intense group dynamics. Share the power in the circle.",
+          "12": "Hidden, deep transformation; the power runs underground. Bring the dynamics into the light."
+        }
+      },
+      "aspects": {
+        "sun_moon": {
+          "conjunction": "What you want and what you need move together here. You run on one instinct, little translation required. Trust that ease - and choose, on purpose, what you build with it.",
+          "sextile": "There's real warmth available between will and feeling, but it answers when you reach for it. Notice the moments rapport opens up. Step toward them; they won't wait around.",
+          "trine": "Wants and needs sync without much effort, smoothing over the rougher edges in your charts. It's a comfortable place to land. Let it be easy - just don't let easy turn into asleep.",
+          "square": "Your drives and your needs pull in different directions, and you feel it in the body. That tension isn't a flaw; it's the work. Keep naming it gently, and keep finding the balance.",
+          "opposition": "One of you tends to lead, one tends to respond, again and again. Notice the pattern instead of resenting it. Say it out loud, and trade the roles on purpose."
+        },
+        "sun_mercury": {
+          "conjunction": "Words pour through this one; you talk easily and often, mostly on the same page. Talking is how you stay close here. Keep the line open - silence lands as distance."
+        },
+        "sun_venus": {
+          "conjunction": "Affection comes easily, and you show it without much hesitation. You find each other genuinely pleasant to be around. Conflict is the harder skill - practice meeting it without folding yourself away."
+        },
+        "sun_mars": {
+          "conjunction": "There's heat here, and drive, and the occasional clash that comes with both. You light each other up. Point that force at something you both want, not at each other.",
+          "sextile": "Momentum is right there the moment you decide to move. The energy cooperates, but it waits on your yes. Start things together; the engine's already warm.",
+          "trine": "You get things done as a pair, almost without trying. The drive just flows. Don't let it sit idle - give it somewhere real to go.",
+          "square": "Your wills meet and they spark, fast and often. The friction is honest, even when it's tiring. Decide who leads which fights, and burn the heat off moving, not arguing.",
+          "opposition": "You push each other into motion, with a quiet competition underneath. Let it be fuel rather than a scoreboard. Notice when winning starts to matter more than the two of you."
+        },
+        "sun_jupiter": {
+          "conjunction": "Optimism and warmth expand between you; you draw out each other's confidence. It's a generous, good-feeling bond. Just keep your promises a little smaller than your hopes.",
+          "sextile": "Growth is on the table whenever you say yes to it. Doors open for the two of you together. Walk through; they don't stay open forever.",
+          "trine": "Luck and generosity come easily here, and you feel bigger as a pair. It's a warm, steady base. Stay awake in it - ease can slide into excess.",
+          "square": "You inflate each other's hopes, and the promises start outrunning reality. Let the optimism stay - just give it a plan. Check the actual numbers.",
+          "opposition": "One of you reaches too far, one pulls back, and you tug between excess and caution. Neither of you is wrong. Find the middle before you overcommit."
+        },
+        "sun_saturn": {
+          "conjunction": "This bond is serious and built to last, and it can also feel heavy. Structure is a real gift here. Schedule lightness on purpose, so duty doesn't crowd out the warmth.",
+          "sextile": "Commitment builds when you do the unglamorous work, and the ground holds. Make the plans. The discipline pays you back.",
+          "trine": "Responsibility flows naturally, and you steady each other without strain. It's reliable, durable. Add some play so it doesn't go gray on you.",
+          "square": "Duty presses on identity here; one of you can feel controlled or boxed in. Loosen the grip. Name the limits without policing each other.",
+          "opposition": "Freedom and restriction keep testing each other between you. You're each learning the other's edges. Set the rules together, not on one another."
+        },
+        "sun_uranus": {
+          "conjunction": "There's something electric here - you wake each other up. It's exciting, and it doesn't sit still. Build in flexibility, or the charge starts to fray things.",
+          "sextile": "Fresh energy is available the moment you welcome change. There's room to be fully yourselves. Try the new thing together.",
+          "trine": "Freedom moves easily between you; you give each other space without it costing anything. Keep it interesting. Routine is the one thing that dulls this.",
+          "square": "This runs hot and cold, on and off, hard to pin down. Stability keeps wrestling the urge to bolt. Be honest with yourselves about whether you actually want to stay.",
+          "opposition": "One reaches for space, one reaches for closeness, and the pull whipsaws. Don't work with it by disappearing. Negotiate the room you each need, out loud."
+        },
+        "sun_neptune": {
+          "conjunction": "You see each other through a soft, forgiving filter, and it's genuinely inspiring. It can also blur the picture. Keep checking who's actually standing in front of you.",
+          "sextile": "Imagination and compassion open up when you invite them in. A creative or tender bond is right there. Use it - and stay grounded while you do.",
+          "trine": "Empathy flows here; you inspire each other gently. It's dreamy and creative and real. Reality-check the picture every so often, with love.",
+          "square": "Confusion slips in, and you start misreading each other. Set down the fantasy for a minute. Say what's literally true and let that be enough.",
+          "opposition": "One of you projects an ideal, one quietly fails to match it, and disillusion waits in the gap. See the real person, not the screen you put up. It's kinder, and it lasts."
+        },
+        "sun_pluto": {
+          "conjunction": "This is intense; you change each other at the root. The power is real, and so is the volatility. Watch for control wearing the costume of care.",
+          "sextile": "Depth is available when you're willing to go there. Real change waits in the harder conversation. Take it - gently, but take it.",
+          "trine": "Transformation moves through you without force; you evolve together. It's deep and durable. You don't need to manufacture drama to feel how real it is.",
+          "square": "Power struggles run hot here, and control surfaces fast. Put the leverage down. Share the wheel, or this one collapses under its own pressure.",
+          "opposition": "One tends to dominate, one resists, and the whole fight is about control. Name the game you're both playing. Then split the power, evenly."
+        },
+        "moon_mercury": {
+          "conjunction": "Feelings and words connect easily; you can actually talk about how you feel. That's rarer than it sounds. Say it - this pairing rewards honesty out loud.",
+          "sextile": "Emotional honesty flows when you reach for it. The understanding is there, waiting. Open the conversation first.",
+          "trine": "You read each other's moods almost without trying, and talking feels safe. It's a comfortable place. Keep it from drifting into small talk.",
+          "square": "Head and heart clash here; one rationalizes while the other reacts. Slow it down. Translate between the two of you instead of insisting one is right.",
+          "opposition": "Thinking and feeling pull apart, and you end up talking past each other. Notice which register you're each in. Match it - facts or feelings, pick one and meet there."
+        },
+        "moon_venus": {
+          "conjunction": "This is warm and tender; you make each other feel genuinely good. It's a soft place to land. Just don't get so comfortable that you stop growing toward each other.",
+          "sextile": "Affection flows when you show up for it. The warmth is available. Make the small kind gesture first.",
+          "trine": "Comfort and ease come naturally, and you simply enjoy each other. It's easygoing. Watch the slide into laziness, and the quiet dig-in of stubbornness.",
+          "square": "You like each other, and you also go a little slack together. Comfort tips into laziness. Push past the lull, and don't let stubbornness set like concrete.",
+          "opposition": "Your needs and your tastes don't quite line up, and you reach for different comforts. It's not a dealbreaker. Compromise on the small daily things."
+        },
+        "moon_mars": {
+          "conjunction": "Feelings run hot and fast here; you set each other off, in passion and in temper both. Both are real. Let yourself cool a beat before you speak.",
+          "sextile": "Emotional drive aligns when you choose it, and the chemistry is good. Act on the warmth, not the flare.",
+          "trine": "Feeling and action move together; you protect each other on instinct. It's warm and alive. Keep an eye on the temper - it rides shotgun.",
+          "square": "Moods trigger fights, and you find each other's nerves easily. Step away before you react. Don't turn your feelings into weapons.",
+          "opposition": "One of you feels it, one of you acts on it, and they collide. Reactivity runs high. Pause the impulse, and speak to the feeling directly."
+        },
+        "moon_jupiter": {
+          "conjunction": "Feelings run generous and expansive; you feel safe, supported, held. It's a lovely base. Just watch the urge to overindulge each other into a stupor.",
+          "sextile": "Comfort grows when you lean toward it. Warmth and goodwill are there. Be generous on purpose.",
+          "trine": "Emotional generosity flows, and you buoy each other up. It feels good and stays steady. Don't overdo the comfort until it goes soft.",
+          "square": "Feelings get inflated here, and you overpromise each other emotionally. Right-size the expectations. Care without smothering.",
+          "opposition": "One needs reassurance, one over-gives it, and the excess starts to strain. Balance the comfort with some honesty."
+        },
+        "moon_saturn": {
+          "conjunction": "Feelings get serious and contained here; the loyalty is deep, and it can run heavy. Say the warmth out loud. Don't ration your affection like it's scarce.",
+          "sextile": "Emotional security builds with steady effort. The comfort is earned, and it holds. Show up consistently.",
+          "trine": "Stability flows; you feel safe and committed. It's durable. Add warmth so it doesn't quietly go cold.",
+          "square": "One of you can feel unsupported or held at arm's length; duty chills the warmth. Loosen up. Give reassurance freely, before it's asked for.",
+          "opposition": "Your needs press against the limits here - one wants more closeness, one withholds it. Meet halfway, on purpose."
+        },
+        "moon_uranus": {
+          "conjunction": "Feelings spike and shift fast; it's exciting and a little unsteady. Expect the mood swings. Build real room for each other's independence.",
+          "sextile": "Emotional freshness is available when you allow it. There's space to be yourselves. Try new ground together.",
+          "trine": "You give each other emotional freedom without strain - comfort that doesn't cling. Keep it interesting.",
+          "square": "Moods turn erratic, and closeness and distance keep flipping. Don't chase the swings. Name the need for space out loud.",
+          "opposition": "One reaches for closeness, one bolts, and the push-pull stings. Negotiate distance openly instead of guessing."
+        },
+        "moon_neptune": {
+          "conjunction": "The empathy here is deep and the edges are blurred; you feel each other's moods as your own. It's tender, and it's foggy. Keep checking what's actually real.",
+          "sextile": "Compassion opens when you invite it. A creative, feeling bond is available. Use it, and stay clear-eyed.",
+          "trine": "Empathy flows; you soothe each other almost automatically. It's dreamy and kind. Reality-check the idealizing now and then.",
+          "square": "Emotional confusion creeps in, and you start misreading each other's moods. Stop guessing. Ask directly - it's gentler than it sounds.",
+          "opposition": "One idealizes, one feels unseen, and disappointment waits in the gap. See the actual person. That's where the real tenderness lives."
+        },
+        "moon_pluto": {
+          "conjunction": "Feelings run deep and intense; you transform each other emotionally. It's powerful, and it can get possessive. Keep an honest eye on the control.",
+          "sextile": "Emotional depth opens when you're willing to go there. Real intimacy waits in the vulnerable step. Take it.",
+          "trine": "Deep feeling moves without force; you understand each other's core. It's intense but smooth. You don't need to stir up drama to prove it.",
+          "square": "Emotional power struggles flare, and jealousy and control surface. Put down the manipulation. Share the power instead.",
+          "opposition": "One controls, one resists, all on the emotional level, and it's heavy. Name the dynamic. Even it out."
+        },
+        "mercury_venus": {
+          "conjunction": "Communication turns gentle and warm; you skip the harsh words almost naturally. Keep it gracious - and when the hard thing needs saying, say it softly.",
+          "sextile": "Easy, pleasant exchange is available when you reach for it. The rapport is there. Make conversation a habit, not an event."
+        },
+        "mercury_mars": {
+          "conjunction": "Talk runs sharp and fast here; you spark both ideas and arguments. The mind is alive. Channel the heat into debate, not into attack.",
+          "sextile": "Mental drive aligns when you choose it, and the exchange gets productive. Brainstorm together - that's where this shines.",
+          "trine": "Ideas and action move together; you think and act as a team. It's quick and effective. Keep it from getting clipped or curt.",
+          "square": "Words turn into weapons here, and you argue fast and hard. Slow the pace down. Drop the sarcasm before it lands.",
+          "opposition": "Opinions meet head-on, and debate tips into combat. Argue the idea, not the person. You'll feel the difference."
+        },
+        "mercury_jupiter": {
+          "conjunction": "Big-picture thinking expands between you; you inspire each other's ideas. Watch the exaggeration. Check the details before you commit to them.",
+          "sextile": "Mental growth is available when you engage. There's learning here for both of you. Ask the bigger question.",
+          "trine": "Ideas flow generously; you teach each other without trying. It's open and optimistic. Don't gloss over the specifics.",
+          "square": "Ideas inflate past what's real, and you overpromise out loud. Pin the facts down. Stop overstating before it costs you.",
+          "opposition": "One thinks in broad strokes, one in fine print, and the scale clashes. Reconcile the vision with the detail. You need both."
+        },
+        "mercury_saturn": {
+          "conjunction": "Talk here is serious, careful, thought-through; you don't speak loosely. It can stiffen into rigidity. Stay open to new input.",
+          "sextile": "Clear, disciplined exchange comes with a little effort. Solid planning is available. Put it in writing.",
+          "trine": "Organized thinking flows, and you communicate reliably. It's steady and clear. Add some warmth to the words.",
+          "square": "Communication blocks up, and one of you can feel criticized or shut down. Soften the delivery. Set the judgment aside.",
+          "opposition": "Open ideas push against caution, and you stall each other out. Balance the new thinking with rigor instead of choosing sides."
+        },
+        "mercury_uranus": {
+          "conjunction": "Quick, inventive, unpredictable minds; you spark insights off each other. It's exciting and a little scattered. Finish what you start.",
+          "sextile": "Fresh ideas arrive when you welcome them. Innovation is available. Try the unconventional angle.",
+          "trine": "Brilliant ideas flow easily; you think fast together. It's original and free. Keep one foot on the ground.",
+          "square": "Thinking turns erratic, and you change positions fast. Pin down what you actually agree on. Don't argue just to shock.",
+          "opposition": "One reaches for stability, one for disruption, and the ideas whipsaw. Find common ground on purpose."
+        },
+        "mercury_neptune": {
+          "conjunction": "There's an almost wordless understanding here; you sense each other's thoughts. It can also fog into delusion. Confirm what was actually said.",
+          "sextile": "Imaginative exchange opens when you invite it. Creative communication is available. Use it, and stay literal too.",
+          "trine": "You communicate beyond words; the empathy flows. It's inspired and gentle. Reality-check your assumptions.",
+          "square": "Clear talk gets hard, and you misunderstand or mislead each other. Be forthright. Stop filling the gaps with what you imagine.",
+          "opposition": "One idealizes the conversation, one ends up confused, and the wires cross. Say exactly what you mean. Precision is the kindness here."
+        },
+        "mercury_pluto": {
+          "conjunction": "Conversation runs deep and probing; you challenge each other's minds. Watch for one voice dominating. Let both of you speak.",
+          "sextile": "Mental depth opens when you're willing to go there. Real insight waits in the deeper question. Ask it.",
+          "trine": "Penetrating talk flows, and you learn about yourselves through it. It's intense but smooth. Don't tip into interrogation.",
+          "square": "Communication turns into a power struggle, and one of you dominates the ideas. Make room. Stop pushing your view as the only one.",
+          "opposition": "One controls the conversation, one resists - a quiet battle of minds. Let each other hold differing opinions. That's the whole fix."
+        },
+        "venus_mars": {
+          "conjunction": "The attraction here is strong and physical; you want each other. It's passionate, occasionally combative. Keep the desire from curdling into friction.",
+          "sextile": "Attraction sparks when you act on it. The chemistry is good. Make the move.",
+          "trine": "Desire and affection flow; you please each other naturally. It's warm and magnetic. Keep putting effort in - it's not all automatic.",
+          "square": "Attraction laced with friction; you want each other and irritate each other in the same breath. Aim the tension into passion, not fights.",
+          "opposition": "Desire pulls against affection here - hot, then cold. Balance the wanting with the caring. They're not the same muscle."
+        },
+        "venus_jupiter": {
+          "conjunction": "Love runs generous and indulgent; you spoil each other. It's lovely, and a little excessive. Keep a gentle eye on the overspending and the overeating.",
+          "sextile": "Affection grows when you lean toward it. The goodwill is there. Be generous first.",
+          "trine": "Love and luck flow; you feel abundant together. It's easygoing and warm. Don't overindulge until it loses its meaning.",
+          "square": "Affection inflates, and you overdo the good stuff together. Set some limits. Curb the excess before it dulls.",
+          "opposition": "One over-gives, one over-takes, and the indulgence starts to strain. Right-size the generosity."
+        },
+        "venus_saturn": {
+          "conjunction": "This love is committed, serious, built to last - and it can run cool. Show the warmth actively. Don't ration your affection like there's not enough to go around.",
+          "sextile": "Commitment builds with effort, and the love holds. Make it official.",
+          "trine": "Loyalty flows; you commit without strain. It's reliable, and warm enough. Keep the spark lit on purpose.",
+          "square": "Affection feels blocked or rationed here; one of you withholds. Loosen up. Give freely, before it's earned.",
+          "opposition": "Warmth pushes against duty - one wants more, one guards the gate. Meet on terms you both name out loud."
+        },
+        "venus_uranus": {
+          "conjunction": "The attraction here is exciting and unconventional; you thrill each other. It's also unsteady on commitment. Build in the freedom you both need.",
+          "sextile": "Fresh romance is available when you allow it. The novelty is there. Try something new together.",
+          "trine": "Free, easy attraction; you give each other space and it works. It's light and interesting. Keep it from quietly drifting.",
+          "square": "On-and-off attraction, closeness and distance flipping. Be honest about whether you want to stay. Don't chase what keeps leaving.",
+          "opposition": "One wants freedom, one wants closeness, and the romance whipsaws. Negotiate the space openly."
+        },
+        "venus_neptune": {
+          "conjunction": "This love is dreamy and idealized; you see each other as a little bit perfect. It's romantic, and blind in spots. Check who's really there.",
+          "sextile": "Tenderness opens when you invite it. Creative romance is available. Use it, and stay grounded.",
+          "trine": "Compassionate love flows; you inspire each other. It's soft and devoted. Reality-check the ideal gently.",
+          "square": "Romantic illusion creeps in, and you idealize or quietly deceive. Set down the fantasy. See clearly - it's the more loving move.",
+          "opposition": "One idealizes, one disappoints, and disillusion waits there. Love the real person. That's the only version that stays."
+        },
+        "venus_pluto": {
+          "conjunction": "This love is magnetic, consuming, transformative; you change each other through it. It's powerful, and it can grip too tight. Watch the jealousy.",
+          "sextile": "Deep attraction opens when you go there. Intimacy waits in the vulnerable risk. Take it.",
+          "trine": "A deep bond flows; you transform through loving each other. It's intense but smooth. You don't need to manufacture jealousy to feel it.",
+          "square": "Love turns into a power struggle, and possessiveness flares. Put the control down. Trust, or let go - those are the options.",
+          "opposition": "One controls, one resists, in love, and the push-pull runs heavy. Name the power game you're playing."
+        },
+        "mars_jupiter": {
+          "conjunction": "Big energy, big confidence; you push each other to act. Watch the reckless overreach. Aim before you fire.",
+          "sextile": "Momentum builds when you commit. The shared goals are there. Start the project.",
+          "trine": "Drive and luck flow; you achieve together. It's energetic and sure. Don't get sloppy in the ease.",
+          "square": "Energy outruns judgment here, and you egg each other on. Stay aligned on the goal. Slow the impulse.",
+          "opposition": "One pushes hard, one overextends, and the direction clashes. Agree on where you're headed first."
+        },
+        "mars_saturn": {
+          "conjunction": "Drive meets the brakes here; it's disciplined and frustrating in equal measure. Pace yourselves. Don't bottle the anger until it bursts.",
+          "sextile": "Controlled action comes with effort, and the progress is steady. Make the plan, then move.",
+          "trine": "Disciplined drive flows; you build steadily. It's reliable and effective. Stay open, not rigid.",
+          "square": "You can't quite get in sync - one pushes, one blocks. Different speeds, different goals. Find one direction together.",
+          "opposition": "Action pushes against restraint, and you frustrate each other. Coordinate the pace on purpose."
+        },
+        "mars_uranus": {
+          "conjunction": "The energy here is explosive and electric; exciting, and volatile. Expect the unexpected. Build in flexibility before it blows.",
+          "sextile": "Fresh drive arrives when you welcome it. Bold moves are available. Try the new approach.",
+          "trine": "Inventive action flows; you energize each other freely. It's dynamic and original. Keep it stable enough to hold.",
+          "square": "Erratic, rebellious energy; you provoke each other. Don't push for the reaction. Cool the impulse first.",
+          "opposition": "One drives steady, one disrupts, and sparks fly. Channel the charge. Don't detonate it."
+        },
+        "mars_neptune": {
+          "conjunction": "Drive gets diffuse here, or it gets inspired - the energy either fogs or flows toward a dream. Define the target. Don't drift.",
+          "sextile": "Inspired action opens when you invite it. Creative drive is available. Act on the vision.",
+          "trine": "Imaginative energy flows; you pursue ideals together. It's gentle and creative. Keep the momentum up.",
+          "square": "Action confuses or undermines itself, and the energy leaks. Get specific. Stop the passive moves.",
+          "opposition": "One acts, one dissolves it, and drive meets fog. Name the goal clearly."
+        },
+        "mars_pluto": {
+          "conjunction": "The drive here is intense and relentless; you push each other hard. It's powerful, and it can turn destructive. Watch for coercion.",
+          "sextile": "Deep drive opens when you go there. Real power waits in the hard goal. Push toward it.",
+          "trine": "Transformative energy flows; you achieve through intensity. It's strong and smooth. Don't overpower each other.",
+          "square": "Power and force collide, and control battles flare. Set the domination down. Share command.",
+          "opposition": "One forces, one resists, and the struggle is raw. Name the power fight. Split the control."
+        },
+        "jupiter_saturn": {
+          "conjunction": "Growth meets structure here; the ambition is balanced. Build steadily. Don't let caution quietly kill the optimism.",
+          "sextile": "Measured growth comes with effort. Solid expansion is available. Plan, then grow.",
+          "trine": "Optimism and discipline flow; you build wisely. It's stable and ambitious. Keep the momentum.",
+          "square": "Expansion fights restriction - one pushes, one limits. Balance the vision with realism instead of picking a winner.",
+          "opposition": "Growth pulls against caution, and you stall or overreach. Find the middle path."
+        },
+        "jupiter_uranus": {
+          "conjunction": "Freedom and luck expand here; you free each other up. It's exciting and restless. Build in some stability.",
+          "sextile": "Fresh opportunity arrives when you act. Breakthroughs are available. Take the leap.",
+          "trine": "Lucky, free energy flows; you grow without strain. It's open and exciting. Keep it grounded.",
+          "square": "Restlessness inflates, and you destabilize each other. Don't bolt at the first itch. Stay long enough to build something.",
+          "opposition": "One expands, one disrupts, and freedom whipsaws. Negotiate the room without breaking the thing."
+        },
+        "jupiter_neptune": {
+          "conjunction": "A spiritual, idealistic bond; you dream big together. It's inspiring, and unrealistic in spots. Stay grounded.",
+          "sextile": "Compassion expands when you invite it. Creative growth is available. Use it wisely.",
+          "trine": "Idealism and generosity flow; you inspire each other. It's dreamy and kind. Reality-check the vision.",
+          "square": "Optimism turns delusional, and you see what isn't there. Get realistic. Check the facts.",
+          "opposition": "One inflates the dream, one drifts off, and illusion waits there. Ground the vision."
+        },
+        "jupiter_pluto": {
+          "conjunction": "A powerful, ambitious bond; you feel unstoppable together. It's strong, and it can turn controlling. Watch the power grabs.",
+          "sextile": "Deep growth opens when you go there. Transformation is available. Take the bigger step.",
+          "trine": "Transformative growth flows; you evolve and expand. It's powerful and smooth. Don't overreach.",
+          "square": "Ambition turns into a power struggle, and control issues inflate. Put the leverage down. Share the win.",
+          "opposition": "One expands, one controls, and the fight is over power. Name it. Split the influence."
+        },
+        "saturn_uranus": {
+          "conjunction": "Structure meets rebellion here; there's tension between the old way and the new. Balance routine with change. Don't dig in.",
+          "sextile": "Disciplined change comes with effort. Steady innovation is available. Update the system.",
+          "trine": "Stability and freedom balance; you evolve carefully. It's reliable and open. Keep adapting.",
+          "square": "Order fights disruption - one holds, one breaks. Negotiate the change without the chaos.",
+          "opposition": "Tradition pulls against freedom, and you polarize. Find the workable middle."
+        },
+        "saturn_neptune": {
+          "conjunction": "Reality meets the dream here - structure on a good day, disillusion on a hard one. Ground the ideal. Don't let doubt erode it.",
+          "sextile": "Practical vision opens when you invite it. Grounded creativity is available. Build the dream slowly.",
+          "trine": "Discipline and imagination flow; you make ideals real. It's steady and inspired. Keep the faith.",
+          "square": "Doubt undermines the structure, and confusion erodes the commitment. Get concrete. Set the fog down.",
+          "opposition": "One grounds, one dissolves, and reality fights illusion. Anchor the vision."
+        },
+        "saturn_pluto": {
+          "conjunction": "Heavy, intense, transformative; this is built under pressure. Endure it, or rebuild from it. Watch the rigidity and the control.",
+          "sextile": "Deep restructuring comes with effort. Lasting change is available. Do the hard rebuild.",
+          "trine": "Transformation grounds steadily; you build through depth. It's durable and powerful. Don't let it harden into stone.",
+          "square": "Control and structure collide, and power grinds against limits. Loosen up. Share command.",
+          "opposition": "One controls, one restricts, and the pressure is immense. Name the struggle. Ease the grip."
+        },
+        "uranus_neptune": {
+          "conjunction": "Vision and disruption blend here - idealistic, unstable, with a generational flavor. Channel it into something real.",
+          "sextile": "Inventive idealism opens when you invite it. Creative breakthroughs are available. Use the spark.",
+          "trine": "Innovation and imagination flow; you dream and disrupt together. It's original and gentle. Stay grounded.",
+          "square": "Disruption confuses the vision, and instability mixes with fog. Get concrete. Don't drift, and don't bolt.",
+          "opposition": "One disrupts, one dissolves, and the direction blurs. Anchor the shared idea."
+        },
+        "uranus_pluto": {
+          "conjunction": "Explosive transformation; radical change moves between you. It's intense and generational. Steer it deliberately.",
+          "sextile": "Deep change opens when you act. Real transformation is available. Take the radical step.",
+          "trine": "Revolutionary energy flows; you transform freely. It's powerful and original. Keep it constructive.",
+          "square": "Upheaval and control collide - volatile power. Don't force it, don't detonate it. Channel the charge.",
+          "opposition": "One disrupts, one controls, and the struggle is intense. Name it. Direct the force together."
+        },
+        "neptune_pluto": {
+          "conjunction": "A deep, transformative, dreamy bond - subtle, and generational. Channel it. Don't lose yourselves inside it.",
+          "sextile": "Spiritual depth opens when you invite it. Quiet transformation is available. Go inward together.",
+          "trine": "Imagination and depth flow; you evolve gently. It's subtle and powerful. Stay present to it.",
+          "square": "Illusion meets control, and confusion mixes with power. Get clear. Set down the manipulation.",
+          "opposition": "One dissolves, one controls, and the pull is subtle. Stay honest. Share the power."
+        }
+      },
+      "planetsInSigns": {
+        "sun": {
+          "aries": "Composite Sun in Aries: the relationship runs on action, independence, and heat - energized by starting and doing things together. Gift: drive and aliveness. Watch: impatience, competition, and burning hot then cold.",
+          "taurus": "Composite Sun in Taurus: built on stability, sensuality, and steady comfort. Gift: durability and ease. Watch: stubbornness and getting stuck in a rut neither will break.",
+          "gemini": "Composite Sun in Gemini: lives on conversation, curiosity, and mental spark. Gift: never boring, always something to say. Watch: staying in the head, restlessness, skating the surface.",
+          "cancer": "Composite Sun in Cancer: about emotional closeness, nurturing, and building a home. Gift: deep care and belonging. Watch: moodiness, clinging, and retreating into the shell when hurt.",
+          "leo": "Composite Sun in Leo: warm, expressive, and proud - it wants to be a couple that shines. Gift: generosity, romance, fun. Watch: ego clashes and a need for attention that competes with intimacy.",
+          "virgo": "Composite Sun in Virgo: practical, devoted, and improvement-minded - you care for each other through the details. Gift: usefulness and reliability. Watch: criticism, fussing, and love expressed only as fixing.",
+          "libra": "Composite Sun in Libra: about partnership itself - balance, fairness, harmony, beauty. Gift: a true sense of 'we'. Watch: conflict-avoidance and keeping the peace at the cost of honesty.",
+          "scorpio": "Composite Sun in Scorpio: intense, private, and transformative - all-or-nothing depth. Gift: deep bonding and fierce loyalty. Watch: jealousy, power struggles, and control.",
+          "sagittarius": "Composite Sun in Sagittarius: about freedom, adventure, growth, and honesty. Gift: expansion and fun. Watch: restlessness, over-promising, and dodging commitment.",
+          "capricorn": "Composite Sun in Capricorn: serious, committed, and goal-oriented - built for the long haul. Gift: durability and shared ambition. Watch: coldness, all-work-no-play, and duty over warmth.",
+          "aquarius": "Composite Sun in Aquarius: independent, unconventional, and friendship-based. Gift: freedom and acceptance. Watch: detachment and avoiding emotional depth.",
+          "pisces": "Composite Sun in Pisces: romantic, compassionate, and spiritually attuned - soft boundaries between you. Gift: tenderness and imagination. Watch: idealization, escapism, and losing the line between you."
+        },
+        "moon": {
+          "aries": "Composite Moon in Aries: emotions run hot and fast - quick to feel, quick to react. Gift: passion and honesty about feelings. Watch: flared tempers and impatience with softer needs.",
+          "taurus": "Composite Moon in Taurus: emotionally steady, sensual, and security-seeking. Gift: calm, reliable comfort. Watch: emotional stubbornness and resistance to change.",
+          "gemini": "Composite Moon in Gemini: feelings get processed through talking and thinking. Gift: you discuss emotions openly. Watch: rationalizing feelings instead of feeling them.",
+          "cancer": "Composite Moon in Cancer: deeply nurturing and home-centered, with strong emotions. Gift: deep care and a real sense of safety. Watch: moodiness and over-protectiveness.",
+          "leo": "Composite Moon in Leo: emotions are warm, generous, and expressive - the relationship needs to feel special. Gift: affection and romance. Watch: drama and needing constant reassurance.",
+          "virgo": "Composite Moon in Virgo: feelings show up as care, helpfulness, and attention to needs. Gift: practical devotion. Watch: anxiety and picking at small things instead of naming the feeling.",
+          "libra": "Composite Moon in Libra: the relationship needs harmony and fairness to feel okay. Gift: emotional balance and consideration. Watch: burying conflict to keep the peace.",
+          "scorpio": "Composite Moon in Scorpio: emotions run deep, intense, and private - strong bonding, strong undercurrents. Gift: fierce intimacy and loyalty. Watch: jealousy, secrecy, and emotional control.",
+          "sagittarius": "Composite Moon in Sagittarius: emotionally easygoing, optimistic, and freedom-loving. Gift: lightness and room to breathe. Watch: dodging deep feeling and needing too much space.",
+          "capricorn": "Composite Moon in Capricorn: emotions are contained and serious, shown through commitment more than words. Gift: dependable steadiness. Watch: coldness and difficulty being tender.",
+          "aquarius": "Composite Moon in Aquarius: emotionally independent, friendly, and a bit detached. Gift: acceptance and space. Watch: avoiding emotional closeness.",
+          "pisces": "Composite Moon in Pisces: emotionally merged, empathic, and dreamy. Gift: deep compassion and attunement. Watch: blurred boundaries, moodiness, and escapism."
+        }
+      },
+      "ascendantSigns": {
+        "aries": "Composite Ascendant in Aries: comes across as bold, energetic, and direct - people feel its charge. Gift: a dynamic, alive presence. Watch: reading as combative or impulsive.",
+        "taurus": "Composite Ascendant in Taurus: reads as stable, warm, and grounded. Gift: a reassuring, solid presence. Watch: seeming stuck or resistant to change.",
+        "gemini": "Composite Ascendant in Gemini: comes across as lively, talkative, and curious. Gift: a fun, engaging vibe. Watch: reading as flighty or surface-level.",
+        "cancer": "Composite Ascendant in Cancer: feels nurturing, protective, and home-centered. Gift: a caring, safe presence. Watch: seeming closed-off or moody to outsiders.",
+        "leo": "Composite Ascendant in Leo: presents as warm, confident, and a little theatrical - a couple that's noticed. Gift: magnetic and generous. Watch: reading as showy or attention-seeking.",
+        "virgo": "Composite Ascendant in Virgo: comes across as modest, capable, and considerate. Gift: a helpful, grounded vibe. Watch: seeming reserved or overly careful.",
+        "libra": "Composite Ascendant in Libra: reads as gracious, balanced, and attractive - a classic lovely couple. Gift: charm and ease. Watch: seeming conflict-averse or image-focused.",
+        "scorpio": "Composite Ascendant in Scorpio: gives off intensity, magnetism, and mystery. Gift: a compelling, powerful presence. Watch: reading as guarded or intimidating.",
+        "sagittarius": "Composite Ascendant in Sagittarius: feels open, adventurous, and fun-loving. Gift: an easygoing, expansive vibe. Watch: seeming flaky or commitment-shy.",
+        "capricorn": "Composite Ascendant in Capricorn: reads as serious, mature, and put-together. Gift: a respectable, solid presence. Watch: seeming cold or all-business.",
+        "aquarius": "Composite Ascendant in Aquarius: comes across as unique, independent, and a bit unconventional. Gift: an open, original vibe. Watch: reading as detached or hard to pin down.",
+        "pisces": "Composite Ascendant in Pisces: feels soft, dreamy, and compassionate. Gift: a gentle, romantic presence. Watch: seeming vague, boundary-less, or hard to read."
+      }
+    },
+    "aspectLogic": {
+      "conjunction": "Energies fuse; intensified, inseparable.",
+      "sextile": "Opportunity you must reach for; not automatic.",
+      "trine": "Flows on its own; risk of coasting.",
+      "square": "Internal friction; the grinding point; work required.",
+      "opposition": "Push-pull between the two of you; projection; needs balance."
+    },
+    "astronomicalLimits": {
+      "sun_mercury": "conjunction only (Mercury never exceeds ~28 degrees from Sun)",
+      "sun_venus": "conjunction only (Venus never exceeds ~47 degrees from Sun)",
+      "mercury_venus": "conjunction and sextile only (max separation ~76 degrees)"
+    },
+    "houseMeaningShort": {
+      "1": "identity of the couple, the 'we', how you present",
+      "2": "shared values, money, resources, security",
+      "3": "communication, daily exchange, local life",
+      "4": "home, foundation, roots, private life",
+      "5": "fun, romance, creativity, children, play",
+      "6": "routine, work, health, daily maintenance",
+      "7": "the partnership itself, balance, open conflict",
+      "8": "intimacy, sex, shared resources, transformation",
+      "9": "beliefs, travel, growth, meaning",
+      "10": "public role, reputation, goals, status",
+      "11": "friendship, community, shared hopes",
+      "12": "the hidden, private, unconscious, retreat"
+    },
+    "coverage": {
+      "aspectPairs": 45,
+      "aspectEntries": 214,
+      "housePlanets": 10,
+      "houseEntries": 120,
+      "version": "v2"
+    },
+    "voiceStyle": "Warm, second-person, embodied. Names the felt quality, then lands a clear prescriptive cue. Plain English, no mystical filler.",
+    "expandedReadingPrompts": {
+      "priorityOrder": [
+        "Start with Composite Sun, Moon, Ascendant, Venus, Mars, and Saturn before reading outer-planet drama.",
+        "Name the relationship climate first: purpose, daily emotional tone, communication, affection, conflict, commitment, and repair.",
+        "Treat hard outer-planet contacts as pressure signatures, not proof that the relationship is special or permanent.",
+        "Read the composite chart after natal capacity and synastry so the shared pattern does not erase the two actual people."
+      ],
+      "coreQuestions": {
+        "sun": "What is this relationship organized around, and does that purpose still fit both people?",
+        "moon": "What does the relationship feel like on an ordinary day, not only during high emotion?",
+        "venus": "How does affection move here, and does it stay warm when the relationship is under stress?",
+        "mars": "Where does conflict go, and can the pair act without turning on each other?",
+        "saturn": "What is the relationship asking both people to carry, and is the weight chosen or imposed?",
+        "neptune": "Where is compassion real, and where is the pair protecting a fantasy from facts?",
+        "pluto": "Where does intensity transform, and where does it start to control?"
+      },
+      "compositeCautions": [
+        "Do not treat a heavy composite as proof of obligation.",
+        "Do not treat an easy composite as proof of maturity.",
+        "Do not let chemistry override safety, consent, repair, or lived behavior.",
+        "When the composite shows intensity, explain the pressure and return agency to the user."
+      ]
+    },
+    "marqueePlacements": {
+      "scope": "Composite Sun and Moon by sign and house; Composite Venus and Mars by house; Composite Ascendant by sign.",
+      "policy": "Use after natal capacity and synastry. Composite placement text describes the relationship field, not a verdict about whether the relationship should continue.",
+      "status": "DRAFT",
+      "counts": {
+        "signs": 24,
+        "houses": 48,
+        "ascendantSigns": 12
+      }
+    },
+    "compositeExpansion": {
+      "planetsInCompositeChart": {
+        "scope": "Composite Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, nodes, Ascendant, and Midheaven as the relationship's shared field.",
+        "use": [
+          "Sun: central purpose and vitality of the relationship.",
+          "Moon: daily emotional climate and instinctive comfort pattern.",
+          "Mercury: communication, problem-solving, and the way the relationship thinks.",
+          "Venus: affection, pleasure, peace-making, taste, and social ease.",
+          "Mars: desire, conflict, initiative, anger, and sexual heat.",
+          "Jupiter: growth, shared faith, opportunity, humor, and excess.",
+          "Saturn: commitment, pressure, durability, duty, delay, and fear.",
+          "Uranus: freedom, disruption, unconventional rhythm, and instability.",
+          "Neptune: idealization, compassion, confusion, secrecy, and spiritual longing.",
+          "Pluto: intensity, power, compulsion, survival material, and transformation.",
+          "Nodes: shared growth direction and repeating relationship patterns, kept belief-neutral.",
+          "Angles: visible style, private foundation, partnership axis, and public direction of the bond."
+        ]
+      },
+      "compositeAspects": {
+        "scope": "Major aspects inside the composite chart, read as relationship dynamics rather than one person doing something to the other.",
+        "aspectOrder": [
+          "conjunction",
+          "opposition",
+          "square",
+          "trine",
+          "sextile"
+        ],
+        "method": [
+          "Start with Sun-Moon, Sun-Ascendant, Moon-Ascendant, Venus-Mars, Venus-Saturn, Mars-Saturn, and contacts from Saturn, Uranus, Neptune, or Pluto to personal planets.",
+          "Read conjunctions as fused relationship functions that become loud and hard to separate.",
+          "Read oppositions as polarities the relationship must learn to hold without assigning one side to one partner forever.",
+          "Read squares as recurring pressure that requires repair skills and conscious outlets.",
+          "Read trines as ease that supports the bond but can become passive if the relationship avoids growth.",
+          "Read sextiles as opportunities that need active use."
+        ],
+        "caution": "Composite aspects are not blame assignments. They describe the relationship field both people participate in."
+      },
+      "relationshipSynthesis": {
+        "order": [
+          "Summarize each natal relationship pattern.",
+          "Summarize the strongest synastry contacts and overlays.",
+          "Name the composite Sun, Moon, Ascendant, Venus, Mars, and Saturn story.",
+          "Add Uranus, Neptune, Pluto, nodes, and configurations only when they are tight or repeated.",
+          "Separate attraction from compatibility, compatibility from durability, and durability from health.",
+          "End with choices, repair needs, and the skills the relationship requires."
+        ],
+        "outputPolicy": "Never use the composite as a verdict. Give strengths, pressure points, and practical relationship skills."
+      }
+    }
+  },
+  "weighting": [
+    "Composite Sun, Moon, Ascendant, Venus, Mars, and Saturn carry the first layer of relationship meaning.",
+    "Use planet-in-house interpretations to locate where the relationship function expresses most visibly.",
+    "Use composite aspects to describe how relationship functions cooperate, grind, polarize, or fuse.",
+    "Respect astronomical limits: Composite Sun-Mercury and Sun-Venus are conjunction-only for major aspects; Mercury-Venus is conjunction or sextile only.",
+    "Hard aspects involving Saturn, Uranus, Neptune, or Pluto need plain-language risk notes, not romanticized intensity.",
+    "Easy aspects can support the relationship but should not be oversold as compatibility guarantees.",
+    "A relationship can have strong composite signatures and still require emotional maturity, repair skills, and real-world choice."
+  ],
+  "orbs": {
+    "default": "Use the app-wide major-aspect orb policy for composite planets, with tighter weighting for exact contacts.",
+    "luminariesAndAngles": "Allow slightly wider interpretive attention for Composite Sun, Moon, and Ascendant contacts when they define the chart story.",
+    "outerPlanets": "Use tighter orbs and require clear relevance before emphasizing Uranus, Neptune, or Pluto."
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

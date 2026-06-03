@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/angle.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "point", "sign", "tldr", "body", "approach", "shadow", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "enum": ["ascendant-sign"] },
+    "point": { "enum": ["ascendant"] },
+    "sign": { "type": "string" },
+    "tldr": { "type": "string" },
+    "body": { "type": "string" },
+    "approach": { "type": "string" },
+    "shadow": { "type": "string" },
+    "note": { "type": "string" },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

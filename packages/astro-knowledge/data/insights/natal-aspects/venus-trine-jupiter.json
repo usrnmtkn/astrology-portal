@@ -1,0 +1,48 @@
+{
+  "id": "venus-trine-jupiter",
+  "kind": "natal-aspect",
+  "displayTitle": "Abundant Or Indulgent",
+  "summary": "Pleasure, affection, generosity, and ease can open naturally for you. The heart wants to say yes.",
+  "body": "Venus trine Jupiter describes warmth in love, money, style, and social connection. You may attract support through charm, generosity, humor, or a sincere belief that life can be better than it is. This aspect can bring ease in relationships and a talent for creating comfort, beauty, or celebration. The shadow is excess: spending, indulging, smoothing over conflict, or assuming goodwill will solve what requires attention. The gift is joyful connection. The growth is giving abundance a thoughtful shape.",
+  "gift": "Generosity, charm, social grace, creative taste, and the ability to make love feel spacious.",
+  "shadow": "Overindulgence, avoidance of conflict, taking ease for granted, and saying yes past capacity.",
+  "integration": "Let pleasure stay connected to values. Abundance becomes more sustainable when delight has discernment.",
+  "do": [
+    "Share generously with clear limits",
+    "Let beauty support your values",
+    "Use charm to connect, not to avoid truth"
+  ],
+  "dont": [
+    "Spend from mood alone",
+    "Smooth over a problem that needs a conversation",
+    "Assume ease means compatibility"
+  ],
+  "lifeAreas": [
+    "love",
+    "money",
+    "growth"
+  ],
+  "tags": [
+    "pleasure",
+    "abundance",
+    "generosity",
+    "charm",
+    "values"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "jupiter"
+    }
+  ],
+  "collectionHints": [
+    "love-patterns",
+    "core-traits",
+    "personal-growth"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

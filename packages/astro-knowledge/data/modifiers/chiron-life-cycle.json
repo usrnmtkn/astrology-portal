@@ -1,0 +1,166 @@
+{
+  "id": "chiron-life-cycle",
+  "schema": "modifier/modern-point-life-cycle",
+  "appliesTo": [
+    "chiron",
+    "modern-point",
+    "life-cycle",
+    "timing",
+    "transit"
+  ],
+  "role": "lifecycle",
+  "category": "modern-point",
+  "summary": "Chiron cycle milestones describe recurring wound-and-repair themes, culminating in the Chiron return around age 50-51.",
+  "body": "Use Chiron cycle milestones as a modern secondary timing layer. The cycle can describe when an old wound becomes visible, when the person meets helpers or mirrors, and when the same theme returns with more consciousness. It is not a traditional timing factor and should not override planets, houses, rulers, sect, dignity, or time-lord logic.",
+  "definition": "Chiron has an uneven orbit of about 50 years. Its squares, opposition, trines, sextiles, and return can arrive at different ages depending on natal placement, so exact degree calculation matters more than age estimates.",
+  "appUsage": [
+    "Label this as a modern Chiron life-cycle layer, not a traditional timing doctrine.",
+    "Use exact transit-to-natal Chiron contacts rather than age alone whenever possible.",
+    "Read the natal Chiron sign, house, and close aspects before giving a cycle example.",
+    "Surface examples as possible life areas for reflection, not as fixed events.",
+    "Weight up when Chiron contacts the Sun, Moon, Ascendant, MC, Venus, Mars, chart ruler, or a strongly activated house."
+  ],
+  "note": "Distilled from approved project Chiron source material. Source files were not copied into the repository.",
+  "classes": {
+    "cycleFacts": {
+      "period": "about 50 years, with uneven time in signs",
+      "returnWindow": "usually around age 50-51",
+      "ageCaution": "Early cycle contacts vary widely by natal Chiron position; calculate exact contacts before showing timing.",
+      "coreTheme": "The same sore place returns at different maturity levels: first as something that happens to the person, later as something they can name, work with, and sometimes help others understand."
+    },
+    "milestones": [
+      {
+        "id": "first_sextile",
+        "aspect": "sextile",
+        "approximateAge": "3-16",
+        "plainTranslation": "Early opportunity to notice a healing thread, often before the person has language for it. Interests, helpers, or subtle clues can appear and make sense later.",
+        "examples": [
+          "a child developing an unusual interest that later becomes meaningful",
+          "a supportive teacher, friend, or healer appearing early",
+          "a first hint of the gift wrapped inside the sore place"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "first_square",
+        "aspect": "square",
+        "approximateAge": "5-23",
+        "plainTranslation": "The first sharp activation of the wound. Depending on age, the person may experience it as something done by others before they understand the pattern.",
+        "examples": [
+          "feeling singled out around identity, body, voice, belonging, family, or competence",
+          "a painful experience that repeats the original wound theme",
+          "a sudden awareness that there is more going on beneath the visible life"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "first_trine",
+        "aspect": "trine",
+        "approximateAge": "8-29",
+        "plainTranslation": "A more supportive opening in the cycle. The person may meet helpers, mentors, teachers, or friends who give language and tools for the wound.",
+        "examples": [
+          "finding a mentor who names the pattern",
+          "discovering therapy, healing work, art, teaching, or advocacy as a path",
+          "realizing the wound can become skill rather than only pain"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "opposition",
+        "aspect": "opposition",
+        "approximateAge": "13-37",
+        "plainTranslation": "The wound becomes visible across the room. The person can begin to understand how the old hurt has shaped choices, relationships, and identity.",
+        "examples": [
+          "seeing the shadow pattern clearly for the first time",
+          "a relationship, teacher, client, or crisis mirroring the wound back",
+          "realizing that the old defense is no longer protecting the life being built"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "second_trine",
+        "aspect": "trine",
+        "approximateAge": "21-42",
+        "plainTranslation": "Another healing opening, often close enough to the Uranus midlife cycle to accelerate growth. People or circumstances can help the person move closer to purpose.",
+        "examples": [
+          "meeting a guide, practitioner, peer group, or community that speeds integration",
+          "turning personal healing into study, service, or creative work",
+          "choosing a path that feels more honest than the inherited one"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "second_square",
+        "aspect": "square",
+        "approximateAge": "27-44",
+        "plainTranslation": "Unhealed material demands attention again. If it overlaps the Uranus opposition, the experience can feel intense because healing and freedom are asking for change at the same time.",
+        "examples": [
+          "old pain showing up through relationship, body, work, family, or purpose questions",
+          "a need to stop betraying the self to meet an expected life script",
+          "a turning point where the person chooses repair over repetition"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "second_sextile",
+        "aspect": "sextile",
+        "approximateAge": "varies before return",
+        "plainTranslation": "A later opportunity to practice the healing with more awareness. The person often has better tools, clearer boundaries, and more capacity to choose support.",
+        "examples": [
+          "creative work gaining depth from lived experience",
+          "finding people who support growth instead of repeating the wound",
+          "using hard-won insight to help someone else without rescuing them"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      },
+      {
+        "id": "return",
+        "aspect": "conjunction",
+        "approximateAge": "50-51",
+        "plainTranslation": "The Chiron return brings the original wound theme back for integration. The question is no longer only what hurt; it is what the person now knows, teaches, protects, repairs, or refuses to keep repeating.",
+        "examples": [
+          "a long-running identity, relationship, family, body, or purpose wound becoming impossible to ignore",
+          "choosing therapy, mentorship, teaching, advocacy, caregiving, art, or spiritual practice with more maturity",
+          "turning the old sore place into a boundary, vocation, or medicine for others"
+        ],
+        "voiceNeutral": true,
+        "status": "DRAFT"
+      }
+    ],
+    "examplePatternsByHouse": {
+      "1": "Identity, body, visibility, autonomy, and the fear of unintentionally hurting others through self-assertion.",
+      "2": "Body comfort, money, food, possessions, self-worth, and learning to treat human needs without shame.",
+      "3": "Voice, learning, language, siblings, school, daily movement, and the wound of not being understood.",
+      "4": "Family, parents, home, belonging, emotional safety, and the habit of seeking unavailable people as a substitute for the old unmet need.",
+      "5": "Creativity, joy, romance, children, performance, and the fear that self-expression will be mocked or rejected.",
+      "6": "Work, health, service, routines, usefulness, and the pressure to fix what hurts through control or over-functioning.",
+      "7": "Partnership, projection, abandonment, repair through reciprocity, and learning not to make another person the whole medicine.",
+      "8": "Trust, intimacy, shared resources, grief, dependency, and the courage to face what the person would rather keep buried.",
+      "9": "Faith, education, worldview, teachers, belonging to a larger meaning system, and healing the wound around belief.",
+      "10": "Authority, career, reputation, legacy, public competence, and the fear of being exposed as not enough.",
+      "11": "Friendship, community, future, group belonging, exclusion, and learning to contribute without losing individuality.",
+      "12": "Solitude, hidden pain, dreams, retreat, old endings, and healing what was carried silently or unconsciously."
+    }
+  },
+  "prohibitions": [
+    "Do not call Chiron a planet or a traditional timing factor.",
+    "Do not use Chiron to diagnose trauma, illness, or psychological pathology.",
+    "Do not frame the wound as permanent damage or fate.",
+    "Do not tell users they must become healers, teachers, or spiritual practitioners because of Chiron."
+  ],
+  "weighting": [
+    "Exact transit-to-natal Chiron contacts are stronger than age estimates.",
+    "Contacts to Sun, Moon, Ascendant, MC, Venus, Mars, chart ruler, or angular houses increase relevance.",
+    "Repeated testimony from the natal Chiron placement, current transits, progressions, returns, or activated houses is required before naming concrete examples.",
+    "Use as optional modern-points content and keep it hidden unless the user enables Chiron or asks for healing/shadow material."
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

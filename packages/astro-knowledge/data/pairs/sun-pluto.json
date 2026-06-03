@@ -1,0 +1,24 @@
+{
+  "id": "sun-pluto",
+  "planetA": "sun",
+  "planetB": "pluto",
+  "traditional": "No classical doctrine: Pluto is a modern planet. This combination is modern/cyclic only.",
+  "modern": {
+    "blend": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately.",
+    "harmonious": "Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation.",
+    "hard": "Power runs to extremes and relationships tip into control struggles.",
+    "business": "Real influence; the intensity tends to polarize people."
+  },
+  "cyclicNote": "This pair runs a full conjunction-to-conjunction cycle; waxing/waning phase meaning is carried on the transit entries.",
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological/popular)",
+    "cyclic": "applied per-aspect on transit entries (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately.",
+  "harmonious": "Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation.",
+  "hard": "Power runs to extremes and relationships tip into control struggles.",
+  "business": "Real influence; the intensity tends to polarize people."
+}

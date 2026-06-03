@@ -1,0 +1,63 @@
+{
+  "id": "uranus",
+  "planet": "uranus",
+  "title": "Uranus Meaning",
+  "overview": "Uranus is a modern interpretive planet associated with disruption, liberation, invention, awakening, instability, and the refusal to keep living inside a pattern that has gone stale. It does not replace traditional rulership logic, but it can describe the flavor of sudden change and individuation.",
+  "cycle": "Uranus takes about 84 years to complete the zodiac and spends roughly seven years in each sign. Its sign is often generational; its house and aspects show where the person experiences surprise, freedom, reinvention, and breaks from convention.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "Uranus in Aries describes a generation that disrupts through courage, independence, and bold action. Innovation comes through refusal to wait for permission."
+    },
+    {
+      "sign": "taurus",
+      "body": "Uranus in Taurus describes disruption around money, land, food, bodies, values, and material security. Innovation comes through changing what stability means."
+    },
+    {
+      "sign": "gemini",
+      "body": "Uranus in Gemini describes disruption through language, media, education, mobility, and information systems. Innovation comes through new ways of thinking and connecting."
+    },
+    {
+      "sign": "cancer",
+      "body": "Uranus in Cancer describes disruption around home, family, belonging, and emotional inheritance. Innovation comes through redefining protection and private life."
+    },
+    {
+      "sign": "leo",
+      "body": "Uranus in Leo describes disruption through creativity, performance, leadership, and personal expression. Innovation comes through new ways of being seen."
+    },
+    {
+      "sign": "virgo",
+      "body": "Uranus in Virgo describes disruption around work, health, service, systems, and daily process. Innovation comes through better methods and practical reform."
+    },
+    {
+      "sign": "libra",
+      "body": "Uranus in Libra describes disruption around partnership, justice, aesthetics, and social agreements. Innovation comes through changing how people relate and negotiate."
+    },
+    {
+      "sign": "scorpio",
+      "body": "Uranus in Scorpio describes disruption around intimacy, shared resources, power, psychology, and taboo material. Innovation comes through confronting what was hidden."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "Uranus in Sagittarius describes disruption around belief, travel, education, law, publishing, and global perspective. Innovation comes through challenging inherited truths."
+    },
+    {
+      "sign": "capricorn",
+      "body": "Uranus in Capricorn describes disruption around institutions, authority, career, government, and long-standing structures. Innovation comes through rebuilding systems."
+    },
+    {
+      "sign": "aquarius",
+      "body": "Uranus in Aquarius describes disruption around networks, technology, community, social ideals, and collective futures. Innovation comes through new forms of belonging."
+    },
+    {
+      "sign": "pisces",
+      "body": "Uranus in Pisces describes disruption around spirituality, compassion, art, dreams, and collective sensitivity. Innovation comes through awakening what had been submerged."
+    }
+  ],
+  "source": {
+    "title": "Project-authored planetary overview cleanup",
+    "pages": []
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

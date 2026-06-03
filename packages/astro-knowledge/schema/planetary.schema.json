@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/planetary.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "planet", "title", "overview", "cycle", "signs", "source", "voiceNeutral", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "planet": { "type": "string" },
+    "title": { "type": "string" },
+    "overview": { "type": "string" },
+    "cycle": { "type": "string" },
+    "signs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sign", "body"],
+        "properties": {
+          "sign": { "type": "string" },
+          "body": { "type": "string" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "pages"],
+      "properties": {
+        "title": { "type": "string" },
+        "pages": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    },
+    "voiceNeutral": { "const": true },
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  }
+}

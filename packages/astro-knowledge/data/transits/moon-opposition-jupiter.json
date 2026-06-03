@@ -1,0 +1,29 @@
+{
+  "id": "moon-opposition-jupiter",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "jupiter",
+  "tldr": "the Moon opposition Jupiter.",
+  "traditional": "the Moon opposition Jupiter: a hard contact. The body, home, and daily needs works against growth, fortune, and patronage \u2014 obstruction, friction, and strained outcomes in these areas.",
+  "modern": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Psychologically the opposition is inner tension to integrate: Emotional and physical excess; overindulgence and overcommitment. The growth is owning both sides instead of splitting them.",
+  "cyclic": {
+    "phase": "Full (culmination)",
+    "meaning": "Feeling and growth reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation."
+  },
+  "business": "Friction in this area. Warmth and generosity that draw people in; watch the tendency to overextend.",
+  "shadow": "Moodiness and over-need collides with excess and overreach; forcing or splitting it instead of working it through.",
+  "arcApplying": "A confrontation builds; the other side comes fully into view.",
+  "arcSeparating": "The standoff resolves into balance or a split.",
+  "composedFrom": [
+    "pair:moon-jupiter",
+    "aspect:opposition"
+  ],
+  "provenance": {
+    "traditional": "classical and traditional sources",
+    "modern": "modern aspect cookbook (psychological / popular register)",
+    "cyclic": "humanistic / process-oriented source (cyclic model)"
+  },
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "base": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity. Psychologically the opposition is inner tension to integrate: Emotional and physical excess; overindulgence and overcommitment. The growth is owning both sides instead of splitting them."
+}

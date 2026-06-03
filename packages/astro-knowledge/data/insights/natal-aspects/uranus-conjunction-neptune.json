@@ -1,0 +1,48 @@
+{
+  "id": "uranus-conjunction-neptune",
+  "kind": "natal-aspect",
+  "displayTitle": "Visionary Or Untethered",
+  "summary": "Change and imagination merge here. You may carry a generational instinct for new ideals, new systems, and new myths.",
+  "body": "Uranus conjunction Neptune describes a collective signature that can become personal when strongly placed. It links disruption with vision, technology with spirituality, and rebellion with longing for a different world. You may be sensitive to cultural shifts, digital possibility, alternative communities, or ideals that do not fit inherited categories. The gift is imaginative innovation. The shadow is drifting into vague rebellion or mistaking a dream of the future for the work of building one.",
+  "gift": "Vision, intuition for change, imaginative innovation, and sensitivity to emerging collective patterns.",
+  "shadow": "Vague rebellion, escapist ideals, disorientation, and chasing the future without grounding it.",
+  "integration": "Give the vision a practice. The future becomes real through specific choices, skills, and communities.",
+  "do": [
+    "Test the vision in a real system",
+    "Find communities that build what they imagine",
+    "Let intuition and technical skill work together"
+  ],
+  "dont": [
+    "Confuse disruption with liberation",
+    "Float above practical consequences",
+    "Follow every signal as if it is a calling"
+  ],
+  "lifeAreas": [
+    "spirituality",
+    "friends",
+    "growth"
+  ],
+  "tags": [
+    "vision",
+    "innovation",
+    "collective",
+    "future",
+    "ideals"
+  ],
+  "intensity": 3,
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "conjunction",
+      "planetB": "neptune"
+    }
+  ],
+  "collectionHints": [
+    "personal-growth",
+    "core-traits",
+    "career-patterns"
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
