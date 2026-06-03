@@ -2557,12 +2557,19 @@ function SkyWheel({
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
+    const startAngle = angleForLongitude(index * 30 + inset);
+    const endAngle = angleForLongitude(index * 30 + 30 - inset);
+    const labelAngle = angleForLongitude(index * 30 + 15);
+    const labelIsAboveCenter = Math.sin((labelAngle * Math.PI) / 180) < -0.05;
+    const shouldReversePath = isNatalWheel && labelIsAboveCenter;
 
     return {
       sign,
       isLong,
       id: `sign-label-path-${showHouses ? "houses" : "sky"}-${sign.toLowerCase()}`,
-      path: arcPath(angleForLongitude(index * 30 + inset), angleForLongitude(index * 30 + 30 - inset), signLabelRadius)
+      path: shouldReversePath
+        ? arcPath(endAngle, startAngle, signLabelRadius)
+        : arcPath(startAngle, endAngle, signLabelRadius)
     };
   });
 
