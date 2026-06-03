@@ -3145,7 +3145,7 @@ function TodayView({
   return (
     <>
       <PlacementView positions={positions} onOpenDetail={onOpenDetail} />
-      <ActiveAspects aspects={aspects} onOpenDetail={onOpenDetail} />
+      <ActiveAspects aspects={aspects} positions={positions} onOpenDetail={onOpenDetail} />
     </>
   );
 }
@@ -3201,7 +3201,55 @@ function aspectTone(type: string) {
   return "Contact";
 }
 
-function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspects"]; onOpenDetail: (detail: SkyDetail) => void }) {
+const aspectOpportunity: Record<string, string> = {
+  conjunction: "noticing what becomes louder when two themes occupy the same space",
+  opposition: "holding two needs in view without forcing one to erase the other",
+  square: "working with pressure honestly instead of moving around it",
+  trine: "letting ease become useful instead of passive",
+  sextile: "using a small opening before it disappears into the background"
+};
+
+const aspectApplication: Record<string, string> = {
+  conjunction: "naming the pattern that is asking for attention",
+  opposition: "comparison, conversation, and decisions that require balance",
+  square: "adjusting habits, expectations, or plans that have become too tight",
+  trine: "creative work, repair, planning, and choices that benefit from cooperation",
+  sextile: "low-pressure conversations, practical experiments, and small next steps"
+};
+
+function formatAspectPlacement(position?: PlanetPosition) {
+  if (!position) {
+    return "";
+  }
+
+  return ` in ${position.sign}`;
+}
+
+function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], fallback: ReactNode[]) {
+  const from = positions.find((position) => position.planet === aspect.from);
+  const to = positions.find((position) => position.planet === aspect.to);
+  const fromTheme = placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
+  const toTheme = placementThemes[aspect.to] ?? `${aspect.to.toLowerCase()} themes`;
+  const opportunity = aspectOpportunity[aspect.type] ?? "reading both planetary themes together";
+  const application = aspectApplication[aspect.type] ?? "noticing what the day is asking you to integrate";
+
+  return [
+    `${aspect.from}${formatAspectPlacement(from)} is ${aspect.type} ${aspect.to}${formatAspectPlacement(to)}, bringing ${fromTheme} into contact with ${toTheme}.`,
+    `This alignment supports ${opportunity}. ${aspect.from} ${placementMeanings[aspect.from] ?? `brings ${fromTheme}.`} ${aspect.to} ${placementMeanings[aspect.to] ?? `brings ${toTheme}.`}`,
+    `Together, these planets encourage ${application}. Because this contact is close by degree, its themes may feel more noticeable today.`,
+    ...fallback.slice(1)
+  ];
+}
+
+function ActiveAspects({
+  aspects,
+  positions,
+  onOpenDetail
+}: {
+  aspects: SkySnapshot["aspects"];
+  positions: PlanetPosition[];
+  onOpenDetail: (detail: SkyDetail) => void;
+}) {
   return (
     <section className="aspect-section" aria-label="Aspects">
       <span className="eyebrow section-label aspect-section-label">Aspects</span>
@@ -3212,6 +3260,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
             const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to));
             const rowSummary = content.summary ?? aspect.meaning;
             const detailParagraphs = content.detailParagraphs.length > 0 ? content.detailParagraphs : [aspect.meaning];
+            const body = currentSkyAspectWriteup(aspect, positions, detailParagraphs);
 
             return (
               <button
@@ -3225,7 +3274,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
                   title,
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
                   content: content.bundle,
-                  body: detailParagraphs
+                  body
                 })}
               >
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
