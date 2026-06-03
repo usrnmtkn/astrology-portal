@@ -239,6 +239,37 @@ const planetMotives: Record<string, string> = {
   "True Node": "direction, timing, and the unfamiliar pull forward"
 };
 
+const signCurrentStyles: Record<string, string> = {
+  Aries: "directness, urgency, courage, and the need to begin",
+  Taurus: "stability, embodiment, patience, and material reality",
+  Gemini: "curiosity, language, movement, and fast-changing information",
+  Cancer: "memory, protection, belonging, and emotional context",
+  Leo: "visibility, creative confidence, pride, and the wish to be seen",
+  Virgo: "discernment, repair, usefulness, and attention to detail",
+  Libra: "relationship, fairness, comparison, and the search for balance",
+  Scorpio: "trust, intensity, privacy, and what is happening below the surface",
+  Sagittarius: "belief, honesty, perspective, and the need for more room",
+  Capricorn: "structure, restraint, responsibility, and practical next steps",
+  Aquarius: "systems, distance, objectivity, and the pressure to update old patterns",
+  Pisces: "feeling, imagination, porousness, and the pull toward surrender"
+};
+
+const aspectMovement: Record<string, string> = {
+  conjunction: "sits close enough to merge with",
+  opposition: "stands across from",
+  square: "runs into pressure with",
+  trine: "moves easily with",
+  sextile: "has a usable opening with"
+};
+
+const aspectOpenings: Record<string, string> = {
+  conjunction: "The effect can feel louder because both planets are speaking at once.",
+  opposition: "The tension is in holding both sides without pretending one of them does not matter.",
+  square: "The pressure can be clarifying when it shows what no longer fits the situation.",
+  trine: "The support is available without much force, which makes it easier to miss if the day is rushed.",
+  sextile: "The opening is practical and easy to use, but it still needs a choice or small action."
+};
+
 const defaultTransitForm: TransitForm = {
   name: "",
   birthPlace: "",
@@ -2957,10 +2988,7 @@ function RetrogradeCallout({
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
-          const detailParagraphs = [
-            placementOpeningParagraph(position),
-            placementRetrogradeNote(position)
-          ].filter(Boolean);
+          const detailParagraphs = retrogradeDetailBody(position);
 
           return (
             <button
@@ -3216,14 +3244,6 @@ function aspectTone(type: string) {
   return "Contact";
 }
 
-const aspectOpportunity: Record<string, string> = {
-  conjunction: "noticing what becomes louder when two themes occupy the same space",
-  opposition: "holding two needs in view without forcing one to erase the other",
-  square: "working with pressure honestly instead of moving around it",
-  trine: "letting ease become useful instead of passive",
-  sextile: "using a small opening before it disappears into the background"
-};
-
 const aspectApplication: Record<string, string> = {
   conjunction: "naming the pattern that is asking for attention",
   opposition: "comparison, conversation, and decisions that require balance",
@@ -3247,26 +3267,20 @@ const sunSeasonOpenings: Record<string, string> = {
   Pisces: "Pisces season brings attention to imagination, compassion, surrender, and the places where feeling moves beyond clean edges."
 };
 
-function formatAspectPlacement(position?: PlanetPosition) {
-  if (!position) {
-    return "";
-  }
-
-  return ` in ${position.sign}`;
-}
-
 function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], _fallback: ReactNode[]) {
   const from = positions.find((position) => position.planet === aspect.from);
   const to = positions.find((position) => position.planet === aspect.to);
-  const fromTheme = placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
-  const toTheme = placementThemes[aspect.to] ?? `${aspect.to.toLowerCase()} themes`;
-  const opportunity = aspectOpportunity[aspect.type] ?? "reading both planetary themes together";
+  const fromStyle = from ? ` in ${from.sign}` : "";
+  const toStyle = to ? ` in ${to.sign}` : "";
+  const fromTheme = planetMotives[aspect.from] ?? placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
+  const toTheme = planetMotives[aspect.to] ?? placementThemes[aspect.to] ?? `${aspect.to.toLowerCase()} themes`;
+  const movement = aspectMovement[aspect.type] ?? `is in a ${aspect.type} with`;
+  const opening = aspectOpenings[aspect.type] ?? "The contact is close enough to make both planetary themes more noticeable.";
   const application = aspectApplication[aspect.type] ?? "noticing what the day is asking you to integrate";
 
   return [
-    `${aspect.from}${formatAspectPlacement(from)} is ${aspect.type} ${aspect.to}${formatAspectPlacement(to)}, bringing ${fromTheme} into contact with ${toTheme}.`,
-    `This alignment supports ${opportunity}. ${aspect.from} ${placementMeanings[aspect.from] ?? `brings ${fromTheme}.`} ${aspect.to} ${placementMeanings[aspect.to] ?? `brings ${toTheme}.`}`,
-    `Together, these planets encourage ${application}. Because this contact is close by degree, its themes may feel more noticeable today.`
+    `${aspect.from}${fromStyle} ${movement} ${aspect.to}${toStyle} today, tying ${fromTheme} to ${toTheme}. ${opening}`,
+    `This may be most useful for ${application}, especially where the day already feels active, unfinished, or hard to sort quickly.`
   ];
 }
 
@@ -3313,11 +3327,10 @@ function describePlacementAspect(position: PlanetPosition, aspect: SkySnapshot["
   const otherSign = otherPosition ? ` in ${otherPosition.sign}` : "";
   const currentPlanetMotive = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
   const otherPlanetMotive = planetMotives[otherPlanet] ?? placementThemes[otherPlanet] ?? `${otherPlanet.toLowerCase()} themes`;
-  const signFrame = otherPosition
-    ? `${position.sign} and ${otherPosition.sign}`
-    : position.sign;
+  const movement = aspectMovement[aspect.type] ?? `is in a ${aspect.type} with`;
+  const opening = aspectOpenings[aspect.type] ?? "The contact makes both planetary themes more noticeable.";
 
-  return `${position.planet} in ${position.sign} is ${aspect.type} ${otherPlanet}${otherSign} today. ${position.planet} brings ${currentPlanetMotive}. ${otherPlanet} brings ${otherPlanetMotive}. Together in ${signFrame}, this makes the placement more active than background weather.`;
+  return `${position.planet} in ${position.sign} ${movement} ${otherPlanet}${otherSign} today, so ${currentPlanetMotive} is being shaped by ${otherPlanetMotive}. ${opening}`;
 }
 
 function placementOpeningParagraph(position: PlanetPosition) {
@@ -3342,14 +3355,14 @@ function placementAspectGuidance(position: PlanetPosition, activeAspects: SkySna
   const application = aspectApplication[primaryAspect.type] ?? "noticing what is asking to be integrated";
 
   if (position.planet === "Sun") {
-    return `This is what gives ${position.sign} season its sharper edge today. The larger seasonal theme is still present, but the ${primaryAspect.type} to ${otherPlanet} shows where the day asks for ${application}.`;
+    return `This is what makes ${position.sign} season feel more specific today. The broader seasonal theme is still present, but the contact with ${otherPlanet} points toward ${application}.`;
   }
 
   if (position.planet === "Moon") {
-    return `Because the Moon moves quickly, this may show up as a passing mood, reaction, or need that feels louder for a few hours. It is useful for ${application}.`;
+    return `Because the Moon moves quickly, this may show up as a passing mood, reaction, or need that feels louder for a few hours. The useful move is ${application}.`;
   }
 
-  return `The sign shows the style of this placement, but the aspect shows what is happening through it right now. This is useful for ${application}.`;
+  return `The sign describes the style of the placement. The aspect describes what is happening through it today. This points toward ${application}.`;
 }
 
 function placementRetrogradeNote(position: PlanetPosition) {
@@ -3357,7 +3370,20 @@ function placementRetrogradeNote(position: PlanetPosition) {
     return "";
   }
 
-  return `${position.planet} is also retrograde, so the emphasis turns toward review, revision, and returning to unfinished material before pushing the topic forward.`;
+  const planetTheme = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
+  const signStyle = signCurrentStyles[position.sign] ?? `${position.sign}'s style`;
+
+  return `${position.planet} is retrograde in ${position.sign}, pulling ${planetTheme} back through ${signStyle}. The movement is less about pushing the topic forward and more about noticing what needs review before the next step can hold.`;
+}
+
+function retrogradeDetailBody(position: PlanetPosition) {
+  const note = placementRetrogradeNote(position);
+  const planetTheme = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
+
+  return [
+    note,
+    `This can make ${planetTheme} feel quieter, slower, or more internal for now. The point is not to force a conclusion. It is to see what has changed, what still has weight, and what needs a more honest revision.`
+  ];
 }
 
 function placementDetailBody(position: PlanetPosition, positions: PlanetPosition[], aspects: SkySnapshot["aspects"], _fallback: ReactNode[]) {
