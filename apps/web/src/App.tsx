@@ -3144,13 +3144,21 @@ function TodayView({
 }) {
   return (
     <>
-      <PlacementView positions={positions} onOpenDetail={onOpenDetail} />
+      <PlacementView positions={positions} aspects={aspects} onOpenDetail={onOpenDetail} />
       <ActiveAspects aspects={aspects} positions={positions} onOpenDetail={onOpenDetail} />
     </>
   );
 }
 
-function PlacementView({ positions, onOpenDetail }: { positions: PlanetPosition[]; onOpenDetail: (detail: SkyDetail) => void }) {
+function PlacementView({
+  positions,
+  aspects,
+  onOpenDetail
+}: {
+  positions: PlanetPosition[];
+  aspects: SkySnapshot["aspects"];
+  onOpenDetail: (detail: SkyDetail) => void;
+}) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
 
   return (
@@ -3181,7 +3189,7 @@ function PlacementView({ positions, onOpenDetail }: { positions: PlanetPosition[
       </div>
 
       {placementMode === "table" ? (
-        <PlacementTable positions={positions} onOpenDetail={onOpenDetail} />
+        <PlacementTable positions={positions} aspects={aspects} onOpenDetail={onOpenDetail} />
       ) : (
         <PlacementParagraph positions={positions} />
       )}
@@ -3239,6 +3247,49 @@ function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positio
     `Together, these planets encourage ${application}. Because this contact is close by degree, its themes may feel more noticeable today.`,
     ...fallback.slice(1)
   ];
+}
+
+function aspectsForPlacement(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
+  return aspects
+    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
+    .sort((a, b) => a.orb - b.orb)
+    .slice(0, 2);
+}
+
+function describePlacementAspect(position: PlanetPosition, aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[]) {
+  const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
+  const otherPosition = positions.find((candidate) => candidate.planet === otherPlanet);
+  const otherSign = otherPosition ? ` in ${otherPosition.sign}` : "";
+  const tone = aspectTone(aspect.type).toLowerCase();
+  const opportunity = aspectOpportunity[aspect.type] ?? "reading both planetary themes together";
+
+  return `${position.planet} is also ${aspect.type} ${otherPlanet}${otherSign}, adding ${tone} around ${opportunity}.`;
+}
+
+function placementOpeningParagraph(position: PlanetPosition) {
+  if (position.planet === "Sun") {
+    return `The Sun in ${position.sign} sets the tone for ${position.sign} season, bringing attention to the pace, questions, and priorities moving through the collective weather right now.`;
+  }
+
+  return `${position.planet} is moving through ${position.sign}, so ${placementThemes[position.planet] ?? position.theme.toLowerCase()} is being expressed through ${position.sign}'s style.`;
+}
+
+function placementDetailBody(position: PlanetPosition, positions: PlanetPosition[], aspects: SkySnapshot["aspects"], fallback: ReactNode[]) {
+  const activeAspects = aspectsForPlacement(position, aspects);
+  const body = [
+    placementOpeningParagraph(position),
+    ...fallback
+  ];
+
+  if (activeAspects.length > 0) {
+    body.push(
+      `What makes this placement active right now: ${activeAspects
+        .map((aspect) => describePlacementAspect(position, aspect, positions))
+        .join(" ")}`
+    );
+  }
+
+  return body;
 }
 
 function ActiveAspects({
@@ -3317,7 +3368,15 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
   );
 }
 
-function PlacementTable({ positions, onOpenDetail }: { positions: PlanetPosition[]; onOpenDetail: (detail: SkyDetail) => void }) {
+function PlacementTable({
+  positions,
+  aspects,
+  onOpenDetail
+}: {
+  positions: PlanetPosition[];
+  aspects: SkySnapshot["aspects"];
+  onOpenDetail: (detail: SkyDetail) => void;
+}) {
   const orderedPositions = placementPlanetOrder
     .map((planet) => positions.find((position) => position.planet === planet))
     .filter((position): position is PlanetPosition => Boolean(position));
@@ -3339,12 +3398,13 @@ function PlacementTable({ positions, onOpenDetail }: { positions: PlanetPosition
                 placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
                 `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
               ];
+          const body = placementDetailBody(position, positions, aspects, detailParagraphs);
           const openDetail = () => onOpenDetail({
             glyph: position.glyph,
             kicker: "Placement",
             title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
-            body: detailParagraphs,
+            body,
             content: content.bundle
           });
 
