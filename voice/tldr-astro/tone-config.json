@@ -1,0 +1,13 @@
+{
+  "voiceId": "tldr-astro-v1",
+  "readingLevel": "plainspoken",
+  "sentenceLength": "short-to-medium",
+  "certainty": "low-to-moderate",
+  "defaultStatus": "REVIEW",
+  "preferredPatterns": [
+    "start with lived experience",
+    "say what each planet wants",
+    "explain why the behavior makes sense",
+    "use soft certainty"
+  ]
+}

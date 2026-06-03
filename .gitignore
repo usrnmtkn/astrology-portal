@@ -3,3 +3,4 @@ dist/*
 !dist/.gitkeep
 sources/*
 !sources/.gitkeep
+.DS_Store
