@@ -2003,10 +2003,6 @@ export function App() {
                 onSunriseOrbChange={setSunriseOrbEnabled}
                 dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                 onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                onJoin={() => {
-                  setAccountIntent("create");
-                  setMode("profile");
-                }}
               />
             )
           )}
@@ -4132,8 +4128,7 @@ function GuestSettingsView({
   dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
-  onDyslexiaFontChange,
-  onJoin
+  onDyslexiaFontChange
 }: {
   theme: UiTheme;
   location: LocationInput;
@@ -4142,7 +4137,6 @@ function GuestSettingsView({
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
-  onJoin: () => void;
 }) {
   return (
     <section className="settings-page guest-settings-page" aria-label="Settings">
@@ -4187,15 +4181,6 @@ function GuestSettingsView({
           </div>
         </section>
 
-        <section className="settings-group" aria-label="Account settings">
-          <span className="settings-group-label">Personalize</span>
-          <div className="settings-card guest-settings-account">
-            <p>Create an account to save birth details, chart preferences, and daily transit settings.</p>
-            <button type="button" onClick={onJoin}>
-              Join
-            </button>
-          </div>
-        </section>
       </div>
     </section>
   );

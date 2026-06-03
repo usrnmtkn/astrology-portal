@@ -5724,44 +5724,6 @@ blockquote {
   border-color: #ffffff;
 }
 
-.guest-settings-account {
-  padding: 28px;
-}
-
-.guest-settings-account h3 {
-  color: var(--ink-app);
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
-  letter-spacing: -0.02em;
-  margin: 0 0 8px;
-}
-
-.guest-settings-account p {
-  color: var(--muted-app);
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.45;
-  margin: 0 0 22px;
-}
-
-.guest-settings-account button {
-  align-items: center;
-  background: var(--ink-app);
-  border: 0;
-  border-radius: 999px;
-  color: var(--surface-app);
-  display: inline-flex;
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 800;
-  justify-content: center;
-  letter-spacing: 0.14em;
-  min-height: 48px;
-  padding: 0 28px;
-  text-transform: uppercase;
-}
-
-
 /* Sunrise orb preference removes the warm top glow while keeping the page calm. */
 .app-shell.sunrise-orb-disabled {
   background:
@@ -5867,13 +5829,14 @@ html,
 }
 
 .topbar {
-  --nav-width: min(calc(100vw - 48px), var(--col-app));
+  --nav-width: var(--col-app);
   align-items: center;
   backdrop-filter: saturate(1.55) blur(18px);
   -webkit-backdrop-filter: saturate(1.55) blur(18px);
   background: color-mix(in srgb, var(--surface-app) 70%, transparent);
   border: 1px solid var(--line-app);
   border-radius: 999px;
+  box-sizing: border-box;
   box-shadow:
     0 18px 46px rgba(20, 20, 20, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -5886,7 +5849,7 @@ html,
   padding: 0 14px 0 24px;
   position: sticky;
   top: 18px;
-  width: var(--nav-width);
+  width: min(100%, var(--nav-width));
 }
 
 .theme-dark .topbar {
@@ -6705,7 +6668,7 @@ html,
 
 @media (max-width: 760px) {
   .topbar {
-    --nav-width: calc(100vw - 24px);
+    --nav-width: 100%;
     gap: 8px;
     height: 64px;
     min-height: 64px;
@@ -6734,7 +6697,7 @@ html,
 
 @media (max-width: 560px) {
   .topbar {
-    --nav-width: calc(100vw - 20px);
+    --nav-width: 100%;
     gap: 6px;
   }
 
