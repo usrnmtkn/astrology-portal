@@ -25,11 +25,11 @@ flowchart TD
     GENERATED["generated/\nVoice-rendered content\nreviewed per profile"]
     ENGINE["engine/timing/\nRanking helpers only\nno authored meaning"]
     SCRIPTS["scripts/build.js\nValidate and compile"]
-    DIST["dist/\nknowledge.json\nknowledge.index.json\nentries/*.json"]
+    DIST["dist/\nknowledge.json full bundle\nsky.json\nnatal.json\nrelationships.json\nweb.json\nknowledge.index.json\nentries/*.json"]
   end
 
   subgraph APP["tldrastro app"]
-    IMPORT["apps/web/src/content/registry.ts\nimports @tldr/astro-knowledge"]
+    IMPORT["apps/web/src/content/registry.ts\nimports @tldr/astro-knowledge/web"]
     SURFACES["Surface selectors\nCore Traits, Love Patterns,\nCareer Patterns, Forecasts"]
     UI["React views\nrender selected knowledge\nand approved voice content"]
   end
@@ -50,17 +50,35 @@ flowchart TD
 - Put tone, style, and prompt constraints in `voice/`.
 - Put reviewed voice output in `generated/`.
 - Put selection, ranking, and UI logic in the consuming app.
-- Do not vendor a copied knowledge JSON into an app. Apps should import `@tldr/astro-knowledge`.
+- Do not vendor a copied knowledge JSON into an app. Apps should import the smallest `@tldr/astro-knowledge` bundle that matches the surface.
 
 ## Offline Consumption
 
 Both consumers can bundle this package for offline use.
 
-Web and React Native can import the merged bundle:
+Web and React Native can import the merged bundle when they truly need the whole corpus:
 
 ```js
 import knowledge from "@tldr/astro-knowledge";
 ```
+
+Most surfaces should import a smaller domain bundle:
+
+```js
+import skyKnowledge from "@tldr/astro-knowledge/sky";
+import natalKnowledge from "@tldr/astro-knowledge/natal";
+import relationshipKnowledge from "@tldr/astro-knowledge/relationships";
+```
+
+The current web registry imports `@tldr/astro-knowledge/web`, a compatibility bundle for the existing app surfaces. It excludes synastry and composite material while the UI is still wired through one registry.
+
+Bundle intent:
+
+- `sky.json`: current sky, planetary weather, lunations, and transit framework material.
+- `natal.json`: natal placements, angles, chart rulers, point placements, point aspects, and insight cards.
+- `relationships.json`: synastry and composite material.
+- `web.json`: the smaller bundle the current website needs until route-level lazy loading is introduced.
+- `knowledge.json`: full compatibility bundle.
 
 For single-entry loading without parsing the whole corpus, bundle `dist/entries/` and read `dist/knowledge.index.json`. Each id maps to a generated entry file:
 

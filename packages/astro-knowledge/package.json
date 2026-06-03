@@ -10,6 +10,10 @@
   ],
   "exports": {
     ".": "./dist/knowledge.json",
+    "./sky": "./dist/sky.json",
+    "./natal": "./dist/natal.json",
+    "./relationships": "./dist/relationships.json",
+    "./web": "./dist/web.json",
     "./index": "./dist/knowledge.index.json",
     "./entries/*": "./dist/entries/*.json",
     "./timing-engine": "./engine/timing/index.js"

@@ -1,4 +1,4 @@
-import knowledgeBundle from "@tldr/astro-knowledge";
+import knowledgeBundle from "@tldr/astro-knowledge/web";
 import type {
   ContentArea,
   ContentBundle,
