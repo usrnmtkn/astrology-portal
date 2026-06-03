@@ -254,20 +254,41 @@ const signCurrentStyles: Record<string, string> = {
   Pisces: "feeling, imagination, porousness, and the pull toward surrender"
 };
 
-const aspectMovement: Record<string, string> = {
-  conjunction: "sits close enough to merge with",
-  opposition: "stands across from",
-  square: "runs into pressure with",
-  trine: "moves easily with",
-  sextile: "has a usable opening with"
+const planetPlainRoles: Record<string, string> = {
+  Sun: "where attention, confidence, and the main tone of the day are moving",
+  Moon: "what people feel, need, remember, and react to instinctively",
+  Mercury: "how you think, talk, listen, plan, and exchange information",
+  Venus: "what feels desirable, pleasant, valuable, or worth choosing",
+  Mars: "how heat, effort, anger, courage, and urgency move through the day",
+  Jupiter: "where growth, belief, appetite, and possibility get amplified",
+  Saturn: "structure, discipline, limits, responsibility, and what can last",
+  Uranus: "change, interruption, freedom, and the part of the day that refuses the usual pattern",
+  Neptune: "imagination, longing, sensitivity, projection, and the places where facts get blurry",
+  Pluto: "pressure, power, obsession, endings, and the need for deeper change",
+  "True Node": "direction, timing, and the unfamiliar thing pulling attention forward"
 };
 
-const aspectOpenings: Record<string, string> = {
-  conjunction: "The effect can feel louder because both planets are speaking at once.",
-  opposition: "The tension is in holding both sides without pretending one of them does not matter.",
-  square: "The pressure can be clarifying when it shows what no longer fits the situation.",
-  trine: "The support is available without much force, which makes it easier to miss if the day is rushed.",
-  sextile: "The opening is practical and easy to use, but it still needs a choice or small action."
+const signPlainRoles: Record<string, string> = {
+  Aries: "fast, direct, and ready to act",
+  Taurus: "slow, practical, and focused on what is tangible",
+  Gemini: "curious, verbal, scattered, and full of moving pieces",
+  Cancer: "emotional, protective, memory-led, and sensitive to tone",
+  Leo: "expressive, visible, proud, and looking for creative honesty",
+  Virgo: "specific, observant, corrective, and focused on what can be improved",
+  Libra: "relational, comparative, and focused on balance or fairness",
+  Scorpio: "private, intense, and alert to control, trust, or hidden motives",
+  Sagittarius: "restless, honest, future-facing, and hungry for perspective",
+  Capricorn: "serious, contained, practical, and aware of consequences",
+  Aquarius: "detached, system-aware, and ready to question the old pattern",
+  Pisces: "porous, imaginative, compassionate, and easy to blur around the edges"
+};
+
+const aspectPlainRoles: Record<string, string> = {
+  conjunction: "a close contact, so both planets speak at once",
+  opposition: "a face-off, so two needs ask to be held at the same time",
+  square: "a friction point, so something asks for adjustment",
+  trine: "an easy flow, so support is available without much force",
+  sextile: "a supportive opening, so the opportunity is there if you use it"
 };
 
 const defaultTransitForm: TransitForm = {
@@ -2752,10 +2773,6 @@ function SkyWheel({
   const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
-  const tooltipWidth = 214;
-  const tooltipLineHeight = 18;
-  const tooltipPaddingY = 12;
-  const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
@@ -2774,23 +2791,9 @@ function SkyWheel({
         : arcPath(startAngle, endAngle, signLabelRadius)
     };
   });
-  const activeTooltipPosition = activeTooltipPlanet
-    ? positions.find((position) => position.planet === activeTooltipPlanet)
-    : null;
-
-  function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), radius.planet);
-    const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
-    const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
-    const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
-    const x = marker.x > center ? marker.x - tooltipWidth - 18 : marker.x + 18;
-    const y = Math.min(Math.max(marker.y - height / 2, 18), 600 - height - 18);
-
-    return { lines, height, x, y };
-  }
-
   return (
     <svg className="sky-wheel" viewBox="0 0 600 600" role="img" aria-label="Planet positions">
+      <title>Current zodiac wheel</title>
       <defs>
         {signLabelPaths.map(({ id, path }) => (
           <path id={id} key={id} d={path} />
@@ -2861,6 +2864,7 @@ function SkyWheel({
                 x2={b.x}
                 y2={b.y}
               />
+              <title>{from.planet} {type} {to.planet}, {orb.toFixed(1)}° orb</title>
             </g>
           );
         })}
@@ -2929,7 +2933,17 @@ function SkyWheel({
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
           const label = point(planetAngle(position), radius.planet - 22);
-          const { lines: tooltipLines } = tooltipDetails(position);
+          const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
+          const tooltipLines = [placementLine, ...aspectTooltipLines(position, aspects)];
+          const tooltipWidth = 214;
+          const tooltipLineHeight = 18;
+          const tooltipPaddingY = 12;
+          const tooltipHeight = tooltipPaddingY * 2 + tooltipLines.length * tooltipLineHeight;
+          const tooltipX = marker.x > center ? marker.x - tooltipWidth - 18 : marker.x + 18;
+          const tooltipY = Math.min(
+            Math.max(marker.y - tooltipHeight / 2, 18),
+            600 - tooltipHeight - 18
+          );
 
           return (
             <g
@@ -2938,10 +2952,6 @@ function SkyWheel({
               tabIndex={0}
               role="img"
               aria-label={tooltipLines.join(". ")}
-              onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
-              onFocus={() => setActiveTooltipPlanet(position.planet)}
-              onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
-              onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
             >
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
               <circle cx={marker.x} cy={marker.y} r="18" className="planet-hit-area" />
@@ -2951,22 +2961,11 @@ function SkyWheel({
               <text x={label.x} y={label.y} className="planet-degree">
                 {Math.floor(position.degree)}°
               </text>
-            </g>
-          );
-        })}
-      </g>
-
-      {activeTooltipPosition && (
-        <g className="planet-tooltips" aria-hidden="true">
-          {(() => {
-            const { lines, height, x, y } = tooltipDetails(activeTooltipPosition);
-
-            return (
-              <g className="planet-tooltip planet-tooltip-active" transform={`translate(${x} ${y})`}>
-                <rect width={tooltipWidth} height={height} rx="12" />
-                {lines.map((line, index) => (
+              <g className="planet-tooltip" transform={`translate(${tooltipX} ${tooltipY})`} aria-hidden="true">
+                <rect width={tooltipWidth} height={tooltipHeight} rx="12" />
+                {tooltipLines.map((line, index) => (
                   <text
-                    key={`${activeTooltipPosition.planet}-tooltip-${line}`}
+                    key={`${position.planet}-tooltip-${line}`}
                     x="14"
                     y={tooltipPaddingY + 13 + index * tooltipLineHeight}
                     className={index === 0 ? "planet-tooltip-title" : undefined}
@@ -2975,10 +2974,10 @@ function SkyWheel({
                   </text>
                 ))}
               </g>
-            );
-          })()}
-        </g>
-      )}
+            </g>
+          );
+        })}
+      </g>
     </svg>
   );
 }
@@ -3354,17 +3353,56 @@ const sunSeasonOpenings: Record<string, string> = {
 function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], _fallback: ReactNode[]) {
   const from = positions.find((position) => position.planet === aspect.from);
   const to = positions.find((position) => position.planet === aspect.to);
-  const fromStyle = from ? ` in ${from.sign}` : "";
-  const toStyle = to ? ` in ${to.sign}` : "";
-  const fromTheme = planetMotives[aspect.from] ?? placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
-  const toTheme = planetMotives[aspect.to] ?? placementThemes[aspect.to] ?? `${aspect.to.toLowerCase()} themes`;
-  const movement = aspectMovement[aspect.type] ?? `is in a ${aspect.type} with`;
-  const opening = aspectOpenings[aspect.type] ?? "The contact is close enough to make both planetary themes more noticeable.";
-  const application = aspectApplication[aspect.type] ?? "noticing what the day is asking you to integrate";
+  return currentSkyAspectAdvice(aspect, from, to);
+}
+
+function isAspectPair(aspect: SkySnapshot["aspects"][number], planetA: string, planetB: string, type?: string) {
+  const matchesPair = (aspect.from === planetA && aspect.to === planetB) || (aspect.from === planetB && aspect.to === planetA);
+  return matchesPair && (!type || aspect.type === type);
+}
+
+function timedAspectLine(aspect: SkySnapshot["aspects"][number]) {
+  if (aspect.orb <= 1) {
+    return "It is strongest today and should start easing over the next day or so.";
+  }
+
+  return "It is active now, with the exact feeling strongest while the planets stay close by degree.";
+}
+
+function currentSkyAspectAdvice(aspect: SkySnapshot["aspects"][number], from?: PlanetPosition, to?: PlanetPosition) {
+  const mercury = [from, to].find((position) => position?.planet === "Mercury");
+  const neptune = [from, to].find((position) => position?.planet === "Neptune");
+  const sun = [from, to].find((position) => position?.planet === "Sun");
+  const saturn = [from, to].find((position) => position?.planet === "Saturn");
+
+  if (isAspectPair(aspect, "Mercury", "Neptune", "square") && mercury && neptune) {
+    return [
+      `Conversations blur today. You may think you said one thing while someone else heard another, or read a message in the worst possible tone. Plans made on a wave of feeling can sound brilliant now and vague by tomorrow.`,
+      `Mercury in ${mercury.sign} describes thinking and communication filtered through ${signCurrentStyles[mercury.sign] ?? mercury.sign.toLowerCase()}. Neptune in ${neptune.sign} dissolves edges, blurring fact into impression and sincerity into projection. The square is the friction between them: what you think you know and what is actually true can slip out of alignment.`,
+      `Get it in writing, ask the clarifying question, and let any big decision wait until this aspect clears. ${timedAspectLine(aspect)}`
+    ];
+  }
+
+  if (isAspectPair(aspect, "Sun", "Saturn", "sextile") && sun && saturn) {
+    return [
+      `The ${sun.sign} Sun is in a supportive sextile with Saturn in ${saturn.sign}, making it easier to turn scattered ideas into something usable. If your attention has been split across too many conversations, plans, or choices, narrow the field.`,
+      `The Sun in ${sun.sign} shows where the day’s attention is moving: ${signCurrentStyles[sun.sign] ?? sun.sign.toLowerCase()}. Saturn brings structure, discipline, and the part that builds something lasting. A sextile is an easy, supportive angle, an open door rather than a push.`,
+      `Pick the one idea with a clear next step and act on it. Make the call, send the draft, schedule the meeting, or put the plan on a timeline. ${timedAspectLine(aspect)}`
+    ];
+  }
+
+  const fromSign = from?.sign ?? "";
+  const toSign = to?.sign ?? "";
+  const fromRole = planetPlainRoles[aspect.from] ?? placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
+  const toRole = planetPlainRoles[aspect.to] ?? placementThemes[aspect.to] ?? `${aspect.to.toLowerCase()} themes`;
+  const fromStyle = from ? signPlainRoles[from.sign] ?? from.sign.toLowerCase() : "its current sign";
+  const toStyle = to ? signPlainRoles[to.sign] ?? to.sign.toLowerCase() : "its current sign";
+  const aspectRole = aspectPlainRoles[aspect.type] ?? `a ${aspect.type}`;
 
   return [
-    `${aspect.from}${fromStyle} ${movement} ${aspect.to}${toStyle} today, tying ${fromTheme} to ${toTheme}. ${opening}`,
-    `This may be most useful for ${application}, especially where the day already feels active, unfinished, or hard to sort quickly.`
+    `${aspect.from}${fromSign ? ` in ${fromSign}` : ""} is ${aspect.type} ${aspect.to}${toSign ? ` in ${toSign}` : ""} today. You may notice ${fromRole} running into ${toRole}, especially in situations that already feel active, personal, or unresolved.`,
+    `${aspect.from} is moving through ${fromSign || "its current sign"}, which makes its expression more ${fromStyle}. ${aspect.to} is moving through ${toSign || "its current sign"}, bringing in something more ${toStyle}. A ${aspect.type} is ${aspectRole}.`,
+    `${aspectApplication[aspect.type] ? `Use this for ${aspectApplication[aspect.type]}.` : "Use this to slow down and name what is actually happening."} Before you act, separate the feeling from the fact and choose the next step that still makes sense tomorrow. ${timedAspectLine(aspect)}`
   ];
 }
 
@@ -3405,18 +3443,6 @@ function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapsh
   return `${position.planet} in ${position.sign}`;
 }
 
-function describePlacementAspect(position: PlanetPosition, aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[]) {
-  const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
-  const otherPosition = positions.find((candidate) => candidate.planet === otherPlanet);
-  const otherSign = otherPosition ? ` in ${otherPosition.sign}` : "";
-  const currentPlanetMotive = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
-  const otherPlanetMotive = planetMotives[otherPlanet] ?? placementThemes[otherPlanet] ?? `${otherPlanet.toLowerCase()} themes`;
-  const movement = aspectMovement[aspect.type] ?? `is in a ${aspect.type} with`;
-  const opening = aspectOpenings[aspect.type] ?? "The contact makes both planetary themes more noticeable.";
-
-  return `${position.planet} in ${position.sign} ${movement} ${otherPlanet}${otherSign} today, so ${currentPlanetMotive} is being shaped by ${otherPlanetMotive}. ${opening}`;
-}
-
 function placementOpeningParagraph(position: PlanetPosition) {
   if (position.planet === "Sun") {
     return sunSeasonOpenings[position.sign] ?? `The Sun in ${position.sign} sets the tone for ${position.sign} season, bringing attention to the priorities moving through the collective weather right now.`;
@@ -3427,26 +3453,6 @@ function placementOpeningParagraph(position: PlanetPosition) {
   }
 
   return `${position.planet} is moving through ${position.sign}, so ${placementThemes[position.planet] ?? position.theme.toLowerCase()} is being expressed through ${position.sign}'s style.`;
-}
-
-function placementAspectGuidance(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  const primaryAspect = activeAspects[0];
-  if (!primaryAspect) {
-    return "";
-  }
-
-  const otherPlanet = primaryAspect.from === position.planet ? primaryAspect.to : primaryAspect.from;
-  const application = aspectApplication[primaryAspect.type] ?? "noticing what is asking to be integrated";
-
-  if (position.planet === "Sun") {
-    return `This is what makes ${position.sign} season feel more specific today. The broader seasonal theme is still present, but the contact with ${otherPlanet} points toward ${application}.`;
-  }
-
-  if (position.planet === "Moon") {
-    return `Because the Moon moves quickly, this may show up as a passing mood, reaction, or need that feels louder for a few hours. The useful move is ${application}.`;
-  }
-
-  return `The sign describes the style of the placement. The aspect describes what is happening through it today. This points toward ${application}.`;
 }
 
 function placementRetrogradeNote(position: PlanetPosition) {
@@ -3461,12 +3467,13 @@ function placementRetrogradeNote(position: PlanetPosition) {
 }
 
 function retrogradeDetailBody(position: PlanetPosition) {
-  const note = placementRetrogradeNote(position);
   const planetTheme = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
+  const signStyle = signCurrentStyles[position.sign] ?? `${position.sign}'s style`;
 
   return [
-    note,
-    `This can make ${planetTheme} feel quieter, slower, or more internal for now. The point is not to force a conclusion. It is to see what has changed, what still has weight, and what needs a more honest revision.`
+    `Something connected to ${planetTheme} may keep circling back instead of moving cleanly forward. It may feel like a delay, a repeated thought, an old pattern, or a situation that needs another look before it can resolve.`,
+    `${position.planet} is retrograde in ${position.sign}, so this review is moving through ${signStyle}. The issue is not necessarily new. Retrogrades often make older material visible again so you can see what has changed and what still has weight.`,
+    `Do not force a final answer too quickly. Revisit the conversation, check the timeline, edit the plan, or name what still feels unfinished. The useful move is revision, not acceleration.`
   ];
 }
 
@@ -3475,10 +3482,13 @@ function placementDetailBody(position: PlanetPosition, positions: PlanetPosition
   const retrogradeNote = placementRetrogradeNote(position);
 
   if (activeAspects.length > 0) {
+    const primaryAspect = activeAspects[0];
+    const from = positions.find((candidate) => candidate.planet === primaryAspect.from);
+    const to = positions.find((candidate) => candidate.planet === primaryAspect.to);
+    const body = currentSkyAspectAdvice(primaryAspect, from, to);
+
     return [
-      placementOpeningParagraph(position),
-      ...activeAspects.map((aspect) => describePlacementAspect(position, aspect, positions)),
-      placementAspectGuidance(position, activeAspects),
+      ...body,
       ...(retrogradeNote ? [retrogradeNote] : [])
     ];
   }
