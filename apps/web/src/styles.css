@@ -2496,6 +2496,7 @@ button {
   font-family: var(--font-symbol);
   font-size: 26px;
   font-weight: 400;
+  pointer-events: none;
   stroke: none;
   text-anchor: middle;
 }
@@ -2504,6 +2505,56 @@ button {
   fill: #4c4c4c;
   font-size: 13px;
   font-weight: 700;
+  pointer-events: none;
+}
+
+.planet-marker {
+  cursor: help;
+  outline: none;
+}
+
+.planet-hit-area {
+  fill: transparent;
+  pointer-events: all;
+  stroke: none;
+}
+
+.planet-tooltip {
+  filter: drop-shadow(0 16px 28px rgba(26, 22, 19, 0.18));
+  opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transition: opacity 160ms ease;
+}
+
+.planet-marker:hover .planet-tooltip,
+.planet-marker:focus-visible .planet-tooltip {
+  opacity: 1;
+}
+
+.planet-marker:focus-visible .planet-hit-area {
+  stroke: rgba(26, 22, 19, 0.32);
+  stroke-width: 2;
+}
+
+.planet-tooltip rect {
+  fill: rgba(255, 255, 255, 0.96);
+  stroke: rgba(26, 22, 19, 0.12);
+  stroke-width: 1;
+}
+
+.planet-tooltip text {
+  fill: #5f5b55;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.planet-tooltip .planet-tooltip-title {
+  fill: #1a1613;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .house-labels text {
@@ -3793,6 +3844,27 @@ blockquote {
 
 .theme-dark .planet-degree {
   fill: #c9c3bb;
+}
+
+.theme-dark .planet-marker:focus-visible .planet-hit-area {
+  stroke: rgba(241, 238, 232, 0.38);
+}
+
+.theme-dark .planet-tooltip {
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.44));
+}
+
+.theme-dark .planet-tooltip rect {
+  fill: rgba(30, 28, 24, 0.96);
+  stroke: rgba(241, 238, 232, 0.16);
+}
+
+.theme-dark .planet-tooltip text {
+  fill: #c9c3bb;
+}
+
+.theme-dark .planet-tooltip .planet-tooltip-title {
+  fill: #f1eee8;
 }
 
 .theme-dark .house-labels text {

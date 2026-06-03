@@ -2594,6 +2594,38 @@ function natalElementBalance(positions: PlanetPosition[]) {
   }));
 }
 
+function formatPlanetDegree(position: PlanetPosition) {
+  const degree = Math.floor(position.degree);
+  const minutes = Math.round((position.degree - degree) * 60);
+
+  if (minutes === 60) {
+    return `${degree + 1}°00'`;
+  }
+
+  return `${degree}°${String(minutes).padStart(2, "0")}'`;
+}
+
+function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
+  const activeAspects = aspects
+    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
+    .map((aspect) => {
+      const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
+      return `${aspect.type} ${otherPlanet} (${aspect.orb.toFixed(1)}° orb)`;
+    });
+
+  if (activeAspects.length === 0) {
+    return ["No exact aspects right now."];
+  }
+
+  const visibleAspects = activeAspects.slice(0, 4);
+
+  if (activeAspects.length > visibleAspects.length) {
+    visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
+  }
+
+  return visibleAspects;
+}
+
 function SkyWheel({
   positions,
   aspects,
@@ -2881,16 +2913,47 @@ function SkyWheel({
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
           const label = point(planetAngle(position), radius.planet - 22);
+          const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
+          const tooltipLines = [placementLine, ...aspectTooltipLines(position, aspects)];
+          const tooltipWidth = 214;
+          const tooltipLineHeight = 18;
+          const tooltipPaddingY = 12;
+          const tooltipHeight = tooltipPaddingY * 2 + tooltipLines.length * tooltipLineHeight;
+          const tooltipX = marker.x > center ? marker.x - tooltipWidth - 18 : marker.x + 18;
+          const tooltipY = Math.min(
+            Math.max(marker.y - tooltipHeight / 2, 18),
+            600 - tooltipHeight - 18
+          );
 
           return (
-            <g key={position.planet}>
+            <g
+              key={position.planet}
+              className="planet-marker"
+              tabIndex={0}
+              role="img"
+              aria-label={tooltipLines.join(". ")}
+            >
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
+              <circle cx={marker.x} cy={marker.y} r="18" className="planet-hit-area" />
               <text x={marker.x} y={marker.y + 5} className="planet-glyph">
                 {position.glyph}
               </text>
               <text x={label.x} y={label.y} className="planet-degree">
                 {Math.floor(position.degree)}°
               </text>
+              <g className="planet-tooltip" transform={`translate(${tooltipX} ${tooltipY})`} aria-hidden="true">
+                <rect width={tooltipWidth} height={tooltipHeight} rx="12" />
+                {tooltipLines.map((line, index) => (
+                  <text
+                    key={`${position.planet}-tooltip-${line}`}
+                    x="14"
+                    y={tooltipPaddingY + 13 + index * tooltipLineHeight}
+                    className={index === 0 ? "planet-tooltip-title" : undefined}
+                  >
+                    {line}
+                  </text>
+                ))}
+              </g>
             </g>
           );
         })}
