@@ -3225,6 +3225,21 @@ const aspectApplication: Record<string, string> = {
   sextile: "low-pressure conversations, practical experiments, and small next steps"
 };
 
+const sunSeasonOpenings: Record<string, string> = {
+  Aries: "Aries season begins the zodiac year by bringing attention back to action, appetite, courage, and the places where waiting has become its own kind of answer.",
+  Taurus: "Taurus season slows the pace enough to notice what is stable, what is pleasurable, and what actually has enough value to keep receiving your time.",
+  Gemini: "Gemini season brings attention to questions, conversations, movement, and the information passing between people, places, and choices.",
+  Cancer: "Cancer season turns attention toward home, memory, protection, and the emotional roots beneath what people say they need.",
+  Leo: "Leo season brings attention to visibility, creative courage, joy, and the places where being seen asks for more honesty than performance.",
+  Virgo: "Virgo season brings attention to repair, discernment, daily rhythms, and the small details that decide whether something can actually work.",
+  Libra: "Libra season brings attention to relationship, balance, fairness, and the constant recalibration required when more than one person matters.",
+  Scorpio: "Scorpio season brings attention to trust, power, intimacy, and the truths that become harder to avoid once the surface story stops working.",
+  Sagittarius: "Sagittarius season brings attention to belief, movement, honesty, and the larger horizon that starts calling when the current frame feels too small.",
+  Capricorn: "Capricorn season brings attention to time, responsibility, structure, and the long-term shape of what is being built.",
+  Aquarius: "Aquarius season brings attention to systems, community, distance, and the future that becomes possible when old patterns are questioned.",
+  Pisces: "Pisces season brings attention to imagination, compassion, surrender, and the places where feeling moves beyond clean edges."
+};
+
 function formatAspectPlacement(position?: PlanetPosition) {
   if (!position) {
     return "";
@@ -3268,7 +3283,7 @@ function describePlacementAspect(position: PlanetPosition, aspect: SkySnapshot["
 
 function placementOpeningParagraph(position: PlanetPosition) {
   if (position.planet === "Sun") {
-    return `The Sun in ${position.sign} sets the tone for ${position.sign} season, bringing attention to the pace, questions, and priorities moving through the collective weather right now.`;
+    return sunSeasonOpenings[position.sign] ?? `The Sun in ${position.sign} sets the tone for ${position.sign} season, bringing attention to the priorities moving through the collective weather right now.`;
   }
 
   return `${position.planet} is moving through ${position.sign}, so ${placementThemes[position.planet] ?? position.theme.toLowerCase()} is being expressed through ${position.sign}'s style.`;
@@ -3385,7 +3400,7 @@ function PlacementTable({
     <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
       <div className="placement-table">
         {orderedPositions.map((position) => {
-          const title = `${position.planet} in ${position.sign}`;
+          const title = position.planet === "Sun" ? `${position.sign} Season` : `${position.planet} in ${position.sign}`;
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
