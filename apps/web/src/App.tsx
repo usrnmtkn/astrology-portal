@@ -225,6 +225,20 @@ const placementMeanings: Record<string, string> = {
   "True Node": "marks the directional pull of the moment and what feels fated, unfamiliar, or newly relevant."
 };
 
+const planetMotives: Record<string, string> = {
+  Sun: "attention, vitality, and the larger tone of the season",
+  Moon: "mood, instinct, and immediate emotional need",
+  Mercury: "language, choices, messages, and the story being told",
+  Venus: "connection, pleasure, values, and what feels worth choosing",
+  Mars: "heat, action, conflict, and the need to move",
+  Jupiter: "growth, perspective, appetite, and permission",
+  Saturn: "structure, proof, limits, and the reality of time",
+  Uranus: "change, disruption, freedom, and what refuses the usual pattern",
+  Neptune: "imagination, longing, sensitivity, and the places where things blur",
+  Pluto: "pressure, power, obsession, and deep change",
+  "True Node": "direction, timing, and the unfamiliar pull forward"
+};
+
 const defaultTransitForm: TransitForm = {
   name: "",
   birthPlace: "",
@@ -2943,14 +2957,10 @@ function RetrogradeCallout({
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
-          const detailParagraphs = content.detailParagraphs.length > 0
-            ? content.detailParagraphs
-            : [
-                <>
-                  <strong>{position.planet}</strong> is retrograde in <strong>{position.sign}</strong> right now.
-                </>,
-                placementMeanings[position.planet] ?? "This retrograde marks one of the live notes in today's sky."
-              ];
+          const detailParagraphs = [
+            placementOpeningParagraph(position),
+            placementRetrogradeNote(position)
+          ].filter(Boolean);
 
           return (
             <button
@@ -2962,10 +2972,7 @@ function RetrogradeCallout({
                 kicker: "Retrograde",
                 title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
-                body: [
-                  ...detailParagraphs,
-                  "Read retrograde motion as a cue to review, refine, and revisit this planet's topic before pushing it forward."
-                ],
+                body: detailParagraphs,
                 content: content.bundle
               })}
             >
@@ -3248,7 +3255,7 @@ function formatAspectPlacement(position?: PlanetPosition) {
   return ` in ${position.sign}`;
 }
 
-function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], fallback: ReactNode[]) {
+function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], _fallback: ReactNode[]) {
   const from = positions.find((position) => position.planet === aspect.from);
   const to = positions.find((position) => position.planet === aspect.to);
   const fromTheme = placementThemes[aspect.from] ?? `${aspect.from.toLowerCase()} themes`;
@@ -3259,8 +3266,7 @@ function currentSkyAspectWriteup(aspect: SkySnapshot["aspects"][number], positio
   return [
     `${aspect.from}${formatAspectPlacement(from)} is ${aspect.type} ${aspect.to}${formatAspectPlacement(to)}, bringing ${fromTheme} into contact with ${toTheme}.`,
     `This alignment supports ${opportunity}. ${aspect.from} ${placementMeanings[aspect.from] ?? `brings ${fromTheme}.`} ${aspect.to} ${placementMeanings[aspect.to] ?? `brings ${toTheme}.`}`,
-    `Together, these planets encourage ${application}. Because this contact is close by degree, its themes may feel more noticeable today.`,
-    ...fallback.slice(1)
+    `Together, these planets encourage ${application}. Because this contact is close by degree, its themes may feel more noticeable today.`
   ];
 }
 
@@ -3271,14 +3277,47 @@ function aspectsForPlacement(position: PlanetPosition, aspects: SkySnapshot["asp
     .slice(0, 2);
 }
 
+function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
+  if (position.planet === "Sun") {
+    return "Seasonal weather";
+  }
+
+  if (position.planet === "Moon") {
+    return "Lunar weather";
+  }
+
+  if (activeAspects.length > 0) {
+    return "Active placement";
+  }
+
+  return "Placement";
+}
+
+function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
+  if (position.planet === "Sun") {
+    return `${position.sign} Season`;
+  }
+
+  const primaryAspect = activeAspects[0];
+  if (primaryAspect) {
+    const otherPlanet = primaryAspect.from === position.planet ? primaryAspect.to : primaryAspect.from;
+    return `${position.planet} in ${position.sign} ${primaryAspect.type} ${otherPlanet}`;
+  }
+
+  return `${position.planet} in ${position.sign}`;
+}
+
 function describePlacementAspect(position: PlanetPosition, aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[]) {
   const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
   const otherPosition = positions.find((candidate) => candidate.planet === otherPlanet);
   const otherSign = otherPosition ? ` in ${otherPosition.sign}` : "";
-  const tone = aspectTone(aspect.type).toLowerCase();
-  const opportunity = aspectOpportunity[aspect.type] ?? "reading both planetary themes together";
+  const currentPlanetMotive = planetMotives[position.planet] ?? placementThemes[position.planet] ?? position.theme.toLowerCase();
+  const otherPlanetMotive = planetMotives[otherPlanet] ?? placementThemes[otherPlanet] ?? `${otherPlanet.toLowerCase()} themes`;
+  const signFrame = otherPosition
+    ? `${position.sign} and ${otherPosition.sign}`
+    : position.sign;
 
-  return `${position.planet} is also ${aspect.type} ${otherPlanet}${otherSign}, adding ${tone} around ${opportunity}.`;
+  return `${position.planet} in ${position.sign} is ${aspect.type} ${otherPlanet}${otherSign} today. ${position.planet} brings ${currentPlanetMotive}. ${otherPlanet} brings ${otherPlanetMotive}. Together in ${signFrame}, this makes the placement more active than background weather.`;
 }
 
 function placementOpeningParagraph(position: PlanetPosition) {
@@ -3286,25 +3325,65 @@ function placementOpeningParagraph(position: PlanetPosition) {
     return sunSeasonOpenings[position.sign] ?? `The Sun in ${position.sign} sets the tone for ${position.sign} season, bringing attention to the priorities moving through the collective weather right now.`;
   }
 
+  if (position.planet === "Moon") {
+    return `The Moon in ${position.sign} describes the emotional weather of the day, shaping what feels immediate, reactive, protective, or hard to ignore.`;
+  }
+
   return `${position.planet} is moving through ${position.sign}, so ${placementThemes[position.planet] ?? position.theme.toLowerCase()} is being expressed through ${position.sign}'s style.`;
 }
 
-function placementDetailBody(position: PlanetPosition, positions: PlanetPosition[], aspects: SkySnapshot["aspects"], fallback: ReactNode[]) {
-  const activeAspects = aspectsForPlacement(position, aspects);
-  const body = [
-    placementOpeningParagraph(position),
-    ...fallback
-  ];
-
-  if (activeAspects.length > 0) {
-    body.push(
-      `What makes this placement active right now: ${activeAspects
-        .map((aspect) => describePlacementAspect(position, aspect, positions))
-        .join(" ")}`
-    );
+function placementAspectGuidance(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
+  const primaryAspect = activeAspects[0];
+  if (!primaryAspect) {
+    return "";
   }
 
-  return body;
+  const otherPlanet = primaryAspect.from === position.planet ? primaryAspect.to : primaryAspect.from;
+  const application = aspectApplication[primaryAspect.type] ?? "noticing what is asking to be integrated";
+
+  if (position.planet === "Sun") {
+    return `This is what gives ${position.sign} season its sharper edge today. The larger seasonal theme is still present, but the ${primaryAspect.type} to ${otherPlanet} shows where the day asks for ${application}.`;
+  }
+
+  if (position.planet === "Moon") {
+    return `Because the Moon moves quickly, this may show up as a passing mood, reaction, or need that feels louder for a few hours. It is useful for ${application}.`;
+  }
+
+  return `The sign shows the style of this placement, but the aspect shows what is happening through it right now. This is useful for ${application}.`;
+}
+
+function placementRetrogradeNote(position: PlanetPosition) {
+  if (position.motion !== "retrograde") {
+    return "";
+  }
+
+  return `${position.planet} is also retrograde, so the emphasis turns toward review, revision, and returning to unfinished material before pushing the topic forward.`;
+}
+
+function placementDetailBody(position: PlanetPosition, positions: PlanetPosition[], aspects: SkySnapshot["aspects"], _fallback: ReactNode[]) {
+  const activeAspects = aspectsForPlacement(position, aspects);
+  const retrogradeNote = placementRetrogradeNote(position);
+
+  if (activeAspects.length > 0) {
+    return [
+      placementOpeningParagraph(position),
+      ...activeAspects.map((aspect) => describePlacementAspect(position, aspect, positions)),
+      placementAspectGuidance(position, activeAspects),
+      ...(retrogradeNote ? [retrogradeNote] : [])
+    ];
+  }
+
+  if (position.planet === "Sun" || position.planet === "Moon") {
+    return [
+      placementOpeningParagraph(position),
+      ...(retrogradeNote ? [retrogradeNote] : [])
+    ];
+  }
+
+  return [
+    placementOpeningParagraph(position),
+    ...(retrogradeNote ? [retrogradeNote] : [])
+  ];
 }
 
 function ActiveAspects({
@@ -3400,7 +3479,8 @@ function PlacementTable({
     <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
       <div className="placement-table">
         {orderedPositions.map((position) => {
-          const title = position.planet === "Sun" ? `${position.sign} Season` : `${position.planet} in ${position.sign}`;
+          const activeAspects = aspectsForPlacement(position, aspects);
+          const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
@@ -3416,7 +3496,7 @@ function PlacementTable({
           const body = placementDetailBody(position, positions, aspects, detailParagraphs);
           const openDetail = () => onOpenDetail({
             glyph: position.glyph,
-            kicker: "Placement",
+            kicker: placementDetailKicker(position, activeAspects),
             title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
             body,
