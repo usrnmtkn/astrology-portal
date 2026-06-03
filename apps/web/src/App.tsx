@@ -179,6 +179,7 @@ const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
 const userProfileStorageKey = "tldrastro:userProfile";
+const portalModeStorageKey = "tldrastro:portalMode";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
@@ -196,6 +197,54 @@ const zodiacSigns = [
   "Aquarius",
   "Pisces"
 ];
+const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
+const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+
+function isPortalMode(value: unknown): value is PortalMode {
+  return typeof value === "string" && portalModes.includes(value as PortalMode);
+}
+
+function isAuthenticatedPortalMode(value: PortalMode): value is Exclude<PortalMode, "guest"> {
+  return authenticatedPortalModes.includes(value);
+}
+
+function getStoredPortalMode() {
+  try {
+    const savedMode = window.localStorage.getItem(portalModeStorageKey);
+
+    return isPortalMode(savedMode) ? savedMode : null;
+  } catch {
+    return null;
+  }
+}
+
+function getInitialPortalMode(): PortalMode {
+  return getStoredPortalMode() ?? getInitialAccountMode();
+}
+
+function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalMode | null): PortalMode {
+  if (isAuthenticatedPortalMode(currentMode)) {
+    return currentMode;
+  }
+
+  if (restoredMode && isAuthenticatedPortalMode(restoredMode)) {
+    return restoredMode;
+  }
+
+  return "profile";
+}
+
+function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
+  if (currentMode === "member") {
+    return "guest";
+  }
+
+  if (currentMode === "friends" || currentMode === "account" || currentMode === "settings") {
+    return "profile";
+  }
+
+  return currentMode;
+}
 
 const placementThemes: Record<string, string> = {
   Sun: "identity and vitality",
@@ -1289,11 +1338,12 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
 
 export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
+  const restoredPortalModeRef = useRef<PortalMode | null>(getStoredPortalMode());
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [skyDate, setSkyDate] = useState(dateInputValue);
-  const [mode, setMode] = useState<PortalMode>(getInitialAccountMode);
+  const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
@@ -1409,6 +1459,18 @@ export function App() {
       return;
     }
   }, [dyslexiaFriendlyFont]);
+
+  useEffect(() => {
+    if (!userProfile && isAuthenticatedPortalMode(mode)) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(portalModeStorageKey, mode);
+    } catch {
+      return;
+    }
+  }, [mode, userProfile]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -1571,6 +1633,7 @@ export function App() {
         setRemoteAccountId(null);
         setRemoteProfileReady(false);
         lastRemoteProfileSaveRef.current = "";
+        setMode(unauthenticatedLandingMode);
         return;
       }
 
@@ -1614,7 +1677,7 @@ export function App() {
         }
 
         clearPendingSignupForm();
-        setMode("profile");
+        setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
         setRemoteProfileReady(true);
       } catch (error) {
         if (cancelled) {
@@ -1624,7 +1687,7 @@ export function App() {
         console.warn("Supabase profile load failed; using local profile cache.", error);
         setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
         clearPendingSignupForm();
-        setMode("profile");
+        setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
         setRemoteProfileReady(true);
       }
     }
