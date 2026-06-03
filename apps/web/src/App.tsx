@@ -1903,20 +1903,6 @@ export function App() {
           >
             {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
           </button>
-          {userProfile && (
-            <button
-              type="button"
-              className={`friends-toggle ${mode === "friends" ? "active" : ""}`}
-              aria-label="Open friends"
-              onClick={() => {
-                setMode("friends");
-                setMenuOpen(false);
-              }}
-            >
-              <Users size={18} aria-hidden="true" />
-              <span>Friends</span>
-            </button>
-          )}
           <button
             type="button"
             className="menu-toggle"
