@@ -2667,6 +2667,8 @@ function SkyWheel({
       } => Boolean(aspect)
     );
   const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
+  const signDividerInnerRadius = radius.signInner - 2;
+  const signDividerOuterRadius = radius.outer + 2;
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
@@ -2720,8 +2722,8 @@ function SkyWheel({
       <g className="sign-band-dividers">
         {signs.map((sign, index) => {
           const a = angleForLongitude(index * 30);
-          const outer = point(a, radius.outer);
-          const inner = point(a, radius.signInner);
+          const outer = point(a, signDividerOuterRadius);
+          const inner = point(a, signDividerInnerRadius);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
       </g>
