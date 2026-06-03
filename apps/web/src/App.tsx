@@ -1880,7 +1880,7 @@ export function App() {
                 <span>You</span>
               </button>
               <button
-                className={mode === "friends" ? "active" : ""}
+                className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
                 type="button"
                 onClick={() => setMode("friends")}
               >
