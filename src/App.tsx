@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { approvedVoiceOrKnowledgeFallback, aspectContentId } from "./content/registry";
+import { approvedVoiceOrKnowledgeFallback, aspectContentId, placementContentId } from "./content/registry";
 import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
@@ -2814,6 +2814,15 @@ function RetrogradeCallout({
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
+          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+          const detailParagraphs = content.detailParagraphs.length > 0
+            ? content.detailParagraphs
+            : [
+                <>
+                  <strong>{position.planet}</strong> is retrograde in <strong>{position.sign}</strong> right now.
+                </>,
+                placementMeanings[position.planet] ?? "This retrograde marks one of the live notes in today's sky."
+              ];
 
           return (
             <button
@@ -2826,12 +2835,10 @@ function RetrogradeCallout({
                 title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
                 body: [
-                  <>
-                    <strong>{position.planet}</strong> is retrograde in <strong>{position.sign}</strong> right now.
-                  </>,
-                  placementMeanings[position.planet] ?? "This retrograde marks one of the live notes in today's sky.",
+                  ...detailParagraphs,
                   "Read retrograde motion as a cue to review, refine, and revisit this planet's topic before pushing it forward."
-                ]
+                ],
+                content: content.bundle
               })}
             >
               <span className="retro-badge" aria-hidden="true">
@@ -3076,7 +3083,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const content = approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to));
             const rowSummary = content.summary ?? aspect.meaning;
-            const detailBody = content.body ?? aspect.meaning;
+            const detailParagraphs = content.detailParagraphs.length > 0 ? content.detailParagraphs : [aspect.meaning];
 
             return (
               <button
@@ -3090,17 +3097,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
                   title,
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
                   content: content.bundle,
-                  body: [
-                    detailBody,
-                    <>
-                      <strong>{aspect.from}</strong> and <strong>{aspect.to}</strong> are in a {aspect.type} today. The smaller the orb, the more exact the contact feels.
-                    </>,
-                    aspectTone(aspect.type) === "Flow"
-                      ? "This aspect tends to move with less resistance. It can be useful when you want cooperation, ease, or a cleaner path through the day."
-                      : aspectTone(aspect.type) === "Friction"
-                        ? "This aspect tends to ask for adjustment. It can be productive when you name the tension instead of trying to move around it."
-                        : "This contact puts two planetary themes in the same room. Watch what gets louder, simpler, or harder to ignore."
-                  ]
+                  body: detailParagraphs
                 })}
               >
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
@@ -3124,16 +3121,21 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
 function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
   return (
     <div className="placement-prose">
-      {positions.map((position, index) => (
-        <p key={position.planet}>
-          {index === 0 ? "Today’s " : ""}
-          <strong>{position.planet}</strong>
-          {" at "}
-          <span>{formatPlacementPosition(position).toUpperCase()}</span>
-          {" "}
-          {placementMeanings[position.planet]}
-        </p>
-      ))}
+      {positions.map((position, index) => {
+        const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+        const summary = content.summary ?? placementMeanings[position.planet] ?? "marks one of the live notes in today's sky.";
+
+        return (
+          <p key={position.planet}>
+            {index === 0 ? "Today’s " : ""}
+            <strong>{position.planet}</strong>
+            {" at "}
+            <span>{formatPlacementPosition(position).toUpperCase()}</span>
+            {" "}
+            {summary}
+          </p>
+        );
+      })}
     </div>
   );
 }
@@ -3150,18 +3152,23 @@ function PlacementTable({ positions, onOpenDetail }: { positions: PlanetPosition
           const title = `${position.planet} in ${position.sign}`;
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
+          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+          const detailParagraphs = content.detailParagraphs.length > 0
+            ? content.detailParagraphs
+            : [
+                <>
+                  <strong>{position.planet}</strong> is moving through <strong>{formatPlacementPosition(position)}</strong> in the current sky.
+                </>,
+                placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
+                `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
+              ];
           const openDetail = () => onOpenDetail({
             glyph: position.glyph,
             kicker: "Placement",
             title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
-            body: [
-              <>
-                <strong>{position.planet}</strong> is moving through <strong>{formatPlacementPosition(position)}</strong> in the current sky.
-              </>,
-              placementMeanings[position.planet] ?? "This placement marks one of the live notes in today's sky.",
-              `${position.sign} gives this planet its style: the sign tells you how the planet is expressing itself, while the degree shows where it is inside that sign.`
-            ]
+            body: detailParagraphs,
+            content: content.bundle
           });
 
           return (
