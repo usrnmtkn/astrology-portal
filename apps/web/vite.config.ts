@@ -8,6 +8,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
+            return "astro-knowledge";
+          }
           if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
             return "react";
           }
