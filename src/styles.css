@@ -6814,6 +6814,152 @@ html,
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
+/* Final auth/menu contrast pass. Keep this after the duplicate menu rules above. */
+.auth-mode .signup-heading p,
+.auth-mode .signup-heading h3,
+.auth-mode .signup-story h2,
+.auth-mode .signin-note,
+.auth-mode .signin-note button {
+  color: var(--ink-app);
+}
+
+.auth-mode .signup-heading p,
+.auth-mode .signup-field > span,
+.auth-mode .email-divider span {
+  color: var(--muted-app);
+}
+
+.auth-mode .signup-field > div,
+.auth-mode .signup-city-search label > input,
+.auth-mode .signup-city-search .city-search-control {
+  background: var(--surface-muted-app);
+  border-color: var(--line-strong-app);
+}
+
+.auth-mode .signup-field input,
+.auth-mode .signup-city-search input,
+.auth-mode .signup-city-search label > input {
+  color: var(--ink-app);
+}
+
+.auth-mode .signup-field input::placeholder,
+.auth-mode .signup-city-search input::placeholder,
+.auth-mode .signup-city-search label > input::placeholder {
+  color: var(--faint-app);
+  opacity: 1;
+}
+
+.auth-mode .social-signons button {
+  background: var(--surface-app);
+  border-color: var(--line-strong-app);
+  color: var(--ink-app);
+}
+
+.auth-mode .social-signons button:hover,
+.auth-mode .social-signons button:focus-visible {
+  border-color: color-mix(in srgb, var(--ink-app) 45%, var(--line-strong-app));
+  outline: none;
+}
+
+.auth-mode .signup-submit {
+  background: var(--ink-app);
+  color: var(--surface-app);
+}
+
+.theme-dark.auth-mode .signup-story {
+  background:
+    radial-gradient(58% 50% at 2% 0%, rgba(214, 104, 140, 0.4) 0%, transparent 55%),
+    radial-gradient(54% 48% at 100% 2%, rgba(96, 134, 224, 0.34) 0%, transparent 56%),
+    radial-gradient(64% 56% at 88% 100%, rgba(138, 116, 220, 0.28) 0%, transparent 60%),
+    radial-gradient(56% 50% at 6% 100%, rgba(74, 168, 168, 0.22) 0%, transparent 58%),
+    var(--surface-app);
+}
+
+.theme-dark.auth-mode .signup-heading p,
+.theme-dark.auth-mode .signup-heading h3,
+.theme-dark.auth-mode .signup-story h2,
+.theme-dark.auth-mode .signin-note,
+.theme-dark.auth-mode .signin-note button {
+  color: var(--ink-app);
+}
+
+.theme-dark.auth-mode .signup-heading p,
+.theme-dark.auth-mode .signup-field > span,
+.theme-dark.auth-mode .email-divider span {
+  color: var(--muted-app);
+}
+
+.theme-dark.auth-mode .auth-message {
+  background: rgba(159, 184, 255, 0.1);
+  border-color: rgba(159, 184, 255, 0.22);
+  color: var(--ink-app);
+}
+
+.theme-dark.auth-mode .signup-field > div,
+.theme-dark.auth-mode .signup-city-search label > input,
+.theme-dark.auth-mode .signup-city-search .city-search-control {
+  background: var(--surface-muted-app);
+  border-color: var(--line-strong-app);
+}
+
+.theme-dark.auth-mode .signup-field input,
+.theme-dark.auth-mode .signup-city-search input,
+.theme-dark.auth-mode .signup-city-search label > input {
+  color: var(--ink-app);
+}
+
+.theme-dark.auth-mode .signup-submit {
+  background: var(--ink-app);
+  color: var(--surface-app);
+}
+
+.site-menu .site-menu-auth button,
+.theme-dark .site-menu .site-menu-auth button {
+  border-radius: 18px;
+  font-weight: var(--fw-bold);
+}
+
+.site-menu .site-menu-join {
+  background: var(--surface-app);
+  border: 1px solid var(--line-strong-app);
+  color: var(--ink-app);
+}
+
+.site-menu .site-menu-login {
+  background: var(--ink-app);
+  border: 1px solid var(--ink-app);
+  color: var(--surface-app);
+}
+
+.theme-dark .site-menu .site-menu-join {
+  background: var(--surface-muted-app);
+  border-color: var(--line-strong-app);
+  color: var(--ink-app);
+}
+
+.theme-dark .site-menu .site-menu-login {
+  background: var(--ink-app);
+  border-color: var(--ink-app);
+  color: var(--surface-app);
+}
+
+.site-menu .site-menu-join:hover,
+.site-menu .site-menu-join:focus-visible,
+.theme-dark .site-menu .site-menu-join:hover,
+.theme-dark .site-menu .site-menu-join:focus-visible {
+  background: color-mix(in srgb, var(--surface-app) 82%, var(--ink-app) 6%);
+  border-color: color-mix(in srgb, var(--ink-app) 28%, var(--line-strong-app));
+  outline: none;
+}
+
+.site-menu .site-menu-login:hover,
+.site-menu .site-menu-login:focus-visible,
+.theme-dark .site-menu .site-menu-login:hover,
+.theme-dark .site-menu .site-menu-login:focus-visible {
+  background: color-mix(in srgb, var(--ink-app) 88%, var(--surface-app) 12%);
+  outline: none;
+}
+
 .account-page .settings-row strong,
 .account-page .settings-readonly-row strong,
 .settings-page .settings-row strong,
