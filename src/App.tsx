@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { approvedVoiceOrKnowledgeFallback, aspectContentId, placementContentId } from "./content/registry";
+import { approvedVoiceOrKnowledgeFallback, aspectContentId, currentSkyAspectContentId, placementContentId } from "./content/registry";
 import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
@@ -3203,7 +3203,7 @@ function ActiveAspects({ aspects, onOpenDetail }: { aspects: SkySnapshot["aspect
         <div className="aspect-row-list">
           {aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
-            const content = approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to));
+            const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to));
             const rowSummary = content.summary ?? aspect.meaning;
             const detailParagraphs = content.detailParagraphs.length > 0 ? content.detailParagraphs : [aspect.meaning];
 
