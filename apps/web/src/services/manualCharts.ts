@@ -229,6 +229,11 @@ export async function createManualChart(userId: string, input: ManualChartInput)
     });
 
   if (connectionError) {
+    await client
+      .from("manual_charts")
+      .delete()
+      .eq("id", chart.id)
+      .eq("owner_user_id", userId);
     throw connectionError;
   }
 
