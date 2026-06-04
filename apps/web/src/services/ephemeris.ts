@@ -1,4 +1,4 @@
-import type { LocationInput, PlanetPosition, SkySnapshot } from "../types";
+import type { LocationInput, PlanetPosition, SkySnapshot } from "../types.js";
 
 const signs = [
   ["Aries", "♈"],

@@ -3,7 +3,7 @@ import {
   generateWithOpenAI,
   saveGeneratedInterpretation,
   type GenerateContentInput
-} from "./_lib/content-generation";
+} from "./_lib/content-generation.js";
 
 async function readJsonBody(req: IncomingMessage) {
   const chunks: Buffer[] = [];
