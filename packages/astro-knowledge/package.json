@@ -18,7 +18,11 @@
     "./web": "./dist/web.json",
     "./index": "./dist/knowledge.index.json",
     "./entries/*": "./dist/entries/*.json",
-    "./timing-engine": "./engine/timing/index.js"
+    "./timing-engine": {
+      "types": "./engine/timing/index.d.ts",
+      "import": "./engine/timing/browser.js",
+      "require": "./engine/timing/index.js"
+    }
   },
   "scripts": {
     "validate": "node scripts/validate.js",

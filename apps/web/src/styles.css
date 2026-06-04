@@ -2439,6 +2439,7 @@ button {
 }
 
 .sign-labels text {
+  dominant-baseline: middle;
   fill: #ffffff;
   font-size: 14px;
   text-transform: uppercase;
@@ -10025,26 +10026,72 @@ html,
 }
 
 .manual-chart-actions {
-  display: grid;
-  gap: 7px;
-  justify-items: end;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
 }
 
-.manual-chart-actions button {
+.manual-chart-menu-trigger {
   align-items: center;
-  background: transparent;
+  background: color-mix(in srgb, var(--surface-app) 82%, var(--line-app));
   border: 1px solid var(--line-app);
-  border-radius: 999px;
+  border-radius: 50%;
   color: var(--ink-app);
   cursor: pointer;
   display: inline-flex;
-  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-ui);
-  gap: 6px;
-  min-height: 34px;
-  padding: 0 10px;
+  height: 42px;
+  justify-content: center;
+  padding: 0;
+  width: 42px;
 }
 
-.manual-chart-actions .manual-chart-delete {
+.manual-chart-menu-trigger[aria-expanded="true"] {
+  background: var(--ink-app);
+  color: var(--surface-app);
+}
+
+.manual-chart-overflow-menu {
+  background: color-mix(in srgb, var(--surface-app) 98%, transparent);
+  border: 1px solid var(--line-app);
+  border-radius: 18px;
+  box-shadow: 0 18px 38px rgba(20, 22, 22, 0.16);
+  display: grid;
+  gap: 4px;
+  min-width: 190px;
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+}
+
+.theme-dark .manual-chart-overflow-menu {
+  box-shadow: none;
+}
+
+.manual-chart-overflow-menu button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink-app);
+  cursor: pointer;
+  display: flex;
+  font: var(--fw-semibold) var(--text-meta) / 1 var(--font-ui);
+  gap: 10px;
+  justify-content: flex-start;
+  min-height: 42px;
+  padding: 0 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.manual-chart-overflow-menu button:hover {
+  background: color-mix(in srgb, var(--ink-app) 7%, transparent);
+}
+
+.manual-chart-overflow-menu .manual-chart-delete {
   color: #9b3d3d;
 }
 
@@ -11190,11 +11237,11 @@ button.friend-bond-snapshot-card:focus-visible {
   }
 
   .app-shell:is(.mode-profile, .mode-friends) .profile-layout .manual-chart-row {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 44px minmax(0, 1fr) auto;
   }
 
   .manual-chart-actions {
-    grid-column: 2;
+    grid-column: 3;
   }
 
   .manual-chart-select {

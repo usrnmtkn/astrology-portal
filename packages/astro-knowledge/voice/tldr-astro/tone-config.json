@@ -5,9 +5,16 @@
   "certainty": "low-to-moderate",
   "defaultStatus": "REVIEW",
   "preferredPatterns": [
+    "choose feed, in-depth, or article mode based on surface",
     "start with lived experience",
+    "write a strong human title",
+    "name what is being activated",
+    "explain why the person may feel, think, remember, want, or react a certain way",
+    "for bonds, describe the dynamic between two people instead of separate chart traits",
     "say what each planet wants",
     "explain why the behavior makes sense",
-    "use soft certainty"
+    "give one concrete course of action",
+    "use soft certainty for natal identity",
+    "use practical advice for current sky and transits"
   ]
 }

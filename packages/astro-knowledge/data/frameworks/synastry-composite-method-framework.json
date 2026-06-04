@@ -28,12 +28,22 @@
     {
       "id": "interaspects",
       "heading": "Interaspects",
-      "body": "Prioritize close major aspects between one person's planets and the other's personal planets or angles. Conjunctions fuse and intensify. Oppositions polarize and reveal the other side. Squares create friction and action. Trines ease exchange. Sextiles offer cooperation that must be used."
+      "body": "Prioritize close major aspects between one person's planets and the other's personal planets or angles. Conjunctions are especially high signal because the two planetary functions tend to play out together automatically. Oppositions polarize and reveal the other side. Squares create friction and action. Trines ease exchange. Sextiles offer cooperation that must be used."
+    },
+    {
+      "id": "synastry-directionality",
+      "heading": "Synastry Directionality",
+      "body": "Synastry is directional. One person's planet acts as the visitor and the other person's chart receives it through a planet, point, or house. The app should preserve who is activating whom instead of reducing the contact to a neutral compatibility statement."
+    },
+    {
+      "id": "key-pair",
+      "heading": "Key Pair",
+      "body": "After ranking the contacts, identify one or two key pairs that describe the strongest repeating dynamic in the relationship. The key pair should be selected by orb, planet importance, angle or node involvement, personal planet relevance, and whether the contact answers a real natal relationship need."
     },
     {
       "id": "house-overlays",
       "heading": "House Overlays",
-      "body": "House overlays show where one person lands in the other's life. A partner's planets in your 1st affect identity and embodiment; 4th affects home and roots; 5th affects pleasure and romance; 7th affects partnership; 8th affects intimacy and shared resources; 10th affects reputation and life direction. The house person feels the life area; the planet person supplies the function."
+      "body": "House overlays show where one person lands in the other's life. The house person feels the life area being activated; the planet person supplies the planetary function. A partner's planets in your 1st affect identity and embodiment; 4th affects home and roots; 5th affects pleasure and romance; 7th affects partnership; 8th affects intimacy and shared resources; 10th affects reputation and life direction. House overlays provide context, while planet-to-planet contacts describe the stronger behavioral exchange."
     },
     {
       "id": "cross-chart-configurations",
@@ -43,7 +53,7 @@
     {
       "id": "saturn-and-durability",
       "heading": "Saturn And Durability",
-      "body": "Saturn contacts can indicate commitment, endurance, duty, and structure, but also inhibition, fear, coldness, delay, or burden. Do not romanticize Saturn as proof of longevity. Ask whether the Saturn person provides structure that supports the bond or pressure that makes affection go cold."
+      "body": "Saturn contacts can indicate commitment, endurance, duty, structure, maturity, loyalty, and the willingness to keep showing up, but also inhibition, fear, coldness, delay, guilt, unequal burden, or the feeling that affection has to be earned. Do not romanticize Saturn as proof of longevity and do not treat it as automatically bad. Ask whether the Saturn person provides structure that supports the bond or pressure that makes affection go cold. Strong Saturn copy should name the support, the cost, and the agreement that needs to become explicit."
     },
     {
       "id": "nodes-vertex-and-12th",
@@ -53,12 +63,27 @@
     {
       "id": "composite-chart",
       "heading": "Composite Chart",
-      "body": "Use the composite chart to describe the relationship as a third entity. Composite Sun describes purpose and identity of the bond. Composite Moon describes the daily emotional climate. Composite Venus describes affection and pleasure. Composite Mars describes conflict and desire. Composite Saturn describes tests, limits, and durability."
+      "body": "Use the composite chart to describe the relationship as a third entity: not either person alone, but the pattern created when both charts combine. Composite Sun describes vitality, purpose, and identity of the bond. Composite Moon describes the private emotional climate and how the relationship repairs. Composite Mercury describes communication, agreements, decisions, and how the bond processes information. Composite Venus describes affection, kindness, pleasure, and repair. Composite Mars describes desire, heat, conflict, and how anger must be handled. Composite Jupiter describes growth, generosity, faith, opportunity, and where the relationship may overpromise. Composite Saturn describes tests, limits, responsibilities, commitments, and durability. Composite Uranus describes freedom, disruption, difference, instability, and resistance to control. Composite Neptune describes idealization, longing, imagination, sensitivity, confusion, and blurred boundaries. Composite Pluto describes intensity, power, control, compulsion, and transformation. Composite Ascendant describes how the relationship appears socially."
+    },
+    {
+      "id": "composite-houses-and-timing",
+      "heading": "Composite Houses And Timing",
+      "body": "Composite houses show where the relationship expresses itself most visibly. They should be used for practical interpretation: what part of life the bond keeps pulling attention toward, where the relationship is easiest to maintain, and where pressure gathers. Current transits and progressions to the composite chart describe relationship timing. Frame them as pressure on the bond, not as blame on either person."
+    },
+    {
+      "id": "composite-boundary",
+      "heading": "Composite Boundary",
+      "body": "Composite should not be used to decide which person is doing what. Use synastry for the interaction between two people. Use composite when the relationship has enough continuity, commitment, or shared purpose to behave like its own container."
+    },
+    {
+      "id": "traditional-compatibility-modifiers",
+      "heading": "Traditional Compatibility Modifiers",
+      "body": "Use traditional compatibility rules as ranking modifiers, not fixed verdicts. Close Moon contacts, Venus contacts, Jupiter contacts, Ascendant contacts, Midheaven contacts, angular-house contacts, and contacts involving the Lot of Fortune can raise relevance when they are otherwise supported. Mars and Saturn contacts are important because they show attraction, pressure, action, commitment, or strain, but their tone depends on sect, dignity, house placement, and the surrounding pattern. Keep advanced terms out of default copy unless the user opens an astrology-detail layer."
     },
     {
       "id": "order-of-reading",
       "heading": "Order Of Reading",
-      "body": "Recommended order: each natal relationship pattern, shared Sun-Moon-Ascendant story, close interaspects, house overlays, Venus-Mars attraction, Saturn durability, nodal or turning-point contacts if used, composite chart, then a grounded summary of strengths, risks, and choices."
+      "body": "Recommended order: each natal relationship pattern, shared Sun-Moon-Ascendant story, close interaspects, house overlays, Venus-Mars attraction, Saturn support and cost, nodal or turning-point contacts if used, composite chart, composite timing if active, then a grounded summary of strengths, risks, and choices."
     }
   ],
   "voiceNeutral": true,

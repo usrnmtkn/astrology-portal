@@ -1,0 +1,71 @@
+{
+  "id": "circle-feed-logic-framework",
+  "kind": "framework",
+  "role": "product-logic",
+  "category": "feed-ranking",
+  "title": "Circle Feed Logic Framework",
+  "sections": [
+    {
+      "id": "product-formula",
+      "heading": "Product Formula",
+      "body": "Every feed item should combine a sky event, personal chart activation, timing relevance, life area, and social context. The goal is astrology as timing, context, and language for what people are already feeling."
+    },
+    {
+      "id": "signal-pipeline",
+      "heading": "Signal Pipeline",
+      "body": "Detect the sky event, check personal activation, apply timing modifiers, check relationship activation, check circle repetition, map to theme and life area, score and rank, render as a card, apply privacy, then allow save, journal, share, or discuss."
+    },
+    {
+      "id": "sky-events",
+      "heading": "Sky Events",
+      "body": "Collective events include ingresses, exact or near-exact aspects, lunations, stations, retrogrades, and major Moon contacts. They become feed-worthy when exact, personally relevant, socially relevant, or part of a larger pattern."
+    },
+    {
+      "id": "personal-activations",
+      "heading": "Personal Activations",
+      "body": "High-priority contacts include Sun, Moon, Ascendant, Midheaven, chart ruler, Mercury, Venus, Mars, lord of the year, activated profection ruler, and natal aspect patterns. Personal transit cards should include whole-sign house context when the chart is available."
+    },
+    {
+      "id": "relationship-activations",
+      "heading": "Relationship Activations",
+      "body": "Relationship relevance increases when current astrology touches both charts, an existing synastry aspect, a composite planet or angle, a house overlay, or an existing pressure point between two charts. High-signal relationship timing includes transits to composite Sun, Moon, Venus, Mars, Saturn, Ascendant, or Midheaven; transits to a close synastry contact; the same sky event hitting both people's personal planets or angles; and Saturn, Mars, Venus, Moon, or Jupiter contacts becoming exact by transit, progression, or lunation. Composite timing should describe what the relationship is being asked to deal with now. Synastry timing should describe how one person is activating the other now."
+    },
+    {
+      "id": "circle-activations",
+      "heading": "Circle Activations",
+      "body": "Circle relevance increases when multiple people share a house activation, planet theme, lord of the year, profection house, or similar relationship pressure. Privacy determines whether names, anonymous counts, or general labels are shown."
+    },
+    {
+      "id": "hellenistic-layer",
+      "heading": "Hellenistic Relevance Layer",
+      "body": "Whole-sign houses, annual profections, lord of the year, sect, angularity, aversion, dignity, lots, and time-lord stacking should primarily improve ranking and tone under the hood. Technical terms should be optional."
+    },
+    {
+      "id": "ranking-weights",
+      "heading": "Ranking Weights",
+      "body": "Use transit importance, orb tightness, personal relevance, relationship relevance, circle repetition, traditional relationship modifiers, Hellenistic modifiers, novelty, and fatigue to rank candidate cards. Strongest boosts belong to angles, chart ruler, lord of the year, exact aspects, outer planet contacts to personal points, shared relationship activation, close Moon contacts, Venus or Jupiter support, Saturn or Mars pressure, composite timing, and repeated circle themes."
+    },
+    {
+      "id": "traditional-relationship-modifiers",
+      "heading": "Traditional Relationship Modifiers",
+      "body": "For relationship ranking, close Moon contacts, Venus contacts, Jupiter contacts, Ascendant contacts, Midheaven contacts, angular house contacts, and contacts involving Lots can raise relevance. Mars and Saturn contacts should also rank strongly because they show action, attraction, pressure, commitment, or strain. Sect, dignity, and planetary condition should adjust tone and confidence under the hood instead of appearing as default reader-facing jargon."
+    },
+    {
+      "id": "theme-taxonomy",
+      "heading": "Theme Taxonomy",
+      "body": "Map feed items to human themes instead of planet labels: Power, Love, Work, Home, Voice, Body, Future, and Creativity."
+    },
+    {
+      "id": "copy-contract",
+      "heading": "Copy Contract",
+      "body": "Every card should answer what is happening, where it lands, why it matters, and what the user should notice or do. Titles should sound like human insight rather than generated astrology labels. Avoid deterministic claims."
+    },
+    {
+      "id": "privacy-contract",
+      "heading": "Privacy Contract",
+      "body": "Default shared content should not expose raw chart data. Supported sharing levels are private, insight only, astrology details, and full chart. Relationship timing requires consent from both people."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
