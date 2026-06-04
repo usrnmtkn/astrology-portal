@@ -2483,22 +2483,39 @@ button {
 }
 
 .interchart-aspect-lines line {
-  opacity: 0.62;
-  stroke-width: 1.75;
+  opacity: 0.7;
+  stroke-width: 1.65;
+}
+
+.synastry-chart-rings circle,
+.synastry-chart-rings line {
+  fill: none;
+  stroke: rgba(55, 71, 79, 0.32);
+  stroke-width: 1;
+}
+
+.synastry-chart-rings circle:first-child {
+  stroke: rgba(55, 71, 79, 0.48);
+  stroke-dasharray: 2 7;
+}
+
+.synastry-chart-rings circle:nth-child(2) {
+  stroke: rgba(55, 71, 79, 0.22);
 }
 
 .inner-planet-labels .planet-glyph {
   fill: #c98d59;
-  font-size: 21px;
+  font-size: 23px;
 }
 
 .inner-planet-labels .planet-degree {
   fill: #9c704e;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .inner-planet-labels .planet-tick {
-  stroke: rgba(201, 141, 89, 0.76);
+  stroke: rgba(201, 141, 89, 0.82);
+  stroke-width: 1.35;
 }
 
 .natal-angle-lines line {
