@@ -539,6 +539,14 @@ function skyAspectAdvice(planetA: string, aspect: string, planetB: string) {
   return `${skyAspectNotice(planetA, aspect, planetB)} ${skyAspectMove(planetA, aspect, planetB)} ${skyAspectTiming(planetA, planetB)}`;
 }
 
+function skyAspectDetailParagraphs(planetA: string, aspect: string, planetB: string) {
+  return cleanParagraphs([
+    skyAspectNotice(planetA, aspect, planetB),
+    skyAspectWhy(planetA, aspect, planetB),
+    `${skyAspectMove(planetA, aspect, planetB)} ${skyAspectTiming(planetA, planetB)}`
+  ]);
+}
+
 function natalAspectAdvice(planetA: string, aspect: string, planetB: string) {
   const planetALabel = titleize(planetA);
   const planetBLabel = titleize(planetB);
@@ -616,6 +624,35 @@ function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
   return `This placement can make ${topic} easier to understand through ${style}. Notice where this pattern helps you name what is happening, then choose the response that keeps the strength without repeating the habit.`;
 }
 
+function skyPlacementDetailParagraphs(planet: string, sign: string) {
+  const planetLabel = titleize(planet);
+  const signLabel = titleize(sign);
+  const topic = skyPlanetTopic[planet] ?? planetTopic[planet] ?? `${planetLabel.toLowerCase()} themes`;
+  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+
+  if (planet === "sun") {
+    return cleanParagraphs([
+      `${signLabel} season brings attention to ${style}. You may notice the day keeps pulling you back to the conversations, choices, and patterns connected to that sign.`,
+      `The Sun describes attention, vitality, and the larger tone of the season. In ${signLabel}, that tone moves through ${style}.`,
+      `Give the season one clear place to go. Choose the question, conversation, or next step that makes the broader theme useful in real life.`
+    ]);
+  }
+
+  if (planet === "moon") {
+    return cleanParagraphs([
+      `The Moon is in ${signLabel} today, so feelings, needs, and reactions may move through ${style}.`,
+      `The Moon describes what people need quickly and instinctively. In ${signLabel}, the mood of the day is more likely to look for ${style}.`,
+      `Notice what you need before you answer too fast. A simple pause can keep the feeling from turning into an automatic reaction.`
+    ]);
+  }
+
+  return cleanParagraphs([
+    `${planetLabel} is moving through ${signLabel}, bringing ${topic} into ${style}.`,
+    `${planetLabel} describes ${topic}. In ${signLabel}, that topic takes on ${style}.`,
+    `Look for where this shows up in ordinary decisions today. Choose one response that is concrete enough to act on.`
+  ]);
+}
+
 export function createDomainRegistry(bundleInput: unknown) {
   const bundle = bundleInput as KnowledgeBundle;
   const registryMode: "sky" | "natal" = (bundle.transits?.length ?? 0) > 0 ? "sky" : "natal";
@@ -688,11 +725,8 @@ export function createDomainRegistry(bundleInput: unknown) {
       continue;
     }
 
-    const sourceBody = cleanText(transit.modern) || cleanText(transit.base) || cleanText(transit.business) || cleanText(transit.tldr) || transit.id;
-    const sourceSummary = cleanText(transit.tldr);
-    const generatedSummary = readableAspectSummary(transit.transiting, transit.aspect, transit.other, "sky");
     const body = skyAspectAdvice(transit.transiting, transit.aspect, transit.other);
-    const summary = sourceSummary && sourceSummary.length > 24 ? sourceSummary : generatedSummary;
+    const summary = skyAspectHeadline(transit.transiting, transit.aspect, transit.other);
 
     const knowledgeItem: KnowledgeItem = {
       id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
@@ -708,7 +742,7 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: summary,
         displaySummary: summary,
-        detailParagraphs: cleanParagraphs([sourceBody, transit.business, transit.shadow]),
+        detailParagraphs: skyAspectDetailParagraphs(transit.transiting, transit.aspect, transit.other),
         livedExperience: body,
         gift: cleanText(transit.business),
         challenge: cleanText(transit.shadow)
@@ -763,6 +797,9 @@ export function createDomainRegistry(bundleInput: unknown) {
     const mode = registryMode;
     const generatedSummary = planet && sign ? placementSummary(planet, sign, mode) : "";
     const generatedBody = planet && sign ? placementAdvice(planet, sign, mode) : "";
+    const generatedDetailParagraphs = planet && sign && mode === "sky"
+      ? skyPlacementDetailParagraphs(planet, sign)
+      : cleanParagraphs([placement.gift, placement.challenge, placement.note]);
 
     const knowledgeItem: KnowledgeItem = {
       id: placement.id,
@@ -781,7 +818,7 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: cleanText(placement.tldr) || generatedSummary || placement.id,
         displaySummary: generatedSummary || cleanText(placement.tldr) || cleanText(placement.body),
-        detailParagraphs: cleanParagraphs([placement.gift, placement.challenge, placement.note]),
+        detailParagraphs: generatedDetailParagraphs,
         livedExperience: generatedBody || cleanText(placement.body) || cleanText(placement.tldr) || placement.id,
         gift: cleanText(placement.gift),
         challenge: cleanText(placement.challenge)
@@ -855,6 +892,10 @@ export function createDomainRegistry(bundleInput: unknown) {
     const aspectThemes = primitiveThemes(aspectMap, aspectName);
     const mode = id.startsWith("sky-") || registryMode === "sky" ? "sky" : "natal";
 
+    const summary = mode === "sky"
+      ? skyAspectHeadline(planetA, aspectName, planetB)
+      : readableAspectSummary(planetA, aspectName, planetB, mode);
+
     return {
       id,
       type: mode === "sky" ? "current-sky-aspect" : "natal-aspect",
@@ -872,9 +913,9 @@ export function createDomainRegistry(bundleInput: unknown) {
         [planetB]: planetBThemes
       },
       interpretation: {
-        coreTheme: `${sentenceList(planetAThemes)} meets ${sentenceList(planetBThemes)}.`,
-        displaySummary: readableAspectSummary(planetA, aspectName, planetB, mode),
-        detailParagraphs: [],
+        coreTheme: mode === "sky" ? summary : `${sentenceList(planetAThemes)} meets ${sentenceList(planetBThemes)}.`,
+        displaySummary: summary,
+        detailParagraphs: mode === "sky" ? skyAspectDetailParagraphs(planetA, aspectName, planetB) : [],
         livedExperience: mode === "sky" ? skyAspectAdvice(planetA, aspectName, planetB) : natalAspectAdvice(planetA, aspectName, planetB),
         gift: "",
         challenge: ""
@@ -896,6 +937,7 @@ export function createDomainRegistry(bundleInput: unknown) {
     const signName = signMap[sign]?.name ?? titleize(sign);
     const planetThemes = primitiveThemes(planetMap, planet);
     const signThemes = primitiveThemes(signMap, sign);
+    const mode = id.startsWith("sky-") ? "sky" : registryMode;
 
     return {
       id,
@@ -905,17 +947,17 @@ export function createDomainRegistry(bundleInput: unknown) {
         sign
       },
       contentAreas: areasForFactors(planet, sign),
-      priority: placementPriority(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
-      intensity: placementPriority(planet, sign, id.startsWith("sky-") ? "sky" : registryMode) >= 50 ? 4 : 2,
+      priority: placementPriority(planet, sign, mode),
+      intensity: placementPriority(planet, sign, mode) >= 50 ? 4 : 2,
       knowledgeBasis: {
         [planet]: planetThemes,
         [sign]: signThemes
       },
       interpretation: {
-        coreTheme: `${planetName} expresses ${sentenceList(planetThemes)} through ${signName}.`,
-        displaySummary: placementSummary(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
-        detailParagraphs: [],
-        livedExperience: placementAdvice(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
+        coreTheme: mode === "sky" ? placementSummary(planet, sign, mode) : `${planetName} expresses ${sentenceList(planetThemes)} through ${signName}.`,
+        displaySummary: placementSummary(planet, sign, mode),
+        detailParagraphs: mode === "sky" ? skyPlacementDetailParagraphs(planet, sign) : [],
+        livedExperience: placementAdvice(planet, sign, mode),
         gift: "",
         challenge: ""
       },
@@ -964,6 +1006,19 @@ export function createDomainRegistry(bundleInput: unknown) {
         summary: cleanText(bundle.voice.summary),
         body: cleanText(bundle.voice.body),
         detailParagraphs: cleanParagraphs([bundle.voice.body, ...(bundle.knowledge?.interpretation.detailParagraphs ?? [])])
+      };
+    }
+
+    if (bundle.knowledge) {
+      const fallbackDetailParagraphs = bundle.knowledge.interpretation.detailParagraphs.length > 0
+        ? bundle.knowledge.interpretation.detailParagraphs
+        : cleanParagraphs([bundle.knowledge.interpretation.livedExperience]);
+
+      return {
+        bundle,
+        summary: cleanText(bundle.knowledge.interpretation.displaySummary) || cleanText(bundle.knowledge.interpretation.coreTheme),
+        body: cleanText(bundle.knowledge.interpretation.livedExperience),
+        detailParagraphs: fallbackDetailParagraphs
       };
     }
 
