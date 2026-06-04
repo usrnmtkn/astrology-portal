@@ -3600,6 +3600,20 @@ function SkyWheel({
     house: 112,
     inner: 44
   };
+  const hasInnerChart = innerPositions.length > 0;
+  const chartRadii = {
+    outerPlanet: hasInnerChart ? 212 : radius.planet,
+    outerDegree: hasInnerChart ? 192 : radius.planet - 22,
+    outerTickInner: hasInnerChart ? radius.signInner - 22 : radius.signInner - 18,
+    outerTickOuter: radius.signInner - 4,
+    innerRingOuter: 178,
+    innerRingInner: 116,
+    innerPlanet: 150,
+    innerDegree: 130,
+    innerTickInner: 160,
+    innerTickOuter: 174,
+    aspect: hasInnerChart ? 92 : radius.aspect
+  };
 
   function point(angle: number, distance: number) {
     const rad = (angle * Math.PI) / 180;
@@ -3716,7 +3730,7 @@ function SkyWheel({
     : null;
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), radius.planet);
+    const marker = point(planetAngle(position), chartRadii.outerPlanet);
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
     const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
@@ -3787,8 +3801,8 @@ function SkyWheel({
 
       <g className="aspect-lines">
         {aspectPairs.map(({ from, to, type, orb, className }) => {
-          const a = point(planetAngle(from), radius.aspect);
-          const b = point(planetAngle(to), radius.aspect);
+          const a = point(planetAngle(from), chartRadii.aspect);
+          const b = point(planetAngle(to), chartRadii.aspect);
 
           return (
             <g key={`${from.planet}-${to.planet}`} className={`${className} ${type}`}>
@@ -3806,8 +3820,8 @@ function SkyWheel({
       {interAspectPairs.length > 0 && (
         <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
           {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className }) => {
-            const a = point(angleForLongitude(fromLongitude), radius.aspect + 24);
-            const b = point(angleForLongitude(toLongitude), radius.aspect - 24);
+            const a = point(angleForLongitude(fromLongitude), chartRadii.outerPlanet - 34);
+            const b = point(angleForLongitude(toLongitude), chartRadii.innerPlanet + 18);
 
             return (
               <g key={id} className={`${className} ${type}`}>
@@ -3859,6 +3873,20 @@ function SkyWheel({
         </g>
       )}
 
+      {hasInnerChart && (
+        <g className="synastry-chart-rings" aria-hidden="true">
+          <circle cx={center} cy={center} r={chartRadii.innerRingOuter} />
+          <circle cx={center} cy={center} r={chartRadii.innerRingInner} />
+          {signs.map((sign, index) => {
+            const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+            const outer = point(a, chartRadii.innerRingOuter);
+            const inner = point(a, chartRadii.innerRingInner);
+
+            return <line key={`inner-ring-${sign}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+          })}
+        </g>
+      )}
+
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
           {[
@@ -3882,10 +3910,10 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const marker = point(planetAngle(position), radius.planet);
-          const tickOuter = point(planetAngle(position), radius.signInner - 4);
-          const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetAngle(position), radius.planet - 22);
+          const marker = point(planetAngle(position), chartRadii.outerPlanet);
+          const tickOuter = point(planetAngle(position), chartRadii.outerTickOuter);
+          const tickInner = point(planetAngle(position), chartRadii.outerTickInner);
+          const label = point(planetAngle(position), chartRadii.outerDegree);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -3917,10 +3945,10 @@ function SkyWheel({
         <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
           {innerPositions.map((position) => {
             const angle = angleForLongitude(zodiacLongitude(position));
-            const marker = point(angle, radius.planet - 54);
-            const tickOuter = point(angle, radius.planet - 33);
-            const tickInner = point(angle, radius.planet - 44);
-            const label = point(angle, radius.planet - 76);
+            const marker = point(angle, chartRadii.innerPlanet);
+            const tickOuter = point(angle, chartRadii.innerTickOuter);
+            const tickInner = point(angle, chartRadii.innerTickInner);
+            const label = point(angle, chartRadii.innerDegree);
 
             return (
               <g
