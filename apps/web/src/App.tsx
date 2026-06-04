@@ -3605,10 +3605,6 @@ function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspe
       return `${aspect.type} ${otherPlanet} (${aspect.orb.toFixed(1)}° orb)`;
     });
 
-  if (activeAspects.length === 0) {
-    return ["No exact aspects right now."];
-  }
-
   const visibleAspects = activeAspects.slice(0, 4);
 
   if (activeAspects.length > visibleAspects.length) {
