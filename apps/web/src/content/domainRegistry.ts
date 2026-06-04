@@ -1010,8 +1010,9 @@ export function createDomainRegistry(bundleInput: unknown) {
     }
 
     if (bundle.knowledge) {
-      const fallbackDetailParagraphs = bundle.knowledge.interpretation.detailParagraphs.length > 0
-        ? bundle.knowledge.interpretation.detailParagraphs
+      const knowledgeDetailParagraphs = bundle.knowledge.interpretation.detailParagraphs ?? [];
+      const fallbackDetailParagraphs = knowledgeDetailParagraphs.length > 0
+        ? knowledgeDetailParagraphs
         : cleanParagraphs([bundle.knowledge.interpretation.livedExperience]);
 
       return {

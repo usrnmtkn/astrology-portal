@@ -313,7 +313,12 @@ function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "n
   const registry = contentRegistryFor(domain);
 
   if (registry) {
-    return registry.approvedVoiceOrKnowledgeFallback(id);
+    const fallback = registry.approvedVoiceOrKnowledgeFallback(id);
+
+    return {
+      ...fallback,
+      detailParagraphs: fallback.detailParagraphs ?? []
+    };
   }
 
   return {
@@ -4651,7 +4656,7 @@ function RetrogradeCallout({
           const timelineLines = retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
-            ...(hasApprovedVoiceContent(content) && content.detailParagraphs.length > 0
+            ...(content.detailParagraphs.length > 0
               ? content.detailParagraphs
               : interpretationInReviewParagraphs)
           ];
@@ -4965,12 +4970,10 @@ function ActiveAspects({
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to), "sky");
             const rowSummary = content.summary ?? interpretationInReviewSummary;
-            const detailParagraphs = hasApprovedVoiceContent(content) && content.detailParagraphs.length > 0
+            const detailParagraphs = content.detailParagraphs.length > 0
               ? content.detailParagraphs
               : interpretationInReviewParagraphs;
-            const body = hasApprovedVoiceContent(content) && detailParagraphs.length > 0
-              ? detailParagraphs
-              : interpretationInReviewParagraphs;
+            const body = detailParagraphs;
 
             return (
               <button
@@ -5049,12 +5052,10 @@ function PlacementTable({
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
           const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
-          const detailParagraphs = hasApprovedVoiceContent(content) && content.detailParagraphs.length > 0
+          const detailParagraphs = content.detailParagraphs.length > 0
             ? content.detailParagraphs
             : interpretationInReviewParagraphs;
-          const body = hasApprovedVoiceContent(content) && detailParagraphs.length > 0
-            ? detailParagraphs
-            : interpretationInReviewParagraphs;
+          const body = detailParagraphs;
           const openDetail = () => onOpenDetail({
             glyph: position.glyph,
             kicker: placementDetailKicker(position, activeAspects),
