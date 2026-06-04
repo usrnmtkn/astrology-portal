@@ -159,6 +159,7 @@ export function GeneratedContentAdminDashboard() {
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const statusCounts = rows.reduce<Record<GeneratedContentStatus, number>>((counts, row) => {
@@ -258,6 +259,17 @@ export function GeneratedContentAdminDashboard() {
       ...currentDraft,
       [key]: value
     }));
+  }
+
+  function startNewContent() {
+    const nextDraft = createAdminDraft();
+
+    setDraft(nextDraft);
+    setSelectedId(null);
+    setSurface(nextDraft.surface);
+    setStatus(nextDraft.status);
+    setAreGenerationInputsOpen(true);
+    setMessage("New blank draft ready. Add the astrology facts, then click Generate.");
   }
 
   async function createDraft() {
@@ -498,11 +510,7 @@ export function GeneratedContentAdminDashboard() {
               <RefreshCw size={16} aria-hidden="true" />
               Refresh
             </button>
-            <button className="admin-primary-button" type="button" onClick={() => {
-              const nextDraft = createAdminDraft();
-              setDraft(nextDraft);
-              setSelectedId(null);
-            }}>
+            <button className="admin-primary-button" type="button" onClick={startNewContent}>
               <Plus size={16} aria-hidden="true" />
               New Content
             </button>
@@ -708,7 +716,11 @@ export function GeneratedContentAdminDashboard() {
                 </label>
               </section>
 
-              <details className="admin-advanced admin-generation-inputs">
+              <details
+                className="admin-advanced admin-generation-inputs"
+                open={areGenerationInputsOpen}
+                onToggle={(event) => setAreGenerationInputsOpen(event.currentTarget.open)}
+              >
                 <summary>Generation inputs</summary>
                 <label>
                   <span>Knowledge IDs, comma separated</span>
