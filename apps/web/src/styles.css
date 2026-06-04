@@ -6238,30 +6238,17 @@ html,
   text-transform: uppercase;
 }
 
+.retro-top .retro-until {
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
 .retro-copy {
   color: color-mix(in srgb, var(--ink-app) 68%, var(--muted-app));
   font-size: var(--type-description);
   font-weight: var(--fw-regular);
   line-height: 1.5;
-}
-
-.retro-dates,
-.retro-shadow-lines {
-  color: var(--muted-app);
-  font-family: var(--font-ui);
-  font-size: 0.94rem;
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0;
-  line-height: 1.35;
-}
-
-.retro-shadow-lines {
-  display: grid;
-  gap: 2px;
-}
-
-.retro-shadow-lines:empty {
-  display: none;
 }
 
 .retrograde-detail-line {
@@ -10188,6 +10175,49 @@ html,
   font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 0;
+}
+
+.friends-logic-card-loading {
+  pointer-events: none;
+}
+
+.friends-card-skeleton {
+  animation: friendsCardSkeletonPulse 1.25s ease-in-out infinite;
+  background: color-mix(in srgb, var(--ink-app) 12%, transparent);
+  border-radius: 999px;
+  display: block;
+}
+
+.friends-card-skeleton-label {
+  height: 11px;
+  width: 42%;
+}
+
+.friends-card-skeleton-title {
+  height: 18px;
+  margin-top: 2px;
+  width: 72%;
+}
+
+.friends-card-skeleton-line {
+  height: 13px;
+  width: 92%;
+}
+
+.friends-card-skeleton-line-short {
+  width: 68%;
+}
+
+@keyframes friendsCardSkeletonPulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .friends-card-skeleton {
+    animation: none;
+  }
 }
 
 .friends-primary-update {

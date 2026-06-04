@@ -4583,7 +4583,7 @@ function retrogradeCardRange(window?: RetrogradeWindow) {
     return "Dates calculating";
   }
 
-  return `Retrograde ${formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd)}`;
+  return `Until ${formatRetrogradeDate(window.retrogradeEnd)}`;
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
@@ -4642,7 +4642,7 @@ function RetrogradeCallout({
 
   return (
     <section className="retrograde-section" aria-label="Retrograde planets">
-      <span className="section-label">Retrograde</span>
+      <span className="section-label">Currently in Retrograde</span>
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
@@ -4663,7 +4663,7 @@ function RetrogradeCallout({
               type="button"
               onClick={() => onOpenDetail({
                 glyph: position.glyph,
-                kicker: "Retrograde",
+                kicker: "Currently in Retrograde",
                 title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
                 body: detailParagraphs,
@@ -4677,15 +4677,9 @@ function RetrogradeCallout({
               <span className="retro-main">
                 <span className="retro-top">
                   <strong>{title}</strong>
-                  <em>now</em>
+                  <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
-                <span className="retro-dates">{retrogradeCardRange(retrogradeWindow)}</span>
-                <span className="retro-shadow-lines">
-                  {timelineLines.filter((line) => line.startsWith("Pre-shadow") || line.startsWith("Post-shadow")).map((line) => (
-                    <span key={line}>{line}</span>
-                  ))}
-                </span>
                 <span className="retro-copy">Review, refine, revisit. This planet is asking for a second look.</span>
               </span>
             </button>
@@ -4925,7 +4919,7 @@ function aspectsForPlacement(position: PlanetPosition, aspects: SkySnapshot["asp
 
 function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
   if (position.planet === "Sun") {
-    return "Seasonal weather";
+    return "Solar weather";
   }
 
   if (position.planet === "Moon") {
@@ -4941,7 +4935,7 @@ function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnaps
 
 function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
   if (position.planet === "Sun") {
-    return `${position.sign} Season`;
+    return `Sun in ${position.sign}`;
   }
 
   const primaryAspect = activeAspects[0];
@@ -6692,6 +6686,7 @@ function ManualChartsPanel({
     : "Add complete birth details to read the chart's elemental balance and signature.";
   const selectedRelationshipTypeLabel = relationshipTypeLabel(selectedChart?.relationshipType);
   const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts), [currentSky, charts]);
+  const isLoadingCharts = status === "loading";
 
   useEffect(() => {
     let cancelled = false;
@@ -6897,19 +6892,30 @@ function ManualChartsPanel({
       <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
         <div className="friends-feed-preview-heading">
           <span>Circle Feed</span>
-          <strong>{charts.length} saved {charts.length === 1 ? "chart" : "charts"}</strong>
+          <strong>{isLoadingCharts ? "Loading charts" : `${charts.length} saved ${charts.length === 1 ? "chart" : "charts"}`}</strong>
         </div>
         <p className="friends-feed-preview-copy">
           This feed ranks the strongest current activations for saved charts and flags repeated timing themes across your circle.
         </p>
-        <div className="friends-circle-strip" aria-label="Circle activations">
-          {circleCards.map((card) => (
-            <article className="friends-logic-card" key={card.title}>
-              <span>{card.label}</span>
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-            </article>
-          ))}
+        <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle activations" : "Circle activations"}>
+          {isLoadingCharts ? (
+            [0, 1, 2].map((index) => (
+              <article className="friends-logic-card friends-logic-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
+                <span className="friends-card-skeleton friends-card-skeleton-label" />
+                <i className="friends-card-skeleton friends-card-skeleton-title" />
+                <i className="friends-card-skeleton friends-card-skeleton-line" />
+                <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
+              </article>
+            ))
+          ) : (
+            circleCards.map((card) => (
+              <article className="friends-logic-card" key={card.title}>
+                <span>{card.label}</span>
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+              </article>
+            ))
+          )}
         </div>
       </section>
       )}
