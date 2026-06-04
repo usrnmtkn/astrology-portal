@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris";
+import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
 import {
   generateWithOpenAI,
   loadSkySourceSnapshot,
   saveGeneratedInterpretation,
   type GenerateContentInput
-} from "../_lib/content-generation";
+} from "../_lib/content-generation.js";
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
