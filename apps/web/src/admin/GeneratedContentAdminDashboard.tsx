@@ -46,6 +46,16 @@ type AdminGeneratedContentDraft = {
   reviewerNotes: string;
 };
 
+type AdminContentFactsPayload = {
+  ok: boolean;
+  contentKey: string;
+  eventType: string;
+  targetDate: string;
+  facts: Record<string, unknown>;
+  knowledgeIds: string[];
+  sourceSnapshot: Record<string, unknown>;
+};
+
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 
 function dateInputValue(date: Date = new Date()) {
@@ -261,7 +271,62 @@ export function GeneratedContentAdminDashboard() {
     }));
   }
 
-  function startNewContent() {
+  async function loadFactsForDraft(baseDraft = draft, options: { manageLoading?: boolean } = {}) {
+    const shouldManageLoading = options.manageLoading ?? true;
+
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return baseDraft;
+    }
+
+    if (baseDraft.surface !== "sky") {
+      setMessage("Automatic fact loading is connected for Sky first. You can still save and edit other surfaces manually for now.");
+      return baseDraft;
+    }
+
+    if (shouldManageLoading) {
+      setIsLoading(true);
+    }
+
+    try {
+      const payload = await adminJsonRequest<AdminContentFactsPayload>(
+        "/api/admin/content-facts",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            surface: baseDraft.surface,
+            mode: baseDraft.mode,
+            eventType: baseDraft.eventType,
+            targetDate: baseDraft.targetDate
+          })
+        }
+      );
+      const nextDraft: AdminGeneratedContentDraft = {
+        ...baseDraft,
+        contentKey: payload.contentKey,
+        eventType: payload.eventType,
+        targetDate: payload.targetDate,
+        factsJson: JSON.stringify(payload.facts, null, 2),
+        knowledgeIds: payload.knowledgeIds.join(", "),
+        sourceSnapshotJson: JSON.stringify(payload.sourceSnapshot, null, 2)
+      };
+
+      setDraft(nextDraft);
+      setAreGenerationInputsOpen(true);
+      setMessage("Loaded current Sky facts. You can generate now.");
+      return nextDraft;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load astrology facts.");
+      return baseDraft;
+    } finally {
+      if (shouldManageLoading) {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  async function startNewContent() {
     const nextDraft = createAdminDraft();
 
     setDraft(nextDraft);
@@ -269,7 +334,8 @@ export function GeneratedContentAdminDashboard() {
     setSurface(nextDraft.surface);
     setStatus(nextDraft.status);
     setAreGenerationInputsOpen(true);
-    setMessage("New blank draft ready. Add the astrology facts, then click Generate.");
+    setMessage("New Sky draft ready. Loading astrology facts...");
+    await loadFactsForDraft(nextDraft);
   }
 
   async function createDraft() {
@@ -327,6 +393,7 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
+      const draftWithFacts = await loadFactsForDraft(draft, { manageLoading: false });
       const payload = await adminJsonRequest<{
         ok: boolean;
         generated: {
@@ -342,15 +409,15 @@ export function GeneratedContentAdminDashboard() {
         {
           method: "POST",
           body: JSON.stringify({
-            contentKey: draft.contentKey,
-            surface: draft.surface,
-            mode: draft.mode,
-            eventType: draft.eventType,
-            targetDate: draft.targetDate || undefined,
-            facts: parseAdminJson(draft.factsJson, "Facts"),
-            knowledgeIds: draft.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
-            sourceSnapshot: parseAdminJson(draft.sourceSnapshotJson, "Source snapshot"),
-            voiceNotes: draft.reviewerNotes
+            contentKey: draftWithFacts.contentKey,
+            surface: draftWithFacts.surface,
+            mode: draftWithFacts.mode,
+            eventType: draftWithFacts.eventType,
+            targetDate: draftWithFacts.targetDate || undefined,
+            facts: parseAdminJson(draftWithFacts.factsJson, "Facts"),
+            knowledgeIds: draftWithFacts.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
+            sourceSnapshot: parseAdminJson(draftWithFacts.sourceSnapshotJson, "Source snapshot"),
+            voiceNotes: draftWithFacts.reviewerNotes
           })
         }
       );
@@ -510,7 +577,7 @@ export function GeneratedContentAdminDashboard() {
               <RefreshCw size={16} aria-hidden="true" />
               Refresh
             </button>
-            <button className="admin-primary-button" type="button" onClick={startNewContent}>
+            <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
               <Plus size={16} aria-hidden="true" />
               New Content
             </button>
@@ -624,6 +691,10 @@ export function GeneratedContentAdminDashboard() {
                 <button type="button" onClick={() => setIsPreviewOpen(true)}>
                   <Eye size={16} aria-hidden="true" />
                   Preview
+                </button>
+                <button type="button" onClick={() => void loadFactsForDraft()} disabled={isLoading || !canUseApi}>
+                  <RefreshCw size={16} aria-hidden="true" />
+                  Load Facts
                 </button>
                 <button type="button" onClick={generateDraft} disabled={isLoading || !canUseApi}>
                   <Sparkles size={16} aria-hidden="true" />
