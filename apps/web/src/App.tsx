@@ -3558,8 +3558,6 @@ function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspe
 function SkyWheel({
   positions,
   aspects,
-  innerPositions = [],
-  interAspects = [],
   ascendant,
   ascendantLongitude,
   midheavenLongitude,
@@ -3567,8 +3565,6 @@ function SkyWheel({
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
-  innerPositions?: PlanetPosition[];
-  interAspects?: InterChartAspectLine[];
   ascendant?: string;
   ascendantLongitude?: number;
   midheavenLongitude?: number;
@@ -3599,20 +3595,6 @@ function SkyWheel({
     aspect: 150,
     house: 112,
     inner: 44
-  };
-  const hasInnerChart = innerPositions.length > 0;
-  const chartRadii = {
-    outerPlanet: hasInnerChart ? 212 : radius.planet,
-    outerDegree: hasInnerChart ? 192 : radius.planet - 22,
-    outerTickInner: hasInnerChart ? radius.signInner - 22 : radius.signInner - 18,
-    outerTickOuter: radius.signInner - 4,
-    innerRingOuter: 178,
-    innerRingInner: 116,
-    innerPlanet: 150,
-    innerDegree: 130,
-    innerTickInner: 160,
-    innerTickOuter: 174,
-    aspect: hasInnerChart ? 92 : radius.aspect
   };
 
   function point(angle: number, distance: number) {
@@ -3696,10 +3678,6 @@ function SkyWheel({
         className: string;
       } => Boolean(aspect)
     );
-  const interAspectPairs = interAspects.map((aspect) => ({
-    ...aspect,
-    className: aspectClass(aspect.type)
-  }));
   const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
@@ -3730,7 +3708,7 @@ function SkyWheel({
     : null;
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), chartRadii.outerPlanet);
+    const marker = point(planetAngle(position), radius.planet);
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
     const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
@@ -3801,8 +3779,8 @@ function SkyWheel({
 
       <g className="aspect-lines">
         {aspectPairs.map(({ from, to, type, orb, className }) => {
-          const a = point(planetAngle(from), chartRadii.aspect);
-          const b = point(planetAngle(to), chartRadii.aspect);
+          const a = point(planetAngle(from), radius.aspect);
+          const b = point(planetAngle(to), radius.aspect);
 
           return (
             <g key={`${from.planet}-${to.planet}`} className={`${className} ${type}`}>
@@ -3816,26 +3794,6 @@ function SkyWheel({
           );
         })}
       </g>
-
-      {interAspectPairs.length > 0 && (
-        <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
-          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className }) => {
-            const a = point(angleForLongitude(fromLongitude), chartRadii.outerPlanet - 34);
-            const b = point(angleForLongitude(toLongitude), chartRadii.innerPlanet + 18);
-
-            return (
-              <g key={id} className={`${className} ${type}`}>
-                <line
-                  x1={a.x}
-                  y1={a.y}
-                  x2={b.x}
-                  y2={b.y}
-                />
-              </g>
-            );
-          })}
-        </g>
-      )}
 
       {isNatalWheel && (
         <g className="natal-angle-lines" aria-label="Ascendant axis">
@@ -3873,20 +3831,6 @@ function SkyWheel({
         </g>
       )}
 
-      {hasInnerChart && (
-        <g className="synastry-chart-rings" aria-hidden="true">
-          <circle cx={center} cy={center} r={chartRadii.innerRingOuter} />
-          <circle cx={center} cy={center} r={chartRadii.innerRingInner} />
-          {signs.map((sign, index) => {
-            const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
-            const outer = point(a, chartRadii.innerRingOuter);
-            const inner = point(a, chartRadii.innerRingInner);
-
-            return <line key={`inner-ring-${sign}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-          })}
-        </g>
-      )}
-
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
           {[
@@ -3910,10 +3854,10 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const marker = point(planetAngle(position), chartRadii.outerPlanet);
-          const tickOuter = point(planetAngle(position), chartRadii.outerTickOuter);
-          const tickInner = point(planetAngle(position), chartRadii.outerTickInner);
-          const label = point(planetAngle(position), chartRadii.outerDegree);
+          const marker = point(planetAngle(position), radius.planet);
+          const tickOuter = point(planetAngle(position), radius.signInner - 4);
+          const tickInner = point(planetAngle(position), radius.signInner - 18);
+          const label = point(planetAngle(position), radius.planet - 22);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -3941,36 +3885,6 @@ function SkyWheel({
         })}
       </g>
 
-      {innerPositions.length > 0 && (
-        <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
-          {innerPositions.map((position) => {
-            const angle = angleForLongitude(zodiacLongitude(position));
-            const marker = point(angle, chartRadii.innerPlanet);
-            const tickOuter = point(angle, chartRadii.innerTickOuter);
-            const tickInner = point(angle, chartRadii.innerTickInner);
-            const label = point(angle, chartRadii.innerDegree);
-
-            return (
-              <g
-                key={`inner-${position.planet}`}
-                className="planet-marker planet-marker-inner"
-                role="img"
-                aria-label={`Inner chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
-              >
-                <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-                <circle cx={marker.x} cy={marker.y} r="15" className="planet-hit-area" />
-                <text x={marker.x} y={marker.y + 5} className="planet-glyph">
-                  {position.glyph}
-                </text>
-                <text x={label.x} y={label.y} className="planet-degree">
-                  {Math.floor(position.degree)}°
-                </text>
-              </g>
-            );
-          })}
-        </g>
-      )}
-
       {activeTooltipPosition && (
         <g className="planet-tooltips" aria-hidden="true">
           {(() => {
@@ -3994,6 +3908,262 @@ function SkyWheel({
           })()}
         </g>
       )}
+    </svg>
+  );
+}
+
+function SynastryWheel({
+  outerPositions,
+  innerPositions,
+  interAspects,
+  ascendant,
+  ascendantLongitude
+}: {
+  outerPositions: PlanetPosition[];
+  innerPositions: PlanetPosition[];
+  interAspects: InterChartAspectLine[];
+  ascendant?: string;
+  ascendantLongitude?: number;
+}) {
+  const signs = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces"
+  ];
+  const center = 300;
+  const radius = {
+    outer: 284,
+    signInner: 240,
+    outerPlanet: 212,
+    outerDegree: 192,
+    outerTickInner: 218,
+    outerTickOuter: 236,
+    innerRingOuter: 178,
+    innerRingInner: 116,
+    innerPlanet: 150,
+    innerDegree: 130,
+    innerTickInner: 160,
+    innerTickOuter: 174,
+    aspect: 92,
+    house: 112,
+    inner: 44
+  };
+  const isNatalWheel = typeof ascendantLongitude === "number";
+  const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
+  const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
+
+  function point(angle: number, distance: number) {
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: center + Math.cos(rad) * distance,
+      y: center + Math.sin(rad) * distance
+    };
+  }
+
+  function arcPath(startAngle: number, endAngle: number, distance: number) {
+    const delta = ((endAngle - startAngle + 540) % 360) - 180;
+    const resolvedEndAngle = startAngle + delta;
+    const start = point(startAngle, distance);
+    const end = point(resolvedEndAngle, distance);
+    const sweep = delta >= 0 ? 1 : 0;
+
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${distance} ${distance} 0 0 ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+
+  function angleForLongitude(longitude: number) {
+    if (isNatalWheel) {
+      return 180 - normalizedAngle(longitude - ascendantLongitude);
+    }
+
+    return 225 + longitude;
+  }
+
+  function aspectClass(type: string) {
+    if (["trine", "sextile"].includes(type)) {
+      return "soft";
+    }
+
+    if (["square", "opposition"].includes(type)) {
+      return "hard";
+    }
+
+    return "neutral";
+  }
+
+  const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
+  const signLabelPaths = signs.map((sign, index) => {
+    const isLong = sign.length >= 9;
+    const inset = isLong ? 0.3 : 3.8;
+    const startAngle = angleForLongitude(index * 30 + inset);
+    const endAngle = angleForLongitude(index * 30 + 30 - inset);
+    const labelAngle = angleForLongitude(index * 30 + 15);
+    const labelIsAboveCenter = Math.sin((labelAngle * Math.PI) / 180) < -0.05;
+    const shouldReversePath = isNatalWheel && labelIsAboveCenter;
+
+    return {
+      sign,
+      isLong,
+      id: `synastry-sign-label-path-${sign.toLowerCase()}`,
+      path: shouldReversePath
+        ? arcPath(endAngle, startAngle, signLabelRadius)
+        : arcPath(startAngle, endAngle, signLabelRadius)
+    };
+  });
+  const interAspectPairs = interAspects.map((aspect) => ({
+    ...aspect,
+    className: aspectClass(aspect.type)
+  }));
+
+  function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
+    const angle = angleForLongitude(zodiacLongitude(position));
+    const markerRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
+    const degreeRadius = ring === "outer" ? radius.outerDegree : radius.innerDegree;
+    const tickInnerRadius = ring === "outer" ? radius.outerTickInner : radius.innerTickInner;
+    const tickOuterRadius = ring === "outer" ? radius.outerTickOuter : radius.innerTickOuter;
+    const marker = point(angle, markerRadius);
+    const label = point(angle, degreeRadius);
+    const tickInner = point(angle, tickInnerRadius);
+    const tickOuter = point(angle, tickOuterRadius);
+
+    return (
+      <g
+        key={`${ring}-${position.planet}`}
+        className={`planet-marker ${ring === "inner" ? "planet-marker-inner" : "planet-marker-outer"}`}
+        role="img"
+        aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
+      >
+        <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
+        <circle cx={marker.x} cy={marker.y} r={ring === "outer" ? "18" : "15"} className="planet-hit-area" />
+        <text x={marker.x} y={marker.y + 5} className="planet-glyph">
+          {position.glyph}
+        </text>
+        <text x={label.x} y={label.y} className="planet-degree">
+          {Math.floor(position.degree)}°
+        </text>
+      </g>
+    );
+  }
+
+  return (
+    <svg className="sky-wheel synastry-wheel" viewBox="0 0 600 600" role="img" aria-label="Synastry chart with two rings">
+      <defs>
+        {signLabelPaths.map(({ id, path }) => (
+          <path id={id} key={id} d={path} />
+        ))}
+      </defs>
+      <g className="wheel-rings">
+        <circle cx={center} cy={center} r={radius.outer} />
+        <circle cx={center} cy={center} r={radius.signInner} />
+        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
+        <circle cx={center} cy={center} r={radius.inner} />
+      </g>
+      <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
+      <g className="wheel-sectors">
+        {signs.map((sign, index) => {
+          const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+          const outer = point(a, radius.signInner);
+          const inner = point(a, radius.inner);
+          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+      <g className="sign-band-dividers">
+        {signs.map((sign, index) => {
+          const a = angleForLongitude(index * 30);
+          const outer = point(a, radius.outer + 2);
+          const inner = point(a, radius.signInner - 2);
+          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+      <g className="sign-labels">
+        {signLabelPaths.map(({ sign, id, isLong }) => (
+          <g key={sign} className={isLong ? "sign-label-long" : undefined}>
+            <text className="sign-label-halo">
+              <textPath href={`#${id}`} startOffset="50%">{sign}</textPath>
+            </text>
+            <text>
+              <textPath href={`#${id}`} startOffset="50%">{sign}</textPath>
+            </text>
+          </g>
+        ))}
+      </g>
+      <g className="synastry-chart-rings" aria-hidden="true">
+        <circle cx={center} cy={center} r={radius.innerRingOuter} />
+        <circle cx={center} cy={center} r={radius.innerRingInner} />
+        {signs.map((sign, index) => {
+          const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+          const outer = point(a, radius.innerRingOuter);
+          const inner = point(a, radius.innerRingInner);
+
+          return <line key={`inner-ring-${sign}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+      {interAspectPairs.length > 0 && (
+        <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
+          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className }) => {
+            const a = point(angleForLongitude(fromLongitude), radius.outerPlanet - 34);
+            const b = point(angleForLongitude(toLongitude), radius.innerPlanet + 18);
+
+            return (
+              <g key={id} className={`${className} ${type}`}>
+                <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+              </g>
+            );
+          })}
+        </g>
+      )}
+      {isNatalWheel && (
+        <g className="natal-angle-lines" aria-label="Ascendant axis">
+          {(() => {
+            const asc = point(angleForLongitude(ascendantLongitude), radius.signInner - 12);
+            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.signInner - 12);
+
+            return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
+          })()}
+        </g>
+      )}
+      {ascendant && (
+        <g className="house-labels" aria-label="Whole sign houses">
+          {Array.from({ length: 12 }, (_, index) => {
+            const house = index + 1;
+            const p = isNatalWheel
+              ? point(angleForLongitude(wholeHouseStartLongitude + index * 30 + 15), radius.house)
+              : point(angleForLongitude((signs.indexOf(ascendant) + index) * 30 + 15), radius.house);
+
+            return <text key={house} x={p.x} y={p.y}>{house}</text>;
+          })}
+        </g>
+      )}
+      {isNatalWheel && (
+        <g className="angular-labels" aria-label="Chart angles">
+          {[
+            ["ASC", ascendantLongitude],
+            ["DSC", ascendantLongitude + 180]
+          ].map(([label, longitude]) => {
+            if (typeof longitude !== "number") {
+              return null;
+            }
+
+            const p = point(angleForLongitude(longitude), radius.signInner - 38);
+
+            return <text key={label} x={p.x} y={p.y}>{label}</text>;
+          })}
+        </g>
+      )}
+      <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
+        {outerPositions.map((position) => renderPlanet(position, "outer"))}
+      </g>
+      <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
+        {innerPositions.map((position) => renderPlanet(position, "inner"))}
+      </g>
     </svg>
   );
 }
@@ -6909,15 +7079,12 @@ function ManualChartsPanel({
               {relationshipView === "synastry" && selectedChart.natalChart && (
                 <div className="friend-synastry-wheel-shell">
                   <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                    <SkyWheel
-                      positions={selectedChart.natalChart.positions}
-                      aspects={[]}
+                    <SynastryWheel
+                      outerPositions={selectedChart.natalChart.positions}
                       innerPositions={profileNatalSky?.positions ?? []}
                       interAspects={selectedSynastryAspectLines}
                       ascendant={selectedChart.natalChart.ascendant}
                       ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                      midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                      showHouses
                     />
                   </div>
                   <div className="friend-chart-legend" aria-label="Chart comparison legend">
