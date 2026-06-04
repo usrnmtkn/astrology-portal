@@ -9637,7 +9637,7 @@ html,
 
 .friends-page-heading h2 {
   color: var(--ink-app);
-  font: var(--fw-semibold) clamp(30px, 4.8vw, 46px) / 1.04 var(--font-ui);
+  font: var(--fw-bold) var(--text-h1) / 1.02 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
 }
@@ -9701,7 +9701,7 @@ html,
 
 .friends-feed-preview-heading span {
   color: var(--ink-app);
-  font: var(--fw-semibold) 19px / 1.15 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1.25 var(--font-ui);
   letter-spacing: 0;
 }
 
@@ -9710,14 +9710,14 @@ html,
   border-radius: 999px;
   color: var(--surface-app);
   flex: 0 0 auto;
-  font: var(--fw-semibold) 12px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-ui);
   letter-spacing: 0;
   padding: 8px 10px;
 }
 
 .friends-feed-preview-copy {
   color: var(--muted-app);
-  font: var(--fw-regular) 14px / 1.45 var(--font-detail);
+  font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: -4px 0 0;
   max-width: 720px;
@@ -9778,7 +9778,7 @@ html,
 
 .manual-chart-form-heading h3 {
   color: var(--ink-app);
-  font: var(--fw-semibold) 20px / 1.15 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1.25 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
 }
@@ -9787,7 +9787,7 @@ html,
 .manual-chart-list-heading span,
 .manual-chart-message {
   color: var(--muted-app);
-  font: var(--fw-regular) 13px / 1.45 var(--font-detail);
+  font: var(--fw-regular) var(--text-meta) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 4px 0 0;
 }
@@ -9798,7 +9798,7 @@ html,
   border-radius: 999px;
   color: var(--ink-app);
   cursor: pointer;
-  font: var(--fw-semibold) 12px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-ui);
   padding: 9px 12px;
 }
 
@@ -9808,7 +9808,7 @@ html,
   border-radius: 999px;
   color: var(--surface-app);
   display: inline-flex;
-  font: var(--fw-semibold) 12px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-ui);
   justify-content: center;
   min-width: 30px;
   padding: 8px 10px;
@@ -9823,7 +9823,7 @@ html,
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
-  font: var(--fw-semibold) 13px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-meta) / 1 var(--font-ui);
   gap: 7px;
   min-height: 38px;
   padding: 0 13px;
@@ -9844,7 +9844,7 @@ html,
   background: transparent;
   border: 0;
   color: var(--ink-app);
-  font: var(--fw-regular) 16px / 1.35 var(--font-ui);
+  font: var(--fw-regular) var(--text-body) / 1.35 var(--font-ui);
   min-width: 0;
   outline: 0;
   width: 100%;
@@ -9866,7 +9866,7 @@ html,
   color: var(--surface-app);
   cursor: pointer;
   display: inline-flex;
-  font: var(--fw-semibold) 15px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-label) / 1 var(--font-ui);
   gap: 8px;
   justify-content: center;
   min-height: 46px;
@@ -9936,7 +9936,7 @@ html,
   border-radius: 50%;
   color: var(--surface-app);
   display: inline-flex;
-  font: var(--fw-semibold) 13px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-meta) / 1 var(--font-ui);
   height: 44px;
   justify-content: center;
   letter-spacing: 0;
@@ -9947,7 +9947,7 @@ html,
   color: color-mix(in srgb, var(--ink-app) 72%, var(--muted-app));
   display: flex;
   flex-wrap: wrap;
-  font: var(--fw-regular) 12px / 1.3 var(--font-detail);
+  font: var(--fw-regular) var(--text-caption) / 1.3 var(--font-detail);
   gap: 8px;
   letter-spacing: 0;
   margin-top: 4px;
@@ -9961,16 +9961,14 @@ html,
 
 .manual-chart-row .crt {
   display: block;
-  font-size: 17px;
-  line-height: 1.15;
+  font: var(--sky-row-title-weight, 600) var(--sky-row-title-size, var(--text-body)) / var(--sky-row-line-height, 1.3) var(--font-ui);
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
 .manual-chart-row .crs {
   display: block;
-  font-size: 13px;
-  line-height: 1.35;
+  font: var(--fw-regular) var(--sky-row-subline-size, var(--text-caption)) / 1.35 var(--font-detail);
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -9989,7 +9987,7 @@ html,
   color: var(--ink-app);
   cursor: pointer;
   display: inline-flex;
-  font: var(--fw-semibold) 12px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-ui);
   gap: 6px;
   min-height: 34px;
   padding: 0 10px;
@@ -10043,7 +10041,7 @@ html,
 
 .friend-profile-header h3 {
   color: var(--ink-app);
-  font: var(--fw-semibold) 26px / 1.08 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h2) / 1.15 var(--font-ui);
   letter-spacing: 0;
   margin: 2px 0 0;
 }
@@ -10075,21 +10073,21 @@ html,
 
 .friends-logic-card span {
   color: var(--muted-app);
-  font: var(--fw-semibold) 11px / 1 var(--font-detail);
-  letter-spacing: 0.08em;
+  font: var(--fw-semibold) var(--text-micro) / 1 var(--font-detail);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .friends-logic-card h3 {
   color: var(--ink-app);
-  font: var(--fw-semibold) 18px / 1.16 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h4) / 1.3 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
 }
 
 .friends-logic-card p {
   color: var(--muted-app);
-  font: var(--fw-regular) 14px / 1.45 var(--font-detail);
+  font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 0;
 }
@@ -10121,13 +10119,13 @@ html,
 .friends-mini-card span,
 .friends-mini-card em {
   color: var(--muted-app);
-  font: var(--fw-regular) 12px / 1.25 var(--font-detail);
+  font: var(--fw-regular) var(--text-caption) / 1.25 var(--font-detail);
   letter-spacing: 0;
 }
 
 .friends-mini-card strong {
   color: var(--ink-app);
-  font: var(--fw-semibold) 15px / 1.1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-label) / 1.2 var(--font-ui);
   letter-spacing: 0;
 }
 
@@ -10190,7 +10188,7 @@ html,
 .friend-bond-avatar {
   border: 5px solid var(--surface-app);
   box-shadow: 0 0 0 1px var(--line-app), 0 12px 28px rgba(20, 22, 22, 0.12);
-  font-size: 23px;
+  font-size: var(--text-h2);
   height: 82px;
   width: 82px;
 }
@@ -10212,7 +10210,7 @@ html,
 .friend-hero-avatar {
   border: 5px solid var(--surface-app);
   box-shadow: 0 0 0 1px var(--line-app);
-  font-size: 26px;
+  font-size: var(--text-h2);
   height: 82px;
   width: 82px;
 }
@@ -10225,7 +10223,7 @@ html,
 
 .friend-hero-copy h3 {
   color: var(--ink-app);
-  font: var(--fw-semibold) clamp(24px, 3.5vw, 34px) / 1.05 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h2) / 1.15 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
 }
@@ -10253,14 +10251,14 @@ html,
 }
 
 .friend-person-pill strong {
-  font: var(--fw-semibold) clamp(18px, 1.8vw, 22px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h4) / 1.2 var(--font-ui);
 }
 
 .friend-relationship-type {
   align-items: center;
   color: var(--ink-app);
   display: inline-flex;
-  font: var(--fw-regular) clamp(17px, 1.8vw, 22px) / 1.1 var(--font-ui);
+  font: var(--fw-regular) var(--text-body) / 1.2 var(--font-ui);
   gap: 10px;
   text-transform: capitalize;
 }
@@ -10271,7 +10269,7 @@ html,
   border-radius: 999px;
   color: var(--ink-app);
   display: inline-flex;
-  font: var(--fw-semibold) clamp(22px, 2.2vw, 28px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1 var(--font-ui);
   justify-content: center;
   max-width: 460px;
   min-height: 64px;
@@ -10325,7 +10323,7 @@ html,
 .friend-view-tabs button {
   border-radius: 999px;
   color: color-mix(in srgb, var(--ink-app) 62%, var(--muted-app));
-  font: var(--fw-semibold) clamp(15px, 1.6vw, 18px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-label) / 1 var(--font-ui);
   justify-content: center;
   min-width: 0;
   padding: 0 14px;
@@ -10358,12 +10356,13 @@ html,
 }
 
 .friend-aspect-row {
-  --sky-row-gap: 18px;
-  --sky-row-glyph-size: 24px;
-  --sky-row-padding-block: 20px;
-  --sky-row-padding-inline: 24px;
-  --sky-row-title-size: clamp(19px, 2vw, 24px);
-  --sky-row-degree-size: 16px;
+  --sky-row-gap: 13px;
+  --sky-row-glyph-size: 19px;
+  --sky-row-padding-block: 13px;
+  --sky-row-padding-inline: 20px;
+  --sky-row-title-size: var(--text-body);
+  --sky-row-degree-size: var(--text-meta);
+  --sky-row-subline-size: var(--text-caption);
 }
 
 .friend-aspect-row.selected {
@@ -10415,20 +10414,20 @@ button.friend-bond-snapshot-card:focus-visible {
 .friend-bond-snapshot-card span,
 .friend-dynamic-card > span {
   color: var(--muted-app);
-  font: var(--fw-semibold) 12px / 1 var(--font-detail);
-  letter-spacing: 0.14em;
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-detail);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .friend-bond-snapshot-card h3 {
-  font: var(--fw-semibold) clamp(20px, 2vw, 24px) / 1.16 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1.25 var(--font-ui);
   letter-spacing: 0;
   margin: 22px 28px 0 0;
 }
 
 .friend-bond-snapshot-card p {
   color: var(--muted-app);
-  font: var(--fw-regular) clamp(14px, 1.4vw, 16px) / 1.48 var(--font-detail);
+  font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 0;
 }
@@ -10482,7 +10481,7 @@ button.friend-bond-snapshot-card:focus-visible {
   color: var(--surface-app);
   display: inline-flex;
   flex: 0 0 auto;
-  font: var(--fw-semibold) 13px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-meta) / 1 var(--font-ui);
   font-style: normal;
   height: 38px;
   justify-content: center;
@@ -10490,7 +10489,7 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-signs-head strong {
-  font: var(--fw-semibold) clamp(19px, 2vw, 24px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1.25 var(--font-ui);
 }
 
 .friend-signs-row {
@@ -10512,11 +10511,11 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-signs-section-label span {
-  font-size: 25px;
+  font-size: var(--text-h2);
 }
 
 .friend-signs-section-label strong {
-  font: var(--fw-semibold) clamp(16px, 1.7vw, 20px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h4) / 1.3 var(--font-ui);
 }
 
 .friend-sign-cell {
@@ -10531,12 +10530,12 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-sign-cell > span {
-  font-size: clamp(26px, 3.6vw, 38px);
+  font-size: var(--text-h2);
   line-height: 1;
 }
 
 .friend-sign-cell strong {
-  font: var(--fw-semibold) clamp(17px, 1.8vw, 22px) / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-body) / 1.3 var(--font-ui);
   letter-spacing: 0;
 }
 
@@ -10582,14 +10581,14 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .friend-signature-card h3 {
   color: var(--ink-app);
-  font: var(--fw-semibold) clamp(20px, 2.2vw, 26px) / 1.14 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h3) / 1.25 var(--font-ui);
   letter-spacing: 0;
   margin: 8px 42px 12px 0;
 }
 
 .friend-signature-card p {
   color: var(--muted-app);
-  font: var(--fw-regular) clamp(14px, 1.5vw, 17px) / 1.5 var(--font-detail);
+  font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 0;
 }
@@ -10603,7 +10602,7 @@ button.friend-bond-snapshot-card:focus-visible {
   align-items: center;
   color: var(--muted-app);
   display: flex;
-  font: var(--fw-regular) 16px / 1.3 var(--font-detail);
+  font: var(--fw-regular) var(--text-body) / 1.3 var(--font-detail);
   gap: 18px;
   justify-content: space-between;
 }
@@ -10630,7 +10629,7 @@ button.friend-bond-snapshot-card:focus-visible {
   color: var(--muted-app);
   display: flex;
   flex-wrap: wrap;
-  font: var(--fw-regular) 16px / 1.3 var(--font-detail);
+  font: var(--fw-regular) var(--text-body) / 1.3 var(--font-detail);
   gap: 18px;
   margin-top: 17px;
 }
@@ -10663,7 +10662,7 @@ button.friend-bond-snapshot-card:focus-visible {
   color: var(--ink-app);
   display: flex;
   flex-wrap: wrap;
-  font: var(--fw-semibold) 18px / 1.2 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h4) / 1.2 var(--font-ui);
   gap: 22px;
   justify-content: center;
   letter-spacing: 0;
@@ -10727,7 +10726,7 @@ button.friend-bond-snapshot-card:focus-visible {
   color: var(--muted-app);
   cursor: pointer;
   display: inline-flex;
-  font: var(--fw-regular) 18px / 1 var(--font-ui);
+  font: var(--fw-regular) var(--text-label) / 1 var(--font-ui);
   justify-content: center;
   min-height: 46px;
   padding: 0 18px;
@@ -10778,8 +10777,8 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .friend-compare-pill span {
   color: var(--muted-app);
-  font: var(--fw-semibold) 13px / 1 var(--font-detail);
-  letter-spacing: 0.14em;
+  font: var(--fw-semibold) var(--text-meta) / 1 var(--font-detail);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -10789,7 +10788,7 @@ button.friend-bond-snapshot-card:focus-visible {
   border-radius: 999px;
   color: var(--surface-app);
   display: inline-flex;
-  font: var(--fw-semibold) 15px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-label) / 1 var(--font-ui);
   font-style: normal;
   height: 34px;
   justify-content: center;
@@ -10797,12 +10796,12 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-compare-pill strong {
-  font: var(--fw-semibold) 18px / 1 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h4) / 1 var(--font-ui);
 }
 
 .friend-compat-intro {
   color: var(--muted-app);
-  font: var(--fw-regular) clamp(16px, 1.8vw, 20px) / 1.5 var(--font-detail);
+  font: var(--fw-regular) var(--text-description) / 1.45 var(--font-detail);
   letter-spacing: 0;
   margin: 10px auto 22px;
   max-width: 880px;
@@ -10821,7 +10820,7 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .synastry-detail-panel h2 {
   color: var(--ink-app);
-  font: var(--fw-semibold) clamp(28px, 3vw, 36px) / 1.08 var(--font-ui);
+  font: var(--fw-semibold) var(--text-h2) / 1.15 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
   max-width: 720px;
@@ -10829,8 +10828,8 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .synastry-detail-meta {
   color: var(--muted-app);
-  font: var(--fw-regular) 13px / 1.35 var(--font-detail);
-  letter-spacing: 0.09em;
+  font: var(--fw-regular) var(--text-meta) / 1.35 var(--font-detail);
+  letter-spacing: 0.08em;
   margin: -2px 0 0;
   text-transform: uppercase;
 }
@@ -10848,15 +10847,15 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .synastry-tldr-card span {
   color: var(--muted-app);
-  font: var(--fw-semibold) 12px / 1 var(--font-detail);
-  letter-spacing: 0.18em;
+  font: var(--fw-semibold) var(--text-eyebrow) / 1 var(--font-detail);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .synastry-tldr-card p,
 .synastry-copy p {
   color: var(--ink-app);
-  font: var(--fw-regular) clamp(16px, 1.5vw, 18px) / 1.5 var(--font-detail);
+  font: var(--fw-regular) var(--text-body) / 1.5 var(--font-detail);
   letter-spacing: 0;
   margin: 0;
 }
@@ -10949,7 +10948,6 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-bond-avatar {
-  font-size: 20px;
   height: 74px;
   width: 74px;
 }
@@ -11026,7 +11024,7 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-sign-cell > span {
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: var(--text-h2);
 }
 
 .friend-sign-cell strong {
@@ -11056,7 +11054,7 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-chart-legend {
-  font-size: clamp(15px, 1.7vw, 18px);
+  font-size: var(--text-h4);
   gap: 16px;
 }
 
@@ -11087,13 +11085,13 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .friend-aspect-row {
-  --sky-row-gap: 14px;
-  --sky-row-glyph-size: 22px;
-  --sky-row-padding-block: 18px;
+  --sky-row-gap: 13px;
+  --sky-row-glyph-size: 19px;
+  --sky-row-padding-block: 13px;
   --sky-row-padding-inline: 20px;
-  --sky-row-title-size: 18px;
-  --sky-row-subline-size: 14px;
-  --sky-row-degree-size: 14px;
+  --sky-row-title-size: var(--text-body);
+  --sky-row-subline-size: var(--text-caption);
+  --sky-row-degree-size: var(--text-meta);
 }
 
 .synastry-tldr-card {
@@ -11108,10 +11106,6 @@ button.friend-bond-snapshot-card:focus-visible {
 @media (max-width: 720px) {
   .friends-page {
     gap: 18px;
-  }
-
-  .friends-page-heading h2 {
-    font-size: clamp(28px, 9vw, 38px);
   }
 
   .app-shell:is(.mode-profile, .mode-friends) .profile-layout .manual-chart-workspace {
@@ -11175,7 +11169,6 @@ button.friend-bond-snapshot-card:focus-visible {
 
   .friend-hero-avatar {
     border-width: 4px;
-    font-size: 22px;
     height: 68px;
     width: 68px;
   }
@@ -11190,7 +11183,6 @@ button.friend-bond-snapshot-card:focus-visible {
 
   .friend-view-tabs button {
     border-radius: 14px;
-    font-size: 14px;
     min-height: 40px;
     padding: 0 8px;
   }
@@ -11209,7 +11201,6 @@ button.friend-bond-snapshot-card:focus-visible {
   }
 
   .friend-bond-avatar {
-    font-size: 18px;
     height: 62px;
     width: 62px;
   }
@@ -11228,16 +11219,7 @@ button.friend-bond-snapshot-card:focus-visible {
     padding: 0 12px 0 14px;
   }
 
-  .friend-person-pill strong {
-    font-size: 16px;
-  }
-
-  .friend-relationship-type {
-    font-size: 16px;
-  }
-
   .friend-bond-tone {
-    font-size: 20px;
     min-height: 46px;
     padding: 0 20px;
   }
@@ -11253,12 +11235,7 @@ button.friend-bond-snapshot-card:focus-visible {
   }
 
   .friend-bond-snapshot-card h3 {
-    font-size: 21px;
     margin-top: 16px;
-  }
-
-  .friend-bond-snapshot-card p {
-    font-size: 15px;
   }
 
   .friend-signs-head span,
@@ -11281,29 +11258,15 @@ button.friend-bond-snapshot-card:focus-visible {
     width: 32px;
   }
 
-  .friend-signs-head strong {
-    font-size: 19px;
-  }
-
   .friend-signs-section-label {
     min-height: 46px;
-  }
-
-  .friend-sign-cell > span {
-    font-size: 25px;
-  }
-
-  .friend-sign-cell strong {
-    font-size: 17px;
   }
 
   .friend-aspect-row {
     --sky-row-gap: 12px;
     --sky-row-glyph-size: 19px;
-    --sky-row-padding-block: 18px;
+    --sky-row-padding-block: 13px;
     --sky-row-padding-inline: 16px;
-    --sky-row-title-size: 18px;
-    --sky-row-degree-size: 14px;
     grid-template-columns: 64px minmax(0, 1fr) minmax(30px, auto);
   }
 
@@ -11322,39 +11285,17 @@ button.friend-bond-snapshot-card:focus-visible {
     width: 100%;
   }
 
-  .friend-compat-intro {
-    font-size: 16px;
-  }
-
-  .friend-chart-legend {
-    font-size: 14px;
-  }
-
   .synastry-detail-panel {
     max-width: 100%;
     padding-top: 18px;
   }
 
   .synastry-detail-panel h2 {
-    font-size: clamp(24px, 7vw, 30px);
     line-height: 1.1;
   }
 
   .synastry-tldr-card {
     padding: 18px;
-  }
-
-  .synastry-tldr-card p,
-  .synastry-copy p {
-    font-size: 16px;
-  }
-
-  .manual-chart-row .crt {
-    font-size: 16px;
-  }
-
-  .manual-chart-row .crs {
-    font-size: 12px;
   }
 
   .synastry-tldr-card,
