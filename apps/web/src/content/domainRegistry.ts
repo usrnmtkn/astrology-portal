@@ -143,11 +143,11 @@ const signStyle: Record<string, string> = {
 };
 
 const aspectAction: Record<string, string> = {
-  conjunction: "Because these two planets are close together, the themes may feel blended. Notice where one topic is coloring the other before you respond.",
-  opposition: "Because these planets face each other, the pattern may show up through contrast. Let both sides be named before you decide which one needs your attention.",
-  square: "Because this is a square, the pressure is useful when it reveals what is not working. Slow down enough to clarify the choice instead of forcing a quick answer.",
-  trine: "Because this is a trine, the support may be easy to miss. Use the opening deliberately, especially where a simple action could move things forward.",
-  sextile: "Because this is a sextile, the opening is helpful but not automatic. Choose one small, practical action that gives the support somewhere to land."
+  conjunction: "Name what is blending before you respond. One topic may be coloring the other more than you realize.",
+  opposition: "Name both sides before you choose one. The useful information may be in the contrast.",
+  square: "Slow the reaction down. The pressure is useful when it shows what needs a clearer choice.",
+  trine: "Use the opening on purpose. A simple action may move something forward without much force.",
+  sextile: "Choose one small action. The support is available, but it still needs somewhere practical to land."
 };
 
 const aspectVerb: Record<string, string> = {
@@ -442,12 +442,101 @@ function readableAspectSummary(planetA: string, aspect: string, planetB: string,
   return `${planetALabel} ${aspect} ${planetBLabel} can link ${planetATheme} with ${planetBTheme}.`;
 }
 
-function skyAspectAdvice(planetA: string, aspect: string, planetB: string) {
+function skyAspectHeadline(planetA: string, aspect: string, planetB: string) {
+  const pair = [planetA, planetB].sort().join("-");
+  const specific: Record<string, string> = {
+    "mercury-neptune": "Conversations may blur today.",
+    "moon-uranus": "Try a different response today.",
+    "sun-saturn": "Turn one idea into action.",
+    "venus-saturn": "Affection may need proof today.",
+    "mars-saturn": "Do not force what needs patience.",
+    "moon-venus": "Comfort may be easier to reach.",
+    "mercury-saturn": "Say the practical thing clearly.",
+    "venus-mars": "Desire may need better timing.",
+    "sun-neptune": "Do not rush to believe the story.",
+    "moon-pluto": "A feeling may run deeper than expected."
+  };
+
+  if (specific[pair]) {
+    return specific[pair];
+  }
+
+  if (hardAspects.has(aspect)) {
+    return "Something may need a clearer choice today.";
+  }
+
+  if (softAspects.has(aspect)) {
+    return "A small opening may be easier to use today.";
+  }
+
+  return "Two parts of the day may be hard to separate.";
+}
+
+function skyAspectNotice(planetA: string, aspect: string, planetB: string) {
   const planetALabel = titleize(planetA);
   const planetBLabel = titleize(planetB);
-  const action = aspectAction[aspect] ?? "Treat this as a cue to pause, notice the pattern, and choose the cleanest next step.";
+  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
+  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
 
-  return `${planetALabel} and ${planetBLabel} are in a ${aspect} today. ${action}`;
+  if (hardAspects.has(aspect)) {
+    return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, so ${firstTopic} may run into ${secondTopic}. You may notice the tension through a conversation, plan, reaction, or choice that does not settle as quickly as you want it to.`;
+  }
+
+  if (softAspects.has(aspect)) {
+    return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, so ${firstTopic} may work more easily with ${secondTopic}. You may notice a small opening where a usual pattern can shift without needing a dramatic push.`;
+  }
+
+  return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, blending ${firstTopic} with ${secondTopic}. You may notice these two themes showing up at the same time instead of as separate issues.`;
+}
+
+function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
+  const planetALabel = titleize(planetA);
+  const planetBLabel = titleize(planetB);
+  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
+  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
+  const aspectMeaning: Record<string, string> = {
+    conjunction: "A conjunction blends the planets, so it can be harder to tell where one topic ends and the other begins.",
+    opposition: "An opposition creates contrast, so the day may show two needs, views, or instincts facing each other.",
+    square: "A square creates friction, so the issue may become obvious through pressure, interruption, or a choice that cannot stay vague.",
+    trine: "A trine is a supportive angle, so the useful part may feel available without much force.",
+    sextile: "A sextile is an opening, but it usually works best when you take a small step toward it."
+  };
+
+  return `${planetALabel} describes ${firstTopic}. ${planetBLabel} brings in ${secondTopic}. ${aspectMeaning[aspect] ?? "The aspect shows how these two parts of the sky are interacting."}`;
+}
+
+function skyAspectMove(planetA: string, aspect: string, planetB: string) {
+  const pair = [planetA, planetB].sort().join("-");
+  const specific: Record<string, string> = {
+    "mercury-neptune": "Get important details in writing. Ask the clarifying question before reacting, and wait before making a decision that depends on certainty.",
+    "moon-uranus": "Try a different response before repeating the old one. Take enough space to think clearly, then make one practical adjustment.",
+    "sun-saturn": "Narrow the field. Pick the idea with the clearest next step and put it on a timeline.",
+    "venus-saturn": "Look for care in actions, not only in words. Let consistency matter more than a quick reassurance.",
+    "mars-saturn": "Move slowly enough to avoid wasting energy. Choose the task that can actually be completed.",
+    "moon-venus": "Make comfort concrete. Say what would feel supportive instead of hoping the other person guesses.",
+    "mercury-saturn": "Keep the message simple. Say what is true, what is possible, and what needs more time.",
+    "venus-mars": "Notice the difference between attraction and urgency. Let desire move, but do not let it make the whole decision.",
+    "sun-neptune": "Check the facts before committing to the story. Inspiration is useful, but only if it can survive a little daylight.",
+    "moon-pluto": "Do not dismiss the feeling just because it is intense. Name what is underneath it before trying to control it."
+  };
+
+  return specific[pair] ?? aspectAction[aspect] ?? "Pause long enough to name what is happening, then choose the next step that still makes sense tomorrow.";
+}
+
+function skyAspectTiming(planetA: string, planetB: string) {
+  if (planetA === "moon" || planetB === "moon") {
+    return "This is strongest today and should ease within the next day.";
+  }
+
+  if (longArcPlanets.has(planetA) || longArcPlanets.has(planetB)) {
+    return "This is active now, with the strongest effect around the exact aspect.";
+  }
+
+  return "This is strongest today and should start easing over the next day or so.";
+}
+
+function skyAspectAdvice(planetA: string, aspect: string, planetB: string) {
+  return `${skyAspectNotice(planetA, aspect, planetB)} ${skyAspectMove(planetA, aspect, planetB)} ${skyAspectTiming(planetA, planetB)}`;
 }
 
 function natalAspectAdvice(planetA: string, aspect: string, planetB: string) {
@@ -493,10 +582,14 @@ function placementSummary(planet: string, sign: string, mode: "sky" | "natal") {
 
   if (mode === "sky") {
     if (planet === "sun") {
-      return `${signLabel} season brings attention to ${style}.`;
+      return `${signLabel} season puts attention on ${style}.`;
     }
 
-    return `Right now, ${planetLabel} in ${signLabel} brings ${topic} through ${style}.`;
+    if (planet === "moon") {
+      return `Today may move through ${style}.`;
+    }
+
+    return `${planetLabel} is moving through ${signLabel}, bringing ${topic} into ${style}.`;
   }
 
   return `${planetLabel} in ${signLabel} can describe ${topic} through ${style}.`;
@@ -510,7 +603,11 @@ function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
 
   if (mode === "sky") {
     if (planet === "sun") {
-      return `Use ${signLabel} season by giving your attention a clearer question. The season favors ${style}, but it works best when curiosity turns into one specific conversation, decision, or next step.`;
+      return `${signLabel} season brings attention to ${style}. Use it by giving your attention a clearer question, conversation, decision, or next step.`;
+    }
+
+    if (planet === "moon") {
+      return `The Moon is moving through ${signLabel}, so the emotional tone of the day may be filtered through ${style}. Notice what you need before you decide how quickly to respond.`;
     }
 
     return `${planetLabel} is moving through ${signLabel}, so ${topic} may be filtered through ${style}. Notice where this shows up in the day, then choose one response that is concrete enough to act on.`;
