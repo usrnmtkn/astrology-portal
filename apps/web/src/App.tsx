@@ -548,6 +548,15 @@ const defaultManualChartForm: ManualChartForm = {
   notes: ""
 };
 
+const relationshipTypeLabels: Record<string, string> = {
+  event: "Event",
+  family: "Family",
+  friend: "Friendship",
+  other: "Connection",
+  partner: "Partnership",
+  work: "Work"
+};
+
 const defaultChartSettings: ChartSettings = {
   houseSystem: "Whole House",
   zodiac: "Tropical",
@@ -1955,6 +1964,10 @@ function relationshipSignRows(profileNatalSky: SkySnapshot | null, chart: Manual
     yourSign: skyPointSign(profileNatalSky, point),
     friendSign: skyPointSign(friendSky, point)
   }));
+}
+
+function relationshipTypeLabel(value?: string) {
+  return relationshipTypeLabels[value ?? "friend"] ?? value ?? "Friendship";
 }
 
 function relationshipMidpointLongitude(first: number, second: number) {
@@ -6610,6 +6623,7 @@ function ManualChartsPanel({
         ? "Magnetic"
         : "Bond";
   const selectedBondToneClass = selectedBondTone.toLowerCase();
+  const selectedRelationshipTypeLabel = relationshipTypeLabel(selectedChart?.relationshipType);
   const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts), [currentSky, charts]);
 
   useEffect(() => {
@@ -7001,7 +7015,7 @@ function ManualChartsPanel({
               </div>
               <span className="friend-relationship-type">
                 <span aria-hidden="true">◎</span>
-                {selectedChart.relationshipType || "Friendship"}
+                {selectedRelationshipTypeLabel}
               </span>
               <span className={`friend-bond-tone friend-bond-tone-${selectedBondToneClass}`}>
                 {selectedBondTone}
@@ -7036,7 +7050,16 @@ function ManualChartsPanel({
             <div className="friend-tab-pane friend-feed-pane friend-bond-pane" aria-label="Bond">
               <span className="eyebrow section-label friend-section-label">Snapshots</span>
               <div className="friend-bond-snapshots" aria-label={`${selectedChart.displayName} relationship snapshots`}>
-                <article className="friend-bond-snapshot-card">
+                <button
+                  className="friend-bond-snapshot-card"
+                  type="button"
+                  onClick={() => {
+                    if (selectedStrongestConnection) {
+                      setSelectedSynastryContactId(selectedStrongestConnection.id);
+                    }
+                    setFriendProfileTab("synastry");
+                  }}
+                >
                   <span>Strongest connection</span>
                   <h3>
                     {selectedStrongestConnection
@@ -7045,8 +7068,17 @@ function ManualChartsPanel({
                   </h3>
                   <p>{selectedStrongestConnection?.summary ?? "Add both complete charts to rank the most supportive contact."}</p>
                   <ChevronRight size={24} aria-hidden="true" />
-                </article>
-                <article className="friend-bond-snapshot-card">
+                </button>
+                <button
+                  className="friend-bond-snapshot-card"
+                  type="button"
+                  onClick={() => {
+                    if (selectedBiggestChallenge) {
+                      setSelectedSynastryContactId(selectedBiggestChallenge.id);
+                    }
+                    setFriendProfileTab("synastry");
+                  }}
+                >
                   <span>Biggest challenge</span>
                   <h3>
                     {selectedBiggestChallenge
@@ -7055,7 +7087,7 @@ function ManualChartsPanel({
                   </h3>
                   <p>{selectedBiggestChallenge?.summary ?? "The friction points appear once both charts can be compared."}</p>
                   <ChevronRight size={24} aria-hidden="true" />
-                </article>
+                </button>
                 <article className="friend-bond-snapshot-card">
                   <span>Current weather</span>
                   <h3>
