@@ -1,7 +1,9 @@
 import {
   ArrowDownRight,
   ArrowUpRight,
+  Archive,
   CalendarDays,
+  Check,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -12,6 +14,8 @@ import {
   MoreVertical,
   Pencil,
   Plus,
+  RefreshCw,
+  Save,
   Settings,
   Sparkles,
   Star,
@@ -42,6 +46,7 @@ import type { AuthAccount } from "./services/auth";
 import {
   generatedContentParagraphs,
   loadLiveGeneratedContent,
+  type GeneratedContentMode,
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import {
@@ -220,6 +225,47 @@ type SkyDetail = {
   meta: string;
   body: ReactNode[];
   content?: ContentBundle;
+};
+
+type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type AdminGeneratedContentRow = {
+  id: string;
+  content_key: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  status: GeneratedContentStatus;
+  event_type: string | null;
+  target_date: string | null;
+  headline: string | null;
+  summary: string | null;
+  body: string | null;
+  sections: Array<{ heading: string; body: string }> | Record<string, unknown> | null;
+  reviewer_notes: string | null;
+  prompt_version: string | null;
+  model: string | null;
+  reviewed_at: string | null;
+  published_at: string | null;
+  updated_at: string;
+  created_at: string;
+};
+
+type AdminGeneratedContentDraft = {
+  id?: string;
+  contentKey: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  status: GeneratedContentStatus;
+  eventType: string;
+  targetDate: string;
+  headline: string;
+  summary: string;
+  body: string;
+  sectionsJson: string;
+  factsJson: string;
+  sourceSnapshotJson: string;
+  knowledgeIds: string;
+  reviewerNotes: string;
 };
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
@@ -1323,51 +1369,90 @@ function detailMetaRows(meta: string) {
         ? "Timing"
         : index === 0
           ? "Signature"
-          : "Context";
+          : "Timing";
 
     return { label, value: part };
   });
 }
 
-const placementDurationLabels: Record<string, string> = {
-  Sun: "About 30 days in this sign",
-  Moon: "About 2.5 days in this sign",
-  Mercury: "About 2-3 weeks in this sign",
-  Venus: "About 3-4 weeks in this sign",
-  Mars: "About 6-7 weeks in this sign",
-  Jupiter: "About 1 year in this sign",
-  Saturn: "About 2.5 years in this sign",
-  Uranus: "About 7 years in this sign",
-  Neptune: "About 14 years in this sign",
-  Pluto: "About 12-30 years in this sign",
-  "True Node": "About 18 months in this sign"
+const averageDailyMotion: Record<string, number> = {
+  Sun: 0.9856,
+  Moon: 13.176,
+  Mercury: 1.25,
+  Venus: 1,
+  Mars: 0.52,
+  Jupiter: 0.083,
+  Saturn: 0.033,
+  Uranus: 0.012,
+  Neptune: 0.006,
+  Pluto: 0.004,
+  "True Node": 0.053
 };
 
-const aspectDurationLabels: Record<string, string> = {
-  Moon: "About 6-12 hours",
-  Sun: "About 1-2 days",
-  Mercury: "About 1-3 days",
-  Venus: "About 2-4 days",
-  Mars: "About 4-7 days",
-  Jupiter: "About 2-4 weeks",
-  Saturn: "About 3-6 weeks",
-  Uranus: "About 1-3 months",
-  Neptune: "About 1-3 months",
-  Pluto: "About 1-3 months"
-};
+function daysFrom(dateValue: string, days: number) {
+  const date = new Date(dateValue);
 
-function placementDurationLabel(position: PlanetPosition) {
-  return placementDurationLabels[position.planet] ?? "Current sign cycle";
+  if (Number.isNaN(date.getTime())) {
+    return new Date();
+  }
+
+  date.setUTCDate(date.getUTCDate() + Math.round(days));
+  return date;
 }
 
-function currentSkyAspectDurationLabel(aspect: SkySnapshot["aspects"][number]) {
+function formatTransitRange(start: Date, end: Date) {
+  const formatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+
+  return `${formatter.format(start)} - ${formatter.format(end)}`;
+}
+
+function placementTransitRange(position: PlanetPosition, generatedAt: string) {
+  const speed = averageDailyMotion[position.planet] ?? 1;
+  const entryOffset = position.motion === "retrograde"
+    ? 30 - position.degree
+    : position.degree;
+  const exitOffset = position.motion === "retrograde"
+    ? position.degree
+    : 30 - position.degree;
+
+  return formatTransitRange(
+    daysFrom(generatedAt, -(entryOffset / speed)),
+    daysFrom(generatedAt, exitOffset / speed)
+  );
+}
+
+function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const fastestPlanet = [aspect.from, aspect.to]
     .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
     .filter((item) => item.order >= 0)
     .sort((first, second) => first.order - second.order)[0]?.planet;
-  const duration = fastestPlanet ? aspectDurationLabels[fastestPlanet] : "Active now";
+  const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
+  const aspectWindowOrb = fastestPlanet === "Moon"
+    ? 6
+    : ["Sun", "Mercury", "Venus", "Mars"].includes(fastestPlanet ?? "")
+      ? 3
+      : 1.5;
+  const remainingOrb = Math.max(0.2, aspectWindowOrb - aspect.orb);
+  const currentOffsetDays = remainingOrb / speed;
 
-  return `${duration} near exact (${aspect.orb.toFixed(1)}° orb now)`;
+  return formatTransitRange(
+    daysFrom(generatedAt, -currentOffsetDays),
+    daysFrom(generatedAt, currentOffsetDays)
+  );
+}
+
+function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
+  const primaryAspect = activeAspects[0];
+
+  if (primaryAspect) {
+    return `${pointGlyph(primaryAspect.from)} ${aspectGlyph(primaryAspect.type)} ${pointGlyph(primaryAspect.to)}`;
+  }
+
+  if (position.motion === "retrograde") {
+    return `${position.glyph} ℞`;
+  }
+
+  return `${position.glyph} ${position.signGlyph}`;
 }
 
 function detailSectionTitle(index: number) {
@@ -1582,6 +1667,41 @@ const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "P
 function angularDistance(first: number, second: number) {
   const difference = Math.abs(normalizedAngle(first - second));
   return difference > 180 ? 360 - difference : difference;
+}
+
+function wheelMarkerClusterLevels<T>(
+  items: T[],
+  keyForItem: (item: T) => string,
+  angleForItem: (item: T) => number,
+  threshold = 8
+) {
+  const entries = items
+    .map((item) => ({
+      item,
+      key: keyForItem(item),
+      angle: normalizedAngle(angleForItem(item))
+    }))
+    .sort((first, second) => first.angle - second.angle);
+  const levels = new Map<string, number>();
+  let clusterLevel = 0;
+
+  entries.forEach((entry, index) => {
+    if (index > 0 && angularDistance(entry.angle, entries[index - 1].angle) <= threshold) {
+      clusterLevel += 1;
+    } else {
+      clusterLevel = 0;
+    }
+
+    levels.set(entry.key, clusterLevel);
+  });
+
+  const first = entries[0];
+  const last = entries[entries.length - 1];
+  if (first && last && first !== last && angularDistance(first.angle, last.angle) <= threshold) {
+    levels.set(first.key, (levels.get(last.key) ?? 0) + 1);
+  }
+
+  return levels;
 }
 
 function formatOrb(orb: number) {
@@ -2564,7 +2684,19 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[]) 
   ];
 }
 
+function isAdminContentPath() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.location.pathname === "/admin/content" || window.location.pathname === "/admin/generated-content";
+}
+
 export function App() {
+  if (isAdminContentPath()) {
+    return <GeneratedContentAdminDashboard />;
+  }
+
   const initialLocationState = useMemo(getInitialLocation, []);
   const restoredPortalModeRef = useRef<PortalMode | null>(getStoredPortalMode());
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
@@ -3477,6 +3609,7 @@ export function App() {
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
+                  generatedAt={sky.generatedAt}
                   generatedContent={skyGeneratedContent}
                   onOpenDetail={setSelectedSkyDetail}
                 />
@@ -3485,6 +3618,7 @@ export function App() {
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
+                  generatedAt={sky.generatedAt}
                   generatedContent={skyGeneratedContent}
                   onOpenDetail={setSelectedSkyDetail}
                 />
@@ -3606,6 +3740,565 @@ export function App() {
         </>
       )}
 
+    </main>
+  );
+}
+
+const adminSecretStorageKey = "tldrastro:contentAdminSecret";
+
+function createAdminDraft(date = dateInputValue()): AdminGeneratedContentDraft {
+  return {
+    contentKey: `sky-daily-${date}`,
+    surface: "sky",
+    mode: "feed",
+    status: "DRAFT",
+    eventType: "daily_sky",
+    targetDate: date,
+    headline: "",
+    summary: "",
+    body: "",
+    sectionsJson: "[]",
+    factsJson: JSON.stringify({
+      date,
+      note: "Add the current astrology facts that should guide this interpretation."
+    }, null, 2),
+    sourceSnapshotJson: "{}",
+    knowledgeIds: "",
+    reviewerNotes: ""
+  };
+}
+
+function adminDraftFromRow(row: AdminGeneratedContentRow): AdminGeneratedContentDraft {
+  return {
+    id: row.id,
+    contentKey: row.content_key,
+    surface: row.surface,
+    mode: row.mode,
+    status: row.status,
+    eventType: row.event_type ?? "",
+    targetDate: row.target_date ?? "",
+    headline: row.headline ?? "",
+    summary: row.summary ?? "",
+    body: row.body ?? "",
+    sectionsJson: JSON.stringify(row.sections ?? [], null, 2),
+    factsJson: "{}",
+    sourceSnapshotJson: "{}",
+    knowledgeIds: "",
+    reviewerNotes: row.reviewer_notes ?? ""
+  };
+}
+
+function parseAdminJson(value: string, label: string) {
+  try {
+    return value.trim() ? JSON.parse(value) : {};
+  } catch {
+    throw new Error(`${label} must be valid JSON.`);
+  }
+}
+
+async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${secret}`,
+      ...(options.headers ?? {})
+    }
+  });
+  const payload = await response.json().catch(() => null) as T & { error?: string };
+
+  if (!response.ok) {
+    throw new Error(payload?.error ?? `Request failed with ${response.status}.`);
+  }
+
+  return payload;
+}
+
+function GeneratedContentAdminDashboard() {
+  const [secret, setSecret] = useState(() => {
+    try {
+      return window.localStorage.getItem(adminSecretStorageKey) ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [secretDraft, setSecretDraft] = useState(secret);
+  const [surface, setSurface] = useState<GeneratedContentSurface | "all">("sky");
+  const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
+  const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
+  const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
+  const [isLoading, setIsLoading] = useState(false);
+  const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
+  const canUseApi = secret.trim().length > 0;
+
+  async function loadRows(nextStatus = status, nextSurface = surface) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        status: nextStatus,
+        limit: "75"
+      });
+
+      if (nextSurface !== "all") {
+        params.set("surface", nextSurface);
+      }
+
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?${params}`,
+        secret
+      );
+
+      setRows(payload.rows ?? []);
+      setMessage(`Loaded ${(payload.rows ?? []).length} ${nextStatus.toLowerCase()} rows.`);
+
+      if (!payload.rows?.some((row) => row.id === selectedId)) {
+        const firstRow = payload.rows?.[0] ?? null;
+        setSelectedId(firstRow?.id ?? null);
+        if (firstRow) {
+          setDraft(adminDraftFromRow(firstRow));
+        }
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load generated content.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (canUseApi) {
+      void loadRows();
+    }
+  }, [secret]);
+
+  function saveSecret(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const nextSecret = secretDraft.trim();
+
+    setSecret(nextSecret);
+    try {
+      if (nextSecret) {
+        window.localStorage.setItem(adminSecretStorageKey, nextSecret);
+      } else {
+        window.localStorage.removeItem(adminSecretStorageKey);
+      }
+    } catch {
+      return;
+    }
+  }
+
+  function selectRow(row: AdminGeneratedContentRow) {
+    setSelectedId(row.id);
+    setDraft(adminDraftFromRow(row));
+  }
+
+  function updateDraft<K extends keyof AdminGeneratedContentDraft>(key: K, value: AdminGeneratedContentDraft[K]) {
+    setDraft((currentDraft) => ({
+      ...currentDraft,
+      [key]: value
+    }));
+  }
+
+  async function createDraft() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            contentKey: draft.contentKey,
+            surface: draft.surface,
+            mode: draft.mode,
+            status: draft.status,
+            eventType: draft.eventType,
+            targetDate: draft.targetDate || null,
+            headline: draft.headline,
+            summary: draft.summary,
+            body: draft.body,
+            sections: parseAdminJson(draft.sectionsJson, "Sections"),
+            facts: parseAdminJson(draft.factsJson, "Facts"),
+            sourceSnapshot: parseAdminJson(draft.sourceSnapshotJson, "Source snapshot"),
+            knowledgeIds: draft.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
+            reviewerNotes: draft.reviewerNotes
+          })
+        }
+      );
+      const row = payload.rows?.[0];
+
+      if (row) {
+        setSelectedId(row.id);
+        setDraft(adminDraftFromRow(row));
+      }
+
+      setMessage("Draft created.");
+      await loadRows();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not create draft.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function generateDraft() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{
+        ok: boolean;
+        generated: {
+          headline: string;
+          summary: string;
+          body: string;
+          sections: Array<{ heading: string; body: string }>;
+        };
+        saved: AdminGeneratedContentRow[];
+      }>(
+        "/api/generate-content",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            contentKey: draft.contentKey,
+            surface: draft.surface,
+            mode: draft.mode,
+            eventType: draft.eventType,
+            targetDate: draft.targetDate || undefined,
+            facts: parseAdminJson(draft.factsJson, "Facts"),
+            knowledgeIds: draft.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
+            sourceSnapshot: parseAdminJson(draft.sourceSnapshotJson, "Source snapshot"),
+            voiceNotes: draft.reviewerNotes
+          })
+        }
+      );
+      const row = payload.saved?.[0];
+
+      if (row) {
+        setSelectedId(row.id);
+        setDraft(adminDraftFromRow(row));
+      } else {
+        setDraft((currentDraft) => ({
+          ...currentDraft,
+          headline: payload.generated.headline,
+          summary: payload.generated.summary,
+          body: payload.generated.body,
+          sectionsJson: JSON.stringify(payload.generated.sections ?? [], null, 2)
+        }));
+      }
+
+      setMessage("Generated a new OpenAI draft.");
+      await loadRows();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not generate content.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveDraft(nextStatus = draft.status) {
+    if (!draft.id) {
+      await createDraft();
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: draft.id,
+            status: nextStatus,
+            headline: draft.headline,
+            summary: draft.summary,
+            body: draft.body,
+            sections: parseAdminJson(draft.sectionsJson, "Sections"),
+            reviewerNotes: draft.reviewerNotes
+          })
+        }
+      );
+      const row = payload.rows?.[0];
+
+      if (row) {
+        setDraft(adminDraftFromRow(row));
+        setSelectedId(row.id);
+      }
+
+      setMessage(nextStatus === "LIVE" ? "Published live." : nextStatus === "ARCHIVED" ? "Archived." : "Saved.");
+      await loadRows();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not save draft.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function deleteDraft() {
+    if (!draft.id || !window.confirm("Delete this generated content row? This cannot be undone.")) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?id=${encodeURIComponent(draft.id)}`,
+        secret,
+        { method: "DELETE" }
+      );
+      setDraft(createAdminDraft());
+      setSelectedId(null);
+      setMessage("Deleted.");
+      await loadRows();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not delete row.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <main className="admin-dashboard">
+      <header className="admin-dashboard-header">
+        <div>
+          <p className="admin-eyebrow">Internal content ops</p>
+          <h1>Generated Content Review</h1>
+          <p>Generate, edit, approve, publish, archive, or delete OpenAI-written astrology content before it appears in the public app.</p>
+        </div>
+        <a className="admin-public-link" href="/">
+          Public app
+        </a>
+      </header>
+
+      <section className="admin-secret-panel" aria-label="Admin access">
+        <form onSubmit={saveSecret}>
+          <label>
+            <span>CONTENT_GENERATION_SECRET</span>
+            <input
+              type="password"
+              value={secretDraft}
+              onChange={(event) => setSecretDraft(event.target.value)}
+              placeholder="Paste the secret for this session"
+            />
+          </label>
+          <button type="submit">
+            <Save size={16} aria-hidden="true" />
+            Save Secret
+          </button>
+        </form>
+        <p>{message}</p>
+      </section>
+
+      <section className="admin-workbench">
+        <aside className="admin-list-panel" aria-label="Generated content list">
+          <div className="admin-controls">
+            <label>
+              <span>Surface</span>
+              <select value={surface} onChange={(event) => {
+                const nextSurface = event.target.value as GeneratedContentSurface | "all";
+                setSurface(nextSurface);
+                void loadRows(status, nextSurface);
+              }}>
+                <option value="all">All</option>
+                <option value="sky">Sky</option>
+                <option value="you">You</option>
+                <option value="natal">Natal</option>
+                <option value="synastry">Synastry</option>
+                <option value="composite">Composite</option>
+                <option value="relationship">Relationship</option>
+              </select>
+            </label>
+            <label>
+              <span>Status</span>
+              <select value={status} onChange={(event) => {
+                const nextStatus = event.target.value as GeneratedContentStatus | "all";
+                setStatus(nextStatus);
+                void loadRows(nextStatus, surface);
+              }}>
+                <option value="DRAFT">Draft</option>
+                <option value="REVIEWED">Reviewed</option>
+                <option value="LIVE">Live</option>
+                <option value="ARCHIVED">Archived</option>
+                <option value="ERROR">Error</option>
+                <option value="all">All</option>
+              </select>
+            </label>
+            <button type="button" onClick={() => void loadRows()} disabled={isLoading || !canUseApi}>
+              <RefreshCw size={16} aria-hidden="true" />
+              Refresh
+            </button>
+            <button type="button" onClick={() => {
+              const nextDraft = createAdminDraft();
+              setDraft(nextDraft);
+              setSelectedId(null);
+            }}>
+              <Plus size={16} aria-hidden="true" />
+              New
+            </button>
+          </div>
+
+          <div className="admin-row-list">
+            {rows.map((row) => (
+              <button
+                type="button"
+                key={row.id}
+                className={`admin-row-card ${row.id === selectedId ? "selected" : ""}`}
+                onClick={() => selectRow(row)}
+              >
+                <span className={`admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                <strong>{row.headline || row.content_key}</strong>
+                <small>{row.surface} · {row.mode} · {row.target_date ?? "no date"}</small>
+              </button>
+            ))}
+            {rows.length === 0 && (
+              <p className="admin-empty">No rows match this filter yet.</p>
+            )}
+          </div>
+        </aside>
+
+        <section className="admin-editor-panel" aria-label="Generated content editor">
+          <div className="admin-editor-toolbar">
+            <div>
+              <p className="admin-eyebrow">{selectedRow ? "Editing existing row" : "Creating new row"}</p>
+              <h2>{draft.headline || draft.contentKey}</h2>
+            </div>
+            <div className="admin-toolbar-actions">
+              <button type="button" onClick={generateDraft} disabled={isLoading || !canUseApi}>
+                <Sparkles size={16} aria-hidden="true" />
+                Generate
+              </button>
+              <button type="button" onClick={() => void saveDraft()} disabled={isLoading || !canUseApi}>
+                <Save size={16} aria-hidden="true" />
+                Save
+              </button>
+              <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !draft.id}>
+                <Check size={16} aria-hidden="true" />
+                Reviewed
+              </button>
+              <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id}>
+                <Eye size={16} aria-hidden="true" />
+                Publish Live
+              </button>
+              <button type="button" onClick={() => void saveDraft("ARCHIVED")} disabled={isLoading || !draft.id}>
+                <Archive size={16} aria-hidden="true" />
+                Archive
+              </button>
+              <button className="admin-danger-button" type="button" onClick={() => void deleteDraft()} disabled={isLoading || !draft.id}>
+                <Trash2 size={16} aria-hidden="true" />
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div className="admin-form-grid">
+            <label>
+              <span>Content key</span>
+              <input value={draft.contentKey} onChange={(event) => updateDraft("contentKey", event.target.value)} />
+            </label>
+            <label>
+              <span>Surface</span>
+              <select value={draft.surface} onChange={(event) => updateDraft("surface", event.target.value as GeneratedContentSurface)}>
+                <option value="sky">Sky</option>
+                <option value="you">You</option>
+                <option value="natal">Natal</option>
+                <option value="synastry">Synastry</option>
+                <option value="composite">Composite</option>
+                <option value="relationship">Relationship</option>
+              </select>
+            </label>
+            <label>
+              <span>Mode</span>
+              <select value={draft.mode} onChange={(event) => updateDraft("mode", event.target.value as GeneratedContentMode)}>
+                <option value="feed">Feed</option>
+                <option value="in_depth">In-depth</option>
+                <option value="article">Article</option>
+              </select>
+            </label>
+            <label>
+              <span>Status</span>
+              <select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as GeneratedContentStatus)}>
+                <option value="DRAFT">Draft</option>
+                <option value="REVIEWED">Reviewed</option>
+                <option value="LIVE">Live</option>
+                <option value="ARCHIVED">Archived</option>
+                <option value="ERROR">Error</option>
+              </select>
+            </label>
+            <label>
+              <span>Event type</span>
+              <input value={draft.eventType} onChange={(event) => updateDraft("eventType", event.target.value)} />
+            </label>
+            <label>
+              <span>Target date</span>
+              <input type="date" value={draft.targetDate} onChange={(event) => updateDraft("targetDate", event.target.value)} />
+            </label>
+          </div>
+
+          <label className="admin-field-wide">
+            <span>Headline</span>
+            <input value={draft.headline} onChange={(event) => updateDraft("headline", event.target.value)} />
+          </label>
+          <label className="admin-field-wide">
+            <span>Summary</span>
+            <textarea value={draft.summary} onChange={(event) => updateDraft("summary", event.target.value)} rows={3} />
+          </label>
+          <label className="admin-field-wide">
+            <span>Body</span>
+            <textarea value={draft.body} onChange={(event) => updateDraft("body", event.target.value)} rows={12} />
+          </label>
+          <label className="admin-field-wide">
+            <span>Reviewer notes / extra voice notes</span>
+            <textarea value={draft.reviewerNotes} onChange={(event) => updateDraft("reviewerNotes", event.target.value)} rows={3} />
+          </label>
+
+          <details className="admin-advanced">
+            <summary>Generation inputs</summary>
+            <label>
+              <span>Knowledge IDs, comma separated</span>
+              <input value={draft.knowledgeIds} onChange={(event) => updateDraft("knowledgeIds", event.target.value)} />
+            </label>
+            <label>
+              <span>Facts JSON</span>
+              <textarea value={draft.factsJson} onChange={(event) => updateDraft("factsJson", event.target.value)} rows={8} />
+            </label>
+            <label>
+              <span>Source snapshot JSON</span>
+              <textarea value={draft.sourceSnapshotJson} onChange={(event) => updateDraft("sourceSnapshotJson", event.target.value)} rows={8} />
+            </label>
+            <label>
+              <span>Sections JSON</span>
+              <textarea value={draft.sectionsJson} onChange={(event) => updateDraft("sectionsJson", event.target.value)} rows={6} />
+            </label>
+          </details>
+
+          <section className="admin-preview" aria-label="Content preview">
+            <p className="admin-eyebrow">User preview</p>
+            <h3>{draft.headline || "Untitled"}</h3>
+            {draft.summary && <strong>{draft.summary}</strong>}
+            {draft.body.split(/\n{2,}/).filter(Boolean).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        </section>
+      </section>
     </main>
   );
 }
@@ -4152,9 +4845,19 @@ function SkyWheel({
   const activeTooltipPosition = activeTooltipPlanet
     ? positions.find((position) => position.planet === activeTooltipPlanet)
     : null;
+  const planetClusterLevels = wheelMarkerClusterLevels(
+    positions,
+    (position) => position.planet,
+    planetAngle,
+    8
+  );
+
+  function planetMarkerRadius(position: PlanetPosition) {
+    return radius.planet - (planetClusterLevels.get(position.planet) ?? 0) * 28;
+  }
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), radius.planet);
+    const marker = point(planetAngle(position), planetMarkerRadius(position));
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
     const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
@@ -4300,10 +5003,11 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const marker = point(planetAngle(position), radius.planet);
+          const markerRadius = planetMarkerRadius(position);
+          const marker = point(planetAngle(position), markerRadius);
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetAngle(position), radius.planet - 22);
+          const label = point(planetAngle(position), markerRadius - 22);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -4468,11 +5172,27 @@ function SynastryWheel({
     ...aspect,
     className: aspectClass(aspect.type)
   }));
+  const outerPlanetClusterLevels = wheelMarkerClusterLevels(
+    outerPositions,
+    (position) => position.planet,
+    (position) => angleForLongitude(zodiacLongitude(position)),
+    8
+  );
+  const innerPlanetClusterLevels = wheelMarkerClusterLevels(
+    innerPositions,
+    (position) => position.planet,
+    (position) => angleForLongitude(zodiacLongitude(position)),
+    8
+  );
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
-    const markerRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
-    const degreeRadius = ring === "outer" ? radius.outerDegree : radius.innerDegree;
+    const clusterLevel = ring === "outer"
+      ? outerPlanetClusterLevels.get(position.planet) ?? 0
+      : innerPlanetClusterLevels.get(position.planet) ?? 0;
+    const clusterOffset = clusterLevel * (ring === "outer" ? 24 : 20);
+    const markerRadius = (ring === "outer" ? radius.outerPlanet : radius.innerPlanet) - clusterOffset;
+    const degreeRadius = (ring === "outer" ? radius.outerDegree : radius.innerDegree) - clusterOffset;
     const tickInnerRadius = ring === "outer" ? radius.outerTickInner : radius.innerTickInner;
     const tickOuterRadius = ring === "outer" ? radius.outerTickOuter : radius.innerTickOuter;
     const marker = point(angle, markerRadius);
@@ -4764,6 +5484,14 @@ function retrogradeCardRange(window?: RetrogradeWindow) {
   return `Until ${formatRetrogradeDate(window.retrogradeEnd)}`;
 }
 
+function retrogradeDetailRange(window?: RetrogradeWindow) {
+  if (!window) {
+    return "Dates calculating";
+  }
+
+  return formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd);
+}
+
 function SkyCards({
   sky,
   generatedContent
@@ -4849,10 +5577,10 @@ function RetrogradeCallout({
               className="retro"
               type="button"
               onClick={() => onOpenDetail({
-                glyph: position.glyph,
+                glyph: `${position.glyph} ℞`,
                 kicker: "Currently in Retrograde",
                 title: generated?.headline ?? title,
-                meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeCardRange(retrogradeWindow)}`,
+                meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeDetailRange(retrogradeWindow)}`,
                 body: detailParagraphs,
                 content: content.bundle
               })}
@@ -5024,11 +5752,13 @@ function CitySearchField({
 function TodayView({
   positions,
   aspects,
+  generatedAt,
   generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedAt: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -5037,12 +5767,14 @@ function TodayView({
       <PlacementView
         positions={positions}
         aspects={aspects}
+        generatedAt={generatedAt}
         generatedContent={generatedContent}
         onOpenDetail={onOpenDetail}
       />
       <ActiveAspects
         aspects={aspects}
         positions={positions}
+        generatedAt={generatedAt}
         generatedContent={generatedContent}
         onOpenDetail={onOpenDetail}
       />
@@ -5053,11 +5785,13 @@ function TodayView({
 function PlacementView({
   positions,
   aspects,
+  generatedAt,
   generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedAt: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -5094,6 +5828,7 @@ function PlacementView({
         <PlacementTable
           positions={positions}
           aspects={aspects}
+          generatedAt={generatedAt}
           generatedContent={generatedContent}
           onOpenDetail={onOpenDetail}
         />
@@ -5144,11 +5879,13 @@ function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapsh
 function ActiveAspects({
   aspects,
   positions,
+  generatedAt,
   generatedContent,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
+  generatedAt: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -5173,10 +5910,10 @@ function ActiveAspects({
                 key={`${aspect.from}-${aspect.to}`}
                 aria-label={`Read more about ${title}`}
                 onClick={() => onOpenDetail({
-                  glyph: aspectGlyph(aspect.type),
+                  glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
                   kicker: "",
                   title: generated?.headline ?? title,
-                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectDurationLabel(aspect)}`,
+                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
                   content: content.bundle,
                   body
                 })}
@@ -5232,11 +5969,13 @@ function PlacementParagraph({
 function PlacementTable({
   positions,
   aspects,
+  generatedAt,
   generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedAt: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -5258,10 +5997,10 @@ function PlacementTable({
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
           const openDetail = () => onOpenDetail({
-            glyph: position.glyph,
+            glyph: detailGlyphForPlacement(position, activeAspects),
             kicker: placementDetailKicker(position, activeAspects),
             title: generated?.headline ?? title,
-            meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementDurationLabel(position)}`,
+            meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementTransitRange(position, generatedAt)}`,
             body,
             content: content.bundle
           });
