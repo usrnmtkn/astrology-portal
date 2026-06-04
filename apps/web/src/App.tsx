@@ -1319,7 +1319,7 @@ function detailMetaRows(meta: string) {
     const lower = part.toLowerCase();
     const label = lower.includes("orb")
       ? "Orb"
-      : lower === "today"
+      : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
         ? "Timing"
         : index === 0
           ? "Signature"
@@ -1327,6 +1327,47 @@ function detailMetaRows(meta: string) {
 
     return { label, value: part };
   });
+}
+
+const placementDurationLabels: Record<string, string> = {
+  Sun: "About 30 days in this sign",
+  Moon: "About 2.5 days in this sign",
+  Mercury: "About 2-3 weeks in this sign",
+  Venus: "About 3-4 weeks in this sign",
+  Mars: "About 6-7 weeks in this sign",
+  Jupiter: "About 1 year in this sign",
+  Saturn: "About 2.5 years in this sign",
+  Uranus: "About 7 years in this sign",
+  Neptune: "About 14 years in this sign",
+  Pluto: "About 12-30 years in this sign",
+  "True Node": "About 18 months in this sign"
+};
+
+const aspectDurationLabels: Record<string, string> = {
+  Moon: "About 6-12 hours",
+  Sun: "About 1-2 days",
+  Mercury: "About 1-3 days",
+  Venus: "About 2-4 days",
+  Mars: "About 4-7 days",
+  Jupiter: "About 2-4 weeks",
+  Saturn: "About 3-6 weeks",
+  Uranus: "About 1-3 months",
+  Neptune: "About 1-3 months",
+  Pluto: "About 1-3 months"
+};
+
+function placementDurationLabel(position: PlanetPosition) {
+  return placementDurationLabels[position.planet] ?? "Current sign cycle";
+}
+
+function currentSkyAspectDurationLabel(aspect: SkySnapshot["aspects"][number]) {
+  const fastestPlanet = [aspect.from, aspect.to]
+    .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
+    .filter((item) => item.order >= 0)
+    .sort((first, second) => first.order - second.order)[0]?.planet;
+  const duration = fastestPlanet ? aspectDurationLabels[fastestPlanet] : "Active now";
+
+  return `${duration} near exact (${aspect.orb.toFixed(1)}° orb now)`;
 }
 
 function detailSectionTitle(index: number) {
@@ -1360,7 +1401,7 @@ function SkyDetailArticle({
       <article className="sky-detail-article">
         <header className="sky-detail-hero">
           <div className="sky-detail-glyph" aria-hidden="true">{detail.glyph}</div>
-          <span className="sky-detail-kicker">{detail.kicker}</span>
+          {detail.kicker ? <span className="sky-detail-kicker">{detail.kicker}</span> : null}
           <h2 id="sky-detail-title">{detail.title}</h2>
           <dl className="sky-detail-meta">
             {metaRows.map((row) => (
@@ -4811,7 +4852,7 @@ function RetrogradeCallout({
                 glyph: position.glyph,
                 kicker: "Currently in Retrograde",
                 title: generated?.headline ?? title,
-                meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
+                meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeCardRange(retrogradeWindow)}`,
                 body: detailParagraphs,
                 content: content.bundle
               })}
@@ -5083,19 +5124,7 @@ function aspectsForPlacement(position: PlanetPosition, aspects: SkySnapshot["asp
 }
 
 function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  if (position.planet === "Sun") {
-    return "Solar weather";
-  }
-
-  if (position.planet === "Moon") {
-    return "Lunar weather";
-  }
-
-  if (activeAspects.length > 0) {
-    return "Active placement";
-  }
-
-  return "Placement";
+  return "";
 }
 
 function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
@@ -5145,9 +5174,9 @@ function ActiveAspects({
                 aria-label={`Read more about ${title}`}
                 onClick={() => onOpenDetail({
                   glyph: aspectGlyph(aspect.type),
-                  kicker: "Today's aspect",
+                  kicker: "",
                   title: generated?.headline ?? title,
-                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
+                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectDurationLabel(aspect)}`,
                   content: content.bundle,
                   body
                 })}
@@ -5232,7 +5261,7 @@ function PlacementTable({
             glyph: position.glyph,
             kicker: placementDetailKicker(position, activeAspects),
             title: generated?.headline ?? title,
-            meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
+            meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementDurationLabel(position)}`,
             body,
             content: content.bundle
           });
