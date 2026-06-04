@@ -123,8 +123,8 @@ const planetTopic: Record<string, string> = {
 
 const skyPlanetTopic: Record<string, string> = {
   ...planetTopic,
-  moon: "the emotional weather",
-  sun: "the tone of the season"
+  moon: "feelings, needs, and reactions",
+  sun: "attention, vitality, and the larger tone of the season"
 };
 
 const signStyle: Record<string, string> = {
@@ -477,6 +477,23 @@ function skyAspectNotice(planetA: string, aspect: string, planetB: string) {
   const planetBLabel = titleize(planetB);
   const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
   const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
+  const pair = [planetA, planetB].sort().join("-");
+  const specific: Record<string, string> = {
+    "mercury-neptune": "Conversations can blur today. You may think you said one thing while someone else hears another, or a message may land in a tone nobody intended.",
+    "moon-uranus": "Your usual reaction may not fit today. A feeling can change quickly, or something small may interrupt the plan you thought you were following.",
+    "sun-saturn": "The day can make scattered ideas easier to organize. If your attention has been split across too many choices, one useful next step may become clearer.",
+    "venus-saturn": "Affection may feel more believable when it shows up through actions. Empty reassurance may not land as well as consistency, follow-through, or a practical gesture.",
+    "mars-saturn": "Effort may meet a limit today. Pushing harder can waste energy if the timing, structure, or responsibility underneath the action has not been handled.",
+    "moon-venus": "Comfort may be easier to name today. A small act of care, beauty, food, rest, or reassurance can do more than a big emotional conversation.",
+    "mercury-saturn": "The practical conversation may be the one that helps most today. Details, timing, and limits can make a message clearer instead of colder.",
+    "venus-mars": "Attraction and urgency can get tangled today. Wanting something does not automatically mean the timing is right.",
+    "sun-neptune": "The story may be softer than the facts today. Inspiration is possible, but so is seeing what you want to see.",
+    "moon-pluto": "A reaction may carry more history than the moment explains. The feeling may be real, but it may not be only about what just happened."
+  };
+
+  if (specific[pair]) {
+    return specific[pair];
+  }
 
   if (hardAspects.has(aspect)) {
     return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, so ${firstTopic} may run into ${secondTopic}. You may notice the tension through a conversation, plan, reaction, or choice that does not settle as quickly as you want it to.`;
@@ -494,6 +511,19 @@ function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
   const planetBLabel = titleize(planetB);
   const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
   const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
+  const pair = [planetA, planetB].sort().join("-");
+  const specific: Record<string, string> = {
+    "mercury-neptune": "Mercury describes how information moves. Neptune softens boundaries, so facts, impressions, memories, and wishes can slide into each other. The square creates friction between what is being said and what is actually clear.",
+    "moon-uranus": "The Moon describes instinct and immediate need. Uranus brings disruption, freedom, and the urge to break pattern. A trine can make the change easier to use if you do not treat the first reaction as the only option.",
+    "sun-saturn": "The Sun shows where attention is going. Saturn adds structure, discipline, and reality checks. A sextile is an opening, so focus is available if you choose one concrete place to put it.",
+    "venus-saturn": "Venus describes affection, pleasure, and value. Saturn asks for proof, patience, and maturity. The contact can make care feel more serious, but also more trustworthy when it is backed by action.",
+    "mars-saturn": "Mars wants movement. Saturn slows things down until the structure is strong enough to hold the effort. The aspect can feel frustrating, but it is useful for choosing the action that will actually work.",
+    "moon-venus": "The Moon describes need and response. Venus describes pleasure, ease, and affection. The contact can make it easier to understand what would feel supportive in a simple, concrete way.",
+    "mercury-saturn": "Mercury handles words and decisions. Saturn brings limits, time, and responsibility. The contact favors clarity over performance.",
+    "venus-mars": "Venus wants connection and pleasure. Mars wants action and desire. The aspect can show where attraction needs timing, consent, or a cleaner choice.",
+    "sun-neptune": "The Sun brings attention. Neptune brings imagination, longing, and blur. The contact can inspire, but it can also make the obvious facts harder to hold.",
+    "moon-pluto": "The Moon describes emotional need. Pluto brings depth, control, fear, and transformation. The contact can pull a feeling up from underneath the surface."
+  };
   const aspectMeaning: Record<string, string> = {
     conjunction: "A conjunction blends the planets, so it can be harder to tell where one topic ends and the other begins.",
     opposition: "An opposition creates contrast, so the day may show two needs, views, or instincts facing each other.",
@@ -501,6 +531,10 @@ function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
     trine: "A trine is a supportive angle, so the useful part may feel available without much force.",
     sextile: "A sextile is an opening, but it usually works best when you take a small step toward it."
   };
+
+  if (specific[pair]) {
+    return specific[pair];
+  }
 
   return `${planetALabel} describes ${firstTopic}. ${planetBLabel} brings in ${secondTopic}. ${aspectMeaning[aspect] ?? "The aspect shows how these two parts of the sky are interacting."}`;
 }

@@ -40,6 +40,11 @@ import {
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
+  generatedContentParagraphs,
+  loadLiveGeneratedContent,
+  type LiveGeneratedContent
+} from "./services/generatedContent";
+import {
   createManualChart,
   deleteManualChart,
   listManualCharts,
@@ -217,6 +222,8 @@ type SkyDetail = {
   content?: ContentBundle;
 };
 
+type GeneratedContentMap = Map<string, LiveGeneratedContent>;
+
 type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
   typeof import("./content/skyRegistry"),
@@ -340,6 +347,24 @@ function hasApprovedVoiceContent(content: ContentFallback) {
 
 const interpretationInReviewSummary = "Interpretation in review.";
 const interpretationInReviewParagraphs = ["This interpretation is being reviewed before it appears here."];
+
+function liveGeneratedContent(generatedContent: GeneratedContentMap, contentKey: string) {
+  return generatedContent.get(contentKey) ?? null;
+}
+
+function liveGeneratedSummary(generated: LiveGeneratedContent | null, fallback: string | null) {
+  return generated?.summary?.trim() || fallback || interpretationInReviewSummary;
+}
+
+function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
+  const paragraphs = generatedContentParagraphs(generated);
+
+  return paragraphs.length > 0
+    ? paragraphs
+    : fallbackParagraphs.length > 0
+      ? fallbackParagraphs
+      : interpretationInReviewParagraphs;
+}
 
 function importContentRegistry(domain: ContentDomain): Promise<LazyContentRegistry> {
   if (domain === "sky") {
@@ -1280,6 +1305,93 @@ function GoogleIcon() {
       <path d="M4.4 11.9a6.01 6.01 0 0 1 0-3.8V5.51H1.06a10 10 0 0 0 0 8.98L4.4 11.9Z" fill="#FBBC04" />
       <path d="M10 3.98c1.47 0 2.79.5 3.82 1.49l2.87-2.86A9.6 9.6 0 0 0 10 0 9.99 9.99 0 0 0 1.06 5.51L4.4 8.1A5.9 5.9 0 0 1 10 3.98Z" fill="#E94235" />
     </svg>
+  );
+}
+
+function detailMetaRows(meta: string) {
+  const parts = meta.split("·").map((part) => part.trim()).filter(Boolean);
+
+  if (parts.length === 0) {
+    return [{ label: "Context", value: "Field guide" }];
+  }
+
+  return parts.map((part, index) => {
+    const lower = part.toLowerCase();
+    const label = lower.includes("orb")
+      ? "Orb"
+      : lower === "today"
+        ? "Timing"
+        : index === 0
+          ? "Signature"
+          : "Context";
+
+    return { label, value: part };
+  });
+}
+
+function detailSectionTitle(index: number) {
+  const titles = ["What it means", "How it shows up", "What to do with it", "Keep in mind"];
+
+  return titles[index] ?? "Further notes";
+}
+
+function SkyDetailArticle({
+  detail,
+  onClose
+}: {
+  detail: SkyDetail;
+  onClose: () => void;
+}) {
+  const metaRows = detailMetaRows(detail.meta);
+  const statement = detail.content?.knowledge?.interpretation.coreTheme;
+  const paragraphs = detail.body.length > 0 ? detail.body : ["This field guide is still being written."];
+  const [lede, ...sectionParagraphs] = paragraphs;
+
+  return (
+    <section
+      className="sky-detail-page"
+      aria-label={`${detail.title} field guide`}
+      aria-labelledby="sky-detail-title"
+    >
+      <button className="sky-detail-back" type="button" aria-label="Close detail" onClick={onClose}>
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Back</span>
+      </button>
+      <article className="sky-detail-article">
+        <header className="sky-detail-hero">
+          <div className="sky-detail-glyph" aria-hidden="true">{detail.glyph}</div>
+          <span className="sky-detail-kicker">{detail.kicker}</span>
+          <h2 id="sky-detail-title">{detail.title}</h2>
+          <dl className="sky-detail-meta">
+            {metaRows.map((row) => (
+              <div className="sky-detail-meta-row" key={`${row.label}-${row.value}`}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </header>
+
+        {statement ? (
+          <aside className="sky-detail-statement">
+            <span aria-hidden="true" />
+            <p>{statement}</p>
+          </aside>
+        ) : null}
+
+        <div className="sky-detail-body">
+          <p className="sky-detail-lede">{lede}</p>
+          {sectionParagraphs.map((paragraph, index) => (
+            <section className="sky-detail-section" key={index}>
+              <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {detailSectionTitle(index)}</span>
+              <h3>{detailSectionTitle(index)}</h3>
+              <p>{paragraph}</p>
+            </section>
+          ))}
+          <div className="sky-detail-end" aria-hidden="true">✦</div>
+        </div>
+      </article>
+    </section>
   );
 }
 
@@ -2447,6 +2559,7 @@ export function App() {
 
     return getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
   });
+  const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
@@ -2484,6 +2597,27 @@ export function App() {
       cancelled = true;
     };
   }, [mode]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadLiveGeneratedContent("sky", skyDate)
+      .then((content) => {
+        if (!cancelled) {
+          setSkyGeneratedContent(content);
+        }
+      })
+      .catch((error) => {
+        console.warn("Live Sky interpretations failed to load; using local knowledge fallback.", error);
+        if (!cancelled) {
+          setSkyGeneratedContent(new Map());
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [skyDate]);
 
   useEffect(() => {
     if (!cityPickerOpen) {
@@ -3087,8 +3221,8 @@ export function App() {
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
 
   return (
-    <main className={`app-shell theme-${theme} mode-${mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
-      {!isSignupMode && (
+    <main className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
+      {!isSignupMode && !selectedSkyDetail && (
         <header className="topbar">
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
@@ -3207,230 +3341,228 @@ export function App() {
         </header>
       )}
 
-      {isTodayMode && (
-        <section className="today-hero" aria-label="Today controls">
-          <h1>the sky today.</h1>
-          <div className="today-controls">
-            <button
-              className="today-pill"
-              type="button"
-              aria-expanded={datePickerOpen}
-              aria-controls="sky-date-picker"
-              onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
-            >
-              <CalendarDays size={18} aria-hidden="true" />
-              <span>{formatSkyDate(skyDate)}</span>
-            </button>
-            <button
-              className="today-pill"
-              type="button"
-              ref={cityPickerTriggerRef}
-              aria-expanded={cityPickerOpen}
-              aria-controls="city-picker"
-              onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
-            >
-              <MapPin size={18} aria-hidden="true" />
-              <span>{sky.location.label}</span>
-              <Pencil size={16} aria-hidden="true" />
-            </button>
-          </div>
-          {datePickerOpen && (
-            <SkyDatePicker
-              value={skyDate}
-              onSelect={(nextDate) => {
-                setSkyDate(nextDate);
-                setDatePickerOpen(false);
-              }}
-            />
-          )}
-          {cityPickerOpen && (
-            <form
-              className="city-picker hero-city-picker"
-              id="city-picker"
-              ref={cityPickerRef}
-              onSubmit={(event) => {
-                event.preventDefault();
-                applyManualLocation();
-              }}
-            >
-              <label>
-                <span>City</span>
-                <input
-                  value={manualLocation}
-                  onChange={(event) => setManualLocation(event.target.value)}
-                  aria-label="City"
-                  placeholder="Search for a city"
-                  autoFocus
-                />
-              </label>
-              <CitySuggestions
-                suggestions={citySuggestions}
-                status={citySearchStatus}
-                mapboxEnabled={hasMapboxToken()}
-                onSelect={applyCitySuggestion}
-              />
-              <div className="city-picker-actions">
-                <button type="submit">Update</button>
-                <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+      {selectedSkyDetail ? (
+          <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
+      ) : (
+        <>
+          {isTodayMode && (
+            <section className="today-hero" aria-label="Today controls">
+              <h1>the sky today.</h1>
+              <div className="today-controls">
+                <button
+                  className="today-pill"
+                  type="button"
+                  aria-expanded={datePickerOpen}
+                  aria-controls="sky-date-picker"
+                  onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
+                >
+                  <CalendarDays size={18} aria-hidden="true" />
+                  <span>{formatSkyDate(skyDate)}</span>
+                </button>
+                <button
+                  className="today-pill"
+                  type="button"
+                  ref={cityPickerTriggerRef}
+                  aria-expanded={cityPickerOpen}
+                  aria-controls="city-picker"
+                  onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
+                >
+                  <MapPin size={18} aria-hidden="true" />
+                  <span>{sky.location.label}</span>
+                  <Pencil size={16} aria-hidden="true" />
+                </button>
               </div>
-            </form>
+              {datePickerOpen && (
+                <SkyDatePicker
+                  value={skyDate}
+                  onSelect={(nextDate) => {
+                    setSkyDate(nextDate);
+                    setDatePickerOpen(false);
+                  }}
+                />
+              )}
+              {cityPickerOpen && (
+                <form
+                  className="city-picker hero-city-picker"
+                  id="city-picker"
+                  ref={cityPickerRef}
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    applyManualLocation();
+                  }}
+                >
+                  <label>
+                    <span>City</span>
+                    <input
+                      value={manualLocation}
+                      onChange={(event) => setManualLocation(event.target.value)}
+                      aria-label="City"
+                      placeholder="Search for a city"
+                      autoFocus
+                    />
+                  </label>
+                  <CitySuggestions
+                    suggestions={citySuggestions}
+                    status={citySearchStatus}
+                    mapboxEnabled={hasMapboxToken()}
+                    onSelect={applyCitySuggestion}
+                  />
+                  <div className="city-picker-actions">
+                    <button type="submit">Update</button>
+                    <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+                  </div>
+                </form>
+              )}
+            </section>
           )}
-        </section>
-      )}
 
-      <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
-        {!isSignupMode && !isProfileMode && (
-          <section className="sky-panel" aria-label="Current sky">
-            <SkyWheel positions={sky.positions} aspects={sky.aspects} />
+          <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
+            {!isSignupMode && !isProfileMode && (
+              <section className="sky-panel" aria-label="Current sky">
+                <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
-            <SkyCards sky={sky} />
-            <RetrogradeCallout positions={sky.positions} generatedAt={sky.generatedAt} onOpenDetail={setSelectedSkyDetail} />
+                <SkyCards sky={sky} generatedContent={skyGeneratedContent} />
+                <RetrogradeCallout
+                  positions={sky.positions}
+                  generatedAt={sky.generatedAt}
+                  generatedContent={skyGeneratedContent}
+                  onOpenDetail={setSelectedSkyDetail}
+                />
+              </section>
+            )}
+
+            <section className="detail-panel" aria-label="Portal details">
+              {mode === "guest" && (
+                <TodayView
+                  positions={sky.positions}
+                  aspects={sky.aspects}
+                  generatedContent={skyGeneratedContent}
+                  onOpenDetail={setSelectedSkyDetail}
+                />
+              )}
+              {mode === "member" && (
+                <TodayView
+                  positions={sky.positions}
+                  aspects={sky.aspects}
+                  generatedContent={skyGeneratedContent}
+                  onOpenDetail={setSelectedSkyDetail}
+                />
+              )}
+              {mode === "profile" && (
+                userProfile ? (
+                  <ProfileView
+                    profile={userProfile}
+                    onUpdateProfile={setUserProfile}
+                    transitForm={transitForm}
+                    transitItems={activeTransits}
+                    natalSky={profileNatalSky}
+                    transitsDrawn={transitsDrawn}
+                    selectedTransit={selectedTransit}
+                    selectedTransitId={selectedTransitId}
+                    setSelectedTransitId={setSelectedTransitId}
+                    onCreateChart={() => openCreateChartModal()}
+                  />
+                ) : (
+                  <SignupView
+                    initialMode={accountIntent}
+                    onClose={() => {
+                      setAccountIntent("create");
+                      setMode(userProfile ? "profile" : "guest");
+                    }}
+                    onCreateProfile={(nextProfile) => {
+                      setUserProfile(nextProfile);
+                      setMode("profile");
+                    }}
+                  />
+                )
+              )}
+              {mode === "friends" && userProfile && (
+                <ManualChartsPanel
+                  profile={userProfile}
+                  currentSky={sky}
+                  profileNatalSky={profileNatalSky}
+                  profileTransits={activeTransits}
+                />
+              )}
+              {mode === "account" && userProfile && (
+                <AccountView
+                  profile={userProfile}
+                  onSignOut={async () => {
+                    await signOutAuth();
+                    setUserProfile(null);
+                    setMode("profile");
+                  }}
+                  onUpdateProfile={setUserProfile}
+                />
+              )}
+              {mode === "settings" && (
+                userProfile ? (
+                  <SettingsView
+                    profile={userProfile}
+                    onUpdateProfile={setUserProfile}
+                    theme={theme}
+                    sunriseOrbEnabled={sunriseOrbEnabled}
+                    onThemeChange={setTheme}
+                    onSunriseOrbChange={setSunriseOrbEnabled}
+                    dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                    onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                    onSignOut={async () => {
+                      await signOutAuth();
+                      setUserProfile(null);
+                      setMode("profile");
+                    }}
+                  />
+                ) : (
+                  <GuestSettingsView
+                    theme={theme}
+                    location={location}
+                    sunriseOrbEnabled={sunriseOrbEnabled}
+                    onThemeChange={setTheme}
+                    onSunriseOrbChange={setSunriseOrbEnabled}
+                    dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                    onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                  />
+                )
+              )}
+            </section>
           </section>
-        )}
 
-        <section className="detail-panel" aria-label="Portal details">
-          {mode === "guest" && <TodayView positions={sky.positions} aspects={sky.aspects} onOpenDetail={setSelectedSkyDetail} />}
-          {mode === "member" && (
-            <TodayView positions={sky.positions} aspects={sky.aspects} onOpenDetail={setSelectedSkyDetail} />
-          )}
-          {mode === "profile" && (
-            userProfile ? (
-              <ProfileView
-                profile={userProfile}
-                onUpdateProfile={setUserProfile}
-                transitForm={transitForm}
-                transitItems={activeTransits}
-                natalSky={profileNatalSky}
-                transitsDrawn={transitsDrawn}
-                selectedTransit={selectedTransit}
-                selectedTransitId={selectedTransitId}
-                setSelectedTransitId={setSelectedTransitId}
-                onCreateChart={() => openCreateChartModal()}
-              />
-            ) : (
-              <SignupView
-                initialMode={accountIntent}
-                onClose={() => {
-                  setAccountIntent("create");
-                  setMode(userProfile ? "profile" : "guest");
-                }}
-                onCreateProfile={(nextProfile) => {
-                  setUserProfile(nextProfile);
-                  setMode("profile");
-                }}
-              />
-            )
-          )}
-          {mode === "friends" && userProfile && (
-            <ManualChartsPanel
-              profile={userProfile}
-              currentSky={sky}
-              profileNatalSky={profileNatalSky}
-              profileTransits={activeTransits}
-            />
-          )}
-{mode === "account" && userProfile && (
-  <AccountView
-    profile={userProfile}
-    onSignOut={async () => {
-      await signOutAuth();
-      setUserProfile(null);
-      setMode("profile");
-    }}
-    onUpdateProfile={setUserProfile}
-  />
-)}
-          {mode === "settings" && (
-            userProfile ? (
-              <SettingsView
-                profile={userProfile}
-                onUpdateProfile={setUserProfile}
-                theme={theme}
-                sunriseOrbEnabled={sunriseOrbEnabled}
-                onThemeChange={setTheme}
-                onSunriseOrbChange={setSunriseOrbEnabled}
-                dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                onSignOut={async () => {
-                  await signOutAuth();
-                  setUserProfile(null);
-                  setMode("profile");
-                }}
-              />
-            ) : (
-              <GuestSettingsView
-                theme={theme}
-                location={location}
-                sunriseOrbEnabled={sunriseOrbEnabled}
-                onThemeChange={setTheme}
-                onSunriseOrbChange={setSunriseOrbEnabled}
-                dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                onDyslexiaFontChange={setDyslexiaFriendlyFont}
-              />
-            )
-          )}
-        </section>
-      </section>
-
-      {isTodayMode && mode === "member" && userProfile && needsChartSetup && (
-        <button className="create-chart-fab" type="button" onClick={() => openCreateChartModal()}>
-          <span className="create-chart-fab-icon" aria-hidden="true">
-            <Sparkles size={18} />
-          </span>
-          <span className="create-chart-fab-copy">
-            <strong>Create your chart</strong>
-            <em>{chartFlowStepsLeft(userProfile)} steps left</em>
-          </span>
-        </button>
-      )}
-
-      {chartModalOpen && (
-        <div className="chart-modal-backdrop" role="presentation" onMouseDown={() => setChartModalOpen(false)}>
-          <section
-            className="chart-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="chart-modal-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
-              ×
+          {isTodayMode && mode === "member" && userProfile && needsChartSetup && (
+            <button className="create-chart-fab" type="button" onClick={() => openCreateChartModal()}>
+              <span className="create-chart-fab-icon" aria-hidden="true">
+                <Sparkles size={18} />
+              </span>
+              <span className="create-chart-fab-copy">
+                <strong>Create your chart</strong>
+                <em>{chartFlowStepsLeft(userProfile)} steps left</em>
+              </span>
             </button>
-            <CreateChartFlow
-              form={transitForm}
-              setForm={setTransitForm}
-              profile={userProfile}
-              step={chartModalStep}
-              setStep={setChartModalStep}
-              onSave={drawTransitChart}
-            />
-          </section>
-        </div>
-      )}
+          )}
 
-      {selectedSkyDetail && (
-        <div className="sky-detail-backdrop" role="presentation" onMouseDown={() => setSelectedSkyDetail(null)}>
-          <section
-            className="sky-detail-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="sky-detail-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <button className="sky-detail-close" type="button" aria-label="Close detail" onClick={() => setSelectedSkyDetail(null)}>
-              <X size={22} aria-hidden="true" />
-            </button>
-            <div className="sky-detail-glyph" aria-hidden="true">{selectedSkyDetail.glyph}</div>
-            <span>{selectedSkyDetail.kicker}</span>
-            <h2 id="sky-detail-title">{selectedSkyDetail.title}</h2>
-            <p className="sky-detail-meta">{selectedSkyDetail.meta}</p>
-            <div className="sky-detail-body">
-              {selectedSkyDetail.body.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+          {chartModalOpen && (
+            <div className="chart-modal-backdrop" role="presentation" onMouseDown={() => setChartModalOpen(false)}>
+              <section
+                className="chart-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="chart-modal-title"
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
+                  ×
+                </button>
+                <CreateChartFlow
+                  form={transitForm}
+                  setForm={setTransitForm}
+                  profile={userProfile}
+                  step={chartModalStep}
+                  setStep={setChartModalStep}
+                  onSave={drawTransitChart}
+                />
+              </section>
             </div>
-          </section>
-        </div>
+          )}
+        </>
       )}
 
     </main>
@@ -4591,9 +4723,16 @@ function retrogradeCardRange(window?: RetrogradeWindow) {
   return `Until ${formatRetrogradeDate(window.retrogradeEnd)}`;
 }
 
-function SkyCards({ sky }: { sky: SkySnapshot }) {
+function SkyCards({
+  sky,
+  generatedContent
+}: {
+  sky: SkySnapshot;
+  generatedContent: GeneratedContentMap;
+}) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
+  const dailyContent = liveGeneratedContent(generatedContent, `sky-daily-${sky.generatedAt.slice(0, 10)}`);
 
   return (
     <section className="sky-lunar-brief" aria-label="Sky highlights">
@@ -4624,7 +4763,7 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
       </div>
       <div className="sky-lunar-tldr">
         <span>TLDR</span>
-        <p>{moonPhaseTldr(sky.moonPhase)}</p>
+        <p>{dailyContent?.summary ?? moonPhaseTldr(sky.moonPhase)}</p>
       </div>
     </section>
   );
@@ -4633,10 +4772,12 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
 function RetrogradeCallout({
   positions,
   generatedAt,
+  generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   generatedAt: string;
+  generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const retrogrades = positions.filter((position) => position.motion === "retrograde");
@@ -4651,14 +4792,14 @@ function RetrogradeCallout({
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
-          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
+          const contentKey = placementContentId(position.planet, position.sign, "sky");
+          const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+          const generated = liveGeneratedContent(generatedContent, contentKey);
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
           const timelineLines = retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
-            ...(content.detailParagraphs.length > 0
-              ? content.detailParagraphs
-              : interpretationInReviewParagraphs)
+            ...liveGeneratedBody(generated, content.detailParagraphs)
           ];
 
           return (
@@ -4669,7 +4810,7 @@ function RetrogradeCallout({
               onClick={() => onOpenDetail({
                 glyph: position.glyph,
                 kicker: "Currently in Retrograde",
-                title,
+                title: generated?.headline ?? title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · CURRENT SKY`,
                 body: detailParagraphs,
                 content: content.bundle
@@ -4842,16 +4983,28 @@ function CitySearchField({
 function TodayView({
   positions,
   aspects,
+  generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   return (
     <>
-      <PlacementView positions={positions} aspects={aspects} onOpenDetail={onOpenDetail} />
-      <ActiveAspects aspects={aspects} positions={positions} onOpenDetail={onOpenDetail} />
+      <PlacementView
+        positions={positions}
+        aspects={aspects}
+        generatedContent={generatedContent}
+        onOpenDetail={onOpenDetail}
+      />
+      <ActiveAspects
+        aspects={aspects}
+        positions={positions}
+        generatedContent={generatedContent}
+        onOpenDetail={onOpenDetail}
+      />
     </>
   );
 }
@@ -4859,10 +5012,12 @@ function TodayView({
 function PlacementView({
   positions,
   aspects,
+  generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
@@ -4895,9 +5050,14 @@ function PlacementView({
       </div>
 
       {placementMode === "table" ? (
-        <PlacementTable positions={positions} aspects={aspects} onOpenDetail={onOpenDetail} />
+        <PlacementTable
+          positions={positions}
+          aspects={aspects}
+          generatedContent={generatedContent}
+          onOpenDetail={onOpenDetail}
+        />
       ) : (
-        <PlacementParagraph positions={positions} />
+        <PlacementParagraph positions={positions} generatedContent={generatedContent} />
       )}
     </>
   );
@@ -4955,10 +5115,12 @@ function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapsh
 function ActiveAspects({
   aspects,
   positions,
+  generatedContent,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
+  generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   return (
@@ -4968,11 +5130,11 @@ function ActiveAspects({
         <div className="aspect-row-list">
           {aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
-            const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to), "sky");
-            const rowSummary = content.summary ?? interpretationInReviewSummary;
-            const detailParagraphs = content.detailParagraphs.length > 0
-              ? content.detailParagraphs
-              : interpretationInReviewParagraphs;
+            const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
+            const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+            const generated = liveGeneratedContent(generatedContent, contentKey);
+            const rowSummary = liveGeneratedSummary(generated, content.summary);
+            const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
             const body = detailParagraphs;
 
             return (
@@ -4984,7 +5146,7 @@ function ActiveAspects({
                 onClick={() => onOpenDetail({
                   glyph: aspectGlyph(aspect.type),
                   kicker: "Today's aspect",
-                  title,
+                  title: generated?.headline ?? title,
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${aspect.orb.toFixed(1)}° orb`,
                   content: content.bundle,
                   body
@@ -5008,12 +5170,20 @@ function ActiveAspects({
   );
 }
 
-function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
+function PlacementParagraph({
+  positions,
+  generatedContent
+}: {
+  positions: PlanetPosition[];
+  generatedContent: GeneratedContentMap;
+}) {
   return (
     <div className="placement-prose">
       {positions.map((position, index) => {
-        const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
-        const summary = content.summary ?? interpretationInReviewSummary;
+        const contentKey = placementContentId(position.planet, position.sign, "sky");
+        const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+        const generated = liveGeneratedContent(generatedContent, contentKey);
+        const summary = liveGeneratedSummary(generated, content.summary);
 
         return (
           <p key={position.planet}>
@@ -5033,10 +5203,12 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
 function PlacementTable({
   positions,
   aspects,
+  generatedContent,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const orderedPositions = placementPlanetOrder
@@ -5051,15 +5223,15 @@ function PlacementTable({
           const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
-          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
-          const detailParagraphs = content.detailParagraphs.length > 0
-            ? content.detailParagraphs
-            : interpretationInReviewParagraphs;
+          const contentKey = placementContentId(position.planet, position.sign, "sky");
+          const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+          const generated = liveGeneratedContent(generatedContent, contentKey);
+          const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
           const openDetail = () => onOpenDetail({
             glyph: position.glyph,
             kicker: placementDetailKicker(position, activeAspects),
-            title,
+            title: generated?.headline ?? title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · TODAY`,
             body,
             content: content.bundle
@@ -6891,31 +7063,66 @@ function ManualChartsPanel({
 
       {resolvedFriendsMainView === "circle" && (
       <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
-        <div className="friends-feed-preview-heading">
-          <span>Circle Feed</span>
-          <strong>{isLoadingCharts ? "Loading charts" : `${charts.length} saved ${charts.length === 1 ? "chart" : "charts"}`}</strong>
-        </div>
-        <p className="friends-feed-preview-copy">
-          This feed ranks the strongest current activations for saved charts and flags repeated timing themes across your circle.
-        </p>
-        <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle activations" : "Circle activations"}>
+        <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle feed" : "Circle feed"}>
           {isLoadingCharts ? (
             [0, 1, 2].map((index) => (
-              <article className="friends-logic-card friends-logic-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
-                <span className="friends-card-skeleton friends-card-skeleton-label" />
-                <i className="friends-card-skeleton friends-card-skeleton-title" />
-                <i className="friends-card-skeleton friends-card-skeleton-line" />
-                <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
+              <article className="friends-feed-card friends-feed-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
+                <span className="friends-feed-avatar-stack">
+                  <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
+                  <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
+                </span>
+                <span className="friends-feed-card-body">
+                  <span className="friends-card-skeleton friends-card-skeleton-label" />
+                  <i className="friends-card-skeleton friends-card-skeleton-title" />
+                  <i className="friends-card-skeleton friends-card-skeleton-line" />
+                  <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
+                </span>
+                <span className="friends-card-skeleton friends-card-skeleton-chevron" />
               </article>
             ))
           ) : (
-            circleCards.map((card) => (
-              <article className="friends-logic-card" key={card.title}>
-                <span>{card.label}</span>
-                <h3>{card.title}</h3>
-                <p>{card.body}</p>
+            circleCards.map((card, index) => {
+              const feedCharts = charts.length > 1
+                ? charts.slice(0, 2)
+                : charts.slice(0, 1);
+              const feedMeta = index === 0
+                ? "Today"
+                : index === 1
+                  ? "This week"
+                  : card.label === "Friend update"
+                    ? "Friend update · 2 days ago"
+                    : `${index + 2} days ago`;
+
+              return (
+              <article className="friends-feed-card" key={card.title}>
+                <span className="friends-feed-avatar-stack" aria-hidden="true">
+                  {feedCharts.map((chart) => (
+                    <span className="friends-feed-avatar" key={chart.id}>
+                      {profileInitials(chart.displayName, chart.displayName)}
+                    </span>
+                  ))}
+                  {feedCharts.length === 0 && (
+                    <span className="friends-feed-avatar">
+                      {profileInitials(profile.name, profile.email)}
+                    </span>
+                  )}
+                </span>
+                <span className="friends-feed-card-body">
+                  <span className="friends-feed-meta">{feedMeta}</span>
+                  <h3>{card.title}</h3>
+                  <p>{card.body}</p>
+                  {index === 0 && (
+                    <span className="friends-feed-symbols" aria-label="Aspect symbols">
+                      <span>☽</span>
+                      <span>∗</span>
+                      <span>☿</span>
+                    </span>
+                  )}
+                </span>
+                <ChevronRight className="friends-feed-chevron" size={24} aria-hidden="true" />
               </article>
-            ))
+              );
+            })
           )}
         </div>
       </section>
@@ -6923,17 +7130,13 @@ function ManualChartsPanel({
 
       {resolvedFriendsMainView === "charts" && (
       <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
+        <div className="friends-chart-toolbar">
+          <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
+            <span>Add chart</span>
+          </button>
+        </div>
         <section className="manual-chart-list" aria-label="Saved manual charts">
-          <div className="manual-chart-list-heading">
-            <div>
-              <span>Saved friends</span>
-              {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
-            </div>
-            <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
-              <Plus size={17} aria-hidden="true" />
-              <span>Add friend</span>
-            </button>
-          </div>
+          {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
           {status === "loading" && (
             <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
               <span>Charts</span>

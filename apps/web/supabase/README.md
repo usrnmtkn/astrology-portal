@@ -32,3 +32,35 @@ supabase db push
 ```
 
 Or paste the migration SQL into the Supabase SQL editor.
+
+## Generated Interpretations
+
+`migrations/20260604183000_generated_interpretations.sql` adds `generated_interpretations`, the review queue for server-rendered OpenAI content.
+
+The browser should not write to this table directly. The Vercel API routes use:
+
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL` optional, defaults to `gpt-4.1-mini`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `CONTENT_GENERATION_SECRET`
+- `CRON_SECRET`
+
+Suggested flow:
+
+1. Apply the migration.
+2. Add the environment variables in Vercel.
+3. Call `POST /api/generate-content` for manual drafts.
+4. Let Vercel Cron call `GET /api/cron/generate-sky` daily.
+5. Review rows in `generated_interpretations` before changing `status` to `LIVE`.
+
+Review workflow:
+
+- Generated rows are created as `DRAFT`.
+- Use `GET /api/admin/generated-content?status=DRAFT&surface=sky` with `Authorization: Bearer CONTENT_GENERATION_SECRET` to list review candidates.
+- Use `PATCH /api/admin/generated-content` with the same authorization to edit `headline`, `summary`, `body`, `sections`, `reviewerNotes`, or `status`.
+- Mark a row `REVIEWED` after editorial review.
+- Mark a row `LIVE` only when it is approved for regular users.
+- Browser reads are limited by RLS to `status = 'LIVE'`, so drafts and reviewed-but-unpublished rows remain hidden.
+
+The app reads `LIVE` Sky content first, keyed by `content_key`, then falls back to the local knowledge bundle if no approved generated row exists.
