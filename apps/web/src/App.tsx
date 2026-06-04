@@ -140,6 +140,7 @@ type TransitItem = {
 };
 
 type FriendProfileTab = "transits" | "chart" | "compatibility";
+type RelationshipView = "synastry" | "composite";
 
 type FriendTimingContext = {
   age: number | null;
@@ -162,6 +163,24 @@ type SynastryContact = {
   aspect: string;
   orb: number;
   tone: string;
+  summary: string;
+};
+
+type InterChartAspectLine = {
+  id: string;
+  fromLongitude: number;
+  toLongitude: number;
+  type: string;
+  orb: number;
+};
+
+type HouseOverlay = {
+  id: string;
+  planet: string;
+  glyph: string;
+  ownerName: string;
+  targetName: string;
+  house: number;
   summary: string;
 };
 
@@ -191,7 +210,7 @@ type SkyDetail = {
 type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
   typeof import("./content/skyRegistry"),
-  "approvedVoiceOrKnowledgeFallback" | "aspectContentId" | "currentSkyAspectContentId" | "placementContentId"
+  "approvedVoiceOrKnowledgeFallback" | "aspectContentId" | "currentSkyAspectContentId" | "transitNatalContentId" | "placementContentId"
 >;
 
 type ContentFallback = {
@@ -229,6 +248,16 @@ function currentSkyAspectContentId(planetA: string, aspect: string, planetB: str
   }
 
   return `sky-${aspectContentId(planetA, aspect, planetB)}`;
+}
+
+function transitNatalContentId(transiting: string, aspect: string, natal: string, domain: ContentDomain = "natal") {
+  const registry = contentRegistryFor(domain);
+
+  if (registry) {
+    return registry.transitNatalContentId(transiting, aspect, natal);
+  }
+
+  return `transit-natal-${aspectContentId(transiting, aspect, natal, domain)}`;
 }
 
 function placementContentId(planet: string, sign: string, domain: ContentDomain = "natal") {
@@ -308,6 +337,20 @@ const zodiacSigns = [
   "Aquarius",
   "Pisces"
 ];
+const zodiacSignGlyphs: Record<string, string> = {
+  Aries: "♈",
+  Taurus: "♉",
+  Gemini: "♊",
+  Cancer: "♋",
+  Leo: "♌",
+  Virgo: "♍",
+  Libra: "♎",
+  Scorpio: "♏",
+  Sagittarius: "♐",
+  Capricorn: "♑",
+  Aquarius: "♒",
+  Pisces: "♓"
+};
 const traditionalSignRulers: Record<string, string> = {
   Aries: "Mars",
   Taurus: "Venus",
@@ -1615,7 +1658,7 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem) {
 
   const area = transitLifeArea(transit, chart);
   const areaTheme = transitLifeAreaTheme(transit, chart);
-  const content = approvedVoiceOrKnowledgeFallback(aspectContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+  const content = approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
 
   return content.summary ?? `${transit.transitPlanet} ${transit.aspect} ${transit.natalPoint} is active in their ${area}: ${areaTheme}. This is timing, not a verdict.`;
 }
@@ -1805,6 +1848,148 @@ function synastryDetailCopy(friendName: string, contact: SynastryContact) {
       : `A conjunction blends the two points directly, making ${friendName}'s ${contact.friendPoint.role} hard to separate from your ${contact.yourPoint.role}.`;
 
   return [firstLine, secondLine];
+}
+
+function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart): HouseOverlay[] {
+  const friendSky = chart.natalChart;
+
+  if (!profileNatalSky || !friendSky) {
+    return [];
+  }
+
+  const priorityPlanets = ["Sun", "Moon", "Venus", "Mars", "Mercury", "Jupiter", "Saturn"];
+  const overlayRows = [
+    ...friendSky.positions.map((position) => ({
+      position,
+      ownerName: chart.displayName,
+      targetName: "your",
+      targetAscendant: profileNatalSky.ascendant
+    })),
+    ...profileNatalSky.positions.map((position) => ({
+      position,
+      ownerName: "Your",
+      targetName: `${chart.displayName}'s`,
+      targetAscendant: friendSky.ascendant
+    }))
+  ];
+
+  return overlayRows
+    .filter(({ position }) => priorityPlanets.includes(position.planet))
+    .flatMap(({ position, ownerName, targetName, targetAscendant }) => {
+      const house = wholeSignHouseForSign(position.sign, targetAscendant);
+
+      if (!house) {
+        return [];
+      }
+
+      const ownerLabel = ownerName === "Your" ? "Your" : `${ownerName}'s`;
+      const houseOwner = targetName === "your" ? "your" : targetName;
+      const lifeArea = houseLifeAreas[house] ?? "life area";
+
+      return [{
+        id: `${ownerName}-${position.planet}-${targetName}-${house}`.toLowerCase().replace(/\s+/g, "-"),
+        planet: position.planet,
+        glyph: position.glyph,
+        ownerName,
+        targetName,
+        house,
+        summary: `${ownerLabel} ${position.planet} lands in ${houseOwner} ${ordinalHouse(house)} house: ${lifeArea}.`
+      }];
+    })
+    .sort((first, second) => {
+      const firstPriority = priorityPlanets.indexOf(first.planet);
+      const secondPriority = priorityPlanets.indexOf(second.planet);
+      const firstAngular = [1, 4, 7, 10].includes(first.house) ? 0 : 1;
+      const secondAngular = [1, 4, 7, 10].includes(second.house) ? 0 : 1;
+
+      return firstAngular - secondAngular || firstPriority - secondPriority || first.house - second.house;
+    })
+    .slice(0, 6);
+}
+
+function relationshipMidpointLongitude(first: number, second: number) {
+  const distance = normalizedAngle(second - first);
+  const shortestDistance = distance > 180 ? distance - 360 : distance;
+
+  return normalizedAngle(first + shortestDistance / 2);
+}
+
+function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: ManualChart): SkySnapshot | null {
+  const friendSky = chart.natalChart;
+
+  if (!profileNatalSky || !friendSky) {
+    return null;
+  }
+
+  const compositeAscendantLongitude = typeof profileNatalSky.ascendantLongitude === "number" && typeof friendSky.ascendantLongitude === "number"
+    ? relationshipMidpointLongitude(profileNatalSky.ascendantLongitude, friendSky.ascendantLongitude)
+    : undefined;
+  const compositeMidheavenLongitude = typeof profileNatalSky.midheavenLongitude === "number" && typeof friendSky.midheavenLongitude === "number"
+    ? relationshipMidpointLongitude(profileNatalSky.midheavenLongitude, friendSky.midheavenLongitude)
+    : undefined;
+  const compositeAscendant = typeof compositeAscendantLongitude === "number"
+    ? zodiacSignForLongitude(compositeAscendantLongitude)
+    : friendSky.ascendant;
+  const compositeMidheaven = typeof compositeMidheavenLongitude === "number"
+    ? zodiacSignForLongitude(compositeMidheavenLongitude)
+    : friendSky.midheaven;
+  const friendPositions = new Map(friendSky.positions.map((position) => [position.planet, position]));
+  const positions = profileNatalSky.positions.flatMap((yourPosition) => {
+    const friendPosition = friendPositions.get(yourPosition.planet);
+
+    if (!friendPosition || yourPosition.planet === "True Node") {
+      return [];
+    }
+
+    const longitude = relationshipMidpointLongitude(zodiacLongitude(yourPosition), zodiacLongitude(friendPosition));
+    const sign = zodiacSignForLongitude(longitude);
+
+    return [{
+      planet: yourPosition.planet,
+      glyph: yourPosition.glyph,
+      sign,
+      signGlyph: zodiacSignGlyphs[sign] ?? "",
+      degree: normalizedAngle(longitude) % 30,
+      house: wholeSignHouseForSign(sign, compositeAscendant) ?? 0,
+      motion: "direct" as const,
+      theme: `Shared ${comparisonPointRole(yourPosition.planet)}`
+    }];
+  });
+
+  const aspects = positions.flatMap((fromPosition, fromIndex) => (
+    positions.slice(fromIndex + 1).flatMap((toPosition) => {
+      const separation = angularDistance(zodiacLongitude(fromPosition), zodiacLongitude(toPosition));
+      const aspect = transitAspectDefinitions
+        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+        .filter((definition) => definition.orbValue <= definition.orb)
+        .sort((first, second) => first.orbValue - second.orbValue)[0];
+
+      return aspect
+        ? [{
+            from: fromPosition.planet,
+            to: toPosition.planet,
+            type: aspect.type,
+            orb: aspect.orbValue,
+            meaning: `${fromPosition.planet} ${aspect.type} ${toPosition.planet}`
+          }]
+        : [];
+    })
+  ))
+    .sort((first, second) => first.orb - second.orb)
+    .slice(0, 12);
+
+  return {
+    location: profileNatalSky.location,
+    generatedAt: profileNatalSky.generatedAt,
+    ascendant: compositeAscendant,
+    ascendantLongitude: compositeAscendantLongitude,
+    midheaven: compositeMidheaven,
+    midheavenLongitude: compositeMidheavenLongitude,
+    moonPhase: "Relationship chart",
+    dominantElement: natalElementBalance(positions).sort((first, second) => second.count - first.count)[0]?.element ?? "Fire",
+    positions,
+    aspects
+  };
 }
 
 function relationshipWeather(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
@@ -3296,6 +3481,16 @@ function natalPlacementDescription(planet: string) {
   return natalSignatureDescriptions[planet] ?? "A signature in your chart";
 }
 
+function natalPlacementKnowledgeSummary(position: PlanetPosition) {
+  const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+  return content.summary ?? natalPlacementDescription(position.planet);
+}
+
+function natalRisingKnowledgeSummary(risingSign: string) {
+  const content = approvedVoiceOrKnowledgeFallback(placementContentId("Ascendant", risingSign));
+  return content.summary ?? natalSignatureDescriptions.Ascendant;
+}
+
 const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
   Aries: "Fire",
   Leo: "Fire",
@@ -3363,6 +3558,8 @@ function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspe
 function SkyWheel({
   positions,
   aspects,
+  innerPositions = [],
+  interAspects = [],
   ascendant,
   ascendantLongitude,
   midheavenLongitude,
@@ -3370,6 +3567,8 @@ function SkyWheel({
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  innerPositions?: PlanetPosition[];
+  interAspects?: InterChartAspectLine[];
   ascendant?: string;
   ascendantLongitude?: number;
   midheavenLongitude?: number;
@@ -3483,6 +3682,10 @@ function SkyWheel({
         className: string;
       } => Boolean(aspect)
     );
+  const interAspectPairs = interAspects.map((aspect) => ({
+    ...aspect,
+    className: aspectClass(aspect.type)
+  }));
   const signLabelRadius = (radius.outer + radius.signInner) / 2 + 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
@@ -3600,6 +3803,26 @@ function SkyWheel({
         })}
       </g>
 
+      {interAspectPairs.length > 0 && (
+        <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
+          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className }) => {
+            const a = point(angleForLongitude(fromLongitude), radius.aspect + 24);
+            const b = point(angleForLongitude(toLongitude), radius.aspect - 24);
+
+            return (
+              <g key={id} className={`${className} ${type}`}>
+                <line
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                />
+              </g>
+            );
+          })}
+        </g>
+      )}
+
       {isNatalWheel && (
         <g className="natal-angle-lines" aria-label="Ascendant axis">
           {(() => {
@@ -3689,6 +3912,36 @@ function SkyWheel({
           );
         })}
       </g>
+
+      {innerPositions.length > 0 && (
+        <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
+          {innerPositions.map((position) => {
+            const angle = angleForLongitude(zodiacLongitude(position));
+            const marker = point(angle, radius.planet - 54);
+            const tickOuter = point(angle, radius.planet - 33);
+            const tickInner = point(angle, radius.planet - 44);
+            const label = point(angle, radius.planet - 76);
+
+            return (
+              <g
+                key={`inner-${position.planet}`}
+                className="planet-marker planet-marker-inner"
+                role="img"
+                aria-label={`Inner chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
+              >
+                <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
+                <circle cx={marker.x} cy={marker.y} r="15" className="planet-hit-area" />
+                <text x={marker.x} y={marker.y + 5} className="planet-glyph">
+                  {position.glyph}
+                </text>
+                <text x={label.x} y={label.y} className="planet-degree">
+                  {Math.floor(position.degree)}°
+                </text>
+              </g>
+            );
+          })}
+        </g>
+      )}
 
       {activeTooltipPosition && (
         <g className="planet-tooltips" aria-hidden="true">
@@ -5907,21 +6160,23 @@ function ProfileView({
                 <span className="crt">
                   {displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
                 </span>
-                <span className="crs">{natalSignatureDescriptions.Ascendant}</span>
+                <span className="crs">
+                  {displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising) : natalSignatureDescriptions.Ascendant}
+                </span>
               </span>
             </div>
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☉</span>
               <span className="crb">
                 <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
-                <span className="crs">{natalSignatureDescriptions.Sun}</span>
+                <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun) : natalSignatureDescriptions.Sun}</span>
               </span>
             </div>
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☽</span>
               <span className="crb">
                 <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
-                <span className="crs">{natalSignatureDescriptions.Moon}</span>
+                <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon) : natalSignatureDescriptions.Moon}</span>
               </span>
             </div>
           </div>
@@ -5935,7 +6190,7 @@ function ProfileView({
                     <span className="crg" aria-hidden="true">{position.glyph}</span>
                     <span className="crb">
                       <span className="crt">{natalPlacementTitle(position)}</span>
-                      <span className="crs">{natalPlacementDescription(position.planet)}</span>
+                      <span className="crs">{natalPlacementKnowledgeSummary(position)}</span>
                     </span>
                   </div>
                 ))}
@@ -5988,7 +6243,7 @@ function ProfileView({
           {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
             <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
               {aspectRows.map((transit) => {
-                const content = approvedVoiceOrKnowledgeFallback(aspectContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+                const content = approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
                 const rowSummary = content.summary ?? transit.note;
 
                 return (
@@ -6042,6 +6297,7 @@ function ManualChartsPanel({
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("transits");
+  const [relationshipView, setRelationshipView] = useState<RelationshipView>("synastry");
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
@@ -6058,6 +6314,23 @@ function ManualChartsPanel({
   const selectedSynastryContact = selectedSynastryContacts.find((contact) => contact.id === selectedSynastryContactId)
     ?? selectedSynastryContacts[0]
     ?? null;
+  const selectedHouseOverlays = selectedChart ? synastryHouseOverlays(profileNatalSky, selectedChart) : [];
+  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
+    id: contact.id,
+    fromLongitude: contact.friendPoint.longitude,
+    toLongitude: contact.yourPoint.longitude,
+    type: contact.aspect,
+    orb: contact.orb
+  }));
+  const selectedCompositeSky = selectedChart ? relationshipCompositeSky(profileNatalSky, selectedChart) : null;
+  const selectedCompositeElementalBalance = natalElementBalance(selectedCompositeSky?.positions ?? []);
+  const selectedCompositeLeadingElements = selectedCompositeElementalBalance
+    .filter((item) => item.count === Math.max(...selectedCompositeElementalBalance.map((element) => element.count)) && item.count > 0)
+    .map((item) => item.element);
+  const selectedCompositeElementalSummary = selectedCompositeLeadingElements.length > 0
+    ? `${selectedCompositeLeadingElements.join(" & ")} led`
+    : "Pattern pending";
+  const selectedCompositeTopAspect = selectedCompositeSky?.aspects[0] ?? null;
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
   const selectedFriendLeadingElements = selectedFriendElementalBalance
     .filter((item) => item.count === Math.max(...selectedFriendElementalBalance.map((element) => element.count)) && item.count > 0)
@@ -6580,12 +6853,39 @@ function ManualChartsPanel({
 
           {friendProfileTab === "compatibility" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Compatibility">
-              {selectedChart.natalChart && (
+              <div className="friend-compat-toolbar">
+                <div className="friend-mode-switch" role="tablist" aria-label="Relationship chart type">
+                  {([
+                    ["synastry", "Synastry"],
+                    ["composite", "Composite"]
+                  ] as Array<[RelationshipView, string]>).map(([view, label]) => (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={relationshipView === view}
+                      className={relationshipView === view ? "active" : ""}
+                      key={view}
+                      onClick={() => setRelationshipView(view)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <button className="friend-compare-pill" type="button" aria-label={`Compare with ${profile.name}`}>
+                  <span>With</span>
+                  <i aria-hidden="true">{profileInitials(profile.name, profile.email)}</i>
+                  <strong>You</strong>
+                  <ChevronRight size={18} aria-hidden="true" />
+                </button>
+              </div>
+              {relationshipView === "synastry" && selectedChart.natalChart && (
                 <div className="friend-synastry-wheel-shell">
                   <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
                     <SkyWheel
                       positions={selectedChart.natalChart.positions}
-                      aspects={selectedChart.natalChart.aspects}
+                      aspects={[]}
+                      innerPositions={profileNatalSky?.positions ?? []}
+                      interAspects={selectedSynastryAspectLines}
                       ascendant={selectedChart.natalChart.ascendant}
                       ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
                       midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
@@ -6598,81 +6898,199 @@ function ManualChartsPanel({
                   </div>
                 </div>
               )}
-              <div className="friend-compat-toolbar">
-                <span className="friend-mode-switch" aria-label="Compatibility mode">
-                  <strong>Synastry</strong>
-                  <span>Composite</span>
-                </span>
-                <button className="friend-compare-pill" type="button" aria-label={`Compare with ${profile.name}`}>
-                  <span>With</span>
-                  <i aria-hidden="true">{profileInitials(profile.name, profile.email)}</i>
-                  <strong>You</strong>
-                  <ChevronRight size={18} aria-hidden="true" />
-                </button>
-              </div>
               <p className="friend-compat-intro">
-                Two charts, side by side - how {selectedChart.displayName}'s and your planets actually meet, miss, and magnify each other.
+                {relationshipView === "synastry"
+                  ? `Synastry shows where ${selectedChart.displayName}'s chart presses, echoes, and translates yours.`
+                  : `Composite shows the relationship as its own chart: the pattern that appears between both people.`}
               </p>
 
-              {selectedSynastryContact && (
-                <article className="synastry-detail-panel" aria-label="Selected interaspect">
-                  <h2>{selectedChart.displayName}'s {selectedSynastryContact.friendPoint.name} {selectedSynastryContact.aspect} your {selectedSynastryContact.yourPoint.name}</h2>
-                  <p className="synastry-detail-meta">Orb {wholeDegreeOrb(selectedSynastryContact.orb)} · {selectedSynastryContact.tone}</p>
-                  <div className="synastry-tldr-card">
-                    <span>TLDR</span>
-                    <p>{selectedSynastryContact.summary}</p>
-                  </div>
-                  <div className="synastry-copy">
-                    {synastryDetailCopy(selectedChart.displayName, selectedSynastryContact).map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
+              <section className="friend-relationship-snapshot" aria-label={`${selectedChart.displayName} relationship snapshot`}>
+                <article className="friends-logic-card friend-snapshot-card">
+                  <span>Strongest contact</span>
+                  <h3>
+                    {selectedSynastryContact
+                      ? `${selectedSynastryContact.friendPoint.name} ${selectedSynastryContact.aspect} ${selectedSynastryContact.yourPoint.name}`
+                      : "Contact pending"}
+                  </h3>
+                  <p>{selectedSynastryContact?.summary ?? "Add both charts to rank the tightest synastry contacts."}</p>
                 </article>
+                <article className="friends-logic-card friend-snapshot-card">
+                  <span>Where it lands</span>
+                  <h3>
+                    {selectedHouseOverlays[0]
+                      ? `${ordinalHouse(selectedHouseOverlays[0].house)} house activation`
+                      : "Overlay pending"}
+                  </h3>
+                  <p>{selectedHouseOverlays[0]?.summary ?? "House overlays appear when both charts have signs and houses available."}</p>
+                </article>
+                <article className="friends-logic-card friend-snapshot-card">
+                  <span>Composite signal</span>
+                  <h3>{selectedCompositeTopAspect ? `${selectedCompositeTopAspect.from} ${selectedCompositeTopAspect.type} ${selectedCompositeTopAspect.to}` : selectedCompositeElementalSummary}</h3>
+                  <p>
+                    {selectedCompositeTopAspect
+                      ? `The composite chart's tightest aspect is within ${wholeDegreeOrb(selectedCompositeTopAspect.orb)}.`
+                      : "The composite chart summarizes the relationship as its own pattern."}
+                  </p>
+                </article>
+              </section>
+
+              {relationshipView === "synastry" && (
+                <>
+                  {selectedSynastryContact && (
+                    <article className="synastry-detail-panel" aria-label="Selected interaspect">
+                      <h2>{selectedChart.displayName}'s {selectedSynastryContact.friendPoint.name} {selectedSynastryContact.aspect} your {selectedSynastryContact.yourPoint.name}</h2>
+                      <p className="synastry-detail-meta">Orb {wholeDegreeOrb(selectedSynastryContact.orb)} · {selectedSynastryContact.tone}</p>
+                      <div className="synastry-tldr-card">
+                        <span>TLDR</span>
+                        <p>{selectedSynastryContact.summary}</p>
+                      </div>
+                      <div className="synastry-copy">
+                        {synastryDetailCopy(selectedChart.displayName, selectedSynastryContact).map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </article>
+                  )}
+
+                  {selectedHouseOverlays.length > 0 && (
+                    <>
+                      <span className="eyebrow section-label friend-section-label">House overlays · where it lands</span>
+                      <div className="friend-overlay-grid" aria-label={`${selectedChart.displayName} house overlays`}>
+                        {selectedHouseOverlays.map((overlay) => (
+                          <article className="friends-logic-card friend-overlay-card" key={overlay.id}>
+                            <span>{overlay.glyph} {overlay.planet}</span>
+                            <h3>{overlay.targetName === "your" ? `Your ${ordinalHouse(overlay.house)} house` : `${selectedChart.displayName}'s ${ordinalHouse(overlay.house)} house`}</h3>
+                            <p>{overlay.summary}</p>
+                          </article>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <span className="eyebrow section-label friend-section-label">Synastry contacts · strongest first</span>
+                  <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
+                    {selectedSynastryContacts.map((contact) => (
+                      <button
+                        type="button"
+                        className={`aspect-row aspect-row-button friend-aspect-row ${selectedSynastryContact?.id === contact.id ? "selected" : ""}`}
+                        key={contact.id}
+                        onClick={() => setSelectedSynastryContactId(contact.id)}
+                      >
+                        <span className="aspect-row-glyphs" aria-hidden="true">
+                          <span>{contact.friendPoint.glyph}</span>
+                          <span>{aspectGlyph(contact.aspect)}</span>
+                          <span>{contact.yourPoint.glyph}</span>
+                        </span>
+                        <span className="aspect-row-copy">
+                          <h3>{selectedChart.displayName}'s {contact.friendPoint.name} {contact.aspect} your {contact.yourPoint.name}</h3>
+                          <p>{contact.summary}</p>
+                        </span>
+                        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
+                          <span className="aspect-row-dot" aria-hidden="true" />
+                          <span>{wholeDegreeOrb(contact.orb)}</span>
+                        </span>
+                      </button>
+                    ))}
+                    {selectedSynastryContacts.length === 0 && (
+                      selectedFriendCompatibility.map((item) => (
+                        <article className="friends-logic-card" key={item.title}>
+                          <span>Static pattern</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.body}</p>
+                        </article>
+                      ))
+                    )}
+                  </div>
+                  {selectedRelationshipWeather.length > 0 && (
+                    <div className="friend-relationship-weather" aria-label="Relationship weather">
+                      {selectedRelationshipWeather.slice(0, 2).map((item) => (
+                        <article className="friends-logic-card" key={item.title + item.body}>
+                          <span>Relationship weather</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.body}</p>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
 
-              <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
-              <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
-                {selectedSynastryContacts.map((contact) => (
-                  <button
-                    type="button"
-                    className={`aspect-row aspect-row-button friend-aspect-row ${selectedSynastryContact?.id === contact.id ? "selected" : ""}`}
-                    key={contact.id}
-                    onClick={() => setSelectedSynastryContactId(contact.id)}
-                  >
-                    <span className="aspect-row-glyphs" aria-hidden="true">
-                      <span>{contact.friendPoint.glyph}</span>
-                      <span>{aspectGlyph(contact.aspect)}</span>
-                      <span>{contact.yourPoint.glyph}</span>
-                    </span>
-                    <span className="aspect-row-copy">
-                      <h3>{selectedChart.displayName}'s {contact.friendPoint.name} {contact.aspect} your {contact.yourPoint.name}</h3>
-                      <p>{contact.summary}</p>
-                    </span>
-                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{wholeDegreeOrb(contact.orb)}</span>
-                    </span>
-                  </button>
-                ))}
-                {selectedSynastryContacts.length === 0 && (
-                  selectedFriendCompatibility.map((item) => (
-                    <article className="friends-logic-card" key={item.title}>
-                      <span>Static pattern</span>
-                      <h3>{item.title}</h3>
-                      <p>{item.body}</p>
+              {relationshipView === "composite" && (
+                <div className="friend-shared-chart-stage" aria-label="Composite relationship chart">
+                  {selectedCompositeSky ? (
+                    <>
+                      <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and you composite chart wheel`}>
+                        <SkyWheel
+                          positions={selectedCompositeSky.positions}
+                          aspects={selectedCompositeSky.aspects}
+                          ascendant={selectedCompositeSky.ascendant}
+                          ascendantLongitude={selectedCompositeSky.ascendantLongitude}
+                          midheavenLongitude={selectedCompositeSky.midheavenLongitude}
+                          showHouses
+                        />
+                      </div>
+                      <section className="you-signatures-card friend-signature-card friend-shared-summary" aria-label="Composite chart signature">
+                        <div className="you-signatures-main">
+                          <span className="eyebrow section-label">TLDR composite signature</span>
+                          <h3>{selectedCompositeElementalSummary}</h3>
+                          <p>This view reads the connection as its own chart: not you, not {selectedChart.displayName}, but the rhythm created between both charts.</p>
+                        </div>
+                        <div className="elemental-balance" aria-label="Composite chart elemental balance">
+                          <div className="elemental-balance-head">
+                            <span className="eyebrow section-label">Composite balance</span>
+                            <span>{selectedCompositeSky.ascendant} rising field</span>
+                          </div>
+                          <div className="element-bars" aria-hidden="true">
+                            {selectedCompositeElementalBalance.map((item) => (
+                              <span
+                                key={item.element}
+                                className={`element-bar element-${item.element.toLowerCase()}`}
+                                style={{ flexGrow: Math.max(item.count, 1) }}
+                              />
+                            ))}
+                          </div>
+                          <div className="element-legend">
+                            {selectedCompositeElementalBalance.map((item) => (
+                              <span key={item.element} className={`element-legend-item element-${item.element.toLowerCase()}`}>
+                                <i aria-hidden="true" />
+                                {item.element} <b>{item.count}</b>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </section>
+                      <span className="eyebrow section-label friend-section-label">Composite aspects</span>
+                      {selectedCompositeSky.aspects.length > 0 ? (
+                        <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label="Composite chart aspects">
+                          {selectedCompositeSky.aspects.map((aspect) => (
+                            <div className="aspect-row aspect-row-static friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}>
+                              <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                              <span className="aspect-row-copy">
+                                <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+                                <p>One of the relationship's strongest internal patterns.</p>
+                              </span>
+                              <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                                <span className="aspect-row-dot" aria-hidden="true" />
+                                <span>{wholeDegreeOrb(aspect.orb)}</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <article className="friends-logic-card">
+                          <span>Composite aspects</span>
+                          <h3>No tight major aspects yet.</h3>
+                          <p>The composite wheel is available, but no major aspects are within the current display orb.</p>
+                        </article>
+                      )}
+                    </>
+                  ) : (
+                    <article className="friends-logic-card">
+                      <span>Composite</span>
+                      <h3>Relationship pattern pending.</h3>
+                      <p>Add complete birth data for you and {selectedChart.displayName} to generate the composite chart view.</p>
                     </article>
-                  ))
-                )}
-              </div>
-              {selectedRelationshipWeather.length > 0 && (
-                <div className="friend-relationship-weather" aria-label="Relationship weather">
-                  {selectedRelationshipWeather.slice(0, 2).map((item) => (
-                    <article className="friends-logic-card" key={item.title + item.body}>
-                      <span>Relationship weather</span>
-                      <h3>{item.title}</h3>
-                      <p>{item.body}</p>
-                    </article>
-                  ))}
+                  )}
                 </div>
               )}
             </div>
