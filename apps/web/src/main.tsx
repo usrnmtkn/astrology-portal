@@ -1,10 +1,22 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
-import "./styles.css";
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+function isAdminContentPath() {
+  return window.location.pathname === "/admin/content" || window.location.pathname === "/admin/generated-content";
+}
+
+async function startApp() {
+  if (!isAdminContentPath()) {
+    await import("./styles.css");
+  }
+
+  const { App } = await import("./App");
+
+  createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+
+void startApp();
