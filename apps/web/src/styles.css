@@ -9655,6 +9655,57 @@ html,
   width: 100%;
 }
 
+.friends-top-tabs,
+.friends-back-button,
+.friends-feed-view,
+.friends-charts-view,
+.friend-profile-view {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--col-app);
+  width: 100%;
+}
+
+.friends-top-tabs {
+  margin-bottom: 18px;
+  margin-top: 4px;
+}
+
+.friends-top-tabs button {
+  font: var(--fw-semibold) var(--text-h3) / 1.12 var(--font-ui);
+  letter-spacing: 0;
+}
+
+.friends-back-button {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-app) 96%, transparent);
+  border: 1px solid var(--line-app);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(20, 22, 22, 0.08);
+  color: var(--ink-app);
+  cursor: pointer;
+  display: inline-flex;
+  font: var(--fw-semibold) var(--text-label) / 1 var(--font-ui);
+  gap: 8px;
+  justify-self: start;
+  min-height: 44px;
+  padding: 0 16px 0 13px;
+  width: auto;
+}
+
+.theme-dark .friends-back-button {
+  box-shadow: none;
+}
+
+.friends-charts-view {
+  max-width: min(1180px, calc(100vw - 32px));
+}
+
+.friend-profile-view {
+  display: grid;
+  gap: 22px;
+}
+
 .friends-feed-preview {
   background: color-mix(in srgb, var(--surface-app) 94%, transparent);
   border: 1px solid var(--line-app);

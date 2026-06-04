@@ -140,6 +140,7 @@ type TransitItem = {
 };
 
 type FriendProfileTab = "bond" | "signs" | "synastry" | "composite";
+type FriendsMainView = "circle" | "charts" | "profile";
 
 type FriendTimingContext = {
   age: number | null;
@@ -6553,13 +6554,15 @@ function ManualChartsPanel({
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
+  const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>("circle");
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("bond");
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
   const [message, setMessage] = useState("");
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
-  const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? charts[0] ?? null;
+  const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
+  const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
   const selectedFriendTransits = selectedChart ? rankedFriendTransits(currentSky, selectedChart) : [];
   const selectedFriendTopTransit = selectedFriendTransits[0];
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
@@ -6633,7 +6636,7 @@ function ManualChartsPanel({
           setSelectedChartId((currentId) => (
             currentId && nextCharts.some((chart) => chart.id === currentId)
               ? currentId
-              : nextCharts[0]?.id ?? null
+              : null
           ));
           setMessage("");
         }
@@ -6679,6 +6682,12 @@ function ManualChartsPanel({
     setForm(manualChartFormFromChart(chart));
     setMessage("");
     setFriendChartModalOpen(true);
+  }
+
+  function openFriendProfile(chart: ManualChart) {
+    setSelectedChartId(chart.id);
+    setFriendProfileTab("bond");
+    setFriendsMainView("profile");
   }
 
   function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
@@ -6744,6 +6753,7 @@ function ManualChartsPanel({
         return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
       });
       setSelectedChartId(savedChart.id);
+      setFriendsMainView("profile");
       resetForm(editingChartId ? "Manual chart updated." : "Manual chart created.");
       setFriendChartModalOpen(false);
     } catch (error) {
@@ -6760,7 +6770,14 @@ function ManualChartsPanel({
     try {
       await deleteManualChart(profile.id, chart.id);
       setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
-      setSelectedChartId((currentId) => currentId === chart.id ? null : currentId);
+      setSelectedChartId((currentId) => {
+        if (currentId === chart.id) {
+          setFriendsMainView("charts");
+          return null;
+        }
+
+        return currentId;
+      });
       if (editingChartId === chart.id) {
         resetForm();
       }
@@ -6774,17 +6791,44 @@ function ManualChartsPanel({
 
   return (
     <section className="friends-page manual-charts-pane" aria-label="Friends">
-      <div className="friends-page-heading">
-        <h2>friends.</h2>
-      </div>
-      <span className="eyebrow section-label">Circle activity</span>
-      <section className="friends-feed-preview" aria-label="Circle feed preview">
+      {resolvedFriendsMainView === "profile" && selectedChart ? (
+        <button className="friends-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
+          <ChevronLeft size={21} aria-hidden="true" />
+          <span>All charts</span>
+        </button>
+      ) : (
+        <>
+          <div className="friends-page-heading">
+            <h2>friends.</h2>
+          </div>
+          <div className="app-tabs profile-tabs friends-top-tabs" role="tablist" aria-label="Friends views">
+            {([
+              ["circle", "Circle"],
+              ["charts", "Charts"]
+            ] as Array<[Exclude<FriendsMainView, "profile">, string]>).map(([view, label]) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={resolvedFriendsMainView === view}
+                className={resolvedFriendsMainView === view ? "on active" : ""}
+                key={view}
+                onClick={() => setFriendsMainView(view)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {resolvedFriendsMainView === "circle" && (
+      <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
         <div className="friends-feed-preview-heading">
           <span>Circle Feed</span>
           <strong>{charts.length} saved {charts.length === 1 ? "chart" : "charts"}</strong>
         </div>
         <p className="friends-feed-preview-copy">
-          Same sky, different chart, different room. This feed ranks friend updates, circle repetition, and relationship weather from the charts saved below.
+          This feed ranks the strongest current activations for saved charts and flags repeated timing themes across your circle.
         </p>
         <div className="friends-circle-strip" aria-label="Circle activations">
           {circleCards.map((card) => (
@@ -6796,8 +6840,10 @@ function ManualChartsPanel({
           ))}
         </div>
       </section>
-      <div className="friends-dashboard">
-      <section className="manual-chart-workspace manual-chart-workspace-list-only friends-sidebar" aria-label="Friend charts">
+      )}
+
+      {resolvedFriendsMainView === "charts" && (
+      <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
         <section className="manual-chart-list" aria-label="Saved manual charts">
           <div className="manual-chart-list-heading">
             <div>
@@ -6820,7 +6866,7 @@ function ManualChartsPanel({
             <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
               <span>Charts</span>
               <h3>No manual charts yet.</h3>
-              <p>Add someone's birth details to compare transits, chart signatures, and future compatibility.</p>
+              <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
             </section>
           )}
           {charts.length > 0 && (
@@ -6833,10 +6879,7 @@ function ManualChartsPanel({
                     <button
                       type="button"
                       className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedChartId(chart.id);
-                        setFriendProfileTab("bond");
-                      }}
+                      onClick={() => openFriendProfile(chart)}
                       aria-label={`Open ${chart.displayName}`}
                     >
                       <span className="manual-chart-avatar" aria-hidden="true">
@@ -6869,7 +6912,8 @@ function ManualChartsPanel({
           )}
         </section>
       </section>
-      <div className="friends-main">
+      )}
+
       {friendChartModalOpen && (
         <div className="chart-modal-backdrop friend-chart-modal-backdrop" role="presentation" onMouseDown={closeFriendChartModal}>
           <form
@@ -6987,8 +7031,8 @@ function ManualChartsPanel({
           </form>
         </div>
       )}
-      {selectedChart && (
-        <section className="friend-profile-panel friend-focus-panel" aria-label={`${selectedChart.displayName} friend profile`}>
+      {resolvedFriendsMainView === "profile" && selectedChart && (
+        <section className="friend-profile-panel friend-focus-panel friend-profile-view" aria-label={`${selectedChart.displayName} friend profile`}>
           <div className="friend-hero-card friend-bond-hero">
             <div className="friend-bond-avatars" aria-hidden="true">
               <span className="manual-chart-avatar friend-bond-avatar friend-bond-avatar-you">
@@ -7085,7 +7129,7 @@ function ManualChartsPanel({
                   <ChevronRight size={24} aria-hidden="true" />
                 </button>
                 <article className="friend-bond-snapshot-card">
-                  <span>Current weather</span>
+                  <span>Current timing</span>
                   <h3>
                     {selectedFriendTopTransit
                       ? `${selectedFriendTopTransit.transitPlanet} ${selectedFriendTopTransit.aspect} ${selectedChart.displayName}'s ${selectedFriendTopTransit.natalPoint}`
@@ -7393,8 +7437,6 @@ function ManualChartsPanel({
           )}
         </section>
       )}
-      </div>
-      </div>
     </section>
   );
 }
