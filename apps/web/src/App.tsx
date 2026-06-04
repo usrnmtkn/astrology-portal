@@ -22,7 +22,6 @@ import {
   Sun,
   Trash2,
   User,
-  Users,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1320,6 +1319,15 @@ function SmileNavIcon({ size = 18 }: { size?: number }) {
       <path d="M8.5 14q3.5 3 7 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
       <path d="M9.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
       <path d="M14.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
+    </svg>
+  );
+}
+
+function FriendsNavIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 28 18" width={size} xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="9" r="6.25" stroke="currentColor" strokeWidth="2" />
+      <circle cx="18" cy="9" r="6.25" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
@@ -3427,7 +3435,7 @@ export function App() {
                 type="button"
                 onClick={() => setMode("friends")}
               >
-                <Users size={18} aria-hidden="true" />
+                <FriendsNavIcon size={22} />
                 <span>Friends</span>
               </button>
             </>
@@ -3464,7 +3472,7 @@ export function App() {
               {userProfile && (
                 <>
                   <button className="site-menu-friends" type="button" onClick={() => { setMode("friends"); setMenuOpen(false); }}>
-                    <Users size={20} aria-hidden="true" />
+                    <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
                   <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
