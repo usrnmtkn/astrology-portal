@@ -57,8 +57,12 @@ Suggested flow:
 Review workflow:
 
 - Generated rows are created as `DRAFT`.
+- Human review can happen in the internal dashboard at `/admin/content` or `/admin/generated-content`.
+- Paste `CONTENT_GENERATION_SECRET` into the dashboard session gate, then use filters to review drafts by surface/status.
+- Use `Generate` to create a new OpenAI draft from the visible facts/source JSON.
+- Use `Save` for edits, `Reviewed` for editorial pass, `Publish Live` when the public app should display it, and `Archive` or `Delete` when a row should not be used.
 - Use `GET /api/admin/generated-content?status=DRAFT&surface=sky` with `Authorization: Bearer CONTENT_GENERATION_SECRET` to list review candidates.
-- Use `PATCH /api/admin/generated-content` with the same authorization to edit `headline`, `summary`, `body`, `sections`, `reviewerNotes`, or `status`.
+- Use `POST`, `PATCH`, and `DELETE /api/admin/generated-content` with the same authorization to create, edit, or remove rows programmatically.
 - Mark a row `REVIEWED` after editorial review.
 - Mark a row `LIVE` only when it is approved for regular users.
 - Browser reads are limited by RLS to `status = 'LIVE'`, so drafts and reviewed-but-unpublished rows remain hidden.

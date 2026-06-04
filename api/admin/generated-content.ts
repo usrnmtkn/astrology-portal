@@ -48,11 +48,19 @@ async function readJsonBody(req: IncomingMessage) {
 
   return JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
     id?: string;
+    contentKey?: string;
+    surface?: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+    mode?: "feed" | "in_depth" | "article";
+    eventType?: string;
+    targetDate?: string | null;
     status?: ReviewStatus;
     headline?: string;
     summary?: string;
     body?: string;
     sections?: unknown;
+    facts?: unknown;
+    knowledgeIds?: string[];
+    sourceSnapshot?: unknown;
     reviewerNotes?: string;
   };
 }
@@ -93,6 +101,61 @@ async function listGeneratedContent(req: IncomingMessage) {
 
   if (!response.ok) {
     throw new Error(`Supabase list failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return payload;
+}
+
+async function createGeneratedContent(req: IncomingMessage) {
+  const body = await readJsonBody(req);
+
+  if (!body.contentKey?.trim()) {
+    throw new Error("contentKey is required.");
+  }
+
+  if (!body.surface) {
+    throw new Error("surface is required.");
+  }
+
+  if (!body.mode) {
+    throw new Error("mode is required.");
+  }
+
+  if (!body.eventType?.trim()) {
+    throw new Error("eventType is required.");
+  }
+
+  const row = {
+    content_key: body.contentKey.trim(),
+    surface: body.surface,
+    mode: body.mode,
+    status: body.status && allowedStatuses.has(body.status) ? body.status : "DRAFT",
+    event_type: body.eventType.trim(),
+    target_date: body.targetDate || null,
+    facts: body.facts ?? {},
+    knowledge_ids: body.knowledgeIds ?? [],
+    source_snapshot: body.sourceSnapshot ?? {},
+    prompt_version: "manual-admin",
+    model: "manual",
+    headline: body.headline ?? "",
+    summary: body.summary ?? "",
+    body: body.body ?? "",
+    sections: body.sections ?? [],
+    reviewer_notes: body.reviewerNotes ?? ""
+  };
+
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+    method: "POST",
+    headers: {
+      ...adminHeaders(),
+      prefer: "resolution=merge-duplicates,return=representation"
+    },
+    body: JSON.stringify(row)
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`Supabase create failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
   return payload;
@@ -166,6 +229,30 @@ async function updateGeneratedContent(req: IncomingMessage) {
   return payload;
 }
 
+async function deleteGeneratedContent(req: IncomingMessage) {
+  const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+  const id = requestUrl.searchParams.get("id");
+
+  if (!id) {
+    throw new Error("id is required.");
+  }
+
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: {
+      ...adminHeaders(),
+      prefer: "return=representation"
+    }
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`Supabase delete failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return payload;
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!isAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
@@ -178,12 +265,22 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
 
+    if (req.method === "POST") {
+      sendJson(res, 200, { ok: true, rows: await createGeneratedContent(req) });
+      return;
+    }
+
     if (req.method === "PATCH") {
       sendJson(res, 200, { ok: true, rows: await updateGeneratedContent(req) });
       return;
     }
 
-    sendJson(res, 405, { error: "Use GET or PATCH." });
+    if (req.method === "DELETE") {
+      sendJson(res, 200, { ok: true, rows: await deleteGeneratedContent(req) });
+      return;
+    }
+
+    sendJson(res, 405, { error: "Use GET, POST, PATCH, or DELETE." });
   } catch (error) {
     sendJson(res, 500, {
       ok: false,
