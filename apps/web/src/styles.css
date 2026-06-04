@@ -10154,6 +10154,39 @@ html,
   box-shadow: none;
 }
 
+.friend-bond-hero {
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 28px;
+}
+
+.friend-bond-avatars {
+  display: flex;
+  margin-right: 4px;
+}
+
+.friend-bond-avatar {
+  border: 5px solid var(--surface-app);
+  box-shadow: 0 0 0 1px var(--line-app), 0 12px 28px rgba(20, 22, 22, 0.12);
+  font-size: 23px;
+  height: 82px;
+  width: 82px;
+}
+
+.friend-bond-avatar + .friend-bond-avatar {
+  margin-left: -22px;
+}
+
+.friend-bond-avatar-you {
+  background: var(--ink-app);
+  color: var(--surface-app);
+}
+
+.friend-bond-avatar-friend {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-app) 24%, var(--surface-app)), color-mix(in srgb, #d7e6f5 70%, var(--surface-app)));
+  color: var(--ink-app);
+}
+
 .friend-hero-avatar {
   border: 5px solid var(--surface-app);
   box-shadow: 0 0 0 1px var(--line-app);
@@ -10173,6 +10206,67 @@ html,
   font: var(--fw-semibold) clamp(30px, 5vw, 46px) / 1 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
+}
+
+.friend-bond-copy {
+  gap: 14px;
+}
+
+.friend-bond-person-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.friend-person-pill {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-app) 82%, var(--line-app));
+  border: 1px solid var(--line-app);
+  border-radius: 999px;
+  color: var(--ink-app);
+  display: inline-flex;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 18px 0 22px;
+}
+
+.friend-person-pill strong {
+  font: var(--fw-semibold) clamp(18px, 2vw, 26px) / 1 var(--font-ui);
+}
+
+.friend-relationship-type {
+  align-items: center;
+  color: var(--ink-app);
+  display: inline-flex;
+  font: var(--fw-regular) clamp(21px, 2.4vw, 30px) / 1 var(--font-ui);
+  gap: 10px;
+  text-transform: capitalize;
+}
+
+.friend-bond-tone {
+  align-items: center;
+  background: linear-gradient(90deg, #fff9b5, #f3c7ae);
+  border-radius: 999px;
+  color: var(--ink-app);
+  display: inline-flex;
+  font: var(--fw-semibold) clamp(24px, 3.2vw, 40px) / 1 var(--font-ui);
+  justify-content: center;
+  max-width: 460px;
+  min-height: 64px;
+  padding: 0 34px;
+  text-transform: uppercase;
+}
+
+.friend-bond-tone-easy {
+  background: linear-gradient(90deg, #d8f3df, #d6e8ff);
+}
+
+.friend-bond-tone-magnetic {
+  background: linear-gradient(90deg, #f1dbff, #ffd8dd);
+}
+
+.friend-bond-tone-bond {
+  background: linear-gradient(90deg, #eef0e7, #dfe8f4);
 }
 
 .friend-kebab {
@@ -10200,7 +10294,7 @@ html,
   box-shadow: 0 14px 34px rgba(20, 22, 22, 0.07);
   display: grid;
   gap: 0;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   min-height: 66px;
   padding: 7px;
   width: 100%;
@@ -10223,6 +10317,8 @@ html,
 }
 
 .friend-feed-pane,
+.friend-bond-pane,
+.friend-signs-pane,
 .friend-chart-stage,
 .friend-compat-stage {
   gap: 20px;
@@ -10251,6 +10347,180 @@ html,
 .friend-aspect-row.selected {
   background: color-mix(in srgb, var(--accent-app) 10%, var(--surface-app));
 }
+
+.friend-bond-snapshots {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.friend-bond-snapshot-card {
+  background: color-mix(in srgb, var(--surface-app) 96%, transparent);
+  border: 1px solid var(--line-app);
+  border-radius: 8px;
+  box-shadow: 0 16px 34px rgba(20, 22, 22, 0.07);
+  color: var(--ink-app);
+  display: grid;
+  gap: 12px;
+  min-height: 230px;
+  padding: 24px;
+  position: relative;
+}
+
+.friend-bond-snapshot-card > svg {
+  color: var(--ink-app);
+  position: absolute;
+  right: 22px;
+  top: 22px;
+}
+
+.friend-bond-snapshot-card span,
+.friend-dynamic-card > span {
+  color: var(--muted-app);
+  font: var(--fw-semibold) 12px / 1 var(--font-detail);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.friend-bond-snapshot-card h3 {
+  font: var(--fw-semibold) clamp(24px, 2.8vw, 34px) / 1.12 var(--font-ui);
+  letter-spacing: 0;
+  margin: 22px 28px 0 0;
+}
+
+.friend-bond-snapshot-card p {
+  color: var(--muted-app);
+  font: var(--fw-regular) clamp(17px, 2vw, 21px) / 1.45 var(--font-detail);
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.friend-dynamics-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.friend-dynamic-card {
+  background: color-mix(in srgb, var(--surface-app) 94%, var(--accent-app) 8%);
+}
+
+.friend-signs-table {
+  background: color-mix(in srgb, var(--surface-app) 97%, transparent);
+  border: 1px solid var(--line-app);
+  border-radius: 8px;
+  box-shadow: 0 16px 34px rgba(20, 22, 22, 0.06);
+  display: grid;
+  margin: 0 auto;
+  max-width: 900px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.friend-signs-head {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.friend-signs-head span {
+  align-items: center;
+  border-bottom: 1px solid var(--line-app);
+  color: var(--ink-app);
+  display: flex;
+  gap: 14px;
+  min-height: 80px;
+  padding: 0 28px;
+}
+
+.friend-signs-head span + span,
+.friend-signs-row > :nth-child(3) {
+  border-left: 1px solid var(--line-app);
+}
+
+.friend-signs-head i {
+  align-items: center;
+  background: var(--ink-app);
+  border-radius: 999px;
+  color: var(--surface-app);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font: var(--fw-semibold) 13px / 1 var(--font-ui);
+  font-style: normal;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.friend-signs-head strong {
+  font: var(--fw-semibold) clamp(22px, 3vw, 34px) / 1 var(--font-ui);
+}
+
+.friend-signs-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.friend-signs-section-label {
+  align-items: center;
+  background: linear-gradient(90deg, rgba(255, 251, 198, 0.62), rgba(250, 224, 210, 0.76));
+  border-bottom: 1px solid var(--line-app);
+  color: var(--ink-app);
+  display: flex;
+  gap: 12px;
+  grid-column: 1 / -1;
+  justify-content: center;
+  min-height: 58px;
+  padding: 0 20px;
+}
+
+.friend-signs-section-label span {
+  font-size: 25px;
+}
+
+.friend-signs-section-label strong {
+  font: var(--fw-semibold) clamp(18px, 2.1vw, 25px) / 1 var(--font-ui);
+}
+
+.friend-sign-cell {
+  align-items: center;
+  border-bottom: 1px solid var(--line-app);
+  color: var(--ink-app);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 86px;
+  padding: 0 28px;
+}
+
+.friend-sign-cell > span {
+  font-size: clamp(26px, 3.6vw, 38px);
+  line-height: 1;
+}
+
+.friend-sign-cell strong {
+  font: var(--fw-semibold) clamp(20px, 2.4vw, 30px) / 1 var(--font-ui);
+  letter-spacing: 0;
+}
+
+.friend-sign-cell svg {
+  color: var(--muted-app);
+}
+
+.friend-sign-cell.sign-aries,
+.friend-sign-cell.sign-leo,
+.friend-sign-cell.sign-sagittarius { color: #d46f42; }
+
+.friend-sign-cell.sign-taurus,
+.friend-sign-cell.sign-virgo,
+.friend-sign-cell.sign-capricorn { color: #627f47; }
+
+.friend-sign-cell.sign-gemini,
+.friend-sign-cell.sign-libra,
+.friend-sign-cell.sign-aquarius { color: #8c7380; }
+
+.friend-sign-cell.sign-cancer,
+.friend-sign-cell.sign-scorpio,
+.friend-sign-cell.sign-pisces { color: #6187a8; }
 
 .friend-chart-stage .friend-wheel,
 .friend-compat-stage .friend-wheel {
@@ -10650,6 +10920,44 @@ html,
   .friend-view-tabs button {
     font-size: 15px;
     padding: 0 8px;
+  }
+
+  .friend-bond-hero {
+    align-items: start;
+    grid-template-columns: 1fr auto;
+  }
+
+  .friend-bond-avatars {
+    grid-column: 1 / -1;
+  }
+
+  .friend-bond-copy {
+    grid-column: 1 / 2;
+  }
+
+  .friend-bond-avatar {
+    height: 72px;
+    width: 72px;
+  }
+
+  .friend-bond-tone {
+    font-size: 22px;
+    min-height: 52px;
+    padding: 0 24px;
+  }
+
+  .friend-bond-snapshots,
+  .friend-dynamics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-signs-head span,
+  .friend-sign-cell {
+    padding-inline: 16px;
+  }
+
+  .friend-sign-cell {
+    min-height: 76px;
   }
 
   .friend-aspect-row {

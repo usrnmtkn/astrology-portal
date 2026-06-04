@@ -139,7 +139,7 @@ type TransitItem = {
   note: string;
 };
 
-type FriendProfileTab = "transits" | "chart" | "synastry" | "composite";
+type FriendProfileTab = "bond" | "signs" | "synastry" | "composite";
 
 type FriendTimingContext = {
   age: number | null;
@@ -1904,6 +1904,57 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       return firstAngular - secondAngular || firstPriority - secondPriority || first.house - second.house;
     })
     .slice(0, 6);
+}
+
+function oppositeZodiacSign(sign?: string) {
+  if (!sign) {
+    return null;
+  }
+
+  const signIndex = zodiacSigns.indexOf(sign);
+
+  if (signIndex < 0) {
+    return null;
+  }
+
+  return zodiacSigns[(signIndex + 6) % 12];
+}
+
+function skyPointSign(sky: SkySnapshot | null | undefined, point: string) {
+  if (!sky) {
+    return null;
+  }
+
+  if (point === "Ascendant") {
+    return sky.ascendant;
+  }
+
+  if (point === "Descendant") {
+    return oppositeZodiacSign(sky.ascendant);
+  }
+
+  if (point === "Midheaven") {
+    return sky.midheaven;
+  }
+
+  if (point === "Imum Coeli") {
+    return oppositeZodiacSign(sky.midheaven);
+  }
+
+  return sky.positions.find((position) => position.planet === point)?.sign ?? null;
+}
+
+function relationshipSignRows(profileNatalSky: SkySnapshot | null, chart: ManualChart) {
+  const friendSky = chart.natalChart;
+  const points = ["Moon", "Venus", "Mars", "Ascendant", "Descendant", "Midheaven", "Imum Coeli", "Jupiter"];
+
+  return points.map((point) => ({
+    id: point.toLowerCase().replace(/\s+/g, "-"),
+    point,
+    glyph: pointGlyph(point),
+    yourSign: skyPointSign(profileNatalSky, point),
+    friendSign: skyPointSign(friendSky, point)
+  }));
 }
 
 function relationshipMidpointLongitude(first: number, second: number) {
@@ -6493,7 +6544,7 @@ function ManualChartsPanel({
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
-  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("transits");
+  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("bond");
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
@@ -6510,7 +6561,15 @@ function ManualChartsPanel({
   const selectedSynastryContact = selectedSynastryContacts.find((contact) => contact.id === selectedSynastryContactId)
     ?? selectedSynastryContacts[0]
     ?? null;
+  const selectedStrongestConnection = selectedSynastryContacts.find((contact) => contact.tone !== "Friction")
+    ?? selectedSynastryContacts[0]
+    ?? null;
+  const selectedBiggestChallenge = selectedSynastryContacts.find((contact) => contact.tone === "Friction")
+    ?? selectedSynastryContacts[1]
+    ?? selectedSynastryContacts[0]
+    ?? null;
   const selectedHouseOverlays = selectedChart ? synastryHouseOverlays(profileNatalSky, selectedChart) : [];
+  const selectedRelationshipSignRows = selectedChart ? relationshipSignRows(profileNatalSky, selectedChart) : [];
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
     id: contact.id,
     fromLongitude: contact.friendPoint.longitude,
@@ -6543,6 +6602,14 @@ function ManualChartsPanel({
   const selectedFriendSignatureBody = selectedFriendLeadingElements[0]
     ? `Most of ${selectedChart?.displayName ?? "this friend's"} planets fall in ${selectedFriendLeadingElements[0].toLowerCase()} signs - a simple read on the chart's baseline tempo.`
     : "Add complete birth details to read the chart's elemental balance and signature.";
+  const selectedBondTone = selectedBiggestChallenge?.tone === "Friction"
+    ? "Complicated"
+    : selectedStrongestConnection?.tone === "Flow"
+      ? "Easy"
+      : selectedStrongestConnection?.tone === "Fusion"
+        ? "Magnetic"
+        : "Bond";
+  const selectedBondToneClass = selectedBondTone.toLowerCase();
   const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts), [currentSky, charts]);
 
   useEffect(() => {
@@ -6758,7 +6825,7 @@ function ManualChartsPanel({
                       className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
                       onClick={() => {
                         setSelectedChartId(chart.id);
-                        setFriendProfileTab("transits");
+                        setFriendProfileTab("bond");
                       }}
                       aria-label={`Open ${chart.displayName}`}
                     >
@@ -6912,19 +6979,33 @@ function ManualChartsPanel({
       )}
       {selectedChart && (
         <section className="friend-profile-panel friend-focus-panel" aria-label={`${selectedChart.displayName} friend profile`}>
-          <div className="friend-hero-card">
-            <span className="manual-chart-avatar friend-hero-avatar" aria-hidden="true">
-              {profileInitials(selectedChart.displayName, selectedChart.displayName)}
-            </span>
-            <div className="friend-hero-copy">
-              <h3>{selectedChart.displayName}</h3>
-              {selectedFriendBigThree && (
-                <div className="you-signature-row" aria-label={`${selectedChart.displayName} big three`}>
-                  <span><span aria-hidden="true">☉</span>{selectedFriendBigThree.sun}</span>
-                  <span><span aria-hidden="true">☽</span>{selectedFriendBigThree.moon}</span>
-                  <span><span aria-hidden="true">↑</span>{selectedFriendBigThree.rising}</span>
-                </div>
-              )}
+          <div className="friend-hero-card friend-bond-hero">
+            <div className="friend-bond-avatars" aria-hidden="true">
+              <span className="manual-chart-avatar friend-bond-avatar friend-bond-avatar-you">
+                {profileInitials(profile.name, profile.email)}
+              </span>
+              <span className="manual-chart-avatar friend-bond-avatar friend-bond-avatar-friend">
+                {profileInitials(selectedChart.displayName, selectedChart.displayName)}
+              </span>
+            </div>
+            <div className="friend-hero-copy friend-bond-copy">
+              <div className="friend-bond-person-row" aria-label="Relationship pair">
+                <span className="friend-person-pill">
+                  <strong>You</strong>
+                  <ChevronRight size={18} aria-hidden="true" />
+                </span>
+                <span className="friend-person-pill">
+                  <strong>{selectedChart.displayName}</strong>
+                  <ChevronRight size={18} aria-hidden="true" />
+                </span>
+              </div>
+              <span className="friend-relationship-type">
+                <span aria-hidden="true">◎</span>
+                {selectedChart.relationshipType || "Friendship"}
+              </span>
+              <span className={`friend-bond-tone friend-bond-tone-${selectedBondToneClass}`}>
+                {selectedBondTone}
+              </span>
             </div>
             <button className="friend-kebab" type="button" aria-label={`Edit ${selectedChart.displayName}`} onClick={() => editChart(selectedChart)}>
               <MoreVertical size={24} aria-hidden="true" />
@@ -6933,8 +7014,8 @@ function ManualChartsPanel({
 
           <div className="app-tabs profile-tabs friend-tabs friend-view-tabs" role="tablist" aria-label="Friend profile sections">
             {([
-              ["transits", "Transits"],
-              ["chart", "Chart"],
+              ["bond", "Bond"],
+              ["signs", "Signs"],
               ["synastry", "Synastry"],
               ["composite", "Composite"]
             ] as Array<[FriendProfileTab, string]>).map(([tab, label]) => (
@@ -6951,100 +7032,101 @@ function ManualChartsPanel({
             ))}
           </div>
 
-          {friendProfileTab === "transits" && (
-            <div className="friend-tab-pane friend-feed-pane" aria-label="Transits">
-              <span className="eyebrow section-label friend-section-label">Today's aspects to {selectedChart.displayName}'s chart</span>
-              {selectedFriendTopTransit && (
-                <article className="friends-logic-card friends-primary-update">
-                  <span>Top update</span>
-                  <h3>{selectedFriendTopTransit.transitPlanet} {selectedFriendTopTransit.aspect} {selectedChart.displayName}'s {selectedFriendTopTransit.natalPoint}</h3>
+          {friendProfileTab === "bond" && (
+            <div className="friend-tab-pane friend-feed-pane friend-bond-pane" aria-label="Bond">
+              <span className="eyebrow section-label friend-section-label">Snapshots</span>
+              <div className="friend-bond-snapshots" aria-label={`${selectedChart.displayName} relationship snapshots`}>
+                <article className="friend-bond-snapshot-card">
+                  <span>Strongest connection</span>
+                  <h3>
+                    {selectedStrongestConnection
+                      ? `${selectedStrongestConnection.friendPoint.name} ${selectedStrongestConnection.aspect} ${selectedStrongestConnection.yourPoint.name}`
+                      : "Connection pending"}
+                  </h3>
+                  <p>{selectedStrongestConnection?.summary ?? "Add both complete charts to rank the most supportive contact."}</p>
+                  <ChevronRight size={24} aria-hidden="true" />
+                </article>
+                <article className="friend-bond-snapshot-card">
+                  <span>Biggest challenge</span>
+                  <h3>
+                    {selectedBiggestChallenge
+                      ? `${selectedBiggestChallenge.friendPoint.name} ${selectedBiggestChallenge.aspect} ${selectedBiggestChallenge.yourPoint.name}`
+                      : "Challenge pending"}
+                  </h3>
+                  <p>{selectedBiggestChallenge?.summary ?? "The friction points appear once both charts can be compared."}</p>
+                  <ChevronRight size={24} aria-hidden="true" />
+                </article>
+                <article className="friend-bond-snapshot-card">
+                  <span>Current weather</span>
+                  <h3>
+                    {selectedFriendTopTransit
+                      ? `${selectedFriendTopTransit.transitPlanet} ${selectedFriendTopTransit.aspect} ${selectedChart.displayName}'s ${selectedFriendTopTransit.natalPoint}`
+                      : "Quiet sky"}
+                  </h3>
                   <p>{friendUpdateSummary(selectedChart, selectedFriendTopTransit)}</p>
+                  <ChevronRight size={24} aria-hidden="true" />
                 </article>
-              )}
-              {selectedFriendTiming && selectedFriendTiming.profectedHouse && (
-                <article className="friends-logic-card friend-timing-card">
-                  <span>Timing layer</span>
-                  <h3>{ordinalHouse(selectedFriendTiming.profectedHouse)} house year</h3>
-                  <p>{timingSummary(selectedChart, selectedFriendTiming)}</p>
-                </article>
-              )}
-              <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} active transits`}>
-                {selectedFriendTransits.slice(0, 8).map((transit) => (
-                  <div className="aspect-row aspect-row-static friend-aspect-row" key={transit.id}>
-                    <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
-                    <span className="aspect-row-copy">
-                      <h3>{transit.transitPlanet} {transit.aspect} {selectedChart.displayName}'s {transit.natalPoint}</h3>
-                      <p>{transit.note.replace("your natal", `${selectedChart.displayName}'s natal`)}</p>
-                    </span>
-                    <span className="aspect-row-meta" aria-label={`${transit.orb} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{transit.orb}</span>
-                    </span>
-                  </div>
-                ))}
-                {selectedFriendTransits.length === 0 && (
-                  <article className="friends-logic-card">
-                    <span>Transits</span>
-                    <h3>No exact hits yet.</h3>
-                    <p>{friendUpdateSummary(selectedChart)}</p>
+              </div>
+
+              <span className="eyebrow section-label friend-section-label">Friendship dynamics</span>
+              <div className="friend-dynamics-grid" aria-label={`${selectedChart.displayName} friendship dynamics`}>
+                {selectedFriendCompatibility.slice(0, 4).map((item) => (
+                  <article className="friends-logic-card friend-dynamic-card" key={item.title}>
+                    <span>Pattern</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
                   </article>
-                )}
+                ))}
+                {selectedRelationshipWeather.slice(0, 2).map((item) => (
+                  <article className="friends-logic-card friend-dynamic-card" key={item.title + item.body}>
+                    <span>Relationship weather</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </article>
+                ))}
               </div>
             </div>
           )}
 
-          {friendProfileTab === "chart" && (
-            <div className="friend-tab-pane friend-chart-stage" aria-label="Friend chart">
-              {selectedChart.natalChart ? (
-                <>
-                  <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                    <SkyWheel
-                      positions={selectedChart.natalChart.positions}
-                      aspects={selectedChart.natalChart.aspects}
-                      ascendant={selectedChart.natalChart.ascendant}
-                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                      midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                      showHouses
-                    />
-                  </div>
-                  <section className="you-signatures-card friend-signature-card" aria-label={`${selectedChart.displayName} signatures`}>
-                    <div className="you-signatures-main">
-                      <span className="eyebrow section-label">{selectedChart.displayName}'s signatures</span>
-                      <h3>{selectedFriendSignatureTitle}</h3>
-                      <p>{selectedFriendSignatureBody}</p>
+          {friendProfileTab === "signs" && (
+            <div className="friend-tab-pane friend-signs-pane" aria-label="Signs">
+              <div className="friend-signs-table" aria-label={`${profile.name} and ${selectedChart.displayName} sign comparison`}>
+                <div className="friend-signs-head">
+                  <span>
+                    <i aria-hidden="true">{profileInitials(profile.name, profile.email)}</i>
+                    <strong>You</strong>
+                  </span>
+                  <span>
+                    <i aria-hidden="true">{profileInitials(selectedChart.displayName, selectedChart.displayName)}</i>
+                    <strong>{selectedChart.displayName}</strong>
+                  </span>
+                </div>
+                {selectedRelationshipSignRows.map((row) => {
+                  const yourGlyph = row.yourSign ? zodiacSignGlyphs[row.yourSign] ?? "" : "";
+                  const friendGlyph = row.friendSign ? zodiacSignGlyphs[row.friendSign] ?? "" : "";
+                  const yourClass = row.yourSign ? row.yourSign.toLowerCase().replace(/\s+/g, "-") : "unknown";
+                  const friendClass = row.friendSign ? row.friendSign.toLowerCase().replace(/\s+/g, "-") : "unknown";
+
+                  return (
+                    <div className="friend-signs-row" key={row.id}>
+                      <div className="friend-signs-section-label">
+                        <span aria-hidden="true">{row.glyph}</span>
+                        <strong>{row.point}</strong>
+                      </div>
+                      <span className={`friend-sign-cell sign-${yourClass}`}>
+                        <span aria-hidden="true">{yourGlyph}</span>
+                        <strong>{row.yourSign ?? "Pending"}</strong>
+                        <ChevronRight size={22} aria-hidden="true" />
+                      </span>
+                      <span className={`friend-sign-cell sign-${friendClass}`}>
+                        <span aria-hidden="true">{friendGlyph}</span>
+                        <strong>{row.friendSign ?? "Pending"}</strong>
+                        <ChevronRight size={22} aria-hidden="true" />
+                      </span>
                     </div>
-                    <div className="elemental-balance" aria-label={`${selectedChart.displayName} elemental balance`}>
-                      <div className="elemental-balance-head">
-                        <span className="eyebrow section-label">Elemental balance</span>
-                        <span>{selectedFriendElementalSummary}</span>
-                      </div>
-                      <div className="element-bars" aria-hidden="true">
-                        {selectedFriendElementalBalance.map((item) => (
-                          <span
-                            key={item.element}
-                            className={`element-bar element-${item.element.toLowerCase()}`}
-                            style={{ flexGrow: Math.max(item.count, 1) }}
-                          />
-                        ))}
-                      </div>
-                      <div className="element-legend">
-                        {selectedFriendElementalBalance.map((item) => (
-                          <span key={item.element} className={`element-legend-item element-${item.element.toLowerCase()}`}>
-                            <i aria-hidden="true" />
-                            {item.element} <b>{item.count}</b>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </section>
-                </>
-              ) : (
-                <article className="friends-logic-card">
-                  <span>Chart</span>
-                  <h3>Chart calculation pending.</h3>
-                  <p>Edit and save this friend again to calculate their natal wheel from birth details.</p>
-                </article>
-              )}
+                  );
+                })}
+              </div>
             </div>
           )}
 
