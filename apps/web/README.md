@@ -62,4 +62,4 @@ flowchart LR
 
 Run commands from the monorepo root. The root build compiles the knowledge package first, then builds this app against that generated package output.
 
-The website lazy-loads `src/content/registry.ts` from `App.tsx` so the first HTML response and main app module do not preload the knowledge bundle. Keep new source-backed surfaces behind dynamic imports unless their content is required for the first paint.
+The website lazy-loads domain registries from `App.tsx` so the first HTML response and main app module do not preload the knowledge bundles. Sky loads `src/content/skyRegistry.ts`, profile/natal surfaces load `src/content/natalRegistry.ts`, and friends/relationship surfaces load `src/content/relationshipRegistry.ts`. Keep new source-backed surfaces behind dynamic imports unless their content is required for the first paint.

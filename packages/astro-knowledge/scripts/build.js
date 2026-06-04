@@ -199,6 +199,7 @@ function build() {
   const natalKnowledge = withBundleMetadata(packageJson, generatedAt, {
     primitives,
     pairs,
+    transitNatal,
     planetary,
     points,
     pointPlacements,
