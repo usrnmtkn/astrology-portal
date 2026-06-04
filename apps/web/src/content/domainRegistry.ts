@@ -142,12 +142,28 @@ export function aspectContentId(planetA: string, aspect: string, planetB: string
   return `${normalizeIdPart(planetA)}-${normalizeIdPart(aspect)}-${normalizeIdPart(planetB)}`;
 }
 
+export function natalAspectContentId(planetA: string, aspect: string, planetB: string) {
+  return `natal-${aspectContentId(planetA, aspect, planetB)}`;
+}
+
 export function currentSkyAspectContentId(planetA: string, aspect: string, planetB: string) {
   return `sky-${aspectContentId(planetA, aspect, planetB)}`;
 }
 
+export function transitNatalContentId(transiting: string, aspect: string, natal: string) {
+  return `transit-natal-${aspectContentId(transiting, aspect, natal)}`;
+}
+
 export function placementContentId(planet: string, sign: string) {
   return `${normalizeIdPart(planet)}-in-${normalizeIdPart(sign)}`;
+}
+
+export function skyPlacementContentId(planet: string, sign: string) {
+  return `sky-${placementContentId(planet, sign)}`;
+}
+
+export function natalPlacementContentId(planet: string, sign: string) {
+  return `natal-${placementContentId(planet, sign)}`;
 }
 
 function primitiveThemes(map: PrimitiveMap, id: string | undefined) {
@@ -429,7 +445,11 @@ export function createDomainRegistry(bundleInput: unknown) {
   return {
     approvedVoiceOrKnowledgeFallback,
     aspectContentId,
+    natalAspectContentId,
     currentSkyAspectContentId,
-    placementContentId
+    transitNatalContentId,
+    placementContentId,
+    skyPlacementContentId,
+    natalPlacementContentId
   };
 }

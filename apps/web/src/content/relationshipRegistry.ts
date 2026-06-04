@@ -4,6 +4,10 @@ import { createDomainRegistry } from "./domainRegistry";
 export const {
   approvedVoiceOrKnowledgeFallback,
   aspectContentId,
+  natalAspectContentId,
   currentSkyAspectContentId,
-  placementContentId
+  transitNatalContentId,
+  placementContentId,
+  skyPlacementContentId,
+  natalPlacementContentId
 } = createDomainRegistry(relationshipKnowledge);
