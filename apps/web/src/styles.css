@@ -11145,6 +11145,105 @@ button.friend-bond-snapshot-card:focus-visible {
   line-height: 1.5;
 }
 
+/* Friends view strict type scale */
+.friends-page {
+  --friend-type-eyebrow: 11px;
+  --friend-type-meta: 13px;
+  --friend-type-body: 15px;
+  --friend-type-body-lg: 17px;
+  --friend-type-card-title: 20px;
+  --friend-type-section: 24px;
+  --friend-type-detail: 36px;
+}
+
+.friends-page :is(.section-label, .friends-logic-card span, .friend-bond-snapshot-card span, .synastry-tldr-card span) {
+  font-size: var(--friend-type-eyebrow);
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.friends-page :is(.manual-chart-list-heading span, .manual-chart-message, .manual-chart-signatures, .synastry-detail-meta, .friend-chart-legend em) {
+  font-size: var(--friend-type-meta);
+  line-height: 1.35;
+}
+
+.friends-page :is(.friends-feed-preview-copy, .friends-logic-card p, .friend-bond-snapshot-card p, .friend-signature-card p, .friend-compat-intro, .synastry-copy p) {
+  font-size: var(--friend-type-body);
+  line-height: 1.5;
+}
+
+.friends-page :is(.synastry-tldr-card p) {
+  font-size: var(--friend-type-body-lg);
+  line-height: 1.5;
+}
+
+.friends-page :is(.friends-logic-card h3, .friend-bond-snapshot-card h3, .friend-signature-card h3, .aspect-row-copy h3) {
+  font-size: var(--friend-type-card-title);
+  line-height: 1.18;
+}
+
+.friends-page :is(.friend-signs-head strong, .friend-person-pill strong, .friend-bond-tone) {
+  font-size: var(--friend-type-section);
+  line-height: 1.05;
+}
+
+.friends-page .manual-chart-row .crb {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.friends-page .manual-chart-row .crt {
+  display: block;
+  font-size: 17px;
+  line-height: 1.15;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.friends-page .manual-chart-row .crs {
+  display: block;
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.friends-page .synastry-detail-panel h2 {
+  font-size: clamp(30px, 3.1vw, var(--friend-type-detail));
+  line-height: 1.08;
+  max-width: 720px;
+}
+
+.friends-page .synastry-detail-panel {
+  gap: 16px;
+  max-width: 760px;
+  padding-top: 22px;
+}
+
+.friends-page .synastry-tldr-card {
+  max-width: 720px;
+  padding: 18px 20px;
+}
+
+.friends-page .synastry-copy {
+  gap: 16px;
+  max-width: 720px;
+}
+
+.friends-page .friend-bond-tone {
+  min-height: 48px;
+  padding: 0 24px;
+}
+
+.friends-page .friend-bond-snapshot-card {
+  min-height: 170px;
+}
+
+.friends-page .friend-aspect-row {
+  --sky-row-title-size: var(--friend-type-card-title);
+  --sky-row-subline-size: var(--friend-type-body);
+}
+
 @media (max-width: 720px) {
   .friends-page {
     gap: 18px;
@@ -11381,6 +11480,42 @@ button.friend-bond-snapshot-card:focus-visible {
   .synastry-tldr-card p,
   .synastry-copy p {
     font-size: 18px;
+  }
+
+  .friends-page {
+    --friend-type-body: 14px;
+    --friend-type-body-lg: 16px;
+    --friend-type-card-title: 18px;
+    --friend-type-section: 20px;
+    --friend-type-detail: 30px;
+  }
+
+  .friends-page .manual-chart-row .crt {
+    font-size: 16px;
+  }
+
+  .friends-page .manual-chart-row .crs {
+    font-size: 12px;
+  }
+
+  .friends-page .synastry-detail-panel {
+    max-width: 100%;
+    padding-top: 18px;
+  }
+
+  .friends-page .synastry-detail-panel h2 {
+    font-size: clamp(24px, 7vw, var(--friend-type-detail));
+    line-height: 1.1;
+  }
+
+  .friends-page .synastry-tldr-card,
+  .friends-page .synastry-copy {
+    max-width: 100%;
+  }
+
+  .friends-page .friend-bond-tone {
+    min-height: 42px;
+    padding: 0 18px;
   }
 
   .friend-relationship-weather {
