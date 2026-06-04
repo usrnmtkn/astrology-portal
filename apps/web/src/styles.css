@@ -9629,6 +9629,29 @@ html,
   padding: 18px;
 }
 
+.friends-dashboard {
+  align-items: start;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: min(1180px, calc(100vw - 32px));
+  width: 100%;
+}
+
+.friends-dashboard .friends-sidebar {
+  margin: 0;
+  max-width: none;
+  position: sticky;
+  top: 18px;
+}
+
+.friends-main {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
 .theme-dark .friends-feed-preview {
   box-shadow: none;
 }
@@ -9681,6 +9704,10 @@ html,
 
 .app-shell:is(.mode-profile, .mode-friends) .profile-layout .manual-chart-workspace-list-only {
   grid-template-columns: 1fr;
+}
+
+.friends-dashboard .manual-chart-workspace-list-only {
+  max-width: none;
 }
 
 .app-shell:is(.mode-profile, .mode-friends) .profile-layout .manual-chart-form,
@@ -9818,8 +9845,8 @@ html,
 .manual-chart-cards {
   background: color-mix(in srgb, var(--surface-app) 94%, transparent);
   border: 1px solid var(--line-app);
-  border-radius: 30px;
-  box-shadow: 0 18px 44px rgba(20, 22, 22, 0.08);
+  border-radius: 24px;
+  box-shadow: none;
   display: block;
   margin: 0;
   overflow: hidden;
@@ -9859,6 +9886,10 @@ html,
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-app) 42%, transparent);
 }
 
+.manual-chart-row:has(.manual-chart-select.active) {
+  background: color-mix(in srgb, var(--accent-app) 9%, transparent);
+}
+
 .app-shell:is(.mode-profile, .mode-friends) .profile-layout .manual-chart-row:first-child {
   border-top: 0;
 }
@@ -9887,13 +9918,14 @@ html,
 }
 
 .manual-chart-actions {
-  display: flex;
+  display: grid;
   gap: 7px;
+  justify-items: end;
 }
 
 .manual-chart-actions button {
   align-items: center;
-  background: color-mix(in srgb, var(--surface-app) 78%, var(--line-app));
+  background: transparent;
   border: 1px solid var(--line-app);
   border-radius: 999px;
   color: var(--ink-app);
@@ -10060,6 +10092,8 @@ html,
   border: 0;
   box-shadow: none;
   gap: 22px;
+  margin: 0;
+  max-width: none;
   padding: 0;
 }
 
@@ -10071,13 +10105,13 @@ html,
   align-items: center;
   background: color-mix(in srgb, var(--surface-app) 96%, transparent);
   border: 1px solid var(--line-app);
-  border-radius: 34px;
+  border-radius: 30px;
   box-shadow: 0 18px 44px rgba(20, 22, 22, 0.08);
   display: grid;
   gap: 22px;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  min-height: 128px;
-  padding: 26px 30px;
+  min-height: 118px;
+  padding: 22px 26px;
 }
 
 .theme-dark .friend-hero-card {
@@ -10085,11 +10119,11 @@ html,
 }
 
 .friend-hero-avatar {
-  border: 6px solid var(--surface-app);
+  border: 5px solid var(--surface-app);
   box-shadow: 0 0 0 1px var(--line-app);
-  font-size: 30px;
-  height: 92px;
-  width: 92px;
+  font-size: 26px;
+  height: 82px;
+  width: 82px;
 }
 
 .friend-hero-copy {
@@ -10131,8 +10165,8 @@ html,
   display: grid;
   gap: 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  min-height: 76px;
-  padding: 8px;
+  min-height: 66px;
+  padding: 7px;
   width: 100%;
 }
 
@@ -10164,18 +10198,18 @@ html,
 
 .friend-aspect-list {
   border: 1px solid var(--line-app);
-  border-radius: 30px;
+  border-radius: 26px;
   box-shadow: 0 18px 44px rgba(20, 22, 22, 0.07);
   overflow: hidden;
 }
 
 .friend-aspect-row {
-  --sky-row-gap: 20px;
-  --sky-row-glyph-size: 28px;
-  --sky-row-padding-block: 24px;
-  --sky-row-padding-inline: 28px;
-  --sky-row-title-size: clamp(20px, 2.6vw, 28px);
-  --sky-row-degree-size: 18px;
+  --sky-row-gap: 18px;
+  --sky-row-glyph-size: 24px;
+  --sky-row-padding-block: 20px;
+  --sky-row-padding-inline: 24px;
+  --sky-row-title-size: clamp(19px, 2vw, 24px);
+  --sky-row-degree-size: 16px;
 }
 
 .friend-aspect-row.selected {
@@ -10184,7 +10218,7 @@ html,
 
 .friend-chart-stage .friend-wheel,
 .friend-compat-stage .friend-wheel {
-  max-width: min(100%, 680px);
+  max-width: min(100%, 620px);
 }
 
 .friend-signature-card {
@@ -10416,7 +10450,7 @@ html,
 
 .synastry-detail-panel h2 {
   color: var(--ink-app);
-  font: var(--fw-semibold) clamp(42px, 7vw, 74px) / 1.02 var(--font-ui);
+  font: var(--fw-semibold) clamp(38px, 5.4vw, 64px) / 1.03 var(--font-ui);
   letter-spacing: 0;
   margin: 0;
   max-width: 760px;
@@ -10485,6 +10519,15 @@ html,
 
   .friends-circle-strip {
     grid-template-columns: 1fr;
+  }
+
+  .friends-dashboard {
+    grid-template-columns: 1fr;
+    max-width: var(--col-app);
+  }
+
+  .friends-dashboard .friends-sidebar {
+    position: static;
   }
 
   .friends-feed-preview-heading {

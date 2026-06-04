@@ -6231,7 +6231,7 @@ function ManualChartsPanel({
       <div className="friends-page-heading">
         <h2>friends.</h2>
       </div>
-      <span className="eyebrow section-label">Circle feed logic</span>
+      <span className="eyebrow section-label">Circle activity</span>
       <section className="friends-feed-preview" aria-label="Circle feed preview">
         <div className="friends-feed-preview-heading">
           <span>Circle Feed</span>
@@ -6250,11 +6250,12 @@ function ManualChartsPanel({
           ))}
         </div>
       </section>
-      <section className="manual-chart-workspace manual-chart-workspace-list-only" aria-label="Friend charts">
+      <div className="friends-dashboard">
+      <section className="manual-chart-workspace manual-chart-workspace-list-only friends-sidebar" aria-label="Friend charts">
         <section className="manual-chart-list" aria-label="Saved manual charts">
           <div className="manual-chart-list-heading">
             <div>
-              <span>Saved charts</span>
+              <span>Saved friends</span>
               {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
             </div>
             <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
@@ -6293,7 +6294,7 @@ function ManualChartsPanel({
                       aria-label={`Open ${chart.displayName}`}
                     >
                       <span className="manual-chart-avatar" aria-hidden="true">
-                      {profileInitials(chart.displayName, chart.displayName)}
+                        {profileInitials(chart.displayName, chart.displayName)}
                       </span>
                       <span className="crb">
                         <span className="crt">{chart.displayName}</span>
@@ -6322,6 +6323,7 @@ function ManualChartsPanel({
           )}
         </section>
       </section>
+      <div className="friends-main">
       {friendChartModalOpen && (
         <div className="chart-modal-backdrop friend-chart-modal-backdrop" role="presentation" onMouseDown={closeFriendChartModal}>
           <form
@@ -6677,6 +6679,8 @@ function ManualChartsPanel({
           )}
         </section>
       )}
+      </div>
+      </div>
     </section>
   );
 }
