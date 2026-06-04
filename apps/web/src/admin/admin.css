@@ -1,3 +1,11 @@
+html,
+body,
+#root {
+  background: #101211;
+  margin: 0;
+  min-height: 100%;
+}
+
 .admin-dashboard {
   --admin-bg: #101211;
   --admin-panel: #f6f6f3;
