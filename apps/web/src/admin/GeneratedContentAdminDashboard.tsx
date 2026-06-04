@@ -271,6 +271,12 @@ export function GeneratedContentAdminDashboard() {
     }));
   }
 
+  function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
+    setStatus(nextStatus);
+    setSurface(nextSurface);
+    void loadRows(nextStatus, nextSurface);
+  }
+
   async function loadFactsForDraft(baseDraft = draft, options: { manageLoading?: boolean } = {}) {
     const shouldManageLoading = options.manageLoading ?? true;
 
@@ -520,19 +526,43 @@ export function GeneratedContentAdminDashboard() {
         </a>
 
         <nav className="admin-nav" aria-label="Content operations">
-          <button className="active" type="button">
+          <button
+            className={surface === "sky" && status === "DRAFT" ? "active" : ""}
+            type="button"
+            onClick={() => showQueue("DRAFT", "sky")}
+            disabled={!canUseApi}
+            aria-current={surface === "sky" && status === "DRAFT" ? "page" : undefined}
+          >
             <LayoutDashboard size={18} aria-hidden="true" />
             Dashboard
           </button>
-          <button type="button" onClick={() => void loadRows("DRAFT", surface)} disabled={!canUseApi}>
+          <button
+            className={status === "DRAFT" && !(surface === "sky") ? "active" : ""}
+            type="button"
+            onClick={() => showQueue("DRAFT")}
+            disabled={!canUseApi}
+            aria-current={status === "DRAFT" && !(surface === "sky") ? "page" : undefined}
+          >
             <FileText size={18} aria-hidden="true" />
             Drafts
           </button>
-          <button type="button" onClick={() => void loadRows("LIVE", surface)} disabled={!canUseApi}>
+          <button
+            className={status === "LIVE" ? "active" : ""}
+            type="button"
+            onClick={() => showQueue("LIVE")}
+            disabled={!canUseApi}
+            aria-current={status === "LIVE" ? "page" : undefined}
+          >
             <Eye size={18} aria-hidden="true" />
             Live Content
           </button>
-          <button type="button" onClick={() => void loadRows("REVIEWED", surface)} disabled={!canUseApi}>
+          <button
+            className={status === "REVIEWED" ? "active" : ""}
+            type="button"
+            onClick={() => showQueue("REVIEWED")}
+            disabled={!canUseApi}
+            aria-current={status === "REVIEWED" ? "page" : undefined}
+          >
             <Check size={18} aria-hidden="true" />
             Reviewed
           </button>
