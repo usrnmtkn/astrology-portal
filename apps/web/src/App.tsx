@@ -138,6 +138,15 @@ type TransitItem = {
   note: string;
 };
 
+type FriendProfileTab = "compatibility" | "updates" | "between" | "chart" | "settings";
+
+type FriendTimingContext = {
+  age: number | null;
+  profectedHouse: number | null;
+  profectedSign: string;
+  lordOfYear: string;
+};
+
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 type SignupTimeParts = {
   hour: string;
@@ -161,8 +170,9 @@ type SkyDetail = {
   content?: ContentBundle;
 };
 
+type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
-  typeof import("./content/registry"),
+  typeof import("./content/skyRegistry"),
   "approvedVoiceOrKnowledgeFallback" | "aspectContentId" | "currentSkyAspectContentId" | "placementContentId"
 >;
 
@@ -173,39 +183,51 @@ type ContentFallback = {
   detailParagraphs: string[];
 };
 
-let loadedContentRegistry: LazyContentRegistry | null = null;
+const loadedContentRegistries: Partial<Record<ContentDomain, LazyContentRegistry>> = {};
 
 function normalizeContentIdPart(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-function aspectContentId(planetA: string, aspect: string, planetB: string) {
-  if (loadedContentRegistry) {
-    return loadedContentRegistry.aspectContentId(planetA, aspect, planetB);
+function contentRegistryFor(domain: ContentDomain) {
+  return loadedContentRegistries[domain] ?? null;
+}
+
+function aspectContentId(planetA: string, aspect: string, planetB: string, domain: ContentDomain = "natal") {
+  const registry = contentRegistryFor(domain);
+
+  if (registry) {
+    return registry.aspectContentId(planetA, aspect, planetB);
   }
 
   return `${normalizeContentIdPart(planetA)}-${normalizeContentIdPart(aspect)}-${normalizeContentIdPart(planetB)}`;
 }
 
 function currentSkyAspectContentId(planetA: string, aspect: string, planetB: string) {
-  if (loadedContentRegistry) {
-    return loadedContentRegistry.currentSkyAspectContentId(planetA, aspect, planetB);
+  const registry = contentRegistryFor("sky");
+
+  if (registry) {
+    return registry.currentSkyAspectContentId(planetA, aspect, planetB);
   }
 
   return `sky-${aspectContentId(planetA, aspect, planetB)}`;
 }
 
-function placementContentId(planet: string, sign: string) {
-  if (loadedContentRegistry) {
-    return loadedContentRegistry.placementContentId(planet, sign);
+function placementContentId(planet: string, sign: string, domain: ContentDomain = "natal") {
+  const registry = contentRegistryFor(domain);
+
+  if (registry) {
+    return registry.placementContentId(planet, sign);
   }
 
   return `${normalizeContentIdPart(planet)}-in-${normalizeContentIdPart(sign)}`;
 }
 
-function approvedVoiceOrKnowledgeFallback(id: string): ContentFallback {
-  if (loadedContentRegistry) {
-    return loadedContentRegistry.approvedVoiceOrKnowledgeFallback(id);
+function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "natal"): ContentFallback {
+  const registry = contentRegistryFor(domain);
+
+  if (registry) {
+    return registry.approvedVoiceOrKnowledgeFallback(id);
   }
 
   return {
@@ -219,6 +241,18 @@ function approvedVoiceOrKnowledgeFallback(id: string): ContentFallback {
     body: null,
     detailParagraphs: []
   };
+}
+
+function importContentRegistry(domain: ContentDomain): Promise<LazyContentRegistry> {
+  if (domain === "sky") {
+    return import("./content/skyRegistry");
+  }
+
+  if (domain === "relationship") {
+    return import("./content/relationshipRegistry");
+  }
+
+  return import("./content/natalRegistry");
 }
 
 type ProfilePersistencePayload = {
@@ -256,6 +290,34 @@ const zodiacSigns = [
   "Aquarius",
   "Pisces"
 ];
+const traditionalSignRulers: Record<string, string> = {
+  Aries: "Mars",
+  Taurus: "Venus",
+  Gemini: "Mercury",
+  Cancer: "Moon",
+  Leo: "Sun",
+  Virgo: "Mercury",
+  Libra: "Venus",
+  Scorpio: "Mars",
+  Sagittarius: "Jupiter",
+  Capricorn: "Saturn",
+  Aquarius: "Saturn",
+  Pisces: "Jupiter"
+};
+const houseLifeAreas: Record<number, string> = {
+  1: "identity, body, and personal direction",
+  2: "money, resources, and self-worth",
+  3: "communication, siblings, and daily movement",
+  4: "home, family, roots, and emotional foundation",
+  5: "creativity, pleasure, romance, and children",
+  6: "workflows, health, service, and maintenance",
+  7: "partnerships, agreements, and direct others",
+  8: "shared resources, trust, debt, and deep change",
+  9: "belief, study, travel, and perspective",
+  10: "career, visibility, reputation, and calling",
+  11: "friends, networks, hopes, and belonging",
+  12: "rest, privacy, retreat, and hidden pressure"
+};
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
 
@@ -1395,6 +1457,351 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
     .slice(0, 12);
 }
 
+function transitOrbValue(transit: TransitItem) {
+  const [degreePart = "0", minutePart = "0"] = transit.orb.split(" ");
+  const degrees = Number.parseFloat(degreePart);
+  const minutes = Number.parseFloat(minutePart.replace("'", ""));
+
+  return (Number.isFinite(degrees) ? degrees : 0) + (Number.isFinite(minutes) ? minutes / 60 : 0);
+}
+
+function completedAgeOnDate(birthDate: string, currentDateValue: string) {
+  const [, birthYear = "", birthMonth = "", birthDay = ""] = birthDate.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const currentDate = new Date(currentDateValue);
+
+  if (!birthYear || Number.isNaN(currentDate.getTime())) {
+    return null;
+  }
+
+  const year = Number(birthYear);
+  const month = Number(birthMonth);
+  const day = Number(birthDay);
+  let age = currentDate.getUTCFullYear() - year;
+  const hasBirthdayPassed = currentDate.getUTCMonth() + 1 > month
+    || (currentDate.getUTCMonth() + 1 === month && currentDate.getUTCDate() >= day);
+
+  if (!hasBirthdayPassed) {
+    age -= 1;
+  }
+
+  return age >= 0 ? age : null;
+}
+
+function signAtWholeSignHouse(ascendant: string, house: number) {
+  const ascendantIndex = zodiacSigns.indexOf(ascendant);
+
+  if (ascendantIndex < 0 || house < 1) {
+    return "";
+  }
+
+  return zodiacSigns[(ascendantIndex + house - 1) % 12] ?? "";
+}
+
+function wholeSignHouseForSign(sign: string, ascendant: string) {
+  const signIndex = zodiacSigns.indexOf(sign);
+  const ascendantIndex = zodiacSigns.indexOf(ascendant);
+
+  if (signIndex < 0 || ascendantIndex < 0) {
+    return null;
+  }
+
+  return ((signIndex - ascendantIndex + 12) % 12) + 1;
+}
+
+function friendTimingContext(chart: ManualChart, currentSky: SkySnapshot): FriendTimingContext {
+  const age = completedAgeOnDate(chart.birthDate, currentSky.generatedAt);
+  const ascendant = chart.natalChart?.ascendant ?? "";
+  const profectedHouse = age === null ? null : (age % 12) + 1;
+  const profectedSign = profectedHouse ? signAtWholeSignHouse(ascendant, profectedHouse) : "";
+  const lordOfYear = traditionalSignRulers[profectedSign] ?? "";
+
+  return {
+    age,
+    profectedHouse,
+    profectedSign,
+    lordOfYear
+  };
+}
+
+function timingBoostForTransit(transit: TransitItem, chart: ManualChart, timing: FriendTimingContext) {
+  const natalPoint = chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint);
+  let score = 0;
+
+  if (timing.lordOfYear && transit.transitPlanet === timing.lordOfYear) {
+    score += 14;
+  }
+
+  if (timing.profectedHouse && natalPoint?.house === timing.profectedHouse) {
+    score += 12;
+  }
+
+  if (natalPoint?.house && [1, 4, 7, 10].includes(natalPoint.house)) {
+    score += 7;
+  }
+
+  return score;
+}
+
+function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart) {
+  const timing = friendTimingContext(chart, currentSky);
+
+  return buildNatalTransitItems(currentSky.positions, chart.natalChart?.positions ?? [])
+    .sort((first, second) => {
+      const firstScore = (first.term === "long" ? 8 : 0)
+        + (["Sun", "Moon", "Ascendant", "Midheaven"].includes(first.natalPoint) ? 10 : 0)
+        + timingBoostForTransit(first, chart, timing)
+        - transitOrbValue(first);
+      const secondScore = (second.term === "long" ? 8 : 0)
+        + (["Sun", "Moon", "Ascendant", "Midheaven"].includes(second.natalPoint) ? 10 : 0)
+        + timingBoostForTransit(second, chart, timing)
+        - transitOrbValue(second);
+
+      return secondScore - firstScore;
+    });
+}
+
+function transitLifeArea(transit: TransitItem, chart: ManualChart) {
+  const natalPoint = chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint);
+
+  return natalPoint?.house ? `${ordinalHouse(natalPoint.house)} house` : "house pending";
+}
+
+function transitLifeAreaTheme(transit: TransitItem, chart: ManualChart) {
+  const natalPoint = chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint);
+
+  return natalPoint?.house ? houseLifeAreas[natalPoint.house] ?? "life area" : "life area pending";
+}
+
+function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart) {
+  const ascendant = chart.natalChart?.ascendant ?? "";
+
+  return currentSky.positions
+    .map((position) => ({
+      planet: position.planet,
+      sign: position.sign,
+      house: wholeSignHouseForSign(position.sign, ascendant)
+    }))
+    .filter((activation): activation is { planet: string; sign: string; house: number } => Boolean(activation.house))
+    .sort((first, second) => {
+      const firstAngular = [1, 4, 7, 10].includes(first.house) ? 0 : 1;
+      const secondAngular = [1, 4, 7, 10].includes(second.house) ? 0 : 1;
+
+      return firstAngular - secondAngular || first.house - second.house;
+    });
+}
+
+function friendUpdateSummary(chart: ManualChart, transit?: TransitItem) {
+  if (!transit) {
+    return `${chart.displayName}'s natal chart is saved. Today's exact contacts will appear when their calculated chart has active transit hits.`;
+  }
+
+  const area = transitLifeArea(transit, chart);
+  const areaTheme = transitLifeAreaTheme(transit, chart);
+  const content = approvedVoiceOrKnowledgeFallback(aspectContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+
+  return content.summary ?? `${transit.transitPlanet} ${transit.aspect} ${transit.natalPoint} is active in their ${area}: ${areaTheme}. This is timing, not a verdict.`;
+}
+
+function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
+  if (!timing.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
+    return `${chart.displayName}'s annual timing is pending until their birth time and rising sign are available.`;
+  }
+
+  return `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year: ${houseLifeAreas[timing.profectedHouse]}. ${timing.lordOfYear} is lord of the year, so ${timing.lordOfYear} contacts rank higher for them.`;
+}
+
+function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart) {
+  const friendSky = chart.natalChart;
+  const friendBigThree = manualChartBigThree(chart);
+  const highlights = [
+    {
+      title: "Chart signature",
+      body: `${chart.displayName}'s Sun is in ${friendBigThree.sun}, Moon in ${friendBigThree.moon}, and rising is ${friendBigThree.rising}.`
+    }
+  ];
+
+  if (!profileNatalSky || !friendSky) {
+    highlights.push({
+      title: "Compatibility pending",
+      body: "Add or calculate both charts to compare natal contacts, shared elements, and relationship timing."
+    });
+    return highlights;
+  }
+
+  const synastryHits = profileNatalSky.positions.flatMap((yourPosition) => (
+    friendSky.positions.flatMap((theirPosition) => {
+      const separation = angularDistance(zodiacLongitude(yourPosition), zodiacLongitude(theirPosition));
+      const aspect = transitAspectDefinitions
+        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+        .filter((definition) => definition.orbValue <= 5)
+        .sort((first, second) => first.orbValue - second.orbValue)[0];
+
+      return aspect ? [{ yourPosition, theirPosition, aspect }] : [];
+    })
+  )).filter((hit) => ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.yourPosition.planet) && ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.theirPosition.planet));
+
+  const topHit = synastryHits[0];
+  if (topHit) {
+    highlights.push({
+      title: `${topHit.yourPosition.planet} ${topHit.aspect.type} ${topHit.theirPosition.planet}`,
+      body: `A close natal contact connects your ${topHit.yourPosition.planet} with ${chart.displayName}'s ${topHit.theirPosition.planet}. This is a static relationship pattern: it describes the baseline, not today's mood.`
+    });
+  }
+
+  const yourElement = profileNatalSky.dominantElement;
+  const theirElement = friendSky.dominantElement;
+  highlights.push({
+    title: yourElement === theirElement ? `${yourElement} emphasis` : `${yourElement} meets ${theirElement}`,
+    body: yourElement === theirElement
+      ? `Both charts lean ${yourElement.toLowerCase()}, so the relationship may find common language through the same basic tempo.`
+      : `Your chart leans ${yourElement.toLowerCase()} while theirs leans ${theirElement.toLowerCase()}, giving the connection different instincts to translate.`
+  });
+
+  return highlights.slice(0, 3);
+}
+
+function relationshipWeather(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
+  const sharedPlanets = profileTransits.flatMap((yourTransit) => (
+    friendTransits
+      .filter((friendTransit) => friendTransit.transitPlanet === yourTransit.transitPlanet)
+      .map((friendTransit) => ({ yourTransit, friendTransit }))
+  ));
+
+  if (sharedPlanets.length > 0) {
+    return sharedPlanets.slice(0, 3).map(({ yourTransit, friendTransit }) => ({
+      title: `${yourTransit.transitPlanet} is touching both charts`,
+      body: `For you it contacts ${yourTransit.natalPoint}; for ${chart.displayName}, it contacts ${friendTransit.natalPoint}. Same sky, different room.`
+    }));
+  }
+
+  return friendTransits.slice(0, 2).map((transit) => ({
+    title: `${chart.displayName}'s current weather`,
+    body: `${transit.transitPlanet} ${transit.aspect} ${transit.natalPoint} may shape how available, direct, or sensitive they feel right now.`
+  }));
+}
+
+function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[]) {
+  const rows = charts
+    .filter((chart) => chart.natalChart)
+    .map((chart) => ({
+      chart,
+      transits: rankedFriendTransits(currentSky, chart).slice(0, 5),
+      timing: friendTimingContext(chart, currentSky)
+    }));
+  const byPlanet = new Map<string, ManualChart[]>();
+  const byHouse = new Map<number, ManualChart[]>();
+  const byProfectedHouse = new Map<number, ManualChart[]>();
+  const byLordOfYear = new Map<string, ManualChart[]>();
+
+  rows.forEach(({ chart, transits, timing }) => {
+    if (timing.profectedHouse) {
+      byProfectedHouse.set(timing.profectedHouse, [...(byProfectedHouse.get(timing.profectedHouse) ?? []), chart]);
+    }
+
+    if (timing.lordOfYear) {
+      byLordOfYear.set(timing.lordOfYear, [...(byLordOfYear.get(timing.lordOfYear) ?? []), chart]);
+    }
+
+    transits.forEach((transit) => {
+      byPlanet.set(transit.transitPlanet, [...(byPlanet.get(transit.transitPlanet) ?? []), chart]);
+      const natalPoint = chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint);
+
+      if (natalPoint?.house) {
+        byHouse.set(natalPoint.house, [...(byHouse.get(natalPoint.house) ?? []), chart]);
+      }
+    });
+  });
+
+  const planetCards = Array.from(byPlanet.entries())
+    .filter(([, activeCharts]) => new Set(activeCharts.map((chart) => chart.id)).size >= 2)
+    .map(([planet, activeCharts]) => {
+      const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+
+      return {
+        title: `${planet} is active in your circle`,
+        body: `${uniqueCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} ${uniqueCharts.length === 1 ? "has" : "have"} ${planet} contacts in the current sky.`
+      };
+    });
+  const houseCards = Array.from(byHouse.entries())
+    .filter(([, activeCharts]) => new Set(activeCharts.map((chart) => chart.id)).size >= 2)
+    .map(([house, activeCharts]) => {
+      const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+
+      return {
+        title: `${ordinalHouse(house)} house repetition`,
+        body: `${uniqueCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} are all getting ${ordinalHouse(house)} house activation.`
+      };
+    });
+  const profectionCards = Array.from(byProfectedHouse.entries())
+    .filter(([, activeCharts]) => activeCharts.length >= 2)
+    .map(([house, activeCharts]) => ({
+      title: `${ordinalHouse(house)} house years repeat`,
+      body: `${activeCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} are in ${ordinalHouse(house)} house years, so ${houseLifeAreas[house]} may be louder across the circle.`
+    }));
+  const lordCards = Array.from(byLordOfYear.entries())
+    .filter(([, activeCharts]) => activeCharts.length >= 2)
+    .map(([planet, activeCharts]) => ({
+      title: `${planet} years in your circle`,
+      body: `${activeCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} have ${planet} as lord of the year. ${planet} transits may land with extra relevance for them.`
+    }));
+
+  return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
+}
+
+function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[]) {
+  const calculatedCharts = charts.filter((chart) => chart.natalChart);
+  const circleCards = circleActivationCards(currentSky, charts);
+
+  if (circleCards.length > 0) {
+    return circleCards.map((card) => ({
+      ...card,
+      label: "Circle pattern"
+    }));
+  }
+
+  if (calculatedCharts.length === 1) {
+    const chart = calculatedCharts[0];
+    const topTransit = rankedFriendTransits(currentSky, chart)[0];
+    const timing = friendTimingContext(chart, currentSky);
+
+    return [
+      {
+        label: "Friend update",
+        title: topTransit ? `${chart.displayName}: ${topTransit.transitPlanet} ${topTransit.aspect} ${topTransit.natalPoint}` : `${chart.displayName}'s update is ready`,
+        body: topTransit ? friendUpdateSummary(chart, topTransit) : timingSummary(chart, timing)
+      },
+      {
+        label: "Comparison chart",
+        title: `${chart.displayName} and you`,
+        body: "One friend is enough for compatibility, synastry-style contacts, chart signatures, and relationship weather. Select their profile below to read the comparison."
+      },
+      {
+        label: "Relationship weather",
+        title: "Between Us is active",
+        body: "This compares what today's sky is doing to you and to them, then looks for shared planets, pressure points, and timing themes between both charts."
+      }
+    ];
+  }
+
+  return [
+    {
+      label: "Friend updates",
+      title: "Current astrology for each person",
+      body: "Add one friend to read their chart, compare it with yours, and rank today's transits by house activation, angularity, and annual timing."
+    },
+    {
+      label: "Circle patterns",
+      title: "Who is feeling something similar",
+      body: "With two or more saved friends, repeated planet, house, profection, or lord-of-year signals appear here."
+    },
+    {
+      label: "Between Us",
+      title: "Dynamic relationship weather",
+      body: "Selecting a friend compares what today's sky is doing to you, to them, and between the two charts."
+    }
+  ];
+}
+
 export function App() {
   const initialLocationState = useMemo(getInitialLocation, []);
   const restoredPortalModeRef = useRef<PortalMode | null>(getStoredPortalMode());
@@ -1440,24 +1847,34 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const domains: ContentDomain[] = ["sky"];
 
-    import("./content/registry")
-      .then((registry) => {
-        if (cancelled) {
-          return;
+    if (mode === "profile" || mode === "member" || mode === "account" || mode === "settings") {
+      domains.push("natal");
+    }
+
+    if (mode === "friends") {
+      domains.push("natal", "relationship");
+    }
+
+    Promise.all(domains
+      .filter((domain) => !loadedContentRegistries[domain])
+      .map((domain) => importContentRegistry(domain).then((registry) => {
+        loadedContentRegistries[domain] = registry;
+      })))
+      .then(() => {
+        if (!cancelled) {
+          setContentRegistryVersion((version) => version + 1);
         }
-
-        loadedContentRegistry = registry;
-        setContentRegistryVersion((version) => version + 1);
       })
       .catch((error) => {
-        console.warn("Astro knowledge registry failed to load; using local sky copy fallbacks.", error);
+        console.warn("Astro knowledge registry failed to load; using local content fallbacks.", error);
       });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     if (!cityPickerOpen) {
@@ -2296,7 +2713,12 @@ export function App() {
             )
           )}
           {mode === "friends" && userProfile && (
-            <ManualChartsPanel profile={userProfile} />
+            <ManualChartsPanel
+              profile={userProfile}
+              currentSky={sky}
+              profileNatalSky={profileNatalSky}
+              profileTransits={activeTransits}
+            />
           )}
 {mode === "account" && userProfile && (
   <AccountView
@@ -3358,7 +3780,7 @@ function RetrogradeCallout({
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
-          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
           const timelineLines = retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
@@ -3821,7 +4243,7 @@ function ActiveAspects({
         <div className="aspect-row-list">
           {aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
-            const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to));
+            const content = approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to), "sky");
             const rowSummary = content.summary ?? aspect.meaning;
             const detailParagraphs = content.detailParagraphs.length > 0 ? content.detailParagraphs : [aspect.meaning];
             const body = currentSkyAspectWriteup(aspect, positions, detailParagraphs);
@@ -3863,7 +4285,7 @@ function PlacementParagraph({ positions }: { positions: PlanetPosition[] }) {
   return (
     <div className="placement-prose">
       {positions.map((position, index) => {
-        const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+        const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
         const summary = content.summary ?? placementMeanings[position.planet] ?? "marks one of the live notes in today's sky.";
 
         return (
@@ -3902,7 +4324,7 @@ function PlacementTable({
           const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
-          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+          const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign, "sky"), "sky");
           const detailParagraphs = content.detailParagraphs.length > 0
             ? content.detailParagraphs
             : [
@@ -5457,13 +5879,34 @@ function ProfileView({
   );
 }
 
-function ManualChartsPanel({ profile }: { profile: UserProfile }) {
+function ManualChartsPanel({
+  profile,
+  currentSky,
+  profileNatalSky,
+  profileTransits
+}: {
+  profile: UserProfile;
+  currentSky: SkySnapshot;
+  profileNatalSky: SkySnapshot | null;
+  profileTransits: TransitItem[];
+}) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
+  const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
+  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("updates");
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
   const [message, setMessage] = useState("");
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
+  const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? charts[0] ?? null;
+  const selectedFriendTransits = selectedChart ? rankedFriendTransits(currentSky, selectedChart) : [];
+  const selectedFriendTopTransit = selectedFriendTransits[0];
+  const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
+  const selectedFriendTiming = selectedChart ? friendTimingContext(selectedChart, currentSky) : null;
+  const selectedFriendHouseActivations = selectedChart ? currentSkyHouseActivations(currentSky, selectedChart).slice(0, 4) : [];
+  const selectedFriendCompatibility = selectedChart ? compatibilityHighlights(profileNatalSky, selectedChart) : [];
+  const selectedRelationshipWeather = selectedChart ? relationshipWeather(profileTransits, selectedFriendTransits, selectedChart) : [];
+  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts), [currentSky, charts]);
 
   useEffect(() => {
     let cancelled = false;
@@ -5473,6 +5916,11 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
       .then((nextCharts) => {
         if (!cancelled) {
           setCharts(nextCharts);
+          setSelectedChartId((currentId) => (
+            currentId && nextCharts.some((chart) => chart.id === currentId)
+              ? currentId
+              : nextCharts[0]?.id ?? null
+          ));
           setMessage("");
         }
       })
@@ -5566,6 +6014,7 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
 
         return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
       });
+      setSelectedChartId(savedChart.id);
       resetForm(editingChartId ? "Manual chart updated." : "Manual chart created.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not save manual chart.");
@@ -5581,6 +6030,7 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
     try {
       await deleteManualChart(profile.id, chart.id);
       setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
+      setSelectedChartId((currentId) => currentId === chart.id ? null : currentId);
       if (editingChartId === chart.id) {
         resetForm();
       }
@@ -5597,7 +6047,25 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
       <div className="friends-page-heading">
         <h2>friends.</h2>
       </div>
-      <span className="eyebrow section-label">Manual natal charts</span>
+      <span className="eyebrow section-label">Circle feed logic</span>
+      <section className="friends-feed-preview" aria-label="Circle feed preview">
+        <div className="friends-feed-preview-heading">
+          <span>Circle Feed</span>
+          <strong>{charts.length} saved {charts.length === 1 ? "chart" : "charts"}</strong>
+        </div>
+        <p className="friends-feed-preview-copy">
+          Same sky, different chart, different room. This feed ranks friend updates, circle repetition, and relationship weather from the charts saved below.
+        </p>
+        <div className="friends-circle-strip" aria-label="Circle activations">
+          {circleCards.map((card) => (
+            <article className="friends-logic-card" key={card.title}>
+              <span>{card.label}</span>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
       <section className="manual-chart-workspace" aria-label="Manual natal chart CRUD">
         <form className="manual-chart-form" onSubmit={saveManualChart}>
           <div className="manual-chart-form-heading">
@@ -5734,18 +6202,28 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
 
                 return (
                   <div className="manual-chart-row chart-row" key={chart.id}>
-                    <span className="manual-chart-avatar" aria-hidden="true">
+                    <button
+                      type="button"
+                      className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
+                      onClick={() => {
+                        setSelectedChartId(chart.id);
+                        setFriendProfileTab("updates");
+                      }}
+                      aria-label={`Open ${chart.displayName}`}
+                    >
+                      <span className="manual-chart-avatar" aria-hidden="true">
                       {profileInitials(chart.displayName, chart.displayName)}
-                    </span>
-                    <span className="crb">
-                      <span className="crt">{chart.displayName}</span>
-                      <span className="crs">{manualChartSubtitle(chart)}</span>
-                      <span className="manual-chart-signatures">
-                        <span>☉ {bigThree.sun}</span>
-                        <span>☽ {bigThree.moon}</span>
-                        <span>↑ {bigThree.rising}</span>
                       </span>
-                    </span>
+                      <span className="crb">
+                        <span className="crt">{chart.displayName}</span>
+                        <span className="crs">{manualChartSubtitle(chart)}</span>
+                        <span className="manual-chart-signatures">
+                          <span>☉ {bigThree.sun}</span>
+                          <span>☽ {bigThree.moon}</span>
+                          <span>↑ {bigThree.rising}</span>
+                        </span>
+                      </span>
+                    </button>
                     <span className="manual-chart-actions">
                       <button type="button" onClick={() => editChart(chart)}>
                         <Pencil size={17} aria-hidden="true" />
@@ -5763,6 +6241,173 @@ function ManualChartsPanel({ profile }: { profile: UserProfile }) {
           )}
         </section>
       </section>
+      {selectedChart && (
+        <section className="friend-profile-panel" aria-label={`${selectedChart.displayName} friend profile`}>
+          <div className="friend-profile-header">
+            <span className="manual-chart-avatar" aria-hidden="true">
+              {profileInitials(selectedChart.displayName, selectedChart.displayName)}
+            </span>
+            <div>
+              <span className="eyebrow section-label">{selectedChart.relationshipType || "friend"}</span>
+              <h3>{selectedChart.displayName}</h3>
+              {selectedFriendBigThree && (
+                <div className="you-signature-row" aria-label={`${selectedChart.displayName} big three`}>
+                  <span><span aria-hidden="true">☉</span>{selectedFriendBigThree.sun}</span>
+                  <span><span aria-hidden="true">☽</span>{selectedFriendBigThree.moon}</span>
+                  <span><span aria-hidden="true">↑</span>{selectedFriendBigThree.rising}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="app-tabs profile-tabs friend-tabs" role="tablist" aria-label="Friend profile sections">
+            {([
+              ["compatibility", "Compatibility"],
+              ["updates", "Updates"],
+              ["between", "Between Us"],
+              ["chart", "Chart"],
+              ["settings", "Settings"]
+            ] as Array<[FriendProfileTab, string]>).map(([tab, label]) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={friendProfileTab === tab}
+                className={friendProfileTab === tab ? "on active" : ""}
+                key={tab}
+                onClick={() => setFriendProfileTab(tab)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {friendProfileTab === "compatibility" && (
+            <div className="friend-tab-pane" aria-label="Compatibility">
+              {selectedFriendCompatibility.map((item) => (
+                <article className="friends-logic-card" key={item.title}>
+                  <span>Static pattern</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {friendProfileTab === "updates" && (
+            <div className="friend-tab-pane" aria-label="Updates">
+              <article className="friends-logic-card friends-primary-update">
+                <span>Top update</span>
+                <h3>{selectedFriendTopTransit ? `${selectedFriendTopTransit.transitPlanet} ${selectedFriendTopTransit.aspect} ${selectedFriendTopTransit.natalPoint}` : "No exact hits yet"}</h3>
+                <p>{friendUpdateSummary(selectedChart, selectedFriendTopTransit)}</p>
+              </article>
+              {selectedFriendTiming && (
+                <article className="friends-logic-card friend-timing-card">
+                  <span>Timing layer</span>
+                  <h3>{selectedFriendTiming.profectedHouse ? `${ordinalHouse(selectedFriendTiming.profectedHouse)} house year` : "Annual timing pending"}</h3>
+                  <p>{timingSummary(selectedChart, selectedFriendTiming)}</p>
+                </article>
+              )}
+              {selectedFriendHouseActivations.length > 0 && (
+                <div className="friend-house-activation-grid" aria-label={`${selectedChart.displayName} house activations`}>
+                  {selectedFriendHouseActivations.map((activation) => (
+                    <article className="friends-mini-card" key={`${activation.planet}-${activation.house}`}>
+                      <span>{activation.planet}</span>
+                      <strong>{ordinalHouse(activation.house)} house</strong>
+                      <em>{houseLifeAreas[activation.house]}</em>
+                    </article>
+                  ))}
+                </div>
+              )}
+              <div className="list you-aspects-list aspect-row-list friend-transit-list" aria-label={`${selectedChart.displayName} active transits`}>
+                {selectedFriendTransits.slice(0, 6).map((transit) => (
+                  <div className="aspect-row aspect-row-static" key={transit.id}>
+                    <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
+                    <span className="aspect-row-copy">
+                      <h3>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h3>
+                      <p>{transitLifeArea(transit, selectedChart)} · {transit.note.replace("your natal", `${selectedChart.displayName}'s natal`)}</p>
+                    </span>
+                    <span className="aspect-row-meta" aria-label={`${transit.orb} orb`}>
+                      <span className="aspect-row-dot" aria-hidden="true" />
+                      <span>{transit.orb}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {friendProfileTab === "between" && (
+            <div className="friend-tab-pane" aria-label="Between us">
+              {selectedRelationshipWeather.length > 0 ? selectedRelationshipWeather.map((item) => (
+                <article className="friends-logic-card" key={item.title + item.body}>
+                  <span>Relationship weather</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              )) : (
+                <article className="friends-logic-card">
+                  <span>Relationship weather</span>
+                  <h3>Dynamic timing pending.</h3>
+                  <p>Once both charts have active hits, this space compares what today is doing to you, to them, and between you.</p>
+                </article>
+              )}
+            </div>
+          )}
+
+          {friendProfileTab === "chart" && (
+            <div className="friend-tab-pane" aria-label="Friend chart">
+              {selectedChart.natalChart ? (
+                <>
+                  <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+                    <SkyWheel
+                      positions={selectedChart.natalChart.positions}
+                      aspects={selectedChart.natalChart.aspects}
+                      ascendant={selectedChart.natalChart.ascendant}
+                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                      midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                      showHouses
+                    />
+                  </div>
+                  <div className="list you-list-card friend-chart-list" aria-label={`${selectedChart.displayName} chart placements`}>
+                    {selectedChart.natalChart.positions.slice(0, 8).map((position) => (
+                      <div className="chart-row chart-row-static" key={position.planet}>
+                        <span className="crg" aria-hidden="true">{position.glyph}</span>
+                        <span className="crb">
+                          <span className="crt">{natalPlacementTitle(position)}</span>
+                          <span className="crs">{natalPlacementDescription(position.planet)}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <article className="friends-logic-card">
+                  <span>Chart</span>
+                  <h3>Chart calculation pending.</h3>
+                  <p>Edit and save this friend again to calculate their natal wheel from birth details.</p>
+                </article>
+              )}
+            </div>
+          )}
+
+          {friendProfileTab === "settings" && (
+            <div className="friend-tab-pane" aria-label="Friend settings">
+              <article className="friends-logic-card">
+                <span>Privacy</span>
+                <h3>Private circle chart</h3>
+                <p>This chart is saved in your private circle. Raw chart data stays inside this profile unless you intentionally share an insight.</p>
+              </article>
+              {selectedChart.notes && (
+                <article className="friends-logic-card">
+                  <span>Notes</span>
+                  <h3>Context</h3>
+                  <p>{selectedChart.notes}</p>
+                </article>
+              )}
+            </div>
+          )}
+        </section>
+      )}
     </section>
   );
 }

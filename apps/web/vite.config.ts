@@ -9,6 +9,18 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
+            if (id.includes("sky.json")) {
+              return "astro-knowledge-sky";
+            }
+            if (id.includes("natal.json")) {
+              return "astro-knowledge-natal";
+            }
+            if (id.includes("relationships.json") || id.includes("synastry.json") || id.includes("composite.json")) {
+              return "astro-knowledge-relationships";
+            }
+            if (id.includes("web.json")) {
+              return "astro-knowledge-web";
+            }
             return "astro-knowledge";
           }
           if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {

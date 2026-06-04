@@ -77,7 +77,7 @@ The current web registry imports `@tldr/astro-knowledge/web`, a compatibility bu
 Bundle intent:
 
 - `sky.json`: current sky, planetary weather, lunations, and transit framework material.
-- `natal.json`: natal placements, angles, chart rulers, point placements, point aspects, and insight cards.
+- `natal.json`: natal placements, transit-to-natal meanings, angles, chart rulers, point placements, point aspects, and insight cards.
 - `relationships.json`: combined relationship compatibility bundle for consumers that need both synastry and composite.
 - `synastry.json`: chart-to-chart contacts, overlays, bond types, and synastry policy material.
 - `composite.json`: relationship-as-its-own-chart material and composite synthesis examples.
