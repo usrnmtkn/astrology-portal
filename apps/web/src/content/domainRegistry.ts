@@ -1,4 +1,4 @@
-import type { ContentBundle, KnowledgeItem, VoiceContentItem } from "./types";
+import type { ContentArea, ContentBundle, KnowledgeItem, VoiceContentItem } from "./types";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -77,6 +77,19 @@ type PlacementEntry = {
   status?: string;
 };
 
+type AngleEntry = {
+  id: string;
+  kind?: string;
+  point?: string;
+  sign?: string;
+  tldr?: string;
+  body?: string;
+  approach?: string;
+  shadow?: string;
+  note?: string;
+  status?: string;
+};
+
 type KnowledgeBundle = {
   primitives?: Record<string, PrimitiveEntry[]>;
   insightCards?: InsightCard[];
@@ -84,6 +97,7 @@ type KnowledgeBundle = {
   transitNatal?: TransitNatalEntry[];
   placements?: PlacementEntry[];
   pointPlacements?: PlacementEntry[];
+  angles?: AngleEntry[];
   voiceContent?: VoiceContentItem[];
 };
 
@@ -91,6 +105,96 @@ type PrimitiveMap = Record<string, {
   name: string;
   keywords: string[];
 }>;
+
+const planetTopic: Record<string, string> = {
+  ascendant: "how you meet the world",
+  jupiter: "growth, belief, and opportunity",
+  mars: "action, desire, and conflict",
+  mercury: "thinking, language, and decisions",
+  moon: "feelings, needs, and daily rhythm",
+  neptune: "imagination, longing, and blurred edges",
+  pluto: "power, control, and transformation",
+  saturn: "structure, responsibility, and limits",
+  sun: "attention, vitality, and self-expression",
+  "true-node": "direction, timing, and what feels newly relevant",
+  uranus: "change, disruption, and freedom",
+  venus: "affection, pleasure, and value"
+};
+
+const skyPlanetTopic: Record<string, string> = {
+  ...planetTopic,
+  moon: "the emotional weather",
+  sun: "the tone of the season"
+};
+
+const signStyle: Record<string, string> = {
+  aries: "urgency, courage, and direct action",
+  taurus: "stability, patience, and material reality",
+  gemini: "curiosity, language, movement, and fast-moving information",
+  cancer: "memory, protection, belonging, and emotional context",
+  leo: "visibility, confidence, creativity, and recognition",
+  virgo: "discernment, repair, routine, and useful detail",
+  libra: "relationship, fairness, aesthetics, and social balance",
+  scorpio: "depth, privacy, trust, and emotional honesty",
+  sagittarius: "meaning, belief, exploration, and perspective",
+  capricorn: "structure, restraint, responsibility, and practical next steps",
+  aquarius: "distance, systems, independence, and collective patterns",
+  pisces: "sensitivity, imagination, compassion, and porous boundaries"
+};
+
+const aspectAction: Record<string, string> = {
+  conjunction: "Because these two planets are close together, the themes may feel blended. Notice where one topic is coloring the other before you respond.",
+  opposition: "Because these planets face each other, the pattern may show up through contrast. Let both sides be named before you decide which one needs your attention.",
+  square: "Because this is a square, the pressure is useful when it reveals what is not working. Slow down enough to clarify the choice instead of forcing a quick answer.",
+  trine: "Because this is a trine, the support may be easy to miss. Use the opening deliberately, especially where a simple action could move things forward.",
+  sextile: "Because this is a sextile, the opening is helpful but not automatic. Choose one small, practical action that gives the support somewhere to land."
+};
+
+const aspectVerb: Record<string, string> = {
+  conjunction: "conjoins",
+  opposition: "opposes",
+  square: "squares",
+  trine: "trines",
+  sextile: "sextiles"
+};
+
+const personalPoints = new Set(["sun", "moon", "ascendant", "midheaven"]);
+const personalPlanets = new Set(["mercury", "venus", "mars"]);
+const socialPlanets = new Set(["jupiter", "saturn"]);
+const outerPlanets = new Set(["uranus", "neptune", "pluto"]);
+const longArcPlanets = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
+const hardAspects = new Set(["square", "opposition"]);
+const softAspects = new Set(["trine", "sextile"]);
+
+const contentAreasByPlanet: Record<string, ContentArea[]> = {
+  ascendant: ["identity"],
+  jupiter: ["growth"],
+  mars: ["career", "power"],
+  mercury: ["communication"],
+  moon: ["emotions", "home", "family"],
+  neptune: ["spirituality", "creativity"],
+  pluto: ["power", "growth"],
+  saturn: ["career", "growth"],
+  sun: ["identity", "creativity"],
+  "true-node": ["growth"],
+  uranus: ["growth", "friendship"],
+  venus: ["love", "money", "creativity"]
+};
+
+const contentAreasBySign: Record<string, ContentArea[]> = {
+  aries: ["identity"],
+  taurus: ["money", "health"],
+  gemini: ["communication"],
+  cancer: ["home", "family", "emotions"],
+  leo: ["creativity", "identity"],
+  virgo: ["health", "daily-life"],
+  libra: ["relationships", "love"],
+  scorpio: ["power", "relationships"],
+  sagittarius: ["growth"],
+  capricorn: ["career", "daily-life"],
+  aquarius: ["friendship", "growth"],
+  pisces: ["spirituality", "creativity"]
+};
 
 function normalizeIdPart(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
@@ -109,6 +213,10 @@ function cleanText(value: string | undefined | null) {
 
 function cleanParagraphs(values: Array<string | undefined | null>) {
   return values.map(cleanText).filter(Boolean);
+}
+
+function uniqueValues<T>(values: T[]) {
+  return [...new Set(values)];
 }
 
 function reviewStatus(value: string | undefined): KnowledgeItem["status"] {
@@ -178,21 +286,272 @@ function sentenceList(values: string[]) {
   return `${values.slice(0, -1).join(", ")} and ${values[values.length - 1]}`;
 }
 
+function sentenceStart(value: string) {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+}
+
+function aspectBridge(aspect: string, planetBTheme: string) {
+  switch (aspect) {
+    case "conjunction":
+      return `may blend with ${planetBTheme}`;
+    case "opposition":
+      return `may pull against ${planetBTheme}`;
+    case "square":
+      return `may press against ${planetBTheme}`;
+    case "trine":
+      return `may move with less resistance alongside ${planetBTheme}`;
+    case "sextile":
+      return `may cooperate with ${planetBTheme} if you use the opening`;
+    default:
+      return `may interact with ${planetBTheme}`;
+  }
+}
+
+function normalizedAreas(values: Array<string | undefined> = []): ContentArea[] {
+  const aliases: Record<string, ContentArea> = {
+    body: "health",
+    communication: "communication",
+    creativity: "creativity",
+    career: "career",
+    work: "career",
+    money: "money",
+    love: "love",
+    relationship: "relationships",
+    relationships: "relationships",
+    emotion: "emotions",
+    emotions: "emotions",
+    home: "home",
+    family: "family",
+    power: "power",
+    growth: "growth",
+    spirituality: "spirituality",
+    friendship: "friendship",
+    "daily-life": "daily-life",
+    health: "health",
+    identity: "identity"
+  };
+
+  return uniqueValues(values
+    .map((value) => value ? aliases[normalizeIdPart(value)] : undefined)
+    .filter((value): value is ContentArea => Boolean(value)));
+}
+
+function areasForFactors(...factors: Array<string | undefined>) {
+  return uniqueValues(factors.flatMap((factor) => [
+    ...(factor ? contentAreasByPlanet[factor] ?? [] : []),
+    ...(factor ? contentAreasBySign[factor] ?? [] : [])
+  ]));
+}
+
+function skyAspectPriority(planetA: string, aspect: string, planetB: string) {
+  let score = 25;
+
+  if (planetA === "moon" || planetB === "moon") {
+    score += 10;
+  }
+
+  if (hardAspects.has(aspect)) {
+    score += 10;
+  }
+
+  if (softAspects.has(aspect)) {
+    score += 5;
+  }
+
+  if (longArcPlanets.has(planetA) || longArcPlanets.has(planetB)) {
+    score += 8;
+  }
+
+  return score;
+}
+
+function personalRelevanceScore(point: string | undefined) {
+  if (!point) {
+    return 0;
+  }
+
+  if (personalPoints.has(point)) {
+    return 35;
+  }
+
+  if (personalPlanets.has(point)) {
+    return 25;
+  }
+
+  if (socialPlanets.has(point)) {
+    return 18;
+  }
+
+  if (outerPlanets.has(point)) {
+    return 12;
+  }
+
+  return 8;
+}
+
+function natalAspectPriority(planetA: string | undefined, aspect: string | undefined, planetB: string | undefined, intensity?: number) {
+  let score = 35 + (intensity ? intensity * 8 : 0);
+  score += personalRelevanceScore(planetA);
+  score += personalRelevanceScore(planetB);
+
+  if (hardAspects.has(aspect ?? "")) {
+    score += 10;
+  }
+
+  return score;
+}
+
+function transitNatalPriority(transiting: string, aspect: string, natal: string) {
+  let score = longArcPlanets.has(transiting) ? 35 : 20;
+  score += personalRelevanceScore(natal);
+
+  if (hardAspects.has(aspect)) {
+    score += 10;
+  }
+
+  return score;
+}
+
+function placementPriority(planet: string | undefined, sign: string | undefined, mode: "sky" | "natal") {
+  if (!planet || !sign) {
+    return 3;
+  }
+
+  if (mode === "sky") {
+    return planet === "sun" || planet === "moon" ? 30 : 10;
+  }
+
+  return personalPoints.has(planet) ? 70 : personalPlanets.has(planet) ? 50 : 35;
+}
+
+function approvedVoiceStatus(value: VoiceContentItem["status"] | undefined) {
+  return value === "APPROVED" || value === "LIVE";
+}
+
+function readableAspectSummary(planetA: string, aspect: string, planetB: string, mode: "sky" | "natal") {
+  const planetALabel = titleize(planetA);
+  const planetBLabel = titleize(planetB);
+  const planetATheme = mode === "sky" ? skyPlanetTopic[planetA] ?? planetTopic[planetA] : planetTopic[planetA];
+  const planetBTheme = mode === "sky" ? skyPlanetTopic[planetB] ?? planetTopic[planetB] : planetTopic[planetB];
+  const verb = aspectVerb[aspect] ?? aspect;
+
+  if (mode === "sky") {
+    return `${planetALabel} ${verb} ${planetBLabel} today. ${sentenceStart(planetATheme)} ${aspectBridge(aspect, planetBTheme)}.`;
+  }
+
+  return `${planetALabel} ${aspect} ${planetBLabel} can link ${planetATheme} with ${planetBTheme}.`;
+}
+
+function skyAspectAdvice(planetA: string, aspect: string, planetB: string) {
+  const planetALabel = titleize(planetA);
+  const planetBLabel = titleize(planetB);
+  const action = aspectAction[aspect] ?? "Treat this as a cue to pause, notice the pattern, and choose the cleanest next step.";
+
+  return `${planetALabel} and ${planetBLabel} are in a ${aspect} today. ${action}`;
+}
+
+function natalAspectAdvice(planetA: string, aspect: string, planetB: string) {
+  const planetALabel = titleize(planetA);
+  const planetBLabel = titleize(planetB);
+  const action = aspectAction[aspect] ?? "This pattern is easier to work with when both sides are named clearly.";
+
+  return `In a birth chart, ${planetALabel} ${aspect} ${planetBLabel} describes a recurring way these two parts of life interact. ${action}`;
+}
+
+function transitNatalSummary(transiting: string, aspect: string, natal: string) {
+  const transitingLabel = titleize(transiting);
+  const natalLabel = titleize(natal);
+  const transitingTheme = planetTopic[transiting] ?? `${transitingLabel.toLowerCase()} themes`;
+  const natalTheme = planetTopic[natal] ?? `${natalLabel.toLowerCase()} themes`;
+  const verb = aspectVerb[aspect] ?? aspect;
+
+  return `${transitingLabel} ${verb} your natal ${natalLabel}, bringing ${transitingTheme} into contact with ${natalTheme}.`;
+}
+
+function transitNatalAdvice(transiting: string, aspect: string, natal: string) {
+  const transitingLabel = titleize(transiting);
+  const natalLabel = titleize(natal);
+  const transitTheme = planetTopic[transiting] ?? `${transitingLabel.toLowerCase()} themes`;
+  const natalTheme = planetTopic[natal] ?? `${natalLabel.toLowerCase()} themes`;
+
+  const actionByAspect: Record<string, string> = {
+    conjunction: "Notice where the two topics are blending. Choose one concrete response instead of letting the whole pattern run the day.",
+    opposition: "The useful move is naming both sides before you react. Look for the contrast between what is being stirred up now and what your chart already tends to carry.",
+    square: "The pressure is useful when it shows what needs adjustment. Slow the response down, clarify the choice, and make the next step smaller than your first impulse.",
+    trine: "There may be a natural opening here. Use it deliberately by taking the simple action that supports the pattern instead of waiting for it to resolve itself.",
+    sextile: "The support is available, but it still needs participation. Pick one small action that gives the opening somewhere practical to land."
+  };
+
+  return `This transit can show where ${transitingLabel} themes are activating your natal ${natalLabel} pattern: ${natalTheme}. ${actionByAspect[aspect] ?? "Treat it as a short window for noticing the pattern and choosing the cleanest next step."}`;
+}
+
+function placementSummary(planet: string, sign: string, mode: "sky" | "natal") {
+  const planetLabel = titleize(planet);
+  const signLabel = titleize(sign);
+  const topic = mode === "sky" ? skyPlanetTopic[planet] ?? planetTopic[planet] : planetTopic[planet];
+  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+
+  if (mode === "sky") {
+    if (planet === "sun") {
+      return `${signLabel} season brings attention to ${style}.`;
+    }
+
+    return `Right now, ${planetLabel} in ${signLabel} brings ${topic} through ${style}.`;
+  }
+
+  return `${planetLabel} in ${signLabel} can describe ${topic} through ${style}.`;
+}
+
+function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
+  const planetLabel = titleize(planet);
+  const signLabel = titleize(sign);
+  const topic = mode === "sky" ? skyPlanetTopic[planet] ?? planetTopic[planet] : planetTopic[planet];
+  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+
+  if (mode === "sky") {
+    if (planet === "sun") {
+      return `Use ${signLabel} season by giving your attention a clearer question. The season favors ${style}, but it works best when curiosity turns into one specific conversation, decision, or next step.`;
+    }
+
+    return `${planetLabel} is moving through ${signLabel}, so ${topic} may be filtered through ${style}. Notice where this shows up in the day, then choose one response that is concrete enough to act on.`;
+  }
+
+  return `This placement can make ${topic} easier to understand through ${style}. Notice where this pattern helps you name what is happening, then choose the response that keeps the strength without repeating the habit.`;
+}
+
 export function createDomainRegistry(bundleInput: unknown) {
   const bundle = bundleInput as KnowledgeBundle;
+  const registryMode: "sky" | "natal" = (bundle.transits?.length ?? 0) > 0 ? "sky" : "natal";
   const planetMap = normalizePrimitiveMap(bundle.primitives?.planet);
   const aspectMap = normalizePrimitiveMap(bundle.primitives?.aspect);
   const signMap = normalizePrimitiveMap(bundle.primitives?.sign);
   const voiceBySourceAndVoice = new Map((bundle.voiceContent ?? []).map((item) => [`${item.sourceId}:${item.voiceId}`, item]));
   const knowledgeById = new Map<string, KnowledgeItem>();
+  const legacyIdByAlias = new Map<string, string>();
 
   function addKnowledge(item: KnowledgeItem) {
     knowledgeById.set(item.id, item);
   }
 
+  function addKnowledgeAlias(item: KnowledgeItem, id: string) {
+    knowledgeById.set(id, {
+      ...item,
+      id
+    });
+
+    if (id !== item.id) {
+      legacyIdByAlias.set(id, item.id);
+    }
+  }
+
   for (const card of bundle.insightCards ?? []) {
     const factor = card.sourceFactors?.[0] ?? {};
-    addKnowledge({
+    const areas = uniqueValues([
+      ...normalizedAreas(card.lifeAreas),
+      ...areasForFactors(factor.planetA, factor.planetB)
+    ]);
+
+    const knowledgeItem: KnowledgeItem = {
       id: card.id,
       type: card.kind === "natal-aspect" ? "natal-aspect" : "primitive",
       sourceFactors: {
@@ -200,8 +559,8 @@ export function createDomainRegistry(bundleInput: unknown) {
         aspect: factor.aspect,
         planetB: factor.planetB
       },
-      contentAreas: [],
-      priority: card.intensity ? card.intensity * 15 : undefined,
+      contentAreas: areas,
+      priority: natalAspectPriority(factor.planetA, factor.aspect, factor.planetB, card.intensity),
       intensity: card.intensity,
       knowledgeBasis: {
         ...(factor.planetA ? { [factor.planetA]: primitiveThemes(planetMap, factor.planetA) } : {}),
@@ -218,7 +577,13 @@ export function createDomainRegistry(bundleInput: unknown) {
       },
       sources: ["@tldr/astro-knowledge"],
       status: reviewStatus(card.status)
-    });
+    };
+
+    addKnowledge(knowledgeItem);
+
+    if (card.kind === "natal-aspect" && factor.planetA && factor.aspect && factor.planetB) {
+      addKnowledgeAlias(knowledgeItem, natalAspectContentId(factor.planetA, factor.aspect, factor.planetB));
+    }
   }
 
   for (const transit of bundle.transits ?? []) {
@@ -226,10 +591,13 @@ export function createDomainRegistry(bundleInput: unknown) {
       continue;
     }
 
-    const body = cleanText(transit.modern) || cleanText(transit.base) || cleanText(transit.tldr) || transit.id;
-    const summary = cleanText(transit.tldr) || cleanText(transit.business) || body;
+    const sourceBody = cleanText(transit.modern) || cleanText(transit.base) || cleanText(transit.business) || cleanText(transit.tldr) || transit.id;
+    const sourceSummary = cleanText(transit.tldr);
+    const generatedSummary = readableAspectSummary(transit.transiting, transit.aspect, transit.other, "sky");
+    const body = skyAspectAdvice(transit.transiting, transit.aspect, transit.other);
+    const summary = sourceSummary && sourceSummary.length > 24 ? sourceSummary : generatedSummary;
 
-    addKnowledge({
+    const knowledgeItem: KnowledgeItem = {
       id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
       type: "current-sky-aspect",
       sourceFactors: {
@@ -237,17 +605,22 @@ export function createDomainRegistry(bundleInput: unknown) {
         aspect: transit.aspect,
         planetB: transit.other
       },
+      contentAreas: areasForFactors(transit.transiting, transit.other),
+      priority: skyAspectPriority(transit.transiting, transit.aspect, transit.other),
+      intensity: hardAspects.has(transit.aspect) ? 4 : softAspects.has(transit.aspect) ? 3 : 2,
       interpretation: {
         coreTheme: summary,
         displaySummary: summary,
-        detailParagraphs: [],
+        detailParagraphs: cleanParagraphs([sourceBody, transit.business, transit.shadow]),
         livedExperience: body,
         gift: cleanText(transit.business),
         challenge: cleanText(transit.shadow)
       },
       sources: ["@tldr/astro-knowledge/sky"],
       status: reviewStatus(transit.status)
-    });
+    };
+
+    addKnowledge(knowledgeItem);
   }
 
   for (const transit of bundle.transitNatal ?? []) {
@@ -255,8 +628,13 @@ export function createDomainRegistry(bundleInput: unknown) {
       continue;
     }
 
-    const id = aspectContentId(transit.transiting, transit.aspect, transit.natal);
-    const summary = cleanText(transit.plainTranslation);
+    const id = transitNatalContentId(transit.transiting, transit.aspect, transit.natal);
+    const sourceSummary = cleanText(transit.plainTranslation);
+    const generatedSummary = transitNatalSummary(transit.transiting, transit.aspect, transit.natal);
+    const body = transitNatalAdvice(transit.transiting, transit.aspect, transit.natal);
+    const sourceDetail = sourceSummary && !/\b(days?|weeks?|months?|years?)\.$/i.test(sourceSummary)
+      ? sourceSummary
+      : undefined;
 
     addKnowledge({
       id,
@@ -266,11 +644,14 @@ export function createDomainRegistry(bundleInput: unknown) {
         aspect: transit.aspect,
         planetB: transit.natal
       },
+      contentAreas: areasForFactors(transit.transiting, transit.natal),
+      priority: transitNatalPriority(transit.transiting, transit.aspect, transit.natal),
+      intensity: hardAspects.has(transit.aspect) ? 4 : softAspects.has(transit.aspect) ? 3 : 2,
       interpretation: {
-        coreTheme: summary,
-        displaySummary: summary,
-        detailParagraphs: cleanParagraphs([transit.policy, transit.note]),
-        livedExperience: summary,
+        coreTheme: generatedSummary,
+        displaySummary: generatedSummary,
+        detailParagraphs: cleanParagraphs([sourceDetail, transit.policy]),
+        livedExperience: body,
         gift: "",
         challenge: ""
       },
@@ -280,25 +661,82 @@ export function createDomainRegistry(bundleInput: unknown) {
   }
 
   for (const placement of [...(bundle.placements ?? []), ...(bundle.pointPlacements ?? [])]) {
-    addKnowledge({
+    const planet = placement.planet ?? placement.point;
+    const sign = placement.sign ?? (placement.kind === "sign" && typeof placement.key === "string" ? placement.key : undefined);
+    const mode = registryMode;
+    const generatedSummary = planet && sign ? placementSummary(planet, sign, mode) : "";
+    const generatedBody = planet && sign ? placementAdvice(planet, sign, mode) : "";
+
+    const knowledgeItem: KnowledgeItem = {
       id: placement.id,
       type: "placement",
       sourceFactors: {
-        planetA: placement.planet ?? placement.point,
-        sign: placement.sign ?? (placement.kind === "sign" && typeof placement.key === "string" ? placement.key : undefined),
+        planetA: planet,
+        sign,
         house: placement.house ? String(placement.house) : undefined
       },
+      contentAreas: uniqueValues([
+        ...areasForFactors(planet, sign),
+        ...normalizedAreas([placement.kind])
+      ]),
+      priority: placementPriority(planet, sign, mode),
+      intensity: placementPriority(planet, sign, mode) >= 50 ? 4 : 2,
       interpretation: {
-        coreTheme: cleanText(placement.tldr) || placement.id,
-        displaySummary: cleanText(placement.tldr) || cleanText(placement.body),
+        coreTheme: cleanText(placement.tldr) || generatedSummary || placement.id,
+        displaySummary: generatedSummary || cleanText(placement.tldr) || cleanText(placement.body),
         detailParagraphs: cleanParagraphs([placement.gift, placement.challenge, placement.note]),
-        livedExperience: cleanText(placement.body) || cleanText(placement.tldr) || placement.id,
+        livedExperience: generatedBody || cleanText(placement.body) || cleanText(placement.tldr) || placement.id,
         gift: cleanText(placement.gift),
         challenge: cleanText(placement.challenge)
       },
       sources: ["@tldr/astro-knowledge"],
       status: reviewStatus(placement.status)
-    });
+    };
+
+    addKnowledge(knowledgeItem);
+
+    if (planet && sign) {
+      const legacyId = placementContentId(planet, sign);
+      const domainId = mode === "sky" ? skyPlacementContentId(planet, sign) : natalPlacementContentId(planet, sign);
+
+      addKnowledgeAlias(knowledgeItem, legacyId);
+      addKnowledgeAlias(knowledgeItem, domainId);
+    }
+  }
+
+  for (const angle of bundle.angles ?? []) {
+    if (!angle.point || !angle.sign) {
+      continue;
+    }
+
+    const id = natalPlacementContentId(angle.point, angle.sign);
+    const knowledgeItem: KnowledgeItem = {
+      id,
+      type: "placement",
+      sourceFactors: {
+        planetA: angle.point,
+        sign: angle.sign
+      },
+      contentAreas: uniqueValues([
+        "identity",
+        ...areasForFactors(angle.point, angle.sign)
+      ]),
+      priority: placementPriority(angle.point, angle.sign, "natal"),
+      intensity: 4,
+      interpretation: {
+        coreTheme: cleanText(angle.tldr) || placementSummary(angle.point, angle.sign, "natal"),
+        displaySummary: cleanText(angle.tldr) || placementSummary(angle.point, angle.sign, "natal"),
+        detailParagraphs: cleanParagraphs([angle.body, angle.approach, angle.shadow, angle.note]),
+        livedExperience: cleanText(angle.body) || placementAdvice(angle.point, angle.sign, "natal"),
+        gift: cleanText(angle.approach),
+        challenge: cleanText(angle.shadow)
+      },
+      sources: ["@tldr/astro-knowledge/angles"],
+      status: reviewStatus(angle.status)
+    };
+
+    addKnowledge(knowledgeItem);
+    addKnowledgeAlias(knowledgeItem, placementContentId(angle.point, angle.sign));
   }
 
   function generatedAspectKnowledge(id: string): KnowledgeItem | null {
@@ -308,7 +746,8 @@ export function createDomainRegistry(bundleInput: unknown) {
       return null;
     }
 
-    const [planetA, planetB] = id.split(`-${aspectName}-`);
+    const normalizedId = id.replace(/^(sky|natal)-/, "");
+    const [planetA, planetB] = normalizedId.split(`-${aspectName}-`);
 
     if (!planetA || !planetB) {
       return null;
@@ -317,17 +756,19 @@ export function createDomainRegistry(bundleInput: unknown) {
     const planetAThemes = primitiveThemes(planetMap, planetA);
     const planetBThemes = primitiveThemes(planetMap, planetB);
     const aspectThemes = primitiveThemes(aspectMap, aspectName);
-    const planetAName = planetMap[planetA]?.name ?? titleize(planetA);
-    const planetBName = planetMap[planetB]?.name ?? titleize(planetB);
+    const mode = id.startsWith("sky-") || registryMode === "sky" ? "sky" : "natal";
 
     return {
       id,
-      type: "natal-aspect",
+      type: mode === "sky" ? "current-sky-aspect" : "natal-aspect",
       sourceFactors: {
         planetA,
         aspect: aspectName,
         planetB
       },
+      contentAreas: areasForFactors(planetA, planetB),
+      priority: mode === "sky" ? skyAspectPriority(planetA, aspectName, planetB) : natalAspectPriority(planetA, aspectName, planetB),
+      intensity: hardAspects.has(aspectName) ? 4 : softAspects.has(aspectName) ? 3 : 2,
       knowledgeBasis: {
         [planetA]: planetAThemes,
         [aspectName]: aspectThemes,
@@ -335,9 +776,9 @@ export function createDomainRegistry(bundleInput: unknown) {
       },
       interpretation: {
         coreTheme: `${sentenceList(planetAThemes)} meets ${sentenceList(planetBThemes)}.`,
-        displaySummary: `${planetAName} ${aspectName} ${planetBName}.`,
+        displaySummary: readableAspectSummary(planetA, aspectName, planetB, mode),
         detailParagraphs: [],
-        livedExperience: `${planetAName} and ${planetBName} are connected through a ${aspectName}.`,
+        livedExperience: mode === "sky" ? skyAspectAdvice(planetA, aspectName, planetB) : natalAspectAdvice(planetA, aspectName, planetB),
         gift: "",
         challenge: ""
       },
@@ -347,7 +788,8 @@ export function createDomainRegistry(bundleInput: unknown) {
   }
 
   function generatedPlacementKnowledge(id: string): KnowledgeItem | null {
-    const [planet, sign] = id.split("-in-");
+    const normalizedId = id.replace(/^(sky|natal)-/, "");
+    const [planet, sign] = normalizedId.split("-in-");
 
     if (!planet || !sign) {
       return null;
@@ -365,15 +807,18 @@ export function createDomainRegistry(bundleInput: unknown) {
         planetA: planet,
         sign
       },
+      contentAreas: areasForFactors(planet, sign),
+      priority: placementPriority(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
+      intensity: placementPriority(planet, sign, id.startsWith("sky-") ? "sky" : registryMode) >= 50 ? 4 : 2,
       knowledgeBasis: {
         [planet]: planetThemes,
         [sign]: signThemes
       },
       interpretation: {
         coreTheme: `${planetName} expresses ${sentenceList(planetThemes)} through ${signName}.`,
-        displaySummary: `${planetName} in ${signName}.`,
+        displaySummary: placementSummary(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
         detailParagraphs: [],
-        livedExperience: `${planetName} in ${signName} brings ${sentenceList(planetThemes)} through ${sentenceList(signThemes)}.`,
+        livedExperience: placementAdvice(planet, sign, id.startsWith("sky-") ? "sky" : registryMode),
         gift: "",
         challenge: ""
       },
@@ -387,14 +832,18 @@ export function createDomainRegistry(bundleInput: unknown) {
   }
 
   function getVoiceContentItem(id: string, voiceId = defaultVoiceId) {
-    return voiceBySourceAndVoice.get(`${id}:${voiceId}`) ?? null;
+    return voiceBySourceAndVoice.get(`${id}:${voiceId}`)
+      ?? voiceBySourceAndVoice.get(`${legacyIdByAlias.get(id)}:${voiceId}`)
+      ?? null;
   }
 
   function getContentBundle(id: string, voiceId = defaultVoiceId): ContentBundle {
     const knowledge = getKnowledgeItem(id) ?? null;
     const voice = getVoiceContentItem(id, voiceId);
 
-    if (knowledge && voice?.status === "APPROVED" && voice.sourceId === knowledge.id) {
+    const legacyId = legacyIdByAlias.get(id);
+
+    if (knowledge && approvedVoiceStatus(voice?.status) && (voice?.sourceId === knowledge.id || voice?.sourceId === legacyId)) {
       return { id, knowledge, voice, status: "READY" };
     }
 
@@ -411,26 +860,13 @@ export function createDomainRegistry(bundleInput: unknown) {
 
   function approvedVoiceOrKnowledgeFallback(id: string, voiceId = defaultVoiceId) {
     const bundle = getContentBundle(id, voiceId);
-    const detailParagraphs = bundle.knowledge?.interpretation.detailParagraphs ?? [];
 
     if (bundle.status === "READY" && bundle.voice) {
       return {
         bundle,
         summary: cleanText(bundle.voice.summary),
         body: cleanText(bundle.voice.body),
-        detailParagraphs: cleanParagraphs([bundle.voice.body, ...detailParagraphs])
-      };
-    }
-
-    if (bundle.knowledge) {
-      const summary = cleanText(bundle.knowledge.interpretation.displaySummary) || cleanText(bundle.knowledge.interpretation.coreTheme);
-      const body = cleanText(bundle.knowledge.interpretation.livedExperience);
-
-      return {
-        bundle,
-        summary,
-        body,
-        detailParagraphs: cleanParagraphs([body, ...detailParagraphs])
+        detailParagraphs: cleanParagraphs([bundle.voice.body, ...(bundle.knowledge?.interpretation.detailParagraphs ?? [])])
       };
     }
 

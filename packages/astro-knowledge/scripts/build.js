@@ -189,7 +189,8 @@ function build() {
       "lunar-cycle-framework",
       "transit-lifecycle-framework",
       "predictive-trigger-method-framework",
-      "transit-sect-guide"
+      "transit-sect-guide",
+      "circle-feed-logic-framework"
     ].includes(entry.id)),
     templates,
     voiceProfiles,
@@ -213,7 +214,8 @@ function build() {
       "natal-synthesis-framework",
       "body-astrology-framework",
       "chiron-method-framework",
-      "developmental-age-map-framework"
+      "developmental-age-map-framework",
+      "circle-feed-logic-framework"
     ].includes(entry.id)),
     voiceProfiles,
     voiceContent
@@ -234,7 +236,8 @@ function build() {
       "relationship-dynamics-framework",
       "synastry-bond-types-framework",
       "asteroid-synastry-policy",
-      "composite-synthesis-examples"
+      "composite-synthesis-examples",
+      "circle-feed-logic-framework"
     ].includes(entry.id)),
     voiceProfiles,
     voiceContent
@@ -253,7 +256,8 @@ function build() {
       "synastry-composite-method-framework",
       "relationship-dynamics-framework",
       "synastry-bond-types-framework",
-      "asteroid-synastry-policy"
+      "asteroid-synastry-policy",
+      "circle-feed-logic-framework"
     ].includes(entry.id)),
     voiceProfiles,
     voiceContent
@@ -268,7 +272,8 @@ function build() {
     frameworks: frameworks.filter((entry) => [
       "synastry-composite-method-framework",
       "relationship-dynamics-framework",
-      "composite-synthesis-examples"
+      "composite-synthesis-examples",
+      "circle-feed-logic-framework"
     ].includes(entry.id)),
     voiceProfiles,
     voiceContent

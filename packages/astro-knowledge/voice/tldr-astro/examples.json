@@ -4,5 +4,77 @@
     "input": "Venus + Saturn = affection, love, value, pleasure, restraint, time, commitment, fear of loss, loyalty.",
     "summary": "Love may feel more serious here. Trust tends to build through consistency, time, and proof.",
     "body": "This can bring a lasting quality to love, though it may take time to fully trust what you receive from others. Care often feels most believable when it has proven itself through actions rather than words."
+  },
+  {
+    "sourceId": "sky-mercury-square-neptune",
+    "surface": "sky",
+    "title": "Conversations Blur Today",
+    "input": "Mercury in Cancer square Neptune in Aries. Mercury = thinking, speaking, messages, decisions. Cancer = feeling, memory, protection. Neptune = imagination, longing, fog, projection. Aries = urgency, instinct, action. Square = friction, pressure, adjustment.",
+    "summary": "Conversations blur today. A message may land in a different tone than you meant, or a plan may sound clear in the moment and vague a few hours later.",
+    "body": "Conversations blur today. You may think you said one thing while someone else heard another, and both versions can feel convincing. Messages are easier to read through mood, memory, or defensiveness, especially if there is pressure to respond quickly.\n\nMercury in Cancer is thinking through feeling and personal context. Neptune in Aries adds urgency, imagination, and blurred edges. The square between them can make facts and impressions slip out of alignment. Get it in writing, ask the clarifying question, and let any major decision wait until the facts are easier to separate from the feeling."
+  },
+  {
+    "sourceId": "sky-sun-in-gemini",
+    "surface": "sky",
+    "title": "Turn Scattered Ideas Into Action",
+    "input": "Sun in Gemini sextile Saturn in Aries. Sun = attention, vitality, season tone. Gemini = questions, conversations, information, movement. Saturn = structure, discipline, limits, timing. Aries = initiative. Sextile = usable support.",
+    "summary": "The Gemini Sun has support from Saturn today, making it easier to turn scattered ideas into something usable.",
+    "body": "The Gemini Sun is in a supportive sextile with Saturn in Aries, making it easier to turn scattered ideas into something usable. If your attention has been split across too many conversations, plans, or choices, narrow the field.\n\nThe Sun in Gemini brings curiosity, language, and fast-moving information. Saturn in Aries brings structure, discipline, and the courage to choose a direction. A sextile is an open door rather than a push, so the support is available if you use it. Pick the one idea with a clear next step and act on it: make the call, send the draft, schedule the meeting, or put the plan on a timeline."
+  },
+  {
+    "sourceId": "natal-moon-in-capricorn",
+    "surface": "you",
+    "title": "Hard Worker & Dependable",
+    "input": "Moon in Capricorn. Moon = needs, feelings, instinct, belonging. Capricorn = responsibility, discipline, competence, restraint, results. Moon in Capricorn can emphasize emotional control, reliability, ambition, and difficulty asking for softness.",
+    "summary": "At their best, this person can be practical, dependable, and willing to work hard for something that matters.",
+    "body": "At their best, this person can hold a lot together. They may be practical, dependable, and willing to work hard for something that matters. Feelings are often easier to trust when they have a job to do: protect the plan, keep the promise, finish the task, or make sure everyone gets through the day.\n\nThe Moon describes emotional needs and instinctive reactions. In Capricorn, those needs pass through responsibility, restraint, and competence. This can make someone steady under pressure, but it can also make softness feel inconvenient or hard to justify. The useful work is not becoming less capable. It is letting care, rest, and support count as real needs too."
+  },
+  {
+    "sourceId": "transit-natal-neptune-conjunction-moon",
+    "surface": "you",
+    "title": "Sensitive & Adaptable",
+    "input": "Neptune transit to natal Moon. Neptune = sensitivity, imagination, permeability, ideals, confusion. Moon = emotional life, memory, needs, family patterns. Transit = temporary activation.",
+    "summary": "This period can make emotional boundaries softer. The person may absorb more from their surroundings than they realize.",
+    "body": "This period can make emotional boundaries softer. The person may absorb more from their surroundings than they realize, especially from family, home, memories, or people they care about. It can become harder to tell whether a feeling belongs to the present moment or to an old atmosphere they have carried for a long time.\n\nNeptune increases sensitivity, imagination, and permeability. The Moon describes emotional needs, memory, and the private self. When Neptune activates the Moon, the inner world can feel more open, impressionable, and difficult to define. The best use of this transit is to move slowly around big emotional decisions. Notice what drains you, what restores you, and which feelings become clearer after rest, privacy, or time away from other people's expectations."
+  },
+  {
+    "sourceId": "transit-natal-saturn-conjunction-venus",
+    "surface": "you",
+    "title": "Find Happiness Within",
+    "input": "Saturn transit to natal Venus. Saturn = limits, commitment, time, responsibility, consequences. Venus = love, pleasure, worth, attraction, relationship patterns. Transit = temporary activation.",
+    "summary": "During this time, relationships, pleasure, and self-worth may become more serious. What is not working becomes harder to ignore.",
+    "body": "During this time, relationships, pleasure, and self-worth may become more serious. What is not working becomes harder to ignore, especially if affection has become tied to approval, performance, fear, or the hope that someone else will make life feel complete.\n\nSaturn brings limits, consequences, and the need for maturity. Venus describes love, attraction, pleasure, and value. When Saturn activates Venus, the easy version of closeness may not be available in the same way. This does not mean love disappears. It means love has to become more honest. Spend time noticing what actually nourishes you, what you keep trying to earn, and where a relationship needs clearer expectations instead of more guessing."
+  },
+  {
+    "sourceId": "synastry-sun-conjunction-sun",
+    "surface": "bonds",
+    "title": "Common Ground",
+    "input": "Synastry Sun conjunct Sun. Sun = identity, vitality, life direction, core orientation. Conjunction = merged emphasis, shared focus, amplification.",
+    "summary": "You and {partnerName} may have a lot in common. There can be an immediate sense that you understand how the other person moves through life.",
+    "body": "You and {partnerName} may have a lot in common. The two of you can share a similar way of approaching life, which makes the connection feel easy to recognize. When you are together, things may flow because you are often working from the same basic instincts: what matters, what gets your attention, and what feels worth pursuing.\n\nThe Sun describes core orientation and vitality. In synastry, a Sun conjunction can make two people feel made of similar material. The strength is familiarity and recognition. The challenge is remembering that similarity is not the same as sameness. You may understand each other quickly, but you still need room to be different."
+  },
+  {
+    "sourceId": "synastry-mars-square-saturn",
+    "surface": "bonds",
+    "title": "Biggest Challenge",
+    "input": "Synastry Mars square Saturn. Mars = desire, action, assertion, pace. Saturn = limits, caution, control, responsibility. Square = friction, blockage, pressure.",
+    "summary": "This connection can create pressure around pace, control, and who gets to decide what happens next.",
+    "body": "This connection can create pressure around pace, control, and who gets to decide what happens next. One person may want movement, directness, or action, while the other may slow things down, question the plan, or hold back until it feels realistic. Over time, this can make one person feel blocked and the other feel pushed.\n\nMars wants action. Saturn wants proof, timing, and restraint. The square between them can turn ordinary decisions into tests of patience. The useful move is to name the pressure before it becomes resentment. Decide what needs speed, what needs structure, and where both people are trying to protect something legitimate."
+  },
+  {
+    "sourceId": "synastry-mars-aquarius-square-mars-taurus",
+    "surface": "bonds",
+    "title": "Expectations",
+    "input": "Synastry Mars in Aquarius square Mars in Taurus. Mars = desire, anger, action, pursuit. Aquarius = independence, unconventional choices, distance, friendship. Taurus = steadiness, consistency, comfort, loyalty. Square = conflicting styles.",
+    "summary": "You may want more independence than {partnerName} expects. They may want more consistency than you naturally give.",
+    "body": "You may want more independence than {partnerName} expects. They may want more consistency, presence, or reassurance than you naturally give. This can create a mismatch where you feel pressured and they feel like you are not available enough, even when neither person is trying to hurt the other.\n\nMars describes how people act, want, pursue, and react under pressure. Aquarius Mars needs room to move in its own direction. Taurus Mars wants steadiness and proof through repeated action. The square shows two valid styles rubbing against each other. The relationship works better when independence and reliability are both named directly instead of treated like character flaws."
+  },
+  {
+    "sourceId": "relationship-snapshot-complicated",
+    "surface": "bonds",
+    "title": "Complicated",
+    "input": "Relationship dashboard snapshot. Shared leadership desire, possible friction around control, both people may want to be in charge.",
+    "summary": "You both like to be in charge. If neither of you names who is leading, small choices can turn into power struggles.",
+    "body": "You both like to be in charge. That can make the connection exciting because neither person is passive, but it can also create tension if every choice becomes a quiet contest. Decide what each person actually needs to own. Some decisions need leadership. Some need cooperation. Some are not worth turning into a test."
   }
 ]

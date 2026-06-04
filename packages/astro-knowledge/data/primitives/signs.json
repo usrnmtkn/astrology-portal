@@ -8,7 +8,13 @@
       "mode": "cardinal",
       "traditionalRuler": "mars",
       "modernRuler": "mars",
-      "keywords": [],
+      "keywords": [
+        "urgency",
+        "courage",
+        "direct action",
+        "initiative",
+        "self-starting"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -18,7 +24,13 @@
       "mode": "fixed",
       "traditionalRuler": "venus",
       "modernRuler": "venus",
-      "keywords": [],
+      "keywords": [
+        "stability",
+        "patience",
+        "material reality",
+        "comfort",
+        "consistency"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -28,7 +40,13 @@
       "mode": "mutable",
       "traditionalRuler": "mercury",
       "modernRuler": "mercury",
-      "keywords": [],
+      "keywords": [
+        "curiosity",
+        "language",
+        "movement",
+        "information",
+        "adaptability"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -38,7 +56,13 @@
       "mode": "cardinal",
       "traditionalRuler": "moon",
       "modernRuler": "moon",
-      "keywords": [],
+      "keywords": [
+        "memory",
+        "protection",
+        "belonging",
+        "emotional context",
+        "care"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -48,7 +72,13 @@
       "mode": "fixed",
       "traditionalRuler": "sun",
       "modernRuler": "sun",
-      "keywords": [],
+      "keywords": [
+        "visibility",
+        "confidence",
+        "creativity",
+        "recognition",
+        "expressive warmth"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -58,7 +88,13 @@
       "mode": "mutable",
       "traditionalRuler": "mercury",
       "modernRuler": "mercury",
-      "keywords": [],
+      "keywords": [
+        "discernment",
+        "repair",
+        "routine",
+        "useful detail",
+        "refinement"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -68,7 +104,13 @@
       "mode": "cardinal",
       "traditionalRuler": "venus",
       "modernRuler": "venus",
-      "keywords": [],
+      "keywords": [
+        "relationship",
+        "fairness",
+        "aesthetics",
+        "social balance",
+        "agreement"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -78,7 +120,13 @@
       "mode": "fixed",
       "traditionalRuler": "mars",
       "modernRuler": "pluto",
-      "keywords": [],
+      "keywords": [
+        "depth",
+        "privacy",
+        "trust",
+        "emotional honesty",
+        "intensity"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -88,7 +136,13 @@
       "mode": "mutable",
       "traditionalRuler": "jupiter",
       "modernRuler": "jupiter",
-      "keywords": [],
+      "keywords": [
+        "meaning",
+        "belief",
+        "exploration",
+        "perspective",
+        "growth"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -98,7 +152,13 @@
       "mode": "cardinal",
       "traditionalRuler": "saturn",
       "modernRuler": "saturn",
-      "keywords": [],
+      "keywords": [
+        "structure",
+        "restraint",
+        "responsibility",
+        "practical next steps",
+        "endurance"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -108,7 +168,13 @@
       "mode": "fixed",
       "traditionalRuler": "saturn",
       "modernRuler": "uranus",
-      "keywords": [],
+      "keywords": [
+        "distance",
+        "systems",
+        "independence",
+        "collective patterns",
+        "future orientation"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     },
@@ -118,7 +184,13 @@
       "mode": "mutable",
       "traditionalRuler": "jupiter",
       "modernRuler": "neptune",
-      "keywords": [],
+      "keywords": [
+        "sensitivity",
+        "imagination",
+        "compassion",
+        "porous boundaries",
+        "surrender"
+      ],
       "voiceNeutral": true,
       "status": "DRAFT"
     }
