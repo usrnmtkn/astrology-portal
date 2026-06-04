@@ -1,4 +1,4 @@
-import { Archive, BarChart3, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2 } from "lucide-react";
+import { Archive, BarChart3, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { GeneratedContentMode } from "../services/generatedContent";
@@ -158,6 +158,7 @@ export function GeneratedContentAdminDashboard() {
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const statusCounts = rows.reduce<Record<GeneratedContentStatus, number>>((counts, row) => {
@@ -215,6 +216,21 @@ export function GeneratedContentAdminDashboard() {
       void loadRows();
     }
   }, [secret]);
+
+  useEffect(() => {
+    if (!isPreviewOpen) {
+      return;
+    }
+
+    function closePreviewOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsPreviewOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", closePreviewOnEscape);
+    return () => window.removeEventListener("keydown", closePreviewOnEscape);
+  }, [isPreviewOpen]);
 
   function saveSecret(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -597,6 +613,10 @@ export function GeneratedContentAdminDashboard() {
                 <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}</small>
               </div>
               <div className="admin-toolbar-actions">
+                <button type="button" onClick={() => setIsPreviewOpen(true)}>
+                  <Eye size={16} aria-hidden="true" />
+                  Preview
+                </button>
                 <button type="button" onClick={generateDraft} disabled={isLoading || !canUseApi}>
                   <Sparkles size={16} aria-hidden="true" />
                   Generate
@@ -610,7 +630,7 @@ export function GeneratedContentAdminDashboard() {
                   Reviewed
                 </button>
                 <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id}>
-                  <Eye size={16} aria-hidden="true" />
+                  <Check size={16} aria-hidden="true" />
                   Publish
                 </button>
                 <button type="button" onClick={() => void saveDraft("ARCHIVED")} disabled={isLoading || !draft.id}>
@@ -688,40 +708,59 @@ export function GeneratedContentAdminDashboard() {
                 </label>
               </section>
 
-              <aside className="admin-preview-column">
-                <section className="admin-preview" aria-label="Content preview">
-                  <p className="admin-eyebrow">User preview</p>
-                  <h3>{draft.headline || "Untitled"}</h3>
-                  {draft.summary && <strong>{draft.summary}</strong>}
-                  {draft.body.split(/\n{2,}/).filter(Boolean).map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-
-                <details className="admin-advanced">
-                  <summary>Generation inputs</summary>
-                  <label>
-                    <span>Knowledge IDs, comma separated</span>
-                    <input value={draft.knowledgeIds} onChange={(event) => updateDraft("knowledgeIds", event.target.value)} />
-                  </label>
-                  <label>
-                    <span>Facts JSON</span>
-                    <textarea value={draft.factsJson} onChange={(event) => updateDraft("factsJson", event.target.value)} rows={8} />
-                  </label>
-                  <label>
-                    <span>Source snapshot JSON</span>
-                    <textarea value={draft.sourceSnapshotJson} onChange={(event) => updateDraft("sourceSnapshotJson", event.target.value)} rows={8} />
-                  </label>
-                  <label>
-                    <span>Sections JSON</span>
-                    <textarea value={draft.sectionsJson} onChange={(event) => updateDraft("sectionsJson", event.target.value)} rows={6} />
-                  </label>
-                </details>
-              </aside>
+              <details className="admin-advanced admin-generation-inputs">
+                <summary>Generation inputs</summary>
+                <label>
+                  <span>Knowledge IDs, comma separated</span>
+                  <input value={draft.knowledgeIds} onChange={(event) => updateDraft("knowledgeIds", event.target.value)} />
+                </label>
+                <label>
+                  <span>Facts JSON</span>
+                  <textarea value={draft.factsJson} onChange={(event) => updateDraft("factsJson", event.target.value)} rows={8} />
+                </label>
+                <label>
+                  <span>Source snapshot JSON</span>
+                  <textarea value={draft.sourceSnapshotJson} onChange={(event) => updateDraft("sourceSnapshotJson", event.target.value)} rows={8} />
+                </label>
+                <label>
+                  <span>Sections JSON</span>
+                  <textarea value={draft.sectionsJson} onChange={(event) => updateDraft("sectionsJson", event.target.value)} rows={6} />
+                </label>
+              </details>
             </div>
           </section>
         </section>
       </section>
+
+      {isPreviewOpen && (
+        <div className="admin-preview-modal" role="dialog" aria-modal="true" aria-label="User preview">
+          <div className="admin-preview-modal-shell">
+            <header className="admin-preview-modal-header">
+              <div>
+                <p className="admin-eyebrow">User preview</p>
+                <h2>{draft.headline || "Untitled"}</h2>
+                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}</small>
+              </div>
+              <button type="button" onClick={() => setIsPreviewOpen(false)} aria-label="Close preview">
+                <X size={22} aria-hidden="true" />
+              </button>
+            </header>
+
+            <article className="admin-preview-page">
+              <p className="admin-eyebrow">User preview</p>
+              <h1>{draft.headline || "Untitled"}</h1>
+              {draft.summary && <strong>{draft.summary}</strong>}
+              {draft.body ? (
+                draft.body.split(/\n{2,}/).filter(Boolean).map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))
+              ) : (
+                <p className="admin-preview-empty">No body copy yet.</p>
+              )}
+            </article>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
