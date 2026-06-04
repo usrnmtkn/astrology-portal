@@ -2482,6 +2482,25 @@ button {
   stroke-dasharray: 2 7;
 }
 
+.interchart-aspect-lines line {
+  opacity: 0.62;
+  stroke-width: 1.75;
+}
+
+.inner-planet-labels .planet-glyph {
+  fill: #c98d59;
+  font-size: 21px;
+}
+
+.inner-planet-labels .planet-degree {
+  fill: #9c704e;
+  font-size: 11px;
+}
+
+.inner-planet-labels .planet-tick {
+  stroke: rgba(201, 141, 89, 0.76);
+}
+
 .natal-angle-lines line {
   fill: none;
   opacity: 0.9;
@@ -10375,11 +10394,13 @@ html,
   padding: 6px;
 }
 
-.friend-mode-switch strong,
-.friend-mode-switch span {
+.friend-mode-switch button {
   align-items: center;
+  background: transparent;
+  border: 0;
   border-radius: 999px;
   color: var(--muted-app);
+  cursor: pointer;
   display: inline-flex;
   font: var(--fw-regular) 18px / 1 var(--font-ui);
   justify-content: center;
@@ -10387,9 +10408,34 @@ html,
   padding: 0 18px;
 }
 
-.friend-mode-switch strong {
+.friend-mode-switch button.active {
   background: var(--ink-app);
   color: var(--surface-app);
+}
+
+.friend-shared-chart-stage {
+  display: grid;
+  gap: 20px;
+}
+
+.friend-relationship-snapshot {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.friend-snapshot-card {
+  background: color-mix(in srgb, var(--surface-app) 92%, var(--ink-app) 5%);
+}
+
+.friend-overlay-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.friend-overlay-card {
+  background: color-mix(in srgb, var(--surface-app) 92%, var(--accent-app) 8%);
 }
 
 .friend-compare-pill {
@@ -10619,6 +10665,14 @@ html,
   }
 
   .friend-relationship-weather {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-relationship-snapshot {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-overlay-grid {
     grid-template-columns: 1fr;
   }
 
