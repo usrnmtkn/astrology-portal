@@ -4,48 +4,96 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const sourceRoot = path.join(root, "sources", "tldr-astrology-tarot-rewrites-v4");
-const outputRoot = path.join(root, "generated", "tldr-astro", "v4");
+const outputRoot = path.join(root, "generated", "tldr-astro", "rewrite-corpora");
 
-const csvSources = [
+const sourceSets = [
   {
-    id: "tldr-v4-content-architecture",
-    kind: "content-architecture",
-    surface: "all",
-    title: "TLDR Astro V4 Content Architecture",
-    file: "tldr_content_architecture_v4.csv"
+    id: "tldr-v4",
+    version: "v4",
+    label: "V4 tarot-core rewrite sources",
+    sourceDir: "tldr-astrology-tarot-rewrites-v4",
+    logicFile: "TLDR_ASTRO_TAROT_LOGIC_V4.md",
+    logicSummary: "Planet=function, sign=style, house=life area, aspect=relationship, tarot=meaning layer, TLDR=gift plus friction plus evolution.",
+    sources: [
+      {
+        id: "tldr-v4-content-architecture",
+        kind: "content-architecture",
+        surface: "all",
+        title: "TLDR Astro V4 Content Architecture",
+        file: "tldr_content_architecture_v4.csv"
+      },
+      {
+        id: "tldr-v4-tarot-ontology",
+        kind: "tarot-ontology",
+        surface: "all",
+        title: "TLDR Astro V4 Tarot Ontology Mapping",
+        file: "tldr_tarot_ontology_mapping_v4.csv"
+      },
+      {
+        id: "tldr-v4-sky-rewrites",
+        kind: "rewrite-corpus",
+        surface: "sky",
+        title: "TLDR Astro V4 Sky Transit Aspect Rewrites",
+        file: "tldr_sky_transit_aspect_rewrites_v4_tarot_core.csv"
+      },
+      {
+        id: "tldr-v4-natal-chart-rewrites",
+        kind: "rewrite-corpus",
+        surface: "natal",
+        title: "TLDR Astro V4 Natal Chart Rewrites",
+        file: "tldr_natal_chart_rewrites_v4_tarot_core.csv"
+      },
+      {
+        id: "tldr-v4-transit-to-natal-rewrites",
+        kind: "rewrite-corpus",
+        surface: "transit-to-natal",
+        title: "TLDR Astro V4 Transit To Natal Rewrites",
+        file: "tldr_transit_to_natal_rewrites_v4_tarot_core.csv"
+      }
+    ]
   },
   {
-    id: "tldr-v4-tarot-ontology",
-    kind: "tarot-ontology",
-    surface: "all",
-    title: "TLDR Astro V4 Tarot Ontology Mapping",
-    file: "tldr_tarot_ontology_mapping_v4.csv"
-  },
-  {
-    id: "tldr-v4-sky-rewrites",
-    kind: "rewrite-corpus",
-    surface: "sky",
-    title: "TLDR Astro V4 Sky Transit Aspect Rewrites",
-    file: "tldr_sky_transit_aspect_rewrites_v4_tarot_core.csv"
-  },
-  {
-    id: "tldr-v4-natal-chart-rewrites",
-    kind: "rewrite-corpus",
-    surface: "natal",
-    title: "TLDR Astro V4 Natal Chart Rewrites",
-    file: "tldr_natal_chart_rewrites_v4_tarot_core.csv"
-  },
-  {
-    id: "tldr-v4-transit-to-natal-rewrites",
-    kind: "rewrite-corpus",
-    surface: "transit-to-natal",
-    title: "TLDR Astro V4 Transit To Natal Rewrites",
-    file: "tldr_transit_to_natal_rewrites_v4_tarot_core.csv"
+    id: "tldr-rewrite-csvs",
+    version: "rewrite-csvs",
+    label: "TLDR rewrite CSV sources",
+    sourceDir: "tldr-astrology-rewrite-csvs",
+    logicFile: "tldr_voice_rewrite_schema_examples.csv",
+    logicSummary: "Experience first, astrology explains after. Preserve factual astrology headlines and generate readable, actionable voice from source-backed fields.",
+    sources: [
+      {
+        id: "tldr-rewrite-schema-examples",
+        kind: "rewrite-schema-examples",
+        surface: "all",
+        title: "TLDR Astro Rewrite Schema Examples",
+        file: "tldr_voice_rewrite_schema_examples.csv"
+      },
+      {
+        id: "tldr-rewrite-sky-rewrites",
+        aliases: ["tldr-v4-sky-rewrites"],
+        kind: "rewrite-corpus",
+        surface: "sky",
+        title: "TLDR Astro Sky Transit Aspect Rewrites",
+        file: "tldr_sky_transit_aspect_rewrites.csv"
+      },
+      {
+        id: "tldr-rewrite-natal-chart-rewrites",
+        aliases: ["tldr-v4-natal-chart-rewrites"],
+        kind: "rewrite-corpus",
+        surface: "natal",
+        title: "TLDR Astro Natal Chart Rewrites",
+        file: "tldr_natal_chart_rewrites.csv"
+      },
+      {
+        id: "tldr-rewrite-transit-to-natal-rewrites",
+        aliases: ["tldr-v4-transit-to-natal-rewrites"],
+        kind: "rewrite-corpus",
+        surface: "transit-to-natal",
+        title: "TLDR Astro Transit To Natal Rewrites",
+        file: "tldr_transit_to_natal_rewrites.csv"
+      }
+    ]
   }
 ];
-
-const logicFile = "TLDR_ASTRO_TAROT_LOGIC_V4.md";
 
 function readIfExists(filePath) {
   return fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "";
@@ -151,7 +199,8 @@ function rewriteEntry(row) {
   });
 }
 
-function importCsvSource(source, logic) {
+function importCsvSource(sourceSet, source, logic) {
+  const sourceRoot = path.join(root, "sources", sourceSet.sourceDir);
   const filePath = path.join(sourceRoot, source.file);
 
   if (!fs.existsSync(filePath)) {
@@ -163,47 +212,59 @@ function importCsvSource(source, logic) {
   const entries = isRewriteCorpus ? rows.map(rewriteEntry) : rows.map(compactRecord);
   const output = compactRecord({
     id: source.id,
+    aliases: source.aliases,
     voiceId: "tldr-astro",
     kind: source.kind,
     surface: source.surface,
-    version: "v4",
+    version: sourceSet.version,
     title: source.title,
     sourceFile: path.relative(root, filePath),
     logic: logic ? {
-      sourceFile: path.join("sources", "tldr-astrology-tarot-rewrites-v4", logicFile),
-      summary: "Planet=function, sign=style, house=life area, aspect=relationship, tarot=meaning layer, TLDR=gift plus friction plus evolution."
+      sourceFile: path.join("sources", sourceSet.sourceDir, sourceSet.logicFile),
+      summary: sourceSet.logicSummary
     } : undefined,
     entries
   });
 
-  writeJson(path.join(outputRoot, `${source.id}.json`), output);
+  writeJson(path.join(outputRoot, sourceSet.id, `${source.id}.json`), output);
   return { id: source.id, count: entries.length };
 }
 
 function main() {
-  if (!fs.existsSync(sourceRoot)) {
-    console.log("No V4 rewrite source folder found. Skipping V4 import.");
-    return;
-  }
-
   fs.mkdirSync(outputRoot, { recursive: true });
   for (const name of fs.readdirSync(outputRoot)) {
-    if (name.startsWith("tldr-v4-") && name.endsWith(".json")) {
-      fs.rmSync(path.join(outputRoot, name), { force: true });
+    if (name.startsWith("tldr-v4") || name.startsWith("tldr-rewrite")) {
+      fs.rmSync(path.join(outputRoot, name), { recursive: true, force: true });
     }
   }
 
-  const logic = readIfExists(path.join(sourceRoot, logicFile));
-  const imports = csvSources
-    .map((source) => importCsvSource(source, logic))
-    .filter(Boolean);
+  const imports = [];
+
+  for (const sourceSet of sourceSets) {
+    const sourceRoot = path.join(root, "sources", sourceSet.sourceDir);
+
+    if (!fs.existsSync(sourceRoot)) {
+      continue;
+    }
+
+    const logic = readIfExists(path.join(sourceRoot, sourceSet.logicFile));
+    const sourceImports = sourceSet.sources
+      .map((source) => importCsvSource(sourceSet, source, logic))
+      .filter(Boolean);
+
+    if (sourceImports.length) {
+      imports.push({ label: sourceSet.label, imports: sourceImports });
+    }
+  }
 
   if (!imports.length) {
-    console.log("No V4 rewrite CSV files found. Skipping V4 import.");
+    console.log("No rewrite CSV source files found. Skipping rewrite import.");
     return;
   }
 
-  console.log(`Imported V4 rewrite sources: ${imports.map((item) => `${item.id}=${item.count}`).join(", ")}`);
+  console.log(imports.map((sourceSet) => (
+    `Imported ${sourceSet.label}: ${sourceSet.imports.map((item) => `${item.id}=${item.count}`).join(", ")}`
+  )).join("\n"));
 }
 
 main();

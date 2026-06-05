@@ -157,7 +157,7 @@ A non-engineer should be able to edit one file in `data/`, run `npm run build`, 
 
 The V4 tarot-core rewrite package lives in `sources/tldr-astrology-tarot-rewrites-v4/` when those files are available locally. The build runs `scripts/import-v4-rewrites.js` before compiling the knowledge bundle.
 
-That importer converts the source CSVs into structured voice content under `generated/tldr-astro/v4/`:
+That importer converts the source CSVs into structured voice content under `generated/tldr-astro/rewrite-corpora/`:
 
 - `tldr-v4-sky-rewrites.json`
 - `tldr-v4-natal-chart-rewrites.json`
@@ -165,4 +165,6 @@ That importer converts the source CSVs into structured voice content under `gene
 - `tldr-v4-content-architecture.json`
 - `tldr-v4-tarot-ontology.json`
 
-The app and content-generation API consume these as source-backed rewrite examples. They are guidance for structure, voice, and field logic. Current astrology facts still control what the generated interpretation can claim.
+The current rewrite CSV set is stored in `sources/tldr-astrology-rewrite-csvs/`. Those rows compile into `generated/tldr-astro/rewrite-corpora/tldr-rewrite-csvs/` and are aliased to the V4 lookup IDs until the tarot-core V4 files are available.
+
+The app should not load these large corpora in ordinary UI bundles. `scripts/build.js` keeps them out of `sky.json`, `natal.json`, `relationships.json`, `synastry.json`, and `composite.json`, then writes a separate `dist/rewrite-corpora.json` bundle for backend tooling. The content-generation API reads the generated corpus files directly and uses them as source-backed examples for structure, voice, and field logic. Current astrology facts still control what the generated interpretation can claim.

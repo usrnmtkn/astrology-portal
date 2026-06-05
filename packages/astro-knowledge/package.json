@@ -16,6 +16,7 @@
     "./synastry": "./dist/synastry.json",
     "./composite": "./dist/composite.json",
     "./web": "./dist/web.json",
+    "./rewrite-corpora": "./dist/rewrite-corpora.json",
     "./index": "./dist/knowledge.index.json",
     "./entries/*": "./dist/entries/*.json",
     "./timing-engine": {

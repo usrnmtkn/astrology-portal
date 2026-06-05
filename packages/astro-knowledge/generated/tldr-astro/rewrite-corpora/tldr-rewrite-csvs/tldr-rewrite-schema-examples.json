@@ -1,0 +1,36 @@
+{
+  "id": "tldr-rewrite-schema-examples",
+  "voiceId": "tldr-astro",
+  "kind": "rewrite-schema-examples",
+  "surface": "all",
+  "version": "rewrite-csvs",
+  "title": "TLDR Astro Rewrite Schema Examples",
+  "sourceFile": "sources/tldr-astrology-rewrite-csvs/tldr_voice_rewrite_schema_examples.csv",
+  "logic": {
+    "sourceFile": "sources/tldr-astrology-rewrite-csvs/tldr_voice_rewrite_schema_examples.csv",
+    "summary": "Experience first, astrology explains after. Preserve factual astrology headlines and generate readable, actionable voice from source-backed fields."
+  },
+  "entries": [
+    {
+      "content_area": "Sky / current transit",
+      "base_rule": "Write the observable experience first; astrology explains after.",
+      "required_columns": "base_meaning_rewrite, observable_experience, shadow_pattern, best_move, business_lens",
+      "example_good_baseline": "A conversation may need clarification before it can be trusted.",
+      "avoid": "Mercury and Neptune create confusing energy."
+    },
+    {
+      "content_area": "Natal chart",
+      "base_rule": "Describe tendencies and choice points, not fixed identity.",
+      "required_columns": "base_meaning_rewrite, observable_tendency, where_it_helps, where_it_can_become_difficult, closing_reflection",
+      "example_good_baseline": "You may notice a tendency to gather information before committing to a decision.",
+      "avoid": "You are indecisive."
+    },
+    {
+      "content_area": "Transit to natal",
+      "base_rule": "Describe temporary activation of a natal pattern, not destiny.",
+      "required_columns": "base_meaning_rewrite, observable_current_activation, pressure_point, best_move, reader_facing_summary",
+      "example_good_baseline": "A current conversation may bring an old decision pattern back into focus.",
+      "avoid": "This transit will change your life."
+    }
+  ]
+}

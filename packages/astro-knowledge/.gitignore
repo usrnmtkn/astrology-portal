@@ -3,4 +3,8 @@ dist/*
 !dist/.gitkeep
 sources/*
 !sources/.gitkeep
+!sources/tldr-astrology-rewrite-csvs/
+!sources/tldr-astrology-rewrite-csvs/**
+!sources/tldr-astrology-tarot-rewrites-v4/
+!sources/tldr-astrology-tarot-rewrites-v4/**
 .DS_Store
