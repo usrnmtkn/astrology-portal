@@ -7,6 +7,7 @@ Standalone shared content package for astrological meaning. This repository is t
 - `data/` is meaning: authored JSON only, one editable entry per file where possible.
 - `voice/` is voice: rendering constraints, profiles, banned words, and prompt stubs. It does not contain astrology meaning.
 - `generated/` is voice-rendered content: approved output created from `data/` plus a voice profile.
+- `sources/` is traceable imported source material used to create generated corpora, such as review CSVs and rewrite workbooks.
 - `scripts/` is build tooling: validation and compilation only. No astrology interpretation lives in code.
 - `engine/timing/` is optional app logic: profection context and transit ranking only. It does not contain authored meaning or voice.
 - `docs/circle-feed-logic.md` is the product logic contract for scoring and rendering knowledge-backed feed items.
@@ -25,6 +26,7 @@ flowchart TD
     DATA["data/\nSource-backed astrology meaning\nJSON entries"]
     VOICE["voice/\nTone profiles, style guides,\nbanned phrases, examples"]
     GENERATED["generated/\nVoice-rendered content\nreviewed per profile"]
+    SOURCES["sources/\nTraceable import files\nCSV workbooks and logic docs"]
     DOCS["docs/\nProduct logic contracts\nfeed ranking, content modes,\nand card rules"]
     ENGINE["engine/timing/\nRanking helpers only\nno authored meaning"]
     SCRIPTS["scripts/build.js\nValidate and compile"]
@@ -38,6 +40,7 @@ flowchart TD
   end
 
   DATA --> SCRIPTS
+  SOURCES --> SCRIPTS
   VOICE --> SCRIPTS
   GENERATED --> SCRIPTS
   DOCS -. documents .-> SCRIPTS
@@ -53,6 +56,7 @@ flowchart TD
 - Put source-backed astrology meaning in `data/`.
 - Put tone, style, and prompt constraints in `voice/`.
 - Put reviewed voice output in `generated/`.
+- Put imported CSVs, workbooks, and logic docs in `sources/`, then convert them into structured JSON under `generated/` with a script.
 - Put selection, ranking, and UI logic in the consuming app.
 - Keep product-level feed scoring and card rules documented in `docs/circle-feed-logic.md`.
 - Keep surface-specific voice modes documented in `docs/content-modes.md`.
@@ -148,3 +152,17 @@ A non-engineer should be able to edit one file in `data/`, run `npm run build`, 
 ## Generated Files
 
 `dist/` contents are generated and ignored by git except for `dist/.gitkeep`.
+
+## V4 Rewrite Corpus
+
+The V4 tarot-core rewrite package lives in `sources/tldr-astrology-tarot-rewrites-v4/` when those files are available locally. The build runs `scripts/import-v4-rewrites.js` before compiling the knowledge bundle.
+
+That importer converts the source CSVs into structured voice content under `generated/tldr-astro/v4/`:
+
+- `tldr-v4-sky-rewrites.json`
+- `tldr-v4-natal-chart-rewrites.json`
+- `tldr-v4-transit-to-natal-rewrites.json`
+- `tldr-v4-content-architecture.json`
+- `tldr-v4-tarot-ontology.json`
+
+The app and content-generation API consume these as source-backed rewrite examples. They are guidance for structure, voice, and field logic. Current astrology facts still control what the generated interpretation can claim.
