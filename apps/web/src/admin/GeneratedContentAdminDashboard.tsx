@@ -10,6 +10,7 @@ type VoiceTemplateSurface = "sky" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "templates";
 type VoiceTemplateConfig = {
   template: string;
+  generationGuide: string;
   bannedWords: string;
   phraseBank: string;
 };
@@ -85,6 +86,13 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Make it actionable. Give one concrete move, such as wait, clarify, write it down, narrow the field, make the call, or choose the next step.",
       "Do not write current sky as a natal personality trait."
     ].join("\n"),
+    generationGuide: [
+      "Start with the current astrology facts, then use the knowledge base meanings, then apply the TLDR Astro voice.",
+      "The first paragraph should describe what the reader may notice in ordinary life.",
+      "The second paragraph should explain why the planets, signs, and aspect create that experience.",
+      "The final paragraph should give a practical move and the timing window.",
+      "If there is a strong aspect to the placement, make the aspect the reason the placement matters today."
+    ].join("\n"),
     bannedWords: [
       "same sky, different room",
       "baseline, not today's mood",
@@ -111,6 +119,13 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Write as an observation: what this person may notice in themselves, why it works that way, where it helps, and where it can become difficult.",
       "Avoid prediction. Avoid telling the person who they are.",
       "Keep the astrology visible enough that the interpretation feels traceable."
+    ].join("\n"),
+    generationGuide: [
+      "Translate the chart factor into lived experience before giving advice.",
+      "Explain the internal pattern: what the person tends to feel, remember, want, avoid, or protect.",
+      "Name both the useful expression and the pressure point without making the reader feel judged.",
+      "If the content is in-depth, include where this pattern may show up in daily life.",
+      "Keep every claim traceable to the planet, sign, house, or aspect."
     ].join("\n"),
     bannedWords: [
       "you are",
@@ -139,6 +154,13 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Use names when available. Be direct, specific, and human.",
       "Do not overstate fate, trauma, or permanence."
     ].join("\n"),
+    generationGuide: [
+      "Treat the contact as a dynamic between two people.",
+      "Explain what one person activates in the other and how that may feel from both sides.",
+      "For supportive aspects, name what feels easy and what still needs care.",
+      "For challenging aspects, name the mismatch, expectation, or recurring tension in concrete terms.",
+      "End with a practical relational move, such as naming expectations, slowing down, or separating intent from impact."
+    ].join("\n"),
     bannedWords: [
       "soulmate",
       "twin flame",
@@ -165,6 +187,13 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Name the purpose of the pattern, the pressure point, and how the relationship can be handled more consciously.",
       "Keep the tone grounded and relational.",
       "Do not turn composite content into individual personality descriptions."
+    ].join("\n"),
+    generationGuide: [
+      "Describe the relationship as a shared pattern rather than either person's individual chart.",
+      "Explain what the bond tends to organize around, what it asks from both people, and what it can make harder.",
+      "Use practical relationship language, not mystical certainty.",
+      "When possible, name what the relationship needs in order to function better.",
+      "Avoid declaring the relationship good, bad, doomed, or guaranteed."
     ].join("\n"),
     bannedWords: [
       "this relationship is doomed",
@@ -518,12 +547,14 @@ export function GeneratedContentAdminDashboard() {
     const surfaceKey = templateSurfaceFor(draftWithFacts.surface);
     const config = voiceTemplates[surfaceKey];
     const template = config.template.trim();
+    const generationGuide = config.generationGuide.trim();
     const bannedWords = config.bannedWords.trim();
     const phraseBank = config.phraseBank.trim();
     const rowNotes = draftWithFacts.reviewerNotes.trim();
 
     return [
       template ? `SURFACE VOICE TEMPLATE (${voiceTemplateLabels[surfaceKey]})\n${template}` : "",
+      generationGuide ? `AI GENERATION GUIDE\nFollow these interpretation rules for this content type:\n${generationGuide}` : "",
       bannedWords ? `BANNED WORDS AND PHRASES\nDo not use these words, phrases, constructions, or close variants:\n${bannedWords}` : "",
       phraseBank ? `LANGUAGE AND PHRASE BANK\nPrefer this kind of language when it fits the facts. Do not force every phrase:\n${phraseBank}` : "",
       rowNotes ? `ROW-SPECIFIC EDITORIAL NOTES\n${rowNotes}` : ""
@@ -980,6 +1011,15 @@ export function GeneratedContentAdminDashboard() {
                 value={voiceTemplates[activeTemplateSurface].template}
                 onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "template", event.target.value)}
                 rows={16}
+              />
+            </label>
+
+            <label className="admin-field-wide admin-template-guide-field">
+              <span>AI generation guide</span>
+              <textarea
+                value={voiceTemplates[activeTemplateSurface].generationGuide}
+                onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "generationGuide", event.target.value)}
+                rows={10}
               />
             </label>
 

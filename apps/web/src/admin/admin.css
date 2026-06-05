@@ -287,6 +287,10 @@ body,
   min-height: 420px;
 }
 
+.admin-template-page .admin-template-guide-field textarea {
+  min-height: 260px;
+}
+
 .admin-template-two-column {
   display: grid;
   gap: 14px;
