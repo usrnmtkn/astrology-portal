@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
+import type { SkySnapshot } from "../../apps/web/src/types.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
 
 type ContentFactsInput = {
@@ -57,6 +58,19 @@ function currentSkyAspectKnowledgeId(aspect: { from: string; type: string; to: s
   return `sky-${aspect.from.toLowerCase().replaceAll(" ", "-")}-${aspect.type}-${aspect.to.toLowerCase().replaceAll(" ", "-")}`;
 }
 
+function collectiveSkyPosition(position: SkySnapshot["positions"][number] | undefined) {
+  if (!position) {
+    return undefined;
+  }
+
+  const { house: _house, ...collectivePosition } = position;
+  return collectivePosition;
+}
+
+function collectiveSkyPositions(positions: SkySnapshot["positions"]) {
+  return positions.map((position) => collectiveSkyPosition(position));
+}
+
 async function currentSkyFacts(date: Date) {
   try {
     return await getAstrodienstSky(undefined, date);
@@ -81,13 +95,13 @@ async function buildSkyFacts(input: ContentFactsInput) {
     facts: {
       generatedAt: sky.generatedAt,
       location: sky.location,
-      sun,
-      moon,
+      sun: collectiveSkyPosition(sun),
+      moon: collectiveSkyPosition(moon),
       moonPhase: sky.moonPhase,
       moonEvent: sky.moonEvent,
       dominantElement: sky.dominantElement,
-      positions: sky.positions,
-      retrogrades,
+      positions: collectiveSkyPositions(sky.positions),
+      retrogrades: collectiveSkyPositions(retrogrades),
       topAspects
     },
     knowledgeIds: topAspects.map(currentSkyAspectKnowledgeId),
