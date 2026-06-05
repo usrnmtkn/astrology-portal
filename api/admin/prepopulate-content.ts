@@ -109,6 +109,13 @@ function skyAspectKnowledgeId(aspect: SkySnapshot["aspects"][number]) {
   return `sky-${slug(aspect.from)}-${slug(aspect.type)}-${slug(aspect.to)}`;
 }
 
+function dailySkyHeadline(sun?: SkySnapshot["positions"][number], moon?: SkySnapshot["positions"][number]) {
+  return [
+    sun ? `${sun.sign} Season` : "",
+    moon ? `${moon.sign} Moon` : ""
+  ].filter(Boolean).join(", ") || "Current Sky";
+}
+
 async function currentSkyFacts(date: Date) {
   try {
     return await getAstrodienstSky(undefined, date);
@@ -160,7 +167,7 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
     contentKey: `sky-daily-${targetDate}`,
     eventType: "daily-sky",
     targetDate,
-    headline: "Daily Sky",
+    headline: dailySkyHeadline(sun, moon),
     facts: {
       type: "daily_overview",
       targetDate,

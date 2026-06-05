@@ -107,12 +107,128 @@ function modeRules(mode: ContentMode) {
   ].join("\n");
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function stringValue(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function factRecord(facts: Record<string, unknown>, key: string) {
+  const value = facts[key];
+  return isRecord(value) ? value : null;
+}
+
+function aspectHeadline(aspect: Record<string, unknown>) {
+  const from = stringValue(aspect.from);
+  const type = stringValue(aspect.type);
+  const to = stringValue(aspect.to);
+
+  return from && type && to ? `${from} ${type} ${to}` : "";
+}
+
+function seasonHeadline(sun: Record<string, unknown> | null) {
+  const sign = stringValue(sun?.sign);
+  return sign ? `${sign} Season` : "";
+}
+
+function moonHeadline(facts: Record<string, unknown>) {
+  const moon = factRecord(facts, "moon");
+  const sign = stringValue(moon?.sign);
+  const supportingAspect = factRecord(facts, "supportingAspect");
+
+  if (!sign) {
+    return "";
+  }
+
+  if (supportingAspect) {
+    const type = stringValue(supportingAspect.type);
+    const from = stringValue(supportingAspect.from);
+    const to = stringValue(supportingAspect.to);
+    const otherPlanet = from === "Moon" ? to : from;
+
+    if (type && otherPlanet) {
+      return `Moon in ${sign} ${type} ${otherPlanet}`;
+    }
+  }
+
+  return `Moon in ${sign}`;
+}
+
+function retrogradeHeadline(facts: Record<string, unknown>) {
+  const planet = factRecord(facts, "planet");
+  const planetName = stringValue(planet?.planet);
+  return planetName ? `${planetName} retrograde` : "";
+}
+
+function lunationHeadline(facts: Record<string, unknown>) {
+  const moonEvent = factRecord(facts, "moonEvent");
+  const name = stringValue(moonEvent?.name);
+  const sign = stringValue(moonEvent?.sign);
+
+  return name && sign ? `${name} in ${sign}` : "";
+}
+
+function dailySkyHeadline(facts: Record<string, unknown>) {
+  const sunSign = stringValue(factRecord(facts, "sun")?.sign);
+  const moonSign = stringValue(factRecord(facts, "moon")?.sign);
+  const parts = [
+    sunSign ? `${sunSign} Season` : "",
+    moonSign ? `${moonSign} Moon` : ""
+  ].filter(Boolean);
+
+  return parts.join(", ");
+}
+
+function factualHeadlineFor(input: GenerateContentInput) {
+  const supplied = stringValue(input.headline);
+
+  if (supplied) {
+    return supplied;
+  }
+
+  const facts = input.facts;
+  const type = stringValue(facts.type) || input.eventType;
+  const aspect = factRecord(facts, "aspect");
+
+  if (aspect) {
+    const headline = aspectHeadline(aspect);
+    if (headline) {
+      return headline;
+    }
+  }
+
+  if (type === "seasonal_weather") {
+    return seasonHeadline(factRecord(facts, "sun"));
+  }
+
+  if (type === "lunar_weather") {
+    return moonHeadline(facts);
+  }
+
+  if (type === "retrograde") {
+    return retrogradeHeadline(facts);
+  }
+
+  if (type === "lunation") {
+    return lunationHeadline(facts);
+  }
+
+  if (type === "daily_overview" || input.eventType === "daily-sky") {
+    return dailySkyHeadline(facts);
+  }
+
+  return "";
+}
+
 function buildPrompt(input: GenerateContentInput) {
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
-  const headlineRule = input.headline
+  const lockedHeadline = factualHeadlineFor(input);
+  const headlineRule = lockedHeadline
     ? [
         "HEADLINE RULE",
-        `Return this exact headline string: ${JSON.stringify(input.headline)}.`,
+        `Return this exact headline string: ${JSON.stringify(lockedHeadline)}.`,
         "Do not rewrite it as a human-theme title. Keep the headline as the astrology aspect, placement, transit, season, retrograde, or lunation label.",
         "Put the readable hook, advice, and emotional interpretation in summary and body."
       ].join("\n")
@@ -195,6 +311,7 @@ function responseOutputText(payload: {
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
   const apiKey = requireEnv("OPENAI_API_KEY");
   const model = process.env.OPENAI_MODEL ?? defaultModel;
+  const lockedHeadline = factualHeadlineFor(input);
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -258,7 +375,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   }
 
   return {
-    ...parseResponseJson(outputText, input.headline),
+    ...parseResponseJson(outputText, lockedHeadline || undefined),
     responseId: payload.id,
     model
   };
