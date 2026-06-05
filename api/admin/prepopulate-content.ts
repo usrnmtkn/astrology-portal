@@ -109,6 +109,19 @@ function skyAspectKnowledgeId(aspect: SkySnapshot["aspects"][number]) {
   return `sky-${slug(aspect.from)}-${slug(aspect.type)}-${slug(aspect.to)}`;
 }
 
+function collectiveSkyPosition(position: SkySnapshot["positions"][number] | undefined) {
+  if (!position) {
+    return undefined;
+  }
+
+  const { house: _house, ...collectivePosition } = position;
+  return collectivePosition;
+}
+
+function collectiveSkyPositions(positions: SkySnapshot["positions"]) {
+  return positions.map((position) => collectiveSkyPosition(position));
+}
+
 function dailySkyHeadline(sun?: SkySnapshot["positions"][number], moon?: SkySnapshot["positions"][number]) {
   return [
     sun ? `${sun.sign} Season` : "",
@@ -173,13 +186,13 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
       targetDate,
       generatedAt: sky.generatedAt,
       location: sky.location,
-      sun,
-      moon,
+      sun: collectiveSkyPosition(sun),
+      moon: collectiveSkyPosition(moon),
       moonPhase: sky.moonPhase,
       moonEvent: sky.moonEvent,
       dominantElement: sky.dominantElement,
       topAspects,
-      retrogrades
+      retrogrades: collectiveSkyPositions(retrogrades)
     },
     knowledgeIds: topAspects.map(skyAspectKnowledgeId),
     sourceSnapshot
@@ -196,10 +209,10 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
       facts: {
         type: "seasonal_weather",
         targetDate,
-        sun,
+        sun: collectiveSkyPosition(sun),
         supportingAspect: sunAspect,
         currentSky: {
-          moon,
+          moon: collectiveSkyPosition(moon),
           moonPhase: sky.moonPhase,
           dominantElement: sky.dominantElement,
           topAspects
@@ -221,7 +234,7 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
       facts: {
         type: "lunar_weather",
         targetDate,
-        moon,
+        moon: collectiveSkyPosition(moon),
         moonPhase: sky.moonPhase,
         supportingAspect: moonAspect,
         moonEvent: sky.moonEvent
@@ -241,7 +254,7 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
         type: "current_aspect",
         targetDate,
         aspect,
-        planets: sky.positions.filter((position) => position.planet === aspect.from || position.planet === aspect.to),
+        planets: collectiveSkyPositions(sky.positions.filter((position) => position.planet === aspect.from || position.planet === aspect.to)),
         moonPhase: sky.moonPhase
       },
       knowledgeIds: [skyAspectKnowledgeId(aspect)],
@@ -258,7 +271,7 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
       facts: {
         type: "retrograde",
         targetDate,
-        planet: position,
+        planet: collectiveSkyPosition(position),
         nearbyAspects: topAspects.filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
       },
       knowledgeIds: [],
@@ -279,7 +292,7 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
         moonEvent: sky.moonEvent,
         moonPhase: sky.moonPhase,
         topAspects,
-        positions: sky.positions
+        positions: collectiveSkyPositions(sky.positions)
       },
       knowledgeIds: topAspects.map(skyAspectKnowledgeId),
       sourceSnapshot

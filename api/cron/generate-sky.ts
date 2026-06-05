@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
+import type { SkySnapshot } from "../../apps/web/src/types.js";
 import {
   generateWithOpenAI,
   loadSkySourceSnapshot,
@@ -35,6 +36,15 @@ async function currentSkyFacts(date: Date) {
   }
 }
 
+function collectiveSkyPosition(position: SkySnapshot["positions"][number] | undefined) {
+  if (!position) {
+    return undefined;
+  }
+
+  const { house: _house, ...collectivePosition } = position;
+  return collectivePosition;
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "GET" && req.method !== "POST") {
     sendJson(res, 405, { error: "Use GET or POST." });
@@ -61,8 +71,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       facts: {
         generatedAt: sky.generatedAt,
         location: sky.location,
-        sun,
-        moon,
+        sun: collectiveSkyPosition(sun),
+        moon: collectiveSkyPosition(moon),
         moonPhase: sky.moonPhase,
         moonEvent: sky.moonEvent,
         topAspects
