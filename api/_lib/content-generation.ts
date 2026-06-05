@@ -78,6 +78,7 @@ type V4RewriteEntry = {
 
 type V4RewriteCorpus = {
   id?: string;
+  aliases?: string[];
   surface?: string;
   kind?: string;
   title?: string;
@@ -318,23 +319,32 @@ function approvedExamplesPrompt(examples: ApprovedExample[]) {
   ].filter(Boolean).join("\n")).join("\n\n");
 }
 
-function loadKnowledgeBundleForSurface(surface: Surface) {
-  const bundleName = surface === "sky"
-    ? "sky.json"
-    : surface === "you" || surface === "natal"
-      ? "natal.json"
-      : surface === "synastry"
-        ? "synastry.json"
-        : surface === "composite"
-          ? "composite.json"
-          : "relationships.json";
-  const bundlePath = path.join(process.cwd(), "packages/astro-knowledge/dist", bundleName);
-
-  try {
-    return JSON.parse(fs.readFileSync(bundlePath, "utf8")) as { voiceContent?: V4RewriteCorpus[] };
-  } catch {
-    return { voiceContent: [] };
+function listJsonFiles(dir: string): string[] {
+  if (!fs.existsSync(dir)) {
+    return [];
   }
+
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const entryPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      return listJsonFiles(entryPath);
+    }
+
+    return entry.name.endsWith(".json") ? [entryPath] : [];
+  });
+}
+
+function loadRewriteCorpora() {
+  const corporaRoot = path.join(process.cwd(), "packages/astro-knowledge/generated/tldr-astro/rewrite-corpora");
+
+  return listJsonFiles(corporaRoot).flatMap((filePath) => {
+    try {
+      return [JSON.parse(fs.readFileSync(filePath, "utf8")) as V4RewriteCorpus];
+    } catch {
+      return [];
+    }
+  });
 }
 
 function targetV4CorpusId(input: GenerateContentInput) {
@@ -405,8 +415,9 @@ function loadV4RewriteExamples(input: GenerateContentInput) {
     return [];
   }
 
-  const bundle = loadKnowledgeBundleForSurface(input.surface);
-  const corpus = (bundle.voiceContent ?? []).find((entry) => entry.id === corpusId);
+  const corpus = loadRewriteCorpora().find((entry) => (
+    entry.id === corpusId || entry.aliases?.includes(corpusId)
+  ));
   const entries = corpus?.entries ?? [];
 
   if (!entries.length) {

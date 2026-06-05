@@ -79,6 +79,10 @@ function loadVoiceProfiles() {
   return profiles;
 }
 
+function isRewriteCorpusEntry(entry) {
+  return entry.path?.startsWith("generated/tldr-astro/rewrite-corpora/");
+}
+
 function safeCategory(category) {
   return category.replace(/[^a-z0-9-]/gi, "_");
 }
@@ -140,7 +144,9 @@ function build() {
   const synastryHouseOverlays = loadEntries(path.join("synastry", "house-overlays"));
   const insightCards = loadEntries("insights");
   const voiceProfiles = loadVoiceProfiles();
-  const voiceContent = loadJsonTree("generated");
+  const generatedContent = loadJsonTree("generated");
+  const rewriteCorpora = generatedContent.filter(isRewriteCorpusEntry);
+  const voiceContent = generatedContent.filter((entry) => !isRewriteCorpusEntry(entry));
 
   const generatedAt = new Date().toISOString();
   const knowledge = withBundleMetadata(packageJson, generatedAt, {
@@ -341,6 +347,10 @@ function build() {
   writeJson(path.join(distRoot, "composite.json"), compositeKnowledge);
   writeJson(path.join(distRoot, "web.json"), webKnowledge);
   writeJson(path.join(distRoot, "knowledge.index.json"), index);
+  writeJson(path.join(distRoot, "rewrite-corpora.json"), withBundleMetadata(packageJson, generatedAt, {
+    voiceProfiles,
+    rewriteCorpora
+  }));
 
   const counts = {
     primitives: Object.values(primitives).reduce((total, entries) => total + entries.length, 0),
@@ -370,12 +380,13 @@ function build() {
     insightCards: insightCards.length,
     voiceProfiles: Object.keys(voiceProfiles).length,
     voiceContent: voiceContent.length,
+    rewriteCorpora: rewriteCorpora.length,
     indexedEntries: Object.keys(index.entries).length
   };
 
   console.log("Validation passed: all data files match their schemas.");
   console.log(`Built dist/knowledge.json version ${packageJson.version}.`);
-  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, indexedEntries=${counts.indexedEntries}`);
+  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, rewriteCorpora=${counts.rewriteCorpora}, indexedEntries=${counts.indexedEntries}`);
 }
 
 build();
