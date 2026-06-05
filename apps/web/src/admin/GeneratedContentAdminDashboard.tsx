@@ -19,6 +19,9 @@ type AdminGeneratedContentRow = {
   summary: string | null;
   body: string | null;
   sections: Array<{ heading: string; body: string }> | Record<string, unknown> | null;
+  facts: Record<string, unknown> | null;
+  knowledge_ids: string[] | null;
+  source_snapshot: Record<string, unknown> | null;
   reviewer_notes: string | null;
   prompt_version: string | null;
   model: string | null;
@@ -101,9 +104,9 @@ function adminDraftFromRow(row: AdminGeneratedContentRow): AdminGeneratedContent
     summary: row.summary ?? "",
     body: row.body ?? "",
     sectionsJson: JSON.stringify(row.sections ?? [], null, 2),
-    factsJson: "{}",
-    sourceSnapshotJson: "{}",
-    knowledgeIds: "",
+    factsJson: JSON.stringify(row.facts ?? {}, null, 2),
+    sourceSnapshotJson: JSON.stringify(row.source_snapshot ?? {}, null, 2),
+    knowledgeIds: (row.knowledge_ids ?? []).join(", "),
     reviewerNotes: row.reviewer_notes ?? ""
   };
 }
@@ -131,6 +134,16 @@ function parseAdminJson(value: string, label: string) {
     return value.trim() ? JSON.parse(value) : {};
   } catch {
     throw new Error(`${label} must be valid JSON.`);
+  }
+}
+
+function hasUsableFacts(value: string) {
+  try {
+    const parsed = JSON.parse(value || "{}") as Record<string, unknown>;
+
+    return Object.keys(parsed).length > 0 && !("note" in parsed);
+  } catch {
+    return false;
   }
 }
 
@@ -399,7 +412,9 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const draftWithFacts = await loadFactsForDraft(draft, { manageLoading: false });
+      const draftWithFacts = hasUsableFacts(draft.factsJson)
+        ? draft
+        : await loadFactsForDraft(draft, { manageLoading: false });
       const payload = await adminJsonRequest<{
         ok: boolean;
         generated: {
@@ -446,6 +461,42 @@ export function GeneratedContentAdminDashboard() {
       await loadRows();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not generate content.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function prepopulateSkyQueue() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{
+        ok: boolean;
+        targetDate: string;
+        inserted: number;
+        rows: AdminGeneratedContentRow[];
+      }>(
+        "/api/admin/prepopulate-content",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            surface: "sky",
+            targetDate: draft.targetDate || dateInputValue()
+          })
+        }
+      );
+
+      setSurface("sky");
+      setStatus("DRAFT");
+      setMessage(`Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`);
+      await loadRows("DRAFT", "sky");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not create the Sky review queue.");
     } finally {
       setIsLoading(false);
     }
@@ -610,6 +661,10 @@ export function GeneratedContentAdminDashboard() {
             <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
               <Plus size={16} aria-hidden="true" />
               New Content
+            </button>
+            <button type="button" onClick={() => void prepopulateSkyQueue()} disabled={isLoading || !canUseApi}>
+              <Sparkles size={16} aria-hidden="true" />
+              Create Sky Queue
             </button>
           </div>
         </header>
