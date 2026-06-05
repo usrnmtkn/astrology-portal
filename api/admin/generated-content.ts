@@ -77,20 +77,25 @@ function adminHeaders() {
 
 async function listGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+  const id = requestUrl.searchParams.get("id");
   const status = requestUrl.searchParams.get("status") ?? "DRAFT";
   const surface = requestUrl.searchParams.get("surface");
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 100);
   const params = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at",
+    select: id
+      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at"
+      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at",
     order: "updated_at.desc",
-    limit: String(limit)
+    limit: id ? "1" : String(limit)
   });
 
-  if (status !== "all") {
+  if (id) {
+    params.set("id", `eq.${id}`);
+  } else if (status !== "all") {
     params.set("status", `eq.${status}`);
   }
 
-  if (surface) {
+  if (!id && surface) {
     params.set("surface", `eq.${surface}`);
   }
 
