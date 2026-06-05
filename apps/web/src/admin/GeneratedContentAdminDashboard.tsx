@@ -226,6 +226,7 @@ export function GeneratedContentAdminDashboard() {
         setSelectedId(firstRow?.id ?? null);
         if (firstRow) {
           setDraft(adminDraftFromRow(firstRow));
+          void loadRowDetails(firstRow.id);
         }
       }
     } catch (error) {
@@ -272,9 +273,31 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadRowDetails(id: string) {
+    if (!canUseApi) {
+      return;
+    }
+
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?id=${encodeURIComponent(id)}`,
+        secret
+      );
+      const row = payload.rows?.[0];
+
+      if (row) {
+        setDraft(adminDraftFromRow(row));
+        setRows((currentRows) => currentRows.map((currentRow) => currentRow.id === row.id ? { ...currentRow, ...row } : currentRow));
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load row details.");
+    }
+  }
+
   function selectRow(row: AdminGeneratedContentRow) {
     setSelectedId(row.id);
     setDraft(adminDraftFromRow(row));
+    void loadRowDetails(row.id);
   }
 
   function updateDraft<K extends keyof AdminGeneratedContentDraft>(key: K, value: AdminGeneratedContentDraft[K]) {
