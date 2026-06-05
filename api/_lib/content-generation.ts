@@ -56,6 +56,34 @@ type ApprovedExample = {
   body: string;
 };
 
+type V4RewriteEntry = {
+  id?: string;
+  title?: string;
+  itemType?: string;
+  baseMeaningRewrite?: string;
+  observableExperience?: string;
+  observableTendency?: string;
+  observableCurrentActivation?: string;
+  shadowPattern?: string;
+  pressurePoint?: string;
+  whereItHelps?: string;
+  whereItCanBecomeDifficult?: string;
+  bestMove?: string;
+  readerFacingSummary?: string;
+  closingReflection?: string;
+  symbolicStory?: string;
+  lesson?: string;
+  tldr?: string;
+};
+
+type V4RewriteCorpus = {
+  id?: string;
+  surface?: string;
+  kind?: string;
+  title?: string;
+  entries?: V4RewriteEntry[];
+};
+
 const promptVersion = "tldr-astro-v1";
 const defaultModel = "gpt-4.1-mini";
 const fallbackStyleGuide = [
@@ -290,6 +318,119 @@ function approvedExamplesPrompt(examples: ApprovedExample[]) {
   ].filter(Boolean).join("\n")).join("\n\n");
 }
 
+function loadKnowledgeBundleForSurface(surface: Surface) {
+  const bundleName = surface === "sky"
+    ? "sky.json"
+    : surface === "you" || surface === "natal"
+      ? "natal.json"
+      : surface === "synastry"
+        ? "synastry.json"
+        : surface === "composite"
+          ? "composite.json"
+          : "relationships.json";
+  const bundlePath = path.join(process.cwd(), "packages/astro-knowledge/dist", bundleName);
+
+  try {
+    return JSON.parse(fs.readFileSync(bundlePath, "utf8")) as { voiceContent?: V4RewriteCorpus[] };
+  } catch {
+    return { voiceContent: [] };
+  }
+}
+
+function targetV4CorpusId(input: GenerateContentInput) {
+  if (input.surface === "sky") {
+    return "tldr-v4-sky-rewrites";
+  }
+
+  if (input.eventType.includes("transit") || input.eventType.includes("forecast")) {
+    return "tldr-v4-transit-to-natal-rewrites";
+  }
+
+  if (input.surface === "you" || input.surface === "natal") {
+    return "tldr-v4-natal-chart-rewrites";
+  }
+
+  return "";
+}
+
+function factSearchText(input: GenerateContentInput) {
+  return [
+    input.contentKey,
+    input.eventType,
+    factualHeadlineFor(input),
+    JSON.stringify(input.facts)
+  ].join(" ").toLowerCase();
+}
+
+function entrySearchText(entry: V4RewriteEntry) {
+  return [entry.id, entry.title, entry.itemType].filter(Boolean).join(" ").toLowerCase();
+}
+
+function scoreV4Entry(entry: V4RewriteEntry, input: GenerateContentInput, searchText: string) {
+  const entryText = entrySearchText(entry);
+  let score = 0;
+
+  if (entry.id && input.knowledgeIds?.includes(entry.id)) score += 50;
+  if (entry.itemType && input.eventType.toLowerCase().includes(entry.itemType.toLowerCase())) score += 20;
+  if (entry.id && searchText.includes(entry.id.toLowerCase())) score += 12;
+  if (entry.title && searchText.includes(entry.title.toLowerCase())) score += 10;
+
+  for (const token of searchText.split(/[^a-z0-9]+/).filter((part) => part.length > 3)) {
+    if (entryText.includes(token)) score += 1;
+  }
+
+  return score;
+}
+
+function compactV4Entry(entry: V4RewriteEntry) {
+  return {
+    id: entry.id,
+    title: entry.title,
+    itemType: entry.itemType,
+    baseMeaningRewrite: entry.baseMeaningRewrite,
+    observableExperience: entry.observableExperience ?? entry.observableTendency ?? entry.observableCurrentActivation,
+    friction: entry.shadowPattern ?? entry.pressurePoint ?? entry.whereItCanBecomeDifficult,
+    usefulMove: entry.bestMove ?? entry.whereItHelps ?? entry.closingReflection,
+    readerFacingSummary: entry.readerFacingSummary,
+    symbolicStory: entry.symbolicStory,
+    lesson: entry.lesson,
+    tldr: entry.tldr
+  };
+}
+
+function loadV4RewriteExamples(input: GenerateContentInput) {
+  const corpusId = targetV4CorpusId(input);
+
+  if (!corpusId) {
+    return [];
+  }
+
+  const bundle = loadKnowledgeBundleForSurface(input.surface);
+  const corpus = (bundle.voiceContent ?? []).find((entry) => entry.id === corpusId);
+  const entries = corpus?.entries ?? [];
+
+  if (!entries.length) {
+    return [];
+  }
+
+  const searchText = factSearchText(input);
+  const scored = entries
+    .map((entry, index) => ({ entry, index, score: scoreV4Entry(entry, input, searchText) }))
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+
+  return scored.slice(0, 4).map(({ entry }) => compactV4Entry(entry));
+}
+
+function v4ExamplesPrompt(input: GenerateContentInput) {
+  const examples = loadV4RewriteExamples(input);
+
+  if (!examples.length) {
+    return "No V4 rewrite examples are available in the knowledge bundle yet.";
+  }
+
+  return JSON.stringify(examples, null, 2);
+}
+
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = []) {
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
@@ -335,6 +476,10 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
+    "",
+    "SOURCE-BACKED V4 REWRITE EXAMPLES",
+    "Use these to understand field logic, voice shape, and TLDR Astro interpretation style. Do not copy astrology facts from them unless those facts are also present above.",
+    v4ExamplesPrompt(input),
     "",
     "APPROVED TLDR ASTRO EXAMPLES",
     "Use these only as examples of voice, pacing, specificity, structure, and editorial quality.",
