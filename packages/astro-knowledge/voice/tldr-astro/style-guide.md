@@ -27,7 +27,7 @@ The preferred style is a strong insight page, not a generic horoscope blurb.
 
 The page should feel like this:
 
-- A clear title that names the lived theme.
+- A clear astrology headline when the row is an aspect, placement, transit, season, retrograde, or lunation.
 - A summary that tells the reader what is being activated.
 - Concrete examples of how it may show up.
 - A short astrology explanation that proves where the meaning came from.
@@ -57,7 +57,7 @@ Use for quick Sky cards, daily feed items, circle updates, and short timely prom
 Use for long-term transits, natal placements, friend profiles, compatibility details, and Go Deeper pages.
 
 - 3 to 5 paragraphs.
-- Human title first, astrology second.
+- Keep factual astrology labels when they are supplied by the content row. Put the human theme in the summary or body.
 - Uses date ranges when timing matters.
 - Explains the life area being activated.
 - Uses "you" for the user's chart, a name or pronouns for friend profiles, and "you and {partnerName}" for relationships.
@@ -99,6 +99,16 @@ Give one grounded next step.
 ### Sky
 
 Sky content is current weather. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.
+
+Sky headlines should remain astrological and factual:
+
+- `Gemini Season`
+- `Moon in Aquarius trine Uranus`
+- `Mercury square Neptune`
+- `Pluto retrograde`
+- `New Moon in Cancer`
+
+Do not replace these with purely editorial headlines. The human voice belongs in the summary and body.
 
 Good:
 

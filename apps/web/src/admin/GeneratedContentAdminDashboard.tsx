@@ -457,6 +457,7 @@ export function GeneratedContentAdminDashboard() {
             surface: draftWithFacts.surface,
             mode: draftWithFacts.mode,
             eventType: draftWithFacts.eventType,
+            headline: draftWithFacts.headline,
             targetDate: draftWithFacts.targetDate || undefined,
             facts: parseAdminJson(draftWithFacts.factsJson, "Facts"),
             knowledgeIds: draftWithFacts.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
