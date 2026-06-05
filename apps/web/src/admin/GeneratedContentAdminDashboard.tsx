@@ -67,6 +67,15 @@ type AdminContentFactsPayload = {
   sourceSnapshot: Record<string, unknown>;
 };
 
+type AdminContentStatsPayload = {
+  ok: boolean;
+  stats: {
+    counts: Record<GeneratedContentStatus, number>;
+    total: number;
+    surface: GeneratedContentSurface | "all";
+  };
+};
+
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 const adminVoiceTemplateStorageKey = "tldrastro:contentVoiceTemplates";
 
@@ -525,21 +534,39 @@ export function GeneratedContentAdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
-  const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
-  const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
-  const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
-  const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
-  const canUseApi = secret.trim().length > 0;
-  const statusCounts = rows.reduce<Record<GeneratedContentStatus, number>>((counts, row) => {
-    counts[row.status] += 1;
-    return counts;
-  }, {
+  const [statusMetrics, setStatusMetrics] = useState<Record<GeneratedContentStatus, number>>({
     DRAFT: 0,
     REVIEWED: 0,
     LIVE: 0,
     ARCHIVED: 0,
     ERROR: 0
   });
+  const [totalMetricRows, setTotalMetricRows] = useState(0);
+  const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
+  const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
+  const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
+  const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
+  const canUseApi = secret.trim().length > 0;
+
+  async function loadStatusMetrics(nextSurface = surface) {
+    if (!canUseApi) {
+      return;
+    }
+
+    const params = new URLSearchParams({ stats: "true" });
+
+    if (nextSurface !== "all") {
+      params.set("surface", nextSurface);
+    }
+
+    const payload = await adminJsonRequest<AdminContentStatsPayload>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    setStatusMetrics(payload.stats.counts);
+    setTotalMetricRows(payload.stats.total);
+  }
 
   async function loadRows(nextStatus = status, nextSurface = surface) {
     if (!canUseApi) {
@@ -549,6 +576,7 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
+      await loadStatusMetrics(nextSurface);
       const params = new URLSearchParams({
         status: nextStatus,
         limit: "75"
@@ -564,7 +592,7 @@ export function GeneratedContentAdminDashboard() {
       );
 
       setRows(payload.rows ?? []);
-      setMessage(`Loaded ${(payload.rows ?? []).length} ${nextStatus.toLowerCase()} rows.`);
+      setMessage(`Loaded ${(payload.rows ?? []).length} ${nextStatus.toLowerCase()} rows. Status totals are current.`);
 
       if (!payload.rows?.some((row) => row.id === selectedId)) {
         const firstRow = payload.rows?.[0] ?? null;
@@ -1209,28 +1237,28 @@ export function GeneratedContentAdminDashboard() {
           <>
             <section className="admin-metrics" aria-label="Content status summary">
               <article>
-                <span>Rows loaded</span>
-                <strong>{rows.length}</strong>
+                <span>Total rows</span>
+                <strong>{totalMetricRows}</strong>
                 <small>{surface === "all" ? "All surfaces" : surface}</small>
               </article>
               <article>
                 <span>Drafts</span>
-                <strong>{statusCounts.DRAFT}</strong>
+                <strong>{statusMetrics.DRAFT}</strong>
                 <small>Needs editorial review</small>
               </article>
               <article>
                 <span>Reviewed</span>
-                <strong>{statusCounts.REVIEWED}</strong>
+                <strong>{statusMetrics.REVIEWED}</strong>
                 <small>Ready to publish</small>
               </article>
               <article>
                 <span>Live</span>
-                <strong>{statusCounts.LIVE}</strong>
+                <strong>{statusMetrics.LIVE}</strong>
                 <small>Visible in app</small>
               </article>
               <article>
                 <span>Errors</span>
-                <strong>{statusCounts.ERROR}</strong>
+                <strong>{statusMetrics.ERROR}</strong>
                 <small>Needs attention</small>
               </article>
             </section>
