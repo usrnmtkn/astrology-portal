@@ -2,8 +2,10 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
+const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -49,7 +51,7 @@ async function readJsonBody(req: IncomingMessage) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
     id?: string;
     contentKey?: string;
-    surface?: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+    surface?: GeneratedContentSurface;
     mode?: "feed" | "in_depth" | "article";
     eventType?: string;
     targetDate?: string | null;
@@ -109,6 +111,53 @@ async function listGeneratedContent(req: IncomingMessage) {
   }
 
   return payload;
+}
+
+function exactCountFromContentRange(contentRange: string | null) {
+  const match = contentRange?.match(/\/(\d+)$/);
+  return match ? Number(match[1]) : 0;
+}
+
+async function countGeneratedContent(status: ReviewStatus, surface: GeneratedContentSurface | "all") {
+  const params = new URLSearchParams({
+    select: "id",
+    status: `eq.${status}`,
+    limit: "1"
+  });
+
+  if (surface !== "all") {
+    params.set("surface", `eq.${surface}`);
+  }
+
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    headers: {
+      ...adminHeaders(),
+      prefer: "count=exact",
+      range: "0-0"
+    }
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`Supabase count failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return exactCountFromContentRange(response.headers.get("content-range"));
+}
+
+async function generatedContentStats(req: IncomingMessage) {
+  const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+  const requestedSurface = requestUrl.searchParams.get("surface") as GeneratedContentSurface | "all" | null;
+  const surface = requestedSurface ?? "all";
+  const counts = Object.fromEntries(
+    await Promise.all(reviewStatuses.map(async (status) => [status, await countGeneratedContent(status, surface)]))
+  ) as Record<ReviewStatus, number>;
+
+  return {
+    counts,
+    total: reviewStatuses.reduce((sum, status) => sum + counts[status], 0),
+    surface
+  };
 }
 
 async function createGeneratedContent(req: IncomingMessage) {
@@ -266,6 +315,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     if (req.method === "GET") {
+      const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+      if (requestUrl.searchParams.get("stats") === "true") {
+        sendJson(res, 200, { ok: true, stats: await generatedContentStats(req) });
+        return;
+      }
+
       sendJson(res, 200, { ok: true, rows: await listGeneratedContent(req) });
       return;
     }
