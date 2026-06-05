@@ -3905,6 +3905,89 @@ function formatDegree(degree: number) {
 }
 
 const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+const socialPlacementOrder = [...placementPlanetOrder, "Ascendant"];
+
+type SocialPlacementRow = {
+  id: string;
+  glyph: string;
+  label: string;
+  sign: string;
+  degree: number;
+  house: number | null;
+};
+
+function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow[] {
+  if (!sky) {
+    return [];
+  }
+
+  const positionMap = new Map(sky.positions.map((position) => [position.planet, position]));
+
+  return socialPlacementOrder.flatMap((point) => {
+    if (point === "Ascendant") {
+      return [{
+        id: "Ascendant",
+        glyph: pointGlyph("Ascendant"),
+        label: "Ascendant",
+        sign: sky.ascendant,
+        degree: normalizedAngle(sky.ascendantLongitude ?? 0) % 30,
+        house: 1
+      }];
+    }
+
+    const position = positionMap.get(point);
+
+    if (!position) {
+      return [];
+    }
+
+    return [{
+      id: point,
+      glyph: position.glyph || pointGlyph(point),
+      label: point,
+      sign: position.sign,
+      degree: position.degree,
+      house: position.house || null
+    }];
+  });
+}
+
+function socialPlacementDegree(degree: number) {
+  const rounded = Math.round(degree);
+  return `${rounded === 30 ? 0 : rounded}°`;
+}
+
+function FriendPlacementTable({
+  title,
+  rows,
+  compact = false
+}: {
+  title: string;
+  rows: SocialPlacementRow[];
+  compact?: boolean;
+}) {
+  return (
+    <section className={`friend-placement-column ${compact ? "friend-placement-column-compact" : ""}`} aria-label={`${title} placements`}>
+      <h3 className="friend-placement-column-title">{title}</h3>
+      <div className="friend-placement-table">
+        {rows.map((row) => (
+          <div className="friend-placement-row" key={row.id}>
+            <span className="friend-placement-main">
+              <span className="friend-placement-symbol" aria-hidden="true">{row.glyph}</span>
+              <span className="friend-placement-label">{compact ? row.label : row.sign}</span>
+            </span>
+            <span className="friend-placement-meta">
+              {compact && <span>{row.sign}</span>}
+              <span>{socialPlacementDegree(row.degree)}</span>
+              <span aria-hidden="true">·</span>
+              <span>{row.house ? `H${row.house}` : "H-"}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 const planetDignities: Record<string, Partial<Record<string, { label: string; tone: "good" | "weak" }>>> = {
   Sun: {
@@ -7022,6 +7105,9 @@ function ManualChartsPanel({
     ? `${selectedCompositeLeadingElements.join(" & ")} led`
     : "Pattern pending";
   const selectedCompositeTopAspect = selectedCompositeSky?.aspects[0] ?? null;
+  const selectedFriendPlacementRows = socialPlacementRows(selectedChart?.natalChart ?? null);
+  const profilePlacementRows = socialPlacementRows(profileNatalSky);
+  const selectedCompositePlacementRows = socialPlacementRows(selectedCompositeSky);
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
   const selectedFriendLeadingElements = selectedFriendElementalBalance
     .filter((item) => item.count === Math.max(...selectedFriendElementalBalance.map((element) => element.count)) && item.count > 0)
@@ -7625,43 +7711,31 @@ function ManualChartsPanel({
 
           {friendProfileTab === "signs" && (
             <div className="friend-tab-pane friend-signs-pane" aria-label="Signs">
-              <div className="friend-signs-table" aria-label={`${profile.name} and ${selectedChart.displayName} sign comparison`}>
-                <div className="friend-signs-head">
-                  <span>
-                    <i aria-hidden="true">{profileInitials(profile.name, profile.email)}</i>
-                    <strong>You</strong>
-                  </span>
-                  <span>
-                    <i aria-hidden="true">{profileInitials(selectedChart.displayName, selectedChart.displayName)}</i>
-                    <strong>{selectedChart.displayName}</strong>
-                  </span>
+              <section className="friend-placement-section" aria-label={`${profile.name} and ${selectedChart.displayName} placements`}>
+                <span className="eyebrow section-label friend-section-label">Placements</span>
+                <div className="friend-placement-grid">
+                  <FriendPlacementTable title={selectedChart.displayName} rows={selectedFriendPlacementRows} />
+                  <FriendPlacementTable title="You" rows={profilePlacementRows} />
                 </div>
-                {selectedRelationshipSignRows.map((row) => {
-                  const yourGlyph = row.yourSign ? zodiacSignGlyphs[row.yourSign] ?? "" : "";
-                  const friendGlyph = row.friendSign ? zodiacSignGlyphs[row.friendSign] ?? "" : "";
-                  const yourClass = row.yourSign ? row.yourSign.toLowerCase().replace(/\s+/g, "-") : "unknown";
-                  const friendClass = row.friendSign ? row.friendSign.toLowerCase().replace(/\s+/g, "-") : "unknown";
-
-                  return (
-                    <div className="friend-signs-row" key={row.id}>
-                      <div className="friend-signs-section-label">
-                        <span aria-hidden="true">{row.glyph}</span>
-                        <strong>{row.point}</strong>
-                      </div>
-                      <span className={`friend-sign-cell sign-${yourClass}`}>
-                        <span aria-hidden="true">{yourGlyph}</span>
-                        <strong>{row.yourSign ?? "Pending"}</strong>
-                        <ChevronRight size={22} aria-hidden="true" />
-                      </span>
-                      <span className={`friend-sign-cell sign-${friendClass}`}>
-                        <span aria-hidden="true">{friendGlyph}</span>
-                        <strong>{row.friendSign ?? "Pending"}</strong>
-                        <ChevronRight size={22} aria-hidden="true" />
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                {(selectedFriendPlacementRows.length === 0 || profilePlacementRows.length === 0) && (
+                  <article className="friends-logic-card">
+                    <span>Placements</span>
+                    <h3>Placement comparison pending.</h3>
+                    <p>Add complete birth details for both people to compare planets, signs, degrees, and houses.</p>
+                  </article>
+                )}
+              </section>
+              {selectedRelationshipSignRows.length > 0 && (
+                <section className="friend-sign-summary" aria-label="Core sign summary">
+                  {selectedRelationshipSignRows.slice(0, 4).map((row) => (
+                    <article className="friend-sign-summary-row" key={row.id}>
+                      <span>{row.glyph} {row.point}</span>
+                      <strong>{selectedChart.displayName}: {row.friendSign ?? "Pending"}</strong>
+                      <p>You: {row.yourSign ?? "Pending"}</p>
+                    </article>
+                  ))}
+                </section>
+              )}
             </div>
           )}
 
@@ -7847,6 +7921,12 @@ function ManualChartsPanel({
                         </div>
                       </div>
                     </section>
+                    {selectedCompositePlacementRows.length > 0 && (
+                      <section className="friend-placement-section friend-placement-section-single" aria-label="Composite placements">
+                        <span className="eyebrow section-label friend-section-label">Composite placements</span>
+                        <FriendPlacementTable title="Composite" rows={selectedCompositePlacementRows} compact />
+                      </section>
+                    )}
                     <span className="eyebrow section-label friend-section-label">Composite aspects</span>
                     {selectedCompositeSky.aspects.length > 0 ? (
                       <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label="Composite chart aspects">
