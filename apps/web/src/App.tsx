@@ -2713,6 +2713,15 @@ export function App() {
   const isProfileMode = mode === "profile" || mode === "friends" || mode === "account" || mode === "settings";
 
   useEffect(() => {
+    if (!selectedSkyDetail) {
+      return;
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [selectedSkyDetail]);
+
+  useEffect(() => {
     let cancelled = false;
     const domains: ContentDomain[] = ["sky"];
 
@@ -3367,44 +3376,51 @@ export function App() {
 
   return (
     <main className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
-      {!isSignupMode && !selectedSkyDetail && (
+      {!isSignupMode && (
         <header className="topbar">
-        <div className="brand">
-          <div className="brand-mark" aria-hidden="true">
-            <BrandAsterisk />
-          </div>
-          <div className="brand-wordmark" aria-label="tldrastro">
-            <span>TLDR</span>
-            <em>astro</em>
-          </div>
-        </div>
+          <div className="nav-pill">
+            <button
+              className="brand"
+              type="button"
+              aria-label="Go to Sky"
+              onClick={() => setMode(userProfile ? "member" : "guest")}
+            >
+              <div className="brand-mark" aria-hidden="true">
+                <BrandAsterisk size={30} />
+              </div>
+              <div className="brand-wordmark" aria-label="tldrastro">
+                <span>TLDR</span>
+                <em>astro</em>
+              </div>
+            </button>
 
-        <nav className="site-nav" aria-label="Primary navigation">
-          <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
-            <Sparkles size={18} aria-hidden="true" />
-            <span>Sky</span>
-          </button>
-          {userProfile && (
-            <>
-              <button
-                className={`account-nav ${mode === "profile" ? "active" : ""}`}
-                type="button"
-                onClick={() => setMode("profile")}
-              >
-                <SmileNavIcon />
-                <span>You</span>
+            <nav className="site-nav" aria-label="Primary navigation">
+              <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
+                <Sparkles size={18} aria-hidden="true" />
+                <span>Sky</span>
               </button>
-              <button
-                className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
-                type="button"
-                onClick={() => setMode("friends")}
-              >
-                <FriendsNavIcon size={22} />
-                <span>Friends</span>
-              </button>
-            </>
-          )}
-        </nav>
+              {userProfile && (
+                <>
+                  <button
+                    className={`account-nav ${mode === "profile" ? "active" : ""}`}
+                    type="button"
+                    onClick={() => setMode("profile")}
+                  >
+                    <SmileNavIcon />
+                    <span>You</span>
+                  </button>
+                  <button
+                    className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
+                    type="button"
+                    onClick={() => setMode("friends")}
+                  >
+                    <FriendsNavIcon size={22} />
+                    <span>Friends</span>
+                  </button>
+                </>
+              )}
+            </nav>
+          </div>
 
         <div className="topbar-actions">
           <button
@@ -3490,93 +3506,95 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          {isTodayMode && (
-            <section className="today-hero" aria-label="Today controls">
-              <h1>the sky today.</h1>
-              <div className="today-controls">
-                <button
-                  className="today-pill"
-                  type="button"
-                  aria-expanded={datePickerOpen}
-                  aria-controls="sky-date-picker"
-                  onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
-                >
-                  <CalendarDays size={18} aria-hidden="true" />
-                  <span>{formatSkyDate(skyDate)}</span>
-                </button>
-                <button
-                  className="today-pill"
-                  type="button"
-                  ref={cityPickerTriggerRef}
-                  aria-expanded={cityPickerOpen}
-                  aria-controls="city-picker"
-                  onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
-                >
-                  <MapPin size={18} aria-hidden="true" />
-                  <span>{sky.location.label}</span>
-                  <Pencil size={16} aria-hidden="true" />
-                </button>
-              </div>
-              {datePickerOpen && (
-                <SkyDatePicker
-                  value={skyDate}
-                  onSelect={(nextDate) => {
-                    setSkyDate(nextDate);
-                    setDatePickerOpen(false);
-                  }}
-                />
-              )}
-              {cityPickerOpen && (
-                <form
-                  className="city-picker hero-city-picker"
-                  id="city-picker"
-                  ref={cityPickerRef}
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    applyManualLocation();
-                  }}
-                >
-                  <label>
-                    <span>City</span>
-                    <input
-                      value={manualLocation}
-                      onChange={(event) => setManualLocation(event.target.value)}
-                      aria-label="City"
-                      placeholder="Search for a city"
-                      autoFocus
-                    />
-                  </label>
-                  <CitySuggestions
-                    suggestions={citySuggestions}
-                    status={citySearchStatus}
-                    mapboxEnabled={hasMapboxToken()}
-                    onSelect={applyCitySuggestion}
-                  />
-                  <div className="city-picker-actions">
-                    <button type="submit">Update</button>
-                    <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
-                  </div>
-                </form>
-              )}
-            </section>
-          )}
-
           <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
+            {isTodayMode && (
+              <section className="today-hero" aria-label="Today controls">
+                <h1>the sky today.</h1>
+                <div className="today-controls">
+                  <button
+                    className="today-pill"
+                    type="button"
+                    aria-expanded={datePickerOpen}
+                    aria-controls="sky-date-picker"
+                    onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
+                  >
+                    <CalendarDays size={18} aria-hidden="true" />
+                    <span>{formatSkyDate(skyDate)}</span>
+                  </button>
+                  <button
+                    className="today-pill"
+                    type="button"
+                    ref={cityPickerTriggerRef}
+                    aria-expanded={cityPickerOpen}
+                    aria-controls="city-picker"
+                    onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
+                  >
+                    <MapPin size={18} aria-hidden="true" />
+                    <span>{sky.location.label}</span>
+                    <Pencil size={16} aria-hidden="true" />
+                  </button>
+                </div>
+                {datePickerOpen && (
+                  <SkyDatePicker
+                    value={skyDate}
+                    onSelect={(nextDate) => {
+                      setSkyDate(nextDate);
+                      setDatePickerOpen(false);
+                    }}
+                  />
+                )}
+                {cityPickerOpen && (
+                  <form
+                    className="city-picker hero-city-picker"
+                    id="city-picker"
+                    ref={cityPickerRef}
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      applyManualLocation();
+                    }}
+                  >
+                    <label>
+                      <span>City</span>
+                      <input
+                        value={manualLocation}
+                        onChange={(event) => setManualLocation(event.target.value)}
+                        aria-label="City"
+                        placeholder="Search for a city"
+                        autoFocus
+                      />
+                    </label>
+                    <CitySuggestions
+                      suggestions={citySuggestions}
+                      status={citySearchStatus}
+                      mapboxEnabled={hasMapboxToken()}
+                      onSelect={applyCitySuggestion}
+                    />
+                    <div className="city-picker-actions">
+                      <button type="submit">Update</button>
+                      <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+                    </div>
+                  </form>
+                )}
+              </section>
+            )}
+
             {!isSignupMode && !isProfileMode && (
               <section className="sky-panel" aria-label="Current sky">
                 <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
                 <SkyCards sky={sky} generatedContent={skyGeneratedContent} />
+              </section>
+            )}
+
+            <section className="detail-panel" aria-label="Portal details">
+              {(mode === "guest" || mode === "member") && (
                 <RetrogradeCallout
                   positions={sky.positions}
                   generatedAt={sky.generatedAt}
                   generatedContent={skyGeneratedContent}
                   onOpenDetail={setSelectedSkyDetail}
                 />
-              </section>
-            )}
-
-            <section className="detail-panel" aria-label="Portal details">
+              )}
               {mode === "guest" && (
                 <TodayView
                   positions={sky.positions}
@@ -4997,6 +5015,8 @@ function SkyCards({
 }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
+  const sunDegree = formatBriefPlacementDegree(sun);
+  const moonDegree = formatBriefPlacementDegree(moon);
   const dailyContent = liveGeneratedContent(generatedContent, `sky-daily-${sky.generatedAt.slice(0, 10)}`);
 
   return (
@@ -5006,14 +5026,20 @@ function SkyCards({
           <span className="sky-lunar-pill-icon" aria-hidden="true">☉</span>
           <span className="sky-lunar-pill-copy">
             <em>Sun</em>
-            <h3>{sun?.sign ?? "Current"} {formatBriefPlacementDegree(sun)}</h3>
+            <h3>
+              <span>{sun?.sign ?? "Current"}</span>
+              {sunDegree && <small>{sunDegree}</small>}
+            </h3>
           </span>
         </span>
         <span className="sky-lunar-pill">
           <span className="sky-lunar-pill-icon" aria-hidden="true">☽</span>
           <span className="sky-lunar-pill-copy">
             <em>Moon</em>
-            <h3>{moon?.sign ?? "Current"} {formatBriefPlacementDegree(moon)}</h3>
+            <h3>
+              <span>{moon?.sign ?? "Current"}</span>
+              {moonDegree && <small>{moonDegree}</small>}
+            </h3>
           </span>
         </span>
         <span className="sky-lunar-pill">
@@ -7307,6 +7333,22 @@ function ManualChartsPanel({
         <>
           <div className="friends-page-heading">
             <h2>friends.</h2>
+            <div className="friends-page-actions" aria-label="Friend actions">
+              <button
+                className="manual-chart-add-button manual-chart-invite-button"
+                type="button"
+                onClick={() => {
+                  setFriendsMainView("charts");
+                  setMessage("Social invites are coming soon. Add a private chart for now.");
+                }}
+              >
+                <span aria-hidden="true">✈</span>
+                <span>Invite a friend</span>
+              </button>
+              <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
+                <span>Add chart</span>
+              </button>
+            </div>
           </div>
           <div className="app-tabs profile-tabs friends-top-tabs" role="tablist" aria-label="Friends views">
             {([
@@ -7441,6 +7483,11 @@ function ManualChartsPanel({
                           <span>☉ {bigThree.sun}</span>
                           <span>☽ {bigThree.moon}</span>
                           <span>↑ {bigThree.rising}</span>
+                        </span>
+                        <span className="manual-chart-tags" aria-label={`${chart.displayName} chart tags`}>
+                          <span>♔ {formatProfileBirthDate(chart.birthDate)}</span>
+                          {chart.birthTimeUnknown && <span>Add birth time</span>}
+                          <span>{relationshipTypeLabel(chart.relationshipType)}</span>
                         </span>
                       </span>
                     </button>
