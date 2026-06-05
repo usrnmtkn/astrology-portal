@@ -32,6 +32,30 @@ type StoredGeneratedContent = GeneratedContent & {
   model: string;
 };
 
+type ApprovedExampleRow = {
+  content_key?: string | null;
+  surface?: string | null;
+  mode?: string | null;
+  event_type?: string | null;
+  target_date?: string | null;
+  headline?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  sections?: unknown;
+  status?: string | null;
+};
+
+type ApprovedExample = {
+  contentKey: string;
+  surface: string;
+  mode: string;
+  eventType: string;
+  targetDate: string;
+  headline: string;
+  summary: string;
+  body: string;
+};
+
 const promptVersion = "tldr-astro-v1";
 const defaultModel = "gpt-4.1-mini";
 const fallbackStyleGuide = [
@@ -113,6 +137,32 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function compactBody(value: string, maxLength = 1400) {
+  const trimmed = value.replace(/\s+/g, " ").trim();
+  return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
+}
+
+function exampleFromRow(row: ApprovedExampleRow): ApprovedExample | null {
+  const headline = stringValue(row.headline);
+  const summary = stringValue(row.summary);
+  const body = stringValue(row.body);
+
+  if (!headline || !body) {
+    return null;
+  }
+
+  return {
+    contentKey: stringValue(row.content_key),
+    surface: stringValue(row.surface),
+    mode: stringValue(row.mode),
+    eventType: stringValue(row.event_type),
+    targetDate: stringValue(row.target_date),
+    headline,
+    summary,
+    body: compactBody(body)
+  };
 }
 
 function factRecord(facts: Record<string, unknown>, key: string) {
@@ -222,7 +272,25 @@ function factualHeadlineFor(input: GenerateContentInput) {
   return "";
 }
 
-function buildPrompt(input: GenerateContentInput) {
+function approvedExamplesPrompt(examples: ApprovedExample[]) {
+  if (!examples.length) {
+    return "No approved examples available yet.";
+  }
+
+  return examples.map((example, index) => [
+    `APPROVED EXAMPLE ${index + 1}`,
+    `Surface: ${example.surface || "unknown"}`,
+    `Mode: ${example.mode || "unknown"}`,
+    `Event type: ${example.eventType || "unknown"}`,
+    example.targetDate ? `Target date: ${example.targetDate}` : "",
+    `Headline: ${example.headline}`,
+    example.summary ? `Summary: ${example.summary}` : "",
+    "Body:",
+    example.body
+  ].filter(Boolean).join("\n")).join("\n\n");
+}
+
+function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = []) {
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
   const headlineRule = lockedHeadline
@@ -268,9 +336,99 @@ function buildPrompt(input: GenerateContentInput) {
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
     "",
+    "APPROVED TLDR ASTRO EXAMPLES",
+    "Use these only as examples of voice, pacing, specificity, structure, and editorial quality.",
+    "Do not copy their astrology facts unless they are also present in ASTROLOGY FACTS for the current task.",
+    approvedExamplesPrompt(approvedExamples),
+    "",
     "EXTRA VOICE NOTES",
     input.voiceNotes ?? "None."
   ].join("\n");
+}
+
+function supabaseUrl() {
+  return process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "";
+}
+
+function approvedExampleQueryUrl(input: GenerateContentInput, eventType?: string, limit = 3) {
+  const baseUrl = supabaseUrl();
+
+  if (!baseUrl) {
+    return "";
+  }
+
+  const params = new URLSearchParams({
+    select: "content_key,surface,mode,event_type,target_date,headline,summary,body,sections,status",
+    status: "in.(LIVE,REVIEWED)",
+    surface: `eq.${input.surface}`,
+    mode: `eq.${input.mode}`,
+    content_key: `neq.${input.contentKey}`,
+    order: "updated_at.desc",
+    limit: String(limit)
+  });
+
+  if (eventType) {
+    params.set("event_type", `eq.${eventType}`);
+  }
+
+  return `${baseUrl}/rest/v1/generated_interpretations?${params.toString()}`;
+}
+
+async function loadApprovedExamples(input: GenerateContentInput) {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey) {
+    return [];
+  }
+
+  const eventType = input.eventType.trim();
+  const queries = [
+    approvedExampleQueryUrl(input, eventType, 3),
+    approvedExampleQueryUrl(input, undefined, 3)
+  ].filter(Boolean);
+  const examples: ApprovedExample[] = [];
+  const seen = new Set<string>();
+
+  for (const query of queries) {
+    if (examples.length >= 3) {
+      break;
+    }
+
+    try {
+      const response = await fetch(query, {
+        headers: {
+          apikey: serviceRoleKey,
+          authorization: `Bearer ${serviceRoleKey}`
+        }
+      });
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const rows = await response.json() as ApprovedExampleRow[];
+
+      for (const row of rows) {
+        const example = exampleFromRow(row);
+        const key = example?.contentKey;
+
+        if (!example || !key || seen.has(key)) {
+          continue;
+        }
+
+        seen.add(key);
+        examples.push(example);
+
+        if (examples.length >= 3) {
+          break;
+        }
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return examples;
 }
 
 function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedContent {
@@ -312,6 +470,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const apiKey = requireEnv("OPENAI_API_KEY");
   const model = process.env.OPENAI_MODEL ?? defaultModel;
   const lockedHeadline = factualHeadlineFor(input);
+  const approvedExamples = await loadApprovedExamples(input);
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -320,7 +479,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     },
     body: JSON.stringify({
       model,
-      input: buildPrompt(input),
+      input: buildPrompt(input, approvedExamples),
       text: {
         format: {
           type: "json_schema",
