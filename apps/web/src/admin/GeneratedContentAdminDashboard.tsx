@@ -6,7 +6,7 @@ import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
-type VoiceTemplateSurface = "sky" | "natal" | "synastry" | "composite";
+type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "templates";
 type VoiceTemplateConfig = {
   template: string;
@@ -72,6 +72,9 @@ const adminVoiceTemplateStorageKey = "tldrastro:contentVoiceTemplates";
 
 const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
   sky: "Sky",
+  fullMoon: "Full Moon",
+  newMoon: "New Moon",
+  eclipse: "Eclipse",
   natal: "Natal Chart",
   synastry: "Synastry",
   composite: "Composite"
@@ -110,6 +113,108 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Let the big decision wait until the aspect clears.",
       "Pick the one idea with a clear next step.",
       "This is strongest today and fades over the next day or so."
+    ].join("\n")
+  },
+  fullMoon: {
+    template: [
+      "Use for Full Moon articles and in-depth lunar event rows.",
+      "Keep the headline astrological and specific, such as Full Moon in Aquarius.",
+      "Write as culmination, revelation, release, or a point of emotional clarity.",
+      "Name the sign axis when available, because Full Moons work through polarity.",
+      "Do not write a Full Moon as a personal guarantee or dramatic prediction."
+    ].join("\n"),
+    generationGuide: [
+      "Open with what may be reaching a peak, becoming visible, or asking to be named.",
+      "Explain the Moon sign, the Sun's opposing sign, and any exact aspects that sharpen the event.",
+      "Describe the emotional tension in plain language before naming the astrology in detail.",
+      "Give one practical release, decision, conversation, or boundary the reader can work with.",
+      "Include timing: strongest near the exact Full Moon and felt in the days around it."
+    ].join("\n"),
+    bannedWords: [
+      "manifest",
+      "full moon magic",
+      "release ritual required",
+      "destined",
+      "fated",
+      "the universe is forcing",
+      "everything will be revealed"
+    ].join("\n"),
+    phraseBank: [
+      "Something that has been building may become easier to name.",
+      "This is a checkpoint, not a verdict.",
+      "Notice what feels louder than usual.",
+      "Let the evidence show you what needs attention.",
+      "Name the pattern before reacting to it.",
+      "The practical move is...",
+      "This is strongest around the exact Full Moon and settles over the next few days."
+    ].join("\n")
+  },
+  newMoon: {
+    template: [
+      "Use for New Moon articles and in-depth lunar event rows.",
+      "Keep the headline astrological and specific, such as New Moon in Virgo.",
+      "Write as a beginning, reset, seed point, or quiet shift in attention.",
+      "Focus on what can be started, clarified, simplified, or intentionally chosen.",
+      "Do not overpromise outcomes or write as if intentions guarantee results."
+    ].join("\n"),
+    generationGuide: [
+      "Open with the new cycle and the life theme the sign brings into focus.",
+      "Explain the Sun and Moon joined in the same sign, plus any exact aspects shaping the start.",
+      "Describe what the reader may feel ready to begin, adjust, or stop carrying.",
+      "Give one practical intention or first move that fits the sign and aspects.",
+      "Include timing: strongest near the New Moon, unfolding across the coming lunar cycle and larger six-month arc."
+    ].join("\n"),
+    bannedWords: [
+      "manifest your dream life",
+      "set powerful intentions",
+      "divine timing",
+      "highest timeline",
+      "call in",
+      "quantum leap",
+      "new moon magic"
+    ].join("\n"),
+    phraseBank: [
+      "A new cycle begins around...",
+      "Start smaller than the fantasy.",
+      "Choose the first honest step.",
+      "This is a seed point, not a finished result.",
+      "Pay attention to what feels newly possible.",
+      "The useful move is...",
+      "This begins now and develops over the next lunar cycle."
+    ].join("\n")
+  },
+  eclipse: {
+    template: [
+      "Use for Solar Eclipse and Lunar Eclipse articles or in-depth eclipse rows.",
+      "Keep the headline astrological and specific, such as Lunar Eclipse in Pisces.",
+      "Write eclipses as accelerated turning points on the nodal axis.",
+      "Emphasize observation, integration, and grounding over control.",
+      "Do not recommend manifestation or release rituals during eclipse content."
+    ].join("\n"),
+    generationGuide: [
+      "Open by naming that this is not ordinary lunar weather; it can close or open a chapter.",
+      "Explain the eclipse sign, lunar phase, nodal axis, and any close aspects.",
+      "Describe what may be redirected, revealed, interrupted, or made impossible to ignore.",
+      "Keep the advice grounded: observe, document what changes, avoid forcing a final answer too quickly.",
+      "Include timing: exact date/time if available, plus the larger eclipse season or nodal story when known."
+    ].join("\n"),
+    bannedWords: [
+      "manifest",
+      "release ritual",
+      "fated soulmate",
+      "karmic portal",
+      "destiny is forcing",
+      "cosmic upgrade",
+      "timeline jump"
+    ].join("\n"),
+    phraseBank: [
+      "This is not regular lunar weather.",
+      "Something may close, open, or redirect faster than expected.",
+      "Your job is to notice what is changing before trying to control it.",
+      "Let the story clarify before forcing a conclusion.",
+      "Track what becomes impossible to ignore.",
+      "Stay grounded while the energy settles.",
+      "This belongs to a larger eclipse season, not just one day."
     ].join("\n")
   },
   natal: {
@@ -244,7 +349,25 @@ function loadVoiceTemplates() {
   }
 }
 
-function templateSurfaceFor(surface: GeneratedContentSurface): VoiceTemplateSurface {
+function templateSurfaceFor(surface: GeneratedContentSurface, eventType?: string): VoiceTemplateSurface {
+  const normalizedEventType = (eventType ?? "").toLowerCase().replaceAll("_", "-");
+
+  if (surface === "sky") {
+    if (normalizedEventType.includes("eclipse")) {
+      return "eclipse";
+    }
+
+    if (normalizedEventType.includes("full-moon") || normalizedEventType.includes("fullmoon")) {
+      return "fullMoon";
+    }
+
+    if (normalizedEventType.includes("new-moon") || normalizedEventType.includes("newmoon")) {
+      return "newMoon";
+    }
+
+    return "sky";
+  }
+
   if (surface === "synastry" || surface === "relationship") {
     return "synastry";
   }
@@ -258,6 +381,26 @@ function templateSurfaceFor(surface: GeneratedContentSurface): VoiceTemplateSurf
   }
 
   return "sky";
+}
+
+function templateUsageLabel(surface: VoiceTemplateSurface) {
+  switch (surface) {
+    case "fullMoon":
+      return "Full Moon article rows";
+    case "newMoon":
+      return "New Moon article rows";
+    case "eclipse":
+      return "Eclipse article rows";
+    case "natal":
+      return "You + Natal rows";
+    case "synastry":
+      return "Synastry + Relationship rows";
+    case "composite":
+      return "Composite rows";
+    case "sky":
+    default:
+      return "Sky rows";
+  }
 }
 
 function dateInputValue(date: Date = new Date()) {
@@ -544,7 +687,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
-    const surfaceKey = templateSurfaceFor(draftWithFacts.surface);
+    const surfaceKey = templateSurfaceFor(draftWithFacts.surface, draftWithFacts.eventType);
     const config = voiceTemplates[surfaceKey];
     const template = config.template.trim();
     const generationGuide = config.generationGuide.trim();
@@ -1046,7 +1189,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-guidance">
               <article>
                 <span>Used by</span>
-                <strong>{activeTemplateSurface === "sky" ? "Sky rows" : activeTemplateSurface === "natal" ? "You + Natal rows" : activeTemplateSurface === "synastry" ? "Synastry + Relationship rows" : "Composite rows"}</strong>
+                <strong>{templateUsageLabel(activeTemplateSurface)}</strong>
               </article>
               <article>
                 <span>Applied when</span>
