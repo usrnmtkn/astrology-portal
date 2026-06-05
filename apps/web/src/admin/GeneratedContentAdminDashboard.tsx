@@ -7,6 +7,7 @@ import "./admin.css";
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type VoiceTemplateSurface = "sky" | "natal" | "synastry" | "composite";
+type AdminDashboardPage = "review" | "templates";
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -255,6 +256,7 @@ export function GeneratedContentAdminDashboard() {
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
   const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, string>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
+  const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const statusCounts = rows.reduce<Record<GeneratedContentStatus, number>>((counts, row) => {
@@ -422,6 +424,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
+    setActivePage("review");
     setStatus(nextStatus);
     setSurface(nextSurface);
     void loadRows(nextStatus, nextSurface);
@@ -489,6 +492,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedId(null);
     setSurface(nextDraft.surface);
     setStatus(nextDraft.status);
+    setActivePage("review");
     setAreGenerationInputsOpen(true);
     setMessage("New Sky draft ready. Loading astrology facts...");
     await loadFactsForDraft(nextDraft);
@@ -716,41 +720,50 @@ export function GeneratedContentAdminDashboard() {
 
         <nav className="admin-nav" aria-label="Content operations">
           <button
-            className={surface === "sky" && status === "DRAFT" ? "active" : ""}
+            className={activePage === "review" && surface === "sky" && status === "DRAFT" ? "active" : ""}
             type="button"
             onClick={() => showQueue("DRAFT", "sky")}
             disabled={!canUseApi}
-            aria-current={surface === "sky" && status === "DRAFT" ? "page" : undefined}
+            aria-current={activePage === "review" && surface === "sky" && status === "DRAFT" ? "page" : undefined}
           >
             <LayoutDashboard size={18} aria-hidden="true" />
-            Dashboard
+            Content Review
           </button>
           <button
-            className={status === "DRAFT" && !(surface === "sky") ? "active" : ""}
+            className={activePage === "templates" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("templates")}
+            aria-current={activePage === "templates" ? "page" : undefined}
+          >
+            <Sparkles size={18} aria-hidden="true" />
+            Templates & Voice
+          </button>
+          <button
+            className={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "active" : ""}
             type="button"
             onClick={() => showQueue("DRAFT")}
             disabled={!canUseApi}
-            aria-current={status === "DRAFT" && !(surface === "sky") ? "page" : undefined}
+            aria-current={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "page" : undefined}
           >
             <FileText size={18} aria-hidden="true" />
             Drafts
           </button>
           <button
-            className={status === "LIVE" ? "active" : ""}
+            className={activePage === "review" && status === "LIVE" ? "active" : ""}
             type="button"
             onClick={() => showQueue("LIVE")}
             disabled={!canUseApi}
-            aria-current={status === "LIVE" ? "page" : undefined}
+            aria-current={activePage === "review" && status === "LIVE" ? "page" : undefined}
           >
             <Eye size={18} aria-hidden="true" />
             Live Content
           </button>
           <button
-            className={status === "REVIEWED" ? "active" : ""}
+            className={activePage === "review" && status === "REVIEWED" ? "active" : ""}
             type="button"
             onClick={() => showQueue("REVIEWED")}
             disabled={!canUseApi}
-            aria-current={status === "REVIEWED" ? "page" : undefined}
+            aria-current={activePage === "review" && status === "REVIEWED" ? "page" : undefined}
           >
             <Check size={18} aria-hidden="true" />
             Reviewed
@@ -787,24 +800,32 @@ export function GeneratedContentAdminDashboard() {
       <section className="admin-main">
         <header className="admin-dashboard-header">
           <div>
-            <p className="admin-breadcrumb">Admin / Content generation / Review queue</p>
-            <h1>Generated Content</h1>
-            <p>Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app.</p>
+            <p className="admin-breadcrumb">
+              {activePage === "templates" ? "Admin / Content generation / Templates & voice" : "Admin / Content generation / Review queue"}
+            </p>
+            <h1>{activePage === "templates" ? "Templates & Voice" : "Generated Content"}</h1>
+            <p>
+              {activePage === "templates"
+                ? "Define the voice layer OpenAI should use for each astrology content family before drafts are generated."
+                : "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app."}
+            </p>
           </div>
-          <div className="admin-header-actions">
-            <button type="button" onClick={() => void loadRows()} disabled={isLoading || !canUseApi}>
-              <RefreshCw size={16} aria-hidden="true" />
-              Refresh
-            </button>
-            <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
-              <Plus size={16} aria-hidden="true" />
-              New Content
-            </button>
-            <button type="button" onClick={() => void prepopulateSkyQueue()} disabled={isLoading || !canUseApi}>
-              <Sparkles size={16} aria-hidden="true" />
-              Create Sky Queue
-            </button>
-          </div>
+          {activePage === "review" && (
+            <div className="admin-header-actions">
+              <button type="button" onClick={() => void loadRows()} disabled={isLoading || !canUseApi}>
+                <RefreshCw size={16} aria-hidden="true" />
+                Refresh
+              </button>
+              <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
+                <Plus size={16} aria-hidden="true" />
+                New Content
+              </button>
+              <button type="button" onClick={() => void prepopulateSkyQueue()} disabled={isLoading || !canUseApi}>
+                <Sparkles size={16} aria-hidden="true" />
+                Create Sky Queue
+              </button>
+            </div>
+          )}
         </header>
 
         <section className="admin-message-card" aria-live="polite">
@@ -812,82 +833,99 @@ export function GeneratedContentAdminDashboard() {
           <span>{message}</span>
         </section>
 
-        <section id="voice-templates" className="admin-template-panel" aria-label="Content voice templates">
-          <div className="admin-template-header">
-            <div>
-              <p className="admin-eyebrow">Generation controls</p>
-              <h2>Templates & Voice</h2>
-              <p>Set the voice layer OpenAI should use for each content family. These notes are added to the prompt before a draft is generated.</p>
+        {activePage === "templates" ? (
+          <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Generation controls</p>
+                <h2>{voiceTemplateLabels[activeTemplateSurface]}</h2>
+                <p>Set the reusable instructions OpenAI should follow when generating this type of astrology content. Save here first, then go back to Content Review and generate drafts.</p>
+              </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={saveVoiceTemplates}>
+                  <Save size={16} aria-hidden="true" />
+                  Save Templates
+                </button>
+                <button type="button" onClick={resetActiveVoiceTemplate}>
+                  Reset {voiceTemplateLabels[activeTemplateSurface]}
+                </button>
+              </div>
             </div>
-            <div className="admin-template-actions">
-              <button type="button" onClick={saveVoiceTemplates}>
-                <Save size={16} aria-hidden="true" />
-                Save Templates
-              </button>
-              <button type="button" onClick={resetActiveVoiceTemplate}>
-                Reset {voiceTemplateLabels[activeTemplateSurface]}
-              </button>
+
+            <div className="admin-template-tabs" role="tablist" aria-label="Template surface">
+              {(Object.keys(voiceTemplateLabels) as VoiceTemplateSurface[]).map((surfaceKey) => (
+                <button
+                  key={surfaceKey}
+                  type="button"
+                  className={surfaceKey === activeTemplateSurface ? "active" : ""}
+                  onClick={() => setActiveTemplateSurface(surfaceKey)}
+                  role="tab"
+                  aria-selected={surfaceKey === activeTemplateSurface}
+                >
+                  {voiceTemplateLabels[surfaceKey]}
+                </button>
+              ))}
             </div>
-          </div>
 
-          <div className="admin-template-tabs" role="tablist" aria-label="Template surface">
-            {(Object.keys(voiceTemplateLabels) as VoiceTemplateSurface[]).map((surfaceKey) => (
-              <button
-                key={surfaceKey}
-                type="button"
-                className={surfaceKey === activeTemplateSurface ? "active" : ""}
-                onClick={() => setActiveTemplateSurface(surfaceKey)}
-                role="tab"
-                aria-selected={surfaceKey === activeTemplateSurface}
-              >
-                {voiceTemplateLabels[surfaceKey]}
-              </button>
-            ))}
-          </div>
+            <label className="admin-field-wide">
+              <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
+              <textarea
+                value={voiceTemplates[activeTemplateSurface]}
+                onChange={(event) => updateVoiceTemplate(activeTemplateSurface, event.target.value)}
+                rows={16}
+              />
+            </label>
 
-          <label className="admin-field-wide">
-            <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
-            <textarea
-              value={voiceTemplates[activeTemplateSurface]}
-              onChange={(event) => updateVoiceTemplate(activeTemplateSurface, event.target.value)}
-              rows={9}
-            />
-          </label>
+            <div className="admin-template-guidance">
+              <article>
+                <span>Used by</span>
+                <strong>{activeTemplateSurface === "sky" ? "Sky rows" : activeTemplateSurface === "natal" ? "You + Natal rows" : activeTemplateSurface === "synastry" ? "Synastry + Relationship rows" : "Composite rows"}</strong>
+              </article>
+              <article>
+                <span>Applied when</span>
+                <strong>You click Generate</strong>
+              </article>
+              <article>
+                <span>Row notes</span>
+                <strong>Still layered on top</strong>
+              </article>
+            </div>
 
-          <p className="admin-template-note">
-            Sky rows use the Sky template. You and Natal rows use Natal Chart. Relationship rows use Synastry. Composite rows use Composite. Row-specific reviewer notes still apply on top of this.
-          </p>
-        </section>
+            <p className="admin-template-note">
+              These templates are saved in this browser for now. They shape the OpenAI draft before review, while the knowledge base and current astrology facts keep the interpretation grounded.
+            </p>
+          </section>
+        ) : (
+          <>
+            <section className="admin-metrics" aria-label="Content status summary">
+              <article>
+                <span>Rows loaded</span>
+                <strong>{rows.length}</strong>
+                <small>{surface === "all" ? "All surfaces" : surface}</small>
+              </article>
+              <article>
+                <span>Drafts</span>
+                <strong>{statusCounts.DRAFT}</strong>
+                <small>Needs editorial review</small>
+              </article>
+              <article>
+                <span>Reviewed</span>
+                <strong>{statusCounts.REVIEWED}</strong>
+                <small>Ready to publish</small>
+              </article>
+              <article>
+                <span>Live</span>
+                <strong>{statusCounts.LIVE}</strong>
+                <small>Visible in app</small>
+              </article>
+              <article>
+                <span>Errors</span>
+                <strong>{statusCounts.ERROR}</strong>
+                <small>Needs attention</small>
+              </article>
+            </section>
 
-        <section className="admin-metrics" aria-label="Content status summary">
-          <article>
-            <span>Rows loaded</span>
-            <strong>{rows.length}</strong>
-            <small>{surface === "all" ? "All surfaces" : surface}</small>
-          </article>
-          <article>
-            <span>Drafts</span>
-            <strong>{statusCounts.DRAFT}</strong>
-            <small>Needs editorial review</small>
-          </article>
-          <article>
-            <span>Reviewed</span>
-            <strong>{statusCounts.REVIEWED}</strong>
-            <small>Ready to publish</small>
-          </article>
-          <article>
-            <span>Live</span>
-            <strong>{statusCounts.LIVE}</strong>
-            <small>Visible in app</small>
-          </article>
-          <article>
-            <span>Errors</span>
-            <strong>{statusCounts.ERROR}</strong>
-            <small>Needs attention</small>
-          </article>
-        </section>
-
-        <section className="admin-workbench">
+            <section className="admin-workbench">
           <aside className="admin-list-panel" aria-label="Generated content list">
             <div className="admin-panel-header">
               <div>
@@ -1082,7 +1120,9 @@ export function GeneratedContentAdminDashboard() {
               </details>
             </div>
           </section>
-        </section>
+            </section>
+          </>
+        )}
       </section>
 
       {isPreviewOpen && (
