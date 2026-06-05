@@ -9,6 +9,7 @@ export type GenerateContentInput = {
   surface: Surface;
   mode: ContentMode;
   eventType: string;
+  headline?: string;
   targetDate?: string;
   facts: Record<string, unknown>;
   knowledgeIds?: string[];
@@ -58,7 +59,7 @@ const fallbackStyleGuide = [
   "",
   "Sky content is current weather. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
   "Relationship content should describe what happens between two people, not two separate natal descriptions stitched together.",
-  "Titles should name the human theme, not only the astrology."
+  "If a factual astrology headline is supplied, preserve it exactly. Put the human theme in the summary or body, not in the headline."
 ].join("\n");
 
 function requireEnv(name: string) {
@@ -108,6 +109,18 @@ function modeRules(mode: ContentMode) {
 
 function buildPrompt(input: GenerateContentInput) {
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
+  const headlineRule = input.headline
+    ? [
+        "HEADLINE RULE",
+        `Return this exact headline string: ${JSON.stringify(input.headline)}.`,
+        "Do not rewrite it as a human-theme title. Keep the headline as the astrology aspect, placement, transit, season, retrograde, or lunation label.",
+        "Put the readable hook, advice, and emotional interpretation in summary and body."
+      ].join("\n")
+    : [
+        "HEADLINE RULE",
+        "Use a factual astrology headline whenever possible, such as Mercury square Neptune, Moon in Aquarius trine Uranus, Gemini Season, Pluto retrograde, or New Moon in Cancer.",
+        "Do not replace the astrology headline with a purely editorial theme."
+      ].join("\n");
 
   return [
     styleGuide,
@@ -118,6 +131,8 @@ function buildPrompt(input: GenerateContentInput) {
     "Do not mention the knowledge base, source rows, backend, prompt, or review status.",
     "Do not use em dashes.",
     "Return JSON only.",
+    "",
+    headlineRule,
     "",
     "CONTENT MODE",
     modeRules(input.mode),
@@ -142,7 +157,7 @@ function buildPrompt(input: GenerateContentInput) {
   ].join("\n");
 }
 
-function parseResponseJson(raw: string): GeneratedContent {
+function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
@@ -150,7 +165,7 @@ function parseResponseJson(raw: string): GeneratedContent {
   }
 
   return {
-    headline: parsed.headline,
+    headline: lockedHeadline ?? parsed.headline,
     summary: parsed.summary,
     body: parsed.body,
     sections: parsed.sections ?? []
@@ -243,7 +258,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   }
 
   return {
-    ...parseResponseJson(outputText),
+    ...parseResponseJson(outputText, input.headline),
     responseId: payload.id,
     model
   };
