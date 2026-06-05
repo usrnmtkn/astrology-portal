@@ -208,6 +208,68 @@ body,
   padding: 14px 16px;
 }
 
+.admin-template-panel {
+  background: var(--admin-panel);
+  border: 1px solid var(--admin-line);
+  border-radius: 12px;
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.admin-template-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.admin-template-header h2 {
+  font-size: 32px;
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 4px 0 8px;
+}
+
+.admin-template-header p:not(.admin-eyebrow),
+.admin-template-note {
+  color: var(--admin-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 760px;
+}
+
+.admin-template-actions,
+.admin-template-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-template-actions {
+  justify-content: flex-end;
+}
+
+.admin-template-tabs {
+  border-top: 1px solid var(--admin-line);
+  padding-top: 16px;
+}
+
+.admin-template-tabs button {
+  min-width: 128px;
+}
+
+.admin-template-tabs button.active {
+  background: rgba(124, 134, 255, 0.18);
+  border-color: rgba(124, 134, 255, 0.52);
+  color: #fff;
+}
+
+.admin-template-panel textarea {
+  min-height: 210px;
+}
+
 .admin-metrics {
   display: grid;
   gap: 12px;
@@ -620,6 +682,7 @@ body,
 
   .admin-dashboard-header,
   .admin-editor-toolbar,
+  .admin-template-header,
   .admin-header-actions {
     flex-direction: column;
   }

@@ -6,6 +6,7 @@ import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type VoiceTemplateSurface = "sky" | "natal" | "synastry" | "composite";
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -60,6 +61,75 @@ type AdminContentFactsPayload = {
 };
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
+const adminVoiceTemplateStorageKey = "tldrastro:contentVoiceTemplates";
+
+const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
+  sky: "Sky",
+  natal: "Natal Chart",
+  synastry: "Synastry",
+  composite: "Composite"
+};
+
+const defaultVoiceTemplates: Record<VoiceTemplateSurface, string> = {
+  sky: [
+    "Use for current sky, daily transits, retrogrades, seasons, lunar weather, and active aspects.",
+    "Keep the headline factual and astrological.",
+    "Write in this order: what may be noticeable today, why the astrology explains it, what to do, timing.",
+    "Make it actionable. Give one concrete move, such as wait, clarify, write it down, narrow the field, make the call, or choose the next step.",
+    "Do not write current sky as a natal personality trait."
+  ].join("\n"),
+  natal: [
+    "Use for natal placements, natal aspects, houses, chart ruler, and You page chart material.",
+    "Describe tendencies, not fixed identity.",
+    "Write as an observation: what this person may notice in themselves, why it works that way, where it helps, and where it can become difficult.",
+    "Avoid prediction. Avoid telling the person who they are.",
+    "Keep the astrology visible enough that the interpretation feels traceable."
+  ].join("\n"),
+  synastry: [
+    "Use for two-chart relationship contacts, compatibility, friend charts, and Bonds pages.",
+    "Write about what happens between the two people, not two separate natal descriptions.",
+    "Name the shared feeling, the friction, what each person may expect, and the practical thing they need to understand.",
+    "Use names when available. Be direct, specific, and human.",
+    "Do not overstate fate, trauma, or permanence."
+  ].join("\n"),
+  composite: [
+    "Use for composite chart relationship patterns.",
+    "Write about the relationship as its own entity: what the bond tends to create, repeat, protect, avoid, or ask from both people.",
+    "Name the purpose of the pattern, the pressure point, and how the relationship can be handled more consciously.",
+    "Keep the tone grounded and relational.",
+    "Do not turn composite content into individual personality descriptions."
+  ].join("\n")
+};
+
+function loadVoiceTemplates() {
+  try {
+    const saved = window.localStorage.getItem(adminVoiceTemplateStorageKey);
+    const parsed = saved ? JSON.parse(saved) as Partial<Record<VoiceTemplateSurface, string>> : {};
+
+    return {
+      ...defaultVoiceTemplates,
+      ...parsed
+    };
+  } catch {
+    return defaultVoiceTemplates;
+  }
+}
+
+function templateSurfaceFor(surface: GeneratedContentSurface): VoiceTemplateSurface {
+  if (surface === "synastry" || surface === "relationship") {
+    return "synastry";
+  }
+
+  if (surface === "composite") {
+    return "composite";
+  }
+
+  if (surface === "you" || surface === "natal") {
+    return "natal";
+  }
+
+  return "sky";
+}
 
 function dateInputValue(date: Date = new Date()) {
   const year = date.getFullYear();
@@ -183,6 +253,8 @@ export function GeneratedContentAdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
+  const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, string>>(() => loadVoiceTemplates());
+  const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const statusCounts = rows.reduce<Record<GeneratedContentStatus, number>>((counts, row) => {
@@ -305,6 +377,48 @@ export function GeneratedContentAdminDashboard() {
       ...currentDraft,
       [key]: value
     }));
+  }
+
+  function updateVoiceTemplate(surfaceKey: VoiceTemplateSurface, value: string) {
+    setVoiceTemplates((currentTemplates) => ({
+      ...currentTemplates,
+      [surfaceKey]: value
+    }));
+  }
+
+  function saveVoiceTemplates() {
+    try {
+      window.localStorage.setItem(adminVoiceTemplateStorageKey, JSON.stringify(voiceTemplates));
+      setMessage("Voice templates saved. New generations will use these notes.");
+    } catch {
+      setMessage("Could not save voice templates in this browser.");
+    }
+  }
+
+  function resetActiveVoiceTemplate() {
+    const nextTemplates = {
+      ...voiceTemplates,
+      [activeTemplateSurface]: defaultVoiceTemplates[activeTemplateSurface]
+    };
+
+    setVoiceTemplates(nextTemplates);
+    try {
+      window.localStorage.setItem(adminVoiceTemplateStorageKey, JSON.stringify(nextTemplates));
+    } catch {
+      return;
+    }
+    setMessage(`${voiceTemplateLabels[activeTemplateSurface]} voice template reset.`);
+  }
+
+  function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
+    const surfaceKey = templateSurfaceFor(draftWithFacts.surface);
+    const template = voiceTemplates[surfaceKey]?.trim();
+    const rowNotes = draftWithFacts.reviewerNotes.trim();
+
+    return [
+      template ? `SURFACE VOICE TEMPLATE (${voiceTemplateLabels[surfaceKey]})\n${template}` : "",
+      rowNotes ? `ROW-SPECIFIC EDITORIAL NOTES\n${rowNotes}` : ""
+    ].filter(Boolean).join("\n\n");
   }
 
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
@@ -462,7 +576,7 @@ export function GeneratedContentAdminDashboard() {
             facts: parseAdminJson(draftWithFacts.factsJson, "Facts"),
             knowledgeIds: draftWithFacts.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
             sourceSnapshot: parseAdminJson(draftWithFacts.sourceSnapshotJson, "Source snapshot"),
-            voiceNotes: draftWithFacts.reviewerNotes
+            voiceNotes: voiceNotesForDraft(draftWithFacts)
           })
         }
       );
@@ -696,6 +810,53 @@ export function GeneratedContentAdminDashboard() {
         <section className="admin-message-card" aria-live="polite">
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
+        </section>
+
+        <section id="voice-templates" className="admin-template-panel" aria-label="Content voice templates">
+          <div className="admin-template-header">
+            <div>
+              <p className="admin-eyebrow">Generation controls</p>
+              <h2>Templates & Voice</h2>
+              <p>Set the voice layer OpenAI should use for each content family. These notes are added to the prompt before a draft is generated.</p>
+            </div>
+            <div className="admin-template-actions">
+              <button type="button" onClick={saveVoiceTemplates}>
+                <Save size={16} aria-hidden="true" />
+                Save Templates
+              </button>
+              <button type="button" onClick={resetActiveVoiceTemplate}>
+                Reset {voiceTemplateLabels[activeTemplateSurface]}
+              </button>
+            </div>
+          </div>
+
+          <div className="admin-template-tabs" role="tablist" aria-label="Template surface">
+            {(Object.keys(voiceTemplateLabels) as VoiceTemplateSurface[]).map((surfaceKey) => (
+              <button
+                key={surfaceKey}
+                type="button"
+                className={surfaceKey === activeTemplateSurface ? "active" : ""}
+                onClick={() => setActiveTemplateSurface(surfaceKey)}
+                role="tab"
+                aria-selected={surfaceKey === activeTemplateSurface}
+              >
+                {voiceTemplateLabels[surfaceKey]}
+              </button>
+            ))}
+          </div>
+
+          <label className="admin-field-wide">
+            <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
+            <textarea
+              value={voiceTemplates[activeTemplateSurface]}
+              onChange={(event) => updateVoiceTemplate(activeTemplateSurface, event.target.value)}
+              rows={9}
+            />
+          </label>
+
+          <p className="admin-template-note">
+            Sky rows use the Sky template. You and Natal rows use Natal Chart. Relationship rows use Synastry. Composite rows use Composite. Row-specific reviewer notes still apply on top of this.
+          </p>
         </section>
 
         <section className="admin-metrics" aria-label="Content status summary">
