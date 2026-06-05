@@ -8,6 +8,11 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type VoiceTemplateSurface = "sky" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "templates";
+type VoiceTemplateConfig = {
+  template: string;
+  bannedWords: string;
+  phraseBank: string;
+};
 
 type AdminGeneratedContentRow = {
   id: string;
@@ -71,46 +76,140 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
   composite: "Composite"
 };
 
-const defaultVoiceTemplates: Record<VoiceTemplateSurface, string> = {
-  sky: [
-    "Use for current sky, daily transits, retrogrades, seasons, lunar weather, and active aspects.",
-    "Keep the headline factual and astrological.",
-    "Write in this order: what may be noticeable today, why the astrology explains it, what to do, timing.",
-    "Make it actionable. Give one concrete move, such as wait, clarify, write it down, narrow the field, make the call, or choose the next step.",
-    "Do not write current sky as a natal personality trait."
-  ].join("\n"),
-  natal: [
-    "Use for natal placements, natal aspects, houses, chart ruler, and You page chart material.",
-    "Describe tendencies, not fixed identity.",
-    "Write as an observation: what this person may notice in themselves, why it works that way, where it helps, and where it can become difficult.",
-    "Avoid prediction. Avoid telling the person who they are.",
-    "Keep the astrology visible enough that the interpretation feels traceable."
-  ].join("\n"),
-  synastry: [
-    "Use for two-chart relationship contacts, compatibility, friend charts, and Bonds pages.",
-    "Write about what happens between the two people, not two separate natal descriptions.",
-    "Name the shared feeling, the friction, what each person may expect, and the practical thing they need to understand.",
-    "Use names when available. Be direct, specific, and human.",
-    "Do not overstate fate, trauma, or permanence."
-  ].join("\n"),
-  composite: [
-    "Use for composite chart relationship patterns.",
-    "Write about the relationship as its own entity: what the bond tends to create, repeat, protect, avoid, or ask from both people.",
-    "Name the purpose of the pattern, the pressure point, and how the relationship can be handled more consciously.",
-    "Keep the tone grounded and relational.",
-    "Do not turn composite content into individual personality descriptions."
-  ].join("\n")
+const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> = {
+  sky: {
+    template: [
+      "Use for current sky, daily transits, retrogrades, seasons, lunar weather, and active aspects.",
+      "Keep the headline factual and astrological.",
+      "Write in this order: what may be noticeable today, why the astrology explains it, what to do, timing.",
+      "Make it actionable. Give one concrete move, such as wait, clarify, write it down, narrow the field, make the call, or choose the next step.",
+      "Do not write current sky as a natal personality trait."
+    ].join("\n"),
+    bannedWords: [
+      "same sky, different room",
+      "baseline, not today's mood",
+      "step into your power",
+      "align with your truth",
+      "divine timing",
+      "highest self",
+      "raise your vibration"
+    ].join("\n"),
+    phraseBank: [
+      "You may notice...",
+      "This can show up as...",
+      "Get it in writing.",
+      "Ask the clarifying question.",
+      "Let the big decision wait until the aspect clears.",
+      "Pick the one idea with a clear next step.",
+      "This is strongest today and fades over the next day or so."
+    ].join("\n")
+  },
+  natal: {
+    template: [
+      "Use for natal placements, natal aspects, houses, chart ruler, and You page chart material.",
+      "Describe tendencies, not fixed identity.",
+      "Write as an observation: what this person may notice in themselves, why it works that way, where it helps, and where it can become difficult.",
+      "Avoid prediction. Avoid telling the person who they are.",
+      "Keep the astrology visible enough that the interpretation feels traceable."
+    ].join("\n"),
+    bannedWords: [
+      "you are",
+      "this defines you",
+      "broken",
+      "trauma response",
+      "healing journey",
+      "inner child",
+      "nervous system"
+    ].join("\n"),
+    phraseBank: [
+      "There can be...",
+      "You may recognize this as...",
+      "At its best, this gives...",
+      "When it becomes difficult...",
+      "This often works through...",
+      "The useful question is...",
+      "Care often feels most believable when..."
+    ].join("\n")
+  },
+  synastry: {
+    template: [
+      "Use for two-chart relationship contacts, compatibility, friend charts, and Bonds pages.",
+      "Write about what happens between the two people, not two separate natal descriptions.",
+      "Name the shared feeling, the friction, what each person may expect, and the practical thing they need to understand.",
+      "Use names when available. Be direct, specific, and human.",
+      "Do not overstate fate, trauma, or permanence."
+    ].join("\n"),
+    bannedWords: [
+      "soulmate",
+      "twin flame",
+      "karmic contract",
+      "meant to be",
+      "toxic",
+      "destined",
+      "guaranteed"
+    ].join("\n"),
+    phraseBank: [
+      "This can feel easy because...",
+      "The tension is that...",
+      "One person may expect...",
+      "The other person may experience...",
+      "This works best when both people...",
+      "Name the expectation before it becomes resentment.",
+      "The practical move is..."
+    ].join("\n")
+  },
+  composite: {
+    template: [
+      "Use for composite chart relationship patterns.",
+      "Write about the relationship as its own entity: what the bond tends to create, repeat, protect, avoid, or ask from both people.",
+      "Name the purpose of the pattern, the pressure point, and how the relationship can be handled more consciously.",
+      "Keep the tone grounded and relational.",
+      "Do not turn composite content into individual personality descriptions."
+    ].join("\n"),
+    bannedWords: [
+      "this relationship is doomed",
+      "perfect match",
+      "forever",
+      "unbreakable",
+      "fated",
+      "karmic lesson",
+      "divine union"
+    ].join("\n"),
+    phraseBank: [
+      "This bond tends to...",
+      "Together, the relationship may create...",
+      "The pattern becomes harder when...",
+      "The relationship works best when...",
+      "Both people may need to...",
+      "The pressure point is...",
+      "Handled well, this can become..."
+    ].join("\n")
+  }
 };
 
 function loadVoiceTemplates() {
   try {
     const saved = window.localStorage.getItem(adminVoiceTemplateStorageKey);
-    const parsed = saved ? JSON.parse(saved) as Partial<Record<VoiceTemplateSurface, string>> : {};
+    const parsed = saved ? JSON.parse(saved) as Partial<Record<VoiceTemplateSurface, string | Partial<VoiceTemplateConfig>>> : {};
+    const nextTemplates = { ...defaultVoiceTemplates };
 
-    return {
-      ...defaultVoiceTemplates,
-      ...parsed
-    };
+    for (const surfaceKey of Object.keys(defaultVoiceTemplates) as VoiceTemplateSurface[]) {
+      const savedValue = parsed[surfaceKey];
+
+      if (typeof savedValue === "string") {
+        nextTemplates[surfaceKey] = {
+          ...defaultVoiceTemplates[surfaceKey],
+          template: savedValue
+        };
+      } else if (savedValue && typeof savedValue === "object") {
+        nextTemplates[surfaceKey] = {
+          ...defaultVoiceTemplates[surfaceKey],
+          ...savedValue
+        };
+      }
+    }
+
+    return nextTemplates;
   } catch {
     return defaultVoiceTemplates;
   }
@@ -254,7 +353,7 @@ export function GeneratedContentAdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
-  const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, string>>(() => loadVoiceTemplates());
+  const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
@@ -381,10 +480,13 @@ export function GeneratedContentAdminDashboard() {
     }));
   }
 
-  function updateVoiceTemplate(surfaceKey: VoiceTemplateSurface, value: string) {
+  function updateVoiceTemplate(surfaceKey: VoiceTemplateSurface, key: keyof VoiceTemplateConfig, value: string) {
     setVoiceTemplates((currentTemplates) => ({
       ...currentTemplates,
-      [surfaceKey]: value
+      [surfaceKey]: {
+        ...currentTemplates[surfaceKey],
+        [key]: value
+      }
     }));
   }
 
@@ -414,11 +516,16 @@ export function GeneratedContentAdminDashboard() {
 
   function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
     const surfaceKey = templateSurfaceFor(draftWithFacts.surface);
-    const template = voiceTemplates[surfaceKey]?.trim();
+    const config = voiceTemplates[surfaceKey];
+    const template = config.template.trim();
+    const bannedWords = config.bannedWords.trim();
+    const phraseBank = config.phraseBank.trim();
     const rowNotes = draftWithFacts.reviewerNotes.trim();
 
     return [
       template ? `SURFACE VOICE TEMPLATE (${voiceTemplateLabels[surfaceKey]})\n${template}` : "",
+      bannedWords ? `BANNED WORDS AND PHRASES\nDo not use these words, phrases, constructions, or close variants:\n${bannedWords}` : "",
+      phraseBank ? `LANGUAGE AND PHRASE BANK\nPrefer this kind of language when it fits the facts. Do not force every phrase:\n${phraseBank}` : "",
       rowNotes ? `ROW-SPECIFIC EDITORIAL NOTES\n${rowNotes}` : ""
     ].filter(Boolean).join("\n\n");
   }
@@ -870,11 +977,31 @@ export function GeneratedContentAdminDashboard() {
             <label className="admin-field-wide">
               <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
               <textarea
-                value={voiceTemplates[activeTemplateSurface]}
-                onChange={(event) => updateVoiceTemplate(activeTemplateSurface, event.target.value)}
+                value={voiceTemplates[activeTemplateSurface].template}
+                onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "template", event.target.value)}
                 rows={16}
               />
             </label>
+
+            <div className="admin-template-two-column">
+              <label className="admin-field-wide">
+                <span>Banned words and phrases</span>
+                <textarea
+                  value={voiceTemplates[activeTemplateSurface].bannedWords}
+                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "bannedWords", event.target.value)}
+                  rows={9}
+                />
+              </label>
+
+              <label className="admin-field-wide">
+                <span>Language and phrase bank</span>
+                <textarea
+                  value={voiceTemplates[activeTemplateSurface].phraseBank}
+                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "phraseBank", event.target.value)}
+                  rows={9}
+                />
+              </label>
+            </div>
 
             <div className="admin-template-guidance">
               <article>

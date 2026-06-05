@@ -287,6 +287,16 @@ body,
   min-height: 420px;
 }
 
+.admin-template-two-column {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-template-two-column textarea {
+  min-height: 240px;
+}
+
 .admin-template-guidance {
   display: grid;
   gap: 12px;
@@ -717,6 +727,7 @@ body,
   .admin-nav,
   .admin-metrics,
   .admin-template-guidance,
+  .admin-template-two-column,
   .admin-workbench,
   .admin-editor-grid {
     grid-template-columns: 1fr;
