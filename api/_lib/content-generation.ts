@@ -33,6 +33,33 @@ type StoredGeneratedContent = GeneratedContent & {
 
 const promptVersion = "tldr-astro-v1";
 const defaultModel = "gpt-4.1-mini";
+const fallbackStyleGuide = [
+  "# TLDR Astro Voice",
+  "",
+  "TLDR Astro translates astrology into lived experience.",
+  "Write like an insightful observer who can also give useful advice. The voice should feel human, direct, emotionally intelligent, and grounded in real life.",
+  "",
+  "Core rules:",
+  "- Start with lived experience.",
+  "- Let astrology explain the experience, not replace it.",
+  "- Use soft certainty for natal identity: may, can, often, might, there can be, you may notice.",
+  "- Use clearer action language for transits and current sky: get it in writing, narrow the field, wait a day, name the issue, make the call.",
+  "- Do not use em dashes.",
+  "- Do not use self-help language.",
+  "- Do not use therapy language unless explicitly source-backed.",
+  "- Do not invent childhood causes, trauma claims, karmic explanations, or psychological diagnoses.",
+  "- Do not use \"you are\" as an identity statement.",
+  "- Do not use \"this placement asks you to,\" \"this aspect teaches you,\" or \"the lesson is.\"",
+  "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
+  "- Translate source symbolism into concrete human experience.",
+  "",
+  "Preferred short structure: headline, what the reader may notice, why, what to do, timing.",
+  "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what is useful to do with that information.",
+  "",
+  "Sky content is current weather. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
+  "Relationship content should describe what happens between two people, not two separate natal descriptions stitched together.",
+  "Titles should name the human theme, not only the astrology."
+].join("\n");
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -45,7 +72,11 @@ function requireEnv(name: string) {
 }
 
 function readTextFile(relativePath: string) {
-  return fs.readFileSync(path.join(process.cwd(), relativePath), "utf8");
+  try {
+    return fs.readFileSync(path.join(process.cwd(), relativePath), "utf8");
+  } catch {
+    return fallbackStyleGuide;
+  }
 }
 
 function modeRules(mode: ContentMode) {
