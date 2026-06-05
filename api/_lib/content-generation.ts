@@ -85,8 +85,23 @@ type V4RewriteCorpus = {
   entries?: V4RewriteEntry[];
 };
 
-const promptVersion = "tldr-astro-v1";
+const promptVersion = "tldr-astro-v2";
 const defaultModel = "gpt-4.1-mini";
+const bannedUserFacingPhrases = [
+  "same sky, different room",
+  "not a permanent trait",
+  "source-backed",
+  "authored from approved",
+  "approved project",
+  "knowledge base",
+  "source row",
+  "backend",
+  "prompt",
+  "review status",
+  "this placement asks",
+  "this aspect teaches",
+  "the lesson is"
+];
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
   "",
@@ -157,6 +172,55 @@ function modeRules(mode: ContentMode) {
     "Length: full essay.",
     "Structure: event opening, key aspects, collective meaning, personal application, reflection questions when useful.",
     "Tone: lyrical but concrete, mythic but understandable."
+  ].join("\n");
+}
+
+function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
+  const exactHeadline = lockedHeadline
+    ? `Use this exact headline: ${JSON.stringify(lockedHeadline)}.`
+    : "Use a factual astrology headline, not a poetic title.";
+
+  return [
+    "OUTPUT SHAPE",
+    exactHeadline,
+    "Write the interpretation as: headline + what the reader may notice + why + what to do + timing.",
+    "The headline stays astrology-only. The human hook belongs in summary and body.",
+    "summary: one or two plain sentences that name the situation in human language. Do not summarize the astrology mechanically.",
+    "body: write complete paragraphs in this order:",
+    "1. What may be noticeable in real life today, this season, or during this transit.",
+    "2. Why it may feel that way, using the astrology facts without turning them into a jargon list.",
+    "3. What to do with it, using concrete action language.",
+    "4. Timing, including exactness, active date, orb, or whether it fades soon, only when the facts support it.",
+    "sections: include exactly these headings when they fit the mode: What You May Notice, Why This Is Happening, What To Do, Timing.",
+    "Do not use labels inside body unless the mode is article. Body should read like natural prose.",
+    "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
+    input.surface === "sky" ? "Sky rule: write current astrology as weather, advice, and timing. Do not make it a natal identity description." : "",
+    input.surface === "you" || input.surface === "natal" ? "Natal/You rule: describe a recurring pattern with soft certainty, then give a useful way to work with it." : "",
+    input.surface === "synastry" || input.surface === "composite" || input.surface === "relationship" ? "Relationship rule: describe what happens between the people, where it helps, where it gets complicated, and what makes the bond easier to handle." : ""
+  ].filter(Boolean).join("\n");
+}
+
+function rewriteCorpusRules() {
+  return [
+    "REWRITE CORPUS FIELD MAP",
+    "Use the rewrite examples as a translation guide, not as current facts.",
+    "observableExperience, observableTendency, observableCurrentActivation: use these for What You May Notice.",
+    "baseMeaningRewrite, symbolicStory, tldr: use these for Why This Is Happening.",
+    "shadowPattern, pressurePoint, whereItCanBecomeDifficult: use these for what can get messy or where the friction lives.",
+    "bestMove, whereItHelps, closingReflection: use these for What To Do.",
+    "readerFacingSummary: use this for pacing and plain-language summary style.",
+    "If the examples are not an exact match, use only the style and field logic. Never import a fact that is missing from ASTROLOGY FACTS."
+  ].join("\n");
+}
+
+function bannedPhraseRules() {
+  return [
+    "BANNED USER-FACING LANGUAGE",
+    "Do not use em dashes.",
+    "Do not use these phrases or close variants:",
+    ...bannedUserFacingPhrases.map((phrase) => `- ${phrase}`),
+    "Avoid vague spiritual/self-help language such as lean into, step into your power, highest self, divine timing, embodiment, alignment, or healing journey.",
+    "Prefer concrete actions: get it in writing, ask the clarifying question, wait a day, narrow the field, name the expectation, make the call, schedule the meeting, separate the feeling from the fact."
   ].join("\n");
 }
 
@@ -470,6 +534,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     headlineRule,
     "",
+    outputShapeRules(input, lockedHeadline),
+    "",
     "CONTENT MODE",
     modeRules(input.mode),
     "",
@@ -489,6 +555,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
     "",
     "SOURCE-BACKED V4 REWRITE EXAMPLES",
+    rewriteCorpusRules(),
     "Use these to understand field logic, voice shape, and TLDR Astro interpretation style. Do not copy astrology facts from them unless those facts are also present above.",
     v4ExamplesPrompt(input),
     "",
@@ -496,6 +563,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "Use these only as examples of voice, pacing, specificity, structure, and editorial quality.",
     "Do not copy their astrology facts unless they are also present in ASTROLOGY FACTS for the current task.",
     approvedExamplesPrompt(approvedExamples),
+    "",
+    bannedPhraseRules(),
     "",
     "EXTRA VOICE NOTES",
     input.voiceNotes ?? "None."
@@ -587,6 +656,34 @@ async function loadApprovedExamples(input: GenerateContentInput) {
   return examples;
 }
 
+function validateGeneratedContentQuality(content: GeneratedContent) {
+  const userFacingText = [
+    content.headline,
+    content.summary,
+    content.body,
+    ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].join("\n");
+  const normalized = userFacingText.toLowerCase();
+
+  if (userFacingText.includes("—")) {
+    throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
+  }
+
+  for (const phrase of bannedUserFacingPhrases) {
+    if (normalized.includes(phrase)) {
+      throw new Error(`Generated content used banned phrase: ${phrase}`);
+    }
+  }
+
+  if (content.summary.trim().length < 40) {
+    throw new Error("Generated summary is too thin for editorial review.");
+  }
+
+  if (content.body.trim().length < 180) {
+    throw new Error("Generated body is too thin for editorial review.");
+  }
+}
+
 function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
@@ -594,12 +691,16 @@ function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedConte
     throw new Error("OpenAI response did not include headline, summary, and body.");
   }
 
-  return {
+  const content = {
     headline: lockedHeadline ?? parsed.headline,
     summary: parsed.summary,
     body: parsed.body,
     sections: parsed.sections ?? []
   };
+
+  validateGeneratedContentQuality(content);
+
+  return content;
 }
 
 function responseOutputText(payload: {

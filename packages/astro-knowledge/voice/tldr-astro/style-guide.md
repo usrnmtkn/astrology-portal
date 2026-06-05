@@ -72,6 +72,36 @@ Use for collective astrology, New Moons, Full Moons, eclipses, and seasonal essa
 
 ## Page Pattern
 
+Every generated interpretation should be built from the same editorial chain:
+
+```text
+event type + current astrology facts + source meaning + voice layer = one authored paragraph set
+```
+
+The default user-facing structure is:
+
+```text
+Headline
+What you may notice
+Why it may feel that way
+What to do with it
+Timing
+```
+
+The headline should stay factual and astrological when a factual row is being generated. Use `Mercury square Neptune`, `Gemini Season`, `Moon in Aquarius trine Uranus`, `Pluto retrograde`, or `New Moon in Cancer`. Do not turn the headline into a mood title unless the content row is explicitly asking for an editorial card title.
+
+The summary and body should carry the human interpretation. Start with what may be happening in real life, then explain the astrology behind it, then give one usable course of action.
+
+Use this field logic when generated rewrite examples are available:
+
+- `observableExperience`, `observableTendency`, and `observableCurrentActivation` become what the reader may notice.
+- `baseMeaningRewrite`, `symbolicStory`, and `tldr` become why it is happening.
+- `shadowPattern`, `pressurePoint`, and `whereItCanBecomeDifficult` become what can get messy.
+- `bestMove`, `whereItHelps`, and `closingReflection` become what to do.
+- `readerFacingSummary` becomes the pacing model for the summary.
+
+Do not expose these field names to the user.
+
 For long-form cards, use this structure when the surface supports it:
 
 ```text
@@ -269,3 +299,23 @@ Avoid:
 ```text
 Step into your power and trust the process.
 ```
+
+## Banned User-Facing Phrases
+
+Do not use these phrases, even if they are technically true:
+
+- same sky, different room
+- this is not a permanent trait
+- source-backed
+- authored from approved material
+- approved project material
+- knowledge base
+- source row
+- backend
+- prompt
+- review status
+- this placement asks you to
+- this aspect teaches you
+- the lesson is
+
+Do not use em dashes. Use a period, colon, comma, or semicolon instead.
