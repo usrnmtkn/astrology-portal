@@ -16,8 +16,8 @@ export type FallbackHookDefinition = {
 
 export const fallbackHookDefinitions = [
   {
-    key: "sky.seasonal-weather",
-    label: "Sky > Seasonal Weather",
+    key: "sky.seasonal-current",
+    label: "Sky > Season",
     surface: "sky",
     domain: "sky",
     mode: "feed",
@@ -25,12 +25,12 @@ export const fallbackHookDefinitions = [
     knowledgeIdTemplates: ["sky-{planet}-in-{sign}", "{planet}-in-{sign}"]
   },
   {
-    key: "sky.lunar-weather",
-    label: "Sky > Lunar Weather",
+    key: "sky.lunar-cycle",
+    label: "Sky > Lunar Cycle",
     surface: "sky",
     domain: "sky",
     mode: "feed",
-    description: "Moon sign and lunar weather cards, including the Moon's strongest active aspect.",
+    description: "Moon sign and lunar cycle cards, including the Moon's strongest active aspect.",
     knowledgeIdTemplates: ["sky-{planet}-in-{sign}", "{planet}-in-{sign}"]
   },
   {

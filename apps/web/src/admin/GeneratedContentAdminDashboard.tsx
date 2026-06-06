@@ -91,8 +91,8 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
 };
 
 const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
-  "sky.seasonal-weather": { planet: "Sun", sign: "Gemini" },
-  "sky.lunar-weather": { planet: "Moon", sign: "Capricorn" },
+  "sky.seasonal-current": { planet: "Sun", sign: "Gemini" },
+  "sky.lunar-cycle": { planet: "Moon", sign: "Capricorn" },
   "sky.planetary-placement": { planet: "Venus", sign: "Cancer" },
   "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune" },
   "sky.retrograde": { planet: "Pluto", sign: "Aquarius" },
@@ -134,7 +134,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> = {
   sky: {
     template: [
-      "Use for current sky, daily transits, retrogrades, seasons, lunar weather, and active aspects.",
+      "Use for current sky, daily transits, retrogrades, seasons, lunar cycles, and active aspects.",
       "Keep the headline factual and astrological.",
       "Write in this order: what may be noticeable today, why the astrology explains it, what to do, timing.",
       "Make it actionable. Give one concrete move, such as wait, clarify, write it down, narrow the field, make the call, or choose the next step.",
@@ -243,7 +243,7 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "Do not recommend manifestation or release rituals during eclipse content."
     ].join("\n"),
     generationGuide: [
-      "Open by naming that this is not ordinary lunar weather; it can close or open a chapter.",
+      "Open by naming that this is not an ordinary lunation; it can close or open a chapter.",
       "Explain the eclipse sign, lunar phase, nodal axis, and any close aspects.",
       "Describe what may be redirected, revealed, interrupted, or made impossible to ignore.",
       "Keep the advice grounded: observe, document what changes, avoid forcing a final answer too quickly.",
@@ -259,7 +259,7 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "timeline jump"
     ].join("\n"),
     phraseBank: [
-      "This is not regular lunar weather.",
+      "This is not a regular lunation.",
       "Something may close, open, or redirect faster than expected.",
       "Your job is to notice what is changing before trying to control it.",
       "Let the story clarify before forcing a conclusion.",

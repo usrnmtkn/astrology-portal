@@ -125,7 +125,7 @@ const fallbackStyleGuide = [
   "Preferred short structure: TLDR, what this looks like in real life, why the astrology describes it, useful move, timing.",
   "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what is useful to do with that information.",
   "",
-  "Sky content is current weather. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
+  "Sky content is current astrology. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
   "Relationship content should describe what happens between two people, not two separate natal descriptions stitched together.",
   "If a factual astrology headline is supplied, preserve it exactly. Put the human theme in the summary or body, not in the headline."
 ].join("\n");
@@ -194,7 +194,7 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     "sections: include exactly these headings when they fit the mode: What You May Notice, Why This Is Happening, What To Do, Timing.",
     "Do not use labels inside body unless the mode is article. Body should read like natural prose.",
     "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
-    input.surface === "sky" ? "Sky rule: write current astrology as weather, advice, and timing. Do not make it a natal identity description." : "",
+    input.surface === "sky" ? "Sky rule: write current astrology as advice and timing. Do not make it a natal identity description." : "",
     input.surface === "you" || input.surface === "natal" ? "Natal/You rule: describe a recurring pattern with soft certainty, then give a useful way to work with it." : "",
     input.surface === "synastry" || input.surface === "composite" || input.surface === "relationship" ? "Relationship rule: describe what happens between the people, where it helps, where it gets complicated, and what makes the bond easier to handle." : ""
   ].filter(Boolean).join("\n");
@@ -342,11 +342,11 @@ function factualHeadlineFor(input: GenerateContentInput) {
     }
   }
 
-  if (type === "seasonal_weather") {
+  if (type === "seasonal_current" || type === "seasonal_weather") {
     return seasonHeadline(factRecord(facts, "sun"));
   }
 
-  if (type === "lunar_weather") {
+  if (type === "lunar_cycle" || type === "lunar_weather") {
     return moonHeadline(facts);
   }
 

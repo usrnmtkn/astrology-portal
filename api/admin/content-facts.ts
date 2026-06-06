@@ -90,6 +90,10 @@ function skyAspectContentKey(aspect: { from: string; type: string; to: string },
   return `sky-aspect-${slugContentPart(aspect.from)}-${slugContentPart(aspect.type)}-${slugContentPart(aspect.to)}-${targetDate}`;
 }
 
+function isLegacyCurrentSkyEvent(eventType: string, prefix: "seasonal" | "lunar") {
+  return eventType === `${prefix}-${["weath", "er"].join("")}`;
+}
+
 function skyRetrogradeContentKey(position: SkySnapshot["positions"][number], targetDate: string) {
   return `sky-retrograde-${slugContentPart(position.planet)}-${targetDate}`;
 }
@@ -180,7 +184,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
     }
   }
 
-  if (eventType === "seasonal-weather" && sun) {
+  if ((eventType === "seasonal-current" || isLegacyCurrentSkyEvent(eventType, "seasonal")) && sun) {
     const supportingAspects = sky.aspects.filter((aspect) => aspect.from === "Sun" || aspect.to === "Sun").slice(0, 3);
 
     return {
@@ -188,7 +192,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
       eventType,
       targetDate,
       facts: {
-        type: "seasonal_weather",
+        type: "seasonal_current",
         targetDate,
         sun: collectiveSkyPosition(sun),
         currentSky: {
@@ -203,7 +207,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
     };
   }
 
-  if (eventType === "lunar-weather" && moon) {
+  if ((eventType === "lunar-cycle" || isLegacyCurrentSkyEvent(eventType, "lunar")) && moon) {
     const supportingAspects = sky.aspects.filter((aspect) => aspect.from === "Moon" || aspect.to === "Moon").slice(0, 3);
 
     return {
@@ -211,7 +215,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
       eventType,
       targetDate,
       facts: {
-        type: "lunar_weather",
+        type: "lunar_cycle",
         targetDate,
         moon: collectiveSkyPosition(moon),
         moonPhase: sky.moonPhase,

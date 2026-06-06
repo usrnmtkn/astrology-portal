@@ -586,7 +586,7 @@ const currentSkyPlanetTopic: Record<string, string> = {
   jupiter: "growth, opportunity, and perspective",
   mars: "energy, conflict, and momentum",
   mercury: "thinking, communication, and decisions",
-  moon: "the emotional weather",
+  moon: "the emotional tone",
   neptune: "imagination, longing, and uncertainty",
   pluto: "power, pressure, and deep change",
   saturn: "limits, responsibility, and structure",
@@ -714,7 +714,7 @@ function generatedAspectDisplaySummary(planetAId: string, aspectId: string, plan
 
 function generatedAspectDetailParagraphs(planetAName: string, aspectId: string, planetBName: string) {
   return [
-    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, bringing their themes into the same weather system.`,
+    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, bringing their themes into the same current sky story.`,
     detailPhraseByAspect[aspectId] ?? detailPhraseByAspect.conjunction
   ];
 }
