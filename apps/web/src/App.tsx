@@ -39,6 +39,7 @@ import {
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
+  generatedContentSections,
   generatedContentParagraphs,
   loadLiveGeneratedContent,
   type LiveGeneratedContent
@@ -178,6 +179,7 @@ type SynastryContact = {
   score: number;
   tone: string;
   summary: string;
+  contentKeys: string[];
 };
 
 type InterChartAspectLine = {
@@ -196,6 +198,7 @@ type HouseOverlay = {
   targetName: string;
   house: number;
   summary: string;
+  contentKeys: string[];
 };
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
@@ -218,6 +221,10 @@ type SkyDetail = {
   title: string;
   meta: string;
   body: ReactNode[];
+  sections?: Array<{
+    heading: string;
+    body: ReactNode;
+  }>;
   content?: ContentBundle;
 };
 
@@ -351,8 +358,75 @@ function liveGeneratedContent(generatedContent: GeneratedContentMap, contentKey:
   return generatedContent.get(contentKey) ?? null;
 }
 
+function mergeGeneratedContentMaps(...maps: GeneratedContentMap[]) {
+  const merged: GeneratedContentMap = new Map();
+
+  maps.forEach((map) => {
+    map.forEach((value, key) => {
+      if (!merged.has(key)) {
+        merged.set(key, value);
+      }
+    });
+  });
+
+  return merged;
+}
+
+function liveGeneratedContentByKeys(generatedContent: GeneratedContentMap, contentKeys: string[]) {
+  for (const contentKey of contentKeys) {
+    const generated = liveGeneratedContent(generatedContent, contentKey);
+
+    if (generated) {
+      return generated;
+    }
+  }
+
+  return null;
+}
+
+function generatedDetailSections(generated: LiveGeneratedContent | null) {
+  return generatedContentSections(generated).map((section) => ({
+    heading: section.heading,
+    body: section.body
+  }));
+}
+
+function skyGeneratedDateKey(generatedAt: string) {
+  return generatedAt.slice(0, 10);
+}
+
+function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const dateKey = skyGeneratedDateKey(generatedAt);
+
+  return [
+    `sky-aspect-${normalizeContentIdPart(aspect.from)}-${normalizeContentIdPart(aspect.type)}-${normalizeContentIdPart(aspect.to)}-${dateKey}`,
+    currentSkyAspectContentId(aspect.from, aspect.type, aspect.to)
+  ];
+}
+
+function skyPlacementGeneratedContentKeys(position: PlanetPosition, generatedAt: string) {
+  const dateKey = skyGeneratedDateKey(generatedAt);
+  const keys = new Set<string>();
+
+  if (position.planet === "Sun") {
+    keys.add(`sky-season-${normalizeContentIdPart(position.sign)}-${dateKey}`);
+  }
+
+  if (position.planet === "Moon") {
+    keys.add(`sky-moon-${normalizeContentIdPart(position.sign)}-${dateKey}`);
+  }
+
+  if (position.motion === "retrograde") {
+    keys.add(`sky-retrograde-${normalizeContentIdPart(position.planet)}-${dateKey}`);
+  }
+
+  keys.add(placementContentId(position.planet, position.sign, "sky"));
+
+  return Array.from(keys);
+}
+
 function liveGeneratedSummary(generated: LiveGeneratedContent | null, fallback: string | null) {
-  return generated?.summary?.trim() || fallback || interpretationInReviewSummary;
+  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallback || interpretationInReviewSummary;
 }
 
 function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
@@ -1433,6 +1507,7 @@ function SkyDetailArticle({
   const metaRows = detailMetaRows(detail.meta);
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const paragraphs = detail.body.length > 0 ? detail.body : ["This field guide is still being written."];
+  const generatedSections = detail.sections ?? [];
   const [lede, ...sectionParagraphs] = paragraphs;
 
   return (
@@ -1468,14 +1543,26 @@ function SkyDetailArticle({
         ) : null}
 
         <div className="sky-detail-body">
-          <p className="sky-detail-lede">{lede}</p>
-          {sectionParagraphs.map((paragraph, index) => (
-            <section className="sky-detail-section" key={index}>
-              <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {detailSectionTitle(index)}</span>
-              <h3>{detailSectionTitle(index)}</h3>
-              <p>{paragraph}</p>
-            </section>
-          ))}
+          {generatedSections.length > 0 ? (
+            generatedSections.map((section, index) => (
+              <section className="sky-detail-section" key={`${section.heading}-${index}`}>
+                <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {section.heading}</span>
+                <h3>{section.heading}</h3>
+                <p>{section.body}</p>
+              </section>
+            ))
+          ) : (
+            <>
+              <p className="sky-detail-lede">{lede}</p>
+              {sectionParagraphs.map((paragraph, index) => (
+                <section className="sky-detail-section" key={index}>
+                  <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {detailSectionTitle(index)}</span>
+                  <h3>{detailSectionTitle(index)}</h3>
+                  <p>{paragraph}</p>
+                </section>
+              ))}
+            </>
+          )}
           <div className="sky-detail-end" aria-hidden="true">✦</div>
         </div>
       </article>
@@ -1952,16 +2039,42 @@ function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart)
     });
 }
 
-function friendUpdateSummary(chart: ManualChart, transit?: TransitItem) {
+function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generatedContent?: GeneratedContentMap) {
   if (!transit) {
     return `${chart.displayName}'s chart is saved. A clearer update will appear when a stronger transit is active.`;
   }
 
   const area = transitLifeArea(transit, chart);
   const areaTheme = transitLifeAreaTheme(transit, chart);
-  const content = approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+  const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
+  const content = approvedVoiceOrKnowledgeFallback(contentKey);
+  const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
 
-  return content.summary ?? `${transit.transitPlanet} is activating ${chart.displayName}'s ${transit.natalPoint}. This points attention toward their ${area}: ${areaTheme}. Watch how this changes what they need, avoid, ask for, or try to control right now.`;
+  return liveGeneratedSummary(generated, content.summary) || `${transit.transitPlanet} is activating ${chart.displayName}'s ${transit.natalPoint}. This points attention toward their ${area}: ${areaTheme}. Watch how this changes what they need, avoid, ask for, or try to control right now.`;
+}
+
+function relationshipAspectContentKeys(firstPoint: string, aspect: string, secondPoint: string, context?: "synastry" | "composite") {
+  const baseKey = aspectContentId(firstPoint, aspect, secondPoint, "relationship");
+  const reversedBaseKey = aspectContentId(secondPoint, aspect, firstPoint, "relationship");
+  const prefixes = context ? [context, "relationship"] : ["relationship", "synastry", "composite"];
+  const keys = new Set<string>();
+
+  [baseKey, reversedBaseKey].forEach((key) => {
+    keys.add(key);
+    prefixes.forEach((prefix) => keys.add(`${prefix}-${key}`));
+  });
+
+  return Array.from(keys);
+}
+
+function relationshipPlacementContentKeys(point: string, sign: string, context?: "synastry" | "composite") {
+  const baseKey = placementContentId(point, sign, "relationship");
+  const prefixes = context ? [context, "relationship"] : ["relationship", "synastry", "composite"];
+  const keys = new Set<string>([baseKey]);
+
+  prefixes.forEach((prefix) => keys.add(`${prefix}-${baseKey}`));
+
+  return Array.from(keys);
 }
 
 function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
@@ -1972,7 +2085,7 @@ function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
   return `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year, which emphasizes ${houseLifeAreas[timing.profectedHouse]}. ${timing.lordOfYear} is lord of the year, so contacts from ${timing.lordOfYear} are ranked higher for this chart.`;
 }
 
-function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart) {
+function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap) {
   const friendSky = chart.natalChart;
   const friendBigThree = manualChartBigThree(chart);
   const highlights = [
@@ -2012,9 +2125,12 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   const topHit = synastryHits[0];
   if (topHit) {
     const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
+    const generated = generatedContent
+      ? liveGeneratedContentByKeys(generatedContent, relationshipAspectContentKeys(topHit.theirPosition.planet, topHit.aspect.type, topHit.yourPosition.planet, "synastry"))
+      : null;
     highlights.push({
       title,
-      body: `${chart.displayName}'s ${topHit.theirPosition.planet} ${synastryAspectPhrase(topHit.aspect.type)} your ${topHit.yourPosition.planet}. This is one of the stronger repeating patterns between you, especially when current transits activate either planet.`
+      body: liveGeneratedSummary(generated, `${chart.displayName}'s ${topHit.theirPosition.planet} ${synastryAspectPhrase(topHit.aspect.type)} your ${topHit.yourPosition.planet}. This is one of the stronger repeating patterns between you, especially when current transits activate either planet.`)
     });
   }
 
@@ -2231,7 +2347,13 @@ function synastryVerb(aspect: string) {
   return verbs[aspect] ?? "contacts";
 }
 
-function synastryContactSummary(friendName: string, contact: Omit<SynastryContact, "summary">) {
+function synastryContactSummary(friendName: string, contact: Omit<SynastryContact, "summary">, generatedContent?: GeneratedContentMap) {
+  const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
+
+  if (generated) {
+    return liveGeneratedSummary(generated, null);
+  }
+
   const firstConcept = contact.friendPoint.role.split(",")[0] ?? contact.friendPoint.role;
   const secondConcept = contact.yourPoint.role.split(",")[0] ?? contact.yourPoint.role;
   const directness = contact.tone === "Friction"
@@ -2243,7 +2365,7 @@ function synastryContactSummary(friendName: string, contact: Omit<SynastryContac
   return `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPhrase(contact.aspect)} your ${contact.yourPoint.name}. Their ${firstConcept} activates your ${secondConcept}. ${directness}`;
 }
 
-function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChart): SynastryContact[] {
+function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): SynastryContact[] {
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
 
@@ -2266,19 +2388,27 @@ function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChar
         aspect: aspect.type,
         orb: aspect.orbValue,
         score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
-        tone: synastryTone(aspect.type)
+        tone: synastryTone(aspect.type),
+        contentKeys: relationshipAspectContentKeys(friendPoint.name, aspect.type, yourPoint.name, "synastry")
       };
 
       return [{
         ...baseContact,
-        summary: synastryContactSummary(chart.displayName, baseContact)
+        summary: synastryContactSummary(chart.displayName, baseContact, generatedContent)
       }];
     }))
     .sort((first, second) => second.score - first.score || first.orb - second.orb)
     .slice(0, 16);
 }
 
-function synastryDetailCopy(friendName: string, contact: SynastryContact) {
+function synastryDetailCopy(friendName: string, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
+  const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
+  const generatedParagraphs = generatedContentParagraphs(generated);
+
+  if (generatedParagraphs.length > 0) {
+    return generatedParagraphs;
+  }
+
   const firstLine = `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPhrase(contact.aspect)} your ${contact.yourPoint.name}. Their ${contact.friendPoint.role} activates your ${contact.yourPoint.role}.`;
   const secondLine = synastryAspectMeaning(contact.aspect);
   const thirdLine = synastryActionLine(contact.aspect);
@@ -2286,7 +2416,7 @@ function synastryDetailCopy(friendName: string, contact: SynastryContact) {
   return [firstLine, secondLine, thirdLine];
 }
 
-function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart): HouseOverlay[] {
+function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): HouseOverlay[] {
   const friendSky = chart.natalChart;
 
   if (!profileNatalSky || !friendSky) {
@@ -2325,6 +2455,13 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       const direction = targetName === "your"
         ? `${ownerLabel} ${position.planet} brings ${planetRole} into your ${ordinalHouse(house)} house of ${lifeArea}.`
         : `${ownerLabel} ${position.planet} lands in ${houseOwner} ${ordinalHouse(house)} house of ${lifeArea}.`;
+      const contentKeys = [
+        `synastry-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
+        `relationship-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
+        ...relationshipPlacementContentKeys(position.planet, position.sign, "synastry")
+      ];
+      const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contentKeys) : null;
+      const fallbackSummary = `${direction} This is where the connection is most likely to become concrete, because the planet person keeps stirring that part of the house person's life.`;
 
       return [{
         id: `${ownerName}-${position.planet}-${targetName}-${house}`.toLowerCase().replace(/\s+/g, "-"),
@@ -2333,7 +2470,8 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
         ownerName,
         targetName,
         house,
-        summary: `${direction} This is where the connection is most likely to become concrete, because the planet person keeps stirring that part of the house person's life.`
+        summary: liveGeneratedSummary(generated, fallbackSummary),
+        contentKeys
       }];
     })
     .sort((first, second) => {
@@ -2487,9 +2625,17 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
   };
 }
 
-function compositeAspectSummary(aspect: { from: string; to: string; type: string; orb: number } | null, chartName: string) {
+function compositeAspectSummary(aspect: { from: string; to: string; type: string; orb: number } | null, chartName: string, generatedContent?: GeneratedContentMap) {
   if (!aspect) {
     return "The composite chart is available, but there is not a tight major aspect to prioritize in this view.";
+  }
+
+  const generated = generatedContent
+    ? liveGeneratedContentByKeys(generatedContent, relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite"))
+    : null;
+
+  if (generated) {
+    return liveGeneratedSummary(generated, null);
   }
 
   const tone = synastryTone(aspect.type);
@@ -2592,7 +2738,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[]) {
   return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
 }
 
-function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[]) {
+function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap) {
   const calculatedCharts = charts.filter((chart) => chart.natalChart);
   const circleCards = circleActivationCards(currentSky, charts);
 
@@ -2612,7 +2758,7 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[]) 
       {
         label: "Friend update",
         title: topTransit ? `${chart.displayName}: ${topTransit.transitPlanet} ${topTransit.aspect} ${topTransit.natalPoint}` : `${chart.displayName}'s update is ready`,
-        body: topTransit ? friendUpdateSummary(chart, topTransit) : timingSummary(chart, timing)
+        body: topTransit ? friendUpdateSummary(chart, topTransit, generatedContent) : timingSummary(chart, timing)
       },
       {
         label: "Comparison chart",
@@ -2682,6 +2828,8 @@ export function App() {
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const cityPickerRef = useRef<HTMLFormElement | null>(null);
   const cityPickerTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
@@ -2705,6 +2853,8 @@ export function App() {
     return getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
   });
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
@@ -2774,6 +2924,71 @@ export function App() {
   }, [skyDate]);
 
   useEffect(() => {
+    let cancelled = false;
+    const shouldLoadNatal = Boolean(userProfile) && ["profile", "friends", "account", "settings"].includes(mode);
+
+    if (!shouldLoadNatal) {
+      setNatalGeneratedContent(new Map());
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    Promise.all([
+      loadLiveGeneratedContent("natal", skyDate),
+      loadLiveGeneratedContent("you", skyDate)
+    ])
+      .then((maps) => {
+        if (!cancelled) {
+          setNatalGeneratedContent(mergeGeneratedContentMaps(...maps));
+        }
+      })
+      .catch((error) => {
+        console.warn("Live natal interpretations failed to load; using local knowledge fallback.", error);
+        if (!cancelled) {
+          setNatalGeneratedContent(new Map());
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, skyDate, userProfile]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const shouldLoadRelationships = Boolean(userProfile) && mode === "friends";
+
+    if (!shouldLoadRelationships) {
+      setRelationshipGeneratedContent(new Map());
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    Promise.all([
+      loadLiveGeneratedContent("relationship", skyDate),
+      loadLiveGeneratedContent("synastry", skyDate),
+      loadLiveGeneratedContent("composite", skyDate)
+    ])
+      .then((maps) => {
+        if (!cancelled) {
+          setRelationshipGeneratedContent(mergeGeneratedContentMaps(...maps));
+        }
+      })
+      .catch((error) => {
+        console.warn("Live relationship interpretations failed to load; using local knowledge fallback.", error);
+        if (!cancelled) {
+          setRelationshipGeneratedContent(new Map());
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, skyDate, userProfile]);
+
+  useEffect(() => {
     if (!cityPickerOpen) {
       return;
     }
@@ -2806,6 +3021,40 @@ export function App() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [cityPickerOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node | null;
+
+      if (
+        !target ||
+        menuRef.current?.contains(target) ||
+        menuTriggerRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setMenuOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -3380,18 +3629,20 @@ export function App() {
         <header className="topbar">
           <div className="nav-pill">
             <button
-              className="brand"
+              className="brand-dot"
               type="button"
-              aria-label="Go to Sky"
+              aria-label="Home"
               onClick={() => setMode(userProfile ? "member" : "guest")}
             >
-              <div className="brand-mark" aria-hidden="true">
-                <BrandAsterisk size={30} />
-              </div>
-              <div className="brand-wordmark" aria-label="tldrastro">
-                <span>TLDR</span>
-                <em>astro</em>
-              </div>
+              <BrandAsterisk size={22} />
+            </button>
+            <button
+              className="brand-word"
+              type="button"
+              aria-label="TLDR Astro home"
+              onClick={() => setMode(userProfile ? "member" : "guest")}
+            >
+              TLDR Astro
             </button>
 
             <nav className="site-nav" aria-label="Primary navigation">
@@ -3437,7 +3688,10 @@ export function App() {
           <button
             type="button"
             className="menu-toggle"
+            ref={menuTriggerRef}
             aria-expanded={menuOpen}
+            aria-haspopup="menu"
+            aria-controls="site-overflow-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((isOpen) => !isOpen)}
           >
@@ -3448,25 +3702,25 @@ export function App() {
             </span>
           </button>
           {menuOpen && (
-            <nav className="site-menu" aria-label="Site menu">
+            <div className="site-menu" id="site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
               {userProfile && (
                 <>
-                  <button className="site-menu-friends" type="button" onClick={() => { setMode("friends"); setMenuOpen(false); }}>
+                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { setMode("friends"); setMenuOpen(false); }}>
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
-                  <button type="button" onClick={() => { setMode("account"); setMenuOpen(false); }}>
+                  <button type="button" role="menuitem" onClick={() => { setMode("account"); setMenuOpen(false); }}>
                     <User size={20} aria-hidden="true" />
                     <span>Account</span>
                   </button>
                 </>
               )}
-              <button type="button" onClick={() => { setMode("settings"); setMenuOpen(false); }}>
+              <button type="button" role="menuitem" onClick={() => { setMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
               {userProfile ? (
-                <button className="site-menu-signout" type="button" onClick={async () => { await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
+                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
                   <LogOut size={20} aria-hidden="true" />
                   <span>Sign out</span>
                 </button>
@@ -3475,6 +3729,7 @@ export function App() {
                   <button
                     className="site-menu-join"
                     type="button"
+                    role="menuitem"
                     onClick={() => {
                       setAccountIntent("create");
                       setMode("profile");
@@ -3486,6 +3741,7 @@ export function App() {
                   <button
                     className="site-menu-login"
                     type="button"
+                    role="menuitem"
                     onClick={() => {
                       setAccountIntent("login");
                       setMode("profile");
@@ -3496,7 +3752,7 @@ export function App() {
                   </button>
                 </div>
               )}
-            </nav>
+            </div>
           )}
         </div>
         </header>
@@ -3626,6 +3882,7 @@ export function App() {
                     selectedTransitId={selectedTransitId}
                     setSelectedTransitId={setSelectedTransitId}
                     onCreateChart={() => openCreateChartModal()}
+                    generatedContent={natalGeneratedContent}
                   />
                 ) : (
                   <SignupView
@@ -3647,6 +3904,8 @@ export function App() {
                   currentSky={sky}
                   profileNatalSky={profileNatalSky}
                   profileTransits={activeTransits}
+                  natalGeneratedContent={natalGeneratedContent}
+                  relationshipGeneratedContent={relationshipGeneratedContent}
                 />
               )}
               {mode === "account" && userProfile && (
@@ -3978,30 +4237,44 @@ function socialPlacementDegree(degree: number) {
 function FriendPlacementTable({
   title,
   rows,
-  compact = false
+  compact = false,
+  generatedContent,
+  generatedContext = "natal"
 }: {
   title: string;
   rows: SocialPlacementRow[];
   compact?: boolean;
+  generatedContent?: GeneratedContentMap;
+  generatedContext?: "natal" | "composite";
 }) {
   return (
     <section className={`friend-placement-column ${compact ? "friend-placement-column-compact" : ""}`} aria-label={`${title} placements`}>
       <h3 className="friend-placement-column-title">{title}</h3>
       <div className="friend-placement-table">
-        {rows.map((row) => (
-          <div className="friend-placement-row" key={row.id}>
-            <span className="friend-placement-main">
-              <span className="friend-placement-symbol" aria-hidden="true">{row.glyph}</span>
-              <span className="friend-placement-label">{compact ? row.label : row.sign}</span>
-            </span>
-            <span className="friend-placement-meta">
-              {compact && <span>{row.sign}</span>}
-              <span>{socialPlacementDegree(row.degree)}</span>
-              <span aria-hidden="true">·</span>
-              <span>{row.house ? `H${row.house}` : "H-"}</span>
-            </span>
-          </div>
-        ))}
+        {rows.map((row) => {
+          const generated = generatedContent
+            ? generatedContext === "composite"
+              ? liveGeneratedContentByKeys(generatedContent, relationshipPlacementContentKeys(row.label, row.sign, "composite"))
+              : liveGeneratedContent(generatedContent, placementContentId(row.label, row.sign))
+            : null;
+          const summary = generated?.summary?.trim();
+
+          return (
+            <div className="friend-placement-row" key={row.id}>
+              <span className="friend-placement-main">
+                <span className="friend-placement-symbol" aria-hidden="true">{row.glyph}</span>
+                <span className="friend-placement-label">{compact ? row.label : row.sign}</span>
+              </span>
+              <span className="friend-placement-meta">
+                {compact && <span>{row.sign}</span>}
+                <span>{socialPlacementDegree(row.degree)}</span>
+                <span aria-hidden="true">·</span>
+                <span>{row.house ? `H${row.house}` : "H-"}</span>
+              </span>
+              {summary ? <span className="friend-placement-summary">{summary}</span> : null}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -4138,14 +4411,18 @@ function natalPlacementDescription(planet: string) {
   return natalSignatureDescriptions[planet] ?? "A signature in your chart";
 }
 
-function natalPlacementKnowledgeSummary(position: PlanetPosition) {
+function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedContent?: GeneratedContentMap) {
   const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
-  return content.summary ?? interpretationInReviewSummary;
+  const generated = generatedContent ? liveGeneratedContent(generatedContent, placementContentId(position.planet, position.sign)) : null;
+
+  return liveGeneratedSummary(generated, content.summary);
 }
 
-function natalRisingKnowledgeSummary(risingSign: string) {
+function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: GeneratedContentMap) {
   const content = approvedVoiceOrKnowledgeFallback(placementContentId("Ascendant", risingSign));
-  return content.summary ?? interpretationInReviewSummary;
+  const generated = generatedContent ? liveGeneratedContent(generatedContent, placementContentId("Ascendant", risingSign)) : null;
+
+  return liveGeneratedSummary(generated, content.summary);
 }
 
 const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
@@ -5085,7 +5362,7 @@ function RetrogradeCallout({
           const title = `${position.planet} retrograde`;
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-          const generated = liveGeneratedContent(generatedContent, contentKey);
+          const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
           const timelineLines = retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
@@ -5104,6 +5381,7 @@ function RetrogradeCallout({
                 title: generated?.headline ?? title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeDetailRange(retrogradeWindow)}`,
                 body: detailParagraphs,
+                sections: generatedDetailSections(generated),
                 content: content.bundle
               })}
             >
@@ -5355,7 +5633,7 @@ function PlacementView({
           onOpenDetail={onOpenDetail}
         />
       ) : (
-        <PlacementParagraph positions={positions} generatedContent={generatedContent} />
+        <PlacementParagraph positions={positions} generatedAt={generatedAt} generatedContent={generatedContent} />
       )}
     </>
   );
@@ -5420,7 +5698,7 @@ function ActiveAspects({
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
             const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-            const generated = liveGeneratedContent(generatedContent, contentKey);
+            const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
             const rowSummary = liveGeneratedSummary(generated, content.summary);
             const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
             const body = detailParagraphs;
@@ -5437,7 +5715,8 @@ function ActiveAspects({
                   title: generated?.headline ?? title,
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
                   content: content.bundle,
-                  body
+                  body,
+                  sections: generatedDetailSections(generated)
                 })}
               >
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
@@ -5460,9 +5739,11 @@ function ActiveAspects({
 
 function PlacementParagraph({
   positions,
+  generatedAt,
   generatedContent
 }: {
   positions: PlanetPosition[];
+  generatedAt: string;
   generatedContent: GeneratedContentMap;
 }) {
   return (
@@ -5470,7 +5751,7 @@ function PlacementParagraph({
       {positions.map((position, index) => {
         const contentKey = placementContentId(position.planet, position.sign, "sky");
         const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-        const generated = liveGeneratedContent(generatedContent, contentKey);
+        const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
         const summary = liveGeneratedSummary(generated, content.summary);
 
         return (
@@ -5515,7 +5796,7 @@ function PlacementTable({
           const statuses = placementStatuses(position);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-          const generated = liveGeneratedContent(generatedContent, contentKey);
+          const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
           const openDetail = () => onOpenDetail({
@@ -5524,6 +5805,7 @@ function PlacementTable({
             title: generated?.headline ?? title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementTransitRange(position, generatedAt)}`,
             body,
+            sections: generatedDetailSections(generated),
             content: content.bundle
           });
 
@@ -6769,7 +7051,8 @@ function ProfileView({
   natalSky,
   transitsDrawn,
   setSelectedTransitId,
-  onCreateChart
+  onCreateChart,
+  generatedContent
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
@@ -6781,6 +7064,7 @@ function ProfileView({
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
   onCreateChart: () => void;
+  generatedContent: GeneratedContentMap;
 }) {
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
@@ -6951,7 +7235,7 @@ function ProfileView({
                   {displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
                 </span>
                 <span className="crs">
-                  {displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising) : natalSignatureDescriptions.Ascendant}
+                  {displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
                 </span>
               </span>
             </div>
@@ -6959,14 +7243,14 @@ function ProfileView({
               <span className="crg" aria-hidden="true">☉</span>
               <span className="crb">
                 <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
-                <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun) : natalSignatureDescriptions.Sun}</span>
+                <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}</span>
               </span>
             </div>
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☽</span>
               <span className="crb">
                 <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
-                <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon) : natalSignatureDescriptions.Moon}</span>
+                <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}</span>
               </span>
             </div>
           </div>
@@ -6980,7 +7264,7 @@ function ProfileView({
                     <span className="crg" aria-hidden="true">{position.glyph}</span>
                     <span className="crb">
                       <span className="crt">{natalPlacementTitle(position)}</span>
-                      <span className="crs">{natalPlacementKnowledgeSummary(position)}</span>
+                      <span className="crs">{natalPlacementKnowledgeSummary(position, generatedContent)}</span>
                     </span>
                   </div>
                 ))}
@@ -6993,8 +7277,10 @@ function ProfileView({
               <span className="eyebrow section-label">Aspects in your chart</span>
               <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects in your chart">
                 {natalAspectRows.map((aspect) => {
-                  const content = approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to));
-                  const rowSummary = content.summary ?? interpretationInReviewSummary;
+                  const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
+                  const content = approvedVoiceOrKnowledgeFallback(contentKey);
+                  const generated = liveGeneratedContent(generatedContent, contentKey);
+                  const rowSummary = liveGeneratedSummary(generated, content.summary);
 
                   return (
                     <div
@@ -7033,8 +7319,10 @@ function ProfileView({
           {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
             <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
               {aspectRows.map((transit) => {
-                const content = approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
-                const rowSummary = content.summary ?? interpretationInReviewSummary;
+                const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
+                const content = approvedVoiceOrKnowledgeFallback(contentKey);
+                const generated = liveGeneratedContent(generatedContent, contentKey);
+                const rowSummary = liveGeneratedSummary(generated, content.summary);
 
                 return (
                   <button
@@ -7075,12 +7363,16 @@ function ManualChartsPanel({
   profile,
   currentSky,
   profileNatalSky,
-  profileTransits
+  profileTransits,
+  natalGeneratedContent,
+  relationshipGeneratedContent
 }: {
   profile: UserProfile;
   currentSky: SkySnapshot;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
+  natalGeneratedContent: GeneratedContentMap;
+  relationshipGeneratedContent: GeneratedContentMap;
 }) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
@@ -7100,9 +7392,9 @@ function ManualChartsPanel({
   const selectedFriendTopTransit = selectedFriendTransits[0];
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
   const selectedFriendTiming = selectedChart ? friendTimingContext(selectedChart, currentSky) : null;
-  const selectedFriendCompatibility = selectedChart ? compatibilityHighlights(profileNatalSky, selectedChart) : [];
+  const selectedFriendCompatibility = selectedChart ? compatibilityHighlights(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
   const selectedRelationshipTiming = selectedChart ? relationshipTiming(profileTransits, selectedFriendTransits, selectedChart) : [];
-  const selectedSynastryContacts = selectedChart ? synastryContacts(profileNatalSky, selectedChart) : [];
+  const selectedSynastryContacts = selectedChart ? synastryContacts(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
   const selectedSynastryContact = selectedSynastryContacts.find((contact) => contact.id === selectedSynastryContactId)
     ?? selectedSynastryContacts[0]
     ?? null;
@@ -7113,7 +7405,7 @@ function ManualChartsPanel({
     ?? selectedSynastryContacts[1]
     ?? selectedSynastryContacts[0]
     ?? null;
-  const selectedHouseOverlays = selectedChart ? synastryHouseOverlays(profileNatalSky, selectedChart) : [];
+  const selectedHouseOverlays = selectedChart ? synastryHouseOverlays(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
   const selectedRelationshipSignRows = selectedChart ? relationshipSignRows(profileNatalSky, selectedChart) : [];
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
     id: contact.id,
@@ -7151,7 +7443,7 @@ function ManualChartsPanel({
     ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendLeadingElements[0].toLowerCase()} emphasis. Read that as a repeating style across placements, not as the whole person.`
     : "Add complete birth details to read the chart's elemental balance and signature.";
   const selectedRelationshipTypeLabel = relationshipTypeLabel(selectedChart?.relationshipType);
-  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts), [currentSky, charts]);
+  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent), [currentSky, charts, natalGeneratedContent]);
   const isLoadingCharts = status === "loading";
 
   useEffect(() => {
@@ -7731,7 +8023,7 @@ function ManualChartsPanel({
                       ? `${selectedFriendTopTransit.transitPlanet} ${selectedFriendTopTransit.aspect} ${selectedChart.displayName}'s ${selectedFriendTopTransit.natalPoint}`
                       : "Quiet sky"}
                   </h3>
-                  <p>{friendUpdateSummary(selectedChart, selectedFriendTopTransit)}</p>
+                  <p>{friendUpdateSummary(selectedChart, selectedFriendTopTransit, natalGeneratedContent)}</p>
                   <ChevronRight size={24} aria-hidden="true" />
                 </article>
               </div>
@@ -7761,8 +8053,8 @@ function ManualChartsPanel({
               <section className="friend-placement-section" aria-label={`${profile.name} and ${selectedChart.displayName} placements`}>
                 <span className="eyebrow section-label friend-section-label">Placements</span>
                 <div className="friend-placement-grid">
-                  <FriendPlacementTable title={selectedChart.displayName} rows={selectedFriendPlacementRows} />
-                  <FriendPlacementTable title="You" rows={profilePlacementRows} />
+                  <FriendPlacementTable title={selectedChart.displayName} rows={selectedFriendPlacementRows} generatedContent={natalGeneratedContent} />
+                  <FriendPlacementTable title="You" rows={profilePlacementRows} generatedContent={natalGeneratedContent} />
                 </div>
                 {(selectedFriendPlacementRows.length === 0 || profilePlacementRows.length === 0) && (
                   <article className="friends-logic-card">
@@ -7839,7 +8131,7 @@ function ManualChartsPanel({
                     <p>{selectedSynastryContact.summary}</p>
                   </div>
                   <div className="synastry-copy">
-                    {synastryDetailCopy(selectedChart.displayName, selectedSynastryContact).map((paragraph) => (
+                    {synastryDetailCopy(selectedChart.displayName, selectedSynastryContact, relationshipGeneratedContent).map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
                   </div>
@@ -7920,7 +8212,7 @@ function ManualChartsPanel({
                   <h3>{selectedCompositeTopAspect ? `${selectedCompositeTopAspect.from} ${selectedCompositeTopAspect.type} ${selectedCompositeTopAspect.to}` : selectedCompositeElementalSummary}</h3>
                   <p>
                     {selectedCompositeTopAspect
-                      ? compositeAspectSummary(selectedCompositeTopAspect, selectedChart.displayName)
+                      ? compositeAspectSummary(selectedCompositeTopAspect, selectedChart.displayName, relationshipGeneratedContent)
                       : "The composite chart is ready. Add or refine birth times for a clearer aspect pattern."}
                   </p>
                 </article>
@@ -7971,7 +8263,7 @@ function ManualChartsPanel({
                     {selectedCompositePlacementRows.length > 0 && (
                       <section className="friend-placement-section friend-placement-section-single" aria-label="Composite placements">
                         <span className="eyebrow section-label friend-section-label">Composite placements</span>
-                        <FriendPlacementTable title="Composite" rows={selectedCompositePlacementRows} compact />
+                        <FriendPlacementTable title="Composite" rows={selectedCompositePlacementRows} compact generatedContent={relationshipGeneratedContent} generatedContext="composite" />
                       </section>
                     )}
                     <span className="eyebrow section-label friend-section-label">Composite aspects</span>
@@ -7982,7 +8274,7 @@ function ManualChartsPanel({
                               <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                             <span className="aspect-row-copy">
                               <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                              <p>{compositeAspectSummary(aspect, selectedChart.displayName)}</p>
+                              <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipGeneratedContent)}</p>
                             </span>
                             <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                               <span className="aspect-row-dot" aria-hidden="true" />
