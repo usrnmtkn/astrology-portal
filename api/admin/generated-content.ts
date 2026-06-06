@@ -242,6 +242,26 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
   }
 
+  if (typeof body.contentKey === "string") {
+    patch.content_key = body.contentKey.trim();
+  }
+
+  if (body.surface) {
+    patch.surface = body.surface;
+  }
+
+  if (body.mode) {
+    patch.mode = body.mode;
+  }
+
+  if (typeof body.eventType === "string") {
+    patch.event_type = body.eventType.trim();
+  }
+
+  if (body.targetDate !== undefined) {
+    patch.target_date = body.targetDate || null;
+  }
+
   if (typeof body.headline === "string") {
     patch.headline = body.headline;
   }
@@ -256,6 +276,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sections !== undefined) {
     patch.sections = body.sections;
+  }
+
+  if (body.facts !== undefined) {
+    patch.facts = body.facts;
+  }
+
+  if (body.knowledgeIds !== undefined) {
+    patch.knowledge_ids = body.knowledgeIds;
+  }
+
+  if (body.sourceSnapshot !== undefined) {
+    patch.source_snapshot = body.sourceSnapshot;
   }
 
   if (typeof body.reviewerNotes === "string") {

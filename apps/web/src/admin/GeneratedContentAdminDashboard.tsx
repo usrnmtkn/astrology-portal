@@ -805,10 +805,12 @@ export function GeneratedContentAdminDashboard() {
         {
           method: "POST",
           body: JSON.stringify({
+            contentKey: baseDraft.contentKey,
             surface: baseDraft.surface,
             mode: baseDraft.mode,
             eventType: baseDraft.eventType,
-            targetDate: baseDraft.targetDate
+            targetDate: baseDraft.targetDate,
+            headline: baseDraft.headline
           })
         }
       );
@@ -1010,11 +1012,19 @@ export function GeneratedContentAdminDashboard() {
           method: "PATCH",
           body: JSON.stringify({
             id: draft.id,
+            contentKey: draft.contentKey,
+            surface: draft.surface,
+            mode: draft.mode,
+            eventType: draft.eventType,
+            targetDate: draft.targetDate || null,
             status: nextStatus,
             headline: draft.headline,
             summary: draft.summary,
             body: draft.body,
             sections: parseAdminJson(draft.sectionsJson, "Sections"),
+            facts: parseAdminJson(draft.factsJson, "Facts"),
+            knowledgeIds: draft.knowledgeIds.split(",").map((item) => item.trim()).filter(Boolean),
+            sourceSnapshot: parseAdminJson(draft.sourceSnapshotJson, "Source snapshot"),
             reviewerNotes: draft.reviewerNotes
           })
         }

@@ -879,7 +879,7 @@ function formatPlacementDegree(position?: PlanetPosition) {
     return "";
   }
 
-  return `${position.degree.toFixed(2)}°`;
+  return formatPlanetDegree(position);
 }
 
 function formatBriefPlacementDegree(position?: PlanetPosition) {
@@ -4657,10 +4657,6 @@ function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: 
   );
 }
 
-function formatDegree(degree: number) {
-  return degree.toFixed(2);
-}
-
 const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 const socialPlacementOrder = [...placementPlanetOrder, "Ascendant"];
 
@@ -4830,7 +4826,7 @@ function placementDignity(position: PlanetPosition) {
 }
 
 function placementRangeLabel(position: PlanetPosition) {
-  return `${position.sign} 0°-30° · current degree ${formatDegree(position.degree)}°`;
+  return `${position.sign} 0°-30° · current degree ${formatPlanetDegree(position)}`;
 }
 
 function placementStatuses(position: PlanetPosition) {
@@ -4850,7 +4846,7 @@ function placementStatuses(position: PlanetPosition) {
 }
 
 function formatPlacementPosition(position: PlanetPosition) {
-  return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatDegree(position.degree)}°`;
+  return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatPlanetDegree(position)}`;
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {
@@ -5355,7 +5351,7 @@ function SkyWheel({
                 {position.glyph}
               </text>
               <text x={label.x} y={label.y} className="planet-degree">
-                {Math.floor(position.degree)}°
+                {formatPlanetDegree(position)}
               </text>
             </g>
           );
@@ -5540,7 +5536,7 @@ function SynastryWheel({
           {position.glyph}
         </text>
         <text x={label.x} y={label.y} className="planet-degree">
-          {Math.floor(position.degree)}°
+          {formatPlanetDegree(position)}
         </text>
       </g>
     );
@@ -6369,7 +6365,7 @@ function PlacementTable({
               <span className="sky-pl-body">
                 <span className="sky-pl-main">
                   <span className="sky-pl-title">{title}</span>
-                  <span className="sky-pl-degree">{formatDegree(position.degree)}°</span>
+                  <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
                   {position.motion === "retrograde" ? <span className="sky-pl-rx" aria-label="Retrograde">℞</span> : null}
                   {dignity ? (
                     <span className={`spl-dig spl-dig-${dignity.tone}`}>
