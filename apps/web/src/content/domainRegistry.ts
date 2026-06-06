@@ -90,6 +90,37 @@ type AngleEntry = {
   status?: string;
 };
 
+type SynastryAspectEntry = {
+  id: string;
+  planetA?: string;
+  planetB?: string;
+  aspect?: string;
+  plainTranslation?: string;
+  policy?: string;
+  status?: string;
+};
+
+type SynastryHouseOverlayEntry = {
+  id: string;
+  planet?: string;
+  house?: string | number;
+  plainTranslation?: string;
+  policy?: string;
+  status?: string;
+};
+
+type CompositeEntry = {
+  id: string;
+  placementType?: string;
+  planet?: string;
+  aspect?: string;
+  sign?: string;
+  house?: string | number;
+  plainTranslation?: string;
+  policy?: string;
+  status?: string;
+};
+
 type KnowledgeBundle = {
   primitives?: Record<string, PrimitiveEntry[]>;
   insightCards?: InsightCard[];
@@ -98,6 +129,9 @@ type KnowledgeBundle = {
   placements?: PlacementEntry[];
   pointPlacements?: PlacementEntry[];
   angles?: AngleEntry[];
+  synastryAspects?: SynastryAspectEntry[];
+  synastryHouseOverlays?: SynastryHouseOverlayEntry[];
+  composite?: CompositeEntry[];
   voiceContent?: VoiceContentItem[];
 };
 

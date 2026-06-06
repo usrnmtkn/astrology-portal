@@ -12,7 +12,7 @@ export type LiveGeneratedContent = {
   headline: string | null;
   summary: string | null;
   body: string;
-  sections: Record<string, unknown>;
+  sections: unknown;
   updatedAt: string;
 };
 
@@ -26,8 +26,13 @@ type GeneratedContentRow = {
   headline: string | null;
   summary: string | null;
   body: string;
-  sections: Record<string, unknown> | null;
+  sections: unknown | null;
   updated_at: string;
+};
+
+export type GeneratedContentSection = {
+  heading: string;
+  body: string;
 };
 
 function fromRow(row: GeneratedContentRow): LiveGeneratedContent {
@@ -55,6 +60,49 @@ export function generatedContentParagraphs(content?: LiveGeneratedContent | null
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
+}
+
+function normalizeSection(value: unknown): GeneratedContentSection | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const section = value as Record<string, unknown>;
+  const heading = typeof section.heading === "string"
+    ? section.heading.trim()
+    : typeof section.title === "string"
+      ? section.title.trim()
+      : "";
+  const body = typeof section.body === "string"
+    ? section.body.trim()
+    : typeof section.text === "string"
+      ? section.text.trim()
+      : "";
+
+  if (!heading || !body) {
+    return null;
+  }
+
+  return { heading, body };
+}
+
+export function generatedContentSections(content?: LiveGeneratedContent | null): GeneratedContentSection[] {
+  const sections = content?.sections;
+
+  if (Array.isArray(sections)) {
+    return sections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
+  }
+
+  if (sections && typeof sections === "object") {
+    const record = sections as Record<string, unknown>;
+    const nestedSections = record.sections;
+
+    if (Array.isArray(nestedSections)) {
+      return nestedSections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
+    }
+  }
+
+  return [];
 }
 
 export async function loadLiveGeneratedContent(surface: string, targetDate?: string) {
