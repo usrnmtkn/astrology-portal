@@ -3,6 +3,7 @@ import { createDomainRegistry } from "./domainRegistry";
 
 export const {
   approvedVoiceOrKnowledgeFallback,
+  retrogradePlanetMeaning,
   aspectContentId,
   natalAspectContentId,
   currentSkyAspectContentId,

@@ -704,6 +704,97 @@ body,
   color: var(--admin-muted-dark) !important;
 }
 
+.admin-hooks-page {
+  display: grid;
+  gap: 26px;
+}
+
+.admin-hooks-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.admin-hook-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-border);
+  border-radius: 22px;
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.admin-hook-card-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-hook-card h3 {
+  color: var(--admin-ink);
+  font-size: 24px;
+  letter-spacing: 0;
+  line-height: 1.08;
+  margin: 8px 0 0;
+}
+
+.admin-hook-card-header > span {
+  background: rgba(125, 129, 255, 0.16);
+  border: 1px solid rgba(125, 129, 255, 0.32);
+  border-radius: 999px;
+  color: var(--admin-ink);
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+
+.admin-hook-card > p {
+  color: var(--admin-muted);
+  font-size: 16px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.admin-hook-meta {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.admin-hook-meta div {
+  display: grid;
+  gap: 7px;
+}
+
+.admin-hook-meta dt {
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.admin-hook-meta dd {
+  color: var(--admin-ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+}
+
+.admin-hook-meta code {
+  background: var(--admin-panel-dark);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  color: var(--admin-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  padding: 7px 9px;
+}
+
 @media (max-width: 1500px) {
   .admin-workbench {
     grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
