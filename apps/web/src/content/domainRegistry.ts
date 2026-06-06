@@ -249,6 +249,11 @@ function cleanParagraphs(values: Array<string | undefined | null>) {
   return values.map(cleanText).filter(Boolean);
 }
 
+function summarySentence(value: string | undefined | null) {
+  const text = cleanText(value);
+  return text.split(/(?<=[.!?])\s+/)[0] || text;
+}
+
 function uniqueValues<T>(values: T[]) {
   return [...new Set(values)];
 }
@@ -939,6 +944,153 @@ export function createDomainRegistry(bundleInput: unknown) {
 
     addKnowledge(knowledgeItem);
     addKnowledgeAlias(knowledgeItem, placementContentId(angle.point, angle.sign));
+  }
+
+  for (const entry of bundle.synastryAspects ?? []) {
+    if (!entry.planetA || !entry.planetB || !entry.aspect) {
+      continue;
+    }
+
+    const planetA = normalizeIdPart(entry.planetA);
+    const planetB = normalizeIdPart(entry.planetB);
+    const aspect = normalizeIdPart(entry.aspect);
+    const summary = summarySentence(entry.plainTranslation) || `${titleize(planetA)} ${aspect} ${titleize(planetB)}`;
+    const knowledgeItem: KnowledgeItem = {
+      id: entry.id,
+      type: "synastry-aspect",
+      sourceFactors: {
+        planetA,
+        aspect,
+        planetB
+      },
+      surfaceTags: ["synastry"],
+      contentAreas: uniqueValues(["relationships", ...areasForFactors(planetA, planetB)]),
+      priority: natalAspectPriority(planetA, aspect, planetB),
+      intensity: hardAspects.has(aspect) ? 4 : softAspects.has(aspect) ? 3 : 2,
+      interpretation: {
+        coreTheme: summary,
+        displaySummary: summary,
+        detailParagraphs: cleanParagraphs([entry.plainTranslation, entry.policy]),
+        livedExperience: cleanText(entry.plainTranslation) || summary,
+        gift: "",
+        challenge: ""
+      },
+      sources: ["@tldr/astro-knowledge/synastry"],
+      status: reviewStatus(entry.status)
+    };
+    const baseId = aspectContentId(planetA, aspect, planetB);
+    const reverseId = aspectContentId(planetB, aspect, planetA);
+
+    addKnowledge(knowledgeItem);
+    [baseId, reverseId].forEach((alias) => {
+      addKnowledgeAlias(knowledgeItem, alias);
+      addKnowledgeAlias(knowledgeItem, `synastry-${alias}`);
+      addKnowledgeAlias(knowledgeItem, `relationship-${alias}`);
+    });
+  }
+
+  for (const entry of bundle.synastryHouseOverlays ?? []) {
+    if (!entry.planet || !entry.house) {
+      continue;
+    }
+
+    const planet = normalizeIdPart(entry.planet);
+    const house = String(entry.house);
+    const summary = summarySentence(entry.plainTranslation) || `${titleize(planet)} in the ${house} house`;
+    const knowledgeItem: KnowledgeItem = {
+      id: entry.id,
+      type: "synastry-overlay",
+      sourceFactors: {
+        planetA: planet,
+        house
+      },
+      surfaceTags: ["synastry"],
+      contentAreas: uniqueValues(["relationships", ...(houseLifeAreas[Number(house)] ? normalizedAreas([houseLifeAreas[Number(house)]]) : [])]),
+      priority: personalRelevanceScore(planet) + 20,
+      intensity: personalRelevanceScore(planet) >= 25 ? 4 : 2,
+      interpretation: {
+        coreTheme: summary,
+        displaySummary: summary,
+        detailParagraphs: cleanParagraphs([entry.plainTranslation, entry.policy]),
+        livedExperience: cleanText(entry.plainTranslation) || summary,
+        gift: "",
+        challenge: ""
+      },
+      sources: ["@tldr/astro-knowledge/synastry"],
+      status: reviewStatus(entry.status)
+    };
+    const aliases = [
+      `${planet}-house-${house}`,
+      `${planet}-house${house}`,
+      placementContentId(planet, house),
+      entry.id
+    ];
+
+    addKnowledge(knowledgeItem);
+    aliases.forEach((alias) => {
+      addKnowledgeAlias(knowledgeItem, alias);
+      addKnowledgeAlias(knowledgeItem, `synastry-${alias}`);
+      addKnowledgeAlias(knowledgeItem, `relationship-${alias}`);
+    });
+  }
+
+  for (const entry of bundle.composite ?? []) {
+    const summary = summarySentence(entry.plainTranslation) || entry.id;
+    const sourceFactors: SourceFactors = {};
+    const aliases = new Set<string>([entry.id]);
+
+    if (entry.placementType === "aspect" && entry.planet && entry.aspect) {
+      const [planetA, planetB] = entry.planet.split("-").map(normalizeIdPart);
+      const aspect = normalizeIdPart(entry.aspect);
+
+      if (planetA && planetB) {
+        sourceFactors.planetA = planetA;
+        sourceFactors.aspect = aspect;
+        sourceFactors.planetB = planetB;
+        [aspectContentId(planetA, aspect, planetB), aspectContentId(planetB, aspect, planetA)].forEach((alias) => aliases.add(alias));
+      }
+    }
+
+    if (entry.placementType === "sign" && entry.planet && entry.sign) {
+      sourceFactors.planetA = normalizeIdPart(entry.planet);
+      sourceFactors.sign = normalizeIdPart(entry.sign);
+      aliases.add(placementContentId(sourceFactors.planetA, sourceFactors.sign));
+    }
+
+    if (entry.placementType === "house" && entry.planet && entry.house) {
+      sourceFactors.planetA = normalizeIdPart(entry.planet);
+      sourceFactors.house = String(entry.house);
+      aliases.add(`${sourceFactors.planetA}-house-${sourceFactors.house}`);
+      aliases.add(`${sourceFactors.planetA}-house${sourceFactors.house}`);
+      aliases.add(placementContentId(sourceFactors.planetA, sourceFactors.house));
+    }
+
+    const knowledgeItem: KnowledgeItem = {
+      id: entry.id,
+      type: "composite",
+      sourceFactors,
+      surfaceTags: ["synastry"],
+      contentAreas: uniqueValues(["relationships", ...areasForFactors(sourceFactors.planetA, sourceFactors.planetB, sourceFactors.sign)]),
+      priority: personalRelevanceScore(sourceFactors.planetA) + personalRelevanceScore(sourceFactors.planetB) + 20,
+      intensity: hardAspects.has(sourceFactors.aspect ?? "") ? 4 : 3,
+      interpretation: {
+        coreTheme: summary,
+        displaySummary: summary,
+        detailParagraphs: cleanParagraphs([entry.plainTranslation, entry.policy]),
+        livedExperience: cleanText(entry.plainTranslation) || summary,
+        gift: "",
+        challenge: ""
+      },
+      sources: ["@tldr/astro-knowledge/composite"],
+      status: reviewStatus(entry.status)
+    };
+
+    addKnowledge(knowledgeItem);
+    aliases.forEach((alias) => {
+      addKnowledgeAlias(knowledgeItem, alias);
+      addKnowledgeAlias(knowledgeItem, `composite-${alias}`);
+      addKnowledgeAlias(knowledgeItem, `relationship-${alias}`);
+    });
   }
 
   function generatedAspectKnowledge(id: string): KnowledgeItem | null {
