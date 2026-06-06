@@ -232,7 +232,7 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
   const { data, error } = await query.returns<GeneratedContentRow[]>();
 
   if (error) {
-    console.warn("Live generated content failed to load; using local knowledge fallback.", error);
+    console.warn("Live generated content failed to load; unpublished content will remain hidden.", error);
     return new Map<string, LiveGeneratedContent>();
   }
 
