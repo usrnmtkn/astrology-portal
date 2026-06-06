@@ -28,6 +28,6 @@ export function getHoroscope(period: HoroscopePeriod, sky: SkySnapshot): Horosco
   return {
     period,
     ...base,
-    summary: `${base.summary} With the Moon in ${moon?.sign ?? "motion"} over ${sky.location.label}, the emotional weather is asking to be noticed before it is interpreted.`
+    summary: `${base.summary} With the Moon in ${moon?.sign ?? "motion"} over ${sky.location.label}, the emotional tone is asking to be noticed before it is interpreted.`
   };
 }

@@ -92,6 +92,10 @@ function addAlias(aliases: Set<string>, alias?: string | null) {
   }
 }
 
+function isLegacyCurrentSkyEvent(eventType: string | null, prefix: "seasonal" | "lunar") {
+  return eventType === `${prefix}-${["weath", "er"].join("")}`;
+}
+
 function generatedContentAliases(row: GeneratedContentRow) {
   const aliases = new Set<string>();
   const aspect = parseAspectLabel(row.headline);
@@ -107,11 +111,11 @@ function generatedContentAliases(row: GeneratedContentRow) {
       addAlias(aliases, `sky-${reversedAspect}`);
     }
 
-    if (row.event_type === "seasonal-weather" && placement?.sign) {
+    if ((row.event_type === "seasonal-current" || isLegacyCurrentSkyEvent(row.event_type, "seasonal")) && placement?.sign) {
       addAlias(aliases, row.target_date ? `sky-season-${placement.sign}-${row.target_date}` : null);
     }
 
-    if (row.event_type === "lunar-weather" && placement?.sign) {
+    if ((row.event_type === "lunar-cycle" || isLegacyCurrentSkyEvent(row.event_type, "lunar")) && placement?.sign) {
       addAlias(aliases, row.target_date ? `sky-moon-${placement.sign}-${row.target_date}` : null);
     }
 

@@ -3118,9 +3118,9 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
           natalPoint: yourTransit.natalPoint
         },
         {
-          summary: `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same planetary weather may be moving through different needs, so pause before assuming you are reacting to the same thing.`
+          summary: `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same transit may be moving through different needs, so pause before assuming you are reacting to the same thing.`
         }
-      ).summary ?? `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same planetary weather may be moving through different needs, so pause before assuming you are reacting to the same thing.`
+      ).summary ?? `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same transit may be moving through different needs, so pause before assuming you are reacting to the same thing.`
     }));
   }
 
@@ -5862,7 +5862,7 @@ function RetrogradeCallout({
 
   return (
     <section className="retrograde-section" aria-label="Retrograde planets">
-      <span className="section-label">Retrograde weather</span>
+      <span className="section-label">Retrogrades</span>
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
@@ -6328,9 +6328,9 @@ function PlacementTable({
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const placementHookKey = position.planet === "Sun"
-            ? "sky.seasonal-weather"
+            ? "sky.seasonal-current"
             : position.planet === "Moon"
-              ? "sky.lunar-weather"
+              ? "sky.lunar-cycle"
               : "sky.planetary-placement";
           const content = fallbackFromHook(
             placementHookKey,
@@ -8811,7 +8811,7 @@ function ManualChartsPanel({
                 )}
               </div>
               {selectedRelationshipTiming.length > 0 && (
-                <div className="friend-relationship-weather" aria-label="Relationship timing">
+                <div className="friend-relationship-timing" aria-label="Relationship timing">
                   {selectedRelationshipTiming.slice(0, 2).map((item) => (
                     <article className="friends-logic-card" key={item.title + item.body}>
                       <span>Current timing</span>

@@ -203,11 +203,11 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
 
     rows.push(queueRow({
       contentKey: `sky-season-${slug(sun.sign)}-${targetDate}`,
-      eventType: "seasonal-weather",
+      eventType: "seasonal-current",
       targetDate,
       headline: `${sun.sign} Season`,
       facts: {
-        type: "seasonal_weather",
+        type: "seasonal_current",
         targetDate,
         sun: collectiveSkyPosition(sun),
         supportingAspect: sunAspect,
@@ -228,11 +228,11 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
 
     rows.push(queueRow({
       contentKey: `sky-moon-${slug(moon.sign)}-${targetDate}`,
-      eventType: "lunar-weather",
+      eventType: "lunar-cycle",
       targetDate,
       headline: moonAspect ? `Moon in ${moon.sign} ${moonAspect.type} ${moonAspect.from === "Moon" ? moonAspect.to : moonAspect.from}` : `Moon in ${moon.sign}`,
       facts: {
-        type: "lunar_weather",
+        type: "lunar_cycle",
         targetDate,
         moon: collectiveSkyPosition(moon),
         moonPhase: sky.moonPhase,
