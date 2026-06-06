@@ -1,13 +1,14 @@
 import { Archive, BarChart3, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "review" | "templates";
+type AdminDashboardPage = "review" | "templates" | "hooks";
 type VoiceTemplateConfig = {
   template: string;
   generationGuide: string;
@@ -88,6 +89,47 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
   synastry: "Synastry",
   composite: "Composite"
 };
+
+const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
+  "sky.seasonal-weather": { planet: "Sun", sign: "Gemini" },
+  "sky.lunar-weather": { planet: "Moon", sign: "Capricorn" },
+  "sky.planetary-placement": { planet: "Venus", sign: "Cancer" },
+  "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune" },
+  "sky.retrograde": { planet: "Pluto", sign: "Aquarius" },
+  "you.natal-placement": { planet: "Moon", sign: "Capricorn", house: 6 },
+  "you.natal-aspect": { planetA: "Moon", aspect: "trine", planetB: "Saturn" },
+  "you.transit-to-natal": { transitPlanet: "Saturn", aspect: "square", natalPoint: "Venus" },
+  "friends.synastry-contact": { planetA: "Venus", aspect: "sextile", planetB: "Ascendant" },
+  "friends.house-overlay": { planet: "Venus", house: 4 },
+  "friends.composite-aspect": { planetA: "Sun", aspect: "square", planetB: "Moon" },
+  "friends.relationship-timing": { transitPlanet: "Pluto", aspect: "opposition", natalPoint: "Descendant" },
+  "friends.circle-feed": { topic: "saturn" },
+  "settings.life-area-focus": { topic: "career" }
+};
+
+function adminPageTitle(activePage: AdminDashboardPage) {
+  if (activePage === "templates") return "Templates & Voice";
+  if (activePage === "hooks") return "Fallback Hooks";
+  return "Generated Content";
+}
+
+function adminPageBreadcrumb(activePage: AdminDashboardPage) {
+  if (activePage === "templates") return "Admin / Content generation / Templates & voice";
+  if (activePage === "hooks") return "Admin / Content generation / Fallback hooks";
+  return "Admin / Content generation / Review queue";
+}
+
+function adminPageDescription(activePage: AdminDashboardPage) {
+  if (activePage === "templates") {
+    return "Define the voice layer OpenAI should use for each astrology content family before drafts are generated.";
+  }
+
+  if (activePage === "hooks") {
+    return "Review the named fallback hook points the app uses when a surface needs approved knowledge-backed copy.";
+  }
+
+  return "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app.";
+}
 
 const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> = {
   sky: {
@@ -1048,6 +1090,15 @@ export function GeneratedContentAdminDashboard() {
             Templates & Voice
           </button>
           <button
+            className={activePage === "hooks" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("hooks")}
+            aria-current={activePage === "hooks" ? "page" : undefined}
+          >
+            <KeyRound size={18} aria-hidden="true" />
+            Fallback Hooks
+          </button>
+          <button
             className={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "active" : ""}
             type="button"
             onClick={() => showQueue("DRAFT")}
@@ -1110,14 +1161,10 @@ export function GeneratedContentAdminDashboard() {
         <header className="admin-dashboard-header">
           <div>
             <p className="admin-breadcrumb">
-              {activePage === "templates" ? "Admin / Content generation / Templates & voice" : "Admin / Content generation / Review queue"}
+              {adminPageBreadcrumb(activePage)}
             </p>
-            <h1>{activePage === "templates" ? "Templates & Voice" : "Generated Content"}</h1>
-            <p>
-              {activePage === "templates"
-                ? "Define the voice layer OpenAI should use for each astrology content family before drafts are generated."
-                : "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app."}
-            </p>
+            <h1>{adminPageTitle(activePage)}</h1>
+            <p>{adminPageDescription(activePage)}</p>
           </div>
           {activePage === "review" && (
             <div className="admin-header-actions">
@@ -1142,7 +1189,65 @@ export function GeneratedContentAdminDashboard() {
           <span>{message}</span>
         </section>
 
-        {activePage === "templates" ? (
+        {activePage === "hooks" ? (
+          <section id="fallback-hooks" className="admin-template-panel admin-hooks-page" aria-label="Fallback hook catalog">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Hook catalog</p>
+                <h2>Named Fallback Points</h2>
+                <p>These are the app surfaces that use fallback copy when no LIVE generated content exists yet. Use the labels below to identify what needs a generated row, template, or source-backed rewrite.</p>
+              </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={() => setActivePage("review")}>
+                  <LayoutDashboard size={16} aria-hidden="true" />
+                  Back to Review
+                </button>
+              </div>
+            </div>
+
+            <div className="admin-hooks-grid">
+              {fallbackHookDefinitions.map((hook) => {
+                const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
+                const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
+
+                return (
+                  <article className="admin-hook-card" key={hook.key}>
+                    <div className="admin-hook-card-header">
+                      <div>
+                        <p className="admin-eyebrow">{hook.surface} / {hook.mode}</p>
+                        <h3>{hook.label}</h3>
+                      </div>
+                      <span>{hook.domain}</span>
+                    </div>
+                    <p>{hook.description}</p>
+                    <dl className="admin-hook-meta">
+                      <div>
+                        <dt>Hook key</dt>
+                        <dd>{hook.key}</dd>
+                      </div>
+                      <div>
+                        <dt>Knowledge ID patterns</dt>
+                        <dd>
+                          {hook.knowledgeIdTemplates.map((template) => (
+                            <code key={template}>{template}</code>
+                          ))}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Example IDs</dt>
+                        <dd>
+                          {sampleIds.map((sampleId) => (
+                            <code key={sampleId}>{sampleId}</code>
+                          ))}
+                        </dd>
+                      </div>
+                    </dl>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ) : activePage === "templates" ? (
           <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
             <div className="admin-template-header">
               <div>

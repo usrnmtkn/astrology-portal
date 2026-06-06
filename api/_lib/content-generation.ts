@@ -105,24 +105,24 @@ const bannedUserFacingPhrases = [
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
   "",
-  "TLDR Astro translates astrology into lived experience.",
-  "Write like an insightful observer who can also give useful advice. The voice should feel human, direct, emotionally intelligent, and grounded in real life.",
+  "TLDR Astro explains what the astrology can look like in real life.",
+  "Write like a smart astrologer explaining the pattern in normal language: clear, direct, emotionally aware, and grounded in real life.",
   "",
   "Core rules:",
   "- Start with lived experience.",
-  "- Let astrology explain the experience, not replace it.",
-  "- Use soft certainty for natal identity: may, can, often, might, there can be, you may notice.",
-  "- Use clearer action language for transits and current sky: get it in writing, narrow the field, wait a day, name the issue, make the call.",
+  "- Start with what the astrology describes, then explain what that can look like in ordinary life.",
+  "- Use soft certainty without making every sentence vague. Prefer can, often, tends to, may, and there can be.",
+  "- For transits and current sky, use plain action language that fits the astrology: check the facts, name the issue, take the next real step, or let the situation settle.",
   "- Do not use em dashes.",
   "- Do not use self-help language.",
   "- Do not use therapy language unless explicitly source-backed.",
   "- Do not invent childhood causes, trauma claims, karmic explanations, or psychological diagnoses.",
   "- Do not use \"you are\" as an identity statement.",
-  "- Do not use \"this placement asks you to,\" \"this aspect teaches you,\" or \"the lesson is.\"",
+  "- Do not use \"this placement asks you to,\" \"this aspect works best when,\" or \"the useful thing to notice is.\"",
   "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
   "- Translate source symbolism into concrete human experience.",
   "",
-  "Preferred short structure: headline, what the reader may notice, why, what to do, timing.",
+  "Preferred short structure: TLDR, what this looks like in real life, why the astrology describes it, useful move, timing.",
   "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what is useful to do with that information.",
   "",
   "Sky content is current weather. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
@@ -153,8 +153,8 @@ function modeRules(mode: ContentMode) {
     return [
       "Feed Mode: quick daily insight.",
       "Length: one or two paragraphs.",
-      "Structure: headline, what the reader may notice, why, what to do, timing.",
-      "Tone: immediate, social, specific, and useful."
+      "Structure: TLDR, real-life signal, astrology reason, useful move, timing.",
+      "Tone: direct, specific, easy to read, and useful right away."
     ].join("\n");
   }
 
@@ -162,8 +162,8 @@ function modeRules(mode: ContentMode) {
     return [
       "In-Depth Mode: explain a major transit, placement, or relationship pattern.",
       "Length: three to five paragraphs.",
-      "Structure: what is being activated, likely lived experience, why it feels that way, useful action or reflection.",
-      "Tone: direct, readable, emotionally specific."
+      "Structure: what is being activated, likely real life, why it feels that way, useful action or reflection.",
+      "Tone: direct, readable, emotionally specific, and human on the first read."
     ].join("\n");
   }
 
@@ -841,11 +841,21 @@ export function loadSkySourceSnapshot() {
   const skyPath = path.join(process.cwd(), "packages/astro-knowledge/dist/sky.json");
   const sky = JSON.parse(fs.readFileSync(skyPath, "utf8")) as {
     transits?: Array<Record<string, unknown>>;
+    modifiers?: Array<Record<string, unknown>>;
     primitives?: Record<string, unknown>;
   };
 
+  const retrogradeModifiers = (sky.modifiers ?? []).filter((modifier) => {
+    const id = stringValue(modifier.id);
+    const category = stringValue(modifier.category);
+    const schema = stringValue(modifier.schema);
+
+    return id.includes("retrograde") || category.includes("retrograde") || schema.includes("retrograde");
+  });
+
   return {
     primitives: sky.primitives,
+    modifiers: retrogradeModifiers,
     transits: (sky.transits ?? []).slice(0, 12)
   };
 }

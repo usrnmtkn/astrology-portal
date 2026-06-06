@@ -24,6 +24,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
+import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
@@ -77,7 +78,22 @@ type ChartSettings = {
   houseSystem: "Whole House";
   zodiac: "Tropical";
   aspects: "Standard" | "Tight";
+  lifeAreaFocus: LifeAreaFocus[];
 };
+
+type LifeAreaFocus =
+  | "career"
+  | "relationships"
+  | "friends"
+  | "family"
+  | "health"
+  | "money"
+  | "home"
+  | "communication"
+  | "creativity"
+  | "emotional-needs"
+  | "growth"
+  | "spirituality";
 
 type UserProfile = {
   id: string;
@@ -198,6 +214,7 @@ type HouseOverlay = {
   targetName: string;
   house: number;
   summary: string;
+  detailParagraphs: string[];
   contentKeys: string[];
 };
 
@@ -234,6 +251,7 @@ type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
   typeof import("./content/skyRegistry"),
   | "approvedVoiceOrKnowledgeFallback"
+  | "retrogradePlanetMeaning"
   | "aspectContentId"
   | "natalAspectContentId"
   | "currentSkyAspectContentId"
@@ -345,6 +363,39 @@ function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "n
     body: null,
     detailParagraphs: []
   };
+}
+
+function fallbackFromHook(
+  hookKey: string,
+  context: FallbackHookContext = {},
+  localFallback: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> = {}
+): ContentFallback {
+  const hook = fallbackHookByKey(hookKey);
+  const knowledgeIds = knowledgeIdsForFallbackHook(hookKey, context);
+
+  for (const knowledgeId of knowledgeIds) {
+    const fallback = approvedVoiceOrKnowledgeFallback(knowledgeId, hook?.domain ?? "natal");
+
+    if (fallback.summary || fallback.body || fallback.detailParagraphs.length > 0) {
+      return fallback;
+    }
+  }
+
+  return {
+    bundle: {
+      id: hookKey,
+      knowledge: null,
+      voice: null,
+      status: "INCOMPLETE"
+    },
+    summary: localFallback.summary ?? null,
+    body: localFallback.body ?? null,
+    detailParagraphs: localFallback.detailParagraphs ?? (localFallback.body ? [localFallback.body] : [])
+  };
+}
+
+function retrogradePlanetMeaning(planet: string, domain: ContentDomain = "sky") {
+  return contentRegistryFor(domain)?.retrogradePlanetMeaning(planet) ?? null;
 }
 
 function hasApprovedVoiceContent(content: ContentFallback) {
@@ -528,6 +579,57 @@ const houseLifeAreas: Record<number, string> = {
   11: "friends, networks, hopes, and belonging",
   12: "rest, privacy, retreat, and hidden pressure"
 };
+const lifeAreaFocusOptions: Array<{
+  value: LifeAreaFocus;
+  label: string;
+  description: string;
+}> = [
+  { value: "career", label: "Career", description: "Work, visibility, reputation, ambition, and direction." },
+  { value: "relationships", label: "Relationships", description: "Partners, dating, intimacy, trust, and agreements." },
+  { value: "friends", label: "Friends", description: "Friendships, networks, community, and belonging." },
+  { value: "family", label: "Family", description: "Parents, relatives, roots, and family patterns." },
+  { value: "health", label: "Health", description: "Body, routines, energy, stress, and maintenance." },
+  { value: "money", label: "Money", description: "Income, resources, spending, debt, and shared assets." },
+  { value: "home", label: "Home", description: "Living space, privacy, security, and emotional foundation." },
+  { value: "communication", label: "Communication", description: "Conversations, messages, learning, writing, and siblings." },
+  { value: "creativity", label: "Creativity", description: "Art, pleasure, romance, self-expression, and play." },
+  { value: "emotional-needs", label: "Emotional needs", description: "Mood, memory, care, safety, and inner life." },
+  { value: "growth", label: "Growth", description: "Study, travel, belief, perspective, and long-range development." },
+  { value: "spirituality", label: "Spirituality", description: "Rest, retreat, dreams, solitude, and hidden pressure." }
+];
+const lifeAreaFocusValues = new Set<LifeAreaFocus>(lifeAreaFocusOptions.map((option) => option.value));
+const lifeAreaFocusKeywords: Record<LifeAreaFocus, string[]> = {
+  career: ["career", "work", "calling", "visibility", "reputation", "ambition", "public", "authority", "profession"],
+  relationships: ["relationship", "relationships", "partner", "partnership", "partners", "dating", "romance", "love", "intimacy", "agreement", "agreements", "trust"],
+  friends: ["friend", "friends", "friendship", "network", "networks", "community", "belonging", "group", "circle"],
+  family: ["family", "parents", "parent", "roots", "ancestry", "relatives", "childhood"],
+  health: ["health", "body", "routine", "routines", "maintenance", "service", "stress", "energy", "workflow", "workflows", "rest"],
+  money: ["money", "resources", "income", "spending", "debt", "assets", "shared resources", "security", "self-worth"],
+  home: ["home", "family", "roots", "living", "privacy", "foundation", "security", "belonging"],
+  communication: ["communication", "conversation", "conversations", "message", "messages", "writing", "learning", "siblings", "daily movement", "language"],
+  creativity: ["creativity", "creative", "pleasure", "romance", "children", "play", "art", "expression"],
+  "emotional-needs": ["emotion", "emotional", "mood", "memory", "care", "need", "needs", "safety", "feeling", "feelings"],
+  growth: ["growth", "study", "travel", "belief", "beliefs", "perspective", "meaning", "future", "learning"],
+  spirituality: ["spirituality", "spiritual", "dream", "dreams", "retreat", "hidden", "solitude", "privacy", "rest", "unconscious"]
+};
+const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
+  houses: number[];
+  planets: string[];
+  aspects?: string[];
+}> = {
+  career: { houses: [10, 6, 2], planets: ["Sun", "Saturn", "Mars", "Mercury"], aspects: ["conjunction", "square", "trine", "sextile"] },
+  relationships: { houses: [7, 5, 8], planets: ["Venus", "Mars", "Moon", "Pluto"], aspects: ["conjunction", "opposition", "square", "trine"] },
+  friends: { houses: [11, 3, 7], planets: ["Venus", "Mercury", "Jupiter", "Moon"], aspects: ["conjunction", "trine", "sextile"] },
+  family: { houses: [4, 10, 8], planets: ["Moon", "Saturn", "Sun", "Pluto"], aspects: ["conjunction", "opposition", "square"] },
+  health: { houses: [6, 1, 12], planets: ["Moon", "Mars", "Saturn", "Mercury"], aspects: ["conjunction", "square", "opposition"] },
+  money: { houses: [2, 8, 10], planets: ["Venus", "Jupiter", "Saturn", "Pluto"], aspects: ["conjunction", "square", "trine", "sextile"] },
+  home: { houses: [4, 12, 2], planets: ["Moon", "Venus", "Saturn"], aspects: ["conjunction", "trine", "square"] },
+  communication: { houses: [3, 9, 11], planets: ["Mercury", "Moon", "Jupiter", "Uranus"], aspects: ["conjunction", "square", "trine", "sextile"] },
+  creativity: { houses: [5, 1, 9], planets: ["Sun", "Venus", "Mars", "Neptune"], aspects: ["conjunction", "trine", "sextile"] },
+  "emotional-needs": { houses: [4, 8, 12, 1], planets: ["Moon", "Venus", "Saturn", "Neptune"], aspects: ["conjunction", "opposition", "square", "trine"] },
+  growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "True Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
+  spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
+};
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
 
@@ -616,14 +718,20 @@ const relationshipTypeLabels: Record<string, string> = {
 const defaultChartSettings: ChartSettings = {
   houseSystem: "Whole House",
   zodiac: "Tropical",
-  aspects: "Standard"
+  aspects: "Standard",
+  lifeAreaFocus: []
 };
 
 function normalizeChartSettings(settings?: Partial<ChartSettings> | null): ChartSettings {
+  const lifeAreaFocus = Array.isArray(settings?.lifeAreaFocus)
+    ? settings.lifeAreaFocus.filter((area): area is LifeAreaFocus => lifeAreaFocusValues.has(area as LifeAreaFocus))
+    : [];
+
   return {
     houseSystem: "Whole House",
     zodiac: "Tropical",
-    aspects: settings?.aspects === "Tight" ? "Tight" : "Standard"
+    aspects: settings?.aspects === "Tight" ? "Tight" : "Standard",
+    lifeAreaFocus: Array.from(new Set(lifeAreaFocus))
   };
 }
 
@@ -779,7 +887,7 @@ function formatBriefPlacementDegree(position?: PlanetPosition) {
     return "";
   }
 
-  return `${Math.round(position.degree)}°`;
+  return formatPlanetDegree(position);
 }
 
 function zodiacLongitude(position?: PlanetPosition) {
@@ -1294,6 +1402,20 @@ function compactCityLabel(city: string) {
     .filter(Boolean)
     .map((part, index) => (index > 0 && stateMap[part] ? stateMap[part] : part))
     .join(", ");
+}
+
+function readableNameList(names: string[]) {
+  const cleanNames = names.map((name) => name.trim()).filter(Boolean);
+
+  if (cleanNames.length <= 1) {
+    return cleanNames[0] ?? "";
+  }
+
+  if (cleanNames.length === 2) {
+    return `${cleanNames[0]} and ${cleanNames[1]}`;
+  }
+
+  return `${cleanNames.slice(0, -1).join(", ")}, and ${cleanNames[cleanNames.length - 1]}`;
 }
 
 function chartSetupSteps(profile: UserProfile) {
@@ -2021,6 +2143,182 @@ function transitLifeAreaTheme(transit: TransitItem, chart: ManualChart) {
   return natalPoint?.house ? houseLifeAreas[natalPoint.house] ?? "life area" : "life area pending";
 }
 
+function lifeAreaFocusScore(text: string, focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return 0;
+  }
+
+  const normalizedText = text.toLowerCase();
+
+  return focusAreas.reduce((score, area) => {
+    const keywords = lifeAreaFocusKeywords[area] ?? [];
+    const matches = keywords.filter((keyword) => normalizedText.includes(keyword)).length;
+
+    return score + matches;
+  }, 0);
+}
+
+function transitFocusText(transit: TransitItem) {
+  const houseTheme = transit.natalHouse ? houseLifeAreas[transit.natalHouse] ?? "" : "";
+
+  return [
+    transit.transitPlanet,
+    transit.transitSign,
+    transit.aspect,
+    transit.natalPoint,
+    transit.natalSign,
+    transit.note,
+    houseTheme
+  ].filter(Boolean).join(" ");
+}
+
+function transitLifeAreaFocusScore(transit: TransitItem, focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return 0;
+  }
+
+  return focusAreas.reduce((score, area) => {
+    const astrology = lifeAreaFocusAstrology[area];
+    const houseScore = transit.natalHouse && astrology.houses.includes(transit.natalHouse) ? 8 : 0;
+    const planetScore = [transit.transitPlanet, transit.natalPoint].filter((planet) => astrology.planets.includes(planet)).length * 3;
+    const aspectScore = astrology.aspects?.includes(transit.aspect) ? 1 : 0;
+    const keywordScore = lifeAreaFocusScore(transitFocusText(transit), [area]);
+
+    return score + houseScore + planetScore + aspectScore + keywordScore;
+  }, 0);
+}
+
+function rankTransitsByLifeAreaFocus<T extends TransitItem>(transits: T[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return transits;
+  }
+
+  return [...transits].sort((first, second) => {
+    const firstScore = transitLifeAreaFocusScore(first, focusAreas);
+    const secondScore = transitLifeAreaFocusScore(second, focusAreas);
+
+    if (firstScore !== secondScore) {
+      return secondScore - firstScore;
+    }
+
+    return (second.score ?? 0) - (first.score ?? 0);
+  });
+}
+
+function relationshipFocusText(contact: SynastryContact) {
+  return [
+    contact.friendPoint.name,
+    contact.friendPoint.role,
+    contact.aspect,
+    contact.yourPoint.name,
+    contact.yourPoint.role,
+    contact.tone,
+    contact.summary
+  ].join(" ");
+}
+
+function rankSynastryContactsByLifeAreaFocus(contacts: SynastryContact[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return contacts;
+  }
+
+  return [...contacts].sort((first, second) => {
+    const firstScore = lifeAreaFocusScore(relationshipFocusText(first), focusAreas);
+    const secondScore = lifeAreaFocusScore(relationshipFocusText(second), focusAreas);
+
+    if (firstScore !== secondScore) {
+      return secondScore - firstScore;
+    }
+
+    return second.score - first.score;
+  });
+}
+
+function rankHouseOverlaysByLifeAreaFocus(overlays: HouseOverlay[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return overlays;
+  }
+
+  return [...overlays].sort((first, second) => {
+    const firstHouseScore = focusAreas.some((area) => lifeAreaFocusAstrology[area].houses.includes(first.house)) ? 8 : 0;
+    const secondHouseScore = focusAreas.some((area) => lifeAreaFocusAstrology[area].houses.includes(second.house)) ? 8 : 0;
+    const firstTextScore = lifeAreaFocusScore(`${first.planet} ${houseLifeAreas[first.house] ?? ""} ${first.summary}`, focusAreas);
+    const secondTextScore = lifeAreaFocusScore(`${second.planet} ${houseLifeAreas[second.house] ?? ""} ${second.summary}`, focusAreas);
+    const firstScore = firstHouseScore + firstTextScore;
+    const secondScore = secondHouseScore + secondTextScore;
+
+    return secondScore - firstScore;
+  });
+}
+
+function skyPositionLifeAreaFocusScore(position: PlanetPosition, focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return 0;
+  }
+
+  return focusAreas.reduce((score, area) => {
+    const astrology = lifeAreaFocusAstrology[area];
+    const houseScore = astrology.houses.includes(position.house) ? 8 : 0;
+    const planetScore = astrology.planets.includes(position.planet) ? 3 : 0;
+    const keywordScore = lifeAreaFocusScore(`${position.planet} ${position.sign} ${position.theme} ${houseLifeAreas[position.house] ?? ""}`, [area]);
+
+    return score + houseScore + planetScore + keywordScore;
+  }, 0);
+}
+
+function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return positions;
+  }
+
+  return [...positions].sort((first, second) => {
+    const firstScore = skyPositionLifeAreaFocusScore(first, focusAreas);
+    const secondScore = skyPositionLifeAreaFocusScore(second, focusAreas);
+
+    if (firstScore !== secondScore) {
+      return secondScore - firstScore;
+    }
+
+    return placementPlanetOrder.indexOf(first.planet) - placementPlanetOrder.indexOf(second.planet);
+  });
+}
+
+function skyAspectLifeAreaFocusScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return 0;
+  }
+
+  const firstPosition = positions.find((position) => position.planet === aspect.from);
+  const secondPosition = positions.find((position) => position.planet === aspect.to);
+
+  return focusAreas.reduce((score, area) => {
+    const astrology = lifeAreaFocusAstrology[area];
+    const houseScore = [firstPosition?.house, secondPosition?.house].filter((house) => house && astrology.houses.includes(house)).length * 8;
+    const planetScore = [aspect.from, aspect.to].filter((planet) => astrology.planets.includes(planet)).length * 3;
+    const aspectScore = astrology.aspects?.includes(aspect.type) ? 1 : 0;
+    const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.theme ?? ""} ${secondPosition?.theme ?? ""}`, [area]);
+
+    return score + houseScore + planetScore + aspectScore + keywordScore;
+  }, 0);
+}
+
+function rankSkyAspectsByLifeAreaFocus(aspects: SkySnapshot["aspects"], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
+  if (focusAreas.length === 0) {
+    return aspects;
+  }
+
+  return [...aspects].sort((first, second) => {
+    const firstScore = skyAspectLifeAreaFocusScore(first, positions, focusAreas);
+    const secondScore = skyAspectLifeAreaFocusScore(second, positions, focusAreas);
+
+    if (firstScore !== secondScore) {
+      return secondScore - firstScore;
+    }
+
+    return first.orb - second.orb;
+  });
+}
+
 function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart) {
   const ascendant = chart.natalChart?.ascendant ?? "";
 
@@ -2041,16 +2339,26 @@ function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart)
 
 function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generatedContent?: GeneratedContentMap) {
   if (!transit) {
-    return `${chart.displayName}'s chart is saved. A clearer update will appear when a stronger transit is active.`;
+    return `${chart.displayName}'s chart is saved. When a stronger transit is active, this card will show what is being stirred and what may help them move through it.`;
   }
 
   const area = transitLifeArea(transit, chart);
   const areaTheme = transitLifeAreaTheme(transit, chart);
   const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
-  const content = approvedVoiceOrKnowledgeFallback(contentKey);
+  const localSummary = `${transit.transitPlanet} is pressing on ${chart.displayName}'s ${transit.natalPoint} right now, so ${areaTheme} may feel harder to ignore. If their mood or priorities shift, start with this part of life before assuming the issue is about you.`;
+  const content = fallbackFromHook(
+    "you.transit-to-natal",
+    {
+      transitPlanet: transit.transitPlanet,
+      aspect: transit.aspect,
+      natalPoint: transit.natalPoint,
+      topic: area
+    },
+    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+  );
   const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
 
-  return liveGeneratedSummary(generated, content.summary) || `${transit.transitPlanet} is activating ${chart.displayName}'s ${transit.natalPoint}. This points attention toward their ${area}: ${areaTheme}. Watch how this changes what they need, avoid, ask for, or try to control right now.`;
+  return liveGeneratedSummary(generated, content.summary) || localSummary;
 }
 
 function relationshipAspectContentKeys(firstPoint: string, aspect: string, secondPoint: string, context?: "synastry" | "composite") {
@@ -2079,10 +2387,10 @@ function relationshipPlacementContentKeys(point: string, sign: string, context?:
 
 function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
   if (!timing.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
-    return `${chart.displayName}'s annual timing is pending until their birth time and rising sign are available.`;
+    return `${chart.displayName}'s birth time is needed before the year ruler and house emphasis can be read clearly.`;
   }
 
-  return `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year, which emphasizes ${houseLifeAreas[timing.profectedHouse]}. ${timing.lordOfYear} is lord of the year, so contacts from ${timing.lordOfYear} are ranked higher for this chart.`;
+  return `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year, so ${houseLifeAreas[timing.profectedHouse]} may be taking up more space than usual. ${timing.lordOfYear} is lord of the year, so ${timing.lordOfYear} transits may land more noticeably for them.`;
 }
 
 function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap) {
@@ -2091,14 +2399,14 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   const highlights = [
     {
       title: "Chart signature",
-      body: `${chart.displayName}'s chart starts with Sun in ${friendBigThree.sun}, Moon in ${friendBigThree.moon}, and ${friendBigThree.rising} rising. Read this as their basic rhythm before comparing what happens between you.`
+      body: `${chart.displayName}'s chart opens with Sun in ${friendBigThree.sun}, Moon in ${friendBigThree.moon}, and ${friendBigThree.rising} rising. This gives the relationship its first layer: how they move through life, what they need emotionally, and how they tend to meet the world.`
     }
   ];
 
   if (!profileNatalSky || !friendSky) {
     highlights.push({
-      title: "Compatibility pending",
-      body: "Add or calculate both charts to compare natal contacts, shared elements, and relationship timing."
+      title: "Add both charts",
+      body: "Add complete birth details for both people to see where the connection feels natural, where it asks for more care, and what the current timing is bringing up."
     });
     return highlights;
   }
@@ -2125,12 +2433,22 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   const topHit = synastryHits[0];
   if (topHit) {
     const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
+    const localSummary = `${chart.displayName}'s ${topHit.theirPosition.planet} ${synastryAspectPlainVerb(topHit.aspect.type)} your ${topHit.yourPosition.planet}. This is one of the main ways the relationship gets your attention, especially when current transits touch either planet.`;
+    const hookFallback = fallbackFromHook(
+      "friends.synastry-contact",
+      {
+        planetA: topHit.theirPosition.planet,
+        aspect: topHit.aspect.type,
+        planetB: topHit.yourPosition.planet
+      },
+      { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+    );
     const generated = generatedContent
       ? liveGeneratedContentByKeys(generatedContent, relationshipAspectContentKeys(topHit.theirPosition.planet, topHit.aspect.type, topHit.yourPosition.planet, "synastry"))
       : null;
     highlights.push({
       title,
-      body: liveGeneratedSummary(generated, `${chart.displayName}'s ${topHit.theirPosition.planet} ${synastryAspectPhrase(topHit.aspect.type)} your ${topHit.yourPosition.planet}. This is one of the stronger repeating patterns between you, especially when current transits activate either planet.`)
+      body: liveGeneratedSummary(generated, hookFallback.summary) || localSummary
     });
   }
 
@@ -2139,8 +2457,8 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   highlights.push({
     title: yourElement === theirElement ? `${yourElement} emphasis` : `${yourElement} meets ${theirElement}`,
     body: yourElement === theirElement
-      ? `Both charts lean ${yourElement.toLowerCase()}, so the relationship may share a similar pace, instinct, or way of reading situations.`
-      : `Your chart leans ${yourElement.toLowerCase()} while theirs leans ${theirElement.toLowerCase()}. That gives the connection two different instincts to understand and translate.`
+      ? `Both charts lean ${yourElement.toLowerCase()}. The connection may feel familiar because you process life through a similar element, but that can also reinforce the same blind spots.`
+      : `Your chart leans ${yourElement.toLowerCase()}; ${chart.displayName}'s leans ${theirElement.toLowerCase()}. Notice where that difference creates useful contrast instead of treating it as a mismatch.`
   });
 
   return highlights.slice(0, 3);
@@ -2164,6 +2482,58 @@ function comparisonPointRole(point: string) {
   };
 
   return roles[point] ?? point.toLowerCase();
+}
+
+function houseOverlayPlanetMeaning(planet: string) {
+  const meanings: Record<string, string> = {
+    Sun: "attention, vitality, recognition, and the feeling of being seen",
+    Moon: "emotional needs, instinctive reactions, memory, and private comfort",
+    Mercury: "conversation, questions, observation, and the way two people make sense of each other",
+    Venus: "warmth, affection, ease, beauty, and the desire to make contact feel pleasant",
+    Mars: "desire, urgency, friction, courage, and the places where chemistry becomes harder to ignore",
+    Jupiter: "encouragement, trust, growth, humor, and the feeling that more is possible",
+    Saturn: "seriousness, responsibility, commitment, limits, and the parts of a bond that ask for maturity"
+  };
+
+  return meanings[planet] ?? comparisonPointRole(planet);
+}
+
+function houseOverlayHouseMeaning(house: number) {
+  const meanings: Record<number, string> = {
+    1: "identity, appearance, first impressions, and the way someone moves through the world",
+    2: "money, resources, values, self-worth, and what helps someone feel steady",
+    3: "communication, siblings, daily movement, learning, and the small exchanges that shape everyday life",
+    4: "home, family, roots, memory, and emotional foundation",
+    5: "romance, pleasure, creativity, sex, children, and what makes life feel alive",
+    6: "workflows, health, service, maintenance, and the habits that hold daily life together",
+    7: "partnerships, agreements, attraction, conflict, and direct one-on-one connection",
+    8: "shared resources, trust, vulnerability, debt, intimacy, and what is difficult to control",
+    9: "beliefs, travel, study, faith, worldview, and the search for meaning",
+    10: "career, public life, reputation, authority, and the direction someone is building toward",
+    11: "friends, networks, hopes, community, and the future someone wants to belong to",
+    12: "privacy, retreat, hidden patterns, grief, dreams, and what is processed behind the scenes"
+  };
+
+  return meanings[house] ?? houseLifeAreas[house] ?? "this part of life";
+}
+
+function houseOverlayConcreteExamples(house: number) {
+  const examples: Record<number, string> = {
+    1: "first impressions, attraction, body language, confidence, or the way the two of you naturally take up space together",
+    2: "money, gifts, practical support, appetite, comfort, shared values, or the question of what feels worth investing in",
+    3: "texts, short trips, sibling stories, everyday conversations, errands, and the small exchanges that build familiarity",
+    4: "time at home, conversations about family, shared comfort, old memories, or the feeling of being seen somewhere private",
+    5: "flirtation, play, creative projects, dates, humor, sex, or the part of the connection that wants to feel alive",
+    6: "daily routines, work habits, health choices, helping each other, and the practical maintenance of the bond",
+    7: "naming the relationship, negotiating needs, attraction, conflict, agreements, and the way you meet each other directly",
+    8: "trust, jealousy, debt, shared resources, vulnerability, intimacy, and the places where the bond asks for more honesty",
+    9: "travel, study, belief, spiritual questions, long-distance plans, or the way one person widens the other's view",
+    10: "career, reputation, ambition, public visibility, authority, and the way the relationship is noticed by other people",
+    11: "friend groups, networks, community, future plans, shared causes, and the places where belonging matters",
+    12: "privacy, rest, dreams, grief, hidden patterns, secrecy, and the feelings that are harder to explain in public"
+  };
+
+  return examples[house] ?? houseLifeAreas[house] ?? "the concrete details of this part of life";
 }
 
 function synastryPointWeight(point: string) {
@@ -2235,6 +2605,18 @@ function synastryAspectPhrase(aspect: string) {
   return phrases[aspect] ?? "contacts";
 }
 
+function synastryAspectPlainVerb(aspect: string) {
+  const phrases: Record<string, string> = {
+    conjunction: "amplifies",
+    opposition: "pulls against",
+    square: "presses on",
+    trine: "supports",
+    sextile: "opens up"
+  };
+
+  return phrases[aspect] ?? "touches";
+}
+
 function synastryAspectMeaning(aspect: string) {
   const meanings: Record<string, string> = {
     conjunction: "This contact is hard to miss because the two parts of the chart keep showing up together.",
@@ -2245,6 +2627,18 @@ function synastryAspectMeaning(aspect: string) {
   };
 
   return meanings[aspect] ?? "This contact is one of the repeating patterns between the two charts.";
+}
+
+function synastryContactAdvice(aspect: string) {
+  if (["square", "opposition"].includes(aspect)) {
+    return "Do not rush to decide who is right. Slow the conversation down and separate the feeling from the assumption.";
+  }
+
+  if (["trine", "sextile"].includes(aspect)) {
+    return "Use the ease instead of leaving it vague. Say what you appreciate, make the plan, or let the support become visible.";
+  }
+
+  return "Give the chemistry time to show its shape before making the whole relationship about this one contact.";
 }
 
 function synastryActionLine(aspect: string) {
@@ -2354,15 +2748,20 @@ function synastryContactSummary(friendName: string, contact: Omit<SynastryContac
     return liveGeneratedSummary(generated, null);
   }
 
-  const firstConcept = contact.friendPoint.role.split(",")[0] ?? contact.friendPoint.role;
-  const secondConcept = contact.yourPoint.role.split(",")[0] ?? contact.yourPoint.role;
-  const directness = contact.tone === "Friction"
-    ? "This may be where the connection gets reactive or revealing."
-    : contact.tone === "Flow"
-      ? "This can make the connection feel easier to understand."
-      : "This can make the connection feel immediate.";
+  const verb = synastryAspectPlainVerb(contact.aspect);
+  const advice = synastryContactAdvice(contact.aspect);
+  const localSummary = `${friendName}'s ${contact.friendPoint.name} ${verb} your ${contact.yourPoint.name}. This can make their ${contact.friendPoint.role} feel especially noticeable to your ${contact.yourPoint.role}. ${advice}`;
+  const hookFallback = fallbackFromHook(
+    "friends.synastry-contact",
+    {
+      planetA: contact.friendPoint.name,
+      aspect: contact.aspect,
+      planetB: contact.yourPoint.name
+    },
+    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+  );
 
-  return `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPhrase(contact.aspect)} your ${contact.yourPoint.name}. Their ${firstConcept} activates your ${secondConcept}. ${directness}`;
+  return hookFallback.summary ?? localSummary;
 }
 
 function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): SynastryContact[] {
@@ -2409,11 +2808,20 @@ function synastryDetailCopy(friendName: string, contact: SynastryContact, genera
     return generatedParagraphs;
   }
 
-  const firstLine = `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPhrase(contact.aspect)} your ${contact.yourPoint.name}. Their ${contact.friendPoint.role} activates your ${contact.yourPoint.role}.`;
+  const firstLine = `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPlainVerb(contact.aspect)} your ${contact.yourPoint.name}. You may notice their ${contact.friendPoint.role} affecting your ${contact.yourPoint.role} more strongly than it would with someone else.`;
   const secondLine = synastryAspectMeaning(contact.aspect);
   const thirdLine = synastryActionLine(contact.aspect);
+  const hookFallback = fallbackFromHook(
+    "friends.synastry-contact",
+    {
+      planetA: contact.friendPoint.name,
+      aspect: contact.aspect,
+      planetB: contact.yourPoint.name
+    },
+    { detailParagraphs: [firstLine, secondLine, thirdLine] }
+  );
 
-  return [firstLine, secondLine, thirdLine];
+  return hookFallback.detailParagraphs.length > 0 ? hookFallback.detailParagraphs : [firstLine, secondLine, thirdLine];
 }
 
 function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): HouseOverlay[] {
@@ -2451,17 +2859,48 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       const ownerLabel = ownerName === "Your" ? "Your" : `${ownerName}'s`;
       const houseOwner = targetName === "your" ? "your" : targetName;
       const lifeArea = houseLifeAreas[house] ?? "life area";
-      const planetRole = comparisonPointRole(position.planet);
+      const planetMeaning = houseOverlayPlanetMeaning(position.planet);
+      const houseMeaning = houseOverlayHouseMeaning(house);
+      const concreteExamples = houseOverlayConcreteExamples(house);
       const direction = targetName === "your"
-        ? `${ownerLabel} ${position.planet} brings ${planetRole} into your ${ordinalHouse(house)} house of ${lifeArea}.`
+        ? `${ownerLabel} ${position.planet} lands in your ${ordinalHouse(house)} house of ${lifeArea}.`
         : `${ownerLabel} ${position.planet} lands in ${houseOwner} ${ordinalHouse(house)} house of ${lifeArea}.`;
       const contentKeys = [
+        ...knowledgeIdsForFallbackHook("friends.house-overlay", {
+          planet: position.planet,
+          house
+        }),
         `synastry-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
         `relationship-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
         ...relationshipPlacementContentKeys(position.planet, position.sign, "synastry")
       ];
       const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contentKeys) : null;
-      const fallbackSummary = `${direction} This is where the connection is most likely to become concrete, because the planet person keeps stirring that part of the house person's life.`;
+      const generatedParagraphs = generatedContentParagraphs(generated);
+      const fallbackParagraphs = targetName === "your"
+        ? [
+            `${direction} This can make the connection feel personal in the part of your life connected to ${houseMeaning}.`,
+            `${position.planet} brings ${planetMeaning} into the house it enters. In your ${ordinalHouse(house)} house, that may show up through ${concreteExamples}.`,
+            `The connection may become concrete here because ${ownerLabel.toLowerCase()} presence keeps touching this part of your life. Notice what gets stirred without assuming the whole relationship has to live in this one room.`
+          ]
+        : [
+            `${direction} This can make the connection feel personal quickly, as if your presence touches something specific in ${chart.displayName}'s life.`,
+            `${position.planet} brings ${planetMeaning} into the house it enters. In ${chart.displayName}'s ${ordinalHouse(house)} house, that may show up through ${concreteExamples}.`,
+            `The connection may become concrete here because it does not stay abstract for long. It can move into real life through the ordinary details of this house, so treat that access with care.`
+          ];
+      const hookFallback = fallbackFromHook(
+        "friends.house-overlay",
+        {
+          planet: position.planet,
+          house
+        },
+        { summary: fallbackParagraphs[0], body: fallbackParagraphs.join("\n\n"), detailParagraphs: fallbackParagraphs }
+      );
+      const detailParagraphs = generatedParagraphs.length > 0
+        ? generatedParagraphs
+        : hookFallback.detailParagraphs.length > 0
+          ? hookFallback.detailParagraphs
+          : fallbackParagraphs;
+      const fallbackSummary = fallbackParagraphs[0];
 
       return [{
         id: `${ownerName}-${position.planet}-${targetName}-${house}`.toLowerCase().replace(/\s+/g, "-"),
@@ -2470,7 +2909,8 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
         ownerName,
         targetName,
         house,
-        summary: liveGeneratedSummary(generated, fallbackSummary),
+        summary: liveGeneratedSummary(generated, hookFallback.summary ?? fallbackSummary),
+        detailParagraphs,
         contentKeys
       }];
     })
@@ -2627,7 +3067,7 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
 
 function compositeAspectSummary(aspect: { from: string; to: string; type: string; orb: number } | null, chartName: string, generatedContent?: GeneratedContentMap) {
   if (!aspect) {
-    return "The composite chart is available, but there is not a tight major aspect to prioritize in this view.";
+    return "No single aspect is dominating the relationship chart. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.";
   }
 
   const generated = generatedContent
@@ -2642,12 +3082,22 @@ function compositeAspectSummary(aspect: { from: string; to: string; type: string
   const firstRole = comparisonPointRole(aspect.from);
   const secondRole = comparisonPointRole(aspect.to);
   const phrase = tone === "Friction"
-    ? "This is where the bond itself can get tense. Treat it as a shared pattern to work with, not a flaw in only one person."
+    ? "This is where the bond itself can get tense. Treat it as a shared pattern to work with instead of assigning the whole problem to one person."
     : tone === "Flow"
       ? "This is one of the easier strengths in the bond. It works best when you use it deliberately instead of assuming it will carry everything."
       : "This is a central part of the bond's identity. Both people may feel it quickly when they are together.";
+  const localSummary = `In the composite chart, ${aspect.from} ${synastryAspectPhrase(aspect.type)} ${aspect.to}. The relationship blends ${firstRole} with ${secondRole}. ${phrase}`;
+  const hookFallback = fallbackFromHook(
+    "friends.composite-aspect",
+    {
+      planetA: aspect.from,
+      aspect: aspect.type,
+      planetB: aspect.to
+    },
+    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+  );
 
-  return `In the composite chart, ${aspect.from} ${synastryAspectPhrase(aspect.type)} ${aspect.to}. The relationship blends ${firstRole} with ${secondRole}. ${phrase}`;
+  return hookFallback.summary ?? localSummary;
 }
 
 function relationshipTiming(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
@@ -2660,22 +3110,42 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
   if (sharedPlanets.length > 0) {
     return sharedPlanets.slice(0, 3).map(({ yourTransit, friendTransit }) => ({
       title: `Both charts are feeling ${yourTransit.transitPlanet}`,
-      body: `${yourTransit.transitPlanet} is active for both of you right now. It contacts your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}, so each person may be working through the same planet in a different part of life. Compare needs before assuming you are having the same experience.`
+      body: fallbackFromHook(
+        "friends.relationship-timing",
+        {
+          transitPlanet: yourTransit.transitPlanet,
+          aspect: yourTransit.aspect,
+          natalPoint: yourTransit.natalPoint
+        },
+        {
+          summary: `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same planetary weather may be moving through different needs, so pause before assuming you are reacting to the same thing.`
+        }
+      ).summary ?? `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same planetary weather may be moving through different needs, so pause before assuming you are reacting to the same thing.`
     }));
   }
 
   return friendTransits.slice(0, 2).map((transit) => ({
-    title: `${chart.displayName} is being activated`,
-    body: `${transit.transitPlanet} is contacting ${chart.displayName}'s ${transit.natalPoint}. Watch how this changes what they reach for, resist, explain, or need more time to process.`
+    title: `${chart.displayName} may be feeling ${transit.transitPlanet}`,
+    body: fallbackFromHook(
+      "friends.relationship-timing",
+      {
+        transitPlanet: transit.transitPlanet,
+        aspect: transit.aspect,
+        natalPoint: transit.natalPoint
+      },
+      {
+        summary: `${transit.transitPlanet} is touching ${chart.displayName}'s ${transit.natalPoint}. If they seem more reactive, focused, distant, or urgent, this may be part of what is moving through them before it is about you.`
+      }
+    ).summary ?? `${transit.transitPlanet} is touching ${chart.displayName}'s ${transit.natalPoint}. If they seem more reactive, focused, distant, or urgent, this may be part of what is moving through them before it is about you.`
   }));
 }
 
-function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[]) {
+function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], focusAreas: LifeAreaFocus[] = []) {
   const rows = charts
     .filter((chart) => chart.natalChart)
     .map((chart) => ({
       chart,
-      transits: rankedFriendTransits(currentSky, chart).slice(0, 5),
+      transits: rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart), focusAreas).slice(0, 5),
       timing: friendTimingContext(chart, currentSky)
     }));
   const byPlanet = new Map<string, ManualChart[]>();
@@ -2708,8 +3178,8 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[]) {
       const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
 
       return {
-        title: `${planet} is active in your circle`,
-        body: `${uniqueCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} ${uniqueCharts.length === 1 ? "has" : "have"} current ${planet} contacts.`
+        title: `${planet} is showing up for more than one person`,
+        body: `${readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName))} are all being touched by ${planet} right now. Conversations may keep circling back to ${comparisonPointRole(planet)}, even if each person is dealing with it in a different part of life.`
       };
     });
   const houseCards = Array.from(byHouse.entries())
@@ -2718,29 +3188,29 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[]) {
       const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
 
       return {
-        title: `${ordinalHouse(house)} house repetition`,
-        body: `${uniqueCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} are all receiving ${ordinalHouse(house)} house activation.`
+        title: `${houseLifeAreas[house]} are a shared theme`,
+        body: `${readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName))} are all being pulled toward ${ordinalHouse(house)} house topics. The details may be different, but ${houseLifeAreas[house]} are asking for attention across the circle.`
       };
     });
   const profectionCards = Array.from(byProfectedHouse.entries())
     .filter(([, activeCharts]) => activeCharts.length >= 2)
     .map(([house, activeCharts]) => ({
-      title: `${ordinalHouse(house)} house years repeat`,
-      body: `${activeCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} are in ${ordinalHouse(house)} house years, emphasizing ${houseLifeAreas[house]} across the circle.`
+      title: `${houseLifeAreas[house]} are repeating`,
+      body: `${readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName))} are in ${ordinalHouse(house)} house years. That means ${houseLifeAreas[house]} may be the background topic for more than one person right now.`
     }));
   const lordCards = Array.from(byLordOfYear.entries())
     .filter(([, activeCharts]) => activeCharts.length >= 2)
     .map(([planet, activeCharts]) => ({
-      title: `${planet} years in your circle`,
-      body: `${activeCharts.slice(0, 3).map((chart) => chart.displayName).join(", ")} have ${planet} as lord of the year, so ${planet} transits are ranked with extra weight for them.`
+      title: `${planet} is setting the year-long tone`,
+      body: `${readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName))} have ${planet} as lord of the year. ${planet} themes may feel louder for them, especially when the current sky touches that planet.`
     }));
 
   return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
 }
 
-function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap) {
+function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap, focusAreas: LifeAreaFocus[] = []) {
   const calculatedCharts = charts.filter((chart) => chart.natalChart);
-  const circleCards = circleActivationCards(currentSky, charts);
+  const circleCards = circleActivationCards(currentSky, charts, focusAreas);
 
   if (circleCards.length > 0) {
     return circleCards.map((card) => ({
@@ -2751,7 +3221,7 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
 
   if (calculatedCharts.length === 1) {
     const chart = calculatedCharts[0];
-    const topTransit = rankedFriendTransits(currentSky, chart)[0];
+    const topTransit = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart), focusAreas)[0];
     const timing = friendTimingContext(chart, currentSky);
 
     return [
@@ -2763,12 +3233,12 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
       {
         label: "Comparison chart",
         title: `${chart.displayName} and you`,
-        body: "One saved chart is enough to compare signs, synastry contacts, house overlays, and current transits between both people."
+        body: "Start with the strongest contacts between your charts, then look at where each person's planets land. That shows what feels easy, what gets stirred up, and where the relationship needs more care."
       },
       {
-        label: "Relationship timing",
-        title: "Compare current activations",
-        body: "This compares what the current sky is doing to each chart, then looks for shared planets, pressure points, and timing themes."
+      label: "Relationship timing",
+        title: "What each person is carrying",
+        body: "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing."
       }
     ];
   }
@@ -2777,17 +3247,17 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
     {
       label: "Friend updates",
       title: "Current astrology for each person",
-      body: "Add one friend to compare their chart with yours and rank current transits by house activation, angularity, and annual timing."
+      body: "Add a friend to see what the current sky is bringing up in their chart."
     },
     {
       label: "Circle patterns",
       title: "Who is feeling something similar",
-      body: "With two or more saved friends, repeated planet, house, profection, or lord-of-year signals appear here."
+      body: "With two or more friends, this shows where similar topics are moving through different people at the same time."
     },
     {
       label: "Between Us",
       title: "Relationship timing",
-      body: "Selecting a friend compares what the current sky is doing to you, to them, and to the relationship pattern."
+      body: "Select a friend to compare what the current sky is doing to you, to them, and to the relationship pattern."
     }
   ];
 }
@@ -2828,6 +3298,7 @@ export function App() {
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [friendsLandingKey, setFriendsLandingKey] = useState(0);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const cityPickerRef = useRef<HTMLFormElement | null>(null);
@@ -2857,10 +3328,16 @@ export function App() {
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
-  const activeTransits = profileTransits.length > 0 ? profileTransits : sampleTransits;
+  const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
+  const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isProfileMode = mode === "profile" || mode === "friends" || mode === "account" || mode === "settings";
+
+  function navigateToFriends() {
+    setFriendsLandingKey((currentKey) => currentKey + 1);
+    setMode("friends");
+  }
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -3663,7 +4140,7 @@ export function App() {
                   <button
                     className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
                     type="button"
-                    onClick={() => setMode("friends")}
+                    onClick={navigateToFriends}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
@@ -3705,7 +4182,7 @@ export function App() {
             <div className="site-menu" id="site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
               {userProfile && (
                 <>
-                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { setMode("friends"); setMenuOpen(false); }}>
+                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { navigateToFriends(); setMenuOpen(false); }}>
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
@@ -3838,7 +4315,7 @@ export function App() {
               <section className="sky-panel" aria-label="Current sky">
                 <SkyWheel positions={sky.positions} aspects={sky.aspects} />
 
-                <SkyCards sky={sky} generatedContent={skyGeneratedContent} />
+                <SkyCards sky={sky} />
               </section>
             )}
 
@@ -3857,6 +4334,7 @@ export function App() {
                   aspects={sky.aspects}
                   generatedAt={sky.generatedAt}
                   generatedContent={skyGeneratedContent}
+                  lifeAreaFocus={[]}
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
@@ -3866,6 +4344,7 @@ export function App() {
                   aspects={sky.aspects}
                   generatedAt={sky.generatedAt}
                   generatedContent={skyGeneratedContent}
+                  lifeAreaFocus={userLifeAreaFocus}
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
@@ -3906,6 +4385,7 @@ export function App() {
                   profileTransits={activeTransits}
                   natalGeneratedContent={natalGeneratedContent}
                   relationshipGeneratedContent={relationshipGeneratedContent}
+                  landingKey={friendsLandingKey}
                 />
               )}
               {mode === "account" && userProfile && (
@@ -4373,6 +4853,52 @@ function formatPlacementPosition(position: PlanetPosition) {
   return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatDegree(position.degree)}°`;
 }
 
+function retrogradeDetailKicker(position: PlanetPosition) {
+  return `${position.planet} Retrograde`;
+}
+
+function retrogradeKnowledgeCopy(
+  position: PlanetPosition,
+  generated: LiveGeneratedContent | null,
+  content: ContentFallback
+) {
+  const generatedSummary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0];
+
+  if (generatedSummary) {
+    return generatedSummary;
+  }
+
+  const retrogradeMeaning = retrogradePlanetMeaning(position.planet, "sky");
+  const hookFallback = fallbackFromHook(
+    "sky.retrograde",
+    {
+      planet: position.planet,
+      sign: position.sign
+    },
+    {
+      summary: content.summary ?? null,
+      body: content.body ?? null,
+      detailParagraphs: content.detailParagraphs
+    }
+  );
+
+  if (retrogradeMeaning) {
+    const signPhrase = position.sign ? ` in ${position.sign}` : "";
+
+    return `${position.planet} is retrograde${signPhrase}: ${retrogradeMeaning}.`;
+  }
+
+  const knowledgeSummary = hookFallback.summary?.trim() || hookFallback.body?.trim() || hookFallback.detailParagraphs[0]?.trim();
+
+  if (knowledgeSummary) {
+    return `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
+  }
+
+  const signPhrase = position.sign ? ` in ${position.sign}` : "";
+
+  return `${position.planet} is retrograde${signPhrase}. Review this planet's topic before forcing the next step.`;
+}
+
 function ordinalHouse(house: number) {
   const rem100 = house % 100;
 
@@ -4412,7 +4938,17 @@ function natalPlacementDescription(planet: string) {
 }
 
 function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedContent?: GeneratedContentMap) {
-  const content = approvedVoiceOrKnowledgeFallback(placementContentId(position.planet, position.sign));
+  const content = fallbackFromHook(
+    "you.natal-placement",
+    {
+      planet: position.planet,
+      sign: position.sign,
+      house: position.house
+    },
+    {
+      summary: natalPlacementDescription(position.planet)
+    }
+  );
   const generated = generatedContent ? liveGeneratedContent(generatedContent, placementContentId(position.planet, position.sign)) : null;
 
   return liveGeneratedSummary(generated, content.summary);
@@ -5140,21 +5676,6 @@ function MoonPhaseArt({ phase }: { phase: string }) {
   return <span className="moon-phase-art" aria-hidden="true">{phaseEmojis[phase] ?? "🌙"}</span>;
 }
 
-function moonPhaseTldr(phase: string) {
-  const summaries: Record<string, string> = {
-    "New Moon": "A reset is opening. Keep the signal simple and choose what gets your first real yes.",
-    "Waxing Crescent": "Momentum is still tender. Feed the thing that wants to grow before asking it to prove itself.",
-    "First Quarter": "The day asks for action. A small decision now can clear more space than a perfect plan.",
-    "Waxing Gibbous": "The story is filling in. Refine the details, but do not lose the thread that started it.",
-    "Full Moon": "Feelings reach a peak and something hidden comes to light - a clear, honest day to say the real thing.",
-    "Waning Gibbous": "The lesson is visible now. Share what you know, and let the extra noise fall away.",
-    "Last Quarter": "A choice wants closure. Release the part of the plan that no longer matches the truth.",
-    "Waning Crescent": "Energy turns inward. Rest, integrate, and let the next beginning arrive without force."
-  };
-
-  return summaries[phase] ?? "The Moon is setting the emotional weather. Notice what rises, softens, and asks for care.";
-}
-
 type RetrogradeWindow = {
   planet: string;
   preShadowStart?: string;
@@ -5283,18 +5804,11 @@ function retrogradeDetailRange(window?: RetrogradeWindow) {
   return formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd);
 }
 
-function SkyCards({
-  sky,
-  generatedContent
-}: {
-  sky: SkySnapshot;
-  generatedContent: GeneratedContentMap;
-}) {
+function SkyCards({ sky }: { sky: SkySnapshot }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sunDegree = formatBriefPlacementDegree(sun);
   const moonDegree = formatBriefPlacementDegree(moon);
-  const dailyContent = liveGeneratedContent(generatedContent, `sky-daily-${sky.generatedAt.slice(0, 10)}`);
 
   return (
     <section className="sky-lunar-brief" aria-label="Sky highlights">
@@ -5329,10 +5843,6 @@ function SkyCards({
           </span>
         </span>
       </div>
-      <div className="sky-lunar-tldr">
-        <span>TLDR</span>
-        <p>{dailyContent?.summary ?? moonPhaseTldr(sky.moonPhase)}</p>
-      </div>
     </section>
   );
 }
@@ -5356,7 +5866,7 @@ function RetrogradeCallout({
 
   return (
     <section className="retrograde-section" aria-label="Retrograde planets">
-      <span className="section-label">Currently in Retrograde</span>
+      <span className="section-label">Retrograde weather</span>
       <div className="retro-list">
         {retrogrades.map((position) => {
           const title = `${position.planet} retrograde`;
@@ -5377,7 +5887,7 @@ function RetrogradeCallout({
               type="button"
               onClick={() => onOpenDetail({
                 glyph: `${position.glyph} ℞`,
-                kicker: "Currently in Retrograde",
+                kicker: retrogradeDetailKicker(position),
                 title: generated?.headline ?? title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeDetailRange(retrogradeWindow)}`,
                 body: detailParagraphs,
@@ -5395,7 +5905,7 @@ function RetrogradeCallout({
                   <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
-                <span className="retro-copy">Review, refine, revisit. This planet is asking for a second look.</span>
+                <span className="retro-copy">{retrogradeKnowledgeCopy(position, generated, content)}</span>
               </span>
             </button>
           );
@@ -5554,12 +6064,14 @@ function TodayView({
   aspects,
   generatedAt,
   generatedContent,
+  lifeAreaFocus,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   return (
@@ -5569,6 +6081,7 @@ function TodayView({
         aspects={aspects}
         generatedAt={generatedAt}
         generatedContent={generatedContent}
+        lifeAreaFocus={lifeAreaFocus}
         onOpenDetail={onOpenDetail}
       />
       <ActiveAspects
@@ -5576,6 +6089,7 @@ function TodayView({
         positions={positions}
         generatedAt={generatedAt}
         generatedContent={generatedContent}
+        lifeAreaFocus={lifeAreaFocus}
         onOpenDetail={onOpenDetail}
       />
     </>
@@ -5587,12 +6101,14 @@ function PlacementView({
   aspects,
   generatedAt,
   generatedContent,
+  lifeAreaFocus,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
@@ -5630,10 +6146,11 @@ function PlacementView({
           aspects={aspects}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
+          lifeAreaFocus={lifeAreaFocus}
           onOpenDetail={onOpenDetail}
         />
       ) : (
-        <PlacementParagraph positions={positions} generatedAt={generatedAt} generatedContent={generatedContent} />
+        <PlacementParagraph positions={positions} generatedAt={generatedAt} generatedContent={generatedContent} lifeAreaFocus={lifeAreaFocus} />
       )}
     </>
   );
@@ -5681,23 +6198,35 @@ function ActiveAspects({
   positions,
   generatedAt,
   generatedContent,
+  lifeAreaFocus,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
+  const orderedAspects = rankSkyAspectsByLifeAreaFocus(aspects, positions, lifeAreaFocus);
+
   return (
     <section className="aspect-section" aria-label="Aspects">
       <span className="eyebrow section-label aspect-section-label">Aspects</span>
       <div className="aspects-card aspect-row-card">
         <div className="aspect-row-list">
-          {aspects.map((aspect) => {
+          {orderedAspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
-            const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+            const content = fallbackFromHook(
+              "sky.aspect-detail",
+              {
+                planetA: aspect.from,
+                aspect: aspect.type,
+                planetB: aspect.to
+              },
+              approvedVoiceOrKnowledgeFallback(contentKey, "sky")
+            );
             const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
             const rowSummary = liveGeneratedSummary(generated, content.summary);
             const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
@@ -5740,15 +6269,19 @@ function ActiveAspects({
 function PlacementParagraph({
   positions,
   generatedAt,
-  generatedContent
+  generatedContent,
+  lifeAreaFocus
 }: {
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  lifeAreaFocus: LifeAreaFocus[];
 }) {
+  const orderedPositions = rankSkyPositionsByLifeAreaFocus(positions, lifeAreaFocus);
+
   return (
     <div className="placement-prose">
-      {positions.map((position, index) => {
+      {orderedPositions.map((position, index) => {
         const contentKey = placementContentId(position.planet, position.sign, "sky");
         const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
         const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
@@ -5774,17 +6307,19 @@ function PlacementTable({
   aspects,
   generatedAt,
   generatedContent,
+  lifeAreaFocus,
   onOpenDetail
 }: {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const orderedPositions = placementPlanetOrder
+  const orderedPositions = rankSkyPositionsByLifeAreaFocus(placementPlanetOrder
     .map((planet) => positions.find((position) => position.planet === planet))
-    .filter((position): position is PlanetPosition => Boolean(position));
+    .filter((position): position is PlanetPosition => Boolean(position)), lifeAreaFocus);
 
   return (
     <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
@@ -5795,7 +6330,20 @@ function PlacementTable({
           const dignity = placementDignity(position);
           const statuses = placementStatuses(position);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
-          const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+          const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+          const placementHookKey = position.planet === "Sun"
+            ? "sky.seasonal-weather"
+            : position.planet === "Moon"
+              ? "sky.lunar-weather"
+              : "sky.planetary-placement";
+          const content = fallbackFromHook(
+            placementHookKey,
+            {
+              planet: position.planet,
+              sign: position.sign
+            },
+            localContent
+          );
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
@@ -6172,7 +6720,15 @@ function TransitList({
 }
 
 function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitForm }) {
-  const content = approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+  const content = fallbackFromHook(
+    "you.transit-to-natal",
+    {
+      transitPlanet: transit.transitPlanet,
+      aspect: transit.aspect,
+      natalPoint: transit.natalPoint
+    },
+    approvedVoiceOrKnowledgeFallback(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint))
+  );
   const readTitle = content.summary ?? interpretationInReviewSummary;
   const readParagraphs = hasApprovedVoiceContent(content) && content.detailParagraphs.length > 0
     ? content.detailParagraphs
@@ -6339,7 +6895,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
       <aside className="signup-story">
         <h2>
           {isLogin ? "Welcome back." : "Know what the sky is doing."}
-          <em>{isLogin ? "Your chart is waiting." : "Know what to do about it."}</em>
+          <em>{isLogin ? "See what is active now." : "Know what to do about it."}</em>
         </h2>
         <div className="signup-orbit" aria-hidden="true">
           <span />
@@ -6661,6 +7217,20 @@ function SettingsView({
     setSettingsEditing(true);
   }
 
+  function toggleLifeAreaFocus(area: LifeAreaFocus) {
+    setSettings((currentSettings) => {
+      const currentFocus = normalizeChartSettings(currentSettings).lifeAreaFocus;
+      const nextFocus = currentFocus.includes(area)
+        ? currentFocus.filter((currentArea) => currentArea !== area)
+        : [...currentFocus, area];
+
+      return {
+        ...currentSettings,
+        lifeAreaFocus: nextFocus
+      };
+    });
+  }
+
   function startCurrentLocationEdit() {
     setCurrentCity(profile.currentLocation || defaultLocation.label);
     setCurrentLocationData(profile.currentLocationData ?? withTimeZone(defaultLocation));
@@ -6760,6 +7330,28 @@ function SettingsView({
                   onChange={onDyslexiaFontChange}
                 />
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Content focus settings">
+          <span className="settings-group-label">Content focus</span>
+          <div className="settings-card">
+            <div className="settings-list" aria-label="Life area focus">
+              {lifeAreaFocusOptions.map((option) => (
+                <div className="settings-row settings-row-control" key={option.value}>
+                  <div>
+                    <span>{option.label}</span>
+                    <small>{option.description}</small>
+                  </div>
+                  <SwitchControl
+                    checked={settings.lifeAreaFocus.includes(option.value)}
+                    disabled={!settingsEditing}
+                    label={`Focus more on ${option.label}`}
+                    onChange={() => toggleLifeAreaFocus(option.value)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -6871,10 +7463,12 @@ function AppearanceToggle({
 
 function SwitchControl({
   checked,
+  disabled = false,
   label,
   onChange
 }: {
   checked: boolean;
+  disabled?: boolean;
   label: string;
   onChange: (checked: boolean) => void;
 }) {
@@ -6884,6 +7478,7 @@ function SwitchControl({
       className={`settings-switch ${checked ? "is-on" : ""}`}
       aria-label={label}
       aria-pressed={checked}
+      disabled={disabled}
       onClick={() => onChange(!checked)}
     >
       <span aria-hidden="true" />
@@ -7095,24 +7690,25 @@ function ProfileView({
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
   const planetRows = natalPositions.filter((position) => !["Sun", "Moon", "True Node"].includes(position.planet));
   const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
-  const aspectRows = transitItems.slice(0, 8);
+  const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
+  const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
   const elementalBalance = natalElementBalance(natalPositions);
   const leadingElements = elementalBalance
     .filter((item) => item.count === Math.max(...elementalBalance.map((element) => element.count)) && item.count > 0)
     .map((item) => item.element);
-  const elementalSummary = leadingElements.length > 0 ? `${leadingElements.join(" & ")} led` : "Balance pending";
+  const elementalSummary = leadingElements.length > 0 ? `${leadingElements.join(" & ")} led` : "Balance still forming";
   const plutoSignature = natalPositions.find((position) => position.planet === "Pluto");
   const signatureTitle = plutoSignature?.house === 7 ? "Relationships remake you" : `${safeSun} shapes your center`;
   const signatureBody = plutoSignature?.house === 7
-    ? "Pluto sits angular in your 7th house - partnership is where your deepest growth and power play out. Nothing about love stays surface-level."
+    ? "Pluto sits angular in your 7th house, so partnership is where your deepest growth and power dynamics often play out. Nothing about love stays surface-level."
     : `${natalSun ? natalPlacementTitle(natalSun) : `Sun in ${safeSun}`} sets the center of gravity, while ${safeMoon} and ${safeRising} shape how the chart meets the world.`;
 
   if (!hasSavedBirthDetails) {
     return (
       <section className="you-empty-state" aria-label="Create your chart">
-        <h2>Your chart is waiting.</h2>
+        <h2>Create your chart.</h2>
         <p>
-          Add your birth details, and we'll map the exact sky you were born under - then show how today's planets are activating your chart.
+          Add your birth details to see your natal placements and what today's sky may be bringing up.
         </p>
         <button type="button" className="you-empty-cta" onClick={onCreateChart}>
           <span className="you-empty-cta-icon" aria-hidden="true">
@@ -7190,8 +7786,8 @@ function ProfileView({
           {!natalSky && (
             <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
               <span>Chart</span>
-              <h3>Calculating your chart.</h3>
-              <p>We have the birth details. Your chart wheel and signatures will appear as soon as the calculation finishes.</p>
+              <h3>Reading your chart.</h3>
+              <p>The chart wheel and core signatures will appear as soon as the calculation finishes.</p>
             </section>
           )}
 
@@ -7278,7 +7874,15 @@ function ProfileView({
               <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects in your chart">
                 {natalAspectRows.map((aspect) => {
                   const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
-                  const content = approvedVoiceOrKnowledgeFallback(contentKey);
+                  const content = fallbackFromHook(
+                    "you.natal-aspect",
+                    {
+                      planetA: aspect.from,
+                      aspect: aspect.type,
+                      planetB: aspect.to
+                    },
+                    approvedVoiceOrKnowledgeFallback(contentKey)
+                  );
                   const generated = liveGeneratedContent(generatedContent, contentKey);
                   const rowSummary = liveGeneratedSummary(generated, content.summary);
 
@@ -7320,7 +7924,15 @@ function ProfileView({
             <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
               {aspectRows.map((transit) => {
                 const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
-                const content = approvedVoiceOrKnowledgeFallback(contentKey);
+                const content = fallbackFromHook(
+                  "you.transit-to-natal",
+                  {
+                    transitPlanet: transit.transitPlanet,
+                    aspect: transit.aspect,
+                    natalPoint: transit.natalPoint
+                  },
+                  approvedVoiceOrKnowledgeFallback(contentKey)
+                );
                 const generated = liveGeneratedContent(generatedContent, contentKey);
                 const rowSummary = liveGeneratedSummary(generated, content.summary);
 
@@ -7348,8 +7960,8 @@ function ProfileView({
           {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (
             <section className="you-empty-card" aria-label="Transit setup">
               <span>Daily transits</span>
-              <h3>Your transit view is ready.</h3>
-              <p>Open Create Chart any time to update your birth chart or current city.</p>
+              <h3>Your transit view is set.</h3>
+              <p>Update your birth details or current city any time if something changes.</p>
               <button type="button" onClick={onCreateChart}>Edit details →</button>
             </section>
           )}
@@ -7365,7 +7977,8 @@ function ManualChartsPanel({
   profileNatalSky,
   profileTransits,
   natalGeneratedContent,
-  relationshipGeneratedContent
+  relationshipGeneratedContent,
+  landingKey
 }: {
   profile: UserProfile;
   currentSky: SkySnapshot;
@@ -7373,6 +7986,7 @@ function ManualChartsPanel({
   profileTransits: TransitItem[];
   natalGeneratedContent: GeneratedContentMap;
   relationshipGeneratedContent: GeneratedContentMap;
+  landingKey: number;
 }) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
@@ -7388,13 +8002,14 @@ function ManualChartsPanel({
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
-  const selectedFriendTransits = selectedChart ? rankedFriendTransits(currentSky, selectedChart) : [];
+  const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
+  const selectedFriendTransits = selectedChart ? rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart), lifeAreaFocus) : [];
   const selectedFriendTopTransit = selectedFriendTransits[0];
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
   const selectedFriendTiming = selectedChart ? friendTimingContext(selectedChart, currentSky) : null;
   const selectedFriendCompatibility = selectedChart ? compatibilityHighlights(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
   const selectedRelationshipTiming = selectedChart ? relationshipTiming(profileTransits, selectedFriendTransits, selectedChart) : [];
-  const selectedSynastryContacts = selectedChart ? synastryContacts(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
+  const selectedSynastryContacts = selectedChart ? rankSynastryContactsByLifeAreaFocus(synastryContacts(profileNatalSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
   const selectedSynastryContact = selectedSynastryContacts.find((contact) => contact.id === selectedSynastryContactId)
     ?? selectedSynastryContacts[0]
     ?? null;
@@ -7405,7 +8020,7 @@ function ManualChartsPanel({
     ?? selectedSynastryContacts[1]
     ?? selectedSynastryContacts[0]
     ?? null;
-  const selectedHouseOverlays = selectedChart ? synastryHouseOverlays(profileNatalSky, selectedChart, relationshipGeneratedContent) : [];
+  const selectedHouseOverlays = selectedChart ? rankHouseOverlaysByLifeAreaFocus(synastryHouseOverlays(profileNatalSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
   const selectedRelationshipSignRows = selectedChart ? relationshipSignRows(profileNatalSky, selectedChart) : [];
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
     id: contact.id,
@@ -7421,7 +8036,7 @@ function ManualChartsPanel({
     .map((item) => item.element);
   const selectedCompositeElementalSummary = selectedCompositeLeadingElements.length > 0
     ? `${selectedCompositeLeadingElements.join(" & ")} led`
-    : "Pattern pending";
+    : "Pattern still forming";
   const selectedCompositeTopAspect = selectedCompositeSky?.aspects[0] ?? null;
   const selectedFriendPlacementRows = socialPlacementRows(selectedChart?.natalChart ?? null);
   const profilePlacementRows = socialPlacementRows(profileNatalSky);
@@ -7432,18 +8047,26 @@ function ManualChartsPanel({
     .map((item) => item.element);
   const selectedFriendElementalSummary = selectedFriendLeadingElements.length > 0
     ? `${selectedFriendLeadingElements.join(" & ")} led`
-    : "Balance pending";
+    : "Balance still forming";
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
   const selectedFriendSignatureTitle = selectedFriendLeadingElements[0]
     ? `A ${selectedFriendLeadingElements[0].toLowerCase()}-led chart`
     : selectedFriendSun
       ? natalPlacementTitle(selectedFriendSun)
-      : "Chart signature pending";
+      : "Chart signature needs birth details";
   const selectedFriendSignatureBody = selectedFriendLeadingElements[0]
-    ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendLeadingElements[0].toLowerCase()} emphasis. Read that as a repeating style across placements, not as the whole person.`
-    : "Add complete birth details to read the chart's elemental balance and signature.";
+    ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendLeadingElements[0].toLowerCase()} emphasis. That element is the first language of the chart and colors how the rest of the placements come through.`
+    : "Add complete birth details to read the chart's elemental balance, angles, and strongest signatures.";
   const selectedRelationshipTypeLabel = relationshipTypeLabel(selectedChart?.relationshipType);
-  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent), [currentSky, charts, natalGeneratedContent]);
+
+  useEffect(() => {
+    setFriendsMainView("circle");
+    setSelectedChartId(null);
+    setFriendProfileTab("bond");
+    setSelectedSynastryContactId(null);
+    setOpenChartMenuId(null);
+  }, [landingKey]);
+  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus), [currentSky, charts, natalGeneratedContent, lifeAreaFocus]);
   const isLoadingCharts = status === "loading";
 
   useEffect(() => {
@@ -7741,14 +8364,14 @@ function ManualChartsPanel({
           {status === "loading" && (
             <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
               <span>Charts</span>
-              <h3>Loading manual charts.</h3>
-              <p>Saved friends and charts will appear here.</p>
+              <h3>Loading saved charts.</h3>
+              <p>Your saved friends and comparison charts will appear here.</p>
             </section>
           )}
           {status !== "loading" && charts.length === 0 && (
             <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
               <span>Charts</span>
-              <h3>No manual charts yet.</h3>
+              <h3>No saved friends yet.</h3>
               <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
             </section>
           )}
@@ -7831,7 +8454,7 @@ function ManualChartsPanel({
             <div className="manual-chart-form-heading friend-chart-modal-heading">
               <div>
                 <h3 id="friend-chart-modal-title">{editingChart ? "Edit friend" : "Add friend"}</h3>
-                <p>{editingChart ? editingChart.displayName : "Create a private comparison chart from birth details."}</p>
+                <p>{editingChart ? editingChart.displayName : "Add birth details to read this person's chart and compare it with yours."}</p>
               </div>
             </div>
 
@@ -7992,9 +8615,9 @@ function ManualChartsPanel({
                   <h3>
                     {selectedStrongestConnection
                       ? relationshipThemeTitle(selectedStrongestConnection.friendPoint.name, selectedStrongestConnection.yourPoint.name, selectedStrongestConnection.aspect)
-                      : "Connection pending"}
+                      : "Add both charts"}
                   </h3>
-                  <p>{selectedStrongestConnection?.summary ?? "Add both complete charts to rank the most supportive contact."}</p>
+                  <p>{selectedStrongestConnection?.summary ?? "Add both complete charts to see where the connection feels most supportive."}</p>
                   <ChevronRight size={24} aria-hidden="true" />
                 </button>
                 <button
@@ -8011,9 +8634,9 @@ function ManualChartsPanel({
                   <h3>
                     {selectedBiggestChallenge
                       ? relationshipThemeTitle(selectedBiggestChallenge.friendPoint.name, selectedBiggestChallenge.yourPoint.name, selectedBiggestChallenge.aspect)
-                      : "Challenge pending"}
+                      : "Add both charts"}
                   </h3>
-                  <p>{selectedBiggestChallenge?.summary ?? "The friction points appear once both charts can be compared."}</p>
+                  <p>{selectedBiggestChallenge?.summary ?? "Add both complete charts to see where the connection may ask for more patience, honesty, or care."}</p>
                   <ChevronRight size={24} aria-hidden="true" />
                 </button>
                 <article className="friend-bond-snapshot-card">
@@ -8059,8 +8682,8 @@ function ManualChartsPanel({
                 {(selectedFriendPlacementRows.length === 0 || profilePlacementRows.length === 0) && (
                   <article className="friends-logic-card">
                     <span>Placements</span>
-                    <h3>Placement comparison pending.</h3>
-                    <p>Add complete birth details for both people to compare planets, signs, degrees, and houses.</p>
+                    <h3>Add both charts.</h3>
+                    <p>Add complete birth details for both people to see each person's planets, signs, degrees, and houses side by side.</p>
                   </article>
                 )}
               </section>
@@ -8098,7 +8721,7 @@ function ManualChartsPanel({
                 </div>
               )}
               <p className="friend-compat-intro">
-                Synastry compares two natal charts. It shows how {selectedChart.displayName}'s planets activate yours, where the connection feels easy, and where the two of you may need more translation.
+                Synastry shows how {selectedChart.displayName}'s planets meet yours. It can point to what feels familiar, what feels charged, and where the two of you may need more translation.
               </p>
 
               <section className="friend-relationship-snapshot friend-relationship-snapshot-synastry" aria-label={`${selectedChart.displayName} synastry snapshot`}>
@@ -8107,18 +8730,18 @@ function ManualChartsPanel({
                   <h3>
                     {selectedSynastryContact
                       ? relationshipThemeTitle(selectedSynastryContact.friendPoint.name, selectedSynastryContact.yourPoint.name, selectedSynastryContact.aspect)
-                      : "Contact pending"}
+                      : "Add both charts"}
                   </h3>
-                  <p>{selectedSynastryContact?.summary ?? "Add both complete charts to rank the tightest synastry contacts."}</p>
+                  <p>{selectedSynastryContact?.summary ?? "Add both complete charts to see the strongest contacts between you."}</p>
                 </article>
                 <article className="friends-logic-card friend-snapshot-card">
                   <span>Where it lands</span>
                   <h3>
                     {selectedHouseOverlays[0]
-                      ? `${ordinalHouse(selectedHouseOverlays[0].house)} house activation`
-                      : "Overlay pending"}
+                      ? `${ordinalHouse(selectedHouseOverlays[0].house)} house contact`
+                      : "Add both charts"}
                   </h3>
-                  <p>{selectedHouseOverlays[0]?.summary ?? "House overlays appear once both charts have signs and houses available."}</p>
+                  <p>{selectedHouseOverlays[0]?.summary ?? "Add both complete charts to see where each person's planets land in the other's life."}</p>
                 </article>
               </section>
 
@@ -8146,7 +8769,11 @@ function ManualChartsPanel({
                       <article className="friends-logic-card friend-overlay-card" key={overlay.id}>
                         <span>{overlay.glyph} {overlay.planet}</span>
                         <h3>{overlay.targetName === "your" ? `Your ${ordinalHouse(overlay.house)} house` : `${selectedChart.displayName}'s ${ordinalHouse(overlay.house)} house`}</h3>
-                        <p>{overlay.summary}</p>
+                        <div className="friend-overlay-copy">
+                          {overlay.detailParagraphs.map((paragraph) => (
+                            <p key={paragraph}>{paragraph}</p>
+                          ))}
+                        </div>
                       </article>
                     ))}
                   </div>
@@ -8180,7 +8807,7 @@ function ManualChartsPanel({
                 {selectedSynastryContacts.length === 0 && (
                   selectedFriendCompatibility.map((item) => (
                     <article className="friends-logic-card" key={item.title}>
-                      <span>Static pattern</span>
+                      <span>Pattern</span>
                       <h3>{item.title}</h3>
                       <p>{item.body}</p>
                     </article>
@@ -8213,7 +8840,7 @@ function ManualChartsPanel({
                   <p>
                     {selectedCompositeTopAspect
                       ? compositeAspectSummary(selectedCompositeTopAspect, selectedChart.displayName, relationshipGeneratedContent)
-                      : "The composite chart is ready. Add or refine birth times for a clearer aspect pattern."}
+                      : "The composite chart is ready. Exact birth times make the relationship pattern sharper, especially angles and houses."}
                   </p>
                 </article>
               </section>
@@ -8234,7 +8861,7 @@ function ManualChartsPanel({
                       <div className="you-signatures-main">
                         <span className="eyebrow section-label">TLDR composite signature</span>
                         <h3>{selectedCompositeElementalSummary}</h3>
-                        <p>This view reads the connection as its own chart: not you, not {selectedChart.displayName}, but the shared pattern that starts to form when both charts are combined.</p>
+                        <p>This view treats the relationship as its own chart. It shows the shared pattern that forms when both charts are combined.</p>
                       </div>
                       <div className="elemental-balance" aria-label="Composite chart elemental balance">
                         <div className="elemental-balance-head">
@@ -8286,15 +8913,15 @@ function ManualChartsPanel({
                     ) : (
                       <article className="friends-logic-card">
                         <span>Composite aspects</span>
-                        <h3>No tight major aspects yet.</h3>
-                        <p>The composite wheel is available, but no major aspects are close enough to rank in this view.</p>
+                        <h3>No tight major aspects found.</h3>
+                        <p>No single aspect is leading the relationship chart right now. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.</p>
                       </article>
                     )}
                   </>
                 ) : (
                   <article className="friends-logic-card">
                     <span>Composite</span>
-                    <h3>Relationship pattern pending.</h3>
+                    <h3>Composite chart needs both birth charts.</h3>
                     <p>Add complete birth data for both people to generate the composite chart view.</p>
                   </article>
                 )}

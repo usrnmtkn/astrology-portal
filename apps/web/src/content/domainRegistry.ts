@@ -121,6 +121,24 @@ type CompositeEntry = {
   status?: string;
 };
 
+type ModifierEntry = {
+  id: string;
+  schema?: string;
+  summary?: string;
+  body?: string;
+  definition?: string;
+  appUsage?: string | string[];
+  classes?: {
+    retrogrades?: Record<string, {
+      id?: string;
+      planet?: string;
+      plainTranslation?: string;
+      status?: string;
+    }>;
+  };
+  status?: string;
+};
+
 type KnowledgeBundle = {
   primitives?: Record<string, PrimitiveEntry[]>;
   insightCards?: InsightCard[];
@@ -132,6 +150,7 @@ type KnowledgeBundle = {
   synastryAspects?: SynastryAspectEntry[];
   synastryHouseOverlays?: SynastryHouseOverlayEntry[];
   composite?: CompositeEntry[];
+  modifiers?: ModifierEntry[];
   voiceContent?: VoiceContentItem[];
 };
 
@@ -735,6 +754,24 @@ export function createDomainRegistry(bundleInput: unknown) {
   const voiceBySourceAndVoice = new Map((bundle.voiceContent ?? []).map((item) => [`${item.sourceId}:${item.voiceId}`, item]));
   const knowledgeById = new Map<string, KnowledgeItem>();
   const legacyIdByAlias = new Map<string, string>();
+  const retrogradeMeaningByPlanet = new Map<string, string>();
+
+  for (const modifier of bundle.modifiers ?? []) {
+    const retrogrades = modifier.classes?.retrogrades;
+
+    if (!retrogrades) {
+      continue;
+    }
+
+    Object.values(retrogrades).forEach((retrograde) => {
+      const planet = retrograde.planet ? normalizeIdPart(retrograde.planet) : "";
+      const meaning = cleanText(retrograde.plainTranslation);
+
+      if (planet && meaning) {
+        retrogradeMeaningByPlanet.set(planet, meaning);
+      }
+    });
+  }
 
   function addKnowledge(item: KnowledgeItem) {
     knowledgeById.set(item.id, item);
@@ -1251,8 +1288,13 @@ export function createDomainRegistry(bundleInput: unknown) {
     };
   }
 
+  function retrogradePlanetMeaning(planet: string) {
+    return retrogradeMeaningByPlanet.get(normalizeIdPart(planet)) ?? null;
+  }
+
   return {
     approvedVoiceOrKnowledgeFallback,
+    retrogradePlanetMeaning,
     aspectContentId,
     natalAspectContentId,
     currentSkyAspectContentId,
