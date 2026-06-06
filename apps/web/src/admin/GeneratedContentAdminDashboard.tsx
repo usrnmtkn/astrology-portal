@@ -109,13 +109,13 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "templates") return "Templates & Voice";
-  if (activePage === "hooks") return "Fallback Hooks";
+  if (activePage === "hooks") return "Content Hooks";
   return "Generated Content";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "templates") return "Admin / Content generation / Templates & voice";
-  if (activePage === "hooks") return "Admin / Content generation / Fallback hooks";
+  if (activePage === "hooks") return "Admin / Content generation / Content hooks";
   return "Admin / Content generation / Review queue";
 }
 
@@ -125,7 +125,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "hooks") {
-    return "Review the named fallback hook points the app uses when a surface needs approved knowledge-backed copy.";
+    return "Review the named hook points the app uses when a surface needs approved generated or voice-backed copy.";
   }
 
   return "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app.";
@@ -1106,7 +1106,7 @@ export function GeneratedContentAdminDashboard() {
             aria-current={activePage === "hooks" ? "page" : undefined}
           >
             <KeyRound size={18} aria-hidden="true" />
-            Fallback Hooks
+            Content Hooks
           </button>
           <button
             className={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "active" : ""}
@@ -1200,12 +1200,12 @@ export function GeneratedContentAdminDashboard() {
         </section>
 
         {activePage === "hooks" ? (
-          <section id="fallback-hooks" className="admin-template-panel admin-hooks-page" aria-label="Fallback hook catalog">
+          <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
             <div className="admin-template-header">
               <div>
                 <p className="admin-eyebrow">Hook catalog</p>
-                <h2>Named Fallback Points</h2>
-                <p>These are the app surfaces that use fallback copy when no LIVE generated content exists yet. Use the labels below to identify what needs a generated row, template, or source-backed rewrite.</p>
+                <h2>Named Content Points</h2>
+                <p>These are the app surfaces that need LIVE generated content or approved voice-backed copy. Use the labels below to identify what needs a generated row, template, or source-backed rewrite.</p>
               </div>
               <div className="admin-template-actions">
                 <button type="button" onClick={() => setActivePage("review")}>

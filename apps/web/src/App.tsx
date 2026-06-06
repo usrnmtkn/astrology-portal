@@ -346,12 +346,20 @@ function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "n
   if (registry) {
     const fallback = registry.approvedVoiceOrKnowledgeFallback(id);
 
+    if (!hasApprovedVoiceContent(fallback)) {
+      return emptyContentFallback(id);
+    }
+
     return {
       ...fallback,
       detailParagraphs: fallback.detailParagraphs ?? []
     };
   }
 
+  return emptyContentFallback(id);
+}
+
+function emptyContentFallback(id: string): ContentFallback {
   return {
     bundle: {
       id,
@@ -388,9 +396,9 @@ function fallbackFromHook(
       voice: null,
       status: "INCOMPLETE"
     },
-    summary: localFallback.summary ?? null,
-    body: localFallback.body ?? null,
-    detailParagraphs: localFallback.detailParagraphs ?? (localFallback.body ? [localFallback.body] : [])
+    summary: null,
+    body: null,
+    detailParagraphs: []
   };
 }
 
@@ -2339,13 +2347,11 @@ function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart)
 
 function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generatedContent?: GeneratedContentMap) {
   if (!transit) {
-    return `${chart.displayName}'s chart is saved. When a stronger transit is active, this card will show what is being stirred and what may help them move through it.`;
+    return interpretationInReviewSummary;
   }
 
   const area = transitLifeArea(transit, chart);
-  const areaTheme = transitLifeAreaTheme(transit, chart);
   const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
-  const localSummary = `${transit.transitPlanet} is pressing on ${chart.displayName}'s ${transit.natalPoint} right now, so ${areaTheme} may feel harder to ignore. If their mood or priorities shift, start with this part of life before assuming the issue is about you.`;
   const content = fallbackFromHook(
     "you.transit-to-natal",
     {
@@ -2353,12 +2359,11 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
       aspect: transit.aspect,
       natalPoint: transit.natalPoint,
       topic: area
-    },
-    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+    }
   );
   const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
 
-  return liveGeneratedSummary(generated, content.summary) || localSummary;
+  return liveGeneratedSummary(generated, content.summary);
 }
 
 function relationshipAspectContentKeys(firstPoint: string, aspect: string, secondPoint: string, context?: "synastry" | "composite") {
@@ -2433,22 +2438,20 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   const topHit = synastryHits[0];
   if (topHit) {
     const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
-    const localSummary = `${chart.displayName}'s ${topHit.theirPosition.planet} ${synastryAspectPlainVerb(topHit.aspect.type)} your ${topHit.yourPosition.planet}. This is one of the main ways the relationship gets your attention, especially when current transits touch either planet.`;
     const hookFallback = fallbackFromHook(
       "friends.synastry-contact",
       {
         planetA: topHit.theirPosition.planet,
         aspect: topHit.aspect.type,
         planetB: topHit.yourPosition.planet
-      },
-      { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+      }
     );
     const generated = generatedContent
       ? liveGeneratedContentByKeys(generatedContent, relationshipAspectContentKeys(topHit.theirPosition.planet, topHit.aspect.type, topHit.yourPosition.planet, "synastry"))
       : null;
     highlights.push({
       title,
-      body: liveGeneratedSummary(generated, hookFallback.summary) || localSummary
+      body: liveGeneratedSummary(generated, hookFallback.summary)
     });
   }
 
@@ -2743,25 +2746,16 @@ function synastryVerb(aspect: string) {
 
 function synastryContactSummary(friendName: string, contact: Omit<SynastryContact, "summary">, generatedContent?: GeneratedContentMap) {
   const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
-
-  if (generated) {
-    return liveGeneratedSummary(generated, null);
-  }
-
-  const verb = synastryAspectPlainVerb(contact.aspect);
-  const advice = synastryContactAdvice(contact.aspect);
-  const localSummary = `${friendName}'s ${contact.friendPoint.name} ${verb} your ${contact.yourPoint.name}. This can make their ${contact.friendPoint.role} feel especially noticeable to your ${contact.yourPoint.role}. ${advice}`;
   const hookFallback = fallbackFromHook(
     "friends.synastry-contact",
     {
       planetA: contact.friendPoint.name,
       aspect: contact.aspect,
       planetB: contact.yourPoint.name
-    },
-    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+    }
   );
 
-  return hookFallback.summary ?? localSummary;
+  return liveGeneratedSummary(generated, hookFallback.summary);
 }
 
 function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): SynastryContact[] {
@@ -2808,20 +2802,16 @@ function synastryDetailCopy(friendName: string, contact: SynastryContact, genera
     return generatedParagraphs;
   }
 
-  const firstLine = `${friendName}'s ${contact.friendPoint.name} ${synastryAspectPlainVerb(contact.aspect)} your ${contact.yourPoint.name}. You may notice their ${contact.friendPoint.role} affecting your ${contact.yourPoint.role} more strongly than it would with someone else.`;
-  const secondLine = synastryAspectMeaning(contact.aspect);
-  const thirdLine = synastryActionLine(contact.aspect);
   const hookFallback = fallbackFromHook(
     "friends.synastry-contact",
     {
       planetA: contact.friendPoint.name,
       aspect: contact.aspect,
       planetB: contact.yourPoint.name
-    },
-    { detailParagraphs: [firstLine, secondLine, thirdLine] }
+    }
   );
 
-  return hookFallback.detailParagraphs.length > 0 ? hookFallback.detailParagraphs : [firstLine, secondLine, thirdLine];
+  return liveGeneratedBody(generated, hookFallback.detailParagraphs);
 }
 
 function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): HouseOverlay[] {
@@ -2859,9 +2849,6 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       const ownerLabel = ownerName === "Your" ? "Your" : `${ownerName}'s`;
       const houseOwner = targetName === "your" ? "your" : targetName;
       const lifeArea = houseLifeAreas[house] ?? "life area";
-      const planetMeaning = houseOverlayPlanetMeaning(position.planet);
-      const houseMeaning = houseOverlayHouseMeaning(house);
-      const concreteExamples = houseOverlayConcreteExamples(house);
       const direction = targetName === "your"
         ? `${ownerLabel} ${position.planet} lands in your ${ordinalHouse(house)} house of ${lifeArea}.`
         : `${ownerLabel} ${position.planet} lands in ${houseOwner} ${ordinalHouse(house)} house of ${lifeArea}.`;
@@ -2876,31 +2863,18 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
       ];
       const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contentKeys) : null;
       const generatedParagraphs = generatedContentParagraphs(generated);
-      const fallbackParagraphs = targetName === "your"
-        ? [
-            `${direction} This can make the connection feel personal in the part of your life connected to ${houseMeaning}.`,
-            `${position.planet} brings ${planetMeaning} into the house it enters. In your ${ordinalHouse(house)} house, that may show up through ${concreteExamples}.`,
-            `The connection may become concrete here because ${ownerLabel.toLowerCase()} presence keeps touching this part of your life. Notice what gets stirred without assuming the whole relationship has to live in this one room.`
-          ]
-        : [
-            `${direction} This can make the connection feel personal quickly, as if your presence touches something specific in ${chart.displayName}'s life.`,
-            `${position.planet} brings ${planetMeaning} into the house it enters. In ${chart.displayName}'s ${ordinalHouse(house)} house, that may show up through ${concreteExamples}.`,
-            `The connection may become concrete here because it does not stay abstract for long. It can move into real life through the ordinary details of this house, so treat that access with care.`
-          ];
       const hookFallback = fallbackFromHook(
         "friends.house-overlay",
         {
           planet: position.planet,
           house
-        },
-        { summary: fallbackParagraphs[0], body: fallbackParagraphs.join("\n\n"), detailParagraphs: fallbackParagraphs }
+        }
       );
       const detailParagraphs = generatedParagraphs.length > 0
         ? generatedParagraphs
         : hookFallback.detailParagraphs.length > 0
           ? hookFallback.detailParagraphs
-          : fallbackParagraphs;
-      const fallbackSummary = fallbackParagraphs[0];
+          : [interpretationInReviewSummary];
 
       return [{
         id: `${ownerName}-${position.planet}-${targetName}-${house}`.toLowerCase().replace(/\s+/g, "-"),
@@ -2909,7 +2883,7 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
         ownerName,
         targetName,
         house,
-        summary: liveGeneratedSummary(generated, hookFallback.summary ?? fallbackSummary),
+        summary: liveGeneratedSummary(generated, hookFallback.summary),
         detailParagraphs,
         contentKeys
       }];
@@ -3078,26 +3052,16 @@ function compositeAspectSummary(aspect: { from: string; to: string; type: string
     return liveGeneratedSummary(generated, null);
   }
 
-  const tone = synastryTone(aspect.type);
-  const firstRole = comparisonPointRole(aspect.from);
-  const secondRole = comparisonPointRole(aspect.to);
-  const phrase = tone === "Friction"
-    ? "This is where the bond itself can get tense. Treat it as a shared pattern to work with instead of assigning the whole problem to one person."
-    : tone === "Flow"
-      ? "This is one of the easier strengths in the bond. It works best when you use it deliberately instead of assuming it will carry everything."
-      : "This is a central part of the bond's identity. Both people may feel it quickly when they are together.";
-  const localSummary = `In the composite chart, ${aspect.from} ${synastryAspectPhrase(aspect.type)} ${aspect.to}. The relationship blends ${firstRole} with ${secondRole}. ${phrase}`;
   const hookFallback = fallbackFromHook(
     "friends.composite-aspect",
     {
       planetA: aspect.from,
       aspect: aspect.type,
       planetB: aspect.to
-    },
-    { summary: localSummary, body: localSummary, detailParagraphs: [localSummary] }
+    }
   );
 
-  return hookFallback.summary ?? localSummary;
+  return liveGeneratedSummary(generated, hookFallback.summary);
 }
 
 function relationshipTiming(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
@@ -3116,11 +3080,8 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
           transitPlanet: yourTransit.transitPlanet,
           aspect: yourTransit.aspect,
           natalPoint: yourTransit.natalPoint
-        },
-        {
-          summary: `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same transit may be moving through different needs, so pause before assuming you are reacting to the same thing.`
         }
-      ).summary ?? `${yourTransit.transitPlanet} is touching both charts right now: your ${yourTransit.natalPoint} and ${chart.displayName}'s ${friendTransit.natalPoint}. The same transit may be moving through different needs, so pause before assuming you are reacting to the same thing.`
+      ).summary ?? interpretationInReviewSummary
     }));
   }
 
@@ -3132,11 +3093,8 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
         transitPlanet: transit.transitPlanet,
         aspect: transit.aspect,
         natalPoint: transit.natalPoint
-      },
-      {
-        summary: `${transit.transitPlanet} is touching ${chart.displayName}'s ${transit.natalPoint}. If they seem more reactive, focused, distant, or urgent, this may be part of what is moving through them before it is about you.`
       }
-    ).summary ?? `${transit.transitPlanet} is touching ${chart.displayName}'s ${transit.natalPoint}. If they seem more reactive, focused, distant, or urgent, this may be part of what is moving through them before it is about you.`
+    ).summary ?? interpretationInReviewSummary
   }));
 }
 
@@ -3371,7 +3329,7 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Astro knowledge registry failed to load; using local content fallbacks.", error);
+        console.warn("Astro knowledge registry failed to load; source-backed content will be unavailable.", error);
       });
 
     return () => {
@@ -3389,7 +3347,7 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Live Sky interpretations failed to load; using local knowledge fallback.", error);
+        console.warn("Live Sky interpretations failed to load; unpublished content will remain hidden.", error);
         if (!cancelled) {
           setSkyGeneratedContent(new Map());
         }
@@ -3421,7 +3379,7 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Live natal interpretations failed to load; using local knowledge fallback.", error);
+        console.warn("Live natal interpretations failed to load; unpublished content will remain hidden.", error);
         if (!cancelled) {
           setNatalGeneratedContent(new Map());
         }
@@ -3454,7 +3412,7 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Live relationship interpretations failed to load; using local knowledge fallback.", error);
+        console.warn("Live relationship interpretations failed to load; unpublished content will remain hidden.", error);
         if (!cancelled) {
           setRelationshipGeneratedContent(new Map());
         }
@@ -3546,7 +3504,7 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Swiss Ephemeris sky calculation failed; using fallback sky.", error);
+        console.warn("Swiss Ephemeris sky calculation failed; using static sky snapshot.", error);
         if (!cancelled) {
           setSky(getCurrentSky(skyLocation, selectedDateTime));
         }
@@ -4864,7 +4822,6 @@ function retrogradeKnowledgeCopy(
     return generatedSummary;
   }
 
-  const retrogradeMeaning = retrogradePlanetMeaning(position.planet, "sky");
   const hookFallback = fallbackFromHook(
     "sky.retrograde",
     {
@@ -4878,21 +4835,13 @@ function retrogradeKnowledgeCopy(
     }
   );
 
-  if (retrogradeMeaning) {
-    const signPhrase = position.sign ? ` in ${position.sign}` : "";
-
-    return `${position.planet} is retrograde${signPhrase}: ${retrogradeMeaning}.`;
-  }
-
   const knowledgeSummary = hookFallback.summary?.trim() || hookFallback.body?.trim() || hookFallback.detailParagraphs[0]?.trim();
 
   if (knowledgeSummary) {
     return `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
   }
 
-  const signPhrase = position.sign ? ` in ${position.sign}` : "";
-
-  return `${position.planet} is retrograde${signPhrase}. Review this planet's topic before forcing the next step.`;
+  return interpretationInReviewSummary;
 }
 
 function ordinalHouse(house: number) {
