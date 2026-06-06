@@ -8,6 +8,8 @@ type ContentFactsInput = {
   mode?: "feed" | "in_depth" | "article";
   eventType?: string;
   targetDate?: string;
+  contentKey?: string;
+  headline?: string;
 };
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -55,7 +57,72 @@ function dateOnly(date: Date) {
 }
 
 function currentSkyAspectKnowledgeId(aspect: { from: string; type: string; to: string }) {
-  return `sky-${aspect.from.toLowerCase().replaceAll(" ", "-")}-${aspect.type}-${aspect.to.toLowerCase().replaceAll(" ", "-")}`;
+  return `sky-${slugContentPart(aspect.from)}-${slugContentPart(aspect.type)}-${slugContentPart(aspect.to)}`;
+}
+
+function slugContentPart(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function parseAspectLabel(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  const match = value.match(/^(.+?)\s+(conjunction|opposition|square|trine|sextile)\s+(.+?)$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    from: match[1].trim(),
+    type: match[2].trim().toLowerCase(),
+    to: match[3].trim()
+  };
+}
+
+function skyAspectContentKey(aspect: { from: string; type: string; to: string }, targetDate: string) {
+  return `sky-aspect-${slugContentPart(aspect.from)}-${slugContentPart(aspect.type)}-${slugContentPart(aspect.to)}-${targetDate}`;
+}
+
+function skyRetrogradeContentKey(position: SkySnapshot["positions"][number], targetDate: string) {
+  return `sky-retrograde-${slugContentPart(position.planet)}-${targetDate}`;
+}
+
+function findAspectByLabel(aspects: SkySnapshot["aspects"], label: ReturnType<typeof parseAspectLabel>) {
+  if (!label) {
+    return undefined;
+  }
+
+  const from = slugContentPart(label.from);
+  const to = slugContentPart(label.to);
+  const type = slugContentPart(label.type);
+
+  return aspects.find((aspect) => {
+    const aspectFrom = slugContentPart(aspect.from);
+    const aspectTo = slugContentPart(aspect.to);
+    const aspectType = slugContentPart(aspect.type);
+
+    return aspectType === type && (
+      (aspectFrom === from && aspectTo === to) ||
+      (aspectFrom === to && aspectTo === from)
+    );
+  });
+}
+
+function findRetrogradeByLabel(positions: SkySnapshot["positions"], label?: string) {
+  if (!label) {
+    return undefined;
+  }
+
+  const normalizedLabel = slugContentPart(label.replace(/\s+retrograde$/i, ""));
+
+  return positions.find((position) => position.motion === "retrograde" && slugContentPart(position.planet) === normalizedLabel);
 }
 
 function collectiveSkyPosition(position: SkySnapshot["positions"][number] | undefined) {
@@ -87,10 +154,99 @@ async function buildSkyFacts(input: ContentFactsInput) {
   const retrogrades = sky.positions.filter((position) => position.motion === "retrograde");
   const topAspects = sky.aspects.slice(0, 5);
   const targetDate = dateOnly(date);
+  const eventType = input.eventType || "daily-sky";
+  const sourceSnapshot = loadSkySourceSnapshot();
+
+  if (eventType === "current-aspect") {
+    const label = parseAspectLabel(input.headline);
+    const aspect = findAspectByLabel(sky.aspects, label) ?? topAspects[0];
+
+    if (aspect) {
+      return {
+        contentKey: skyAspectContentKey(aspect, targetDate),
+        eventType,
+        targetDate,
+        facts: {
+          type: "current_aspect",
+          targetDate,
+          aspect,
+          planets: collectiveSkyPositions(sky.positions.filter((position) => position.planet === aspect.from || position.planet === aspect.to)),
+          moonPhase: sky.moonPhase,
+          dominantElement: sky.dominantElement
+        },
+        knowledgeIds: [currentSkyAspectKnowledgeId(aspect)],
+        sourceSnapshot
+      };
+    }
+  }
+
+  if (eventType === "seasonal-weather" && sun) {
+    const supportingAspects = sky.aspects.filter((aspect) => aspect.from === "Sun" || aspect.to === "Sun").slice(0, 3);
+
+    return {
+      contentKey: `sky-season-${slugContentPart(sun.sign)}-${targetDate}`,
+      eventType,
+      targetDate,
+      facts: {
+        type: "seasonal_weather",
+        targetDate,
+        sun: collectiveSkyPosition(sun),
+        currentSky: {
+          moon: collectiveSkyPosition(moon),
+          moonPhase: sky.moonPhase,
+          topAspects: supportingAspects.length ? supportingAspects : topAspects,
+          dominantElement: sky.dominantElement
+        }
+      },
+      knowledgeIds: (supportingAspects.length ? supportingAspects : topAspects).map(currentSkyAspectKnowledgeId),
+      sourceSnapshot
+    };
+  }
+
+  if (eventType === "lunar-weather" && moon) {
+    const supportingAspects = sky.aspects.filter((aspect) => aspect.from === "Moon" || aspect.to === "Moon").slice(0, 3);
+
+    return {
+      contentKey: `sky-moon-${slugContentPart(moon.sign)}-${targetDate}`,
+      eventType,
+      targetDate,
+      facts: {
+        type: "lunar_weather",
+        targetDate,
+        moon: collectiveSkyPosition(moon),
+        moonPhase: sky.moonPhase,
+        supportingAspects,
+        dominantElement: sky.dominantElement
+      },
+      knowledgeIds: supportingAspects.map(currentSkyAspectKnowledgeId),
+      sourceSnapshot
+    };
+  }
+
+  if (eventType === "retrograde") {
+    const retrograde = findRetrogradeByLabel(sky.positions, input.headline) ?? retrogrades[0];
+
+    if (retrograde) {
+      return {
+        contentKey: skyRetrogradeContentKey(retrograde, targetDate),
+        eventType,
+        targetDate,
+        facts: {
+          type: "retrograde",
+          targetDate,
+          planet: collectiveSkyPosition(retrograde),
+          moonPhase: sky.moonPhase,
+          dominantElement: sky.dominantElement
+        },
+        knowledgeIds: [`sky-retrograde-${slugContentPart(retrograde.planet)}`],
+        sourceSnapshot
+      };
+    }
+  }
 
   return {
     contentKey: `sky-daily-${targetDate}`,
-    eventType: input.eventType || "daily-sky",
+    eventType,
     targetDate,
     facts: {
       generatedAt: sky.generatedAt,
@@ -105,7 +261,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
       topAspects
     },
     knowledgeIds: topAspects.map(currentSkyAspectKnowledgeId),
-    sourceSnapshot: loadSkySourceSnapshot()
+    sourceSnapshot
   };
 }
 
