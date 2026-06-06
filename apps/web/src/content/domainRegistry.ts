@@ -1,4 +1,4 @@
-import type { ContentArea, ContentBundle, KnowledgeItem, VoiceContentItem } from "./types";
+import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -1005,7 +1005,7 @@ export function createDomainRegistry(bundleInput: unknown) {
         house
       },
       surfaceTags: ["synastry"],
-      contentAreas: uniqueValues(["relationships", ...(houseLifeAreas[Number(house)] ? normalizedAreas([houseLifeAreas[Number(house)]]) : [])]),
+      contentAreas: ["relationships"],
       priority: personalRelevanceScore(planet) + 20,
       intensity: personalRelevanceScore(planet) >= 25 ? 4 : 2,
       interpretation: {
