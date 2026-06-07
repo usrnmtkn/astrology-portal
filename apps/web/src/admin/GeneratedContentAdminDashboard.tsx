@@ -1236,6 +1236,14 @@ export function GeneratedContentAdminDashboard() {
                         <dd>{hook.key}</dd>
                       </div>
                       <div>
+                        <dt>Required facts</dt>
+                        <dd>
+                          {hook.requiredFacts.map((fact) => (
+                            <code key={fact}>{fact}</code>
+                          ))}
+                        </dd>
+                      </div>
+                      <div>
                         <dt>Knowledge ID patterns</dt>
                         <dd>
                           {hook.knowledgeIdTemplates.map((template) => (
@@ -1252,6 +1260,24 @@ export function GeneratedContentAdminDashboard() {
                         </dd>
                       </div>
                     </dl>
+                    <div className="admin-hook-guidance" aria-label={`${hook.label} generation guidance`}>
+                      <div>
+                        <span>Headline pattern</span>
+                        <p>{hook.copy.headline}</p>
+                      </div>
+                      <div>
+                        <span>Summary pattern</span>
+                        <p>{hook.copy.summary}</p>
+                      </div>
+                      <div>
+                        <span>Body pattern</span>
+                        <p>{hook.copy.body}</p>
+                      </div>
+                      <div>
+                        <span>Best move</span>
+                        <p>{hook.copy.bestMove}</p>
+                      </div>
+                    </div>
                   </article>
                 );
               })}
