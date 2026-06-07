@@ -12313,14 +12313,14 @@ html,
 
 .app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
   grid-template-areas:
-    "sky-head sky-aside"
-    "sky-main sky-aside";
-  grid-template-columns: clamp(420px, 42vw, 560px) minmax(0, 544px);
+    "sky-aside sky-head"
+    "sky-aside sky-main";
+  grid-template-columns: minmax(544px, 0.92fr) minmax(0, 560px);
   justify-content: center;
 }
 
 .app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) > .sky-panel {
-  justify-self: end;
+  justify-self: start;
 }
 
 .app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) > .today-hero,
