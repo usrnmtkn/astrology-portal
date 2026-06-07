@@ -193,6 +193,8 @@ function build() {
     frameworks: frameworks.filter((entry) => [
       "traditional-transit-framework",
       "lunar-cycle-framework",
+      "lunation-content-architecture-framework",
+      "lunation-ritual-practice-framework",
       "transit-lifecycle-framework",
       "predictive-trigger-method-framework",
       "transit-sect-guide",
