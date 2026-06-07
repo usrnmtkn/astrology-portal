@@ -6,6 +6,12 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
+const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
+const sampleOnlyReviewerNote = "SAMPLE ONLY. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
+
+function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
+}
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -183,7 +189,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
-    status: body.status && allowedStatuses.has(body.status) ? body.status : "DRAFT",
+    status: body.status && allowedStatuses.has(body.status) && !isSampleOnlyRow(body.surface, body.contentKey) ? body.status : "DRAFT",
     event_type: body.eventType.trim(),
     target_date: body.targetDate || null,
     facts: body.facts ?? {},
@@ -195,7 +201,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     summary: body.summary ?? "",
     body: body.body ?? "",
     sections: body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? ""
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : "")
   };
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
@@ -229,6 +235,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const patch: Record<string, unknown> = {};
 
   if (body.status) {
+    if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
+      throw new Error("Sample-only personalized rows cannot be published globally. Generate real user or bond scoped content instead.");
+    }
+
     patch.status = body.status;
 
     if (body.status === "REVIEWED") {

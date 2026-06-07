@@ -101,6 +101,7 @@ const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, strin
 };
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
+const personalizedSampleReviewerNote = "SAMPLE ONLY. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 
 function isPersonalizedSurface(surface: GeneratedContentSurfaceFilter) {
   return surface !== "all" && personalizedContentSurfaces.has(surface);
@@ -584,35 +585,35 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
       knowledgeIds: ""
     },
     you: {
-      contentKey: "you-natal-sun-in-aries-9th-house",
+      contentKey: "sample-you-natal-sun-in-aries-9th-house",
       eventType: "natal-placement",
       headline: "Sun in Aries in the 9th house",
       mode: "in_depth",
       knowledgeIds: "natal-sun-in-aries, sun-in-aries, sun-9"
     },
     natal: {
-      contentKey: "natal-moon-trine-saturn",
+      contentKey: "sample-natal-moon-trine-saturn",
       eventType: "natal-aspect",
       headline: "Moon trine Saturn",
       mode: "in_depth",
       knowledgeIds: "natal-moon-trine-saturn, moon-trine-saturn"
     },
     synastry: {
-      contentKey: "synastry-venus-sextile-ascendant",
+      contentKey: "sample-synastry-venus-sextile-ascendant",
       eventType: "synastry-contact",
       headline: "Venus sextile Ascendant",
       mode: "in_depth",
       knowledgeIds: "synastry-venus-sextile-ascendant, relationship-venus-sextile-ascendant, venus-sextile-ascendant"
     },
     composite: {
-      contentKey: "composite-sun-square-moon",
+      contentKey: "sample-composite-sun-square-moon",
       eventType: "composite-aspect",
       headline: "Composite Sun square Moon",
       mode: "in_depth",
       knowledgeIds: "composite-sun-square-moon, sun-square-moon"
     },
     relationship: {
-      contentKey: "relationship-timing-pluto",
+      contentKey: "sample-relationship-timing-pluto",
       eventType: "relationship-timing",
       headline: "Pluto relationship timing",
       mode: "feed",
@@ -641,7 +642,7 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
     }, null, 2),
     sourceSnapshotJson: "{}",
     knowledgeIds: defaultDraft.knowledgeIds,
-    reviewerNotes: ""
+    reviewerNotes: personalizedContentSurfaces.has(resolvedSurface) ? personalizedSampleReviewerNote : ""
   };
 }
 
@@ -1177,6 +1178,11 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function saveDraft(nextStatus = draft.status) {
+    if (nextStatus === "LIVE" && personalizedContentSurfaces.has(draft.surface)) {
+      setMessage("Sample-only personalized rows cannot be published globally. Generate real user or bond scoped content instead.");
+      return;
+    }
+
     if (!draft.id) {
       await createDraft();
       return;
