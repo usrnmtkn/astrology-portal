@@ -228,20 +228,15 @@ You both like to be in charge. If neither of you names who is leading, small cho
 
 Avoid making relationship copy falsely positive. If the bond is complicated, say what is complicated in ordinary language.
 
-## Title Style
+## Headline and Human Hook
 
-Titles should name the human theme, not only the astrology.
+Keep the primary headline factual for fact-backed rows (aspect, placement, transit, season, retrograde, lunation).
+Use summary/body and sections for the human theme and advice language.
 
-Good title patterns:
+Good human hooks in body:
 
-- Relationship Metamorphosis
-- Sensitive & Adaptable
-- Hard Worker & Dependable
-- Find Happiness Within
-- Conversations Blur Today
-- Turn Scattered Ideas Into Action
-- Common Ground
-- Expectations
+- "Conversations can go off on two tracks when the energy is fast."
+- "This can make affection feel earned until consistency grows."
 
 Avoid title patterns:
 
