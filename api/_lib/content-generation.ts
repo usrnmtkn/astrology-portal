@@ -66,6 +66,7 @@ export type SceneLock = {
 };
 
 export type TimeLordSceneLock = {
+  sceneType?: "internal_state" | "body_signal" | "decision_point" | "task_friction" | "conversation" | "relationship_interaction";
   sceneArena: string;
   currentPressure: string;
   personalSensitivity: string;
@@ -311,6 +312,19 @@ const vagueFirstSentencePhrases = [
   "you may notice where",
   "may be easier to see today"
 ];
+const unsupportedExternalScenePhrases = [
+  "someone may ask",
+  "someone might ask",
+  "you may be asked",
+  "you might be asked",
+  "a request may",
+  "the request itself",
+  "someone wants an answer",
+  "someone needs an answer",
+  "a message may arrive",
+  "a conversation may start",
+  "a situation may come up"
+];
 const listPatternPhrases = [
   "especially around",
   "themes of",
@@ -530,11 +544,15 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
     "Do not put technical astrology in summary, body, action, timing, or main sections. Put it only in astrologyDrilldown.",
     "Main copy must not say: time lord, profection, natal Moon, natal Venus, Mars opposite Moon, Venus-ruled year, house activation, transit to natal, aspect pattern.",
+    "Do not invent external events. Do not write someone asks, a message arrives, a conversation starts, or a situation comes up unless ASTROLOGY FACTS explicitly include that event.",
+    "A concrete scene can be an internal state, body signal, decision point, task friction, conversation, or relationship interaction. Choose the scene type that the facts actually support.",
+    "The main copy must still make sense if no obvious external event happens.",
     "astrologyDrilldown: explain why the app is saying this today. Keep it short, clear, and plain.",
     "astrologyDrilldown.title: use 'Why this?'.",
     "astrologyDrilldown.summary: two plain sentences max about the astrology logic.",
     "astrologyDrilldown.factors: include the time lord, strongest pressure, natal target, timing factor, or other relevant factors that actually appear in ASTROLOGY FACTS.",
     "astrologyDrilldown.whyThisScene: explain why this one scene was chosen and what meanings were excluded.",
+    "astrologyDrilldown.whyThisScene must name the scene type and explain why no external event was invented when the facts do not support one.",
     "astrologyDrilldown.timingNote: optional timing strength.",
     input.surface === "sky" ? "Sky rule: write current astrology as advice and timing. Do not make it a natal identity description." : "",
     input.surface === "you" || input.surface === "natal" ? "Natal/You rule: describe a recurring pattern with soft certainty, then give a useful way to work with it." : "",
@@ -545,16 +563,16 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
 function sceneLockRules() {
   return [
     "SCENE LOCK",
-    "Before writing, internally choose one concrete scene.",
+    "Before writing, internally choose one supported lived-experience scene.",
     "Do not output the scene lock as a separate field. Use it to control the final copy.",
     "Internal scene lock shape:",
-    "{ scene: string, mainTension: string, userPressure: string, concreteSituation: string, whatNotToInclude: string[] }",
+    "{ sceneType: 'internal_state' | 'body_signal' | 'decision_point' | 'task_friction' | 'conversation' | 'relationship_interaction', scene: string, mainTension: string, userPressure: string, concreteSituation: string, whatNotToInclude: string[] }",
     "The app should not summarize every possible meaning of the transit, placement, aspect, or relationship contact.",
-    "Pick the most likely human moment and commit to it.",
-    "The final copy must answer: what is the one thing the reader might actually experience?",
+    "Pick the most likely supported experience and commit to it.",
+    "The final copy must answer: what is the one thing the reader might actually notice?",
     "Do not answer: what are all the themes this astrology could represent?",
     "Rules:",
-    "- Choose one scene only.",
+    "- Choose one scene type only.",
     "- Stay inside the chosen scene.",
     "- Do not list alternate meanings.",
     "- Do not name more than two life areas.",
@@ -562,7 +580,9 @@ function sceneLockRules() {
     "- The first sentence must work without astrology knowledge.",
     "- Use astrology only after the human situation is clear.",
     "- Advice must be one specific action.",
-    "- Name what meanings you are choosing not to include, then leave them out."
+    "- Do not invent external events. If the facts do not show an interaction, do not write someone asks, a message arrives, a conversation starts, or a situation comes up.",
+    "- The copy should still fit if no visible event happens.",
+    "- Name what meanings and external events you are choosing not to include, then leave them out."
   ].join("\n");
 }
 
@@ -576,20 +596,21 @@ function timeLordSceneRules(input: GenerateContentInput) {
     "The time lord must narrow the story. It must not add more keywords.",
     "Generation order:",
     "1. Time lord -> scene arena.",
-    "2. Strongest active transit -> current pressure, event, or mood.",
+    "2. Strongest active transit -> current pressure, body signal, threshold, decision point, or mood.",
     "3. Natal planet or point being hit -> personal sensitivity.",
-    "4. Final copy -> one concrete scene.",
+    "4. Final copy -> one supported lived-experience scene.",
     "Internal scene selection prompt:",
-    "Choose one concrete scene for the user. Use the time lord as the main scene filter. Use the strongest transit as the immediate pressure. Use the natal planet or point as the personal sensitivity.",
-    "Return internally: Time lord arena, current pressure, personal sensitivity, one chosen scene, and meanings you are excluding.",
+    "Choose one supported scene type for the user. Use the time lord as the main scene filter. Use the strongest transit as the immediate pressure. Use the natal planet or point as the personal sensitivity.",
+    "Return internally: Time lord arena, current pressure, personal sensitivity, scene type, one chosen scene, meanings you are excluding, and external events you are not inventing.",
     "Do not output this internal selection as a separate field.",
     "Rules:",
-    "- Choose one scene only.",
+    "- Choose one scene type only.",
     "- Do not list all possible topics for the time lord.",
     "- Do not name more than two life areas.",
-    "- The scene must be something that could happen in ordinary life.",
+    "- The scene must be something that could be noticed in ordinary life, including an internal state or body signal.",
     "- The final TLDR must stay inside this scene.",
     "- Do not explain every meaning of the time lord.",
+    "- Do not turn the time lord into a fictional interaction. Venus can be a change in taste, satisfaction, attachment, ease, or cost without anyone asking for anything.",
     mapping
       ? [
           `Detected time lord: ${planet}.`,
@@ -598,6 +619,18 @@ function timeLordSceneRules(input: GenerateContentInput) {
           `Avoid turning ${planet} into these overbroad topics: ${mapping.avoidOverbroadTopics.join(", ")}.`
         ].join("\n")
       : "No time lord was confidently detected. If ASTROLOGY FACTS include one under another label, infer it and apply the same rule."
+  ].join("\n");
+}
+
+function sourceMethodRules() {
+  return [
+    "SOURCE-INFORMED METHOD",
+    "Use the reviewed books as method, not as wording.",
+    "Synthesis rule: read systematically before summarizing. Do not let one factor become the whole interpretation unless it clearly outranks the rest.",
+    "Daily horoscope rule: include lunar contacts for feeling and reaction. For longer timing, start with slower planets and then layer faster triggers.",
+    "Transit rule: a transit becomes personal when it contacts the natal chart. Interpret the current planet, the natal planet or point, the house being activated, and the existing natal pattern.",
+    "Skepticism rule: avoid Barnum statements, vague comfort, mystical opportunity language, and broad predictions. Specific does not mean inventing an event.",
+    "Fit test: after drafting, ask whether the main copy still works if no external event happens. If it depends on a guessed event, rewrite it as a body signal, internal state, decision point, or task friction."
   ].join("\n");
 }
 
@@ -806,6 +839,18 @@ function technicalAstrologyInMainCopy(draft: GeneratedAstrologyDraft) {
   };
 }
 
+function unsupportedExternalSceneInMainCopy(draft: GeneratedAstrologyDraft, facts?: Record<string, unknown>) {
+  const text = mainCopyText(draft);
+  const factText = normalizeText(JSON.stringify(facts ?? {}));
+  const matches = matchedPhrases(text, unsupportedExternalScenePhrases);
+  const factsSupportExternalScene = /\b(message|conversation|request|invitation|meeting|email|call|relationship|partner|friend|social|event)\b/i.test(factText);
+
+  return {
+    hasUnsupportedExternalScene: matches.length > 0 && !factsSupportExternalScene,
+    matches
+  };
+}
+
 function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
   if (!failures.some((failure) => failure.code === code && failure.message === message)) {
     failures.push({ code, message, severity });
@@ -821,6 +866,7 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Do not use a sentence with three or more options joined by commas or or." : "",
     failedCodes.has("TIME_LORD_NOT_USED_AS_SCENE_FILTER") ? "Reject this draft. The time lord was used as a topic list instead of a scene filter. Use the time lord to choose one ordinary life scene, then write only that scene. Do not explain every meaning of the time lord." : "",
     failedCodes.has("TECHNICAL_ASTROLOGY_IN_MAIN_COPY") ? "Reject this draft. The main card teaches astrology mechanics. Rewrite the main card as lived guidance only, with no time lord, profection, natal, house, transit-to-natal, or aspect terms. Put the astrology explanation only in astrologyDrilldown." : "",
+    failedCodes.has("UNSUPPORTED_EXTERNAL_SCENE") ? "Reject this draft. It invented an external event that is not in the facts. Rewrite the main card as an internal state, body signal, decision point, or task friction that still fits if no one says or does anything obvious." : "",
     failedCodes.has("DRILLDOWN_TOO_THIN") ? "Add a concise astrologyDrilldown that answers 'Why this?' with the actual factors used, why this scene was chosen, and the timing strength." : "",
     failedCodes.has("TOO_MANY_LIFE_AREAS") ? "Do not mention more than two life areas." : "",
     failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
@@ -1270,6 +1316,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     timeLordSceneRules(input),
     "",
+    sourceMethodRules(),
+    "",
     "CONTENT MODE",
     modeRules(input.mode),
     "",
@@ -1512,6 +1560,7 @@ export function evaluateEditorialCoherence(
   const astrologyTermCount = countMatches([firstSummarySentence, openingBody].join(" "), astrologyMechanicTerms);
   const keywordListSentence = sentencesFrom([summary, openingBody].join(" ")).find(sentenceHasKeywordListing);
   const technicalMainCopy = technicalAstrologyInMainCopy(draft);
+  const unsupportedExternalScene = unsupportedExternalSceneInMainCopy(draft, context.facts);
   const timeLordPlanet = timeLordPlanetFromFacts(context.facts);
   const timeLordSceneText = [
     summary,
@@ -1556,6 +1605,14 @@ export function evaluateEditorialCoherence(
       failures,
       "TECHNICAL_ASTROLOGY_IN_MAIN_COPY",
       "The main card includes technical astrology that belongs in the drilldown."
+    );
+  }
+
+  if (unsupportedExternalScene.hasUnsupportedExternalScene) {
+    addEditorialFailure(
+      failures,
+      "UNSUPPORTED_EXTERNAL_SCENE",
+      "The main card invents an external event that is not supported by the facts."
     );
   }
 
@@ -1784,8 +1841,12 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
                 sceneLock: {
                   type: "object",
                   additionalProperties: false,
-                  required: ["sceneArena", "currentPressure", "personalSensitivity", "chosenScene", "excludedMeanings"],
+                  required: ["sceneType", "sceneArena", "currentPressure", "personalSensitivity", "chosenScene", "excludedMeanings"],
                   properties: {
+                    sceneType: {
+                      type: "string",
+                      enum: ["internal_state", "body_signal", "decision_point", "task_friction", "conversation", "relationship_interaction"]
+                    },
                     sceneArena: { type: "string" },
                     currentPressure: { type: "string" },
                     personalSensitivity: { type: "string" },
