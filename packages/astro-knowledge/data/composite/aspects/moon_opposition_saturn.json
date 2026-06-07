@@ -1,0 +1,12 @@
+{
+  "id": "moon_opposition_saturn",
+  "kind": "composite",
+  "placementType": "aspect",
+  "planet": "moon-saturn",
+  "aspect": "opposition",
+  "plainTranslation": "Moon opposition Saturn: The conjunction, square, and opposition can be especially difficult when this is a family relationship, especially with an elder/child relationship.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from The Dark Pixie Astrology composites material text.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}
