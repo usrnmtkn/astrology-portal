@@ -12731,3 +12731,249 @@ html,
     max-width: none;
   }
 }
+
+/* Layout repair pass: keep each product surface in a usable first viewport.
+   This intentionally sits last because the file has several exploratory
+   layout layers above it that otherwise reintroduce large blank gutters. */
+.app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
+.app-shell.auth-mode .portal-grid.signup-layout {
+  max-width: min(1440px, calc(100vw - 48px));
+  padding-top: clamp(22px, 3vw, 44px);
+  width: 100%;
+}
+
+.app-shell:is(.mode-profile, .mode-friends) .profile-layout > .detail-panel,
+.app-shell.auth-mode .signup-layout > .detail-panel {
+  align-self: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  margin: 0 auto;
+  overflow: visible;
+  padding: 0;
+}
+
+.app-shell.auth-mode .signup-split {
+  align-items: start;
+  display: grid;
+  gap: clamp(22px, 3vw, 40px);
+  grid-template-columns: minmax(360px, 520px) minmax(420px, 1fr);
+  margin: 0 auto;
+  max-width: 1180px;
+  width: 100%;
+}
+
+.app-shell.auth-mode .signup-form {
+  align-self: start;
+  order: 1;
+}
+
+.app-shell.auth-mode .signup-story {
+  align-self: start;
+  min-height: clamp(260px, 28vw, 380px);
+  order: 2;
+}
+
+.app-shell.auth-mode .auth-close-button {
+  background: var(--surface-app);
+  left: auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  transform: none;
+}
+
+.app-shell.mode-profile .profile-layout .you-page,
+.app-shell.mode-friends .friends-page,
+.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+  margin-top: clamp(18px, 3vw, 42px);
+}
+
+.app-shell.mode-profile .profile-layout .you-page {
+  gap: clamp(18px, 2.5vw, 28px);
+  max-width: min(1180px, calc(100vw - 64px));
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-card {
+  max-width: 760px;
+}
+
+.app-shell.mode-profile .profile-layout .profile-tabs {
+  margin: clamp(18px, 3vw, 36px) auto clamp(14px, 2vw, 24px);
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane {
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
+  margin-bottom: 0;
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) {
+    align-items: start;
+    column-gap: clamp(36px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
+    justify-content: center;
+    margin-top: clamp(18px, 3vw, 42px);
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .you-profile-card,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane {
+    grid-column: 2;
+    justify-self: stretch;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
+    margin-top: clamp(20px, 4vw, 54px);
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) {
+    display: contents;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart > :not(.natal-wheel),
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) > :not(.natal-wheel) {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
+    align-self: start;
+    grid-column: 1;
+    grid-row: 1 / span 8;
+    justify-self: center;
+    margin-top: clamp(12px, 2vw, 28px);
+    max-width: min(560px, 43vw);
+    position: static;
+    width: 100%;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel .sky-wheel,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel svg {
+    max-width: min(560px, 43vw);
+    width: 100%;
+  }
+}
+
+.app-shell.mode-friends .friends-page {
+  gap: clamp(18px, 2.4vw, 30px);
+  max-width: min(1180px, calc(100vw - 64px));
+  padding-top: 0;
+}
+
+.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+  margin-top: clamp(12px, 2vw, 24px);
+  padding-top: 0;
+}
+
+.app-shell.mode-friends .friends-page-heading h2 {
+  font-size: clamp(56px, 6vw, 86px);
+  line-height: 0.95;
+}
+
+.app-shell.mode-friends .friends-chart-toolbar {
+  justify-content: center;
+  margin: clamp(12px, 2vw, 24px) 0 clamp(12px, 2vw, 20px);
+}
+
+.app-shell.mode-friends .profile-layout .manual-chart-list {
+  max-width: 680px;
+}
+
+.app-shell.mode-friends .friends-feed-card {
+  min-height: 0;
+}
+
+.app-shell.mode-friends .friends-back-button {
+  margin-bottom: clamp(12px, 2vw, 18px);
+}
+
+.app-shell.mode-friends .friend-profile-panel {
+  gap: clamp(16px, 2vw, 24px);
+  max-width: min(1180px, calc(100vw - 64px));
+}
+
+.app-shell.mode-friends .friend-profile-card,
+.app-shell.mode-friends .friend-view-tabs {
+  max-width: 420px;
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-friends .friend-profile-panel {
+    display: grid;
+    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
+    justify-content: center;
+  }
+
+  .app-shell.mode-friends .friend-profile-card,
+  .app-shell.mode-friends .friend-view-tabs {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage {
+    column-gap: clamp(36px, 5vw, 72px);
+    display: contents;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
+    align-self: start;
+    grid-column: 1;
+    grid-row: 1 / span 8;
+    justify-self: center;
+    margin-top: clamp(12px, 2.4vw, 28px);
+    max-width: min(560px, 43vw);
+    position: static;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
+    max-width: min(560px, 43vw);
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro,
+  .app-shell.mode-friends .friend-profile-copy-column {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
+    margin-top: clamp(24px, 4vw, 58px);
+  }
+}
+
+@media (max-width: 939px) {
+  .app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
+  .app-shell.auth-mode .portal-grid.signup-layout {
+    max-width: min(100%, calc(100vw - 32px));
+    padding-top: 18px;
+  }
+
+  .app-shell.auth-mode .signup-split {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell.auth-mode .signup-story {
+    order: 1;
+  }
+
+  .app-shell.auth-mode .signup-form {
+    order: 2;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page,
+  .app-shell.mode-friends .friends-page,
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
+  .app-shell.mode-friends .friend-profile-panel {
+    margin-top: 18px;
+    max-width: min(100%, calc(100vw - 32px));
+  }
+}
