@@ -12395,652 +12395,57 @@ html,
   }
 }
 
-/* UI audit stabilization: keep the late redline layer from creating isolated
-   columns, huge vertical gaps, and clipped desktop controls. */
-.auth-mode .portal-grid.signup-layout {
-  max-width: none;
-  padding-top: clamp(24px, 5vw, 72px);
+/* Canonical layout layer
+   The prototype is built from a small set of page primitives: a bounded page
+   shell, a two-column chart/content layout, and compact surface lists. Keep
+   this block as the single source of truth for the app's top-level geometry. */
+.app-shell {
+  --layout-page-max: 1140px;
+  --layout-wide-max: 1180px;
+  --layout-chart-col: clamp(420px, 42vw, 560px);
+  --layout-content-col: minmax(0, 1fr);
+  --layout-gap: clamp(36px, 5vw, 72px);
+  --layout-page-x: clamp(24px, 4vw, 48px);
+  --layout-page-top: clamp(24px, 4vw, 56px);
 }
 
-.auth-mode .signup-layout .detail-panel {
-  margin: 0 auto;
-  max-width: min(1180px, calc(100vw - 96px));
-  width: 100%;
-}
-
-.auth-mode .signup-split {
-  align-items: start;
-  display: grid;
-  gap: clamp(24px, 3vw, 42px);
-  grid-template-columns: minmax(360px, 520px) minmax(360px, 1fr);
-  margin: 0 auto;
-  max-width: 1180px;
-  position: relative;
-  width: 100%;
-}
-
-.auth-mode .auth-close-button {
-  align-items: center;
-  background: var(--surface-app);
-  border: 1px solid var(--line-app);
-  border-radius: 999px;
-  box-shadow: none;
-  color: var(--ink-app);
-  display: inline-flex;
-  height: 42px;
-  justify-content: center;
-  left: auto;
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  width: 42px;
-  z-index: 3;
-}
-
-.auth-mode .signup-form,
-.auth-mode .signup-story {
-  min-width: 0;
-  width: 100%;
-}
-
-.auth-mode .signup-form {
-  order: 1;
-}
-
-.auth-mode .signup-story {
-  border-radius: 20px;
-  min-height: clamp(260px, 33vw, 380px);
-  order: 2;
-  overflow: hidden;
-  padding: clamp(26px, 4vw, 40px);
-}
-
-.auth-mode .signup-story h2 {
-  font-family: var(--font-ui);
-  font-size: clamp(30px, 3vw, 40px);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.08;
-  margin: 0;
-  max-width: 720px;
-}
-
-.auth-mode .signup-story h2 em {
-  display: block;
-  font-family: var(--font-mono);
-  font-style: normal;
-  letter-spacing: -0.02em;
-}
-
-.auth-mode .signup-heading {
-  margin: 0 0 20px;
-}
-
-.auth-mode .signup-field > div,
-.auth-mode .signup-city-search .city-search-control,
-.auth-mode .signup-city-search label > input {
-  border-radius: 16px;
-  min-height: 58px;
-}
-
-.app-shell.mode-profile .profile-layout > .detail-panel:has(.you-page),
-.app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
-  max-width: none;
-  padding: 0;
-  width: 100%;
-}
-
-.app-shell.mode-profile .profile-layout .you-page {
-  gap: 28px;
-  margin: clamp(72px, 9vw, 132px) auto 0;
-  max-width: min(1120px, calc(100vw - 96px));
-}
-
-.app-shell.mode-profile .profile-layout .you-profile-card {
-  max-width: 760px;
-}
-
-.app-shell.mode-profile .profile-layout .profile-tabs {
-  margin: clamp(54px, 7vw, 92px) auto 44px;
-  max-width: 360px;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .subpane {
-  gap: 20px;
-  width: 100%;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
-  margin: 0 auto 10px;
-}
-
-.app-shell.mode-profile .profile-layout .you-page .list.you-aspects-list {
-  max-width: 760px;
-}
-
-@media (min-width: 1040px) {
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) {
-    align-items: start;
-    column-gap: clamp(44px, 6vw, 88px);
-    display: grid;
-    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
-    justify-content: center;
-    max-width: min(1180px, calc(100vw - 96px));
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .you-profile-card,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
-    grid-column: 2;
-    justify-self: stretch;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
-    margin-top: 90px;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane {
-    grid-column: 2;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) {
-    display: contents;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart > :not(.natal-wheel),
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) > :not(.natal-wheel) {
-    grid-column: 2;
-    justify-self: stretch;
-    min-width: 0;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
-    grid-column: 1;
-    grid-row: 1 / span 8;
-    justify-self: center;
-    margin-top: 12px;
-    max-width: 560px;
-    position: sticky;
-    top: 112px;
-    width: 100%;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel .sky-wheel,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel svg {
-    max-width: min(560px, 44vw);
-    width: 100%;
-  }
-}
-
-.app-shell.mode-friends .friends-page {
-  gap: 28px;
-  margin: clamp(56px, 7vw, 96px) auto 0;
-  max-width: min(1180px, calc(100vw - 96px));
-  padding-top: 0;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
-  margin-top: clamp(44px, 6vw, 84px);
-  max-width: min(1180px, calc(100vw - 96px));
-}
-
-.app-shell.mode-friends .friends-page-heading,
-.app-shell.mode-friends .friends-top-tabs,
-.app-shell.mode-friends .friends-feed-view,
-.app-shell.mode-friends .friends-charts-view,
-.app-shell.mode-friends .friends-feed-preview,
-.app-shell.mode-friends .manual-chart-workspace,
-.app-shell.mode-friends .manual-chart-workspace-list-only {
-  max-width: none;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friends-chart-toolbar {
-  justify-content: flex-start;
-  margin: 16px 0 18px;
-}
-
-.app-shell.mode-friends .profile-layout .manual-chart-list {
-  margin: 0 auto;
-  max-width: 680px;
-  width: 100%;
-}
-
-.app-shell.mode-friends .manual-chart-row,
-.app-shell.mode-friends .profile-layout .manual-chart-row {
-  min-height: 118px;
-  padding: 22px 28px;
-}
-
-.app-shell.mode-friends .friends-feed-card {
-  align-items: center;
-  min-height: 144px;
-  padding: 28px 32px;
-}
-
-.app-shell.mode-friends .friend-profile-panel {
-  display: grid;
-  gap: 24px;
-  max-width: min(1180px, calc(100vw - 96px));
-  width: 100%;
-}
-
-.app-shell.mode-friends .friend-profile-card,
-.app-shell.mode-friends .friend-view-tabs {
-  justify-self: end;
-  max-width: 420px;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friend-profile-card {
-  grid-template-columns: 72px minmax(0, 1fr) 32px;
-  min-height: 142px;
-  padding: 24px;
-}
-
-.app-shell.mode-friends .friend-view-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  overflow: hidden;
-}
-
-.app-shell.mode-friends .friend-view-tabs button {
-  font-size: 15px;
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.app-shell.mode-friends .friend-compat-intro {
-  font-size: 17px;
-  line-height: 1.45;
-}
-
-@media (min-width: 1040px) {
-  .app-shell.mode-friends .friend-compat-stage {
-    align-items: start;
-    column-gap: clamp(44px, 6vw, 88px);
-    display: grid;
-    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
-    justify-content: center;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
-    grid-column: 1;
-    grid-row: 1 / span 4;
-    justify-self: center;
-    margin-top: 0;
-    max-width: 560px;
-    position: sticky;
-    top: 112px;
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
-    max-width: min(560px, 44vw);
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro,
-  .app-shell.mode-friends .friend-profile-copy-column {
-    grid-column: 2;
-    min-width: 0;
-  }
-}
-
-@media (max-width: 939px) {
-  .auth-mode .signup-layout .detail-panel,
-  .app-shell.mode-profile .profile-layout .you-page,
-  .app-shell.mode-friends .friends-page,
-  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
-  .app-shell.mode-friends .friend-profile-panel {
-    max-width: min(100%, calc(100vw - 32px));
-  }
-
-  .auth-mode .signup-split {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-mode .signup-form {
-    order: 2;
-  }
-
-  .auth-mode .signup-story {
-    order: 1;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page,
-  .app-shell.mode-friends .friends-page {
-    margin-top: 24px;
-  }
-
-  .app-shell.mode-profile .profile-layout .profile-tabs {
-    margin: 24px auto 32px;
-  }
-
-  .app-shell.mode-friends .friend-profile-card,
-  .app-shell.mode-friends .friend-view-tabs,
-  .app-shell.mode-friends .profile-layout .manual-chart-list {
-    max-width: none;
-  }
-}
-
-/* Layout repair pass: keep each product surface in a usable first viewport.
-   This intentionally sits last because the file has several exploratory
-   layout layers above it that otherwise reintroduce large blank gutters. */
-.app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
-.app-shell.auth-mode .portal-grid.signup-layout {
-  max-width: min(1440px, calc(100vw - 48px));
-  padding-top: clamp(22px, 3vw, 44px);
-  width: 100%;
-}
-
-.app-shell:is(.mode-profile, .mode-friends) .profile-layout > .detail-panel,
+.app-shell .detail-panel,
+.app-shell.mode-profile .profile-layout > .detail-panel,
+.app-shell.mode-friends .profile-layout > .detail-panel,
 .app-shell.auth-mode .signup-layout > .detail-panel {
-  align-self: start;
   background: transparent;
   border: 0;
   box-shadow: none;
-  margin: 0 auto;
+  min-width: 0;
   overflow: visible;
   padding: 0;
 }
 
-.app-shell.auth-mode .signup-split {
-  align-items: start;
+.app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
+.app-shell.auth-mode .portal-grid.signup-layout {
   display: grid;
-  gap: clamp(22px, 3vw, 40px);
-  grid-template-columns: minmax(360px, 520px) minmax(420px, 1fr);
-  margin: 0 auto;
-  max-width: 1180px;
+  grid-template-columns: minmax(0, 1fr);
+  margin: var(--layout-page-top) auto 0;
+  max-width: min(var(--layout-wide-max), calc(100vw - (var(--layout-page-x) * 2)));
   width: 100%;
 }
 
-.app-shell.auth-mode .signup-form {
-  align-self: start;
-  order: 1;
-}
-
-.app-shell.auth-mode .signup-story {
-  align-self: start;
-  min-height: clamp(260px, 28vw, 380px);
-  order: 2;
-}
-
-.app-shell.auth-mode .auth-close-button {
-  background: var(--surface-app);
-  left: auto;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  transform: none;
-}
-
-.app-shell.mode-profile .profile-layout .you-page,
-.app-shell.mode-friends .friends-page,
-.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
-  margin-top: clamp(18px, 3vw, 42px);
-}
-
-.app-shell.mode-profile .profile-layout .you-page {
-  gap: clamp(18px, 2.5vw, 28px);
-  max-width: min(1180px, calc(100vw - 64px));
-}
-
-.app-shell.mode-profile .profile-layout .you-profile-card {
-  max-width: 760px;
-}
-
-.app-shell.mode-profile .profile-layout .profile-tabs {
-  margin: clamp(18px, 3vw, 36px) auto clamp(14px, 2vw, 24px);
-}
-
-.app-shell.mode-profile .profile-layout .you-page .subpane {
-  gap: clamp(16px, 2vw, 24px);
-}
-
-.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
-  margin-bottom: 0;
-}
-
-@media (min-width: 1040px) {
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) {
-    align-items: start;
-    column-gap: clamp(36px, 5vw, 72px);
-    display: grid;
-    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
-    justify-content: center;
-    margin-top: clamp(18px, 3vw, 42px);
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .you-profile-card,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane {
-    grid-column: 2;
-    justify-self: stretch;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
-    margin-top: clamp(20px, 4vw, 54px);
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) {
-    display: contents;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart > :not(.natal-wheel),
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) > :not(.natal-wheel) {
-    grid-column: 2;
-    min-width: 0;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
-    align-self: start;
-    grid-column: 1;
-    grid-row: 1 / span 8;
-    justify-self: center;
-    margin-top: clamp(12px, 2vw, 28px);
-    max-width: min(560px, 43vw);
-    position: static;
-    width: 100%;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel .sky-wheel,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel svg {
-    max-width: min(560px, 43vw);
-    width: 100%;
-  }
-}
-
-.app-shell.mode-friends .friends-page {
-  gap: clamp(24px, 3vw, 36px);
-  max-width: min(100%, calc(100vw - 96px));
-  padding-top: 0;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
-  margin-top: clamp(64px, 8vw, 96px);
-  max-width: min(100%, calc(100vw - 96px));
-  padding-top: 0;
-}
-
-.app-shell.mode-friends .friends-page-heading h2 {
-  font-size: clamp(56px, 6vw, 86px);
-  line-height: 0.95;
-}
-
-.app-shell.mode-friends .friends-chart-toolbar {
-  justify-content: flex-end;
-  margin: clamp(12px, 2vw, 24px) 0 clamp(12px, 2vw, 20px);
-}
-
-.app-shell.mode-friends .profile-layout .manual-chart-list {
-  max-width: none;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friends-feed-card {
-  min-height: 0;
-}
-
-.app-shell.mode-friends .friends-back-button {
-  margin-bottom: clamp(12px, 2vw, 18px);
-}
-
-.app-shell.mode-friends .friend-profile-panel {
-  gap: clamp(24px, 3vw, 36px);
-  max-width: none;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friend-profile-card,
-.app-shell.mode-friends .friend-view-tabs {
-  max-width: none;
-  width: 100%;
-}
-
-@media (min-width: 1040px) {
-  .app-shell.mode-friends .friend-profile-panel {
-    align-items: start;
-    column-gap: 56px;
-    display: grid;
-    grid-template-columns: minmax(420px, 0.94fr) minmax(480px, 532px);
-    justify-content: center;
-  }
-
-  .app-shell.mode-friends .friend-profile-card,
-  .app-shell.mode-friends .friend-view-tabs {
-    grid-column: 2;
-    justify-self: stretch;
-  }
-
-  .app-shell.mode-friends .friend-profile-card {
-    grid-row: 1;
-    min-height: 110px;
-    padding: 22px 24px;
-  }
-
-  .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
-    height: 60px;
-    width: 60px;
-  }
-
-  .app-shell.mode-friends .friend-view-tabs {
-    grid-row: 2;
-    min-height: 58px;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage {
-    display: contents;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
-    align-self: start;
-    grid-column: 1;
-    grid-row: 1 / span 8;
-    justify-self: center;
-    margin-top: 0;
-    max-width: min(560px, 42vw);
-    position: sticky;
-    top: 138px;
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
-    max-width: min(560px, 42vw);
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro,
-  .app-shell.mode-friends .friend-profile-copy-column {
-    grid-column: 2;
-    justify-self: stretch;
-    min-width: 0;
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-profile-copy-column {
-    grid-row: 3;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
-    grid-row: 3;
-    margin-top: 22px;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro + .friend-profile-copy-column {
-    grid-row: 4;
-  }
-
-  .app-shell.mode-friends .friend-profile-copy-column .friend-compat-intro {
-    margin-top: 0;
-  }
-}
-
-@media (max-width: 939px) {
-  .app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
-  .app-shell.auth-mode .portal-grid.signup-layout {
-    max-width: min(100%, calc(100vw - 32px));
-    padding-top: 18px;
-  }
-
-  .app-shell.auth-mode .signup-split {
-    grid-template-columns: 1fr;
-  }
-
-  .app-shell.auth-mode .signup-story {
-    order: 1;
-  }
-
-  .app-shell.auth-mode .signup-form {
-    order: 2;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page,
-  .app-shell.mode-friends .friends-page,
-  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
-  .app-shell.mode-friends .friend-profile-panel {
-    margin-top: 18px;
-    max-width: min(100%, calc(100vw - 32px));
-  }
-}
-
-/* Final prototype alignment layer. Keep this at EOF so older audit rules cannot re-expand the pages. */
-.app-shell {
-  --layout-final-max: 1140px;
-  --layout-final-left: clamp(420px, 42vw, 560px);
-  --layout-final-gap: clamp(36px, 5vw, 72px);
-}
-
-.app-shell.mode-guest .portal-grid:not(.profile-layout):not(.signup-layout),
-.app-shell.mode-member .portal-grid:not(.profile-layout):not(.signup-layout) {
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
   align-items: start;
-  column-gap: var(--layout-final-gap);
+  column-gap: var(--layout-gap);
   display: grid;
   grid-template-areas:
     "sky-aside sky-head"
     "sky-aside sky-main";
-  grid-template-columns: var(--layout-final-left) minmax(0, 1fr);
+  grid-template-columns: var(--layout-chart-col) var(--layout-content-col);
   grid-template-rows: auto 1fr;
-  margin: clamp(22px, 3vw, 44px) auto 0;
-  max-width: min(var(--layout-final-max), calc(100vw - 48px));
-  row-gap: 8px;
+  margin: var(--layout-page-top) auto 0;
+  max-width: min(var(--layout-page-max), calc(100vw - (var(--layout-page-x) * 2)));
+  row-gap: 10px;
   width: 100%;
 }
 
-.app-shell.mode-guest .portal-grid > .today-hero,
-.app-shell.mode-member .portal-grid > .today-hero {
+.app-shell:is(.mode-guest, .mode-member) .portal-grid > .today-hero {
   align-self: end;
   grid-area: sky-head;
   margin: 0 0 10px;
@@ -13048,41 +12453,45 @@ html,
   width: 100%;
 }
 
-.app-shell.mode-guest .portal-grid > .sky-panel,
-.app-shell.mode-member .portal-grid > .sky-panel {
+.app-shell:is(.mode-guest, .mode-member) .portal-grid > .sky-panel {
   align-self: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   grid-area: sky-aside;
   justify-self: stretch;
   margin: 0;
+  padding: 0;
   position: sticky;
   top: 92px;
   width: 100%;
 }
 
-.app-shell.mode-guest .portal-grid > .detail-panel,
-.app-shell.mode-member .portal-grid > .detail-panel {
-  align-self: start;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+.app-shell:is(.mode-guest, .mode-member) .portal-grid > .detail-panel {
   grid-area: sky-main;
   margin: 0;
-  max-width: none;
-  overflow: visible;
-  padding: 0;
   width: 100%;
 }
 
-.app-shell.mode-guest .sky-panel .sky-wheel,
-.app-shell.mode-guest .sky-panel svg,
-.app-shell.mode-member .sky-panel .sky-wheel,
-.app-shell.mode-member .sky-panel svg {
-  max-width: min(520px, 100%);
+.app-shell:is(.mode-guest, .mode-member) .sky-panel .sky-wheel,
+.app-shell:is(.mode-guest, .mode-member) .sky-panel svg,
+.app-shell.mode-profile .natal-wheel .sky-wheel,
+.app-shell.mode-profile .natal-wheel svg,
+.app-shell.mode-friends .friend-wheel,
+.app-shell.mode-friends .friend-wheel .sky-wheel,
+.app-shell.mode-friends .friend-wheel svg {
+  max-width: min(560px, 100%);
   width: 100%;
 }
 
-.retrograde-section {
-  margin: 0;
+.app-shell:is(.mode-guest, .mode-member) .sky-panel .sky-cards {
+  margin-top: 20px;
+}
+
+.retrograde-section,
+.placements-heading,
+.aspect-section {
+  margin-top: 0;
 }
 
 .retro-list {
@@ -13097,7 +12506,7 @@ html,
 }
 
 .retro-badge {
-  flex-basis: 48px;
+  flex: 0 0 48px;
   height: 48px;
   width: 48px;
 }
@@ -13113,7 +12522,7 @@ html,
 }
 
 .placements-heading {
-  margin: 6px 0 12px;
+  margin-bottom: 12px;
 }
 
 .placements-heading h2,
@@ -13126,33 +12535,11 @@ html,
   padding: 16px 18px 17px;
 }
 
-.app-shell.mode-profile .portal-grid.profile-layout,
-.app-shell.mode-friends .portal-grid.profile-layout {
-  max-width: min(var(--layout-final-max), calc(100vw - 48px));
-  padding-top: clamp(24px, 4vw, 64px);
-}
-
-.app-shell.mode-profile .profile-layout > .detail-panel,
-.app-shell.mode-friends .profile-layout > .detail-panel {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  margin: 0 auto;
-  max-width: none;
-  overflow: visible;
-  padding: 0;
-  width: 100%;
-}
-
-.app-shell.mode-profile .profile-layout .you-page,
-.app-shell.mode-friends .friends-page,
-.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
-  margin: 0 auto;
-}
-
 .app-shell.mode-profile .profile-layout .you-page {
-  gap: 28px;
-  max-width: min(var(--layout-final-max), calc(100vw - 48px));
+  display: grid;
+  gap: 24px;
+  margin: 0 auto;
+  max-width: min(var(--layout-page-max), 100%);
   width: 100%;
 }
 
@@ -13160,15 +12547,56 @@ html,
   max-width: 760px;
 }
 
+.app-shell.mode-profile .profile-layout .you-profile-card {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
 .app-shell.mode-profile .profile-layout .profile-tabs {
-  margin: 22px auto 24px;
+  margin: 0 auto;
+  max-width: 420px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
+  margin: 0;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-card,
+.app-shell.mode-profile .profile-layout .you-page .list.you-list-card,
+.app-shell.mode-profile .profile-layout .you-page .list.you-aspects-list,
+.app-shell.mode-profile .profile-layout .you-page .you-empty-card {
+  width: 100%;
 }
 
 .app-shell.mode-friends .friends-page {
+  display: grid;
   gap: 28px;
-  max-width: min(1180px, calc(100vw - 48px));
+  margin: 0 auto;
+  max-width: min(var(--layout-wide-max), 100%);
   padding-top: 0;
   width: 100%;
+}
+
+.app-shell.mode-friends .friends-page-heading,
+.app-shell.mode-friends .friends-top-tabs,
+.app-shell.mode-friends .friends-feed-view,
+.app-shell.mode-friends .friends-charts-view,
+.app-shell.mode-friends .friends-feed-preview,
+.app-shell.mode-friends .manual-chart-workspace {
+  max-width: none;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friends-page-heading h2 {
+  font-size: clamp(56px, 6vw, 86px);
+  line-height: 0.95;
 }
 
 .app-shell.mode-friends .friends-chart-toolbar {
@@ -13177,8 +12605,9 @@ html,
 }
 
 .app-shell.mode-friends .profile-layout .manual-chart-list {
-  margin-inline: auto;
+  margin: 0 auto;
   max-width: 680px;
+  width: 100%;
 }
 
 .app-shell.mode-friends .friends-feed-card {
@@ -13187,16 +12616,27 @@ html,
 }
 
 .app-shell.mode-friends .friend-profile-panel {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  display: grid;
   gap: 24px;
   margin: 0 auto;
-  max-width: min(var(--layout-final-max), calc(100vw - 48px));
+  max-width: min(var(--layout-page-max), 100%);
+  padding: 0;
   width: 100%;
 }
 
 .app-shell.mode-friends .friend-profile-card,
 .app-shell.mode-friends .friend-view-tabs {
-  max-width: 420px;
+  max-width: none;
   width: 100%;
+}
+
+.app-shell.mode-friends .friend-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
 }
 
 .app-shell.mode-friends .friend-view-tabs button {
@@ -13207,19 +12647,69 @@ html,
   white-space: nowrap;
 }
 
+.app-shell.auth-mode .signup-split {
+  align-items: start;
+  display: grid;
+  gap: clamp(24px, 3vw, 42px);
+  grid-template-columns: minmax(360px, 520px) minmax(360px, 1fr);
+  margin: 0 auto;
+  max-width: 1180px;
+  position: relative;
+  width: 100%;
+}
+
+.app-shell.auth-mode .signup-form,
+.app-shell.auth-mode .signup-story {
+  min-width: 0;
+  width: 100%;
+}
+
+.app-shell.auth-mode .signup-form {
+  order: 1;
+}
+
+.app-shell.auth-mode .signup-story {
+  min-height: clamp(260px, 33vw, 380px);
+  order: 2;
+}
+
+.app-shell.auth-mode .auth-close-button {
+  left: auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  transform: none;
+}
+
 @media (min-width: 940px) {
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) {
     align-items: start;
-    column-gap: var(--layout-final-gap);
+    column-gap: var(--layout-gap);
     display: grid;
-    grid-template-columns: var(--layout-final-left) minmax(0, 1fr);
-    row-gap: 8px;
+    grid-template-columns: var(--layout-chart-col) var(--layout-content-col);
+    grid-template-rows: auto auto 1fr;
+    row-gap: 24px;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
+    align-self: start;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    justify-self: center;
+    margin: 0;
+    position: sticky;
+    top: 92px;
+    width: 100%;
   }
 
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .you-profile-card,
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
     grid-column: 2;
     justify-self: stretch;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
+    max-width: none;
   }
 
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart,
@@ -13233,35 +12723,19 @@ html,
     min-width: 0;
   }
 
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
-    grid-column: 1;
-    grid-row: 1 / span 12;
-    justify-self: center;
-    margin: 0;
-    max-width: min(560px, 100%);
-    position: sticky;
-    top: 92px;
-    width: 100%;
-  }
-
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel .sky-wheel,
-  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel svg {
-    max-width: min(560px, 100%);
-    width: 100%;
-  }
-
   .app-shell.mode-friends .friend-profile-panel {
     align-items: start;
-    column-gap: var(--layout-final-gap);
+    column-gap: var(--layout-gap);
     display: grid;
-    grid-template-columns: var(--layout-final-left) minmax(0, 1fr);
-    row-gap: 16px;
+    grid-template-columns: var(--layout-chart-col) var(--layout-content-col);
+    grid-template-rows: auto auto 1fr;
+    row-gap: 24px;
   }
 
   .app-shell.mode-friends .friend-profile-card,
   .app-shell.mode-friends .friend-view-tabs {
     grid-column: 2;
-    justify-self: end;
+    justify-self: stretch;
   }
 
   .app-shell.mode-friends .friend-compat-stage {
@@ -13269,48 +12743,50 @@ html,
   }
 
   .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
+    align-self: start;
     grid-column: 1;
-    grid-row: 1 / span 12;
+    grid-row: 1 / span 3;
     justify-self: center;
     margin: 0;
-    max-width: min(560px, 100%);
     position: sticky;
     top: 92px;
     width: 100%;
   }
 
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
-  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
-    max-width: min(560px, 100%);
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro,
-  .app-shell.mode-friends .friend-profile-copy-column {
+  .app-shell.mode-friends .friend-profile-copy-column,
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
     grid-column: 2;
     min-width: 0;
-  }
-
-  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
-    margin-top: 24px;
+    width: 100%;
   }
 }
 
 @media (max-width: 939px) {
-  .app-shell.mode-guest .portal-grid:not(.profile-layout):not(.signup-layout),
-  .app-shell.mode-member .portal-grid:not(.profile-layout):not(.signup-layout) {
+  .app-shell:is(.mode-profile, .mode-friends, .auth-mode) .portal-grid.profile-layout,
+  .app-shell.auth-mode .portal-grid.signup-layout,
+  .app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
     display: flex;
     flex-direction: column;
     margin-top: 18px;
     max-width: min(100%, calc(100vw - 32px));
   }
 
-  .app-shell.mode-guest .portal-grid > .sky-panel,
-  .app-shell.mode-member .portal-grid > .sky-panel,
+  .app-shell:is(.mode-guest, .mode-member) .portal-grid > .sky-panel,
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel,
   .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
     position: static;
+  }
+
+  .app-shell.auth-mode .signup-split {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell.auth-mode .signup-story {
+    order: 1;
+  }
+
+  .app-shell.auth-mode .signup-form {
+    order: 2;
   }
 }
 
