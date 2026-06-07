@@ -7798,8 +7798,8 @@ function ProfileView({
 
           {planetRows.length > 0 && (
             <>
-              <span className="eyebrow section-label">Your planets</span>
-              <div className="list you-list-card" aria-label="Your planets">
+              <span className="eyebrow section-label">Planets</span>
+              <div className="list you-list-card" aria-label="Planets">
                 {planetRows.map((position) => (
                   <div className="chart-row chart-row-static" key={position.planet}>
                     <span className="crg" aria-hidden="true">{position.glyph}</span>
@@ -7815,8 +7815,8 @@ function ProfileView({
 
           {natalAspectRows.length > 0 && (
             <>
-              <span className="eyebrow section-label">Aspects in your chart</span>
-              <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects in your chart">
+              <span className="eyebrow section-label">Aspects</span>
+              <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects">
                 {natalAspectRows.map((aspect) => {
                   const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
                   const content = fallbackFromHook(
