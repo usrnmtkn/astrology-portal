@@ -157,6 +157,7 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
   "friends.synastry-contact": { planetA: "Venus", aspect: "sextile", planetB: "Ascendant" },
   "friends.house-overlay": { planet: "Venus", house: 4 },
   "friends.composite-aspect": { planetA: "Sun", aspect: "square", planetB: "Moon" },
+  "friends.composite-placement": { planet: "Venus", sign: "Cancer", house: 4 },
   "friends.relationship-timing": { transitPlanet: "Pluto", aspect: "opposition", natalPoint: "Descendant" },
   "friends.circle-feed": { topic: "saturn" },
   "settings.life-area-focus": { topic: "career" }

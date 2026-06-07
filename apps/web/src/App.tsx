@@ -2463,12 +2463,26 @@ function relationshipAspectContentKeys(firstPoint: string, aspect: string, secon
   return Array.from(keys);
 }
 
-function relationshipPlacementContentKeys(point: string, sign: string, context?: "synastry" | "composite") {
+function relationshipPlacementContentKeys(point: string, sign: string, context?: "synastry" | "composite", house?: number | null) {
   const baseKey = placementContentId(point, sign, "relationship");
   const prefixes = context ? [context, "relationship"] : ["relationship", "synastry", "composite"];
   const keys = new Set<string>([baseKey]);
 
   prefixes.forEach((prefix) => keys.add(`${prefix}-${baseKey}`));
+
+  if (house) {
+    const normalizedPoint = normalizeContentIdPart(point);
+    const houseKeys = [
+      `${normalizedPoint}-house-${house}`,
+      `${normalizedPoint}-house${house}`,
+      `${normalizedPoint}-in-${house}-house`
+    ];
+
+    houseKeys.forEach((key) => {
+      keys.add(key);
+      prefixes.forEach((prefix) => keys.add(`${prefix}-${key}`));
+    });
+  }
 
   return Array.from(keys);
 }
@@ -4771,7 +4785,7 @@ function FriendPlacementTable({
         {rows.map((row) => {
           const generated = generatedContent
             ? generatedContext === "composite"
-              ? liveGeneratedContentByKeys(generatedContent, relationshipPlacementContentKeys(row.label, row.sign, "composite"))
+              ? liveGeneratedContentByKeys(generatedContent, relationshipPlacementContentKeys(row.label, row.sign, "composite", row.house))
               : liveGeneratedContent(generatedContent, placementContentId(row.label, row.sign))
             : null;
           const summary = generated?.summary?.trim();
@@ -8955,6 +8969,15 @@ function ManualChartsPanel({
                 <p className="friend-compat-intro">
                   The midpoint of two charts. Each placement is the arc-midpoint of {selectedChart.displayName}'s and {relationshipComparisonIsSelf ? "your" : `${relationshipComparisonName}'s`} charts. Read the relationship as if it had a birth chart of its own.
                 </p>
+                {selectedCompositeSky && (
+                  <FriendPlacementTable
+                    title="Composite placements"
+                    rows={socialPlacementRows(selectedCompositeSky)}
+                    compact
+                    generatedContent={relationshipGeneratedContent}
+                    generatedContext="composite"
+                  />
+                )}
                 <span className="eyebrow section-label friend-section-label">Composite aspects · by strength</span>
                 {selectedCompositeSky ? (
                   <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label="Composite chart aspects">
