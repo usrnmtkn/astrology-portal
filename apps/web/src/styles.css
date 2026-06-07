@@ -2398,6 +2398,214 @@ button {
   dominant-baseline: middle;
 }
 
+/* Target chart rendering: thin-line zodiac wheels shared by the four chart surfaces. */
+.sky-wheel {
+  --wheel-bg: #f4efe8;
+  --wheel-ink: #171410;
+  --wheel-line: rgba(23, 20, 16, 0.46);
+  --wheel-line-soft: rgba(23, 20, 16, 0.28);
+  --wheel-line-faint: rgba(23, 20, 16, 0.18);
+  --wheel-muted: rgba(23, 20, 16, 0.42);
+  --wheel-aspect-soft: #6a5a6b;
+  --wheel-aspect-hard: #b8785f;
+  --wheel-aspect-neutral: #9e988d;
+  --wheel-inner-accent: #b5795e;
+  --wheel-band-bg: #ffffff;
+  background: var(--wheel-bg);
+  border-radius: 0;
+  color: var(--wheel-ink);
+  max-width: min(100%, var(--chart-wheel-size));
+  overflow: visible;
+  width: min(100%, var(--chart-wheel-size));
+}
+
+.theme-dark .sky-wheel {
+  --wheel-bg: #14100d;
+  --wheel-ink: #f3eee8;
+  --wheel-line: rgba(243, 238, 232, 0.52);
+  --wheel-line-soft: rgba(243, 238, 232, 0.3);
+  --wheel-line-faint: rgba(243, 238, 232, 0.18);
+  --wheel-muted: rgba(243, 238, 232, 0.48);
+  --wheel-aspect-soft: #6e5a74;
+  --wheel-aspect-hard: #9a5638;
+  --wheel-aspect-neutral: #746f67;
+  --wheel-inner-accent: #aa6b45;
+  --wheel-band-bg: #000000;
+}
+
+.sky-wheel-zodiac {
+  --chart-wheel-size: 560px;
+}
+
+.sky-wheel-natal,
+.sky-wheel-composite {
+  --chart-wheel-size: 620px;
+}
+
+.sky-wheel-synastry {
+  --chart-wheel-size: 680px;
+}
+
+.sign-band {
+  display: block;
+  fill: none;
+  stroke: var(--wheel-band-bg);
+  stroke-width: var(--chart-sign-ring-width);
+}
+
+.wheel-rings circle,
+.wheel-sectors line,
+.planet-tick,
+.sign-band-dividers line,
+.synastry-chart-rings circle,
+.synastry-chart-rings line {
+  fill: none;
+  stroke: var(--wheel-line);
+  stroke-width: 0.9;
+}
+
+.wheel-rings circle:first-child {
+  stroke: var(--wheel-ink);
+  stroke-width: 1.6;
+}
+
+.wheel-rings circle:nth-child(2) {
+  stroke: var(--wheel-line);
+  stroke-width: 0.85;
+}
+
+.wheel-rings .faint,
+.wheel-rings circle:last-child,
+.synastry-chart-rings circle:nth-child(2) {
+  stroke: var(--wheel-line-faint);
+}
+
+.wheel-sectors line {
+  stroke: var(--wheel-line-soft);
+  stroke-dasharray: 2 5;
+  stroke-width: 0.75;
+}
+
+.sign-band-dividers line {
+  stroke: var(--wheel-line);
+  stroke-width: 0.85;
+}
+
+.sign-labels text {
+  dominant-baseline: middle;
+  fill: var(--wheel-ink);
+  font-family: "Geist Mono", "JetBrains Mono", var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.sky-wheel-zodiac .sign-labels text {
+  font-family: var(--font-symbol);
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.sign-labels .sign-label-halo {
+  display: none;
+}
+
+.aspect-lines line {
+  opacity: 0.82;
+  stroke-linecap: round;
+  stroke-width: 1.15;
+}
+
+.sky-wheel-composite .aspect-lines line {
+  stroke-width: 1.05;
+}
+
+.sky-wheel-synastry .aspect-lines line {
+  opacity: 0.92;
+  stroke-width: 2.7;
+}
+
+.aspect-lines .soft line {
+  stroke: var(--wheel-aspect-soft);
+}
+
+.aspect-lines .hard line {
+  stroke: var(--wheel-aspect-hard);
+}
+
+.aspect-lines .neutral line {
+  stroke: var(--wheel-aspect-neutral);
+}
+
+.aspect-lines .opposition line,
+.aspect-lines .square line {
+  stroke-dasharray: none;
+}
+
+.synastry-chart-rings circle:first-child {
+  stroke: var(--wheel-ink);
+  stroke-dasharray: 3 7;
+  stroke-width: 0.95;
+}
+
+.synastry-chart-rings circle:nth-child(2) {
+  stroke-dasharray: 2 6;
+}
+
+.planet-glyph {
+  fill: var(--wheel-ink);
+  font-family: var(--font-symbol);
+  font-size: 25px;
+}
+
+.inner-planet-labels .planet-glyph {
+  fill: var(--wheel-ink);
+  font-size: 25px;
+}
+
+.planet-tick,
+.inner-planet-labels .planet-tick {
+  stroke: var(--wheel-ink);
+  stroke-width: 0.9;
+}
+
+.wheel-degree-hidden {
+  display: none;
+}
+
+.house-labels text {
+  fill: var(--wheel-muted);
+  font-family: "Geist Mono", "JetBrains Mono", var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.angular-labels text {
+  fill: var(--wheel-ink);
+  font-family: "Geist Mono", "JetBrains Mono", var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.natal-angle-lines line {
+  opacity: 0.75;
+  stroke: var(--wheel-line);
+  stroke-dasharray: 5 5;
+  stroke-width: 0.9;
+}
+
+.planet-tooltip rect {
+  fill: color-mix(in srgb, var(--wheel-bg) 96%, #ffffff 4%);
+  stroke: var(--wheel-line-faint);
+}
+
+.planet-tooltip text,
+.planet-tooltip .planet-tooltip-title {
+  fill: var(--wheel-ink);
+}
+
 .moon-phase-art {
   display: inline-block;
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
@@ -10302,6 +10510,67 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .app-shell:is(.mode-guest, .mode-member) .detail-panel > .retrograde-section:first-child {
   margin-top: 0;
+}
+
+/* Final chart target overrides. Older theme blocks above still style the pre-redesign wheel. */
+.sky-wheel.sky-wheel-zodiac,
+.sky-wheel.sky-wheel-natal,
+.sky-wheel.sky-wheel-composite,
+.sky-wheel.sky-wheel-synastry {
+  background: transparent;
+  border-radius: 0;
+  max-width: min(100%, var(--chart-wheel-size));
+  width: min(100%, var(--chart-wheel-size));
+}
+
+.sky-wheel.sky-wheel-zodiac .sign-band,
+.sky-wheel.sky-wheel-natal .sign-band,
+.sky-wheel.sky-wheel-composite .sign-band,
+.sky-wheel.sky-wheel-synastry .sign-band {
+  display: block;
+  fill: none;
+  stroke: var(--wheel-band-bg);
+  stroke-width: var(--chart-sign-ring-width);
+}
+
+.theme-dark .sky-wheel.sky-wheel-zodiac,
+.theme-dark .sky-wheel.sky-wheel-natal,
+.theme-dark .sky-wheel.sky-wheel-composite,
+.theme-dark .sky-wheel.sky-wheel-synastry {
+  background: transparent;
+}
+
+.theme-dark .sky-wheel.sky-wheel-zodiac .sign-labels text,
+.theme-dark .sky-wheel.sky-wheel-natal .sign-labels text,
+.theme-dark .sky-wheel.sky-wheel-composite .sign-labels text,
+.theme-dark .sky-wheel.sky-wheel-synastry .sign-labels text,
+.theme-dark .sky-wheel.sky-wheel-zodiac .planet-glyph,
+.theme-dark .sky-wheel.sky-wheel-natal .planet-glyph,
+.theme-dark .sky-wheel.sky-wheel-composite .planet-glyph,
+.theme-dark .sky-wheel.sky-wheel-synastry .planet-glyph {
+  fill: var(--wheel-ink);
+}
+
+.theme-dark .sky-wheel.sky-wheel-zodiac .sign-label-halo,
+.theme-dark .sky-wheel.sky-wheel-natal .sign-label-halo,
+.theme-dark .sky-wheel.sky-wheel-composite .sign-label-halo,
+.theme-dark .sky-wheel.sky-wheel-synastry .sign-label-halo {
+  display: none;
+}
+
+.theme-dark .sky-wheel.sky-wheel-zodiac .wheel-rings circle,
+.theme-dark .sky-wheel.sky-wheel-natal .wheel-rings circle,
+.theme-dark .sky-wheel.sky-wheel-composite .wheel-rings circle,
+.theme-dark .sky-wheel.sky-wheel-synastry .wheel-rings circle,
+.theme-dark .sky-wheel.sky-wheel-zodiac .wheel-sectors line,
+.theme-dark .sky-wheel.sky-wheel-natal .wheel-sectors line,
+.theme-dark .sky-wheel.sky-wheel-composite .wheel-sectors line,
+.theme-dark .sky-wheel.sky-wheel-synastry .wheel-sectors line,
+.theme-dark .sky-wheel.sky-wheel-zodiac .planet-tick,
+.theme-dark .sky-wheel.sky-wheel-natal .planet-tick,
+.theme-dark .sky-wheel.sky-wheel-composite .planet-tick,
+.theme-dark .sky-wheel.sky-wheel-synastry .planet-tick {
+  stroke: var(--wheel-line);
 }
 
 @media (max-width: 939px) {
