@@ -85,7 +85,25 @@ type V4RewriteCorpus = {
   entries?: V4RewriteEntry[];
 };
 
-const promptVersion = "tldr-astro-v2";
+type FrameworkSection = {
+  id?: string;
+  heading?: string;
+  body?: string;
+  items?: Array<{
+    label?: string;
+    body?: string;
+  }>;
+};
+
+type FrameworkSnapshot = {
+  id?: string;
+  title?: string;
+  sections?: FrameworkSection[];
+};
+
+const promptVersion = "tldr-astro-v3";
+const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
+const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultModel = "gpt-4.1-mini";
 const bannedUserFacingPhrases = [
   "same sky, different room",
@@ -235,6 +253,126 @@ function stringValue(value: unknown) {
 function compactBody(value: string, maxLength = 1400) {
   const trimmed = value.replace(/\s+/g, " ").trim();
   return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
+}
+
+function slug(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function normalizeWords(value: string) {
+  return value.toLowerCase().trim();
+}
+
+function asArray<T = unknown>(value: unknown): T[] {
+  return Array.isArray(value) ? value as T[] : [];
+}
+
+function loadSkyFrameworks() {
+  try {
+    const skyPath = path.join(process.cwd(), "packages/astro-knowledge/dist/sky.json");
+    const sky = JSON.parse(fs.readFileSync(skyPath, "utf8")) as {
+      frameworks?: FrameworkSnapshot[];
+    };
+
+    return asArray<FrameworkSnapshot>(sky.frameworks);
+  } catch {
+    return [];
+  }
+}
+
+function formatFrameworkSection(framework: FrameworkSnapshot | undefined, sectionId: string) {
+  const section = asArray<FrameworkSection>(framework?.sections).find((item) => item?.id === sectionId);
+
+  if (!section) {
+    return "";
+  }
+
+  const body = stringValue(section.body);
+  const lines = [section.heading ? `${section.heading}: ${body}` : body].filter(Boolean);
+  const items = asArray(section.items).map((item) => {
+    const label = stringValue(item.label);
+    const itemBody = stringValue(item.body);
+    return label || itemBody ? `- ${label}: ${itemBody}`.replace(/- : /g, "- ") : "";
+  }).filter(Boolean);
+
+  if (items.length) {
+    lines.push("", "Items:", ...items);
+  }
+
+  return lines.join("\n");
+}
+
+function formatLunationTemplateInstruction(input: GenerateContentInput) {
+  if (input.surface !== "sky") {
+    return "";
+  }
+
+  const sourceSnapshot = isRecord(input.sourceSnapshot) ? input.sourceSnapshot : {};
+  let frameworks = asArray<FrameworkSnapshot>(sourceSnapshot.frameworks);
+
+  if (!frameworks.length) {
+    frameworks = loadSkyFrameworks();
+  }
+
+  const architecture = asArray<FrameworkSnapshot>(frameworks).find((framework) => framework?.id === SKY_LUNATION_FRAMEWORK_ID);
+  const ritual = asArray<FrameworkSnapshot>(frameworks).find((framework) => framework?.id === SKY_LUNATION_RITUAL_ID);
+
+  if (!architecture) {
+    return "";
+  }
+
+  const moonEvent = factRecord(input.facts, "moonEvent");
+  const eventSignature = normalizeWords(stringValue(moonEvent?.name) || stringValue(input.facts.type) || input.eventType);
+  const eventLabel = slug(eventSignature).includes("full")
+    ? "full moon"
+    : slug(eventSignature).includes("new")
+      ? "new moon"
+      : slug(eventSignature).includes("eclipse")
+        ? "eclipse"
+        : "";
+
+  const modeLine = input.mode === "feed"
+    ? "Use Feed Mode structure for brief timing-focused delivery."
+    : input.mode === "in_depth"
+      ? "Use In-Depth Mode with mechanism, behavior, and integration."
+      : "Use Article Mode with clear sections and reflective practical close.";
+
+  const cardStructure = formatFrameworkSection(architecture, "sky-card-structure");
+  const planetaryContext = formatFrameworkSection(architecture, "planetary-context");
+  const houseSignLinking = formatFrameworkSection(architecture, "house-and-sign-bridging");
+  const toneGuide = formatFrameworkSection(architecture, "tone-guide");
+
+  const eventSection = asArray<FrameworkSection>(architecture.sections).find((section) => section?.id === "lunar-event-templates");
+  const eventItem = eventSection
+    ? asArray(eventSection.items).find((item) => {
+        const label = normalizeWords(stringValue(item.label));
+        return eventLabel ? label.includes(eventLabel) : false;
+      })
+    : undefined;
+
+  const eventGuidance = eventItem
+    ? `LUNAR EVENT TEMPLATE (${stringValue(eventItem.label)}): ${stringValue(eventItem.body)}`
+    : "Choose the strongest lunar event template from the framework by event type.";
+
+  const modeSection = formatFrameworkSection(architecture, "content-modes");
+  const modeGuidance = modeSection || `Use ${input.mode.replace("_", " ").toUpperCase()} mode guidance from the framework.`;
+
+  const ritualNotes = ritual ? `RITUAL PRACTICE FRAMEWORK (reference):\n${JSON.stringify(ritual, null, 2)}` : "";
+  const sourceMode = eventSignature ? `LUNATION EVENT: ${eventSignature}.` : "";
+
+  return [
+    "LUNATION FRAMEWORK",
+    sourceMode,
+    modeLine,
+    modeGuidance,
+    modeSection ? `Mode section:\n${modeSection}` : "",
+    cardStructure ? `Sky Card Structure:\n${cardStructure}` : "",
+    eventGuidance ? `Event-specific guidance:\n${eventGuidance}` : "",
+    planetaryContext ? `Planetary context:\n${planetaryContext}` : "",
+    houseSignLinking ? `House/sign bridging:\n${houseSignLinking}` : "",
+    toneGuide ? `Tone guide:\n${toneGuide}` : "",
+    ritualNotes
+  ].filter(Boolean).join("\n\n");
 }
 
 function exampleFromRow(row: ApprovedExampleRow): ApprovedExample | null {
@@ -541,6 +679,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "SURFACE",
     input.surface,
+    formatLunationTemplateInstruction(input),
     "",
     "EVENT TYPE",
     input.eventType,
@@ -843,6 +982,7 @@ export function loadSkySourceSnapshot() {
     transits?: Array<Record<string, unknown>>;
     modifiers?: Array<Record<string, unknown>>;
     primitives?: Record<string, unknown>;
+    frameworks?: Array<Record<string, unknown>>;
   };
 
   const retrogradeModifiers = (sky.modifiers ?? []).filter((modifier) => {
@@ -856,6 +996,10 @@ export function loadSkySourceSnapshot() {
   return {
     primitives: sky.primitives,
     modifiers: retrogradeModifiers,
-    transits: (sky.transits ?? []).slice(0, 12)
+    transits: (sky.transits ?? []).slice(0, 12),
+    frameworks: asArray(sky.frameworks).filter((framework) => {
+      const frameworkId = stringValue((framework as { id?: unknown }).id);
+      return frameworkId === SKY_LUNATION_FRAMEWORK_ID || frameworkId === SKY_LUNATION_RITUAL_ID || frameworkId === "traditional-transit-framework";
+    })
   };
 }
