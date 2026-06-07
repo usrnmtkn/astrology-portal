@@ -550,11 +550,11 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
       knowledgeIds: ""
     },
     you: {
-      contentKey: "natal-moon-in-capricorn",
+      contentKey: "you-natal-sun-in-aries-9th-house",
       eventType: "natal-placement",
-      headline: "Moon in Capricorn",
+      headline: "Sun in Aries in the 9th house",
       mode: "in_depth",
-      knowledgeIds: "natal-moon-in-capricorn, moon-in-capricorn"
+      knowledgeIds: "natal-sun-in-aries, sun-in-aries, sun-9"
     },
     natal: {
       contentKey: "natal-moon-trine-saturn",
@@ -769,6 +769,8 @@ export function GeneratedContentAdminDashboard() {
         if (firstRow) {
           setDraft(adminDraftFromRow(firstRow));
           void loadRowDetails(firstRow.id);
+        } else {
+          setDraft(createAdminDraft(nextSurface));
         }
       }
     } catch (error) {
