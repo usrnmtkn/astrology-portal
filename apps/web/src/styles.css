@@ -12963,3 +12963,294 @@ html,
     grid-template-columns: 56px minmax(0, 1fr);
   }
 }
+
+/* Relationship comparison UX and final Friends detail stabilization. */
+.app-shell.mode-friends .friend-synastry-wheel-shell {
+  overflow: visible;
+}
+
+.friend-compare-control {
+  display: flex;
+  justify-content: center;
+  margin: 18px auto 0;
+  max-width: 420px;
+  position: relative;
+  width: 100%;
+  z-index: 8;
+}
+
+.friend-compare-pill {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  gap: 10px;
+  justify-content: center;
+  min-height: 54px;
+  padding: 8px 18px;
+  width: 100%;
+}
+
+.friend-compare-prefix {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.friend-compare-avatar {
+  align-items: center;
+  background: var(--text);
+  border-radius: 999px;
+  color: var(--surface);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 900;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.friend-compare-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-compare-popover {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  bottom: calc(100% + 12px);
+  box-shadow: var(--shadow-float);
+  left: 50%;
+  max-width: min(420px, calc(100vw - 36px));
+  overflow: hidden;
+  padding: 18px;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 20;
+}
+
+.friend-compare-popover > .section-label {
+  display: block;
+  margin: 0 0 12px;
+}
+
+.friend-compare-list {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.friend-compare-list button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  font-family: inherit;
+  gap: 14px;
+  grid-template-columns: 42px minmax(0, 1fr) 24px;
+  min-height: 74px;
+  padding: 12px 14px;
+  text-align: left;
+  width: 100%;
+}
+
+.friend-compare-list button:last-child {
+  border-bottom: 0;
+}
+
+.friend-compare-list button:hover,
+.friend-compare-list button.selected {
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+
+.friend-compare-list strong,
+.friend-compare-list small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-compare-list small {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.synastry-placement-rows {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.synastry-placement-row {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.synastry-placement-row > div:first-child {
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 18px 20px;
+}
+
+.synastry-placement-row strong {
+  color: var(--text);
+  font-size: 18px;
+}
+
+.synastry-placement-row em {
+  color: var(--muted);
+  font-style: normal;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.synastry-placement-row p {
+  color: var(--muted);
+  margin: 0;
+  padding: 18px 20px;
+}
+
+.synastry-placement-strip {
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.synastry-placement-chip {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  display: grid;
+  gap: 4px 10px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  min-height: 70px;
+  padding: 12px 16px;
+}
+
+.synastry-placement-chip:nth-child(2n) {
+  border-right: 0;
+}
+
+.synastry-placement-chip:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.synastry-placement-chip > span {
+  font-size: 21px;
+  grid-row: 1 / span 2;
+}
+
+.synastry-placement-chip b,
+.synastry-placement-chip small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.synastry-placement-chip small {
+  color: var(--muted);
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+    margin-top: clamp(20px, 2.8vw, 38px);
+  }
+
+  .app-shell.mode-friends .friend-profile-panel {
+    align-items: start;
+    column-gap: clamp(38px, 4vw, 72px);
+    grid-template-columns: minmax(500px, 620px) minmax(500px, 640px);
+    justify-content: center;
+    max-width: min(1420px, calc(100vw - 96px));
+    row-gap: 24px;
+  }
+
+  .app-shell.mode-friends .friend-profile-card {
+    min-height: 112px;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
+    grid-row: 1 / span 6;
+    justify-self: end;
+    max-width: min(620px, 46vw);
+    top: 112px;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
+    max-width: min(620px, 46vw);
+  }
+
+  .app-shell.mode-friends .friend-profile-copy-column {
+    display: grid;
+    gap: 20px;
+  }
+
+  .app-shell.mode-friends .friend-profile-copy-column,
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
+    max-width: 640px;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro {
+    margin: 10px 0 0;
+  }
+}
+
+@media (max-width: 939px) {
+  .friend-compare-control {
+    max-width: 100%;
+  }
+
+  .friend-compare-popover {
+    bottom: calc(100% + 10px);
+  }
+
+  .synastry-placement-row > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .synastry-placement-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .synastry-placement-chip {
+    border-right: 0;
+  }
+
+  .synastry-placement-chip:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .synastry-placement-chip:last-child {
+    border-bottom: 0;
+  }
+}
