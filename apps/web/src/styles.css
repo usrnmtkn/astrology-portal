@@ -10747,6 +10747,12 @@ button.friend-bond-snapshot-card:focus-visible {
     display: contents;
   }
 
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart > :not(.natal-wheel),
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) > :not(.natal-wheel) {
+    grid-column: 2;
+    min-width: 0;
+  }
+
   .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
     align-self: start;
     grid-column: 1;
@@ -11439,6 +11445,10 @@ button.friend-bond-snapshot-card:focus-visible {
   background: transparent;
   border-radius: inherit;
   overflow: hidden;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-aspects-list.aspect-row-list {
+  background: color-mix(in srgb, var(--surface-app) 96%, transparent);
 }
 
 .app-shell .aspect-row {
