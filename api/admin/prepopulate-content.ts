@@ -178,6 +178,19 @@ function templateSourceSnapshot(surface: GeneratedContentSurface, targetDate: st
   };
 }
 
+const natalSunAriesHouse9Source = [
+  "You may notice a pattern of taking initiative in expanding your horizons and exploring unfamiliar territories, whether through travel, study, or philosophical inquiry.",
+  "There can be a readiness to make quick judgments based on what feels urgent or exciting rather than lingering on all the details.",
+  "This often appears as a natural enthusiasm for pursuing your own path in understanding life's bigger questions.",
+  "This happens because the Sun in Aries places vitality and identity in a sign known for its pioneering and assertive qualities.",
+  "Located in the 9th house, this energy tends to manifest in areas of higher learning, worldview expansion, and active engagement with different cultures or philosophies.",
+  "The Sun's presence here shines a light on the value you place on personal conviction and courageous exploration.",
+  "It can help to channel this energy by setting clear intentions about where to direct your focus, then taking decisive steps to gather information and experience.",
+  "At times, allowing space to reflect can prevent rushing into commitments that might feel less aligned upon review.",
+  "This pattern tends to be noticeable throughout your life as a recurring way you approach growth and meaning.",
+  "The 9th house influence means these themes are especially active in phases dedicated to education, travel, or significant life choices about belief systems and purpose, offering ongoing opportunities to cultivate and refine this assertive, explorative style."
+].join(" ");
+
 function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">, targetDate: string) {
   const sourceSnapshot = templateSourceSnapshot(surface, targetDate);
   const rows: QueueRow[] = [];
@@ -186,7 +199,25 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "natal-moon-in-capricorn",
+        contentKey: "you-natal-sun-in-aries-9th-house",
+        mode: "in_depth",
+        eventType: "natal-placement",
+        targetDate,
+        headline: "Sun in Aries in the 9th house",
+        facts: {
+          type: "natal_placement",
+          planet: "Sun",
+          sign: "Aries",
+          house: 9,
+          sourceMeaning: natalSunAriesHouse9Source,
+          note: "Use the sourceMeaning as the approved astrological foundation. Rewrite into TLDR Astro voice without inventing new claims."
+        },
+        knowledgeIds: ["natal-sun-in-aries", "sun-in-aries", "sun-9"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "you-natal-moon-in-capricorn",
         mode: "in_depth",
         eventType: "natal-placement",
         targetDate,
@@ -203,7 +234,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "natal-moon-trine-saturn",
+        contentKey: "you-natal-moon-trine-saturn",
         mode: "in_depth",
         eventType: "natal-aspect",
         targetDate,
@@ -221,7 +252,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "transit-natal-saturn-square-venus",
+        contentKey: "you-transit-natal-saturn-square-venus",
         mode: "feed",
         eventType: "transit-to-natal",
         targetDate,
@@ -247,15 +278,16 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
         mode: "in_depth",
         eventType: "natal-placement",
         targetDate,
-        headline: "Sun in Aries",
+        headline: "Sun in Aries in the 9th house",
         facts: {
           type: "natal_placement",
           planet: "Sun",
           sign: "Aries",
           house: 9,
-          note: "Use the real natal planet, sign, house, and any relevant aspects when generating a natal chart row."
+          sourceMeaning: natalSunAriesHouse9Source,
+          note: "Use the sourceMeaning as the approved astrological foundation. Rewrite into TLDR Astro voice without inventing new claims."
         },
-        knowledgeIds: ["natal-sun-in-aries", "sun-in-aries"],
+        knowledgeIds: ["natal-sun-in-aries", "sun-in-aries", "sun-9"],
         sourceSnapshot
       }),
       queueRow({
