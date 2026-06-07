@@ -17,7 +17,7 @@ export type GenerateContentInput = {
   voiceNotes?: string;
 };
 
-type GeneratedContent = {
+export type GeneratedAstrologyDraft = {
   headline: string;
   summary: string;
   body: string;
@@ -27,9 +27,26 @@ type GeneratedContent = {
   }>;
 };
 
+type GeneratedContent = GeneratedAstrologyDraft;
+
 type StoredGeneratedContent = GeneratedContent & {
   responseId?: string;
   model: string;
+};
+
+export type GenerationContext = Pick<GenerateContentInput, "surface" | "mode" | "eventType" | "contentKey">;
+
+export type EditorialGateResult = {
+  passed: boolean;
+  score: number;
+  failures: EditorialFailure[];
+  rewriteInstruction?: string;
+};
+
+export type EditorialFailure = {
+  code: string;
+  message: string;
+  severity: "warning" | "fail";
 };
 
 type ApprovedExampleRow = {
@@ -101,6 +118,106 @@ const bannedUserFacingPhrases = [
   "this placement asks",
   "this aspect teaches",
   "the lesson is"
+];
+export const editorialBannedPhrases = [
+  "this contact",
+  "this placement",
+  "this transit activates",
+  "bring into focus",
+  "brings into focus",
+  "themes around",
+  "can manifest as",
+  "invites you to explore",
+  "energies of",
+  "in the realm of",
+  "may indicate",
+  "points to themes of",
+  "supports the expression of",
+  "activates themes",
+  "highlights themes",
+  "asks you to explore",
+  "serves as an invitation"
+];
+export const selfHelpTonePhrases = [
+  "in your own skin",
+  "hold space",
+  "step into",
+  "honor your truth",
+  "your healing",
+  "your journey",
+  "sacred",
+  "embodied",
+  "aligned",
+  "heart-centered",
+  "higher self",
+  "what wants to emerge",
+  "what is asking to be seen",
+  "move with intention",
+  "trust the process",
+  "lean into",
+  "invite yourself",
+  "give yourself permission",
+  "pause long enough to honor",
+  "soften into",
+  "return to yourself"
+];
+const lifeAreaWords = [
+  "trust",
+  "money",
+  "intimacy",
+  "shared responsibility",
+  "work",
+  "family",
+  "career",
+  "health",
+  "communication",
+  "love",
+  "relationships",
+  "debt",
+  "control",
+  "fear",
+  "vulnerability",
+  "identity",
+  "home",
+  "belonging"
+];
+const astrologyMechanicTerms = [
+  "ascendant",
+  "conjunction",
+  "eighth house",
+  "house",
+  "mercury",
+  "moon",
+  "natal",
+  "opposition",
+  "planet",
+  "placement",
+  "pluto",
+  "retrograde",
+  "saturn",
+  "sextile",
+  "square",
+  "sun",
+  "transit",
+  "trine",
+  "venus"
+];
+const genericAdvicePhrases = [
+  "be mindful",
+  "stay open",
+  "trust the process",
+  "reflect on what comes up",
+  "move with intention",
+  "stay grounded",
+  "listen to your intuition"
+];
+const vagueFirstSentencePhrases = [
+  "something unspoken",
+  "there's an easy warmth",
+  "there is an easy warmth",
+  "a conversation may carry more feeling",
+  "you may notice where",
+  "may be easier to see today"
 ];
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
@@ -219,6 +336,7 @@ function bannedPhraseRules() {
     "Do not use em dashes.",
     "Do not use these phrases or close variants:",
     ...bannedUserFacingPhrases.map((phrase) => `- ${phrase}`),
+    ...editorialBannedPhrases.map((phrase) => `- ${phrase}`),
     "Avoid vague spiritual/self-help language such as lean into, step into your power, highest self, divine timing, embodiment, alignment, or healing journey.",
     "Prefer concrete actions: get it in writing, ask the clarifying question, wait a day, narrow the field, name the expectation, make the call, schedule the meeting, separate the feeling from the fact."
   ].join("\n");
@@ -230,6 +348,60 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function normalizeText(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function firstSentence(value: string) {
+  return stringValue(value).split(/(?<=[.!?])\s+/)[0]?.trim() ?? "";
+}
+
+function firstParagraph(value: string) {
+  return stringValue(value).split(/\n\s*\n/)[0]?.trim() ?? "";
+}
+
+function matchedPhrases(text: string, phrases: string[]) {
+  const normalized = normalizeText(text);
+  return phrases.filter((phrase) => normalized.includes(normalizeText(phrase)));
+}
+
+function countMatches(text: string, phrases: string[]) {
+  return matchedPhrases(text, phrases).length;
+}
+
+function lifeAreasIn(text: string) {
+  return matchedPhrases(text, lifeAreaWords);
+}
+
+function hasCommaHeavyList(text: string) {
+  const compact = stringValue(text);
+  return (compact.match(/,/g) ?? []).length >= 3 || /\b(and|or)\b[^.!?]*,\s*/i.test(compact);
+}
+
+function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
+  if (!failures.some((failure) => failure.code === code && failure.message === message)) {
+    failures.push({ code, message, severity });
+  }
+}
+
+function editorialRewriteInstruction(failures: EditorialFailure[]) {
+  const failedCodes = new Set(failures.filter((failure) => failure.severity === "fail").map((failure) => failure.code));
+  const instructions = [
+    "Reject this draft. Rewrite it around one direct, useful human problem.",
+    failedCodes.has("FIRST_SENTENCE_TOO_ASTROLOGICAL") ? "Rewrite the first sentence so it names a plain situation. Do not start with astrology mechanics. Do not make it poetic, mystical, or self-help." : "",
+    failedCodes.has("SUMMARY_LISTS_TOPICS") ? "The summary lists categories instead of naming one specific situation. Choose one concrete situation." : "",
+    failedCodes.has("TOO_MANY_LIFE_AREAS") ? "Do not mention more than two life areas." : "",
+    failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
+    failedCodes.has("ASTROLOGY_OVERLOAD") ? "Lead with the plain situation. Use astrology facts only as support, not as the main language." : "",
+    failedCodes.has("TEXTBOOK_PHRASE") ? "Remove textbook astrology phrasing. Rewrite the sentence in plain language." : "",
+    failedCodes.has("GENERIC_ADVICE") ? "Give the user one specific thing to do today. Make it direct, not therapeutic or vague." : "",
+    failedCodes.has("RELATIONSHIP_COPY_TOO_ABSTRACT") ? "Rewrite relationship copy so it sounds normal and concrete. Avoid technical labels and soft self-help phrasing." : "",
+    failures.some((failure) => failure.code === "SELF_HELP_TONE") ? "Make the tone more direct and less self-help or new-age." : ""
+  ].filter(Boolean);
+
+  return instructions.join(" ");
 }
 
 function compactBody(value: string, maxLength = 1400) {
@@ -506,7 +678,7 @@ function v4ExamplesPrompt(input: GenerateContentInput) {
   return JSON.stringify(examples, null, 2);
 }
 
-function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = []) {
+function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
   const headlineRule = lockedHeadline
@@ -566,6 +738,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     bannedPhraseRules(),
     "",
+    qualityFeedback ? `QUALITY FEEDBACK FROM PRIOR DRAFT\n${qualityFeedback}` : "",
+    qualityFeedback ? "" : "",
     "EXTRA VOICE NOTES",
     input.voiceNotes ?? "None."
   ].join("\n");
@@ -684,7 +858,117 @@ function validateGeneratedContentQuality(content: GeneratedContent) {
   }
 }
 
-function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedContent {
+export function evaluateEditorialCoherence(
+  draft: GeneratedAstrologyDraft,
+  context: GenerationContext
+): EditorialGateResult {
+  const failures: EditorialFailure[] = [];
+  const summary = stringValue(draft.summary);
+  const body = stringValue(draft.body);
+  const firstSummarySentence = firstSentence(summary || body);
+  const openingBody = firstParagraph(body);
+  const reviewText = [summary, openingBody, ...(draft.sections ?? []).map((section) => section.body)].join("\n");
+  const summaryLifeAreas = lifeAreasIn(summary);
+  const openingLifeAreas = lifeAreasIn([summary, openingBody].join(" "));
+  const astrologyTermCount = countMatches([firstSummarySentence, openingBody].join(" "), astrologyMechanicTerms);
+
+  if (
+    astrologyTermCount >= 3 ||
+    /^(this\s+(contact|placement|transit|aspect)|[a-z]+\s+(retrograde|sextile|square|trine|opposition|conjunction)\b)/i.test(firstSummarySentence) ||
+    matchedPhrases(firstSummarySentence, vagueFirstSentencePhrases).length > 0
+  ) {
+    addEditorialFailure(
+      failures,
+      "FIRST_SENTENCE_TOO_ASTROLOGICAL",
+      "The first sentence does not name a direct plain-language situation."
+    );
+  }
+
+  if (summaryLifeAreas.length > 2 || (hasCommaHeavyList(summary) && summaryLifeAreas.length > 1)) {
+    addEditorialFailure(
+      failures,
+      "SUMMARY_LISTS_TOPICS",
+      "The summary lists multiple life areas or topics instead of naming one specific situation."
+    );
+  }
+
+  if (summaryLifeAreas.length > 2) {
+    addEditorialFailure(failures, "TOO_MANY_LIFE_AREAS", "The summary names more than two life areas.");
+  }
+
+  if (
+    openingLifeAreas.length > 3 ||
+    /\b(could affect|may involve|especially around|as well as|long-term plans)\b/i.test([summary, openingBody].join(" "))
+  ) {
+    addEditorialFailure(
+      failures,
+      "NO_DOMINANT_STORYLINE",
+      "The copy gives equal weight to too many possible interpretations instead of choosing one main story."
+    );
+  }
+
+  if (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText)) {
+    addEditorialFailure(
+      failures,
+      "ASTROLOGY_OVERLOAD",
+      "Astrology mechanics carry the prose instead of supporting the human situation."
+    );
+  }
+
+  matchedPhrases(reviewText, editorialBannedPhrases).forEach((phrase) => {
+    addEditorialFailure(failures, "TEXTBOOK_PHRASE", `The phrase '${phrase}' sounds like generic astrology copy.`);
+  });
+
+  matchedPhrases(reviewText, selfHelpTonePhrases).forEach((phrase) => {
+    addEditorialFailure(
+      failures,
+      "SELF_HELP_TONE",
+      `The phrase '${phrase}' sounds too self-help or new-age.`,
+      context.mode === "article" ? "warning" : "fail"
+    );
+  });
+
+  matchedPhrases(reviewText, genericAdvicePhrases).forEach((phrase) => {
+    addEditorialFailure(failures, "GENERIC_ADVICE", `The advice phrase '${phrase}' is too generic.`);
+  });
+
+  const actionSections = (draft.sections ?? []).filter((section) => /what to do|action|advice/i.test(section.heading));
+  const actionText = actionSections.map((section) => section.body).join(" ") || body.split(/\n\s*\n/).slice(-1)[0] || "";
+  if (
+    actionText &&
+    !/\b(ask|check|say|wait|get|write|send|schedule|name|choose|do not|don't|call|clarify|make)\b/i.test(actionText)
+  ) {
+    addEditorialFailure(failures, "GENERIC_ADVICE", "The advice does not give one specific action.");
+  }
+
+  if (context.surface === "synastry" || context.surface === "composite" || context.surface === "relationship") {
+    matchedPhrases(reviewText, [
+      "this contact can feel",
+      "socially smooth",
+      "easy warmth",
+      "at home in your own skin",
+      "feel liked, comfortable"
+    ]).forEach((phrase) => {
+      addEditorialFailure(
+        failures,
+        "RELATIONSHIP_COPY_TOO_ABSTRACT",
+        `The relationship phrase '${phrase}' is too abstract or soft.`
+      );
+    });
+  }
+
+  const score = Math.max(0, 100 - failures.reduce((total, failure) => total + (failure.severity === "fail" ? 18 : 8), 0));
+  const passed = !failures.some((failure) => failure.severity === "fail") && score >= 70;
+
+  return {
+    passed,
+    score,
+    failures,
+    rewriteInstruction: passed ? undefined : editorialRewriteInstruction(failures)
+  };
+}
+
+function parseResponseJson(raw: string, lockedHeadline: string | undefined, input: GenerateContentInput): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
@@ -699,6 +983,17 @@ function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedConte
   };
 
   validateGeneratedContentQuality(content);
+
+  const editorialResult = evaluateEditorialCoherence(content, {
+    contentKey: input.contentKey,
+    eventType: input.eventType,
+    mode: input.mode,
+    surface: input.surface
+  });
+
+  if (!editorialResult.passed) {
+    throw new Error(`Editorial coherence gate failed (${editorialResult.score}/100): ${editorialResult.rewriteInstruction}`);
+  }
 
   return content;
 }
@@ -728,73 +1023,88 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const model = process.env.OPENAI_MODEL ?? defaultModel;
   const lockedHeadline = factualHeadlineFor(input);
   const approvedExamples = await loadApprovedExamples(input);
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      model,
-      input: buildPrompt(input, approvedExamples),
-      text: {
-        format: {
-          type: "json_schema",
-          name: "tldr_astro_generated_content",
-          strict: true,
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            required: ["headline", "summary", "body", "sections"],
-            properties: {
-              headline: { type: "string" },
-              summary: { type: "string" },
-              body: { type: "string" },
-              sections: {
-                type: "array",
-                items: {
-                  type: "object",
-                  additionalProperties: false,
-                  required: ["heading", "body"],
-                  properties: {
-                    heading: { type: "string" },
-                    body: { type: "string" }
+  let qualityFeedback = "";
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model,
+        input: buildPrompt(input, approvedExamples, qualityFeedback),
+        text: {
+          format: {
+            type: "json_schema",
+            name: "tldr_astro_generated_content",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              required: ["headline", "summary", "body", "sections"],
+              properties: {
+                headline: { type: "string" },
+                summary: { type: "string" },
+                body: { type: "string" },
+                sections: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    required: ["heading", "body"],
+                    properties: {
+                      heading: { type: "string" },
+                      body: { type: "string" }
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    })
-  });
+      })
+    });
 
-  const payload = await response.json() as {
-    id?: string;
-    output_text?: string;
-    output?: Array<{
-      content?: Array<{
-        text?: string;
+    const payload = await response.json() as {
+      id?: string;
+      output_text?: string;
+      output?: Array<{
+        content?: Array<{
+          text?: string;
+        }>;
       }>;
-    }>;
-    error?: { message?: string };
-  };
+      error?: { message?: string };
+    };
 
-  if (!response.ok) {
-    throw new Error(payload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+    if (!response.ok) {
+      throw new Error(payload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+    }
+
+    const outputText = responseOutputText(payload);
+
+    if (!outputText) {
+      throw new Error("OpenAI response did not include generated text.");
+    }
+
+    try {
+      return {
+        ...parseResponseJson(outputText, lockedHeadline || undefined, input),
+        responseId: payload.id,
+        model
+      };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
+      qualityFeedback = [
+        lastError.message,
+        "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
+      ].join("\n");
+    }
   }
 
-  const outputText = responseOutputText(payload);
-
-  if (!outputText) {
-    throw new Error("OpenAI response did not include generated text.");
-  }
-
-  return {
-    ...parseResponseJson(outputText, lockedHeadline || undefined),
-    responseId: payload.id,
-    model
-  };
+  throw lastError ?? new Error("Generated content failed quality gates.");
 }
 
 export async function saveGeneratedInterpretation(input: GenerateContentInput, generated: StoredGeneratedContent) {
