@@ -8,6 +8,7 @@ function isAdminContentPath() {
 async function startApp() {
   if (!isAdminContentPath()) {
     await import("./styles.css");
+    await import("./friends-layout-reset.css");
   }
 
   const { App } = await import("./App");
