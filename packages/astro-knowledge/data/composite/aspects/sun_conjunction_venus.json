@@ -1,0 +1,12 @@
+{
+  "id": "sun_conjunction_venus",
+  "kind": "composite",
+  "placementType": "aspect",
+  "planet": "sun-venus",
+  "aspect": "conjunction",
+  "plainTranslation": "Sun conjunction Venus: Sun conjunct Venus, this can increase the love and affection between you.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from The Dark Pixie Astrology composites material text.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

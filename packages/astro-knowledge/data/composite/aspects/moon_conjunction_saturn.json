@@ -1,0 +1,12 @@
+{
+  "id": "moon_conjunction_saturn",
+  "kind": "composite",
+  "placementType": "aspect",
+  "planet": "moon-saturn",
+  "aspect": "conjunction",
+  "plainTranslation": "Moon conjunction Saturn: Moon conjunct Saturn, this relationship may feel constricting and limiting emotionally.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from The Dark Pixie Astrology composites material text.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}
