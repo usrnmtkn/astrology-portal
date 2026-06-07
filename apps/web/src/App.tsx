@@ -2,6 +2,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   CalendarDays,
+  Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -218,6 +220,15 @@ type HouseOverlay = {
   summary: string;
   detailParagraphs: string[];
   contentKeys: string[];
+};
+
+type RelationshipComparisonOption = {
+  id: string;
+  displayName: string;
+  initials: string;
+  subtitle: string;
+  natalChart: SkySnapshot | null;
+  isSelf: boolean;
 };
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
@@ -4994,6 +5005,137 @@ function formatPlanetDegree(position: PlanetPosition) {
   return `${degree}°${String(minutes).padStart(2, "0")}'`;
 }
 
+const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"];
+
+function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
+  if (!sky) {
+    return [];
+  }
+
+  return relationshipPlacementOrder
+    .map((planet) => sky.positions.find((position) => position.planet === planet))
+    .filter((position): position is PlanetPosition => Boolean(position))
+    .slice(0, 8);
+}
+
+function relationshipPossessiveName(name: string, isSelf = false) {
+  if (isSelf) {
+    return "Your";
+  }
+
+  return name.endsWith("s") ? `${name}'` : `${name}'s`;
+}
+
+function RelationshipComparePicker({
+  options,
+  selectedId,
+  open,
+  onToggle,
+  onSelect
+}: {
+  options: RelationshipComparisonOption[];
+  selectedId: string;
+  open: boolean;
+  onToggle: () => void;
+  onSelect: (id: string) => void;
+}) {
+  const selectedOption = options.find((option) => option.id === selectedId) ?? options[0];
+
+  if (!selectedOption) {
+    return null;
+  }
+
+  return (
+    <div className="friend-compare-control">
+      <button
+        type="button"
+        className="friend-compare-pill"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={onToggle}
+      >
+        <span className="friend-compare-prefix">With</span>
+        <span className="friend-compare-avatar" aria-hidden="true">{selectedOption.initials}</span>
+        <span className="friend-compare-name">{selectedOption.displayName}</span>
+        <ChevronDown size={18} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="friend-compare-popover" role="menu" aria-label="Compare with saved chart">
+          <span className="eyebrow section-label">Compare with</span>
+          <div className="friend-compare-list">
+            {options.map((option) => (
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={option.id === selectedOption.id}
+                className={option.id === selectedOption.id ? "selected" : ""}
+                key={option.id}
+                onClick={() => onSelect(option.id)}
+              >
+                <span className="friend-compare-avatar" aria-hidden="true">{option.initials}</span>
+                <span>
+                  <strong>{option.displayName}</strong>
+                  <small>{option.subtitle}</small>
+                </span>
+                {option.id === selectedOption.id && <Check size={20} aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SynastryPlacementRows({
+  outerName,
+  outerSky,
+  innerName,
+  innerSky,
+  innerIsSelf
+}: {
+  outerName: string;
+  outerSky: SkySnapshot | null | undefined;
+  innerName: string;
+  innerSky: SkySnapshot | null | undefined;
+  innerIsSelf: boolean;
+}) {
+  const rows = [
+    { id: "outer", name: outerName, sky: outerSky, label: "Outer", isSelf: false },
+    { id: "inner", name: innerName, sky: innerSky, label: "Inner", isSelf: innerIsSelf }
+  ];
+
+  return (
+    <div className="synastry-placement-rows" aria-label="Synastry natal placements">
+      {rows.map((row) => {
+        const placements = relationshipPlacementPreview(row.sky);
+
+        return (
+          <section className="synastry-placement-row" key={row.id}>
+            <div>
+              <span className="eyebrow section-label">{relationshipPossessiveName(row.name, row.isSelf)} natal placements</span>
+              <strong>{row.name} <em>{row.label}</em></strong>
+            </div>
+            {placements.length > 0 ? (
+              <div className="synastry-placement-strip">
+                {placements.map((position) => (
+                  <span className="synastry-placement-chip" key={`${row.id}-${position.planet}`}>
+                    <span aria-hidden="true">{position.glyph}</span>
+                    <b>{position.planet}</b>
+                    <small>{position.sign} {formatPlanetDegree(position)}</small>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p>Complete this birth chart to show natal placements here.</p>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
   const activeAspects = aspects
     .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
@@ -7988,6 +8130,8 @@ function ManualChartsPanel({
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>("circle");
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("natal");
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
+  const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
+  const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
@@ -7997,7 +8141,37 @@ function ManualChartsPanel({
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
   const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
-  const selectedSynastryContacts = selectedChart ? rankSynastryContactsByLifeAreaFocus(synastryContacts(profileNatalSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
+  const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
+    const selfInitials = profileInitials(profile.name, profile.email);
+    const selfOption: RelationshipComparisonOption = {
+      id: "self",
+      displayName: "You",
+      initials: selfInitials,
+      subtitle: profileNatalSky ? "Your birth chart" : "Birth chart pending",
+      natalChart: profileNatalSky,
+      isSelf: true
+    };
+    const chartOptions = charts
+      .filter((chart) => chart.id !== selectedChart?.id)
+      .map((chart) => ({
+        id: chart.id,
+        displayName: chart.displayName,
+        initials: profileInitials(chart.displayName, chart.displayName),
+        subtitle: manualChartSubtitle(chart),
+        natalChart: chart.natalChart ?? null,
+        isSelf: false
+      }));
+
+    return [selfOption, ...chartOptions];
+  }, [charts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
+  const selectedRelationshipComparison = relationshipComparisonOptions.find((option) => option.id === relationshipComparisonChartId) ?? relationshipComparisonOptions[0];
+  const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
+  const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
+  const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
+  const relationshipComparisonPossessive = relationshipComparisonIsSelf
+    ? "your"
+    : relationshipPossessiveName(relationshipComparisonName).toLowerCase();
+  const selectedSynastryContacts = selectedChart ? rankSynastryContactsByLifeAreaFocus(synastryContacts(relationshipComparisonSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
     id: contact.id,
     fromLongitude: contact.friendPoint.longitude,
@@ -8005,7 +8179,7 @@ function ManualChartsPanel({
     type: contact.aspect,
     orb: contact.orb
   }));
-  const selectedCompositeSky = selectedChart ? relationshipCompositeSky(profileNatalSky, selectedChart) : null;
+  const selectedCompositeSky = selectedChart ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
   const selectedFriendLeadingElements = selectedFriendElementalBalance
     .filter((item) => item.count === Math.max(...selectedFriendElementalBalance.map((element) => element.count)) && item.count > 0)
@@ -8028,6 +8202,8 @@ function ManualChartsPanel({
     setSelectedChartId(null);
     setFriendProfileTab("natal");
     setSelectedSynastryContactId(null);
+    setRelationshipComparisonChartId("self");
+    setRelationshipComparisonPickerOpen(false);
     setOpenChartMenuId(null);
   }, [landingKey]);
   const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus), [currentSky, charts, natalGeneratedContent, lifeAreaFocus]);
@@ -8067,7 +8243,14 @@ function ManualChartsPanel({
 
   useEffect(() => {
     setSelectedSynastryContactId(null);
-  }, [selectedChart?.id]);
+    setRelationshipComparisonPickerOpen(false);
+  }, [selectedChart?.id, friendProfileTab, relationshipComparisonChartId]);
+
+  useEffect(() => {
+    if (!relationshipComparisonOptions.some((option) => option.id === relationshipComparisonChartId)) {
+      setRelationshipComparisonChartId("self");
+    }
+  }, [relationshipComparisonChartId, relationshipComparisonOptions]);
 
   function resetForm(nextMessage = "") {
     setForm(defaultManualChartForm);
@@ -8098,6 +8281,8 @@ function ManualChartsPanel({
     setOpenChartMenuId(null);
     setSelectedChartId(chart.id);
     setFriendProfileTab("natal");
+    setRelationshipComparisonChartId("self");
+    setRelationshipComparisonPickerOpen(false);
     setFriendsMainView("profile");
   }
 
@@ -8610,13 +8795,13 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "synastry" && (
-            <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
+            <div className="friend-tab-pane friend-compat-stage friend-synastry-stage" aria-label="Synastry">
               {selectedChart.natalChart && (
                 <div className="friend-synastry-wheel-shell">
                   <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
                     <SynastryWheel
                       outerPositions={selectedChart.natalChart.positions}
-                      innerPositions={profileNatalSky?.positions ?? []}
+                      innerPositions={relationshipComparisonSky?.positions ?? []}
                       interAspects={selectedSynastryAspectLines}
                       ascendant={selectedChart.natalChart.ascendant}
                       ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
@@ -8624,14 +8809,31 @@ function ManualChartsPanel({
                   </div>
                   <div className="friend-chart-legend" aria-label="Chart comparison legend">
                     <span><i aria-hidden="true" />{selectedChart.displayName} <em>outer</em></span>
-                    <span><i aria-hidden="true" />You <em>inner</em></span>
+                    <span><i aria-hidden="true" />{relationshipComparisonName} <em>inner</em></span>
                   </div>
+                  <RelationshipComparePicker
+                    options={relationshipComparisonOptions}
+                    selectedId={selectedRelationshipComparison?.id ?? "self"}
+                    open={relationshipComparisonPickerOpen}
+                    onToggle={() => setRelationshipComparisonPickerOpen((isOpen) => !isOpen)}
+                    onSelect={(id) => {
+                      setRelationshipComparisonChartId(id);
+                      setRelationshipComparisonPickerOpen(false);
+                    }}
+                  />
                 </div>
               )}
               <p className="friend-compat-intro">
-                Two charts, side by side: how {selectedChart.displayName}'s and your planets actually meet, miss, and magnify each other.
+                Two charts, side by side: how {relationshipPossessiveName(selectedChart.displayName)} and {relationshipComparisonPossessive} planets actually meet, miss, and magnify each other.
               </p>
               <div className="friend-profile-copy-column">
+                <SynastryPlacementRows
+                  outerName={selectedChart.displayName}
+                  outerSky={selectedChart.natalChart}
+                  innerName={relationshipComparisonName}
+                  innerSky={relationshipComparisonSky}
+                  innerIsSelf={relationshipComparisonIsSelf}
+                />
                 <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
                   {selectedSynastryContacts.map((contact) => (
@@ -8669,10 +8871,10 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "composite" && (
-            <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
+            <div className="friend-tab-pane friend-compat-stage friend-composite-stage" aria-label="Composite">
               {selectedCompositeSky && (
                 <div className="friend-synastry-wheel-shell">
-                  <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and you composite chart wheel`}>
+                  <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and ${relationshipComparisonName} composite chart wheel`}>
                     <SkyWheel
                       positions={selectedCompositeSky.positions}
                       aspects={selectedCompositeSky.aspects}
@@ -8683,13 +8885,23 @@ function ManualChartsPanel({
                     />
                   </div>
                   <div className="friend-chart-legend" aria-label="Composite chart label">
-                    <span>{selectedChart.displayName} × You <em>composite</em></span>
+                    <span>{selectedChart.displayName} × {relationshipComparisonName} <em>composite</em></span>
                   </div>
+                  <RelationshipComparePicker
+                    options={relationshipComparisonOptions}
+                    selectedId={selectedRelationshipComparison?.id ?? "self"}
+                    open={relationshipComparisonPickerOpen}
+                    onToggle={() => setRelationshipComparisonPickerOpen((isOpen) => !isOpen)}
+                    onSelect={(id) => {
+                      setRelationshipComparisonChartId(id);
+                      setRelationshipComparisonPickerOpen(false);
+                    }}
+                  />
                 </div>
               )}
               <div className="friend-profile-copy-column">
                 <p className="friend-compat-intro">
-                  The midpoint of two charts. Each placement is the arc-midpoint of {selectedChart.displayName}'s and your charts. Read the relationship as if it had a birth chart of its own.
+                  The midpoint of two charts. Each placement is the arc-midpoint of {relationshipPossessiveName(selectedChart.displayName)} and {relationshipComparisonPossessive} charts. Read the relationship as if it had a birth chart of its own.
                 </p>
                 {selectedCompositeSky && (
                   <FriendPlacementTable
