@@ -377,6 +377,23 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
         },
         knowledgeIds: ["composite-venus-conjunction-mars", "venus-conjunction-mars"],
         sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "composite-venus-house-4",
+        mode: "in_depth",
+        eventType: "composite-placement",
+        targetDate,
+        headline: "Composite Venus in the 4th house",
+        facts: {
+          type: "composite_placement",
+          planet: "Venus",
+          sign: "Cancer",
+          house: 4,
+          note: "Use the real composite planet sign, house, degree, and relationship context when generating this row."
+        },
+        knowledgeIds: ["composite-venus-house-4", "composite-venus-house4", "venus-house-4"],
+        sourceSnapshot
       })
     );
   }
