@@ -30,6 +30,8 @@ type QueueRow = {
   reviewer_notes: string;
 };
 
+const sampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
+
 function requireEnv(name: string) {
   const value = process.env[name];
 
@@ -148,10 +150,13 @@ function queueRow(input: {
   facts: Record<string, unknown>;
   knowledgeIds?: string[];
   sourceSnapshot: Record<string, unknown>;
+  reviewerNotes?: string;
 }): QueueRow {
+  const surface = input.surface ?? "sky";
+
   return {
     content_key: input.contentKey,
-    surface: input.surface ?? "sky",
+    surface,
     mode: input.mode ?? "feed",
     status: "DRAFT",
     event_type: input.eventType,
@@ -165,7 +170,9 @@ function queueRow(input: {
     summary: "",
     body: "",
     sections: [],
-    reviewer_notes: ""
+    reviewer_notes: input.reviewerNotes ?? (sampleSurfaces.has(surface)
+      ? "SAMPLE ONLY. This row is for testing the template, voice, and knowledge hooks. Do not publish as global app content because real You, Synastry, Composite, and Relationship content must be generated from the user's chart or relationship facts."
+      : "")
   };
 }
 
@@ -174,7 +181,10 @@ function templateSourceSnapshot(surface: GeneratedContentSurface, targetDate: st
     source: "admin-template-queue",
     surface,
     targetDate,
-    note: "Seeded from app content hooks. Replace sample facts with chart-specific facts before generating user-facing copy."
+    sampleOnly: sampleSurfaces.has(surface),
+    note: sampleSurfaces.has(surface)
+      ? "Sample row for testing personalized content generation. Real rows must be created from user-specific chart, transit, synastry, or composite facts."
+      : "Seeded from app content hooks."
   };
 }
 
@@ -199,7 +209,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "you-natal-sun-in-aries-9th-house",
+        contentKey: "sample-you-natal-sun-in-aries-9th-house",
         mode: "in_depth",
         eventType: "natal-placement",
         targetDate,
@@ -217,7 +227,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "you-natal-moon-in-capricorn",
+        contentKey: "sample-you-natal-moon-in-capricorn",
         mode: "in_depth",
         eventType: "natal-placement",
         targetDate,
@@ -234,7 +244,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "you-natal-moon-trine-saturn",
+        contentKey: "sample-you-natal-moon-trine-saturn",
         mode: "in_depth",
         eventType: "natal-aspect",
         targetDate,
@@ -252,7 +262,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "you-transit-natal-saturn-square-venus",
+        contentKey: "sample-you-transit-natal-saturn-square-venus",
         mode: "feed",
         eventType: "transit-to-natal",
         targetDate,
@@ -274,7 +284,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "natal-sun-in-aries",
+        contentKey: "sample-natal-sun-in-aries",
         mode: "in_depth",
         eventType: "natal-placement",
         targetDate,
@@ -292,7 +302,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "natal-venus-square-saturn",
+        contentKey: "sample-natal-venus-square-saturn",
         mode: "in_depth",
         eventType: "natal-aspect",
         targetDate,
@@ -315,7 +325,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "synastry-venus-sextile-ascendant",
+        contentKey: "sample-synastry-venus-sextile-ascendant",
         mode: "in_depth",
         eventType: "synastry-contact",
         targetDate,
@@ -335,7 +345,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "synastry-mars-square-saturn",
+        contentKey: "sample-synastry-mars-square-saturn",
         mode: "in_depth",
         eventType: "synastry-contact",
         targetDate,
@@ -355,7 +365,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "synastry-venus-in-4-house",
+        contentKey: "sample-synastry-venus-in-4-house",
         mode: "in_depth",
         eventType: "house-overlay",
         targetDate,
@@ -378,7 +388,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "composite-sun-square-moon",
+        contentKey: "sample-composite-sun-square-moon",
         mode: "in_depth",
         eventType: "composite-aspect",
         targetDate,
@@ -395,7 +405,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "composite-venus-conjunction-mars",
+        contentKey: "sample-composite-venus-conjunction-mars",
         mode: "in_depth",
         eventType: "composite-aspect",
         targetDate,
@@ -417,7 +427,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
     rows.push(
       queueRow({
         surface,
-        contentKey: "relationship-timing-pluto",
+        contentKey: "sample-relationship-timing-pluto",
         mode: "feed",
         eventType: "relationship-timing",
         targetDate,
@@ -433,7 +443,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
       }),
       queueRow({
         surface,
-        contentKey: "friends-circle-saturn",
+        contentKey: "sample-friends-circle-saturn",
         mode: "feed",
         eventType: "circle-feed",
         targetDate,
@@ -631,7 +641,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const templateSurfaces: Array<Exclude<GeneratedContentSurface, "sky">> =
       requestedSurface === "all"
-        ? ["you", "natal", "synastry", "composite", "relationship"]
+        ? []
         : requestedSurface === "sky"
           ? []
           : [requestedSurface];
