@@ -100,6 +100,40 @@ const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, strin
   relationship: "Relationship"
 };
 
+const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
+
+function isPersonalizedSurface(surface: GeneratedContentSurfaceFilter) {
+  return surface !== "all" && personalizedContentSurfaces.has(surface);
+}
+
+function surfaceOptionLabel(surface: GeneratedContentSurfaceFilter) {
+  if (surface === "all" || surface === "sky") {
+    return generatedContentSurfaceLabels[surface];
+  }
+
+  return `${generatedContentSurfaceLabels[surface]} samples`;
+}
+
+function surfaceScopeLabel(surface: GeneratedContentSurfaceFilter) {
+  if (surface === "sky") {
+    return "Global publishable Sky content";
+  }
+
+  if (surface === "all") {
+    return "All rows";
+  }
+
+  return "Sample/test rows only";
+}
+
+function createQueueButtonLabel(surface: GeneratedContentSurfaceFilter) {
+  if (surface === "sky" || surface === "all") {
+    return "Create Sky Queue";
+  }
+
+  return `Create ${generatedContentSurfaceLabels[surface]} Test Samples`;
+}
+
 const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
   sky: "Sky",
   fullMoon: "Full Moon",
@@ -154,7 +188,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Review the named hook points the app uses when a surface needs approved generated or voice-backed copy.";
   }
 
-  return "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app.";
+  return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as sample tests for templates, voice, and knowledge hooks.";
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -603,7 +637,7 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
       surface: resolvedSurface,
       note: resolvedSurface === "sky"
         ? "Load current astrology facts before generating."
-        : "Seeded template row. Add chart-specific facts or use Create Queue for this surface."
+        : "Sample/test row only. Real content for this surface must be generated from user-specific chart, transit, synastry, or composite facts."
     }, null, 2),
     sourceSnapshotJson: "{}",
     knowledgeIds: defaultDraft.knowledgeIds,
@@ -1131,7 +1165,9 @@ export function GeneratedContentAdminDashboard() {
         setSelectedId(firstRow.id);
         setDraft(adminDraftFromRow(firstRow));
       }
-      setMessage(`Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`);
+      setMessage(nextSurface === "sky" || nextSurface === "all"
+        ? `Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`
+        : `Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} sample rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not create the review queue.");
@@ -1340,7 +1376,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
               <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
                 <Sparkles size={16} aria-hidden="true" />
-                Create {generatedContentSurfaceLabels[surface]} Queue
+                {createQueueButtonLabel(surface)}
               </button>
             </div>
           )}
@@ -1583,7 +1619,7 @@ export function GeneratedContentAdminDashboard() {
               <article>
                 <span>Total rows</span>
                 <strong>{totalMetricRows}</strong>
-                <small>{surface === "all" ? "All surfaces" : surface}</small>
+                <small>{surfaceScopeLabel(surface)}</small>
               </article>
               <article>
                 <span>Drafts</span>
@@ -1627,13 +1663,13 @@ export function GeneratedContentAdminDashboard() {
                   setDraft(createAdminDraft(nextSurface));
                   void loadRows(status, nextSurface);
                 }}>
-                  <option value="all">All</option>
-                  <option value="sky">Sky</option>
-                  <option value="you">You</option>
-                  <option value="natal">Natal</option>
-                  <option value="synastry">Synastry</option>
-                  <option value="composite">Composite</option>
-                  <option value="relationship">Relationship</option>
+                  <option value="all">{surfaceOptionLabel("all")}</option>
+                  <option value="sky">{surfaceOptionLabel("sky")}</option>
+                  <option value="you">{surfaceOptionLabel("you")}</option>
+                  <option value="natal">{surfaceOptionLabel("natal")}</option>
+                  <option value="synastry">{surfaceOptionLabel("synastry")}</option>
+                  <option value="composite">{surfaceOptionLabel("composite")}</option>
+                  <option value="relationship">{surfaceOptionLabel("relationship")}</option>
                 </select>
               </label>
               <label>
@@ -1677,7 +1713,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">{selectedRow ? "Editing existing row" : "Creating new row"}</p>
                 <h2>{draft.headline || draft.contentKey}</h2>
-                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}</small>
+                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}{personalizedContentSurfaces.has(draft.surface) ? " / sample only" : ""}</small>
               </div>
               <div className="admin-toolbar-actions">
                 <button type="button" onClick={() => setIsPreviewOpen(true)}>
@@ -1700,7 +1736,7 @@ export function GeneratedContentAdminDashboard() {
                   <Check size={16} aria-hidden="true" />
                   Reviewed
                 </button>
-                <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id}>
+                <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id || personalizedContentSurfaces.has(draft.surface)} title={personalizedContentSurfaces.has(draft.surface) ? "Personalized sample rows are not publishable as global content." : undefined}>
                   <Check size={16} aria-hidden="true" />
                   Publish
                 </button>
@@ -1725,12 +1761,12 @@ export function GeneratedContentAdminDashboard() {
                   <label>
                     <span>Surface</span>
                     <select value={draft.surface} onChange={(event) => updateDraft("surface", event.target.value as GeneratedContentSurface)}>
-                      <option value="sky">Sky</option>
-                      <option value="you">You</option>
-                      <option value="natal">Natal</option>
-                      <option value="synastry">Synastry</option>
-                      <option value="composite">Composite</option>
-                      <option value="relationship">Relationship</option>
+                      <option value="sky">{surfaceOptionLabel("sky")}</option>
+                      <option value="you">{surfaceOptionLabel("you")}</option>
+                      <option value="natal">{surfaceOptionLabel("natal")}</option>
+                      <option value="synastry">{surfaceOptionLabel("synastry")}</option>
+                      <option value="composite">{surfaceOptionLabel("composite")}</option>
+                      <option value="relationship">{surfaceOptionLabel("relationship")}</option>
                     </select>
                   </label>
                   <label>
