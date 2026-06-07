@@ -7,6 +7,7 @@ import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "templates" | "hooks";
 type VoiceTemplateConfig = {
@@ -73,12 +74,22 @@ type AdminContentStatsPayload = {
   stats: {
     counts: Record<GeneratedContentStatus, number>;
     total: number;
-    surface: GeneratedContentSurface | "all";
+    surface: GeneratedContentSurfaceFilter;
   };
 };
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 const adminVoiceTemplateStorageKey = "tldrastro:contentVoiceTemplates";
+
+const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, string> = {
+  all: "All",
+  sky: "Sky",
+  you: "You",
+  natal: "Natal",
+  synastry: "Synastry",
+  composite: "Composite",
+  relationship: "Relationship"
+};
 
 const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
   sky: "Sky",
@@ -462,24 +473,74 @@ function dateInputValue(date: Date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function createAdminDraft(date = dateInputValue()): AdminGeneratedContentDraft {
+function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date = dateInputValue()): AdminGeneratedContentDraft {
+  const resolvedSurface: GeneratedContentSurface = surface === "all" ? "sky" : surface;
+  const defaults: Record<GeneratedContentSurface, Pick<AdminGeneratedContentDraft, "contentKey" | "eventType" | "headline" | "mode" | "knowledgeIds">> = {
+    sky: {
+      contentKey: `sky-daily-${date}`,
+      eventType: "daily-sky",
+      headline: "Daily Sky",
+      mode: "feed",
+      knowledgeIds: ""
+    },
+    you: {
+      contentKey: "natal-moon-in-capricorn",
+      eventType: "natal-placement",
+      headline: "Moon in Capricorn",
+      mode: "in_depth",
+      knowledgeIds: "natal-moon-in-capricorn, moon-in-capricorn"
+    },
+    natal: {
+      contentKey: "natal-moon-trine-saturn",
+      eventType: "natal-aspect",
+      headline: "Moon trine Saturn",
+      mode: "in_depth",
+      knowledgeIds: "natal-moon-trine-saturn, moon-trine-saturn"
+    },
+    synastry: {
+      contentKey: "synastry-venus-sextile-ascendant",
+      eventType: "synastry-contact",
+      headline: "Venus sextile Ascendant",
+      mode: "in_depth",
+      knowledgeIds: "synastry-venus-sextile-ascendant, relationship-venus-sextile-ascendant, venus-sextile-ascendant"
+    },
+    composite: {
+      contentKey: "composite-sun-square-moon",
+      eventType: "composite-aspect",
+      headline: "Composite Sun square Moon",
+      mode: "in_depth",
+      knowledgeIds: "composite-sun-square-moon, sun-square-moon"
+    },
+    relationship: {
+      contentKey: "relationship-timing-pluto",
+      eventType: "relationship-timing",
+      headline: "Pluto relationship timing",
+      mode: "feed",
+      knowledgeIds: "relationship-timing-pluto, transit-natal-pluto-opposition-descendant"
+    }
+  };
+  const defaultDraft = defaults[resolvedSurface];
+
   return {
-    contentKey: `sky-daily-${date}`,
-    surface: "sky",
-    mode: "feed",
+    contentKey: defaultDraft.contentKey,
+    surface: resolvedSurface,
+    mode: defaultDraft.mode,
     status: "DRAFT",
-    eventType: "daily_sky",
+    eventType: defaultDraft.eventType,
     targetDate: date,
-    headline: "",
+    headline: defaultDraft.headline,
     summary: "",
     body: "",
     sectionsJson: "[]",
     factsJson: JSON.stringify({
       date,
-      note: "Add the current astrology facts that should guide this interpretation."
+      surface: resolvedSurface,
+      note: resolvedSurface === "sky"
+        ? "Load current astrology facts before generating."
+        : "Seeded template row. Add chart-specific facts or use Create Queue for this surface."
     }, null, 2),
     sourceSnapshotJson: "{}",
-    knowledgeIds: "",
+    knowledgeIds: defaultDraft.knowledgeIds,
     reviewerNotes: ""
   };
 }
@@ -567,7 +628,7 @@ export function GeneratedContentAdminDashboard() {
     }
   });
   const [secretDraft, setSecretDraft] = useState(secret);
-  const [surface, setSurface] = useState<GeneratedContentSurface | "all">("sky");
+  const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -778,6 +839,8 @@ export function GeneratedContentAdminDashboard() {
     setActivePage("review");
     setStatus(nextStatus);
     setSurface(nextSurface);
+    setSelectedId(null);
+    setDraft(createAdminDraft(nextSurface));
     void loadRows(nextStatus, nextSurface);
   }
 
@@ -839,7 +902,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function startNewContent() {
-    const nextDraft = createAdminDraft();
+    const nextDraft = createAdminDraft(surface);
 
     setDraft(nextDraft);
     setSelectedId(null);
@@ -847,8 +910,11 @@ export function GeneratedContentAdminDashboard() {
     setStatus(nextDraft.status);
     setActivePage("review");
     setAreGenerationInputsOpen(true);
-    setMessage("New Sky draft ready. Loading astrology facts...");
-    await loadFactsForDraft(nextDraft);
+    setMessage(nextDraft.surface === "sky" ? "New Sky draft ready. Loading astrology facts..." : `New ${generatedContentSurfaceLabels[nextDraft.surface]} draft ready.`);
+
+    if (nextDraft.surface === "sky") {
+      await loadFactsForDraft(nextDraft);
+    }
   }
 
   async function createDraft() {
@@ -961,16 +1027,19 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function prepopulateSkyQueue() {
+  async function prepopulateContentQueue() {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
 
+    const requestedSurface = surface;
+
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{
         ok: boolean;
+        surface: GeneratedContentSurfaceFilter;
         targetDate: string;
         inserted: number;
         rows: AdminGeneratedContentRow[];
@@ -980,18 +1049,24 @@ export function GeneratedContentAdminDashboard() {
         {
           method: "POST",
           body: JSON.stringify({
-            surface: "sky",
+            surface: requestedSurface,
             targetDate: draft.targetDate || dateInputValue()
           })
         }
       );
+      const nextSurface = requestedSurface === "all" ? "all" : requestedSurface;
+      const firstRow = payload.rows?.[0] ?? null;
 
-      setSurface("sky");
+      setSurface(nextSurface);
       setStatus("DRAFT");
-      setMessage(`Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`);
-      await loadRows("DRAFT", "sky");
+      if (firstRow) {
+        setSelectedId(firstRow.id);
+        setDraft(adminDraftFromRow(firstRow));
+      }
+      setMessage(`Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`);
+      await loadRows("DRAFT", nextSurface);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not create the Sky review queue.");
+      setMessage(error instanceof Error ? error.message : "Could not create the review queue.");
     } finally {
       setIsLoading(false);
     }
@@ -1057,7 +1132,7 @@ export function GeneratedContentAdminDashboard() {
         secret,
         { method: "DELETE" }
       );
-      setDraft(createAdminDraft());
+      setDraft(createAdminDraft(surface));
       setSelectedId(null);
       setMessage("Deleted.");
       await loadRows();
@@ -1186,9 +1261,9 @@ export function GeneratedContentAdminDashboard() {
                 <Plus size={16} aria-hidden="true" />
                 New Content
               </button>
-              <button type="button" onClick={() => void prepopulateSkyQueue()} disabled={isLoading || !canUseApi}>
+              <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
                 <Sparkles size={16} aria-hidden="true" />
-                Create Sky Queue
+                Create {generatedContentSurfaceLabels[surface]} Queue
               </button>
             </div>
           )}
@@ -1418,8 +1493,10 @@ export function GeneratedContentAdminDashboard() {
               <label>
                 <span>Surface</span>
                 <select value={surface} onChange={(event) => {
-                  const nextSurface = event.target.value as GeneratedContentSurface | "all";
+                  const nextSurface = event.target.value as GeneratedContentSurfaceFilter;
                   setSurface(nextSurface);
+                  setSelectedId(null);
+                  setDraft(createAdminDraft(nextSurface));
                   void loadRows(status, nextSurface);
                 }}>
                   <option value="all">All</option>
