@@ -20,6 +20,9 @@ The goal is not to sound wise. The goal is to make the reader think: yes, that i
 - Do not use "this placement asks you to," "this aspect teaches you," or "the lesson is."
 - Do not call out backend distinctions in user-facing copy, such as "this is not a permanent trait," "source-backed," or "authored from approved material."
 - Translate source symbolism into concrete human experience.
+- Do not invent an external event just to make the writing feel specific. A concrete scene can be an internal state, a body signal, a decision point, a task friction, a conversation, or a relationship moment.
+- Only write an interaction scene when the facts actually support an interaction. Otherwise, write the observable pressure, mood, threshold, memory, or choice.
+- Avoid Barnum-style phrasing: vague comfort, mystical opportunity language, broad predictions, and statements that could fit anyone.
 
 ## Reference Style Direction
 
@@ -37,6 +40,28 @@ The reader should leave with two things:
 
 - Why they may feel, think, remember, want, avoid, or react a certain way.
 - What is useful to do with that information.
+
+## Source-Informed Method
+
+Use the books as method, not as copy.
+
+- From traditional horoscope synthesis: read systematically before summarizing. Do not let one aspect become the whole interpretation unless it clearly outranks the rest.
+- From modern horoscope writing: for a daily reading, include lunar contacts because they describe feeling and reaction. For longer reads, start with slower planets and then layer faster triggers.
+- From transit writing: a transit only becomes personal when it contacts the natal chart. Interpret the current planet, the natal planet or point, the house being activated, and the reader's existing natal pattern.
+- From skeptical critique: do not use vagueness as a substitute for accuracy. Avoid easy phrases like "an opportunity may arise," "something important may happen," or "you may face a choice" unless the copy names the actual kind of pressure.
+
+Before writing, identify:
+
+```text
+1. Dominant timing factor.
+2. Current pressure.
+3. Natal sensitivity.
+4. House or life arena.
+5. Scene type: internal state, body signal, decision point, task friction, conversation, or relationship interaction.
+6. What not to invent.
+```
+
+The final copy should fit even if no obvious external event happens. If the writing depends on "someone asks you," "a message arrives," or "a situation comes up," it is too brittle unless that event is known.
 
 See `packages/astro-knowledge/docs/content-modes.md` for the full Feed, In-Depth, and Article mode rules.
 
@@ -83,14 +108,13 @@ The default user-facing structure is:
 ```text
 Headline
 What you may notice
-Why it may feel that way
 What to do with it
 Timing
 ```
 
 The headline should stay factual and astrological when a factual row is being generated. Use `Mercury square Neptune`, `Gemini Season`, `Moon in Aquarius trine Uranus`, `Pluto retrograde`, or `New Moon in Cancer`. Do not turn the headline into a mood title unless the content row is explicitly asking for an editorial card title.
 
-The summary and body should carry the human interpretation. Start with what may be happening in real life, then explain the astrology behind it, then give one usable course of action.
+The summary and body should carry the human interpretation. Start with the observable experience, then give one usable course of action. Put the astrology explanation in the drilldown.
 
 Use this field logic when generated rewrite examples are available:
 
