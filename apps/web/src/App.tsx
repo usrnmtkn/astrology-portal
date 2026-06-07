@@ -410,8 +410,8 @@ function hasApprovedVoiceContent(content: ContentFallback) {
   return content.bundle.status === "READY" && Boolean(content.bundle.voice);
 }
 
-const interpretationInReviewSummary = "Interpretation in review.";
-const interpretationInReviewParagraphs = ["This interpretation is being reviewed before it appears here."];
+const interpretationInReviewSummary = "";
+const interpretationInReviewParagraphs: string[] = [];
 
 function liveGeneratedContent(generatedContent: GeneratedContentMap, contentKey: string) {
   return generatedContent.get(contentKey) ?? null;
@@ -2347,7 +2347,7 @@ function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart)
 
 function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generatedContent?: GeneratedContentMap) {
   if (!transit) {
-    return interpretationInReviewSummary;
+    return "";
   }
 
   const area = transitLifeArea(transit, chart);
@@ -2874,7 +2874,7 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
         ? generatedParagraphs
         : hookFallback.detailParagraphs.length > 0
           ? hookFallback.detailParagraphs
-          : [interpretationInReviewSummary];
+          : [];
 
       return [{
         id: `${ownerName}-${position.planet}-${targetName}-${house}`.toLowerCase().replace(/\s+/g, "-"),
@@ -3081,7 +3081,7 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
           aspect: yourTransit.aspect,
           natalPoint: yourTransit.natalPoint
         }
-      ).summary ?? interpretationInReviewSummary
+      ).summary ?? ""
     }));
   }
 
@@ -3094,7 +3094,7 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
         aspect: transit.aspect,
         natalPoint: transit.natalPoint
       }
-    ).summary ?? interpretationInReviewSummary
+    ).summary ?? ""
   }));
 }
 
