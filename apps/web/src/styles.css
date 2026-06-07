@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Symbols:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;1,500&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Symbols:wght@400;500&display=swap");
 
 :root {
   color: #18201e;
@@ -11769,5 +11769,628 @@ button.friend-bond-snapshot-card:focus-visible {
 
   .app-shell.mode-friends .manual-chart-select {
     grid-template-columns: 56px minmax(0, 1fr);
+  }
+}
+
+/* Friends redline correction: desktop Friends uses a broad page rail. Keep the
+   profile split in-view and stop the chart list from collapsing into a centered
+   card. */
+@media (min-width: 761px) {
+  .app-shell.mode-friends {
+    --friends-ui-col: calc(100vw - 96px);
+  }
+
+  .app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
+    max-width: none;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friends-page {
+    gap: 24px;
+    max-width: none;
+    padding-top: clamp(20px, 3vw, 44px);
+    width: var(--friends-ui-col);
+  }
+
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+    gap: 18px;
+    padding-top: 18px;
+  }
+
+  .app-shell.mode-friends .friends-back-button {
+    justify-self: start;
+    margin: 0 0 36px;
+    width: auto;
+  }
+
+  .app-shell.mode-friends .friends-page-heading,
+  .app-shell.mode-friends .friends-top-tabs,
+  .app-shell.mode-friends .friends-feed-view,
+  .app-shell.mode-friends .friends-charts-view,
+  .app-shell.mode-friends .manual-chart-workspace,
+  .app-shell.mode-friends .manual-chart-workspace-list-only {
+    justify-self: stretch;
+    max-width: none;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friends-chart-toolbar {
+    margin: 18px 0 10px;
+    padding-right: 0;
+  }
+
+  .app-shell.mode-friends .profile-layout .manual-chart-list {
+    border-radius: 28px;
+    justify-self: stretch;
+    max-width: none;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .manual-chart-row,
+  .app-shell.mode-friends .profile-layout .manual-chart-row {
+    --friends-row-min: 140px;
+    --friends-row-pad-x: 40px;
+    --friends-row-pad-y: 20px;
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+
+  .app-shell.mode-friends .manual-chart-select {
+    gap: 24px;
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .app-shell.mode-friends .manual-chart-row .manual-chart-avatar {
+    height: 46px;
+    width: 46px;
+  }
+
+  .app-shell.mode-friends .manual-chart-row .crt {
+    font-size: 19px;
+  }
+
+  .app-shell.mode-friends .manual-chart-row .crs,
+  .app-shell.mode-friends .manual-chart-signatures {
+    font-size: 14px;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel {
+    max-width: none;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
+    height: 60px;
+    width: 60px;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage {
+    align-items: start;
+    column-gap: 56px;
+    display: grid;
+    grid-template-columns: minmax(460px, 0.96fr) minmax(480px, 532px);
+    justify-content: stretch;
+  }
+
+  .app-shell.mode-friends .friend-profile-card,
+  .app-shell.mode-friends .friend-view-tabs,
+  .app-shell.mode-friends .friend-profile-copy-column,
+  .app-shell.mode-friends .friend-compat-intro {
+    grid-column: 2;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    justify-self: center;
+    position: sticky;
+    top: 118px;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage .friend-synastry-wheel-shell,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel {
+    max-width: min(500px, 39vw);
+    width: 100%;
+  }
+}
+
+/* Redline spec alignment: measured product values from REDLINES-SPEC.md.
+   Kept late so it normalizes the older exploration layers without rewriting them. */
+:root {
+  --bg-app: #eceae4;
+  --surface-app: #ffffff;
+  --surface-muted-app: #f4f4f3;
+  --ink-app: #1a1a1a;
+  --muted-app: #6e6e6b;
+  --faint-app: #8c8c89;
+  --line-app: rgba(20, 20, 20, 0.08);
+  --line-strong-app: rgba(20, 20, 20, 0.14);
+  --accent-app: #4c4c4a;
+  --radius-app: 20px;
+  --radius-large-app: 20px;
+  --col-app: 560px;
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Geist", var(--font-sans);
+  --font-ui: "Geist", var(--font-sans);
+  --font-mono: "Geist Mono", "SFMono-Regular", ui-monospace, Menlo, monospace;
+  --font-body: var(--font-mono);
+  --font-detail: var(--font-mono);
+  --ui-explore-sans: var(--font-ui);
+  --ui-explore-font: var(--font-mono);
+  --chart-wheel-size: 544px;
+  --sky-row-gap: 14px;
+  --sky-row-padding-block: 18px;
+  --sky-row-padding-inline: 20px;
+  --sky-row-title-size: 17px;
+  --sky-row-subline-size: 14px;
+  --sky-row-degree-size: 14px;
+  --sky-row-title-weight: 600;
+}
+
+.theme-dark {
+  --bg-app: #000000;
+  --surface-app: #1a1a1a;
+  --surface-muted-app: #222222;
+  --ink-app: #ececec;
+  --muted-app: #a7a39c;
+  --faint-app: #77746e;
+  --line-app: rgba(255, 255, 255, 0.08);
+  --line-strong-app: rgba(255, 255, 255, 0.14);
+}
+
+body,
+html,
+#root,
+.app-shell {
+  background: var(--bg-app);
+}
+
+.app-shell,
+.app-shell.sunrise-orb-enabled {
+  background: var(--bg-app);
+  color: var(--ink-app);
+  font-family: var(--font-body);
+  padding: 0 clamp(20px, 5vw, 28px) 120px;
+}
+
+.app-shell:not(.dyslexia-font-enabled) :is(h1, h2, h3, h4, h5, h6, .brand-word, .sky-pl-title, .crt, .aspect-row-copy h3) {
+  font-family: var(--font-ui);
+  letter-spacing: -0.01em;
+}
+
+.topbar {
+  --nav-width: min(calc(100vw - 32px), 1640px);
+  height: 50px;
+  margin: 16px auto 0;
+  min-height: 50px;
+  position: sticky;
+  top: 16px;
+  z-index: 90;
+}
+
+.nav-pill {
+  background: color-mix(in srgb, var(--surface-app) 92%, transparent);
+  border: 1px solid var(--line-app);
+  box-shadow: none;
+  gap: 4px;
+  height: 50px;
+  min-height: 50px;
+  padding: 1px 8px 1px 1px;
+}
+
+.brand-dot {
+  flex-basis: 48px;
+  height: 48px;
+  margin-right: 0;
+  width: 48px;
+}
+
+.brand-word {
+  font-family: var(--font-ui);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 19px;
+  margin-right: 0;
+  padding-right: 8px;
+}
+
+.site-nav {
+  gap: 4px;
+}
+
+.site-nav button {
+  color: var(--ink-app);
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 600;
+  height: 46px;
+  letter-spacing: -0.005em;
+  min-height: 46px;
+  padding: 0 12px;
+}
+
+.site-nav button.active {
+  background: var(--surface-muted-app);
+  font-weight: 700;
+}
+
+.topbar-actions {
+  height: 50px;
+  min-height: 50px;
+}
+
+.theme-toggle,
+.menu-toggle {
+  box-shadow: none;
+  height: 50px;
+  width: 50px;
+}
+
+.today-hero {
+  gap: 16px;
+  margin: 0;
+  min-height: 0;
+  padding: clamp(34px, 5vw, 52px) 0 0;
+}
+
+.today-hero h1,
+.app-shell:is(.mode-guest, .mode-member) .today-hero h1 {
+  font-family: var(--font-ui);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 35px;
+  text-align: left;
+}
+
+.today-controls,
+.app-shell:is(.mode-guest, .mode-member) .today-controls {
+  gap: 10px;
+  margin-top: 0;
+}
+
+.today-pill,
+.app-shell:is(.mode-guest, .mode-member) .today-pill {
+  background: var(--surface-app);
+  border: 1px solid var(--line-app);
+  box-shadow: none;
+  gap: 8px;
+  min-height: 38px;
+  padding: 9px 15px;
+}
+
+.today-pill span,
+.app-shell:is(.mode-guest, .mode-member) .today-pill span {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
+  column-gap: clamp(36px, 5vw, 72px);
+  grid-template-columns: clamp(420px, 42vw, 560px) minmax(0, 1fr);
+  max-width: 1140px;
+  row-gap: 8px;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) .sky-wheel,
+.portal-grid:not(.profile-layout):not(.signup-layout) .sky-wheel {
+  max-width: 544px;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pills {
+  gap: 10px;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pill {
+  background: var(--surface-muted-app);
+  border: 1px solid var(--line-2, rgba(20, 20, 20, 0.05));
+  border-radius: 13px;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 10px 6px 6px;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pill-icon {
+  height: 34px;
+  width: 34px;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pill-copy em {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pill-copy :is(h3, strong) {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.05;
+}
+
+.section-label,
+.app-shell .aspect-section-label,
+.app-shell .placements-heading p,
+.app-shell .aspects-heading span,
+.app-shell .subpane > .section-label,
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
+  color: var(--muted-app);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+
+.detail-panel,
+.placement-table-wrap,
+.placement-prose,
+.aspects-card,
+.you-chart-card,
+.you-list-card,
+.you-empty-card,
+.you-transit-brief,
+.settings-card,
+.profile-hero,
+.profile-charts,
+.profile-transits,
+.app-shell .aspect-row-card,
+.app-shell .you-aspects-list,
+.app-shell .friend-aspect-list {
+  background: var(--surface-app);
+  border: 1px solid var(--line-app);
+  border-radius: var(--radius-app);
+  box-shadow: none;
+}
+
+.retro {
+  border-radius: var(--radius-app);
+  box-shadow: none;
+  min-height: 155px;
+}
+
+.retro-top strong,
+.sky-pl-title,
+.aspect-row-copy h3 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 21px;
+}
+
+.retro-copy,
+.sky-pl-meta,
+.aspect-row-copy p,
+.chart-row .crs {
+  color: var(--ink-2, #555553);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.app-shell :is(.aspect-row-copy p, .aspect .ab p, .retro-copy, .you-signatures-main p) {
+  color: var(--ink-2, #555553);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 22px;
+}
+
+.placement-toggle {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-app);
+  border-radius: 0;
+  gap: 30px;
+  padding: 0 0 13px;
+}
+
+.placement-toggle button {
+  background: transparent;
+  border-radius: 0;
+  color: var(--muted-app);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  min-height: 28px;
+  padding: 0;
+}
+
+.placement-toggle button.active {
+  background: transparent;
+  border-bottom: 2px solid var(--ink-app);
+  color: var(--ink-app);
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-card {
+  border-radius: 20px;
+  box-shadow: none;
+  min-height: 0;
+  padding: 20px;
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-copy h2 {
+  font-family: var(--font-ui);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-card {
+  border-radius: 20px;
+  box-shadow: none;
+  max-width: 544px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-main {
+  min-height: 132px;
+  padding: 22px 24px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-card h3 {
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.22;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-card p,
+.app-shell.mode-profile .profile-layout .you-page .elemental-balance-head,
+.app-shell.mode-profile .profile-layout .you-page .element-legend {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .you-signatures-card,
+.app-shell.mode-profile .profile-layout .you-page .list.you-list-card,
+.app-shell.mode-profile .profile-layout .you-page .list.you-aspects-list,
+.app-shell.mode-profile .profile-layout .you-page .you-empty-card,
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
+  max-width: 544px;
+}
+
+.app-shell.mode-detail .sky-detail-page {
+  background: var(--article-bg, var(--bg-app));
+  padding: 150px 28px 140px;
+  width: min(100%, 760px);
+}
+
+.app-shell.mode-detail .sky-detail-article {
+  max-width: 760px;
+}
+
+.app-shell.mode-detail .sky-detail-page h2 {
+  font-family: var(--font-mono);
+  font-size: clamp(40px, 6vw, 57px);
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  line-height: 1.05;
+}
+
+.app-shell.mode-detail .sky-detail-body :is(h2, h3),
+.app-shell.mode-detail .sky-detail-section-num,
+.app-shell.mode-detail .sky-detail-meta,
+.app-shell.mode-detail .sky-detail-body :is(p, li),
+.app-shell.mode-detail .sky-detail-statement p {
+  font-family: var(--font-mono);
+}
+
+.app-shell.mode-detail .sky-detail-body :is(p, li) {
+  font-size: 17px;
+  letter-spacing: -0.003em;
+  line-height: 29px;
+}
+
+.signup-story h2 {
+  font-family: "Newsreader", Georgia, serif;
+}
+
+.auth-mode .signup-heading p,
+.auth-mode .signup-field > span,
+.auth-mode .email-divider span,
+.auth-mode .signup-submit {
+  font-family: "Space Mono", var(--font-mono);
+}
+
+.auth-mode .signup-field input,
+.auth-mode .signup-city-search input,
+.auth-mode .signin-note,
+.auth-mode .social-signons button {
+  font-family: "Space Grotesk", var(--font-sans);
+}
+
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
+  grid-template-areas:
+    "sky-head sky-aside"
+    "sky-main sky-aside";
+  grid-template-columns: clamp(420px, 42vw, 560px) minmax(0, 544px);
+  justify-content: center;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) > .sky-panel {
+  justify-self: end;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) > .today-hero,
+.app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) > .detail-panel {
+  justify-self: stretch;
+  width: 100%;
+}
+
+.app-shell .section-label,
+.app-shell .aspect-section-label,
+.app-shell .placements-heading p,
+.app-shell .aspects-heading span,
+.app-shell .subpane > .section-label,
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label,
+.app-shell.mode-friends .friend-section-label {
+  color: var(--muted-app);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.app-shell :is(
+  .section-label,
+  .placements-heading p,
+  .aspects-heading span,
+  .app-shell .aspect-section-label,
+  .app-shell .aspect-row-card .aspects-heading span
+) {
+  color: var(--muted-app);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.app-shell .detail-panel,
+.app-shell .placement-table-wrap,
+.app-shell .placement-prose,
+.app-shell .aspects-card,
+.app-shell .you-chart-card,
+.app-shell .you-list-card,
+.app-shell .you-empty-card,
+.app-shell .you-transit-brief,
+.app-shell .settings-card,
+.app-shell .profile-hero,
+.app-shell .profile-charts,
+.app-shell .profile-transits,
+.app-shell .aspect-row-card,
+.app-shell .you-aspects-list,
+.app-shell .friend-aspect-list {
+  background: var(--surface-app);
+  border: 1px solid var(--line-app);
+  border-radius: var(--radius-app);
+  box-shadow: none;
+}
+
+.app-shell:is(.mode-guest, .mode-member) .sky-lunar-pill {
+  box-shadow: none;
+}
+
+@media (max-width: 939px) {
+  .app-shell:is(.mode-guest, .mode-member) .portal-grid:not(.profile-layout):not(.signup-layout) {
+    grid-template-areas:
+      "sky-head"
+      "sky-aside"
+      "sky-main";
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 620px;
   }
 }
