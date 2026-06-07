@@ -49,6 +49,14 @@ export type EditorialFailure = {
   severity: "warning" | "fail";
 };
 
+export type SceneLock = {
+  scene: string;
+  mainTension: string;
+  userPressure: string;
+  concreteSituation: string;
+  whatNotToInclude: string[];
+};
+
 type ApprovedExampleRow = {
   content_key?: string | null;
   surface?: string | null;
@@ -245,6 +253,38 @@ const vagueFirstSentencePhrases = [
   "you may notice where",
   "may be easier to see today"
 ];
+const listPatternPhrases = [
+  "especially around",
+  "themes of",
+  "themes around",
+  "may show up as",
+  "could show up as",
+  "whether this is about",
+  "you may feel the pull to prove",
+  "this could affect",
+  "this may involve"
+];
+const abstractListWords = [
+  "trust",
+  "money",
+  "intimacy",
+  "responsibility",
+  "power",
+  "fear",
+  "control",
+  "vulnerability",
+  "attachment",
+  "communication",
+  "boundaries",
+  "desire",
+  "identity",
+  "belonging",
+  "security",
+  "availability",
+  "generosity",
+  "affection",
+  "obligation"
+];
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
   "",
@@ -361,6 +401,30 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   ].filter(Boolean).join("\n");
 }
 
+function sceneLockRules() {
+  return [
+    "SCENE LOCK",
+    "Before writing, internally choose one concrete scene.",
+    "Do not output the scene lock as a separate field. Use it to control the final copy.",
+    "Internal scene lock shape:",
+    "{ scene: string, mainTension: string, userPressure: string, concreteSituation: string, whatNotToInclude: string[] }",
+    "The app should not summarize every possible meaning of the transit, placement, aspect, or relationship contact.",
+    "Pick the most likely human moment and commit to it.",
+    "The final copy must answer: what is the one thing the reader might actually experience?",
+    "Do not answer: what are all the themes this astrology could represent?",
+    "Rules:",
+    "- Choose one scene only.",
+    "- Stay inside the chosen scene.",
+    "- Do not list alternate meanings.",
+    "- Do not name more than two life areas.",
+    "- Do not use a sentence with three or more options joined by commas or or.",
+    "- The first sentence must work without astrology knowledge.",
+    "- Use astrology only after the human situation is clear.",
+    "- Advice must be one specific action.",
+    "- Name what meanings you are choosing not to include, then leave them out."
+  ].join("\n");
+}
+
 function rewriteCorpusRules() {
   return [
     "REWRITE CORPUS FIELD MAP",
@@ -430,6 +494,23 @@ function hasCommaHeavyList(text: string) {
   return (compact.match(/,/g) ?? []).length >= 3 || /\b(and|or)\b[^.!?]*,\s*/i.test(compact);
 }
 
+function sentencesFrom(text: string) {
+  return stringValue(text)
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function sentenceHasKeywordListing(sentence: string) {
+  const normalized = normalizeText(sentence);
+  const abstractCount = countMatches(sentence, abstractListWords);
+  const commaCount = (sentence.match(/,/g) ?? []).length;
+  const patternMatch = listPatternPhrases.some((phrase) => normalized.includes(normalizeText(phrase)));
+  const optionList = commaCount >= 3 || /\b(whether|about|prove|feel|feels|feeling)\b[^.!?]+,\s+[^.!?]+,\s+(or|and)\s+/i.test(sentence);
+
+  return patternMatch || abstractCount > 2 || optionList;
+}
+
 function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
   if (!failures.some((failure) => failure.code === code && failure.message === message)) {
     failures.push({ code, message, severity });
@@ -442,6 +523,7 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     "Reject this draft. Rewrite it around one direct, useful human problem.",
     failedCodes.has("FIRST_SENTENCE_TOO_ASTROLOGICAL") ? "Rewrite the first sentence so it names a plain situation. Do not start with astrology mechanics. Do not make it poetic, mystical, or self-help." : "",
     failedCodes.has("SUMMARY_LISTS_TOPICS") ? "The summary lists categories instead of naming one specific situation. Choose one concrete situation." : "",
+    failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Do not use a sentence with three or more options joined by commas or or." : "",
     failedCodes.has("TOO_MANY_LIFE_AREAS") ? "Do not mention more than two life areas." : "",
     failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
     failedCodes.has("ASTROLOGY_OVERLOAD") ? "Lead with the plain situation. Use astrology facts only as support, not as the main language." : "",
@@ -886,6 +968,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     outputShapeRules(input, lockedHeadline),
     "",
+    sceneLockRules(),
+    "",
     "CONTENT MODE",
     modeRules(input.mode),
     "",
@@ -1073,6 +1157,7 @@ export function evaluateEditorialCoherence(
   const selfHelpMatches = matchedPhrases(reviewText, selfHelpTonePhrases);
   const genericAdviceMatches = matchedPhrases(reviewText, genericAdvicePhrases);
   const astrologyTermCount = countMatches([firstSummarySentence, openingBody].join(" "), astrologyMechanicTerms);
+  const keywordListSentence = sentencesFrom([summary, openingBody].join(" ")).find(sentenceHasKeywordListing);
 
   if (
     astrologyTermCount >= 3 ||
@@ -1091,6 +1176,14 @@ export function evaluateEditorialCoherence(
       failures,
       "SUMMARY_LISTS_TOPICS",
       "The summary lists multiple life areas or topics instead of naming one specific situation."
+    );
+  }
+
+  if (keywordListSentence) {
+    addEditorialFailure(
+      failures,
+      "KEYWORD_LISTING",
+      "The copy lists possible meanings instead of choosing one concrete pressure point."
     );
   }
 
