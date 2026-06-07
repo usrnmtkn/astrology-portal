@@ -2464,7 +2464,8 @@ button {
   stroke-width: 0.9;
 }
 
-.wheel-rings circle:first-child {
+.wheel-rings circle:first-child,
+.sky-wheel-zodiac .wheel-rings circle:nth-child(2) {
   stroke: var(--wheel-ink);
   stroke-width: 1.6;
 }
@@ -2502,9 +2503,11 @@ button {
 }
 
 .sky-wheel-zodiac .sign-labels text {
-  font-family: var(--font-symbol);
-  font-size: 18px;
-  letter-spacing: 0;
+  font-family: "Geist Mono", "JetBrains Mono", var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
 }
 
 .sign-labels .sign-label-halo {
@@ -2521,9 +2524,69 @@ button {
   stroke-width: 1.05;
 }
 
-.sky-wheel-synastry .aspect-lines line {
-  opacity: 0.92;
-  stroke-width: 2.7;
+.sky-wheel-synastry .interchart-aspect-lines line {
+  opacity: 0.9;
+  stroke-linecap: round;
+  stroke-width: 1.35;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .aspect-endpoint {
+  opacity: 0.95;
+  stroke: none;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .neutral line {
+  stroke: var(--wheel-aspect-neutral);
+  stroke-width: 1.2;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .neutral .aspect-endpoint {
+  fill: var(--wheel-aspect-neutral);
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .conjunction line {
+  stroke: #f06f68;
+  stroke-width: 3;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .conjunction .aspect-endpoint {
+  fill: #f06f68;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .opposition line {
+  stroke: #e2c94f;
+  stroke-width: 1.15;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .opposition .aspect-endpoint {
+  fill: #e2c94f;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .trine line {
+  stroke: #6195ff;
+  stroke-width: 1.3;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .trine .aspect-endpoint {
+  fill: #6195ff;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .sextile line {
+  stroke: #76bd84;
+  stroke-width: 1.3;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .sextile .aspect-endpoint {
+  fill: #76bd84;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .square line {
+  stroke: #a75cf5;
+  stroke-width: 1.9;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines .square .aspect-endpoint {
+  fill: #a75cf5;
 }
 
 .aspect-lines .soft line {

@@ -5366,7 +5366,6 @@ function SkyWheel({
   const tooltipLineHeight = 18;
   const tooltipPaddingY = 12;
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
-  const signLabelMode = variant === "zodiac" ? "glyph" : "name";
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
@@ -5378,7 +5377,7 @@ function SkyWheel({
 
     return {
       sign,
-      label: signLabelMode === "glyph" ? zodiacSignGlyphs[sign] ?? sign : sign,
+      label: sign,
       isLong,
       id: `sign-label-path-${showHouses ? "houses" : "sky"}-${sign.toLowerCase()}`,
       path: shouldReversePath
@@ -5716,6 +5715,7 @@ function SynastryWheel({
     ...aspect,
     className: aspectClass(aspect.type)
   }));
+  const interAspectRadius = radius.aspect + 10;
   const outerPlanetClusterLevels = wheelMarkerClusterLevels(
     outerPositions,
     (position) => position.planet,
@@ -5819,12 +5819,14 @@ function SynastryWheel({
       {interAspectPairs.length > 0 && (
         <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
           {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className }) => {
-            const a = point(angleForLongitude(fromLongitude), radius.outerPlanet - 34);
-            const b = point(angleForLongitude(toLongitude), radius.innerPlanet + 18);
+            const a = point(angleForLongitude(fromLongitude), interAspectRadius);
+            const b = point(angleForLongitude(toLongitude), interAspectRadius);
 
             return (
               <g key={id} className={`${className} ${type}`}>
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                <circle cx={a.x} cy={a.y} r="2.2" className="aspect-endpoint aspect-endpoint-from" />
+                <circle cx={b.x} cy={b.y} r="2.2" className="aspect-endpoint aspect-endpoint-to" />
               </g>
             );
           })}
