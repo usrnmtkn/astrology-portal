@@ -10577,8 +10577,8 @@ button.friend-bond-snapshot-card:focus-visible {
 .app-shell.mode-friends .manual-chart-avatar {
   font-size: 13px;
   font-weight: 700;
-  height: 56px;
-  width: 56px;
+  height: 52px;
+  width: 52px;
 }
 
 .app-shell.mode-friends .manual-chart-row .crb {
@@ -10586,17 +10586,17 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .app-shell.mode-friends .manual-chart-row .crt {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .app-shell.mode-friends .manual-chart-row .crs {
-  font-size: 15px;
+  font-size: 14px;
   margin: 0;
 }
 
 .app-shell.mode-friends .manual-chart-signatures {
-  gap: 9px;
-  font-size: 15px;
+  gap: 8px;
+  font-size: 14px;
   margin-top: 0;
 }
 
@@ -10659,7 +10659,7 @@ button.friend-bond-snapshot-card:focus-visible {
   box-shadow: none;
   gap: 18px;
   padding: 0;
-  max-width: min(88vw, 1380px);
+  max-width: min(90vw, 1260px);
   width: 100%;
 }
 
@@ -10681,17 +10681,17 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .app-shell.mode-friends .friend-hero-card {
   align-items: center;
-  min-height: 108px;
-  padding: 22px 26px;
+  min-height: 110px;
+  padding: 18px 22px;
 }
 
 .app-shell.mode-friends .friend-profile-card {
-  grid-template-columns: 68px minmax(0, 1fr) auto;
+  grid-template-columns: 60px minmax(0, 1fr) auto;
 }
 
 .app-shell.mode-friends .friend-profile-avatar {
-  height: 68px;
-  width: 68px;
+  height: 60px;
+  width: 60px;
 }
 
 .app-shell.mode-friends .friend-hero-copy h2 {
@@ -10709,7 +10709,7 @@ button.friend-bond-snapshot-card:focus-visible {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   min-height: 58px;
-  padding: 5px;
+  padding: 3px;
   width: 100%;
 }
 
@@ -10758,7 +10758,14 @@ button.friend-bond-snapshot-card:focus-visible {
 
 .app-shell.mode-friends .friend-aspect-row {
   background: var(--friends-ui-surface);
-  min-height: 92px;
+  --sky-row-gap: 18px;
+  --sky-row-glyph-size: 20px;
+  --sky-row-padding-block: 18px;
+  --sky-row-padding-inline: 22px;
+  --sky-row-title-size: 17px;
+  --sky-row-degree-size: 12px;
+  --sky-row-subline-size: 16px;
+  min-height: 104px;
 }
 
 .app-shell.mode-friends .friend-aspect-row .aspect-row-copy h3 {
@@ -10807,20 +10814,21 @@ button.friend-bond-snapshot-card:focus-visible {
 
 @media (min-width: 1040px) {
   .app-shell.mode-friends .friend-profile-panel {
-    max-width: min(92vw, 1420px);
+    max-width: min(92vw, 1260px);
   }
 
   .app-shell.mode-friends .friend-profile-card,
   .app-shell.mode-friends .friend-view-tabs {
     justify-self: end;
-    width: min(100%, 680px);
+    width: min(100%, 532px);
   }
 
   .app-shell.mode-friends .friend-compat-stage {
     align-items: start;
-    column-gap: clamp(42px, 5vw, 76px);
+    column-gap: 56px;
     display: grid;
-    grid-template-columns: minmax(500px, 0.88fr) minmax(460px, 1fr);
+    grid-template-columns: minmax(440px, 520px) minmax(480px, 532px);
+    justify-content: center;
   }
 
   .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
@@ -10842,7 +10850,7 @@ button.friend-bond-snapshot-card:focus-visible {
 
   .app-shell.mode-friends .friend-compat-stage .friend-synastry-wheel-shell,
   .app-shell.mode-friends .friend-compat-stage .friend-wheel {
-    max-width: min(620px, 43vw);
+    max-width: min(520px, 42vw);
     width: 100%;
   }
 
@@ -11627,9 +11635,9 @@ button.friend-bond-snapshot-card:focus-visible {
 /* Friends width unification: Circle and Charts share the same rail, so cards,
    table cells, and rows line up instead of inheriting older profile widths. */
 .app-shell.mode-friends .friends-page {
-  --friends-row-min: 168px;
-  --friends-row-pad-x: 34px;
-  --friends-row-pad-y: 32px;
+  --friends-row-min: 124px;
+  --friends-row-pad-x: 26px;
+  --friends-row-pad-y: 20px;
   align-items: stretch;
   justify-items: stretch;
   max-width: var(--friends-ui-col);
@@ -11690,9 +11698,9 @@ button.friend-bond-snapshot-card:focus-visible {
 }
 
 .app-shell.mode-friends .manual-chart-select {
-  gap: 22px;
+  gap: 18px;
   grid-column: 1;
-  grid-template-columns: 116px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   min-width: 0;
   width: 100%;
 }
