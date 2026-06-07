@@ -20,12 +20,17 @@ export type GenerateContentInput = {
 
 export type GeneratedAstrologyDraft = {
   headline: string;
+  tldr?: string;
   summary: string;
   body: string;
+  action?: string;
+  timing?: string;
   sections?: Array<{
     heading: string;
     body: string;
   }>;
+  sceneLock?: TimeLordSceneLock | SceneLock;
+  astrologyDrilldown?: AstrologyDrilldown;
 };
 
 type GeneratedContent = GeneratedAstrologyDraft;
@@ -73,6 +78,20 @@ export type TimeLordSceneMap = {
   sceneArenas: string[];
   commonScenes: string[];
   avoidOverbroadTopics: string[];
+};
+
+export type AstrologyFactorExplanation = {
+  label: string;
+  technicalFact: string;
+  plainMeaning: string;
+};
+
+export type AstrologyDrilldown = {
+  title: string;
+  summary: string;
+  factors: AstrologyFactorExplanation[];
+  whyThisScene: string;
+  timingNote?: string;
 };
 
 type ApprovedExampleRow = {
@@ -128,7 +147,25 @@ type V4RewriteCorpus = {
   entries?: V4RewriteEntry[];
 };
 
-const promptVersion = "tldr-astro-v2";
+type FrameworkSection = {
+  id?: string;
+  heading?: string;
+  body?: string;
+  items?: Array<{
+    label?: string;
+    body?: string;
+  }>;
+};
+
+type FrameworkSnapshot = {
+  id?: string;
+  title?: string;
+  sections?: FrameworkSection[];
+};
+
+const promptVersion = "tldr-astro-v4";
+const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
+const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultModel = "gpt-4.1-mini";
 const bannedUserFacingPhrases = [
   "same sky, different room",
@@ -145,6 +182,14 @@ const bannedUserFacingPhrases = [
   "this aspect teaches",
   "the lesson is"
 ];
+
+const requiredHeadingsByMode: Record<ContentMode, string[]> = {
+  feed: ["TLDR", "What You May Notice", "What To Do", "Timing"],
+  in_depth: ["TLDR", "What You May Notice", "What To Do", "Timing", "Reflection"],
+  article: ["What You May Notice", "What To Do", "Timing", "Closing"]
+};
+
+const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
 export const editorialBannedPhrases = [
   "this contact",
   "this placement",
@@ -227,6 +272,27 @@ const astrologyMechanicTerms = [
   "transit",
   "trine",
   "venus"
+];
+const technicalAstrologyMainCopyTerms = [
+  "time lord",
+  "annual time lord",
+  "lord of the year",
+  "profection",
+  "profected",
+  "natal moon",
+  "natal venus",
+  "natal sun",
+  "natal mercury",
+  "natal mars",
+  "natal jupiter",
+  "natal saturn",
+  "mars opposite moon",
+  "venus-ruled year",
+  "house activation",
+  "transit to natal",
+  "aspect pattern",
+  "natal chart",
+  "birth chart mechanics"
 ];
 const genericAdvicePhrases = [
   "be mindful",
@@ -356,10 +422,11 @@ const fallbackStyleGuide = [
   "Write like a smart astrologer explaining the pattern in normal language: clear, direct, emotionally aware, and grounded in real life.",
   "",
   "Core rules:",
-  "- Start with lived experience.",
-  "- Start with what the astrology describes, then explain what that can look like in ordinary life.",
-  "- Use soft certainty without making every sentence vague. Prefer can, often, tends to, may, and there can be.",
-  "- For transits and current sky, use plain action language that fits the astrology: check the facts, name the issue, take the next real step, or let the situation settle.",
+  "- Start with lived experience, then explain what in the chart/facts could produce it.",
+  "- Use concrete, human observations before advice.",
+  "- Use soft certainty without sounding vague. Prefer can, often, tends to, may, and there can be.",
+  "- For transits and current sky, treat facts as timebound and practical: what is happening in this window, what may feel heightened, and what small move helps.",
+  "- For natal and personal summaries, use soft certainty about patterns over time.",
   "- Do not use em dashes.",
   "- Do not use self-help language.",
   "- Do not use therapy language unless explicitly source-backed.",
@@ -369,8 +436,14 @@ const fallbackStyleGuide = [
   "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
   "- Translate source symbolism into concrete human experience.",
   "",
-  "Preferred short structure: TLDR, what this looks like in real life, why the astrology describes it, useful move, timing.",
-  "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what is useful to do with that information.",
+  "Preferred short structure in all modes:",
+  "- what is happening in the facts",
+  "- what this can feel like in life",
+  "- why this pattern may be this way",
+  "- what is most useful to do next",
+  "- timing that helps decide urgency",
+  "",
+  "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what concrete move fits this moment.",
   "",
   "Sky content is current astrology. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
   "Relationship content should describe what happens between two people, not two separate natal descriptions stitched together.",
@@ -400,7 +473,11 @@ function modeRules(mode: ContentMode) {
     return [
       "Feed Mode: quick daily insight.",
       "Length: one or two paragraphs.",
-      "Structure: TLDR, real-life signal, astrology reason, useful move, timing.",
+      "Structure: 4 compact blocks in order",
+      "1) What you may notice",
+      "2) Why this is happening",
+      "3) What to do right now",
+      "4) Timing",
       "Tone: direct, specific, easy to read, and useful right away."
     ].join("\n");
   }
@@ -430,17 +507,35 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   return [
     "OUTPUT SHAPE",
     exactHeadline,
-    "Write the interpretation as: headline + what the reader may notice + why + what to do + timing.",
-    "The headline stays astrology-only. The human hook belongs in summary and body.",
-    "summary: one or two plain sentences that name the situation in human language. Do not summarize the astrology mechanically.",
+    "Return separate main-card copy and astrology drilldown copy.",
+    "Main card = lived guidance. Drilldown = astrology logic.",
+    "The headline stays astrology-only. The human hook belongs in tldr, summary, body, action, and timing.",
+    "tldr: one direct sentence of guidance. It must read without astrology knowledge.",
+    "summary: one or two plain sentences that name the one ordinary-life scene. Do not summarize the astrology mechanically.",
     "body: write complete paragraphs in this order:",
     "1. What may be noticeable in real life today, this season, or during this transit.",
-    "2. Why it may feel that way, using the astrology facts without turning them into a jargon list.",
+    "2. The pressure or tension inside that one scene, without naming astrology mechanics.",
     "3. What to do with it, using concrete action language.",
-    "4. Timing, including exactness, active date, orb, or whether it fades soon, only when the facts support it.",
-    "sections: include exactly these headings when they fit the mode: What You May Notice, Why This Is Happening, What To Do, Timing.",
-    "Do not use labels inside body unless the mode is article. Body should read like natural prose.",
+    "4. Timing in plain language, only when the facts support it.",
+    "action: one specific useful move.",
+    "timing: one plain timing sentence.",
+    "sections: use section objects for main-card clarity and review.",
+    "Use these section headings when they fit the mode and keep the same language in heading names:",
+    "- TLDR",
+    "- What You May Notice",
+    "- What To Do",
+    "- Timing",
+    "Optional for in-depth/article: Reflection, Integration, or Closing Statement.",
+    "Do not use labels inside body unless the mode is article. Body should still read like natural prose.",
     "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
+    "Do not put technical astrology in summary, body, action, timing, or main sections. Put it only in astrologyDrilldown.",
+    "Main copy must not say: time lord, profection, natal Moon, natal Venus, Mars opposite Moon, Venus-ruled year, house activation, transit to natal, aspect pattern.",
+    "astrologyDrilldown: explain why the app is saying this today. Keep it short, clear, and plain.",
+    "astrologyDrilldown.title: use 'Why this?'.",
+    "astrologyDrilldown.summary: two plain sentences max about the astrology logic.",
+    "astrologyDrilldown.factors: include the time lord, strongest pressure, natal target, timing factor, or other relevant factors that actually appear in ASTROLOGY FACTS.",
+    "astrologyDrilldown.whyThisScene: explain why this one scene was chosen and what meanings were excluded.",
+    "astrologyDrilldown.timingNote: optional timing strength.",
     input.surface === "sky" ? "Sky rule: write current astrology as advice and timing. Do not make it a natal identity description." : "",
     input.surface === "you" || input.surface === "natal" ? "Natal/You rule: describe a recurring pattern with soft certainty, then give a useful way to work with it." : "",
     input.surface === "synastry" || input.surface === "composite" || input.surface === "relationship" ? "Relationship rule: describe what happens between the people, where it helps, where it gets complicated, and what makes the bond easier to handle." : ""
@@ -606,6 +701,11 @@ function timeLordPlanetFromFacts(facts: Record<string, unknown> | undefined): Pl
   return visit(facts);
 }
 
+function compactBody(value: string, maxLength = 1400) {
+  const trimmed = value.replace(/\s+/g, " ").trim();
+  return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
+}
+
 function normalizeText(value: string) {
   return value.toLowerCase().replace(/\s+/g, " ").trim();
 }
@@ -618,13 +718,14 @@ function firstParagraph(value: string) {
   return stringValue(value).split(/\n\s*\n/)[0]?.trim() ?? "";
 }
 
+function countMatches(text: string, phrases: string[]) {
+  const normalized = normalizeText(text);
+  return phrases.filter((phrase) => normalized.includes(normalizeText(phrase))).length;
+}
+
 function matchedPhrases(text: string, phrases: string[]) {
   const normalized = normalizeText(text);
   return phrases.filter((phrase) => normalized.includes(normalizeText(phrase)));
-}
-
-function countMatches(text: string, phrases: string[]) {
-  return matchedPhrases(text, phrases).length;
 }
 
 function lifeAreasIn(text: string) {
@@ -681,6 +782,30 @@ function timeLordUsedAsSceneFilter(text: string, planet: Planet) {
   return sceneMatches.length > 0 || arenaMatches.length > 0;
 }
 
+function mainCopyText(draft: GeneratedAstrologyDraft) {
+  return [
+    draft.tldr,
+    draft.summary,
+    draft.body,
+    draft.action,
+    draft.timing,
+    ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].filter(Boolean).join("\n");
+}
+
+function technicalAstrologyInMainCopy(draft: GeneratedAstrologyDraft) {
+  const text = mainCopyText(draft);
+  const normalized = normalizeText(text);
+  const phraseMatches = technicalAstrologyMainCopyTerms.filter((term) => normalized.includes(normalizeText(term)));
+  const aspectMechanics = /\b(conjunction|opposition|square|trine|sextile)\b/i.test(text);
+  const houseMechanics = /\b\d+(st|nd|rd|th)\s+house\b/i.test(text);
+
+  return {
+    hasTechnicalAstrology: phraseMatches.length > 0 || aspectMechanics || houseMechanics,
+    matches: phraseMatches
+  };
+}
+
 function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
   if (!failures.some((failure) => failure.code === code && failure.message === message)) {
     failures.push({ code, message, severity });
@@ -695,6 +820,8 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     failedCodes.has("SUMMARY_LISTS_TOPICS") ? "The summary lists categories instead of naming one specific situation. Choose one concrete situation." : "",
     failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Do not use a sentence with three or more options joined by commas or or." : "",
     failedCodes.has("TIME_LORD_NOT_USED_AS_SCENE_FILTER") ? "Reject this draft. The time lord was used as a topic list instead of a scene filter. Use the time lord to choose one ordinary life scene, then write only that scene. Do not explain every meaning of the time lord." : "",
+    failedCodes.has("TECHNICAL_ASTROLOGY_IN_MAIN_COPY") ? "Reject this draft. The main card teaches astrology mechanics. Rewrite the main card as lived guidance only, with no time lord, profection, natal, house, transit-to-natal, or aspect terms. Put the astrology explanation only in astrologyDrilldown." : "",
+    failedCodes.has("DRILLDOWN_TOO_THIN") ? "Add a concise astrologyDrilldown that answers 'Why this?' with the actual factors used, why this scene was chosen, and the timing strength." : "",
     failedCodes.has("TOO_MANY_LIFE_AREAS") ? "Do not mention more than two life areas." : "",
     failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
     failedCodes.has("ASTROLOGY_OVERLOAD") ? "Lead with the plain situation. Use astrology facts only as support, not as the main language." : "",
@@ -707,9 +834,137 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
   return instructions.join(" ");
 }
 
-function compactBody(value: string, maxLength = 1400) {
-  const trimmed = value.replace(/\s+/g, " ").trim();
-  return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
+function hasEnoughSectionContent(sections: Array<{ heading?: string; body?: string }>) {
+  return sections.filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 40).length >= 2;
+}
+
+function requiredSectionHeadingsForMode(mode: ContentMode) {
+  return requiredHeadingsByMode[mode] ?? [];
+}
+
+function sectionHeadingSetMatch(sectionHeadings: string[], required: string[]) {
+  const normalizedSet = new Set(sectionHeadings.map((heading) => normalizeText(heading)));
+  return required.filter((requiredHeading) => normalizedSet.has(normalizeText(requiredHeading)));
+}
+
+function slug(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function normalizeWords(value: string) {
+  return value.toLowerCase().trim();
+}
+
+function asArray<T = unknown>(value: unknown): T[] {
+  return Array.isArray(value) ? value as T[] : [];
+}
+
+function loadSkyFrameworks() {
+  try {
+    const skyPath = path.join(process.cwd(), "packages/astro-knowledge/dist/sky.json");
+    const sky = JSON.parse(fs.readFileSync(skyPath, "utf8")) as {
+      frameworks?: FrameworkSnapshot[];
+    };
+
+    return asArray<FrameworkSnapshot>(sky.frameworks);
+  } catch {
+    return [];
+  }
+}
+
+function formatFrameworkSection(framework: FrameworkSnapshot | undefined, sectionId: string) {
+  const section = asArray<FrameworkSection>(framework?.sections).find((item) => item?.id === sectionId);
+
+  if (!section) {
+    return "";
+  }
+
+  const body = stringValue(section.body);
+  const lines = [section.heading ? `${section.heading}: ${body}` : body].filter(Boolean);
+  const items = asArray(section.items).map((item) => {
+    const label = stringValue(item.label);
+    const itemBody = stringValue(item.body);
+    return label || itemBody ? `- ${label}: ${itemBody}`.replace(/- : /g, "- ") : "";
+  }).filter(Boolean);
+
+  if (items.length) {
+    lines.push("", "Items:", ...items);
+  }
+
+  return lines.join("\n");
+}
+
+function formatLunationTemplateInstruction(input: GenerateContentInput) {
+  if (input.surface !== "sky") {
+    return "";
+  }
+
+  const sourceSnapshot = isRecord(input.sourceSnapshot) ? input.sourceSnapshot : {};
+  let frameworks = asArray<FrameworkSnapshot>(sourceSnapshot.frameworks);
+
+  if (!frameworks.length) {
+    frameworks = loadSkyFrameworks();
+  }
+
+  const architecture = asArray<FrameworkSnapshot>(frameworks).find((framework) => framework?.id === SKY_LUNATION_FRAMEWORK_ID);
+  const ritual = asArray<FrameworkSnapshot>(frameworks).find((framework) => framework?.id === SKY_LUNATION_RITUAL_ID);
+
+  if (!architecture) {
+    return "";
+  }
+
+  const moonEvent = factRecord(input.facts, "moonEvent");
+  const eventSignature = normalizeWords(stringValue(moonEvent?.name) || stringValue(input.facts.type) || input.eventType);
+  const eventLabel = slug(eventSignature).includes("full")
+    ? "full moon"
+    : slug(eventSignature).includes("new")
+      ? "new moon"
+      : slug(eventSignature).includes("eclipse")
+        ? "eclipse"
+        : "";
+
+  const modeLine = input.mode === "feed"
+    ? "Use Feed Mode structure for brief timing-focused delivery."
+    : input.mode === "in_depth"
+      ? "Use In-Depth Mode with mechanism, behavior, and integration."
+      : "Use Article Mode with clear sections and reflective practical close.";
+
+  const cardStructure = formatFrameworkSection(architecture, "sky-card-structure");
+  const planetaryContext = formatFrameworkSection(architecture, "planetary-context");
+  const houseSignLinking = formatFrameworkSection(architecture, "house-and-sign-bridging");
+  const toneGuide = formatFrameworkSection(architecture, "tone-guide");
+
+  const eventSection = asArray<FrameworkSection>(architecture.sections).find((section) => section?.id === "lunar-event-templates");
+  const eventItem = eventSection
+    ? asArray(eventSection.items).find((item) => {
+        const label = normalizeWords(stringValue(item.label));
+        return eventLabel ? label.includes(eventLabel) : false;
+      })
+    : undefined;
+
+  const eventGuidance = eventItem
+    ? `LUNAR EVENT TEMPLATE (${stringValue(eventItem.label)}): ${stringValue(eventItem.body)}`
+    : "Choose the strongest lunar event template from the framework by event type.";
+
+  const modeSection = formatFrameworkSection(architecture, "content-modes");
+  const modeGuidance = modeSection || `Use ${input.mode.replace("_", " ").toUpperCase()} mode guidance from the framework.`;
+
+  const ritualNotes = ritual ? `RITUAL PRACTICE FRAMEWORK (reference):\n${JSON.stringify(ritual, null, 2)}` : "";
+  const sourceMode = eventSignature ? `LUNATION EVENT: ${eventSignature}.` : "";
+
+  return [
+    "LUNATION FRAMEWORK",
+    sourceMode,
+    modeLine,
+    modeGuidance,
+    modeSection ? `Mode section:\n${modeSection}` : "",
+    cardStructure ? `Sky Card Structure:\n${cardStructure}` : "",
+    eventGuidance ? `Event-specific guidance:\n${eventGuidance}` : "",
+    planetaryContext ? `Planetary context:\n${planetaryContext}` : "",
+    houseSignLinking ? `House/sign bridging:\n${houseSignLinking}` : "",
+    toneGuide ? `Tone guide:\n${toneGuide}` : "",
+    ritualNotes
+  ].filter(Boolean).join("\n\n");
 }
 
 function exampleFromRow(row: ApprovedExampleRow): ApprovedExample | null {
@@ -1020,6 +1275,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "SURFACE",
     input.surface,
+    formatLunationTemplateInstruction(input),
     "",
     "EVENT TYPE",
     input.eventType,
@@ -1137,14 +1393,20 @@ async function loadApprovedExamples(input: GenerateContentInput) {
   return examples;
 }
 
-function validateGeneratedContentQuality(content: GeneratedContent) {
+function validateGeneratedContentQuality(content: GeneratedContent, mode: ContentMode) {
   const userFacingText = [
     content.headline,
+    content.tldr,
     content.summary,
     content.body,
+    content.action,
+    content.timing,
     ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
-  ].join("\n");
-  const normalized = userFacingText.toLowerCase();
+  ].filter(Boolean).join("\n");
+  const normalized = normalizeText(userFacingText);
+  const sectionHeadings = (content.sections ?? []).map((section) => stringValue(section.heading));
+  const requiredHeadings = requiredSectionHeadingsForMode(mode);
+  const matchedRequired = sectionHeadingSetMatch(sectionHeadings, requiredHeadings);
 
   if (userFacingText.includes("—")) {
     throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
@@ -1156,12 +1418,78 @@ function validateGeneratedContentQuality(content: GeneratedContent) {
     }
   }
 
+  for (const signature of bannedOutputSignatures) {
+    if (normalized.includes(signature)) {
+      throw new Error(`Generated content included disallowed phrase: ${signature}`);
+    }
+  }
+
   if (content.summary.trim().length < 40) {
     throw new Error("Generated summary is too thin for editorial review.");
   }
 
   if (content.body.trim().length < 180) {
     throw new Error("Generated body is too thin for editorial review.");
+  }
+
+  if (!hasEnoughSectionContent(content.sections ?? [])) {
+    throw new Error("Generated sections are too shallow for review quality.");
+  }
+
+  if (requiredHeadings.length > 0 && matchedRequired.length < requiredHeadings.length - 1) {
+    throw new Error(
+      `Generated sections missing required headings. Expected includes: ${requiredHeadings.join(", ")}`
+    );
+  }
+}
+
+function validateAstrologyDrilldownQuality(content: GeneratedContent) {
+  const drilldown = content.astrologyDrilldown;
+
+  if (!drilldown) {
+    throw new Error("Generated content did not include astrologyDrilldown.");
+  }
+
+  if (stringValue(drilldown.title) !== "Why this?") {
+    throw new Error("Generated astrologyDrilldown must use title: Why this?");
+  }
+
+  if (stringValue(drilldown.summary).length < 50) {
+    throw new Error("Generated astrologyDrilldown summary is too thin.");
+  }
+
+  if (!Array.isArray(drilldown.factors) || drilldown.factors.length < 2) {
+    throw new Error("Generated astrologyDrilldown must include at least two astrology factors.");
+  }
+
+  const invalidFactor = drilldown.factors.find((factor) => (
+    stringValue(factor.label).length < 3 ||
+    stringValue(factor.technicalFact).length < 8 ||
+    stringValue(factor.plainMeaning).length < 20
+  ));
+
+  if (invalidFactor) {
+    throw new Error("Generated astrologyDrilldown contains a factor that is too thin.");
+  }
+
+  if (stringValue(drilldown.whyThisScene).length < 80) {
+    throw new Error("Generated astrologyDrilldown must explain why this scene was chosen.");
+  }
+
+  const drilldownText = [
+    drilldown.title,
+    drilldown.summary,
+    ...drilldown.factors.flatMap((factor) => [factor.label, factor.technicalFact, factor.plainMeaning]),
+    drilldown.whyThisScene,
+    drilldown.timingNote
+  ].filter(Boolean).join("\n");
+
+  if (drilldownText.includes("—")) {
+    throw new Error("Generated astrologyDrilldown used an em dash.");
+  }
+
+  if (countMatches(drilldownText, editorialBannedPhrases) > 2) {
+    throw new Error("Generated astrologyDrilldown sounds too much like generic astrology copy.");
   }
 }
 
@@ -1175,11 +1503,22 @@ export function evaluateEditorialCoherence(
   const firstSummarySentence = firstSentence(summary || body);
   const openingBody = firstParagraph(body);
   const reviewText = [summary, openingBody, ...(draft.sections ?? []).map((section) => section.body)].join("\n");
+  const normalizedFirstSentence = normalizeText(firstSummarySentence);
   const summaryLifeAreas = lifeAreasIn(summary);
   const openingLifeAreas = lifeAreasIn([summary, openingBody].join(" "));
+  const textbookMatches = matchedPhrases(reviewText, editorialBannedPhrases);
+  const selfHelpMatches = matchedPhrases(reviewText, selfHelpTonePhrases);
+  const genericAdviceMatches = matchedPhrases(reviewText, genericAdvicePhrases);
   const astrologyTermCount = countMatches([firstSummarySentence, openingBody].join(" "), astrologyMechanicTerms);
   const keywordListSentence = sentencesFrom([summary, openingBody].join(" ")).find(sentenceHasKeywordListing);
+  const technicalMainCopy = technicalAstrologyInMainCopy(draft);
   const timeLordPlanet = timeLordPlanetFromFacts(context.facts);
+  const timeLordSceneText = [
+    summary,
+    openingBody,
+    isRecord(draft.sceneLock) ? Object.values(draft.sceneLock).flat().join(" ") : "",
+    draft.astrologyDrilldown?.whyThisScene ?? ""
+  ].join(" ");
   const timeLordMisuseSentence = timeLordPlanet
     ? sentencesFrom([summary, openingBody].join(" ")).find((sentence) => sentenceMisusesTimeLord(sentence, timeLordPlanet))
     : undefined;
@@ -1212,7 +1551,15 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (timeLordPlanet && (timeLordMisuseSentence || !timeLordUsedAsSceneFilter([summary, openingBody].join(" "), timeLordPlanet))) {
+  if (technicalMainCopy.hasTechnicalAstrology) {
+    addEditorialFailure(
+      failures,
+      "TECHNICAL_ASTROLOGY_IN_MAIN_COPY",
+      "The main card includes technical astrology that belongs in the drilldown."
+    );
+  }
+
+  if (timeLordPlanet && (timeLordMisuseSentence || !timeLordUsedAsSceneFilter(timeLordSceneText, timeLordPlanet))) {
     addEditorialFailure(
       failures,
       "TIME_LORD_NOT_USED_AS_SCENE_FILTER",
@@ -1220,8 +1567,24 @@ export function evaluateEditorialCoherence(
     );
   }
 
+  if (
+    !draft.astrologyDrilldown ||
+    draft.astrologyDrilldown.factors.length < 2 ||
+    stringValue(draft.astrologyDrilldown.whyThisScene).length < 80
+  ) {
+    addEditorialFailure(
+      failures,
+      "DRILLDOWN_TOO_THIN",
+      "The astrology drilldown does not clearly explain why this scene was chosen."
+    );
+  }
+
   if (summaryLifeAreas.length > 2) {
-    addEditorialFailure(failures, "TOO_MANY_LIFE_AREAS", "The summary names more than two life areas.");
+    addEditorialFailure(
+      failures,
+      "TOO_MANY_LIFE_AREAS",
+      "The summary names more than two life areas."
+    );
   }
 
   if (
@@ -1243,11 +1606,15 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  matchedPhrases(reviewText, editorialBannedPhrases).forEach((phrase) => {
-    addEditorialFailure(failures, "TEXTBOOK_PHRASE", `The phrase '${phrase}' sounds like generic astrology copy.`);
+  textbookMatches.forEach((phrase) => {
+    addEditorialFailure(
+      failures,
+      "TEXTBOOK_PHRASE",
+      `The phrase '${phrase}' sounds like generic astrology copy.`
+    );
   });
 
-  matchedPhrases(reviewText, selfHelpTonePhrases).forEach((phrase) => {
+  selfHelpMatches.forEach((phrase) => {
     addEditorialFailure(
       failures,
       "SELF_HELP_TONE",
@@ -1256,8 +1623,12 @@ export function evaluateEditorialCoherence(
     );
   });
 
-  matchedPhrases(reviewText, genericAdvicePhrases).forEach((phrase) => {
-    addEditorialFailure(failures, "GENERIC_ADVICE", `The advice phrase '${phrase}' is too generic.`);
+  genericAdviceMatches.forEach((phrase) => {
+    addEditorialFailure(
+      failures,
+      "GENERIC_ADVICE",
+      `The advice phrase '${phrase}' is too generic.`
+    );
   });
 
   const actionSections = (draft.sections ?? []).filter((section) => /what to do|action|advice/i.test(section.heading));
@@ -1266,17 +1637,28 @@ export function evaluateEditorialCoherence(
     actionText &&
     !/\b(ask|check|say|wait|get|write|send|schedule|name|choose|do not|don't|call|clarify|make)\b/i.test(actionText)
   ) {
-    addEditorialFailure(failures, "GENERIC_ADVICE", "The advice does not give one specific action.");
+    addEditorialFailure(
+      failures,
+      "GENERIC_ADVICE",
+      "The advice does not give one specific action."
+    );
   }
 
-  if (context.surface === "synastry" || context.surface === "composite" || context.surface === "relationship") {
-    matchedPhrases(reviewText, [
+  if (
+    context.surface === "synastry" ||
+    context.surface === "composite" ||
+    context.surface === "relationship"
+  ) {
+    const relationshipAbstractPhrases = [
       "this contact can feel",
       "socially smooth",
       "easy warmth",
       "at home in your own skin",
       "feel liked, comfortable"
-    ]).forEach((phrase) => {
+    ];
+    const relationshipMatches = matchedPhrases(reviewText, relationshipAbstractPhrases);
+
+    relationshipMatches.forEach((phrase) => {
       addEditorialFailure(
         failures,
         "RELATIONSHIP_COPY_TOO_ABSTRACT",
@@ -1296,7 +1678,7 @@ export function evaluateEditorialCoherence(
   };
 }
 
-function parseResponseJson(raw: string, lockedHeadline: string | undefined, input: GenerateContentInput): GeneratedContent {
+function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateContentInput): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
@@ -1305,12 +1687,18 @@ function parseResponseJson(raw: string, lockedHeadline: string | undefined, inpu
 
   const content = {
     headline: lockedHeadline ?? parsed.headline,
+    tldr: parsed.tldr,
     summary: parsed.summary,
     body: parsed.body,
+    action: parsed.action,
+    timing: parsed.timing,
+    sceneLock: parsed.sceneLock,
+    astrologyDrilldown: parsed.astrologyDrilldown,
     sections: parsed.sections ?? []
   };
 
-  validateGeneratedContentQuality(content);
+  validateGeneratedContentQuality(content, input.mode);
+  validateAstrologyDrilldownQuality(content);
 
   const editorialResult = evaluateEditorialCoherence(content, {
     contentKey: input.contentKey,
@@ -1373,11 +1761,14 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
             schema: {
               type: "object",
               additionalProperties: false,
-              required: ["headline", "summary", "body", "sections"],
+              required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "sceneLock", "astrologyDrilldown"],
               properties: {
                 headline: { type: "string" },
+                tldr: { type: "string" },
                 summary: { type: "string" },
                 body: { type: "string" },
+                action: { type: "string" },
+                timing: { type: "string" },
                 sections: {
                   type: "array",
                   items: {
@@ -1388,6 +1779,45 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
                       heading: { type: "string" },
                       body: { type: "string" }
                     }
+                  }
+                },
+                sceneLock: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["sceneArena", "currentPressure", "personalSensitivity", "chosenScene", "excludedMeanings"],
+                  properties: {
+                    sceneArena: { type: "string" },
+                    currentPressure: { type: "string" },
+                    personalSensitivity: { type: "string" },
+                    chosenScene: { type: "string" },
+                    excludedMeanings: {
+                      type: "array",
+                      items: { type: "string" }
+                    }
+                  }
+                },
+                astrologyDrilldown: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["title", "summary", "factors", "whyThisScene", "timingNote"],
+                  properties: {
+                    title: { type: "string" },
+                    summary: { type: "string" },
+                    factors: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        additionalProperties: false,
+                        required: ["label", "technicalFact", "plainMeaning"],
+                        properties: {
+                          label: { type: "string" },
+                          technicalFact: { type: "string" },
+                          plainMeaning: { type: "string" }
+                        }
+                      }
+                    },
+                    whyThisScene: { type: "string" },
+                    timingNote: { type: "string" }
                   }
                 }
               }
@@ -1420,7 +1850,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
 
     try {
       return {
-        ...parseResponseJson(outputText, lockedHeadline || undefined, input),
+        ...parseResponseJson(outputText, lockedHeadline || "", input),
         responseId: payload.id,
         model
       };
@@ -1462,7 +1892,11 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
       headline: generated.headline,
       summary: generated.summary,
       body: generated.body,
-      sections: generated.sections ?? {},
+      sections: {
+        sections: generated.sections ?? [],
+        sceneLock: generated.sceneLock ?? null,
+        astrologyDrilldown: generated.astrologyDrilldown ?? null
+      },
       openai_response_id: generated.responseId
     })
   });
@@ -1482,6 +1916,7 @@ export function loadSkySourceSnapshot() {
     transits?: Array<Record<string, unknown>>;
     modifiers?: Array<Record<string, unknown>>;
     primitives?: Record<string, unknown>;
+    frameworks?: Array<Record<string, unknown>>;
   };
 
   const retrogradeModifiers = (sky.modifiers ?? []).filter((modifier) => {
@@ -1495,6 +1930,10 @@ export function loadSkySourceSnapshot() {
   return {
     primitives: sky.primitives,
     modifiers: retrogradeModifiers,
-    transits: (sky.transits ?? []).slice(0, 12)
+    transits: (sky.transits ?? []).slice(0, 12),
+    frameworks: asArray(sky.frameworks).filter((framework) => {
+      const frameworkId = stringValue((framework as { id?: unknown }).id);
+      return frameworkId === SKY_LUNATION_FRAMEWORK_ID || frameworkId === SKY_LUNATION_RITUAL_ID || frameworkId === "traditional-transit-framework";
+    })
   };
 }

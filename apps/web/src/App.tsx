@@ -42,9 +42,11 @@ import {
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import {
+  generatedContentDrilldown,
   generatedContentSections,
   generatedContentParagraphs,
   loadLiveGeneratedContent,
+  type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import {
@@ -253,6 +255,7 @@ type SkyDetail = {
     heading: string;
     body: ReactNode;
   }>;
+  astrologyDrilldown?: GeneratedContentDrilldown | null;
   content?: ContentBundle;
 };
 
@@ -459,6 +462,10 @@ function generatedDetailSections(generated: LiveGeneratedContent | null) {
     heading: section.heading,
     body: section.body
   }));
+}
+
+function generatedAstrologyDrilldown(generated: LiveGeneratedContent | null) {
+  return generatedContentDrilldown(generated);
 }
 
 function skyGeneratedDateKey(generatedAt: string) {
@@ -1649,6 +1656,7 @@ function SkyDetailArticle({
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const paragraphs = detail.body.length > 0 ? detail.body : ["This field guide is still being written."];
   const generatedSections = detail.sections ?? [];
+  const drilldown = detail.astrologyDrilldown;
   const [lede, ...sectionParagraphs] = paragraphs;
 
   return (
@@ -1704,6 +1712,29 @@ function SkyDetailArticle({
               ))}
             </>
           )}
+          {drilldown ? (
+            <details className="sky-detail-drilldown">
+              <summary>{drilldown.title || "Why this?"}</summary>
+              <div className="sky-detail-drilldown-body">
+                {drilldown.summary ? <p>{drilldown.summary}</p> : null}
+                {drilldown.factors.length > 0 ? (
+                  <dl>
+                    {drilldown.factors.map((factor) => (
+                      <div key={`${factor.label}-${factor.technicalFact}`}>
+                        <dt>{factor.label}</dt>
+                        <dd>
+                          <strong>{factor.technicalFact}</strong>
+                          <span>{factor.plainMeaning}</span>
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+                {drilldown.whyThisScene ? <p>{drilldown.whyThisScene}</p> : null}
+                {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
+              </div>
+            </details>
+          ) : null}
           <div className="sky-detail-end" aria-hidden="true">✦</div>
         </div>
       </article>
@@ -6083,6 +6114,7 @@ function RetrogradeCallout({
                 meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeDetailRange(retrogradeWindow)}`,
                 body: detailParagraphs,
                 sections: generatedDetailSections(generated),
+                astrologyDrilldown: generatedAstrologyDrilldown(generated),
                 content: content.bundle
               })}
             >
@@ -6436,7 +6468,8 @@ function ActiveAspects({
                   meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
                   content: content.bundle,
                   body,
-                  sections: generatedDetailSections(generated)
+                  sections: generatedDetailSections(generated),
+                  astrologyDrilldown: generatedAstrologyDrilldown(generated)
                 })}
               >
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
@@ -6545,6 +6578,7 @@ function PlacementTable({
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementTransitRange(position, generatedAt)}`,
             body,
             sections: generatedDetailSections(generated),
+            astrologyDrilldown: generatedAstrologyDrilldown(generated),
             content: content.bundle
           });
 
