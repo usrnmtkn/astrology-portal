@@ -1,0 +1,69 @@
+{
+  "id": "lunation-content-architecture-framework",
+  "kind": "framework",
+  "role": "method",
+  "category": "lunar",
+  "title": "Lunation Content Architecture Framework",
+  "sections": [
+    {
+      "id": "content-modes",
+      "heading": "Content Modes",
+      "body": "Use the three modes to match content surface and length for Sky, Horoscope, and feed contexts.",
+      "items": [
+        {
+          "label": "Feed Mode",
+          "body": "1 to 2 short paragraphs. Prioritize current lived effect, specific timing, and one practical move. Use this for daily transits and brief check-in summaries."
+        },
+        {
+          "label": "In-Depth Mode",
+          "body": "3 to 5 paragraphs. Explain mechanism, observable behavior, practical implications by life area, and the integration path. Use for major placements, transits, and relationship pattern entries."
+        },
+        {
+          "label": "Article Mode",
+          "body": "Long-form essay style with clear sections, collective context, and reflective close. Use for eclipses, New Moons, Full Moons, and seasonal cycles with household and ritual framing."
+        }
+      ]
+    },
+    {
+      "id": "sky-card-structure",
+      "heading": "Sky Card Structure",
+      "body": "Write each Sky output with this order: headline, what this feels like, why this is happening, what to do, and timing. Keep the headline factual and astronomy-linked."
+    },
+    {
+      "id": "lunar-event-templates",
+      "heading": "Lunar Event Templates",
+      "body": "Match structure to event type and phase intensity. For brief entries, keep only the strongest two lines for each section.",
+      "items": [
+        {
+          "label": "New Moon",
+          "body": "Open with phase and sign. Include six-month arc, two-week arc, intention framing, and the exact release condition when the arc matures."
+        },
+        {
+          "label": "Full Moon",
+          "body": "Open with culmination and release frame. Show what has become visible since the corresponding New Moon and what can be released with integrity."
+        },
+        {
+          "label": "Eclipse",
+          "body": "Use witness-first language. Avoid prediction language. Name the turning point and where identity, relationship, or direction is being redefined."
+        }
+      ]
+    },
+    {
+      "id": "planetary-context",
+      "heading": "Planetary Layering",
+      "body": "Report event facts and the strongest active transit overlays only. If multiple transits compete, include a second overlay only when it materially changes tone or action."
+    },
+    {
+      "id": "house-and-sign-bridging",
+      "heading": "Sign and House Linking",
+      "body": "If a phase has a natal-house link, include house themes in plain language only when the link is materially clear in the timing window."
+    },
+    {
+      "id": "tone-guide",
+      "heading": "Tone Guide",
+      "body": "No em dashes. No prediction certainty. Use soft modality. Start from observed experience, then explanation, then action. Close with what becomes possible."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
