@@ -1883,6 +1883,78 @@ function wheelMarkerClusterLevels<T>(
   return levels;
 }
 
+function wheelMarkerLabelAngles<T>(
+  items: T[],
+  keyForItem: (item: T) => string,
+  angleForItem: (item: T) => number,
+  threshold = 8,
+  separation = 11
+) {
+  const entries = items
+    .map((item) => ({
+      item,
+      key: keyForItem(item),
+      angle: normalizedAngle(angleForItem(item))
+    }))
+    .sort((first, second) => first.angle - second.angle);
+  const labelAngles = new Map<string, number>();
+
+  if (entries.length === 0) {
+    return labelAngles;
+  }
+
+  let clusters: Array<Array<(typeof entries)[number]>> = [];
+
+  entries.forEach((entry) => {
+    const currentCluster = clusters[clusters.length - 1];
+    const previous = currentCluster?.[currentCluster.length - 1];
+
+    if (previous && angularDistance(entry.angle, previous.angle) <= threshold) {
+      currentCluster.push(entry);
+    } else {
+      clusters.push([entry]);
+    }
+  });
+
+  if (clusters.length > 1) {
+    const firstCluster = clusters[0];
+    const lastCluster = clusters[clusters.length - 1];
+    const first = firstCluster[0];
+    const last = lastCluster[lastCluster.length - 1];
+
+    if (first && last && angularDistance(first.angle, last.angle) <= threshold) {
+      clusters = [
+        [
+          ...lastCluster,
+          ...firstCluster.map((entry) => ({
+            ...entry,
+            angle: entry.angle + 360
+          }))
+        ],
+        ...clusters.slice(1, -1)
+      ];
+    }
+  }
+
+  clusters.forEach((cluster) => {
+    if (cluster.length === 1) {
+      labelAngles.set(cluster[0].key, normalizedAngle(cluster[0].angle));
+      return;
+    }
+
+    const ordered = [...cluster].sort((first, second) => first.angle - second.angle);
+    const centerAngle = ordered.reduce((sum, entry) => sum + entry.angle, 0) / ordered.length;
+    const clusterSeparation = ordered.length >= 4 ? separation * 0.82 : separation;
+    const startAngle = centerAngle - ((ordered.length - 1) * clusterSeparation) / 2;
+
+    ordered.forEach((entry, index) => {
+      labelAngles.set(entry.key, normalizedAngle(startAngle + index * clusterSeparation));
+    });
+  });
+
+  return labelAngles;
+}
+
 function formatOrb(orb: number) {
   const degrees = Math.floor(orb);
   const minutes = Math.round((orb - degrees) * 60);
@@ -4841,7 +4913,7 @@ function retrogradeKnowledgeCopy(
     return `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
   }
 
-  return interpretationInReviewSummary;
+  return `${position.planet} is retrograde in ${position.sign}: review the themes of ${position.planet} through the lens of ${position.sign}. Retrograde motion brings this same topic back for review before it moves forward.`;
 }
 
 function ordinalHouse(house: number) {
@@ -5117,19 +5189,20 @@ function SkyWheel({
   const activeTooltipPosition = activeTooltipPlanet
     ? positions.find((position) => position.planet === activeTooltipPlanet)
     : null;
-  const planetClusterLevels = wheelMarkerClusterLevels(
+  const planetLabelAngles = wheelMarkerLabelAngles(
     positions,
     (position) => position.planet,
     planetAngle,
-    8
+    16,
+    17
   );
 
-  function planetMarkerRadius(position: PlanetPosition) {
-    return radius.planet - (planetClusterLevels.get(position.planet) ?? 0) * 28;
+  function planetLabelAngle(position: PlanetPosition) {
+    return planetLabelAngles.get(position.planet) ?? planetAngle(position);
   }
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), planetMarkerRadius(position));
+    const marker = point(planetLabelAngle(position), radius.planet);
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const lines = [placementLine, ...aspectTooltipLines(position, aspects)];
     const height = tooltipPaddingY * 2 + lines.length * tooltipLineHeight;
@@ -5275,11 +5348,10 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const markerRadius = planetMarkerRadius(position);
-          const marker = point(planetAngle(position), markerRadius);
+          const marker = point(planetLabelAngle(position), radius.planet);
           const tickOuter = point(planetAngle(position), radius.signInner - 4);
           const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetAngle(position), markerRadius - 22);
+          const label = point(planetLabelAngle(position), radius.planet - 22);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
