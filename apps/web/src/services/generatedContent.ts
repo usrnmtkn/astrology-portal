@@ -30,11 +30,21 @@ type GeneratedContentRow = {
   updated_at: string;
 };
 
-const globallyPublishableGeneratedSurfaces = new Set(["sky"]);
-
 export type GeneratedContentSection = {
   heading: string;
   body: string;
+};
+
+export type GeneratedContentDrilldown = {
+  title: string;
+  summary: string;
+  factors: Array<{
+    label: string;
+    technicalFact: string;
+    plainMeaning: string;
+  }>;
+  whyThisScene: string;
+  timingNote?: string;
 };
 
 function fromRow(row: GeneratedContentRow): LiveGeneratedContent {
@@ -215,12 +225,60 @@ export function generatedContentSections(content?: LiveGeneratedContent | null):
   return [];
 }
 
-export async function loadLiveGeneratedContent(surface: string, targetDate?: string) {
-  if (!supabase) {
-    return new Map<string, LiveGeneratedContent>();
+function stringField(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export function generatedContentDrilldown(content?: LiveGeneratedContent | null): GeneratedContentDrilldown | null {
+  const sections = content?.sections;
+
+  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+    return null;
   }
 
-  if (!globallyPublishableGeneratedSurfaces.has(surface)) {
+  const record = sections as Record<string, unknown>;
+  const rawDrilldown = record.astrologyDrilldown;
+
+  if (!rawDrilldown || typeof rawDrilldown !== "object" || Array.isArray(rawDrilldown)) {
+    return null;
+  }
+
+  const drilldown = rawDrilldown as Record<string, unknown>;
+  const rawFactors = Array.isArray(drilldown.factors) ? drilldown.factors : [];
+  const factors = rawFactors.flatMap((factor) => {
+    if (!factor || typeof factor !== "object" || Array.isArray(factor)) {
+      return [];
+    }
+
+    const factorRecord = factor as Record<string, unknown>;
+    const label = stringField(factorRecord, "label");
+    const technicalFact = stringField(factorRecord, "technicalFact");
+    const plainMeaning = stringField(factorRecord, "plainMeaning");
+
+    return label && technicalFact && plainMeaning ? [{ label, technicalFact, plainMeaning }] : [];
+  });
+
+  const title = stringField(drilldown, "title") || "Why this?";
+  const summary = stringField(drilldown, "summary");
+  const whyThisScene = stringField(drilldown, "whyThisScene");
+
+  if (!summary && factors.length === 0 && !whyThisScene) {
+    return null;
+  }
+
+  return {
+    title,
+    summary,
+    factors,
+    whyThisScene,
+    timingNote: stringField(drilldown, "timingNote") || undefined
+  };
+}
+
+export async function loadLiveGeneratedContent(surface: string, targetDate?: string) {
+  if (!supabase) {
     return new Map<string, LiveGeneratedContent>();
   }
 
@@ -245,10 +303,6 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
   const byKey = new Map<string, LiveGeneratedContent>();
 
   for (const row of data ?? []) {
-    if (row.content_key.startsWith("sample-")) {
-      continue;
-    }
-
     const content = fromRow(row);
 
     if (!byKey.has(row.content_key)) {
