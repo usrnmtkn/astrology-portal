@@ -12394,3 +12394,340 @@ html,
     max-width: 620px;
   }
 }
+
+/* UI audit stabilization: keep the late redline layer from creating isolated
+   columns, huge vertical gaps, and clipped desktop controls. */
+.auth-mode .portal-grid.signup-layout {
+  max-width: none;
+  padding-top: clamp(24px, 5vw, 72px);
+}
+
+.auth-mode .signup-layout .detail-panel {
+  margin: 0 auto;
+  max-width: min(1180px, calc(100vw - 96px));
+  width: 100%;
+}
+
+.auth-mode .signup-split {
+  align-items: start;
+  display: grid;
+  gap: clamp(24px, 3vw, 42px);
+  grid-template-columns: minmax(360px, 520px) minmax(360px, 1fr);
+  margin: 0 auto;
+  max-width: 1180px;
+  position: relative;
+  width: 100%;
+}
+
+.auth-mode .auth-close-button {
+  align-items: center;
+  background: var(--surface-app);
+  border: 1px solid var(--line-app);
+  border-radius: 999px;
+  box-shadow: none;
+  color: var(--ink-app);
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  left: auto;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 42px;
+  z-index: 3;
+}
+
+.auth-mode .signup-form,
+.auth-mode .signup-story {
+  min-width: 0;
+  width: 100%;
+}
+
+.auth-mode .signup-form {
+  order: 1;
+}
+
+.auth-mode .signup-story {
+  border-radius: 20px;
+  min-height: clamp(260px, 33vw, 380px);
+  order: 2;
+  overflow: hidden;
+  padding: clamp(26px, 4vw, 40px);
+}
+
+.auth-mode .signup-story h2 {
+  font-family: var(--font-ui);
+  font-size: clamp(30px, 3vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin: 0;
+  max-width: 720px;
+}
+
+.auth-mode .signup-story h2 em {
+  display: block;
+  font-family: var(--font-mono);
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+
+.auth-mode .signup-heading {
+  margin: 0 0 20px;
+}
+
+.auth-mode .signup-field > div,
+.auth-mode .signup-city-search .city-search-control,
+.auth-mode .signup-city-search label > input {
+  border-radius: 16px;
+  min-height: 58px;
+}
+
+.app-shell.mode-profile .profile-layout > .detail-panel:has(.you-page),
+.app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
+  max-width: none;
+  padding: 0;
+  width: 100%;
+}
+
+.app-shell.mode-profile .profile-layout .you-page {
+  gap: 28px;
+  margin: clamp(72px, 9vw, 132px) auto 0;
+  max-width: min(1120px, calc(100vw - 96px));
+}
+
+.app-shell.mode-profile .profile-layout .you-profile-card {
+  max-width: 760px;
+}
+
+.app-shell.mode-profile .profile-layout .profile-tabs {
+  margin: clamp(54px, 7vw, 92px) auto 44px;
+  max-width: 360px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane {
+  gap: 20px;
+  width: 100%;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .subpane > .section-label {
+  margin: 0 auto 10px;
+}
+
+.app-shell.mode-profile .profile-layout .you-page .list.you-aspects-list {
+  max-width: 760px;
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) {
+    align-items: start;
+    column-gap: clamp(44px, 6vw, 88px);
+    display: grid;
+    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
+    justify-content: center;
+    max-width: min(1180px, calc(100vw - 96px));
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .you-profile-card,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
+    grid-column: 2;
+    justify-self: stretch;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .profile-tabs {
+    margin-top: 90px;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane {
+    grid-column: 2;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) {
+    display: contents;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane#sub-chart > :not(.natal-wheel),
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .subpane:has(.natal-wheel) > :not(.natal-wheel) {
+    grid-column: 2;
+    justify-self: stretch;
+    min-width: 0;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel {
+    grid-column: 1;
+    grid-row: 1 / span 8;
+    justify-self: center;
+    margin-top: 12px;
+    max-width: 560px;
+    position: sticky;
+    top: 112px;
+    width: 100%;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel .sky-wheel,
+  .app-shell.mode-profile .profile-layout .you-page:has(.natal-wheel) .natal-wheel svg {
+    max-width: min(560px, 44vw);
+    width: 100%;
+  }
+}
+
+.app-shell.mode-friends .friends-page {
+  gap: 28px;
+  margin: clamp(56px, 7vw, 96px) auto 0;
+  max-width: min(1180px, calc(100vw - 96px));
+  padding-top: 0;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+  margin-top: clamp(44px, 6vw, 84px);
+  max-width: min(1180px, calc(100vw - 96px));
+}
+
+.app-shell.mode-friends .friends-page-heading,
+.app-shell.mode-friends .friends-top-tabs,
+.app-shell.mode-friends .friends-feed-view,
+.app-shell.mode-friends .friends-charts-view,
+.app-shell.mode-friends .friends-feed-preview,
+.app-shell.mode-friends .manual-chart-workspace,
+.app-shell.mode-friends .manual-chart-workspace-list-only {
+  max-width: none;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friends-chart-toolbar {
+  justify-content: flex-start;
+  margin: 16px 0 18px;
+}
+
+.app-shell.mode-friends .profile-layout .manual-chart-list {
+  margin: 0 auto;
+  max-width: 680px;
+  width: 100%;
+}
+
+.app-shell.mode-friends .manual-chart-row,
+.app-shell.mode-friends .profile-layout .manual-chart-row {
+  min-height: 118px;
+  padding: 22px 28px;
+}
+
+.app-shell.mode-friends .friends-feed-card {
+  align-items: center;
+  min-height: 144px;
+  padding: 28px 32px;
+}
+
+.app-shell.mode-friends .friend-profile-panel {
+  display: grid;
+  gap: 24px;
+  max-width: min(1180px, calc(100vw - 96px));
+  width: 100%;
+}
+
+.app-shell.mode-friends .friend-profile-card,
+.app-shell.mode-friends .friend-view-tabs {
+  justify-self: end;
+  max-width: 420px;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friend-profile-card {
+  grid-template-columns: 72px minmax(0, 1fr) 32px;
+  min-height: 142px;
+  padding: 24px;
+}
+
+.app-shell.mode-friends .friend-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+}
+
+.app-shell.mode-friends .friend-view-tabs button {
+  font-size: 15px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell.mode-friends .friend-compat-intro {
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-friends .friend-compat-stage {
+    align-items: start;
+    column-gap: clamp(44px, 6vw, 88px);
+    display: grid;
+    grid-template-columns: minmax(480px, 560px) minmax(420px, 560px);
+    justify-content: center;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-synastry-wheel-shell {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    justify-self: center;
+    margin-top: 0;
+    max-width: 560px;
+    position: sticky;
+    top: 112px;
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel .sky-wheel,
+  .app-shell.mode-friends .friend-compat-stage .friend-wheel svg {
+    max-width: min(560px, 44vw);
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-compat-stage > .friend-compat-intro,
+  .app-shell.mode-friends .friend-profile-copy-column {
+    grid-column: 2;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 939px) {
+  .auth-mode .signup-layout .detail-panel,
+  .app-shell.mode-profile .profile-layout .you-page,
+  .app-shell.mode-friends .friends-page,
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
+  .app-shell.mode-friends .friend-profile-panel {
+    max-width: min(100%, calc(100vw - 32px));
+  }
+
+  .auth-mode .signup-split {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-mode .signup-form {
+    order: 2;
+  }
+
+  .auth-mode .signup-story {
+    order: 1;
+  }
+
+  .app-shell.mode-profile .profile-layout .you-page,
+  .app-shell.mode-friends .friends-page {
+    margin-top: 24px;
+  }
+
+  .app-shell.mode-profile .profile-layout .profile-tabs {
+    margin: 24px auto 32px;
+  }
+
+  .app-shell.mode-friends .friend-profile-card,
+  .app-shell.mode-friends .friend-view-tabs,
+  .app-shell.mode-friends .profile-layout .manual-chart-list {
+    max-width: none;
+  }
+}
