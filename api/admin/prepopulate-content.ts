@@ -4,15 +4,16 @@ import type { SkySnapshot } from "../../apps/web/src/types.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
 
 type ContentMode = "feed" | "in_depth" | "article";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 
 type QueueInput = {
-  surface?: "sky";
+  surface?: GeneratedContentSurface | "all";
   targetDate?: string;
 };
 
 type QueueRow = {
   content_key: string;
-  surface: "sky";
+  surface: GeneratedContentSurface;
   mode: ContentMode;
   status: "DRAFT";
   event_type: string;
@@ -139,6 +140,7 @@ async function currentSkyFacts(date: Date) {
 
 function queueRow(input: {
   contentKey: string;
+  surface?: GeneratedContentSurface;
   mode?: ContentMode;
   eventType: string;
   targetDate: string;
@@ -149,7 +151,7 @@ function queueRow(input: {
 }): QueueRow {
   return {
     content_key: input.contentKey,
-    surface: "sky",
+    surface: input.surface ?? "sky",
     mode: input.mode ?? "feed",
     status: "DRAFT",
     event_type: input.eventType,
@@ -165,6 +167,257 @@ function queueRow(input: {
     sections: [],
     reviewer_notes: ""
   };
+}
+
+function templateSourceSnapshot(surface: GeneratedContentSurface, targetDate: string) {
+  return {
+    source: "admin-template-queue",
+    surface,
+    targetDate,
+    note: "Seeded from app content hooks. Replace sample facts with chart-specific facts before generating user-facing copy."
+  };
+}
+
+function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">, targetDate: string) {
+  const sourceSnapshot = templateSourceSnapshot(surface, targetDate);
+  const rows: QueueRow[] = [];
+
+  if (surface === "you") {
+    rows.push(
+      queueRow({
+        surface,
+        contentKey: "natal-moon-in-capricorn",
+        mode: "in_depth",
+        eventType: "natal-placement",
+        targetDate,
+        headline: "Moon in Capricorn",
+        facts: {
+          type: "natal_placement",
+          planet: "Moon",
+          sign: "Capricorn",
+          house: 6,
+          note: "Use the real natal planet, sign, house, and any relevant aspects when generating a user-specific row."
+        },
+        knowledgeIds: ["natal-moon-in-capricorn", "moon-in-capricorn"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "natal-moon-trine-saturn",
+        mode: "in_depth",
+        eventType: "natal-aspect",
+        targetDate,
+        headline: "Moon trine Saturn",
+        facts: {
+          type: "natal_aspect",
+          planetA: "Moon",
+          aspect: "trine",
+          planetB: "Saturn",
+          orb: 1,
+          note: "Use the real natal aspect, orb, houses, and sign context when generating a user-specific row."
+        },
+        knowledgeIds: ["natal-moon-trine-saturn", "moon-trine-saturn"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "transit-natal-saturn-square-venus",
+        mode: "feed",
+        eventType: "transit-to-natal",
+        targetDate,
+        headline: "Saturn square Venus",
+        facts: {
+          type: "transit_to_natal",
+          transitPlanet: "Saturn",
+          aspect: "square",
+          natalPoint: "Venus",
+          note: "Use the real transit dates, exactness, natal house, and transit house when generating a personalized row."
+        },
+        knowledgeIds: ["transit-natal-saturn-square-venus", "saturn-square-venus"],
+        sourceSnapshot
+      })
+    );
+  }
+
+  if (surface === "natal") {
+    rows.push(
+      queueRow({
+        surface,
+        contentKey: "natal-sun-in-aries",
+        mode: "in_depth",
+        eventType: "natal-placement",
+        targetDate,
+        headline: "Sun in Aries",
+        facts: {
+          type: "natal_placement",
+          planet: "Sun",
+          sign: "Aries",
+          house: 9,
+          note: "Use the real natal planet, sign, house, and any relevant aspects when generating a natal chart row."
+        },
+        knowledgeIds: ["natal-sun-in-aries", "sun-in-aries"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "natal-venus-square-saturn",
+        mode: "in_depth",
+        eventType: "natal-aspect",
+        targetDate,
+        headline: "Venus square Saturn",
+        facts: {
+          type: "natal_aspect",
+          planetA: "Venus",
+          aspect: "square",
+          planetB: "Saturn",
+          orb: 1,
+          note: "Use the real natal aspect, orb, houses, and sign context when generating a natal chart row."
+        },
+        knowledgeIds: ["natal-venus-square-saturn", "venus-square-saturn"],
+        sourceSnapshot
+      })
+    );
+  }
+
+  if (surface === "synastry") {
+    rows.push(
+      queueRow({
+        surface,
+        contentKey: "synastry-venus-sextile-ascendant",
+        mode: "in_depth",
+        eventType: "synastry-contact",
+        targetDate,
+        headline: "Venus sextile Ascendant",
+        facts: {
+          type: "synastry_contact",
+          personA: "Person A",
+          personB: "Person B",
+          planetA: "Venus",
+          aspect: "sextile",
+          planetB: "Ascendant",
+          orb: 1,
+          note: "Use real names, directionality, orb, and signs when generating a relationship-specific row."
+        },
+        knowledgeIds: ["synastry-venus-sextile-ascendant", "relationship-venus-sextile-ascendant", "venus-sextile-ascendant"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "synastry-mars-square-saturn",
+        mode: "in_depth",
+        eventType: "synastry-contact",
+        targetDate,
+        headline: "Mars square Saturn",
+        facts: {
+          type: "synastry_contact",
+          personA: "Person A",
+          personB: "Person B",
+          planetA: "Mars",
+          aspect: "square",
+          planetB: "Saturn",
+          orb: 1,
+          note: "Use real names, directionality, orb, signs, and houses when generating a relationship-specific row."
+        },
+        knowledgeIds: ["synastry-mars-square-saturn", "relationship-mars-square-saturn", "mars-square-saturn"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "synastry-venus-in-4-house",
+        mode: "in_depth",
+        eventType: "house-overlay",
+        targetDate,
+        headline: "Venus in the 4th house",
+        facts: {
+          type: "house_overlay",
+          planetPerson: "Person A",
+          housePerson: "Person B",
+          planet: "Venus",
+          house: 4,
+          note: "Use real names, planet owner, house owner, sign, and house context when generating a relationship-specific row."
+        },
+        knowledgeIds: ["synastry-venus-in-4-house", "relationship-venus-in-4-house", "personal-planet-house4"],
+        sourceSnapshot
+      })
+    );
+  }
+
+  if (surface === "composite") {
+    rows.push(
+      queueRow({
+        surface,
+        contentKey: "composite-sun-square-moon",
+        mode: "in_depth",
+        eventType: "composite-aspect",
+        targetDate,
+        headline: "Composite Sun square Moon",
+        facts: {
+          type: "composite_aspect",
+          planetA: "Sun",
+          aspect: "square",
+          planetB: "Moon",
+          note: "Use composite planet signs, houses, and orb when generating a relationship chart row."
+        },
+        knowledgeIds: ["composite-sun-square-moon", "sun-square-moon"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "composite-venus-conjunction-mars",
+        mode: "in_depth",
+        eventType: "composite-aspect",
+        targetDate,
+        headline: "Composite Venus conjunct Mars",
+        facts: {
+          type: "composite_aspect",
+          planetA: "Venus",
+          aspect: "conjunction",
+          planetB: "Mars",
+          note: "Use composite planet signs, houses, and orb when generating a relationship chart row."
+        },
+        knowledgeIds: ["composite-venus-conjunction-mars", "venus-conjunction-mars"],
+        sourceSnapshot
+      })
+    );
+  }
+
+  if (surface === "relationship") {
+    rows.push(
+      queueRow({
+        surface,
+        contentKey: "relationship-timing-pluto",
+        mode: "feed",
+        eventType: "relationship-timing",
+        targetDate,
+        headline: "Pluto relationship timing",
+        facts: {
+          type: "relationship_timing",
+          transitPlanet: "Pluto",
+          topic: "relationship transformation",
+          note: "Use the real transit contact, date range, relationship chart point, and houses when generating this row."
+        },
+        knowledgeIds: ["relationship-timing-pluto", "transit-natal-pluto-opposition-descendant"],
+        sourceSnapshot
+      }),
+      queueRow({
+        surface,
+        contentKey: "friends-circle-saturn",
+        mode: "feed",
+        eventType: "circle-feed",
+        targetDate,
+        headline: "Saturn is active in your circle",
+        facts: {
+          type: "circle_feed",
+          topic: "saturn",
+          note: "Use the real people, shared active planet, houses, and repeated timing pattern when generating this row."
+        },
+        knowledgeIds: ["friends-circle-saturn", "relationship-circle-saturn"],
+        sourceSnapshot
+      })
+    );
+  }
+
+  return rows;
 }
 
 function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
@@ -334,22 +587,32 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const input = await readJsonBody(req);
 
-    if ((input.surface ?? "sky") !== "sky") {
-      sendJson(res, 400, {
-        ok: false,
-        error: "Queue pre-population is connected for Sky first."
-      });
-      return;
-    }
-
     const date = dateFromInput(input.targetDate);
     const targetDate = dateOnly(date);
-    const sky = await currentSkyFacts(date);
-    const rows = buildSkyQueueRows(sky, targetDate);
+    const requestedSurface = input.surface ?? "sky";
+    let rows: QueueRow[] = [];
+
+    if (requestedSurface === "sky" || requestedSurface === "all") {
+      const sky = await currentSkyFacts(date);
+      rows = rows.concat(buildSkyQueueRows(sky, targetDate));
+    }
+
+    const templateSurfaces: Array<Exclude<GeneratedContentSurface, "sky">> =
+      requestedSurface === "all"
+        ? ["you", "natal", "synastry", "composite", "relationship"]
+        : requestedSurface === "sky"
+          ? []
+          : [requestedSurface];
+
+    for (const templateSurface of templateSurfaces) {
+      rows = rows.concat(buildTemplateQueueRows(templateSurface, targetDate));
+    }
+
     const saved = await saveRows(rows);
 
     sendJson(res, 200, {
       ok: true,
+      surface: requestedSurface,
       targetDate,
       inserted: rows.length,
       rows: saved
