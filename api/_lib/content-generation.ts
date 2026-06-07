@@ -3,6 +3,7 @@ import path from "node:path";
 
 type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
 export type GenerateContentInput = {
   contentKey: string;
@@ -34,7 +35,9 @@ type StoredGeneratedContent = GeneratedContent & {
   model: string;
 };
 
-export type GenerationContext = Pick<GenerateContentInput, "surface" | "mode" | "eventType" | "contentKey">;
+export type GenerationContext = Pick<GenerateContentInput, "surface" | "mode" | "eventType" | "contentKey"> & {
+  facts?: Record<string, unknown>;
+};
 
 export type EditorialGateResult = {
   passed: boolean;
@@ -55,6 +58,21 @@ export type SceneLock = {
   userPressure: string;
   concreteSituation: string;
   whatNotToInclude: string[];
+};
+
+export type TimeLordSceneLock = {
+  sceneArena: string;
+  currentPressure: string;
+  personalSensitivity: string;
+  chosenScene: string;
+  excludedMeanings: string[];
+};
+
+export type TimeLordSceneMap = {
+  planet: Planet;
+  sceneArenas: string[];
+  commonScenes: string[];
+  avoidOverbroadTopics: string[];
 };
 
 type ApprovedExampleRow = {
@@ -259,6 +277,78 @@ const abstractListWords = [
   "affection",
   "obligation"
 ];
+export const timeLordSceneMap: Record<Planet, TimeLordSceneMap> = {
+  Sun: {
+    planet: "Sun",
+    sceneArenas: ["visibility", "leadership", "recognition", "direction"],
+    commonScenes: [
+      "being asked to take the lead",
+      "needing to be seen clearly",
+      "deciding whether something represents you well"
+    ],
+    avoidOverbroadTopics: ["identity", "purpose", "confidence", "self-expression"]
+  },
+  Moon: {
+    planet: "Moon",
+    sceneArenas: ["home", "body", "mood", "care", "daily needs"],
+    commonScenes: [
+      "needing more support than usual",
+      "reacting before you have words for it",
+      "handling a domestic or emotional demand"
+    ],
+    avoidOverbroadTopics: ["emotions", "intuition", "nurturing", "inner world"]
+  },
+  Mercury: {
+    planet: "Mercury",
+    sceneArenas: ["messages", "decisions", "logistics", "plans", "information"],
+    commonScenes: [
+      "needing to clarify what was said",
+      "checking the facts before responding",
+      "sorting out a plan that has too many moving parts"
+    ],
+    avoidOverbroadTopics: ["communication", "thinking", "learning", "curiosity"]
+  },
+  Venus: {
+    planet: "Venus",
+    sceneArenas: ["care", "agreement", "affection", "money", "social obligation"],
+    commonScenes: [
+      "being asked for something before you know what you can give",
+      "deciding whether a yes is real or just polite",
+      "noticing whether attention feels steady enough to trust"
+    ],
+    avoidOverbroadTopics: ["love", "beauty", "pleasure", "harmony", "values"]
+  },
+  Mars: {
+    planet: "Mars",
+    sceneArenas: ["conflict", "urgency", "effort", "desire", "competition"],
+    commonScenes: [
+      "wanting to push back immediately",
+      "feeling rushed into action",
+      "needing to say no without escalating the situation"
+    ],
+    avoidOverbroadTopics: ["anger", "passion", "drive", "assertion"]
+  },
+  Jupiter: {
+    planet: "Jupiter",
+    sceneArenas: ["growth", "support", "permission", "opportunity", "belief"],
+    commonScenes: [
+      "deciding whether an opportunity is actually useful",
+      "getting support but needing to define the terms",
+      "being tempted to say yes because something sounds promising"
+    ],
+    avoidOverbroadTopics: ["abundance", "expansion", "luck", "wisdom"]
+  },
+  Saturn: {
+    planet: "Saturn",
+    sceneArenas: ["limits", "responsibility", "delay", "commitment", "structure"],
+    commonScenes: [
+      "needing to give a realistic answer",
+      "realizing a commitment costs more than expected",
+      "setting a limit before resentment builds"
+    ],
+    avoidOverbroadTopics: ["discipline", "karma", "restriction", "maturity"]
+  }
+};
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
   "",
@@ -381,6 +471,41 @@ function sceneLockRules() {
   ].join("\n");
 }
 
+function timeLordSceneRules(input: GenerateContentInput) {
+  const planet = timeLordPlanetFromFacts(input.facts);
+  const mapping = planet ? timeLordSceneMap[planet] : undefined;
+
+  return [
+    "TIME LORD SCENE SELECTOR",
+    "If a time lord is present in ASTROLOGY FACTS, use it as a scene selector before writing the final TLDR.",
+    "The time lord must narrow the story. It must not add more keywords.",
+    "Generation order:",
+    "1. Time lord -> scene arena.",
+    "2. Strongest active transit -> current pressure, event, or mood.",
+    "3. Natal planet or point being hit -> personal sensitivity.",
+    "4. Final copy -> one concrete scene.",
+    "Internal scene selection prompt:",
+    "Choose one concrete scene for the user. Use the time lord as the main scene filter. Use the strongest transit as the immediate pressure. Use the natal planet or point as the personal sensitivity.",
+    "Return internally: Time lord arena, current pressure, personal sensitivity, one chosen scene, and meanings you are excluding.",
+    "Do not output this internal selection as a separate field.",
+    "Rules:",
+    "- Choose one scene only.",
+    "- Do not list all possible topics for the time lord.",
+    "- Do not name more than two life areas.",
+    "- The scene must be something that could happen in ordinary life.",
+    "- The final TLDR must stay inside this scene.",
+    "- Do not explain every meaning of the time lord.",
+    mapping
+      ? [
+          `Detected time lord: ${planet}.`,
+          `Use one of these scene arenas as the filter: ${mapping.sceneArenas.join(", ")}.`,
+          `Useful ordinary scenes: ${mapping.commonScenes.join("; ")}.`,
+          `Avoid turning ${planet} into these overbroad topics: ${mapping.avoidOverbroadTopics.join(", ")}.`
+        ].join("\n")
+      : "No time lord was confidently detected. If ASTROLOGY FACTS include one under another label, infer it and apply the same rule."
+  ].join("\n");
+}
+
 function rewriteCorpusRules() {
   return [
     "REWRITE CORPUS FIELD MAP",
@@ -412,6 +537,73 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function normalizePlanet(value: unknown): Planet | undefined {
+  const text = stringValue(value);
+  const match = (Object.keys(timeLordSceneMap) as Planet[]).find((planet) => normalizeText(planet) === normalizeText(text));
+
+  return match;
+}
+
+function timeLordPlanetFromFacts(facts: Record<string, unknown> | undefined): Planet | undefined {
+  const seen = new Set<unknown>();
+  const timeLordKeys = new Set([
+    "timelord",
+    "time_lord",
+    "yearlord",
+    "year_lord",
+    "activatedtimelord",
+    "activated_time_lord",
+    "profectiontimelord",
+    "profection_time_lord"
+  ]);
+
+  function visit(value: unknown, keyHint = "", depth = 0): Planet | undefined {
+    if (!value || depth > 5 || seen.has(value)) {
+      return undefined;
+    }
+
+    if (typeof value === "string") {
+      return timeLordKeys.has(normalizeText(keyHint).replace(/[^a-z_]/g, "")) ? normalizePlanet(value) : undefined;
+    }
+
+    if (!isRecord(value)) {
+      return undefined;
+    }
+
+    seen.add(value);
+
+    for (const [key, nested] of Object.entries(value)) {
+      const normalizedKey = normalizeText(key).replace(/[^a-z_]/g, "");
+
+      if (timeLordKeys.has(normalizedKey)) {
+        const direct = normalizePlanet(nested);
+
+        if (direct) {
+          return direct;
+        }
+
+        if (isRecord(nested)) {
+          const fromPlanet = normalizePlanet(nested.planet) ?? normalizePlanet(nested.name) ?? normalizePlanet(nested.ruler);
+
+          if (fromPlanet) {
+            return fromPlanet;
+          }
+        }
+      }
+
+      const found = visit(nested, key, depth + 1);
+
+      if (found) {
+        return found;
+      }
+    }
+
+    return undefined;
+  }
+
+  return visit(facts);
 }
 
 function normalizeText(value: string) {
@@ -456,9 +648,37 @@ function sentenceHasKeywordListing(sentence: string) {
   const abstractCount = countMatches(sentence, abstractListWords);
   const commaCount = (sentence.match(/,/g) ?? []).length;
   const patternMatch = listPatternPhrases.some((phrase) => normalized.includes(normalizeText(phrase)));
-  const optionList = commaCount >= 3 || /\b(whether|about|prove|feel|feels|feeling)\b[^.!?]+,\s+[^.!?]+,\s+(or|and)\s+/i.test(sentence);
+  const optionList = commaCount >= 3 || /\b(whether|about|prove|involve|affect)\b[^.!?]+,\s+[^.!?]+,\s+(or|and)\s+/i.test(sentence);
 
   return patternMatch || abstractCount > 2 || optionList;
+}
+
+function sentenceMisusesTimeLord(sentence: string, planet: Planet) {
+  const mapping = timeLordSceneMap[planet];
+  const normalized = normalizeText(sentence);
+  const mentionsPlanet = normalized.includes(normalizeText(planet));
+  const overbroadMatches = matchedPhrases(sentence, mapping.avoidOverbroadTopics);
+  const arenaMatches = matchedPhrases(sentence, mapping.sceneArenas);
+  const listLanguage = /\b(themes?|topics?|areas?|realm|symboli[sz]es|represents|brings|rules|governs)\b/i.test(sentence);
+  const commaList = (sentence.match(/,/g) ?? []).length >= 2 && /\b(and|or)\b/i.test(sentence);
+
+  return mentionsPlanet && (
+    overbroadMatches.length >= 2 ||
+    arenaMatches.length >= 3 ||
+    (listLanguage && (overbroadMatches.length > 0 || arenaMatches.length > 1 || commaList))
+  );
+}
+
+function timeLordUsedAsSceneFilter(text: string, planet: Planet) {
+  const mapping = timeLordSceneMap[planet];
+  const normalized = normalizeText(text);
+  const sceneMatches = mapping.commonScenes.filter((scene) => {
+    const importantWords = normalizeText(scene).split(" ").filter((word) => word.length > 4);
+    return importantWords.length > 0 && importantWords.some((word) => normalized.includes(word));
+  });
+  const arenaMatches = matchedPhrases(text, mapping.sceneArenas);
+
+  return sceneMatches.length > 0 || arenaMatches.length > 0;
 }
 
 function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
@@ -474,6 +694,7 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     failedCodes.has("FIRST_SENTENCE_TOO_ASTROLOGICAL") ? "Rewrite the first sentence so it names a plain situation. Do not start with astrology mechanics. Do not make it poetic, mystical, or self-help." : "",
     failedCodes.has("SUMMARY_LISTS_TOPICS") ? "The summary lists categories instead of naming one specific situation. Choose one concrete situation." : "",
     failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Do not use a sentence with three or more options joined by commas or or." : "",
+    failedCodes.has("TIME_LORD_NOT_USED_AS_SCENE_FILTER") ? "Reject this draft. The time lord was used as a topic list instead of a scene filter. Use the time lord to choose one ordinary life scene, then write only that scene. Do not explain every meaning of the time lord." : "",
     failedCodes.has("TOO_MANY_LIFE_AREAS") ? "Do not mention more than two life areas." : "",
     failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
     failedCodes.has("ASTROLOGY_OVERLOAD") ? "Lead with the plain situation. Use astrology facts only as support, not as the main language." : "",
@@ -792,6 +1013,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     sceneLockRules(),
     "",
+    timeLordSceneRules(input),
+    "",
     "CONTENT MODE",
     modeRules(input.mode),
     "",
@@ -956,6 +1179,10 @@ export function evaluateEditorialCoherence(
   const openingLifeAreas = lifeAreasIn([summary, openingBody].join(" "));
   const astrologyTermCount = countMatches([firstSummarySentence, openingBody].join(" "), astrologyMechanicTerms);
   const keywordListSentence = sentencesFrom([summary, openingBody].join(" ")).find(sentenceHasKeywordListing);
+  const timeLordPlanet = timeLordPlanetFromFacts(context.facts);
+  const timeLordMisuseSentence = timeLordPlanet
+    ? sentencesFrom([summary, openingBody].join(" ")).find((sentence) => sentenceMisusesTimeLord(sentence, timeLordPlanet))
+    : undefined;
 
   if (
     astrologyTermCount >= 3 ||
@@ -982,6 +1209,14 @@ export function evaluateEditorialCoherence(
       failures,
       "KEYWORD_LISTING",
       "The copy lists possible meanings instead of choosing one concrete pressure point."
+    );
+  }
+
+  if (timeLordPlanet && (timeLordMisuseSentence || !timeLordUsedAsSceneFilter([summary, openingBody].join(" "), timeLordPlanet))) {
+    addEditorialFailure(
+      failures,
+      "TIME_LORD_NOT_USED_AS_SCENE_FILTER",
+      `The ${timeLordPlanet} time lord was not used to choose one ordinary life scene.`
     );
   }
 
@@ -1080,6 +1315,7 @@ function parseResponseJson(raw: string, lockedHeadline: string | undefined, inpu
   const editorialResult = evaluateEditorialCoherence(content, {
     contentKey: input.contentKey,
     eventType: input.eventType,
+    facts: input.facts,
     mode: input.mode,
     surface: input.surface
   });
