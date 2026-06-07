@@ -92,6 +92,33 @@
       "id": "waning-phase-release-template",
       "heading": "Waning Phase Release Template",
       "body": "Connect the lunar phase to the previous moon phase. Name how the previous sign guided the work and how the current Moon sign invites refinement. Balance the current Sun sign and Moon sign. Include body awareness, release imagery, consequences of commitment versus resistance, and a closing action line."
+    },
+    {
+      "id": "tldr-event-interpretation-template",
+      "heading": "TLDR Event Interpretation Template",
+      "body": "Use this for Sky feed and in-depth generated content. Preserve the astrology in the headline. Then write in this order: what you may notice, why this is happening, what to do, and timing. The first paragraph should be readable without astrology knowledge. The second paragraph may explain the astrology facts. The final sentence should give a practical next step or timing cue.",
+      "items": [
+        {
+          "label": "Headline",
+          "body": "Keep the exact astrology terms: Sun sextile Saturn, Mercury square Neptune, Moon in Aquarius trine Uranus, Gemini Season, New Moon in Libra, Full Moon in Aries, or Eclipse in Pisces."
+        },
+        {
+          "label": "What You May Notice",
+          "body": "Describe the likely lived experience in plain language: conversations blur, focus sharpens, feelings need space, a relationship pattern becomes visible, a plan asks for structure, or a decision needs clarification."
+        },
+        {
+          "label": "Why",
+          "body": "Explain the source facts: planet meanings, signs, aspect type, lunar phase, house activation if personalized, and current timing. Keep this traceable to the knowledge base and current astrology facts."
+        },
+        {
+          "label": "What To Do",
+          "body": "Give one or more concrete actions. Examples: get it in writing, ask the clarifying question, pick one idea with a next step, wait before deciding, finish the task already started, observe what changes, or name what is complete."
+        },
+        {
+          "label": "Timing",
+          "body": "Name whether the influence is exact today, active for a day or two, part of a lunar two-week arc, part of a six-month arc, or part of a longer eclipse or planetary cycle."
+        }
+      ]
     }
   ],
   "voiceNeutral": true,

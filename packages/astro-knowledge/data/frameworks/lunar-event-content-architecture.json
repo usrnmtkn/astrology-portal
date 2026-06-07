@@ -1,0 +1,149 @@
+{
+  "id": "lunar-event-content-architecture",
+  "kind": "framework",
+  "role": "method",
+  "category": "lunar-events",
+  "title": "Lunar Event Content Architecture",
+  "sections": [
+    {
+      "id": "source-use",
+      "heading": "Source Use",
+      "body": "Use reviewed lunar-event resources as structure and reasoning references, not as prose to copy. Extract the event type, current astrology facts, aspect logic, house activation, timing, and practical action. Then write fresh TLDR Astro language from those facts."
+    },
+    {
+      "id": "event-page-architecture",
+      "heading": "Event Page Architecture",
+      "body": "Long-form lunar and seasonal content should move in a clear sequence: opening theme, exact astrology facts, sign or axis meaning, key aspects, what may surface, what to do, timing, and optional reflection prompts. The reader should understand what is happening, why it may feel that way, and what action or reflection is useful now.",
+      "items": [
+        {
+          "label": "Opening Theme",
+          "body": "Name the event plainly: New Moon in Sign, Full Moon in Sign, Eclipse in Sign, or Season in Sign. Lead with the core situation the reader may recognize, not a mystical abstraction."
+        },
+        {
+          "label": "Astrology Facts",
+          "body": "State the Sun sign, Moon sign, phase, exact aspect type, planets involved, degrees when available, and active timing. Keep astrology terms in headlines and metadata so the user can trace the interpretation."
+        },
+        {
+          "label": "Human Experience",
+          "body": "Translate the facts into what the reader may notice in mood, thought, memory, relationship patterns, work, body, attention, or decision-making."
+        },
+        {
+          "label": "Action",
+          "body": "Give grounded next steps. Examples: get it in writing, ask the clarifying question, narrow the field, wait before deciding, finish one practical step, name what is ending, or observe what life is already changing."
+        },
+        {
+          "label": "Timing",
+          "body": "Explain whether the event is strongest today, active for a few days, tied to a two-week lunar arc, part of a six-month lunation arc, or part of an eclipse series."
+        }
+      ]
+    },
+    {
+      "id": "content-modes",
+      "heading": "Content Modes",
+      "body": "Choose the mode before writing. Feed Mode is immediate and short. In-Depth Mode explains a major transit, natal placement, or relationship pattern. Article Mode is for collective astrology and full lunar or seasonal essays.",
+      "items": [
+        {
+          "label": "Feed Mode",
+          "body": "Use for daily Sky cards, friend updates, and quick circle similarities. Length is one to two paragraphs. Keep it specific, social, and actionable."
+        },
+        {
+          "label": "In-Depth Mode",
+          "body": "Use for major transits, natal placements, friend profiles, compatibility details, and long-term cycles. Length is three to five paragraphs. Explain the pattern, why it matters, how it may show up, and what to do with it."
+        },
+        {
+          "label": "Article Mode",
+          "body": "Use for New Moons, Full Moons, eclipses, seasonal events, and collective astrology. Length can be a full essay. Organize with section headings and include aspects, timing, rising-sign house activation when relevant, and reflection prompts."
+        }
+      ]
+    },
+    {
+      "id": "new-moon-logic",
+      "heading": "New Moon Logic",
+      "body": "New Moons begin cycles. Write them as seed-setting, reset, intention, and the first quiet step of a longer arc. Include the Sun and Moon joined in the same sign, the sign's element and modality, the area of life being initiated, key aspects shaping the beginning, and the six-month same-sign Full Moon maturation point.",
+      "items": [
+        {
+          "label": "Reader Experience",
+          "body": "Name what may be ready to begin, what needs a cleaner intention, and where the reader can choose a small action instead of forcing certainty."
+        },
+        {
+          "label": "Action",
+          "body": "Offer practical intention-setting: choose one focus, write the next step, prepare the conditions, and avoid overloading the new cycle with too many demands."
+        }
+      ]
+    },
+    {
+      "id": "full-moon-logic",
+      "heading": "Full Moon Logic",
+      "body": "Full Moons reveal, culminate, and ask for integration. Write them through the Moon sign, the opposite Sun sign, the axis they create, the two-week arc from the previous New Moon, and the six-month arc from the same-sign New Moon. Emphasize what is visible now and what can no longer be ignored.",
+      "items": [
+        {
+          "label": "Reader Experience",
+          "body": "Name the tension between two needs, behaviors, or priorities. Show where the reader may be pulled toward one side and what a more integrated response could look like."
+        },
+        {
+          "label": "Action",
+          "body": "Offer release, correction, conversation, completion, or integration. Avoid vague release language by naming the actual behavior, belief, or pressure that may be ready to shift."
+        }
+      ]
+    },
+    {
+      "id": "eclipse-logic",
+      "heading": "Eclipse Logic",
+      "body": "Eclipses are not ordinary New or Full Moons. Write them as turning points, closures, openings, and changes that may not be fully controllable. Include the node involved, the sign axis, the house activated when writing for a rising sign, and the larger eclipse series when known.",
+      "items": [
+        {
+          "label": "Reader Experience",
+          "body": "Name what is being revealed, redirected, removed, or accelerated. Use grounded language: a chapter may be closing, an old role may be complete, or a situation may make the next step impossible to avoid."
+        },
+        {
+          "label": "Action",
+          "body": "Do not recommend manifestation or elaborate release rituals during eclipses. Recommend observation, grounding, documenting what changes, and waiting for the energy to settle before forcing decisions."
+        }
+      ]
+    },
+    {
+      "id": "aspect-logic",
+      "heading": "Aspect Logic",
+      "body": "Aspect write-ups should explain the planets, signs, aspect type, lived effect, practical use, and timing. The headline should preserve the astrology terms, such as Mercury square Neptune or Sun sextile Saturn. The body should explain what may happen in ordinary life.",
+      "items": [
+        {
+          "label": "Conjunction",
+          "body": "Two planets combine. Write about fusion, concentration, and a shared focus that can feel strong or hard to separate."
+        },
+        {
+          "label": "Sextile",
+          "body": "Two planets cooperate through an available opening. Write about a useful opportunity that still needs a choice, call, message, draft, plan, or small action."
+        },
+        {
+          "label": "Trine",
+          "body": "Two planets flow more easily. Write about support that may feel natural, but still benefits from being used deliberately."
+        },
+        {
+          "label": "Square",
+          "body": "Two planets create friction. Write about competing needs or facts, where pressure forces adjustment, clarification, or a more honest choice."
+        },
+        {
+          "label": "Opposition",
+          "body": "Two planets face each other. Write about projection, polarity, relationship mirrors, and the need to hold both sides instead of choosing one extreme."
+        }
+      ]
+    },
+    {
+      "id": "rising-sign-house-activation",
+      "heading": "Rising Sign House Activation",
+      "body": "Use rising-sign sections only when the content is personalized by chart or horoscope house. State the rising sign, the house activated by the lunation or transit, the life areas of that house, what may be illuminated or initiated, and the practical shift available. Do not present rising-sign house material as global Sky content."
+    },
+    {
+      "id": "reflection-prompts",
+      "heading": "Reflection Prompts",
+      "body": "Use reflection prompts in Article Mode and selected In-Depth Mode. Prompts should be concrete and tied to the event. Ask what is visible, what is complete, what needs a clearer choice, what support is available, or what behavior is ready to change. Avoid rhetorical questions inside short feed cards."
+    },
+    {
+      "id": "voice-guardrails",
+      "heading": "Voice Guardrails",
+      "body": "Keep the voice grounded, direct, emotionally specific, and useful. Avoid mystical filler and self-help abstractions. Do not use phrases such as portal, vibration, universe wants, cosmic download, soul truth, highest self, divine timing, or trust the universe. Do not invent trauma, childhood wounds, karmic contracts, or nervous-system claims unless the source explicitly supports them."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
