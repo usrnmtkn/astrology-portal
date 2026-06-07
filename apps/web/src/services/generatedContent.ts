@@ -30,6 +30,8 @@ type GeneratedContentRow = {
   updated_at: string;
 };
 
+const globallyPublishableGeneratedSurfaces = new Set(["sky"]);
+
 export type GeneratedContentSection = {
   heading: string;
   body: string;
@@ -218,6 +220,10 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
     return new Map<string, LiveGeneratedContent>();
   }
 
+  if (!globallyPublishableGeneratedSurfaces.has(surface)) {
+    return new Map<string, LiveGeneratedContent>();
+  }
+
   let query = supabase
     .from("generated_interpretations")
     .select("id, content_key, surface, mode, event_type, target_date, headline, summary, body, sections, updated_at")
@@ -239,6 +245,10 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
   const byKey = new Map<string, LiveGeneratedContent>();
 
   for (const row of data ?? []) {
+    if (row.content_key.startsWith("sample-")) {
+      continue;
+    }
+
     const content = fromRow(row);
 
     if (!byKey.has(row.content_key)) {
