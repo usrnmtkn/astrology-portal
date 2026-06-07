@@ -881,7 +881,7 @@ function formatFrameworkSection(framework: FrameworkSnapshot | undefined, sectio
 
   const body = stringValue(section.body);
   const lines = [section.heading ? `${section.heading}: ${body}` : body].filter(Boolean);
-  const items = asArray(section.items).map((item) => {
+  const items = asArray<{ label?: string; body?: string }>(section.items).map((item) => {
     const label = stringValue(item.label);
     const itemBody = stringValue(item.body);
     return label || itemBody ? `- ${label}: ${itemBody}`.replace(/- : /g, "- ") : "";
@@ -936,7 +936,7 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
 
   const eventSection = asArray<FrameworkSection>(architecture.sections).find((section) => section?.id === "lunar-event-templates");
   const eventItem = eventSection
-    ? asArray(eventSection.items).find((item) => {
+    ? asArray<{ label?: string; body?: string }>(eventSection.items).find((item) => {
         const label = normalizeWords(stringValue(item.label));
         return eventLabel ? label.includes(eventLabel) : false;
       })
