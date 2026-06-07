@@ -213,6 +213,23 @@ export const fallbackHookDefinitions = [
     }
   },
   {
+    key: "friends.composite-placement",
+    label: "Friends > Composite Placement",
+    surface: "composite",
+    domain: "relationship",
+    mode: "in_depth",
+    description: "Composite chart planet sign and house placements describing the relationship as its own pattern.",
+    knowledgeIdTemplates: ["composite-{planet}-house-{house}", "composite-{planet}-house{house}", "composite-{planet}-in-{sign}", "relationship-{planet}-house-{house}", "{planet}-house-{house}"],
+    requiredFacts: ["planet", "sign", "house", "relationship context"],
+    copy: {
+      headline: "Composite {{planet}} in {{sign}}",
+      summary: "This placement describes how {{planetTopic}} tends to operate inside the relationship itself, especially through the {{house}} house area.",
+      body: "Composite placements describe the relationship as its own living pattern. {{planet}} names the relationship topic. {{sign}} describes the style it moves through. The {{house}} house shows where that pattern becomes concrete in the bond.",
+      bestMove: "Read this as a shared pattern. Ask what the relationship tends to create here, then choose the behavior that makes the pattern easier to live with.",
+      emptyState: "If no approved content exists, leave the product surface blank."
+    }
+  },
+  {
     key: "friends.relationship-timing",
     label: "Friends > Relationship Timing",
     surface: "relationship",
