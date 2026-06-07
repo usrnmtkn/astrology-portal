@@ -1,0 +1,12 @@
+{
+  "id": "moon_square_pluto",
+  "kind": "composite",
+  "placementType": "aspect",
+  "planet": "moon-pluto",
+  "aspect": "square",
+  "plainTranslation": "Moon square Pluto: Moon square Pluto, the intensity of emotions can be off the charts, and it can be extremely difficult to get them under control.",
+  "policy": "Composite chart entries describe the relationship as a third entity. Read alongside synastry; do not use as a verdict on whether a relationship should continue.",
+  "note": "Imported from The Dark Pixie Astrology composites material text.",
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}
