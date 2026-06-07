@@ -101,7 +101,7 @@ type FrameworkSnapshot = {
   sections?: FrameworkSection[];
 };
 
-const promptVersion = "tldr-astro-v3";
+const promptVersion = "tldr-astro-v4";
 const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultModel = "gpt-4.1-mini";
@@ -120,6 +120,14 @@ const bannedUserFacingPhrases = [
   "this aspect teaches",
   "the lesson is"
 ];
+
+const requiredHeadingsByMode: Record<ContentMode, string[]> = {
+  feed: ["What You May Notice", "Why This Is Happening", "What To Do"],
+  in_depth: ["What You May Notice", "Why This Is Happening", "What To Do", "Timing", "Reflection"],
+  article: ["What You May Notice", "Why This Is Happening", "What To Do", "Timing", "Closing"]
+};
+
+const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
 const fallbackStyleGuide = [
   "# TLDR Astro Voice",
   "",
@@ -127,10 +135,11 @@ const fallbackStyleGuide = [
   "Write like a smart astrologer explaining the pattern in normal language: clear, direct, emotionally aware, and grounded in real life.",
   "",
   "Core rules:",
-  "- Start with lived experience.",
-  "- Start with what the astrology describes, then explain what that can look like in ordinary life.",
-  "- Use soft certainty without making every sentence vague. Prefer can, often, tends to, may, and there can be.",
-  "- For transits and current sky, use plain action language that fits the astrology: check the facts, name the issue, take the next real step, or let the situation settle.",
+  "- Start with lived experience, then explain what in the chart/facts could produce it.",
+  "- Use concrete, human observations before advice.",
+  "- Use soft certainty without sounding vague. Prefer can, often, tends to, may, and there can be.",
+  "- For transits and current sky, treat facts as timebound and practical: what is happening in this window, what may feel heightened, and what small move helps.",
+  "- For natal and personal summaries, use soft certainty about patterns over time.",
   "- Do not use em dashes.",
   "- Do not use self-help language.",
   "- Do not use therapy language unless explicitly source-backed.",
@@ -140,8 +149,14 @@ const fallbackStyleGuide = [
   "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
   "- Translate source symbolism into concrete human experience.",
   "",
-  "Preferred short structure: TLDR, what this looks like in real life, why the astrology describes it, useful move, timing.",
-  "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what is useful to do with that information.",
+  "Preferred short structure in all modes:",
+  "- what is happening in the facts",
+  "- what this can feel like in life",
+  "- why this pattern may be this way",
+  "- what is most useful to do next",
+  "- timing that helps decide urgency",
+  "",
+  "The reader should leave knowing why they may feel, think, remember, want, avoid, or react a certain way, and what concrete move fits this moment.",
   "",
   "Sky content is current astrology. Write about the moment, the day, the season, or the active transit. Do not write it as a natal personality trait.",
   "Relationship content should describe what happens between two people, not two separate natal descriptions stitched together.",
@@ -171,7 +186,11 @@ function modeRules(mode: ContentMode) {
     return [
       "Feed Mode: quick daily insight.",
       "Length: one or two paragraphs.",
-      "Structure: TLDR, real-life signal, astrology reason, useful move, timing.",
+      "Structure: 4 compact blocks in order",
+      "1) What you may notice",
+      "2) Why this is happening",
+      "3) What to do right now",
+      "4) Timing",
       "Tone: direct, specific, easy to read, and useful right away."
     ].join("\n");
   }
@@ -202,6 +221,7 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     "OUTPUT SHAPE",
     exactHeadline,
     "Write the interpretation as: headline + what the reader may notice + why + what to do + timing.",
+    "This is the required structure. Do not flatten this into generic paragraph-only prose.",
     "The headline stays astrology-only. The human hook belongs in summary and body.",
     "summary: one or two plain sentences that name the situation in human language. Do not summarize the astrology mechanically.",
     "body: write complete paragraphs in this order:",
@@ -209,8 +229,14 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     "2. Why it may feel that way, using the astrology facts without turning them into a jargon list.",
     "3. What to do with it, using concrete action language.",
     "4. Timing, including exactness, active date, orb, or whether it fades soon, only when the facts support it.",
-    "sections: include exactly these headings when they fit the mode: What You May Notice, Why This Is Happening, What To Do, Timing.",
-    "Do not use labels inside body unless the mode is article. Body should read like natural prose.",
+    "sections: use section objects for clarity and review.",
+    "Use these section headings when they fit the mode and keep the same language in heading names:",
+    "- What You May Notice",
+    "- Why This Is Happening",
+    "- What To Do",
+    "- Timing",
+    "Optional for in-depth/article: Reflection, Integration, or Closing Statement.",
+    "Do not use labels inside body unless the mode is article. Body should still read like natural prose.",
     "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
     input.surface === "sky" ? "Sky rule: write current astrology as advice and timing. Do not make it a natal identity description." : "",
     input.surface === "you" || input.surface === "natal" ? "Natal/You rule: describe a recurring pattern with soft certainty, then give a useful way to work with it." : "",
@@ -253,6 +279,23 @@ function stringValue(value: unknown) {
 function compactBody(value: string, maxLength = 1400) {
   const trimmed = value.replace(/\s+/g, " ").trim();
   return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
+}
+
+function normalizeText(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function hasEnoughSectionContent(sections: Array<{ heading?: string; body?: string }>) {
+  return sections.filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 40).length >= 2;
+}
+
+function requiredSectionHeadingsForMode(mode: ContentMode) {
+  return requiredHeadingsByMode[mode] ?? [];
+}
+
+function sectionHeadingSetMatch(sectionHeadings: string[], required: string[]) {
+  const normalizedSet = new Set(sectionHeadings.map((heading) => normalizeText(heading)));
+  return required.filter((requiredHeading) => normalizedSet.has(normalizeText(requiredHeading)));
 }
 
 function slug(value: string) {
@@ -795,14 +838,17 @@ async function loadApprovedExamples(input: GenerateContentInput) {
   return examples;
 }
 
-function validateGeneratedContentQuality(content: GeneratedContent) {
+function validateGeneratedContentQuality(content: GeneratedContent, mode: ContentMode) {
   const userFacingText = [
     content.headline,
     content.summary,
     content.body,
     ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
   ].join("\n");
-  const normalized = userFacingText.toLowerCase();
+  const normalized = normalizeText(userFacingText);
+  const sectionHeadings = (content.sections ?? []).map((section) => stringValue(section.heading));
+  const requiredHeadings = requiredSectionHeadingsForMode(mode);
+  const matchedRequired = sectionHeadingSetMatch(sectionHeadings, requiredHeadings);
 
   if (userFacingText.includes("—")) {
     throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
@@ -814,6 +860,12 @@ function validateGeneratedContentQuality(content: GeneratedContent) {
     }
   }
 
+  for (const signature of bannedOutputSignatures) {
+    if (normalized.includes(signature)) {
+      throw new Error(`Generated content included disallowed phrase: ${signature}`);
+    }
+  }
+
   if (content.summary.trim().length < 40) {
     throw new Error("Generated summary is too thin for editorial review.");
   }
@@ -821,9 +873,19 @@ function validateGeneratedContentQuality(content: GeneratedContent) {
   if (content.body.trim().length < 180) {
     throw new Error("Generated body is too thin for editorial review.");
   }
+
+  if (!hasEnoughSectionContent(content.sections ?? [])) {
+    throw new Error("Generated sections are too shallow for review quality.");
+  }
+
+  if (requiredHeadings.length > 0 && matchedRequired.length < requiredHeadings.length - 1) {
+    throw new Error(
+      `Generated sections missing required headings. Expected includes: ${requiredHeadings.join(", ")}`
+    );
+  }
 }
 
-function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedContent {
+function parseResponseJson(raw: string, lockedHeadline: string, mode: ContentMode): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
@@ -837,7 +899,7 @@ function parseResponseJson(raw: string, lockedHeadline?: string): GeneratedConte
     sections: parsed.sections ?? []
   };
 
-  validateGeneratedContentQuality(content);
+  validateGeneratedContentQuality(content, mode);
 
   return content;
 }
@@ -930,7 +992,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   }
 
   return {
-    ...parseResponseJson(outputText, lockedHeadline || undefined),
+    ...parseResponseJson(outputText, lockedHeadline || "", input.mode),
     responseId: payload.id,
     model
   };
