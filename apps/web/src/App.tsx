@@ -5785,6 +5785,24 @@ function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
   }) ?? retrogradeWindows.find((window) => window.planet === position.planet);
 }
 
+function activeRetrogradeWindowForPlanet(planet: string, generatedAt: string) {
+  const currentDay = dateOnly(generatedAt);
+
+  return retrogradeWindows.find((window) => (
+    window.planet === planet
+    && currentDay >= dateOnly(window.retrogradeStart)
+    && currentDay <= dateOnly(window.retrogradeEnd)
+  ));
+}
+
+function activeRetrogradePositions(positions: PlanetPosition[], generatedAt: string) {
+  return positions
+    .filter((position) => position.motion === "retrograde" || activeRetrogradeWindowForPlanet(position.planet, generatedAt))
+    .map((position) => activeRetrogradeWindowForPlanet(position.planet, generatedAt)
+      ? { ...position, motion: "retrograde" as const }
+      : position);
+}
+
 function retrogradeTimelineLines(window?: RetrogradeWindow) {
   if (!window) {
     return ["Retrograde dates are being calculated for this cycle."];
@@ -5875,7 +5893,7 @@ function RetrogradeCallout({
   generatedContent: GeneratedContentMap;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const retrogrades = positions.filter((position) => position.motion === "retrograde");
+  const retrogrades = activeRetrogradePositions(positions, generatedAt);
 
   if (retrogrades.length === 0) {
     return null;
