@@ -1,4 +1,4 @@
-import { Archive, BarChart3, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
+import { Archive, BarChart3, BookOpenText, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
@@ -9,7 +9,16 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "review" | "templates" | "hooks";
+type AdminDashboardPage = "review" | "templates" | "hooks" | "releaseNotes";
+type ReleaseNoteArea = "Dashboard" | "App";
+type ReleaseNote = {
+  date: string;
+  time: string;
+  title: string;
+  summary: string;
+  areas: ReleaseNoteArea[];
+  items: string[];
+};
 type VoiceTemplateConfig = {
   template: string;
   generationGuide: string;
@@ -119,18 +128,24 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 };
 
 function adminPageTitle(activePage: AdminDashboardPage) {
+  if (activePage === "releaseNotes") return "Release Notes";
   if (activePage === "templates") return "Templates & Voice";
   if (activePage === "hooks") return "Content Hooks";
   return "Generated Content";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
+  if (activePage === "releaseNotes") return "Admin / Release notes";
   if (activePage === "templates") return "Admin / Content generation / Templates & voice";
   if (activePage === "hooks") return "Admin / Content generation / Content hooks";
   return "Admin / Content generation / Review queue";
 }
 
 function adminPageDescription(activePage: AdminDashboardPage) {
+  if (activePage === "releaseNotes") {
+    return "Track product updates across the internal dashboard and the public app in one chronological log.";
+  }
+
   if (activePage === "templates") {
     return "Define the voice layer OpenAI should use for each astrology content family before drafts are generated.";
   }
@@ -141,6 +156,57 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 
   return "Generate, review, approve, publish, archive, and delete OpenAI-written astrology content before it appears in the public app.";
 }
+
+const releaseNotes: ReleaseNote[] = [
+  {
+    date: "June 6, 2026",
+    time: "9:30 PM EST",
+    title: "Release notes added to Content Ops",
+    summary: "The dashboard now has a dedicated release-notes page for tracking admin and app changes together.",
+    areas: ["Dashboard"],
+    items: [
+      "Added a Release Notes navigation item inside the admin sidebar.",
+      "Created a chronological notes view with Dashboard and App tags on each entry.",
+      "Designed the page to work without the content-generation secret so status history remains readable."
+    ]
+  },
+  {
+    date: "June 6, 2026",
+    time: "8:45 PM EST",
+    title: "Generated content workflow expanded",
+    summary: "Content Ops can now organize review queues, templates, and hook coverage from one dashboard.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Added review states for draft, reviewed, live, archived, and error content rows.",
+      "Connected content hooks to app surfaces that need approved generated or voice-backed copy.",
+      "Kept published rows tied to the public app surfaces they support."
+    ]
+  },
+  {
+    date: "June 4, 2026",
+    time: "4:55 PM EST",
+    title: "Voice templates and generation controls",
+    summary: "Reusable voice guidance was added for sky, lunar, eclipse, natal, synastry, and composite content families.",
+    areas: ["Dashboard"],
+    items: [
+      "Added editable surface-specific voice templates.",
+      "Added banned phrase lists and phrase-bank fields for generation prompts.",
+      "Layered row-specific reviewer notes on top of reusable template guidance."
+    ]
+  },
+  {
+    date: "June 3, 2026",
+    time: "1:20 PM EST",
+    title: "Admin generated-content API shipped",
+    summary: "The backend admin endpoints now support content creation, review, publishing, and deletion.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Added authenticated admin endpoints for generated content rows.",
+      "Added current-sky fact loading for generation inputs.",
+      "Created the path for reviewed content to move from internal review into live app experiences."
+    ]
+  }
+];
 
 const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> = {
   sky: {
@@ -1184,6 +1250,15 @@ export function GeneratedContentAdminDashboard() {
             Content Hooks
           </button>
           <button
+            className={activePage === "releaseNotes" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("releaseNotes")}
+            aria-current={activePage === "releaseNotes" ? "page" : undefined}
+          >
+            <BookOpenText size={18} aria-hidden="true" />
+            Release Notes
+          </button>
+          <button
             className={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "active" : ""}
             type="button"
             onClick={() => showQueue("DRAFT")}
@@ -1274,7 +1349,58 @@ export function GeneratedContentAdminDashboard() {
           <span>{message}</span>
         </section>
 
-        {activePage === "hooks" ? (
+        {activePage === "releaseNotes" ? (
+          <section id="release-notes" className="admin-template-panel admin-release-page" aria-label="Release notes">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Product history</p>
+                <h2>Dashboard + App Updates</h2>
+                <p>Use this log to keep a plain-English record of what changed, where it landed, and why it matters.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Release note coverage">
+                <article>
+                  <span>Entries</span>
+                  <strong>{releaseNotes.length}</strong>
+                </article>
+                <article>
+                  <span>Tracks</span>
+                  <strong>Dashboard / App</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-release-timeline">
+              {releaseNotes.map((note) => (
+                <article className="admin-release-note" key={`${note.date}-${note.time}-${note.title}`}>
+                  <div className="admin-release-date">
+                    <time>{note.date}</time>
+                    <span>{note.time}</span>
+                  </div>
+                  <div className="admin-release-card">
+                    <div className="admin-release-card-header">
+                      <div>
+                        <div className="admin-release-tags" aria-label="Release areas">
+                          {note.areas.map((area) => (
+                            <span className={`admin-release-tag admin-release-tag-${area.toLowerCase()}`} key={area}>
+                              {area}
+                            </span>
+                          ))}
+                        </div>
+                        <h3>{note.title}</h3>
+                        <p>{note.summary}</p>
+                      </div>
+                    </div>
+                    <ul>
+                      {note.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : activePage === "hooks" ? (
           <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
             <div className="admin-template-header">
               <div>

@@ -704,6 +704,169 @@ body,
   color: var(--admin-muted-dark) !important;
 }
 
+.admin-release-page {
+  align-content: start;
+  gap: 28px;
+  min-height: calc(100vh - 250px);
+  padding: clamp(20px, 3vw, 34px);
+}
+
+.admin-release-page .admin-template-header h2 {
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 0.96;
+}
+
+.admin-release-summary {
+  display: grid;
+  flex: 0 0 320px;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-release-summary article {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  min-height: 96px;
+  padding: 15px;
+}
+
+.admin-release-summary span,
+.admin-release-date span {
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-release-summary strong {
+  color: var(--admin-ink);
+  font-size: 25px;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.admin-release-timeline {
+  display: grid;
+  gap: 0;
+}
+
+.admin-release-note {
+  border-top: 1px solid var(--admin-line);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
+  padding: 28px 0;
+}
+
+.admin-release-note:last-child {
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.admin-release-date {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.admin-release-date time {
+  color: rgba(245, 243, 238, 0.84);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+.admin-release-card {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.admin-release-card-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.admin-release-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.admin-release-tag {
+  border: 1px solid var(--admin-line);
+  border-radius: 999px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  padding: 5px 9px;
+  text-transform: uppercase;
+}
+
+.admin-release-tag-dashboard {
+  background: rgba(124, 134, 255, 0.16);
+  border-color: rgba(124, 134, 255, 0.4);
+  color: #d8dcff;
+}
+
+.admin-release-tag-app {
+  background: rgba(43, 140, 120, 0.18);
+  border-color: rgba(43, 140, 120, 0.42);
+  color: #a7ead8;
+}
+
+.admin-release-card h3 {
+  color: var(--admin-ink);
+  font-size: clamp(25px, 3vw, 40px);
+  letter-spacing: 0;
+  line-height: 1.02;
+  margin: 0 0 10px;
+}
+
+.admin-release-card p {
+  color: var(--admin-muted);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 860px;
+}
+
+.admin-release-card ul {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  max-width: 980px;
+  padding: 0;
+}
+
+.admin-release-card li {
+  color: rgba(245, 243, 238, 0.88);
+  font-size: 17px;
+  line-height: 1.48;
+  padding-left: 24px;
+  position: relative;
+}
+
+.admin-release-card li::before {
+  background: var(--admin-accent-2);
+  border-radius: 999px;
+  content: "";
+  height: 7px;
+  left: 4px;
+  position: absolute;
+  top: 0.66em;
+  width: 7px;
+}
+
 .admin-hooks-page {
   display: grid;
   gap: 26px;
@@ -850,6 +1013,8 @@ body,
 
   .admin-nav,
   .admin-metrics,
+  .admin-release-note,
+  .admin-release-summary,
   .admin-template-guidance,
   .admin-template-two-column,
   .admin-workbench,
@@ -882,6 +1047,17 @@ body,
 
   .admin-toolbar-actions {
     justify-content: flex-start;
+  }
+
+  .admin-release-note {
+    gap: 14px;
+    padding: 24px 0;
+  }
+
+  .admin-release-date {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .admin-preview-modal {
