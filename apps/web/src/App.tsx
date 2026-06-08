@@ -5715,7 +5715,7 @@ function SynastryWheel({
     ...aspect,
     className: aspectClass(aspect.type)
   }));
-  const interAspectRadius = radius.aspect + 10;
+  const interAspectRadius = radius.aspect + 12;
   const outerPlanetClusterLevels = wheelMarkerClusterLevels(
     outerPositions,
     (position) => position.planet,
@@ -5825,8 +5825,8 @@ function SynastryWheel({
             return (
               <g key={id} className={`${className} ${type}`}>
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                <circle cx={a.x} cy={a.y} r="2.2" className="aspect-endpoint aspect-endpoint-from" />
-                <circle cx={b.x} cy={b.y} r="2.2" className="aspect-endpoint aspect-endpoint-to" />
+                <circle cx={a.x} cy={a.y} r="1.9" className="aspect-endpoint aspect-endpoint-from" />
+                <circle cx={b.x} cy={b.y} r="1.9" className="aspect-endpoint aspect-endpoint-to" />
               </g>
             );
           })}
@@ -8275,7 +8275,7 @@ function ManualChartsPanel({
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
   const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
   const selectedSynastryContacts = selectedChart ? rankSynastryContactsByLifeAreaFocus(synastryContacts(relationshipComparisonSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
-  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 14).map((contact) => ({
+  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 10).map((contact) => ({
     id: contact.id,
     fromLongitude: contact.friendPoint.longitude,
     toLongitude: contact.yourPoint.longitude,
