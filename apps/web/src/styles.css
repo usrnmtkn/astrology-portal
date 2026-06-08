@@ -10694,3 +10694,53 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Final relationship chart wheel sizing: use the available left column on desktop. */
+.app-shell.mode-friends .relationship-detail-reset > .relationship-detail-left {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center !important;
+  align-content: start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center !important;
+  width: min(100%, 700px) !important;
+  max-width: 700px !important;
+  min-width: 0 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel {
+  width: min(100%, 700px) !important;
+  max-width: 700px !important;
+  min-width: 0 !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-compare-control, .friend-chart-legend) {
+  width: min(100%, 640px) !important;
+  max-width: 640px !important;
+}
+
+@media (max-width: 1179px) {
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell,
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel {
+    width: min(100%, 680px) !important;
+    max-width: 680px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell,
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+  .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :is(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel {
+    width: min(100%, 430px) !important;
+    max-width: 430px !important;
+  }
+}
