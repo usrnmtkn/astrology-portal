@@ -3428,7 +3428,9 @@ export function App() {
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
-  const isProfileMode = mode === "profile" || mode === "friends" || mode === "account" || mode === "settings";
+  const isFriendsMode = mode === "friends";
+  const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
+  const usesFullPageLayout = isProfileMode || isFriendsMode;
 
   function navigateToFriends() {
     setFriendsLandingKey((currentKey) => currentKey + 1);
@@ -4335,7 +4337,7 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : "portal-grid"}>
+          <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : isFriendsMode ? "portal-grid friends-layout" : "portal-grid"}>
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <h1>the sky today.</h1>
@@ -4407,7 +4409,7 @@ export function App() {
               </section>
             )}
 
-            {!isSignupMode && !isProfileMode && (
+            {!isSignupMode && !usesFullPageLayout && (
               <section className="sky-panel" aria-label="Current sky">
                 <SkyWheel positions={sky.positions} aspects={sky.aspects} variant="zodiac" />
 
@@ -5204,7 +5206,7 @@ function SynastryPlacementRows({
 
         return (
           <section className="synastry-placement-row" key={row.id}>
-            <div>
+            <div className="synastry-placement-row-header">
               <span className="eyebrow section-label">{relationshipPossessiveName(row.name, row.isSelf)} natal placements</span>
               <strong>{row.name} <em>{row.label}</em></strong>
             </div>
