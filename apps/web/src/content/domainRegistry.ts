@@ -96,6 +96,12 @@ type SynastryAspectEntry = {
   planetB?: string;
   aspect?: string;
   plainTranslation?: string;
+  summaryShort?: string;
+  summaryDeep?: string;
+  tension?: string;
+  advice?: string;
+  weight?: number;
+  authoringStatus?: string;
   policy?: string;
   status?: string;
 };
@@ -991,7 +997,9 @@ export function createDomainRegistry(bundleInput: unknown) {
     const planetA = normalizeIdPart(entry.planetA);
     const planetB = normalizeIdPart(entry.planetB);
     const aspect = normalizeIdPart(entry.aspect);
-    const summary = summarySentence(entry.plainTranslation) || `${titleize(planetA)} ${aspect} ${titleize(planetB)}`;
+    const preview = cleanText(entry.summaryShort) || cleanText(entry.plainTranslation);
+    const expanded = cleanText(entry.summaryDeep) || preview || cleanText(entry.plainTranslation);
+    const summary = preview || `${titleize(planetA)} ${aspect} ${titleize(planetB)}`;
     const knowledgeItem: KnowledgeItem = {
       id: entry.id,
       type: "synastry-aspect",
@@ -1007,10 +1015,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: summary,
         displaySummary: summary,
-        detailParagraphs: cleanParagraphs([entry.plainTranslation, entry.policy]),
-        livedExperience: cleanText(entry.plainTranslation) || summary,
-        gift: "",
-        challenge: ""
+        detailParagraphs: cleanParagraphs([expanded, entry.tension, entry.advice, entry.policy]),
+        livedExperience: expanded || summary,
+        gift: cleanText(entry.advice),
+        challenge: cleanText(entry.tension)
       },
       sources: ["@tldr/astro-knowledge/synastry"],
       status: reviewStatus(entry.status)
