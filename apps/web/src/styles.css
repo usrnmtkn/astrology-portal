@@ -8794,3 +8794,39 @@ body,
     display: block !important;
   }
 }
+
+/* Final desktop nav geometry: keep utility actions out of the nav pill. */
+@media (min-width: 821px) {
+  .app-shell .topbar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    transform: none !important;
+    display: grid !important;
+    grid-template-columns: minmax(140px, 1fr) minmax(0, auto) minmax(140px, 1fr) !important;
+    justify-content: stretch !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    padding: 18px 32px 0 !important;
+    pointer-events: none !important;
+  }
+
+  .app-shell .nav-pill {
+    grid-column: 2 !important;
+    justify-self: center !important;
+    max-width: calc(100vw - 280px) !important;
+    min-width: 0 !important;
+    flex: 0 1 auto !important;
+  }
+
+  .app-shell .topbar-actions {
+    position: static !important;
+    grid-column: 3 !important;
+    justify-self: end !important;
+    display: flex !important;
+    gap: 12px !important;
+    pointer-events: auto !important;
+    z-index: 3001 !important;
+  }
+}
