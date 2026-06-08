@@ -8,5 +8,10 @@
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "DRAFT",
+  "summaryDeep": "You and this person may process things in very different ways. One of you may need to talk in order to understand what is happening. The other may need quiet before the words come. One person reaches for language. The other is still trying to feel their way through.\n\nThis can create a real mismatch in emotional timing. They may ask questions when you need comfort. You may go quiet when they need a conversation. They may think they are helping by making sense of the feeling, while you feel like they are standing outside of it and explaining it back to you.\n\nAt its best, this connection teaches both people range. The person with words learns that not everything needs to be solved out loud. The person with feeling learns that language can become a bridge, not a threat. You both get better at translating inner experience into something the other person can actually meet.\n\nThe harder part comes when both people start feeling alone in the same conversation. One person feels unheard. The other feels shut out. One wants a response. The other wants space. Both may be trying to connect, but the methods keep missing each other.\n\nThe practice is to ask for the kind of support you need before frustration takes over. Say, \"I need comfort right now,\" or \"I need help making sense of this.\" Clear language can soften the whole pattern.",
+  "tension": "The harder part comes when both people start feeling alone in the same conversation. One person feels unheard. The other feels shut out. One wants a response. The other wants space. Both may be trying to connect, but the methods keep missing each other.",
+  "advice": "The practice is to ask for the kind of support you need before frustration takes over. Say, \"I need comfort right now,\" or \"I need help making sense of this.\" Clear language can soften the whole pattern.",
+  "weight": 3,
+  "authoringStatus": "locked"
 }
