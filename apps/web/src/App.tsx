@@ -4337,7 +4337,7 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid signup-layout" : isProfileMode ? "portal-grid profile-layout" : isFriendsMode ? "portal-grid friends-layout" : "portal-grid"}>
+          <section className={isSignupMode ? "portal-grid signup-layout" : isFriendsMode ? "portal-grid friends-layout" : isProfileMode ? "portal-grid full-page-layout" : "portal-grid"}>
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <h1>the sky today.</h1>
@@ -5182,7 +5182,7 @@ function RelationshipComparePicker({
                 onClick={() => onSelect(option.id)}
               >
                 <span className="friend-compare-avatar" aria-hidden="true">{option.initials}</span>
-                <span>
+                <span className="friend-compare-option-copy">
                   <strong>{option.displayName}</strong>
                   <small>{option.subtitle}</small>
                 </span>
