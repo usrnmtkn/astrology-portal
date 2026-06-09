@@ -4835,17 +4835,37 @@ function FriendPlacementTable({
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
-              <span className="friend-placement-main">
-                <span className="friend-placement-symbol" aria-hidden="true">{row.glyph}</span>
-                <span className="friend-placement-label">{compact ? row.label : row.sign}</span>
-              </span>
-              <span className="friend-placement-meta">
-                {compact && <span>{row.sign}</span>}
-                <span>{socialPlacementDegree(row.degree)}</span>
-                <span aria-hidden="true">·</span>
-                <span>{row.house ? `H${row.house}` : "H-"}</span>
-              </span>
-              {summary ? <span className="friend-placement-summary">{summary}</span> : null}
+              {compact ? (
+                <>
+                  <span className="friend-placement-main">
+                    <span className="friend-placement-symbol" aria-hidden="true">
+                      {row.glyph}
+                    </span>
+                    <span className="friend-placement-label">{row.label}</span>
+                  </span>
+                  <span className="friend-placement-meta">
+                    <span>{row.sign}</span>
+                    <span>{socialPlacementDegree(row.degree)}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{row.house ? `H${row.house}` : "H-"}</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="friend-placement-main">
+                    <span className="friend-placement-symbol" aria-hidden="true">
+                      {row.glyph}
+                    </span>
+                    <span className="friend-placement-label">{row.sign}</span>
+                  </span>
+                  <span className="friend-placement-meta">
+                    <span>{socialPlacementDegree(row.degree)}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{row.house ? `H${row.house}` : "H-"}</span>
+                  </span>
+                  {summary ? <span className="friend-placement-summary">{summary}</span> : null}
+                </>
+              )}
             </div>
           );
         })}
