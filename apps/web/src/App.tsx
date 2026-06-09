@@ -8022,7 +8022,7 @@ function ProfileView({
         </div>
       </div>
 
-      <div className="app-tabs profile-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
+      <div className="app-tabs profile-tabs you-profile-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
         <button
           type="button"
           role="tab"
@@ -8317,6 +8317,11 @@ function ManualChartsPanel({
     orb: contact.orb
   }));
   const selectedCompositeSky = selectedChart ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
+  const selectedFriendHasChartRail = friendProfileTab === "natal"
+    ? Boolean(selectedChart?.natalChart)
+    : friendProfileTab === "synastry"
+      ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
+      : Boolean(selectedCompositeSky);
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
   const selectedFriendLeadingElements = selectedFriendElementalBalance
     .filter((item) => item.count === Math.max(...selectedFriendElementalBalance.map((element) => element.count)) && item.count > 0)
@@ -8837,7 +8842,7 @@ function ManualChartsPanel({
         </div>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-        <section className="friend-profile-panel friend-focus-panel friend-profile-view relationship-detail-layout relationship-detail-reset" aria-label={`${selectedChart.displayName} friend profile`}>
+        <section className={`friend-profile-panel friend-focus-panel friend-profile-view relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
           <div className="relationship-detail-right friend-detail-content-column">
             <div className="friend-hero-card friend-profile-card">
               <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
@@ -9095,7 +9100,7 @@ function ManualChartsPanel({
                 </div>
               </div>
             )}
-            {friendProfileTab === "synastry" && selectedChart.natalChart && (
+            {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
               <div className="friend-synastry-wheel-shell">
                 <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
                   <SynastryWheel
