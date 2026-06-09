@@ -22,8 +22,8 @@
 /* Friends layout: index, social chart profiles, and comparison views. */
 .app-shell.mode-friends {
   --friends-list-width: min(100%, 1120px);
-  --friends-detail-width: min(1500px, calc(100vw - clamp(160px, 16vw, 256px)));
-  --friends-wheel-size: clamp(480px, 32vw, 640px);
+  --friends-detail-width: min(1380px, calc(100vw - clamp(112px, 10vw, 176px)));
+  --friends-wheel-size: clamp(420px, 31vw, 560px);
   padding: 0;
   overflow-x: clip;
 }
@@ -232,7 +232,7 @@
 }
 
 .app-shell.mode-friends .friend-detail-page.manual-charts-pane {
-  padding: clamp(156px, 12vh, 176px) clamp(64px, 8vw, 128px) 88px;
+  padding: clamp(148px, 12vh, 176px) clamp(48px, 6vw, 96px) 88px;
   overflow-x: clip;
 }
 
@@ -246,11 +246,11 @@
 .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset {
   --relationship-wheel-size: var(--friends-wheel-size);
   display: grid;
-  grid-template-columns: minmax(0, 760px) minmax(460px, 640px);
-  gap: clamp(30px, 4vw, 64px);
+  grid-template-columns: minmax(580px, 1fr) minmax(400px, 560px);
+  gap: clamp(24px, 3vw, 48px);
   align-items: start;
   width: var(--friends-detail-width);
-  max-width: 1500px;
+  max-width: 1380px;
   margin: 0 auto;
   padding: 0;
   overflow: visible;
@@ -260,14 +260,14 @@
   grid-column: 1;
   grid-row: 1;
   min-width: 0;
-  max-width: 760px;
+  max-width: none;
 }
 
 .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-chart-column {
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
-  max-width: 660px;
+  max-width: 560px;
   position: sticky;
   top: clamp(124px, 10vh, 152px);
 }
@@ -291,7 +291,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset .friend-chart-legend,
 .app-shell.mode-friends .relationship-detail-reset .friend-compare-control {
-  width: min(100%, 560px);
+  width: min(100%, var(--relationship-wheel-size));
   max-width: 560px;
   margin: 0 auto;
 }
@@ -357,6 +357,16 @@
   letter-spacing: 0;
 }
 
+.app-shell.mode-friends .relationship-detail-reset .manual-chart-signatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  min-width: 0;
+  color: var(--muted);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
 .app-shell.mode-friends .relationship-detail-reset .friend-view-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -373,7 +383,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset :where(.friend-tab-pane, .friend-profile-copy-column, .synastry-placement-rows, .friend-placement-column, .friend-placement-column-compact, .composite-placements, .friend-aspect-list, .aspect-row-list) {
   width: 100%;
-  max-width: 760px;
+  max-width: none;
   min-width: 0;
 }
 
@@ -401,7 +411,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  max-width: 760px;
+  max-width: none;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--surface);
@@ -460,6 +470,9 @@
 
 .app-shell.mode-friends .relationship-detail-reset .friend-placement-meta {
   grid-area: meta;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
   justify-self: end;
   min-width: 0;
   color: var(--muted);
@@ -519,7 +532,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   width: 100%;
   min-width: 0;
@@ -537,11 +550,12 @@
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-chip :where(b, strong, small) {
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1180px) {
   .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset {
     --relationship-wheel-size: clamp(360px, 74vw, 560px);
     grid-template-columns: minmax(0, 1fr);
