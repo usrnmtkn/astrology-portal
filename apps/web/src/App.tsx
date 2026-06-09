@@ -4856,9 +4856,10 @@ function FriendPlacementTable({
                     <span className="friend-placement-symbol" aria-hidden="true">
                       {row.glyph}
                     </span>
-                    <span className="friend-placement-label">{row.sign}</span>
+                    <span className="friend-placement-label">{row.label}</span>
                   </span>
                   <span className="friend-placement-meta">
+                    <span>{row.sign}</span>
                     <span>{socialPlacementDegree(row.degree)}</span>
                     <span aria-hidden="true">·</span>
                     <span>{row.house ? `H${row.house}` : "H-"}</span>
@@ -8571,151 +8572,151 @@ function ManualChartsPanel({
       )}
 
       {resolvedFriendsMainView === "circle" && (
-      <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
-        <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle feed" : "Circle feed"}>
-          {isLoadingCharts ? (
-            [0, 1, 2].map((index) => (
-              <article className="friends-feed-card friends-feed-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
-                <span className="friends-feed-avatar-stack">
-                  <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-                  <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-                </span>
-                <span className="friends-feed-card-body">
-                  <span className="friends-card-skeleton friends-card-skeleton-label" />
-                  <i className="friends-card-skeleton friends-card-skeleton-title" />
-                  <i className="friends-card-skeleton friends-card-skeleton-line" />
-                  <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
-                </span>
-                <span className="friends-card-skeleton friends-card-skeleton-chevron" />
-              </article>
-            ))
-          ) : (
-            circleCards.map((card, index) => {
-              const feedCharts = charts.length > 1
-                ? charts.slice(0, 2)
-                : charts.slice(0, 1);
-              const feedMeta = index === 0
-                ? "Today"
-                : index === 1
-                  ? "This week"
-                  : card.label === "Friend update"
-                    ? "Friend update · 2 days ago"
-                    : `${index + 2} days ago`;
-
-              return (
-              <article className="friends-feed-card" key={card.title}>
-                <span className="friends-feed-avatar-stack" aria-hidden="true">
-                  {feedCharts.map((chart) => (
-                    <span className="friends-feed-avatar" key={chart.id}>
-                      {profileInitials(chart.displayName, chart.displayName)}
-                    </span>
-                  ))}
-                  {feedCharts.length === 0 && (
-                    <span className="friends-feed-avatar">
-                      {profileInitials(profile.name, profile.email)}
-                    </span>
-                  )}
-                </span>
-                <span className="friends-feed-card-body">
-                  <span className="friends-feed-meta">{feedMeta}</span>
-                  <h3>{card.title}</h3>
-                  <p>{card.body}</p>
-                  {index === 0 && (
-                    <span className="friends-feed-symbols" aria-label="Aspect symbols">
-                      <span>☽</span>
-                      <span>∗</span>
-                      <span>☿</span>
-                    </span>
-                  )}
-                </span>
-                <ChevronRight className="friends-feed-chevron" size={24} aria-hidden="true" />
-              </article>
-              );
-            })
-          )}
-        </div>
-      </section>
-      )}
-
-      {resolvedFriendsMainView === "charts" && (
-      <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
-        <div className="friends-chart-toolbar">
-          <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
-            <span>Add chart</span>
-          </button>
-        </div>
-        <section className="manual-chart-list" aria-label="Saved manual charts">
-          {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
-          {status === "loading" && (
-            <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
-              <span>Charts</span>
-              <h3>Loading saved charts.</h3>
-              <p>Your saved friends and comparison charts will appear here.</p>
-            </section>
-          )}
-          {status !== "loading" && charts.length === 0 && (
-            <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
-              <span>Charts</span>
-              <h3>No saved friends yet.</h3>
-              <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
-            </section>
-          )}
-          {charts.length > 0 && (
-            <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
-              {charts.map((chart) => {
-                const bigThree = manualChartBigThree(chart);
+        <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
+          <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle feed" : "Circle feed"}>
+            {isLoadingCharts ? (
+              [0, 1, 2].map((index) => (
+                <article className="friends-feed-card friends-feed-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
+                  <span className="friends-feed-avatar-stack">
+                    <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
+                    <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
+                  </span>
+                  <span className="friends-feed-card-body">
+                    <span className="friends-card-skeleton friends-card-skeleton-label" />
+                    <i className="friends-card-skeleton friends-card-skeleton-title" />
+                    <i className="friends-card-skeleton friends-card-skeleton-line" />
+                    <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
+                  </span>
+                  <span className="friends-card-skeleton friends-card-skeleton-chevron" />
+                </article>
+              ))
+            ) : (
+              circleCards.map((card, index) => {
+                const feedCharts = charts.length > 1
+                  ? charts.slice(0, 2)
+                  : charts.slice(0, 1);
+                const feedMeta = index === 0
+                  ? "Today"
+                  : index === 1
+                    ? "This week"
+                    : card.label === "Friend update"
+                      ? "Friend update · 2 days ago"
+                      : `${index + 2} days ago`;
 
                 return (
-                  <div className="manual-chart-row chart-row" key={chart.id}>
-                    <button
-                      type="button"
-                      className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
-                      onClick={() => openFriendProfile(chart)}
-                      aria-label={`Open ${chart.displayName}`}
-                    >
-                      <span className="manual-chart-avatar" aria-hidden="true">
-                        {profileInitials(chart.displayName, chart.displayName)}
-                      </span>
-                      <span className="crb">
-                        <span className="crt">{chart.displayName}</span>
-                        <span className="crs">{manualChartSubtitle(chart)}</span>
-                        <span className="manual-chart-signatures">
-                          <span>☉ {bigThree.sun}</span>
-                          <span>☽ {bigThree.moon}</span>
-                          <span>↑ {bigThree.rising}</span>
+                  <article className="friends-feed-card" key={card.title}>
+                    <span className="friends-feed-avatar-stack" aria-hidden="true">
+                      {feedCharts.map((chart) => (
+                        <span className="friends-feed-avatar" key={chart.id}>
+                          {profileInitials(chart.displayName, chart.displayName)}
                         </span>
-                      </span>
-                    </button>
-                    <span className="manual-chart-actions">
-                      <button
-                        className="manual-chart-menu-trigger"
-                        type="button"
-                        aria-label={`More actions for ${chart.displayName}`}
-                        aria-expanded={openChartMenuId === chart.id}
-                        onClick={() => setOpenChartMenuId((currentId) => currentId === chart.id ? null : chart.id)}
-                      >
-                        <MoreVertical size={20} aria-hidden="true" />
-                      </button>
-                      {openChartMenuId === chart.id && (
-                        <span className="manual-chart-overflow-menu" role="menu" aria-label={`${chart.displayName} actions`}>
-                          <button type="button" role="menuitem" onClick={() => editChart(chart)}>
-                            <Pencil size={17} aria-hidden="true" />
-                            <span>Edit chart</span>
-                          </button>
-                          <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => removeChart(chart)}>
-                            <Trash2 size={17} aria-hidden="true" />
-                            <span>Delete chart</span>
-                          </button>
+                      ))}
+                      {feedCharts.length === 0 && (
+                        <span className="friends-feed-avatar">
+                          {profileInitials(profile.name, profile.email)}
                         </span>
                       )}
                     </span>
-                  </div>
+                    <span className="friends-feed-card-body">
+                      <span className="friends-feed-meta">{feedMeta}</span>
+                      <h3>{card.title}</h3>
+                      <p>{card.body}</p>
+                      {index === 0 && (
+                        <span className="friends-feed-symbols" aria-label="Aspect symbols">
+                          <span>☽</span>
+                          <span>∗</span>
+                          <span>☿</span>
+                        </span>
+                      )}
+                    </span>
+                    <ChevronRight className="friends-feed-chevron" size={24} aria-hidden="true" />
+                  </article>
                 );
-              })}
-            </div>
-          )}
+              })
+            )}
+          </div>
         </section>
-      </section>
+      )}
+
+      {resolvedFriendsMainView === "charts" && (
+        <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
+          <div className="friends-chart-toolbar">
+            <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
+              <span>Add chart</span>
+            </button>
+          </div>
+          <section className="manual-chart-list" aria-label="Saved manual charts">
+            {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
+            {status === "loading" && (
+              <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
+                <span>Charts</span>
+                <h3>Loading saved charts.</h3>
+                <p>Your saved friends and comparison charts will appear here.</p>
+              </section>
+            )}
+            {status !== "loading" && charts.length === 0 && (
+              <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
+                <span>Charts</span>
+                <h3>No saved friends yet.</h3>
+                <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
+              </section>
+            )}
+            {charts.length > 0 && (
+              <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
+                {charts.map((chart) => {
+                  const bigThree = manualChartBigThree(chart);
+
+                  return (
+                    <div className="manual-chart-row chart-row" key={chart.id}>
+                      <button
+                        type="button"
+                        className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
+                        onClick={() => openFriendProfile(chart)}
+                        aria-label={`Open ${chart.displayName}`}
+                      >
+                        <span className="manual-chart-avatar" aria-hidden="true">
+                          {profileInitials(chart.displayName, chart.displayName)}
+                        </span>
+                        <span className="crb">
+                          <span className="crt">{chart.displayName}</span>
+                          <span className="crs">{manualChartSubtitle(chart)}</span>
+                          <span className="manual-chart-signatures">
+                            <span>☉ {bigThree.sun}</span>
+                            <span>☽ {bigThree.moon}</span>
+                            <span>↑ {bigThree.rising}</span>
+                          </span>
+                        </span>
+                      </button>
+                      <span className="manual-chart-actions">
+                        <button
+                          className="manual-chart-menu-trigger"
+                          type="button"
+                          aria-label={`More actions for ${chart.displayName}`}
+                          aria-expanded={openChartMenuId === chart.id}
+                          onClick={() => setOpenChartMenuId((currentId) => currentId === chart.id ? null : chart.id)}
+                        >
+                          <MoreVertical size={20} aria-hidden="true" />
+                        </button>
+                        {openChartMenuId === chart.id && (
+                          <span className="manual-chart-overflow-menu" role="menu" aria-label={`${chart.displayName} actions`}>
+                            <button type="button" role="menuitem" onClick={() => editChart(chart)}>
+                              <Pencil size={17} aria-hidden="true" />
+                              <span>Edit chart</span>
+                            </button>
+                            <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => removeChart(chart)}>
+                              <Trash2 size={17} aria-hidden="true" />
+                              <span>Delete chart</span>
+                            </button>
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        </section>
       )}
 
       {friendChartModalOpen && (
@@ -8836,115 +8837,43 @@ function ManualChartsPanel({
         </div>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-          <section className="friend-profile-panel friend-focus-panel friend-profile-view relationship-detail-layout relationship-detail-reset" aria-label={`${selectedChart.displayName} friend profile`}>
-          <div className="relationship-detail-left" aria-label="Relationship chart">
-            {friendProfileTab === "natal" && selectedChart.natalChart && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                  <SkyWheel
-                    positions={selectedChart.natalChart.positions}
-                    aspects={selectedChart.natalChart.aspects}
-                    ascendant={selectedChart.natalChart.ascendant}
-                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                    midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                    showHouses
-                    variant="natal"
-                  />
-                </div>
-                <div className="friend-chart-legend" aria-label="Natal chart label">
-                  <span>{selectedChart.displayName}</span>
-                </div>
-              </div>
-            )}
-            {friendProfileTab === "synastry" && selectedChart.natalChart && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                  <SynastryWheel
-                    outerPositions={selectedChart.natalChart.positions}
-                    innerPositions={relationshipComparisonSky?.positions ?? []}
-                    interAspects={selectedSynastryAspectLines}
-                    ascendant={selectedChart.natalChart.ascendant}
-                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                  />
-                </div>
-                <RelationshipComparePicker
-                  variant="synastry"
-                  outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-                  options={relationshipComparisonOptions}
-                  selectedId={selectedRelationshipComparison?.id ?? "self"}
-                  open={relationshipComparisonPickerOpen}
-                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                  onSelect={(id) => {
-                    setRelationshipComparisonChartId(id);
-                    setRelationshipComparisonPickerOpen(false);
-                  }}
-                />
-              </div>
-            )}
-            {friendProfileTab === "composite" && selectedCompositeSky && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and you composite chart wheel`}>
-                  <SkyWheel
-                    positions={selectedCompositeSky.positions}
-                    aspects={selectedCompositeSky.aspects}
-                    ascendant={selectedCompositeSky.ascendant}
-                    ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-                    midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-                    showHouses
-                    variant="composite"
-                  />
-                </div>
-                <RelationshipComparePicker
-                  variant="composite"
-                  options={relationshipComparisonOptions}
-                  selectedId={selectedRelationshipComparison?.id ?? "self"}
-                  open={relationshipComparisonPickerOpen}
-                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                  onSelect={(id) => {
-                    setRelationshipComparisonChartId(id);
-                    setRelationshipComparisonPickerOpen(false);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="relationship-detail-right">
-          <div className="friend-hero-card friend-profile-card">
-            <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
-              {profileInitials(selectedChart.displayName, selectedChart.displayName)}
-            </span>
-            <div className="friend-hero-copy">
-              <h2>{selectedChart.displayName}</h2>
-              <span className="manual-chart-signatures">
-                <span>☉ {selectedFriendBigThree?.sun ?? "Pending"}</span>
-                <span>☽ {selectedFriendBigThree?.moon ?? "Pending"}</span>
-                <span>↑ {selectedFriendBigThree?.rising ?? "Rising pending"}</span>
+        <section className="friend-profile-panel friend-focus-panel friend-profile-view relationship-detail-layout relationship-detail-reset" aria-label={`${selectedChart.displayName} friend profile`}>
+          <div className="relationship-detail-right friend-detail-content-column">
+            <div className="friend-hero-card friend-profile-card">
+              <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
+                {profileInitials(selectedChart.displayName, selectedChart.displayName)}
               </span>
-            </div>
-            <button className="friend-kebab" type="button" aria-label={`Edit ${selectedChart.displayName}`} onClick={() => editChart(selectedChart)}>
-              <MoreVertical size={24} aria-hidden="true" />
-            </button>
-          </div>
-
-          <div className="app-tabs profile-tabs friend-tabs friend-view-tabs" role="tablist" aria-label="Friend profile sections">
-            {([
-              ["natal", "Natal"],
-              ["synastry", "Synastry"],
-              ["composite", "Composite"]
-            ] as Array<[FriendProfileTab, string]>).map(([tab, label]) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={friendProfileTab === tab}
-                className={friendProfileTab === tab ? "on active" : ""}
-                key={tab}
-                onClick={() => setFriendProfileTab(tab)}
-              >
-                {label}
+              <div className="friend-hero-copy">
+                <h2>{selectedChart.displayName}</h2>
+                <span className="manual-chart-signatures">
+                  <span>☉ {selectedFriendBigThree?.sun ?? "Pending"}</span>
+                  <span>☽ {selectedFriendBigThree?.moon ?? "Pending"}</span>
+                  <span>↑ {selectedFriendBigThree?.rising ?? "Rising pending"}</span>
+                </span>
+              </div>
+              <button className="friend-kebab" type="button" aria-label={`Edit ${selectedChart.displayName}`} onClick={() => editChart(selectedChart)}>
+                <MoreVertical size={24} aria-hidden="true" />
               </button>
-            ))}
-          </div>
+            </div>
+
+            <div className="app-tabs profile-tabs friend-tabs friend-view-tabs" role="tablist" aria-label="Friend profile sections">
+              {([
+                ["natal", "Natal"],
+                ["synastry", "Synastry"],
+                ["composite", "Composite"]
+              ] as Array<[FriendProfileTab, string]>).map(([tab, label]) => (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={friendProfileTab === tab}
+                  className={friendProfileTab === tab ? "on active" : ""}
+                  key={tab}
+                  onClick={() => setFriendProfileTab(tab)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
 
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
@@ -8979,6 +8908,52 @@ function ManualChartsPanel({
                     </div>
                   </div>
                 </section>
+                {selectedChart.natalChart && (
+                  <FriendPlacementTable
+                    title={`${selectedChart.displayName}'s natal placements`}
+                    rows={socialPlacementRows(selectedChart.natalChart)}
+                    generatedContent={relationshipGeneratedContent}
+                    generatedContext="natal"
+                  />
+                )}
+                {selectedChart.natalChart?.aspects.length ? (
+                  <>
+                    <span className="eyebrow section-label friend-section-label">Natal aspects · by strength</span>
+                    <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-natal-aspects-list" aria-label={`${selectedChart.displayName} natal aspects`}>
+                      {selectedChart.natalChart.aspects.map((aspect) => {
+                        const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
+                        const content = fallbackFromHook(
+                          "you.natal-aspect",
+                          {
+                            planetA: aspect.from,
+                            aspect: aspect.type,
+                            planetB: aspect.to
+                          },
+                          approvedVoiceOrKnowledgeFallback(contentKey)
+                        );
+                        const generated = liveGeneratedContent(relationshipGeneratedContent, contentKey);
+                        const rowSummary = liveGeneratedSummary(generated, content.summary);
+
+                        return (
+                          <div
+                            className="aspect-row aspect-row-static friend-aspect-row"
+                            key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                          >
+                            <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                            <span className="aspect-row-copy">
+                              <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+                              <p>{rowSummary}</p>
+                            </span>
+                            <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                              <span className="aspect-row-dot" aria-hidden="true" />
+                              <span>{wholeDegreeOrb(aspect.orb)}</span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : null}
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {[
@@ -9099,6 +9074,78 @@ function ManualChartsPanel({
               </div>
             </div>
           )}
+          </div>
+
+          <div className="relationship-detail-left friend-detail-chart-column" aria-label="Relationship chart">
+            {friendProfileTab === "natal" && selectedChart.natalChart && (
+              <div className="friend-synastry-wheel-shell">
+                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+                  <SkyWheel
+                    positions={selectedChart.natalChart.positions}
+                    aspects={selectedChart.natalChart.aspects}
+                    ascendant={selectedChart.natalChart.ascendant}
+                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                    midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                    showHouses
+                    variant="natal"
+                  />
+                </div>
+                <div className="friend-chart-legend" aria-label="Natal chart label">
+                  <span>{selectedChart.displayName}</span>
+                </div>
+              </div>
+            )}
+            {friendProfileTab === "synastry" && selectedChart.natalChart && (
+              <div className="friend-synastry-wheel-shell">
+                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
+                  <SynastryWheel
+                    outerPositions={selectedChart.natalChart.positions}
+                    innerPositions={relationshipComparisonSky?.positions ?? []}
+                    interAspects={selectedSynastryAspectLines}
+                    ascendant={selectedChart.natalChart.ascendant}
+                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                  />
+                </div>
+                <RelationshipComparePicker
+                  variant="synastry"
+                  outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+                  options={relationshipComparisonOptions}
+                  selectedId={selectedRelationshipComparison?.id ?? "self"}
+                  open={relationshipComparisonPickerOpen}
+                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                  onSelect={(id) => {
+                    setRelationshipComparisonChartId(id);
+                    setRelationshipComparisonPickerOpen(false);
+                  }}
+                />
+              </div>
+            )}
+            {friendProfileTab === "composite" && selectedCompositeSky && (
+              <div className="friend-synastry-wheel-shell">
+                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and you composite chart wheel`}>
+                  <SkyWheel
+                    positions={selectedCompositeSky.positions}
+                    aspects={selectedCompositeSky.aspects}
+                    ascendant={selectedCompositeSky.ascendant}
+                    ascendantLongitude={selectedCompositeSky.ascendantLongitude}
+                    midheavenLongitude={selectedCompositeSky.midheavenLongitude}
+                    showHouses
+                    variant="composite"
+                  />
+                </div>
+                <RelationshipComparePicker
+                  variant="composite"
+                  options={relationshipComparisonOptions}
+                  selectedId={selectedRelationshipComparison?.id ?? "self"}
+                  open={relationshipComparisonPickerOpen}
+                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                  onSelect={(id) => {
+                    setRelationshipComparisonChartId(id);
+                    setRelationshipComparisonPickerOpen(false);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </section>
       )}
