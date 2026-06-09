@@ -19,6 +19,49 @@
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Roboto Mono", "Space Mono", monospace;
 }
 
+/* Final high-specificity table/list corrections for legacy Friends cascades. */
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-placement-table,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-aspect-list,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-big-three-list {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 24px !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-placement-row,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-aspect-row,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .aspect-row.friend-aspect-row {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-placement-label,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .friend-placement-meta,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .aspect-row-copy,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .aspect-row-copy h3,
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset .aspect-row-copy p {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-row,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-add-button,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-chart-toolbar {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
 /* Friends relationship base reset.
    The final detail-page contract at the end of the file owns the route-specific overrides. */
 .app-shell.mode-friends {
@@ -8070,5 +8113,567 @@ body,
   .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-add-button {
     width: 100% !important;
     margin-left: 0 !important;
+  }
+}
+
+/* Friends CSS audit consolidation.
+   This is the current canonical Friends cascade. It incorporates the useful
+   audit/worktree rules against the live React DOM and avoids the stale
+   .friend-compat-stage > .friend-synastry-wheel-shell assumptions. */
+.app-shell.mode-friends {
+  --friends-audit-list-width: min(100%, 1120px);
+  --friends-audit-detail-width: min(1500px, calc(100vw - clamp(48px, 9vw, 152px)));
+  --friends-audit-wheel-size: clamp(500px, 34vw, 640px);
+  overflow-x: clip !important;
+  padding: 0 !important;
+}
+
+.app-shell.mode-friends :where(.friends-page, .friend-profile-panel, .manual-chart-workspace, .manual-chart-cards, .friend-tab-pane, .friend-profile-copy-column) {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  justify-items: center !important;
+  gap: 26px !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: clamp(156px, 12vh, 188px) clamp(18px, 5vw, 72px) 86px !important;
+  overflow-x: clip !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-page-heading,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-top-tabs,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-workspace-list-only {
+  width: var(--friends-audit-list-width) !important;
+  max-width: 1120px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-page-heading h2 {
+  margin: 0 !important;
+  font-size: clamp(4rem, 6vw, 6.75rem) !important;
+  line-height: 0.92 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-top-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: center !important;
+  justify-self: center !important;
+  width: min(100%, 720px) !important;
+  min-height: 62px !important;
+  padding: 5px !important;
+  border-radius: 999px !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-top-tabs button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 0 18px !important;
+  border-radius: 999px !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-workspace-list-only {
+  display: grid !important;
+  gap: 18px !important;
+  margin-top: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-chart-toolbar {
+  display: flex !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-add-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-height: 46px !important;
+  margin-left: auto !important;
+  padding: 0 22px !important;
+  border-radius: 999px !important;
+  font-size: 0.92rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-cards {
+  width: 100% !important;
+  max-width: 100% !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 24px !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-row {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 68px !important;
+  gap: 0 !important;
+  min-height: 124px !important;
+  padding: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-row:nth-child(even) {
+  background: color-mix(in srgb, var(--surface-2) 45%, transparent) !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select {
+  display: grid !important;
+  grid-template-columns: 74px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 24px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 22px 20px 22px 32px !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-avatar {
+  width: 68px !important;
+  height: 68px !important;
+  font-size: 1.08rem !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select .crb {
+  display: grid !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select .crt {
+  display: block !important;
+  max-width: 100% !important;
+  font-size: clamp(1.75rem, 2vw, 2.25rem) !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select .crs,
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select .manual-chart-signatures {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px 16px !important;
+  min-width: 0 !important;
+  color: var(--muted) !important;
+  font-size: clamp(0.94rem, 0.98vw, 1.05rem) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-actions {
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 68px !important;
+  min-width: 68px !important;
+  padding: 0 !important;
+}
+
+.app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-menu-trigger {
+  display: grid !important;
+  place-items: center !important;
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 999px !important;
+}
+
+.app-shell.mode-friends .friend-detail-page.manual-charts-pane {
+  padding: clamp(156px, 12vh, 176px) clamp(24px, 5vw, 76px) 88px !important;
+}
+
+.app-shell.mode-friends .friend-detail-page .friends-back-button {
+  top: clamp(118px, 10vh, 136px) !important;
+  left: clamp(24px, 4vw, 76px) !important;
+}
+
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset {
+  --relationship-wheel-size: var(--friends-audit-wheel-size) !important;
+  display: grid !important;
+  grid-template-columns: minmax(460px, 760px) minmax(500px, 660px) !important;
+  gap: clamp(34px, 4.4vw, 76px) !important;
+  align-items: start !important;
+  width: var(--friends-audit-detail-width) !important;
+  max-width: 1500px !important;
+  margin: 0 auto !important;
+}
+
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-content-column {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+  max-width: 760px !important;
+}
+
+.app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-chart-column {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+  max-width: 660px !important;
+  position: sticky !important;
+  top: clamp(124px, 10vh, 152px) !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell {
+  display: grid !important;
+  place-items: center !important;
+  width: min(100%, var(--relationship-wheel-size)) !important;
+  max-width: var(--relationship-wheel-size) !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: visible !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel,
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell svg {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-hero-card {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  min-height: 0 !important;
+  padding: 28px 34px !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-profile-avatar {
+  width: 72px !important;
+  height: 72px !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-hero-copy h2,
+.app-shell.mode-friends .relationship-detail-reset .friend-profile-card h2 {
+  font-size: clamp(2.15rem, 2.55vw, 3rem) !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-view-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  min-height: 72px !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-view-tabs button {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset :where(.friend-placement-table, .friend-aspect-list, .friend-big-three-list) {
+  width: 100% !important;
+  max-width: 760px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 24px !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-row,
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-column-compact .friend-placement-row {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "symbol label meta"
+    ". summary summary" !important;
+  min-height: 78px !important;
+  padding: 16px 20px !important;
+  gap: 6px 14px !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-row:nth-child(even),
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-column-compact .friend-placement-row:nth-child(even),
+.app-shell.mode-friends .relationship-detail-reset .friend-aspect-row:nth-child(even),
+.app-shell.mode-friends .relationship-detail-reset .aspect-row.friend-aspect-row:nth-child(even) {
+  background: color-mix(in srgb, var(--surface-2) 48%, transparent) !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-row:last-child,
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-column-compact .friend-placement-row:last-child,
+.app-shell.mode-friends .relationship-detail-reset .friend-aspect-row:last-child,
+.app-shell.mode-friends .relationship-detail-reset .aspect-row.friend-aspect-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-main {
+  display: contents !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-symbol {
+  grid-area: symbol !important;
+  width: 42px !important;
+  min-width: 42px !important;
+  text-align: center !important;
+  font-size: 1.25rem !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-label {
+  grid-area: label !important;
+  min-width: 0 !important;
+  font-size: clamp(1rem, 1.05vw, 1.18rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-meta {
+  grid-area: meta !important;
+  justify-self: end !important;
+  min-width: 0 !important;
+  color: var(--muted) !important;
+  font-size: clamp(0.9rem, 0.95vw, 1.05rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-placement-summary {
+  grid-area: summary !important;
+  color: var(--muted) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.38 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-aspect-row,
+.app-shell.mode-friends .relationship-detail-reset .aspect-row.friend-aspect-row {
+  display: grid !important;
+  grid-template-columns: minmax(76px, 112px) minmax(0, 1fr) minmax(54px, auto) !important;
+  align-items: start !important;
+  gap: 18px !important;
+  min-width: 0 !important;
+  padding: 22px 24px !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .aspect-row-copy,
+.app-shell.mode-friends .relationship-detail-reset .aspect-row-copy h3,
+.app-shell.mode-friends .relationship-detail-reset .aspect-row-copy p {
+  min-width: 0 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .aspect-row-copy h3 {
+  margin: 0 !important;
+  font-size: clamp(1.05rem, 1.25vw, 1.35rem) !important;
+  line-height: 1.15 !important;
+  overflow-wrap: break-word !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .aspect-row-copy p {
+  margin: 6px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 0.96rem !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-compat-intro,
+.app-shell.mode-friends .relationship-detail-reset .friend-composite-intro {
+  max-width: 740px !important;
+  color: var(--muted) !important;
+  font-size: clamp(1.35rem, 1.55vw, 2rem) !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-shell.mode-friends .friend-section-label,
+.app-shell.mode-friends .friend-placement-column-title,
+.app-shell.mode-friends .elemental-balance-head .section-label {
+  font-size: clamp(0.76rem, 0.78vw, 0.9rem) !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .synastry-placement-row {
+  padding: 22px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 24px !important;
+  background: var(--surface) !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .synastry-placement-strip {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .synastry-placement-chip {
+  min-width: 0 !important;
+  min-height: 76px !important;
+  padding: 14px 12px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .synastry-placement-chip :where(b, strong, small) {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-pill,
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-popover,
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-list {
+  background: var(--surface) !important;
+}
+
+@media (max-width: 1320px) {
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset {
+    --relationship-wheel-size: clamp(360px, 74vw, 560px) !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: min(920px, calc(100vw - 32px)) !important;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-content-column,
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-chart-column {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    max-width: 100% !important;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-content-column {
+    order: 1 !important;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-chart-column {
+    order: 2 !important;
+    position: relative !important;
+    top: auto !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) {
+    gap: 22px !important;
+    padding: 92px 14px 56px !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-page-heading h2 {
+    font-size: clamp(3.2rem, 19vw, 5rem) !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-top-tabs {
+    justify-self: stretch !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .friends-chart-toolbar {
+    justify-content: stretch !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-add-button {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 0 !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-select {
+    grid-template-columns: 58px minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 16px !important;
+    padding: 22px 58px 22px 20px !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-avatar {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .app-shell.mode-friends .manual-charts-pane:not(.friend-detail-page) .manual-chart-actions {
+    position: absolute !important;
+    top: 18px !important;
+    right: 12px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+  }
+
+  .app-shell.mode-friends .friend-detail-page.manual-charts-pane {
+    padding: 92px 14px 64px !important;
+  }
+
+  .app-shell.mode-friends .friend-detail-page .friends-back-button {
+    position: static !important;
+    margin: 0 0 22px !important;
+  }
+
+  .app-shell.mode-friends .relationship-detail-reset .friend-placement-row,
+  .app-shell.mode-friends .relationship-detail-reset .friend-placement-column-compact .friend-placement-row {
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+    grid-template-areas:
+      "symbol label"
+      "symbol meta"
+      "summary summary" !important;
+  }
+
+  .app-shell.mode-friends .relationship-detail-reset .friend-placement-meta,
+  .app-shell.mode-friends .relationship-detail-reset .aspect-row-meta {
+    justify-self: start !important;
+    white-space: normal !important;
+  }
+
+  .app-shell.mode-friends .relationship-detail-reset .friend-aspect-row,
+  .app-shell.mode-friends .relationship-detail-reset .aspect-row.friend-aspect-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .app-shell.mode-friends .relationship-detail-reset .synastry-placement-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .app-shell.mode-friends .relationship-detail-reset .friend-compat-intro,
+  .app-shell.mode-friends .relationship-detail-reset .friend-composite-intro {
+    font-size: clamp(1.2rem, 5.7vw, 1.6rem) !important;
+    line-height: 1.4 !important;
   }
 }
