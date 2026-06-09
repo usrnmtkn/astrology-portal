@@ -283,7 +283,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
 .app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel,
-.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell svg {
+.app-shell.mode-friends .relationship-detail-reset .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) svg {
   width: 100%;
   max-width: 100%;
   height: auto;
@@ -314,6 +314,13 @@
   border-radius: 999px;
   background: var(--surface);
   overflow: hidden;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-pill svg,
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-list svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
 }
 
 .app-shell.mode-friends .relationship-detail-reset .friend-compare-popover {
@@ -459,6 +466,9 @@
 }
 
 .app-shell.mode-friends .relationship-detail-reset .friend-placement-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
   grid-area: meta;
   justify-self: end;
   min-width: 0;
@@ -519,7 +529,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   width: 100%;
   min-width: 0;
@@ -536,9 +546,35 @@
 
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-chip :where(b, strong, small) {
   min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .manual-chart-signatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  min-width: 0;
+  color: var(--muted);
+  line-height: 1.25;
+  letter-spacing: 0;
+  overflow-wrap: normal;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-option-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-option-copy strong,
+.app-shell.mode-friends .relationship-detail-reset .friend-compare-option-copy small {
+  display: block;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 @media (max-width: 1180px) {
@@ -914,6 +950,7 @@ svg {
 .mode-friends .portal-grid,
 .mode-account .portal-grid,
 .mode-settings .portal-grid,
+.portal-grid.full-page-layout,
 .signup-layout,
 .profile-layout {
   display: block;
@@ -928,7 +965,8 @@ svg {
 
 .mode-friends .detail-panel,
 .mode-account .detail-panel,
-.mode-settings .detail-panel {
+.mode-settings .detail-panel,
+.portal-grid.full-page-layout .detail-panel {
   display: block;
   width: 100%;
 }
@@ -2136,6 +2174,20 @@ svg {
   line-height: 1.35;
 }
 
+.you-signature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  min-width: 0;
+  letter-spacing: 0;
+}
+
+.you-signature-row > span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+}
+
 .friend-view-tabs,
 .profile-tabs {
   display: grid;
@@ -2542,6 +2594,16 @@ svg {
   color: inherit;
   text-align: left;
   justify-items: start;
+}
+
+button.settings-signout-row {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .settings-row-button:focus {
@@ -3520,7 +3582,7 @@ svg {
 .friend-wheel svg,
 .relationship-detail-left .sky-wheel,
 .relationship-detail-left .zodiac-chart,
-.relationship-detail-left svg {
+.relationship-detail-left .friend-wheel svg {
   display: block;
   width: 100%;
   max-width: 720px;
