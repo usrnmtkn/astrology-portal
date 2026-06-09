@@ -260,7 +260,7 @@
   grid-column: 1;
   grid-row: 1;
   min-width: 0;
-  max-width: none;
+  max-width: 760px;
 }
 
 .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout.relationship-detail-reset > .friend-detail-chart-column {
@@ -357,16 +357,6 @@
   letter-spacing: 0;
 }
 
-.app-shell.mode-friends .relationship-detail-reset .manual-chart-signatures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  min-width: 0;
-  color: var(--muted);
-  line-height: 1.25;
-  letter-spacing: 0;
-}
-
 .app-shell.mode-friends .relationship-detail-reset .friend-view-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -383,7 +373,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset :where(.friend-tab-pane, .friend-profile-copy-column, .synastry-placement-rows, .friend-placement-column, .friend-placement-column-compact, .composite-placements, .friend-aspect-list, .aspect-row-list) {
   width: 100%;
-  max-width: none;
+  max-width: 760px;
   min-width: 0;
 }
 
@@ -411,7 +401,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  max-width: none;
+  max-width: 760px;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--surface);
@@ -470,9 +460,6 @@
 
 .app-shell.mode-friends .relationship-detail-reset .friend-placement-meta {
   grid-area: meta;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.35em;
   justify-self: end;
   min-width: 0;
   color: var(--muted);
@@ -532,7 +519,7 @@
 
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-strip {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   width: 100%;
   min-width: 0;
@@ -550,9 +537,8 @@
 .app-shell.mode-friends .relationship-detail-reset .synastry-placement-chip :where(b, strong, small) {
   min-width: 0;
   overflow: hidden;
-  text-overflow: clip;
-  overflow-wrap: break-word;
-  white-space: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 1180px) {
