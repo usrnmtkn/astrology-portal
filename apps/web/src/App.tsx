@@ -284,6 +284,20 @@ type ContentFallback = {
 };
 
 const loadedContentRegistries: Partial<Record<ContentDomain, LazyContentRegistry>> = {};
+const loadingContentRegistries: Partial<Record<ContentDomain, Promise<LazyContentRegistry | null>>> = {};
+const contentRegistryListeners = new Set<() => void>();
+
+function subscribeContentRegistry(listener: () => void) {
+  contentRegistryListeners.add(listener);
+
+  return () => {
+    contentRegistryListeners.delete(listener);
+  };
+}
+
+function notifyContentRegistryListeners() {
+  contentRegistryListeners.forEach((listener) => listener());
+}
 
 function normalizeContentIdPart(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
@@ -291,6 +305,31 @@ function normalizeContentIdPart(value: string) {
 
 function contentRegistryFor(domain: ContentDomain) {
   return loadedContentRegistries[domain] ?? null;
+}
+
+function loadContentRegistry(domain: ContentDomain) {
+  if (loadedContentRegistries[domain]) {
+    return Promise.resolve(loadedContentRegistries[domain]);
+  }
+
+  if (loadingContentRegistries[domain]) {
+    return loadingContentRegistries[domain];
+  }
+
+  loadingContentRegistries[domain] = importContentRegistry(domain)
+    .then((registry) => {
+      loadedContentRegistries[domain] = registry;
+      loadingContentRegistries[domain] = undefined;
+      notifyContentRegistryListeners();
+      return registry;
+    })
+    .catch((error) => {
+      loadingContentRegistries[domain] = undefined;
+      console.warn("Astro knowledge registry failed to load; source-backed content will be unavailable.", error);
+      return null;
+    });
+
+  return loadingContentRegistries[domain];
 }
 
 function baseAspectContentId(planetA: string, aspect: string, planetB: string) {
@@ -371,6 +410,7 @@ function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "n
     };
   }
 
+  void loadContentRegistry(domain);
   return emptyContentFallback(id);
 }
 
@@ -419,7 +459,14 @@ function fallbackFromHook(
 }
 
 function retrogradePlanetMeaning(planet: string, domain: ContentDomain = "sky") {
-  return contentRegistryFor(domain)?.retrogradePlanetMeaning(planet) ?? null;
+  const registry = contentRegistryFor(domain);
+
+  if (registry) {
+    return registry.retrogradePlanetMeaning(planet);
+  }
+
+  void loadContentRegistry(domain);
+  return null;
 }
 
 function hasApprovedVoiceContent(content: ContentFallback) {
@@ -3516,36 +3563,9 @@ export function App() {
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [selectedSkyDetail]);
 
-  useEffect(() => {
-    let cancelled = false;
-    const domains: ContentDomain[] = ["sky"];
-
-    if (mode === "profile" || mode === "member" || mode === "account" || mode === "settings") {
-      domains.push("natal");
-    }
-
-    if (mode === "friends") {
-      domains.push("natal", "relationship");
-    }
-
-    Promise.all(domains
-      .filter((domain) => !loadedContentRegistries[domain])
-      .map((domain) => importContentRegistry(domain).then((registry) => {
-        loadedContentRegistries[domain] = registry;
-      })))
-      .then(() => {
-        if (!cancelled) {
-          setContentRegistryVersion((version) => version + 1);
-        }
-      })
-      .catch((error) => {
-        console.warn("Astro knowledge registry failed to load; source-backed content will be unavailable.", error);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [mode]);
+  useEffect(() => subscribeContentRegistry(() => {
+    setContentRegistryVersion((version) => version + 1);
+  }), []);
 
   useEffect(() => {
     let cancelled = false;
