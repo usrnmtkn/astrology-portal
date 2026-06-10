@@ -700,6 +700,22 @@ svg {
   overflow: visible;
 }
 
+.portal-grid.signup-layout {
+  display: block;
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.signup-layout .detail-panel {
+  display: block;
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 .mode-friends .sky-panel,
 .mode-account .sky-panel,
 .mode-settings .sky-panel {
@@ -3412,6 +3428,7 @@ button.settings-signout-row {
   gap: 18px;
   width: 100%;
   max-height: none;
+  margin-inline: auto;
   padding: clamp(28px, 4vw, 48px);
   box-sizing: border-box;
 }
