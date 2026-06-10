@@ -5593,6 +5593,61 @@ function natalElementBalance(positions: PlanetPosition[]) {
   }));
 }
 
+function elementalBalanceSummary(balance: ReturnType<typeof natalElementBalance>) {
+  const ranked = [...balance].sort((first, second) => second.count - first.count);
+  const [leader, runnerUp] = ranked;
+  const activeElements = ranked.filter((item) => item.count > 0);
+  const topElements = activeElements.filter((item) => item.count === leader?.count);
+  const quietElements = ranked.filter((item) => item.count === 0).map((item) => item.element);
+  const clearLead = Boolean(leader && leader.count > 0 && leader.count >= (runnerUp?.count ?? 0) + 2);
+
+  if (!leader || leader.count === 0) {
+    return {
+      label: "Balance still forming",
+      sentence: "Elemental balance will appear once the chart has placements.",
+      leadElement: null as null | "Fire" | "Earth" | "Air" | "Water",
+      hasClearLead: false
+    };
+  }
+
+  if (clearLead) {
+    return {
+      label: `${leader.element} led`,
+      sentence: `${leader.element} is the clearest emphasis in this chart.`,
+      leadElement: leader.element,
+      hasClearLead: true
+    };
+  }
+
+  if (topElements.length === 1) {
+    return {
+      label: "Mixed emphasis",
+      sentence: `${topElements[0].element} is slightly emphasized, but the chart is broadly mixed.`,
+      leadElement: null,
+      hasClearLead: false
+    };
+  }
+
+  if (topElements.length < 4) {
+    const topLabel = readableNameList(topElements.map((item) => item.element));
+    const quietLabel = quietElements.length > 0 ? `${readableNameList(quietElements)} ${quietElements.length === 1 ? "is" : "are"} quieter.` : "No element is especially quiet.";
+
+    return {
+      label: "Mixed emphasis",
+      sentence: `${topLabel} ${topElements.length === 1 ? "is" : "are"} evenly emphasized. ${quietLabel}`,
+      leadElement: null,
+      hasClearLead: false
+    };
+  }
+
+  return {
+    label: "No single element leads",
+    sentence: "Fire, Earth, Air, and Water are evenly distributed.",
+    leadElement: null,
+    hasClearLead: false
+  };
+}
+
 function formatPlanetDegree(position: PlanetPosition) {
   const degree = Math.floor(position.degree);
   const minutes = Math.round((position.degree - degree) * 60);
@@ -8514,10 +8569,7 @@ function ProfileView({
   const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
   const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
   const elementalBalance = natalElementBalance(natalPositions);
-  const leadingElements = elementalBalance
-    .filter((item) => item.count === Math.max(...elementalBalance.map((element) => element.count)) && item.count > 0)
-    .map((item) => item.element);
-  const elementalSummary = leadingElements.length > 0 ? `${leadingElements.join(" & ")} led` : "Balance still forming";
+  const elementalSummary = elementalBalanceSummary(elementalBalance);
   const plutoSignature = natalPositions.find((position) => position.planet === "Pluto");
   const signatureTitle = plutoSignature?.house === 7 ? "Relationships remake you" : `${safeSun} shapes your center`;
   const signatureBody = plutoSignature?.house === 7
@@ -8619,25 +8671,9 @@ function ProfileView({
             <div className="elemental-balance" aria-label="Elemental balance">
               <div className="elemental-balance-head">
                 <span className="eyebrow section-label">Elemental balance</span>
-                <span>{elementalSummary}</span>
+                <span>{elementalSummary.label}</span>
               </div>
-              <div className="element-bars" aria-hidden="true">
-                {elementalBalance.map((item) => (
-                  <span
-                    key={item.element}
-                    className={`element-bar element-${item.element.toLowerCase()}`}
-                    style={{ flexGrow: Math.max(item.count, 1) }}
-                  />
-                ))}
-              </div>
-              <div className="element-legend">
-                {elementalBalance.map((item) => (
-                  <span key={item.element} className={`element-legend-item element-${item.element.toLowerCase()}`}>
-                    <i aria-hidden="true" />
-                    {item.element} <b>{item.count}</b>
-                  </span>
-                ))}
-              </div>
+              <p>{elementalSummary.sentence}</p>
             </div>
           </section>
 
@@ -8901,20 +8937,17 @@ function ManualChartsPanel({
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
-  const selectedFriendLeadingElements = selectedFriendElementalBalance
-    .filter((item) => item.count === Math.max(...selectedFriendElementalBalance.map((element) => element.count)) && item.count > 0)
-    .map((item) => item.element);
-  const selectedFriendElementalSummary = selectedFriendLeadingElements.length > 0
-    ? `${selectedFriendLeadingElements.join(" & ")} led`
-    : "Balance still forming";
+  const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
-  const selectedFriendSignatureTitle = selectedFriendLeadingElements[0]
-    ? `A ${selectedFriendLeadingElements[0].toLowerCase()}-led chart`
+  const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
+    ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
     : selectedFriendSun
       ? natalPlacementTitle(selectedFriendSun)
       : "Chart signature needs birth details";
-  const selectedFriendSignatureBody = selectedFriendLeadingElements[0]
-    ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendLeadingElements[0].toLowerCase()} emphasis. That element is the first language of the chart and colors how the rest of the placements come through.`
+  const selectedFriendSignatureBody = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
+    ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendElementalSummary.leadElement.toLowerCase()} emphasis. That element is the first language of the chart and colors how the rest of the placements come through.`
+    : selectedFriendSun
+      ? `${natalPlacementTitle(selectedFriendSun)} sets the main signature, while the elements stay more evenly distributed.`
     : "Add complete birth details to read the chart's elemental balance, angles, and strongest signatures.";
 
   useEffect(() => {
@@ -9460,25 +9493,9 @@ function ManualChartsPanel({
                   <div className="elemental-balance" aria-label={`${selectedChart.displayName} elemental balance`}>
                     <div className="elemental-balance-head">
                       <span className="eyebrow section-label">Elemental balance</span>
-                      <span>{selectedFriendElementalSummary}</span>
+                      <span>{selectedFriendElementalSummary.label}</span>
                     </div>
-                    <div className="element-bars" aria-hidden="true">
-                      {selectedFriendElementalBalance.map((item) => (
-                        <span
-                          key={item.element}
-                          className={`element-bar element-${item.element.toLowerCase()}`}
-                          style={{ flexGrow: Math.max(item.count, 1) }}
-                        />
-                      ))}
-                    </div>
-                    <div className="element-legend">
-                      {selectedFriendElementalBalance.map((item) => (
-                        <span key={item.element} className={`element-legend-item element-${item.element.toLowerCase()}`}>
-                          <i aria-hidden="true" />
-                          {item.element} <b>{item.count}</b>
-                        </span>
-                      ))}
-                    </div>
+                    <p>{selectedFriendElementalSummary.sentence}</p>
                   </div>
                 </section>
                 {selectedChart.natalChart && (

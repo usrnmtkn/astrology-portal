@@ -162,8 +162,10 @@
   --segmented-bg: var(--surface);
   --segmented-border: var(--line);
   --segmented-radius: var(--radius-pill);
-  --segmented-padding: var(--sp-half);
-  --segmented-item-height: var(--sp-6);
+  --segmented-padding: 4px;
+  --segmented-gap: 4px;
+  --segmented-item-height: 44px;
+  --segmented-item-px: 24px;
   --segmented-active-bg: var(--pill-bg);
   --segmented-active-fg: var(--pill-fg);
   --segmented-inactive-fg: var(--muted);
@@ -1911,7 +1913,6 @@ svg {
 
 .placement-tabs {
   align-self: flex-start;
-  width: min(520px, 100%);
 }
 
 .placement-table-wrap,
@@ -1938,7 +1939,7 @@ svg {
   padding: var(--row-padding-y) var(--row-padding-x);
   border: 0;
   border-bottom: 1px solid var(--card-border);
-  background: transparent;
+  background: var(--card-bg);
   text-align: left;
 }
 
@@ -2095,6 +2096,22 @@ svg {
   text-align: left;
 }
 
+.chart-row:not(.manual-chart-row),
+.chart-row-static,
+.manual-chart-row,
+.synastry-placement-row,
+.friend-placement-row,
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.settings-row,
+.settings-profile-row,
+.settings-signout-row,
+.account-editable-row,
+.updates-aspect-row {
+  background: var(--card-bg);
+}
+
 .aspect-row:last-child,
 .aspect-row-button:last-child,
 .aspect-row-static:last-child {
@@ -2174,7 +2191,7 @@ svg {
   padding: var(--sp-3) var(--row-px);
   border: 0;
   border-bottom: 1px solid var(--line);
-  background: transparent;
+  background: var(--card-bg);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
@@ -2307,7 +2324,6 @@ svg {
 
 .friends-top-tabs {
   justify-self: center;
-  width: min(1040px, 100%);
   margin: 0;
 }
 
@@ -2489,10 +2505,6 @@ svg {
   border-bottom: 0;
   border-bottom-right-radius: 23px;
   border-bottom-left-radius: 23px;
-}
-
-.manual-chart-row:nth-child(even) {
-  background: color-mix(in srgb, var(--surface-2) 45%, transparent);
 }
 
 .manual-chart-select {
@@ -2869,25 +2881,17 @@ svg {
   gap: 0.25em;
 }
 
-.friend-view-tabs,
-.profile-tabs:not(.friends-top-tabs) {
-  width: 100%;
-}
-
 .you-profile-tabs {
-  justify-self: center;
-  width: min(100%, 760px);
-}
-
-.friend-chart-page .friend-view-tabs.segmented-control {
-  width: 100%;
+  align-self: flex-start;
 }
 
 .segmented-control {
-  display: grid;
+  display: inline-grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap: var(--sp-half);
+  grid-auto-columns: max-content;
+  gap: var(--segmented-gap);
+  width: fit-content;
+  max-width: 100%;
   min-width: 0;
   padding: var(--segmented-padding);
   border: 1px solid var(--segmented-border);
@@ -2895,6 +2899,12 @@ svg {
   background: var(--segmented-bg);
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+
+.segmented-control--wide {
+  display: grid;
+  grid-auto-columns: 1fr;
+  width: 100%;
 }
 
 .segmented-control--scroll {
@@ -2915,10 +2925,10 @@ svg {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 0;
+  min-width: max-content;
   height: var(--segmented-item-height);
   min-height: 0;
-  padding: 0 var(--sp-3);
+  padding: 0 var(--segmented-item-px);
   border: 0;
   border-radius: var(--segmented-radius);
   background: transparent;
@@ -2929,7 +2939,6 @@ svg {
   line-height: 1;
   letter-spacing: 0;
   text-align: center;
-  text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
   overflow: hidden;
@@ -2952,13 +2961,17 @@ svg {
 
 .segmented-control--compact .segmented-control__item {
   height: 40px;
-  padding: 0 var(--sp-2);
+  padding: 0 18px;
   font-size: var(--text-row-value);
 }
 
 @media (max-width: 640px) {
+  .segmented-control {
+    max-width: 100%;
+  }
+
   .segmented-control .segmented-control__item {
-    height: 44px;
+    height: 40px;
     padding: 0 var(--sp-2);
     font-size: 14px;
   }
@@ -3037,7 +3050,7 @@ svg {
 }
 
 .friend-chart-page .friend-signature-card .elemental-balance {
-  padding: 22px 32px 24px;
+  padding: 14px 32px 18px;
 }
 
 .you-signatures-main {
@@ -3062,64 +3075,34 @@ svg {
 
 .elemental-balance {
   display: grid;
-  gap: 18px;
-  padding: var(--card-padding);
+  gap: 6px;
+  padding: 14px var(--card-padding) 16px;
   border-top: 1px solid var(--card-border);
+  color: var(--text-muted);
 }
 
 .elemental-balance-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px 16px;
   flex-wrap: wrap;
   min-width: 0;
 }
 
-.element-bars,
-.element-legend {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+.elemental-balance-head > span:last-child {
+  color: var(--muted);
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
 }
 
-.element-bar {
-  height: 12px;
-  border-radius: 999px;
-}
-
-.element-fire {
-  background: var(--terra);
-}
-
-.element-earth {
-  background: var(--earth);
-}
-
-.element-air {
-  background: var(--air);
-}
-
-.element-water {
-  background: var(--water);
-}
-
-.element-legend-item {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-width: 0;
-  gap: 4px;
-  color: var(--ink);
-  font-weight: 900;
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.element-legend-item b {
-  flex: 0 0 auto;
+.elemental-balance p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.4;
 }
 
 .friend-chart-legend {
@@ -3391,14 +3374,6 @@ svg {
   font-size: 1rem;
 }
 
-.synastry-placement-row:nth-child(odd) {
-  background: color-mix(in srgb, var(--ink) 3%, var(--surface));
-}
-
-.synastry-placement-column-inner .synastry-placement-row:nth-child(odd) {
-  background: color-mix(in srgb, var(--synastry-accent) 7%, var(--surface));
-}
-
 .synastry-placement-row:last-child {
   border-bottom: 0;
 }
@@ -3468,22 +3443,27 @@ svg {
 }
 
 .friend-placement-column-title {
+  margin: 0;
   padding: 20px 24px;
   border-bottom: 1px solid var(--card-border);
+  color: var(--muted);
   font-size: var(--type-xs);
+  font-weight: var(--font-weight-bold);
   line-height: 1.15;
   letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 
 .friend-placement-table {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  max-width: 760px;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  overflow: hidden;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .friend-placement-row {
@@ -3502,11 +3482,16 @@ svg {
   overflow: hidden;
 }
 
-.friend-chart-page .friend-placement-column,
-.friend-chart-page .friend-placement-table {
+.friend-chart-page .friend-placement-column {
   border-color: var(--app-border);
-  border-radius: 28px;
   background: var(--app-card);
+  border-radius: 28px;
+}
+
+.friend-chart-page .friend-placement-table {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .friend-chart-page .friend-placement-column-title {
@@ -3525,12 +3510,6 @@ svg {
 .friend-chart-page .friend-placement-row-compact {
   min-height: 68px;
   padding: 18px 24px;
-}
-
-.friend-placement-row:nth-child(even),
-.friend-aspect-row:nth-child(even),
-.aspect-row.friend-aspect-row:nth-child(even) {
-  background: color-mix(in srgb, var(--surface-2) 48%, transparent);
 }
 
 .friend-placement-main {
@@ -3694,6 +3673,7 @@ svg {
   gap: 20px;
   padding: var(--row-padding-y) var(--row-padding-x);
   border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
 }
 
 .settings-row-button {
@@ -4759,6 +4739,7 @@ body.modal-open {
   align-items: center;
   padding: var(--row-padding-y) var(--row-padding-x);
   border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
 }
 
 .chart-row:not(.manual-chart-row):last-child,
@@ -5119,8 +5100,6 @@ body.modal-open {
   }
 
   .friends-top-tabs {
-    justify-self: stretch;
-    width: 100%;
     max-width: none;
   }
 
