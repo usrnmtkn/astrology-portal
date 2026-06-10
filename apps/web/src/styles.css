@@ -103,6 +103,12 @@ svg {
   color: var(--ink);
 }
 
+.app-shell.auth-mode {
+  display: grid;
+  align-items: center;
+  padding-top: clamp(96px, 10vh, 132px);
+}
+
 .topbar {
   position: fixed;
   top: 0;
@@ -300,8 +306,7 @@ svg {
 .mode-account .portal-grid,
 .mode-settings .portal-grid,
 .portal-grid.full-page-layout,
-.signup-layout,
-.profile-layout {
+.signup-layout {
   display: block;
   width: min(1700px, 100%);
   overflow: visible;
@@ -424,6 +429,27 @@ svg {
 
 .planet-hit-area {
   fill: transparent;
+}
+
+.planet-tooltip {
+  pointer-events: none;
+}
+
+.planet-tooltip rect {
+  fill: var(--ink);
+  stroke: color-mix(in srgb, var(--surface) 26%, transparent);
+  stroke-width: 1;
+}
+
+.planet-tooltip text {
+  fill: var(--surface);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.planet-tooltip-title {
+  font-weight: 900;
 }
 
 .aspect-lines line,
@@ -1056,16 +1082,20 @@ svg {
 }
 
 .app-tabs {
-  display: flex;
-  align-items: center;
-  gap: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.72);
   padding: 6px;
 }
 
-.app-tabs button {
+.placement-tabs {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 4px;
+}
+
+.placement-tabs button {
   min-width: 0;
   border: 0;
   border-radius: 999px;
@@ -1076,14 +1106,10 @@ svg {
   white-space: nowrap;
 }
 
-.app-tabs button.active,
-.app-tabs button.on.active {
+.placement-tabs button.active,
+.placement-tabs button.on.active {
   background: var(--ink);
   color: var(--surface);
-}
-
-.placement-tabs {
-  align-self: flex-start;
 }
 
 .placement-table-wrap,
@@ -1437,7 +1463,7 @@ svg {
 .manual-chart-cards {
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--surface);
@@ -1453,11 +1479,18 @@ svg {
   padding: 0;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
-  overflow: hidden;
+  overflow: visible;
+}
+
+.manual-chart-row:first-child {
+  border-top-left-radius: 23px;
+  border-top-right-radius: 23px;
 }
 
 .manual-chart-row:last-child {
   border-bottom: 0;
+  border-bottom-right-radius: 23px;
+  border-bottom-left-radius: 23px;
 }
 
 .manual-chart-row:nth-child(even) {
@@ -1530,6 +1563,7 @@ svg {
 
 .manual-chart-actions {
   position: relative;
+  z-index: 2;
   display: grid;
   place-items: center;
   width: 68px;
@@ -1554,9 +1588,11 @@ svg {
   position: absolute;
   top: 54px;
   right: 16px;
-  z-index: 30;
+  z-index: 40;
   display: grid;
-  width: 180px;
+  width: max-content;
+  min-width: 180px;
+  max-width: min(260px, calc(100vw - 40px));
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -1565,11 +1601,15 @@ svg {
 }
 
 .manual-chart-overflow-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   border: 0;
   border-radius: 10px;
   background: transparent;
   padding: 10px 12px;
   text-align: left;
+  white-space: nowrap;
 }
 
 .friends-feed-view {
@@ -1919,14 +1959,27 @@ svg {
 .friend-chart-legend {
   display: flex;
   justify-content: center;
-  gap: 24px;
+  gap: 14px 24px;
   flex-wrap: wrap;
   width: min(100%, var(--relationship-wheel-size));
   max-width: 560px;
   margin: 0 auto;
+  color: var(--ink);
+  font-size: clamp(0.82rem, 0.9vw, 0.98rem);
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-align: center;
   text-transform: uppercase;
+  user-select: none;
+}
+
+.friend-chart-legend span {
+  white-space: nowrap;
+}
+
+.friend-chart-legend b {
+  margin-right: 0.35em;
 }
 
 .friend-chart-legend em {
@@ -2020,6 +2073,28 @@ svg {
   border-bottom: 0;
 }
 
+.friend-compare-option-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  line-height: 1.18;
+}
+
+.friend-compare-option-copy strong,
+.friend-compare-option-copy small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-compare-option-copy small {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
 .synastry-placement-rows {
   display: grid;
   gap: 18px;
@@ -2051,7 +2126,7 @@ svg {
 
 .synastry-placement-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   overflow: hidden;
   gap: 1px;
   border: 1px solid var(--line);
@@ -2081,14 +2156,6 @@ svg {
 
 .synastry-placement-chip b {
   grid-area: name;
-}
-
-.synastry-placement-chip small {
-  grid-area: meta;
-}
-
-.synastry-placement-chip b,
-.synastry-placement-chip small {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2096,7 +2163,12 @@ svg {
 }
 
 .synastry-placement-chip small {
+  grid-area: meta;
+  display: block;
+  overflow: hidden;
   color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .friend-placement-column {
@@ -2344,11 +2416,11 @@ button.settings-signout-row {
 
 .signup-split {
   display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(420px, 1fr);
-  align-items: start;
-  width: min(1500px, 100%);
+  grid-template-columns: minmax(360px, 0.92fr) minmax(420px, 1fr);
+  align-items: center;
+  width: min(1420px, 100%);
   margin: 0 auto;
-  gap: 28px;
+  gap: clamp(32px, 5vw, 72px);
 }
 
 .signup-story,
@@ -2377,11 +2449,11 @@ button.settings-signout-row {
   width: 100%;
   min-height: 54px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 14px;
   background: var(--surface);
   color: var(--ink);
-  padding: 0 18px;
-  font-weight: 900;
+  padding: 14px 18px;
+  font-weight: 800;
 }
 
 .social-signons button:disabled {
@@ -2683,15 +2755,6 @@ button.settings-signout-row {
   background: var(--line);
 }
 
-.social-signons button {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  padding: 14px;
-  font-weight: 800;
-}
-
 .chart-modal-backdrop,
 .friend-chart-modal-backdrop {
   position: fixed;
@@ -2942,6 +3005,8 @@ button.settings-signout-row {
   grid-template-columns: minmax(520px, 760px) minmax(480px, 760px);
   align-items: start;
   gap: clamp(48px, 6vw, 112px);
+  width: min(1700px, 100%);
+  overflow: visible;
 }
 
 .you-profile-card {
@@ -3004,12 +3069,6 @@ button.settings-signout-row {
 .theme-dark .you-list-card,
 .theme-dark .aspects-card {
   background: var(--surface);
-}
-
-@media (max-width: 1320px) {
-  .synastry-placement-strip {
-    grid-template-columns: repeat(2, minmax(150px, 1fr));
-  }
 }
 
 @media (max-width: 1180px) {
