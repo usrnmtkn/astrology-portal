@@ -16,6 +16,7 @@
   --earth: #97aa82;
   --air: #7fb8da;
   --water: #6476bd;
+  --synastry-accent: #c8915f;
   --lavender: #f7e8fb;
   --shadow: 0 24px 70px rgba(23, 23, 23, 0.08);
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Roboto Mono", "Space Mono", monospace;
@@ -43,7 +44,13 @@
   --radius-pill: 999px;
   --card-bg: var(--surface);
   --card-border: var(--line);
-  --chart-size: min(760px, 72vh);
+  --chart-layout-max: 1480px;
+  --chart-column-width: minmax(560px, 680px);
+  --content-column-width: minmax(560px, 720px);
+  --chart-layout-gap: clamp(64px, 7vw, 112px);
+  --shared-chart-size: clamp(560px, 40vw, 660px);
+  --chart-size: var(--shared-chart-size);
+  --nav-safe-offset: calc(var(--nav-height) + 72px);
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
@@ -207,79 +214,98 @@ svg {
   padding: 0;
 }
 
-.sky-layout {
-  --chart-size: clamp(560px, 42vw, 680px);
-  grid-template-columns: minmax(460px, 620px) minmax(520px, 680px);
+.chart-layout,
+.sky-layout,
+.chart-page-layout {
+  display: grid;
+  grid-template-columns: var(--chart-column-width) var(--content-column-width);
+  gap: var(--chart-layout-gap);
   align-items: start;
-  gap: clamp(56px, 5vw, 112px);
+  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
 }
 
-.sky-chart-column,
+.chart-layout__visual,
+.chart-page-visual,
+.sky-chart-column {
+  position: sticky;
+  top: var(--nav-safe-offset);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding-top: 0;
+  margin-top: 0;
+  transform: none;
+}
+
+.chart-layout__content,
+.chart-page-content,
 .sky-content-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 32px;
   padding-top: 0;
 }
 
-.sky-chart-column {
-  display: flex;
-  justify-content: center;
-  margin-top: 0;
-  transform: none;
+.chart-layout,
+.chart-layout__content,
+.chart-layout__visual,
+.subpane,
+.section-label,
+.you-signatures-card,
+.you-list-card,
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.chart-row,
+.chart-row-static {
+  scroll-margin-top: var(--nav-safe-offset);
 }
 
 .sky-layout .sky-panel {
   grid-row: 1 / span 2;
 }
 
-.sky-page {
-  --chart-size: clamp(560px, 42vw, 680px);
-}
-
-.you-chart-page {
-  --chart-size: clamp(560px, 42vw, 680px);
-}
-
-.friend-chart-page {
-  --chart-size: clamp(560px, 40vw, 680px);
-}
-
-.friend-chart-page--synastry {
-  --chart-size: clamp(560px, 40vw, 680px);
-}
-
-.friend-chart-page--composite {
-  --chart-size: clamp(540px, 38vw, 650px);
-}
-
-.chart-page-layout {
-  display: grid;
-  grid-template-columns: minmax(520px, 680px) minmax(560px, 720px);
-  gap: clamp(56px, 5vw, 112px);
-  align-items: start;
-}
-
-.chart-page-visual {
-  min-width: 0;
-}
-
-.chart-page-content {
-  display: grid;
-  min-width: 0;
-  gap: 26px;
-}
-
-.chart-page-layout .chart-page-visual,
-.you-chart-page .chart-shell,
-.friend-detail-chart-rail {
-  position: sticky;
-  top: calc(var(--nav-height) + 56px);
-  align-self: start;
+.you-chart-page.page-shell {
+  padding: 0;
 }
 
 .page-back-row {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  margin: 0 auto clamp(18px, 2vw, 28px);
+  display: contents;
+}
+
+.floating-back-button {
+  position: fixed;
+  top: 36px;
+  left: 36px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 22px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-pill);
+  background: var(--app-card);
+  color: var(--app-text);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.floating-back-button:hover {
+  transform: translateY(-1px);
+}
+
+.theme-dark .floating-back-button {
+  border-color: var(--app-border);
+  background: var(--surface-2);
+  color: var(--app-text);
 }
 
 .ui-card,
@@ -293,17 +319,19 @@ svg {
 .chart-shell {
   display: grid;
   place-items: center;
-  width: min(100%, var(--chart-size));
+  width: min(100%, var(--shared-chart-size));
+  height: min(calc(100vw - var(--page-gutter) * 2), var(--shared-chart-size));
   max-width: 100%;
   min-width: 0;
   margin-inline: auto;
+  aspect-ratio: 1 / 1;
 }
 
 .chart-frame {
   display: grid;
   place-items: center;
-  width: min(100%, var(--chart-size));
-  height: auto;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   min-width: 0;
   aspect-ratio: 1 / 1;
@@ -496,7 +524,7 @@ svg {
   background: var(--surface-2);
 }
 
-.portal-grid {
+.portal-grid:not(.chart-layout) {
   display: grid;
   grid-template-columns: minmax(520px, 760px) minmax(480px, 760px);
   align-items: start;
@@ -520,7 +548,7 @@ svg {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 34px;
+  gap: 32px;
 }
 
 .mode-friends .portal-grid,
@@ -595,6 +623,26 @@ svg {
   stroke-width: 0.9;
 }
 
+.synastry-ring-zebra path {
+  stroke: none;
+}
+
+.synastry-ring-zebra-outer .zebra-even {
+  fill: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.synastry-ring-zebra-outer .zebra-odd {
+  fill: color-mix(in srgb, var(--ink) 2.5%, transparent);
+}
+
+.synastry-ring-zebra-inner .zebra-even {
+  fill: color-mix(in srgb, var(--synastry-accent) 12%, transparent);
+}
+
+.synastry-ring-zebra-inner .zebra-odd {
+  fill: color-mix(in srgb, var(--synastry-accent) 5%, transparent);
+}
+
 .theme-dark .wheel-rings circle,
 .theme-dark .synastry-chart-rings circle {
   stroke: rgba(245, 242, 235, 0.18);
@@ -602,6 +650,22 @@ svg {
 
 .theme-dark .synastry-chart-rings line {
   stroke: rgba(245, 242, 235, 0.18);
+}
+
+.theme-dark .synastry-ring-zebra-outer .zebra-even {
+  fill: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+.theme-dark .synastry-ring-zebra-outer .zebra-odd {
+  fill: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.theme-dark .synastry-ring-zebra-inner .zebra-even {
+  fill: color-mix(in srgb, var(--synastry-accent) 18%, transparent);
+}
+
+.theme-dark .synastry-ring-zebra-inner .zebra-odd {
+  fill: color-mix(in srgb, var(--synastry-accent) 8%, transparent);
 }
 
 .wheel-rings .faint {
@@ -769,7 +833,7 @@ svg {
 
 .inner-planet-labels .planet-glyph,
 .inner-planet-labels .planet-degree {
-  fill: #c8915f;
+  fill: var(--synastry-accent);
 }
 
 .sky-lunar-brief {
@@ -1074,16 +1138,6 @@ svg {
 
 .sky-detail-back {
   justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow);
-  padding: 12px 16px;
-  font-weight: 900;
 }
 
 .sky-detail-article {
@@ -1983,40 +2037,23 @@ svg {
 }
 
 .friend-back-row {
-  width: min(1280px, 100%);
+  width: auto;
 }
 
 .friend-detail-back-row {
-  display: flex;
-  align-items: center;
-  min-height: 64px;
-  margin-bottom: clamp(28px, 4vw, 48px);
+  display: contents;
 }
 
 .friends-back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--ink);
-  padding: 13px 18px;
-  font-weight: 800;
-  box-shadow: var(--shadow);
+  margin: 0;
 }
 
 .friend-detail-layout,
 .relationship-detail-layout {
-  --relationship-wheel-size: var(--chart-size);
-  display: grid;
-  grid-template-columns: minmax(520px, 680px) minmax(560px, 720px);
-  align-items: start;
-  justify-content: center;
-  width: min(1380px, 100%);
-  max-width: 1380px;
+  --relationship-wheel-size: var(--shared-chart-size);
+  justify-content: initial;
+  max-width: none;
   margin: 0 auto;
-  gap: clamp(48px, 5vw, 112px);
   padding: 0;
   overflow: visible;
 }
@@ -2026,7 +2063,7 @@ svg {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 26px;
+  gap: 32px;
 }
 
 .relationship-detail-left {
@@ -2047,8 +2084,6 @@ svg {
   grid-row: 1;
   width: 100%;
   max-width: 680px;
-  position: sticky;
-  top: calc(var(--nav-height) + 56px);
   align-self: start;
 }
 
@@ -2069,7 +2104,7 @@ svg {
 .friend-synastry-wheel-shell {
   display: grid;
   place-items: center;
-  width: min(100%, var(--chart-size));
+  width: 100%;
   max-width: 100%;
   min-width: 0;
   gap: 22px;
@@ -2178,6 +2213,73 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   justify-self: center;
   width: min(100%, 760px);
+}
+
+.segmented-control {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-pill);
+  background: var(--app-card);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+  overflow: visible;
+}
+
+.segmented-control--compact {
+  width: fit-content;
+}
+
+.segmented-control .segmented-control__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 56px;
+  min-height: 0;
+  padding: 0 24px;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--app-muted);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.segmented-control .segmented-control__item.segmented-control__item--active {
+  background: var(--app-text);
+  color: var(--app-bg);
+  box-shadow: none;
+}
+
+.segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
+  background: color-mix(in srgb, var(--app-text) 4%, transparent);
+  color: var(--app-text);
+}
+
+.theme-dark .segmented-control {
+  border-color: var(--app-border);
+  background: var(--surface-2);
+}
+
+.theme-dark .segmented-control .segmented-control__item.segmented-control__item--active {
+  background: var(--app-text);
+  color: var(--app-bg);
+}
+
+.theme-dark .segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
+  background: color-mix(in srgb, var(--app-bg) 8%, transparent);
 }
 
 .friend-compat-stage,
@@ -2291,7 +2393,7 @@ svg {
 .friend-chart-legend {
   display: flex;
   justify-content: center;
-  gap: 10px 22px;
+  gap: 10px 24px;
   flex-wrap: wrap;
   width: min(100%, var(--relationship-wheel-size));
   max-width: 560px;
@@ -2306,28 +2408,38 @@ svg {
   user-select: none;
 }
 
-.friend-chart-legend span {
+.friend-chart-legend span,
+.friend-chart-legend-item {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   min-width: 0;
-  gap: 0.42em;
+  gap: 0.58em;
   white-space: normal;
 }
 
 .friend-chart-legend b {
   flex: 0 0 auto;
   margin-right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
   color: var(--ink);
+}
+
+.friend-chart-legend-item-inner b {
+  border-color: var(--synastry-accent);
+  background: color-mix(in srgb, var(--synastry-accent) 28%, transparent);
 }
 
 .friend-chart-legend strong {
   display: block;
-  max-width: 14ch;
-  overflow: hidden;
+  max-width: none;
+  overflow: visible;
   color: var(--ink);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .friend-chart-legend em {
@@ -2444,13 +2556,21 @@ svg {
   font-weight: 800;
 }
 
+.synastry-placements-comparison,
 .synastry-placement-rows {
   display: grid;
-  gap: 24px;
+  gap: 14px;
 }
 
-.synastry-placement-panel,
-.synastry-placement-row {
+.synastry-placement-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.synastry-placement-column,
+.synastry-placement-panel {
   display: grid;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2459,12 +2579,30 @@ svg {
   overflow: hidden;
 }
 
+.synastry-placement-column {
+  align-self: start;
+}
+
+.synastry-placement-column-inner {
+  border-color: color-mix(in srgb, var(--synastry-accent) 34%, var(--line));
+}
+
+.synastry-placement-column-header,
 .synastry-placement-panel-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 16px;
-  padding: 24px 28px 16px;
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.synastry-placement-column-header h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.15rem, 1.45vw, 1.45rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.05;
 }
 
 .synastry-placement-panel-title {
@@ -2476,58 +2614,77 @@ svg {
 }
 
 .synastry-placement-panel-ring {
-  color: var(--ink);
+  color: var(--muted);
   font-weight: var(--font-weight-bold);
-  font-size: 1rem;
-  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.synastry-placement-grid,
-.synastry-placement-strip {
+.synastry-placement-table {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
   overflow: hidden;
-  border-top: 1px solid var(--line);
+  grid-template-columns: 1fr;
 }
 
-.synastry-placement-card,
-.synastry-placement-chip {
+.synastry-placement-row {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: 34px minmax(120px, 1fr) minmax(72px, auto) minmax(66px, auto);
+  align-items: center;
   min-width: 0;
-  gap: 12px;
-  padding: 18px 20px;
-  border-right: 1px solid var(--line);
+  gap: 12px 16px;
+  padding: 18px 24px;
+  border: 0;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
-  overflow: hidden;
+  overflow: visible;
 }
 
-.synastry-placement-card:nth-child(4n),
-.synastry-placement-chip:nth-child(4n) {
-  border-right: 0;
+.synastry-placement-row:nth-child(odd) {
+  background: color-mix(in srgb, var(--ink) 3%, var(--surface));
 }
 
-.synastry-placement-glyph,
-.synastry-placement-chip > span:first-child {
-  font-size: 1.3rem;
+.synastry-placement-column-inner .synastry-placement-row:nth-child(odd) {
+  background: color-mix(in srgb, var(--synastry-accent) 7%, var(--surface));
+}
+
+.synastry-placement-row:last-child {
+  border-bottom: 0;
+}
+
+.synastry-placement-glyph {
+  color: var(--ink);
+  font-size: 1.35rem;
   line-height: 1;
 }
 
-.synastry-placement-copy {
-  display: grid;
-  min-width: 0;
-  gap: 6px;
+.synastry-placement-column-inner .synastry-placement-glyph {
+  color: var(--synastry-accent);
 }
 
+.synastry-placement-sign,
+.synastry-placement-copy {
+  min-width: 0;
+}
+
+.synastry-placement-sign,
 .synastry-placement-planet,
 .synastry-placement-chip b {
   display: block;
   color: var(--ink);
   font-weight: var(--font-weight-bold);
+  line-height: 1.12;
+}
+
+.synastry-placement-degree,
+.synastry-placement-house {
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: var(--font-weight-medium);
   line-height: 1.1;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .synastry-placement-meta,
@@ -3428,35 +3585,6 @@ button.settings-signout-row {
   margin: 0 auto;
 }
 
-@media (min-width: 1181px) {
-  .you-chart-page {
-    grid-template-columns: minmax(520px, 680px) minmax(560px, 720px);
-    align-items: start;
-    gap: clamp(56px, 5vw, 112px);
-  }
-
-  .you-chart-page > .you-profile-card,
-  .you-chart-page > .you-profile-tabs,
-  .you-chart-page > #sub-transits {
-    grid-column: 2;
-  }
-
-  .you-chart-page > #sub-chart {
-    display: contents;
-  }
-
-  .you-chart-page > #sub-chart > .chart-shell {
-    grid-column: 1;
-    grid-row: 1 / span 16;
-    width: min(100%, var(--chart-size));
-    margin: 0 auto;
-  }
-
-  .you-chart-page > #sub-chart > :not(.chart-shell) {
-    grid-column: 2;
-  }
-}
-
 .profile-layout .sky-panel,
 .profile-layout .detail-panel {
   display: block;
@@ -3533,13 +3661,47 @@ button.settings-signout-row {
   background: var(--surface);
 }
 
+.theme-dark .floating-back-button {
+  border-color: var(--app-border);
+  background: var(--surface-2);
+  color: var(--app-text);
+}
+
+@media (max-width: 1320px) and (min-width: 1181px) {
+  :root {
+    --chart-column-width: minmax(500px, 620px);
+    --content-column-width: minmax(500px, 1fr);
+    --chart-layout-gap: clamp(48px, 5vw, 64px);
+    --shared-chart-size: clamp(520px, 40vw, 600px);
+  }
+}
+
 @media (max-width: 1180px) {
-  .portal-grid,
-  .sky-layout,
-  .profile-layout,
-  .you-chart-page {
+  .portal-grid:not(.chart-layout),
+  .profile-layout {
     grid-template-columns: 1fr;
     gap: 36px;
+  }
+
+  .chart-layout {
+    grid-template-columns: 1fr;
+    width: min(760px, calc(100vw - var(--page-gutter) * 2));
+    gap: 36px;
+  }
+
+  .chart-layout__visual,
+  .chart-page-visual,
+  .sky-chart-column,
+  .friend-detail-chart-rail {
+    position: relative;
+    top: auto;
+    order: 1;
+  }
+
+  .chart-layout__content,
+  .chart-page-content,
+  .sky-content-column {
+    order: 2;
   }
 
   .today-hero,
@@ -3548,29 +3710,12 @@ button.settings-signout-row {
     grid-column: auto;
   }
 
+  .today-hero {
+    order: 2;
+  }
+
   .sky-layout .sky-panel {
     grid-row: auto;
-  }
-
-  .you-chart-page > #sub-chart {
-    display: grid;
-  }
-
-  .you-chart-page > .you-profile-card,
-  .you-chart-page > .you-profile-tabs,
-  .you-chart-page > #sub-transits,
-  .you-chart-page > #sub-chart,
-  .you-chart-page > #sub-chart > .chart-shell,
-  .you-chart-page > #sub-chart > :not(.chart-shell) {
-    grid-column: auto;
-    grid-row: auto;
-  }
-
-  .you-chart-page > #sub-chart > .chart-shell,
-  .chart-page-layout .chart-page-visual,
-  .friend-detail-chart-rail {
-    position: relative;
-    top: auto;
   }
 
   .topbar {
@@ -3598,11 +3743,10 @@ button.settings-signout-row {
   }
 
   .relationship-detail-layout {
-    --chart-size: clamp(340px, 74vw, 560px);
-    --relationship-wheel-size: var(--chart-size);
+    --relationship-wheel-size: min(100%, var(--shared-chart-size));
     grid-template-columns: minmax(0, 1fr);
-    width: min(920px, calc(100vw - 32px));
-    max-width: 920px;
+    width: min(760px, calc(100vw - var(--page-gutter) * 2));
+    max-width: 760px;
   }
 
   .relationship-detail-layout > .friend-detail-content-column,
@@ -3627,19 +3771,8 @@ button.settings-signout-row {
     width: min(920px, calc(100vw - 32px));
   }
 
-  .synastry-placement-grid,
-  .synastry-placement-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .synastry-placement-card:nth-child(4n),
-  .synastry-placement-chip:nth-child(4n) {
-    border-right: 1px solid var(--line);
-  }
-
-  .synastry-placement-card:nth-child(2n),
-  .synastry-placement-chip:nth-child(2n) {
-    border-right: 0;
+  .synastry-placement-columns {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -3660,6 +3793,14 @@ button.settings-signout-row {
 }
 
 @media (max-width: 720px) {
+  .floating-back-button {
+    top: 18px;
+    left: 18px;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 0.95rem;
+  }
+
   .app-shell {
     padding: 112px 18px 48px;
   }
@@ -3700,16 +3841,36 @@ button.settings-signout-row {
   .auth-shell,
   .signup-grid,
   .manual-chart-grid,
-  .synastry-placement-grid,
   .synastry-placement-strip,
   .friend-placement-table,
   .friend-placement-column-compact .friend-placement-table {
     grid-template-columns: 1fr;
   }
 
-  .synastry-placement-card,
-  .synastry-placement-chip {
-    border-right: 0;
+  .synastry-placement-row {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "glyph sign degree"
+      "glyph house house";
+    gap: 6px 12px;
+    padding: 16px 18px;
+  }
+
+  .synastry-placement-glyph {
+    grid-area: glyph;
+  }
+
+  .synastry-placement-sign {
+    grid-area: sign;
+  }
+
+  .synastry-placement-degree {
+    grid-area: degree;
+  }
+
+  .synastry-placement-house {
+    grid-area: house;
+    text-align: left;
   }
 
   .retro {
