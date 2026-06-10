@@ -4427,7 +4427,7 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid signup-layout" : isFriendsMode ? "portal-grid friends-layout" : isProfileMode ? "portal-grid full-page-layout" : "portal-grid"}>
+          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell"}>
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <h1>the sky today.</h1>
@@ -4501,7 +4501,11 @@ export function App() {
 
             {!isSignupMode && !usesFullPageLayout && (
               <section className="sky-panel" aria-label="Current sky">
-                <SkyWheel positions={sky.positions} aspects={sky.aspects} variant="zodiac" />
+                <div className="chart-shell sky-chart-shell">
+                  <div className="chart-frame">
+                    <SkyWheel positions={sky.positions} aspects={sky.aspects} variant="zodiac" />
+                  </div>
+                </div>
 
                 <SkyCards sky={sky} />
               </section>
@@ -7632,7 +7636,7 @@ function SettingsView({
   }
 
   return (
-    <section className="settings-page" aria-label="Settings">
+    <section className="settings-page page-shell--narrow" aria-label="Settings">
       <div className="settings-header">
         <h2>settings.</h2>
         <button className="settings-save" type="button" onClick={handleSettingsAction}>
@@ -7710,9 +7714,9 @@ function SettingsView({
             <div className="settings-list" aria-label="Life area focus">
               {lifeAreaFocusOptions.map((option) => (
                 <div className="settings-row settings-row-control" key={option.value}>
-                  <div>
-                    <span>{option.label}</span>
-                    <small>{option.description}</small>
+                  <div className="settings-row-copy">
+                    <span className="settings-row-title">{option.label}</span>
+                    <small className="settings-row-description">{option.description}</small>
                   </div>
                   <SwitchControl
                     checked={settings.lifeAreaFocus.includes(option.value)}
@@ -7760,7 +7764,7 @@ function GuestSettingsView({
   onDyslexiaFontChange: (enabled: boolean) => void;
 }) {
   return (
-    <section className="settings-page guest-settings-page" aria-label="Settings">
+    <section className="settings-page page-shell--narrow guest-settings-page" aria-label="Settings">
       <div className="settings-header">
         <h2>settings.</h2>
       </div>
@@ -7916,7 +7920,7 @@ function AccountView({
   };
 
   return (
-    <section className="account-page" aria-label="Account">
+    <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
         <h2>account.</h2>
       </div>
@@ -8099,7 +8103,7 @@ function ProfileView({
   }
 
   return (
-    <section className="you-page" aria-label="You">
+    <section className="you-page page-shell--narrow" aria-label="You">
       <div className="you-profile-card" aria-label="Profile summary">
         <span className="you-profile-monogram" aria-hidden="true">
           {profileInitials(profile.name, profile.email)}
@@ -8142,16 +8146,18 @@ function ProfileView({
       {profileTab === "chart" && (
         <div className="subpane" id="sub-chart">
           {natalSky && (
-            <div className="wheel natal-wheel" id="wheel-natal" aria-label="Natal chart wheel">
-              <SkyWheel
-                positions={natalSky.positions}
-                aspects={natalSky.aspects}
-                ascendant={natalSky.ascendant}
-                ascendantLongitude={natalSky.ascendantLongitude}
-                midheavenLongitude={natalSky.midheavenLongitude}
-                showHouses
-                variant="natal"
-              />
+            <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
+              <div className="chart-frame">
+                <SkyWheel
+                  positions={natalSky.positions}
+                  aspects={natalSky.aspects}
+                  ascendant={natalSky.ascendant}
+                  ascendantLongitude={natalSky.ascendantLongitude}
+                  midheavenLongitude={natalSky.midheavenLongitude}
+                  showHouses
+                  variant="natal"
+                />
+              </div>
             </div>
           )}
           {!natalSky && (
@@ -8652,12 +8658,14 @@ function ManualChartsPanel({
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
 
   return (
-    <section className={`friends-page manual-charts-pane${isFriendDetailView ? " friend-detail-page" : ""}`} aria-label="Friends">
+    <section className={`friends-page page-shell manual-charts-pane${isFriendDetailView ? " friend-detail-page" : ""}`} aria-label="Friends">
       {resolvedFriendsMainView === "profile" && selectedChart ? (
-        <button className="friends-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
-          <ChevronLeft size={21} aria-hidden="true" />
-          <span>Charts</span>
-        </button>
+        <div className="page-back-row friend-back-row">
+          <button className="friends-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
+            <ChevronLeft size={21} aria-hidden="true" />
+            <span>Charts</span>
+          </button>
+        </div>
       ) : (
         <>
           <div className="friends-page-heading">
@@ -8949,8 +8957,8 @@ function ManualChartsPanel({
         </div>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-        <section className={`friend-profile-panel friend-focus-panel friend-profile-view relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
-          <div className="relationship-detail-right friend-detail-content-column">
+        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
+          <div className="relationship-detail-right friend-detail-content-column friend-detail-main">
             <div className="friend-hero-card friend-profile-card">
               <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
                 {profileInitials(selectedChart.displayName, selectedChart.displayName)}
@@ -9188,10 +9196,10 @@ function ManualChartsPanel({
           )}
           </div>
 
-          <div className="relationship-detail-left friend-detail-chart-column" aria-label="Relationship chart">
+          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail" aria-label="Relationship chart">
             {friendProfileTab === "natal" && selectedChart.natalChart && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+              <div className="friend-synastry-wheel-shell chart-shell">
+                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
                   <SkyWheel
                     positions={selectedChart.natalChart.positions}
                     aspects={selectedChart.natalChart.aspects}
@@ -9208,8 +9216,8 @@ function ManualChartsPanel({
               </div>
             )}
             {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
+              <div className="friend-synastry-wheel-shell chart-shell">
+                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
                   <SynastryWheel
                     outerPositions={selectedChart.natalChart.positions}
                     innerPositions={relationshipComparisonSky?.positions ?? []}
@@ -9234,8 +9242,8 @@ function ManualChartsPanel({
               </div>
             )}
             {friendProfileTab === "composite" && selectedCompositeSky && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
+              <div className="friend-synastry-wheel-shell chart-shell">
+                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
                   <SkyWheel
                     positions={selectedCompositeSky.positions}
                     aspects={selectedCompositeSky.aspects}
