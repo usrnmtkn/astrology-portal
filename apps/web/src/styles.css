@@ -62,6 +62,8 @@
   --shared-chart-size: clamp(560px, 40vw, 660px);
   --chart-size: var(--shared-chart-size);
   --nav-safe-offset: calc(var(--nav-height) + 72px);
+  --chart-page-top: calc(var(--nav-height) + 96px);
+  --chart-sticky-top: calc(var(--nav-height) + 72px);
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
@@ -267,9 +269,10 @@ svg {
 .chart-page-visual,
 .sky-chart-column {
   position: sticky;
-  top: var(--nav-safe-offset);
+  top: var(--chart-sticky-top);
   display: flex;
   flex-direction: column;
+  align-self: start;
   align-items: center;
   min-width: 0;
   padding-top: 0;
@@ -463,6 +466,8 @@ svg {
   max-width: 100%;
   min-width: 0;
   margin-inline: auto;
+  margin-top: 0;
+  padding-top: 0;
   aspect-ratio: 1 / 1;
 }
 
@@ -491,6 +496,12 @@ svg {
   padding: var(--page-top) var(--page-gutter) 80px;
   background: var(--bg);
   color: var(--ink);
+}
+
+.app-shell.mode-guest,
+.app-shell.mode-member,
+.app-shell.mode-profile {
+  padding-top: var(--chart-page-top);
 }
 
 .app-shell.auth-mode {
@@ -2208,7 +2219,7 @@ svg {
   position: relative;
   width: min(var(--page-max), 100%);
   margin: 0 auto;
-  padding: calc(var(--nav-height) + 88px) var(--page-gutter) 88px;
+  padding: var(--chart-page-top) var(--page-gutter) 88px;
   overflow-x: clip;
 }
 
@@ -2244,10 +2255,6 @@ svg {
   margin-inline: auto;
 }
 
-.friend-chart-page .chart-layout__visual {
-  top: calc(var(--nav-height) + 64px);
-}
-
 .friend-chart-page .chart-layout__content,
 .friend-chart-page .friend-detail-main {
   gap: 28px;
@@ -2256,7 +2263,7 @@ svg {
 .friend-chart-page .section-block,
 .friend-chart-page .section-label,
 .friend-chart-page .friend-section-label {
-  scroll-margin-top: calc(var(--nav-height) + 64px);
+  scroll-margin-top: var(--chart-sticky-top);
 }
 
 .relationship-detail-left,
