@@ -5194,8 +5194,8 @@ function RelationshipComparePicker({
       )}
       {variant === "synastry" && (
         <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
-          <span><b>A</b>{outerInitials ?? "A"} <em>- outer ring</em></span>
-          <span><b>B</b>{selectedOption.initials} <em>- inner ring</em></span>
+          <span><b>A</b> {outerInitials ?? "A"} <em>- outer ring</em></span>
+          <span><b>B</b> {selectedOption.initials} <em>- inner ring</em></span>
         </div>
       )}
     </div>
