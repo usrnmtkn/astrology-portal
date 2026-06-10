@@ -353,7 +353,7 @@ svg {
 }
 
 .theme-dark .sign-band {
-  stroke: #000000;
+  stroke: #050505;
 }
 
 .wheel-rings circle {
@@ -373,8 +373,21 @@ svg {
   stroke-width: 0.9;
 }
 
+.theme-dark .wheel-rings circle,
+.theme-dark .synastry-chart-rings circle {
+  stroke: rgba(245, 242, 235, 0.18);
+}
+
+.theme-dark .synastry-chart-rings line {
+  stroke: rgba(245, 242, 235, 0.18);
+}
+
 .wheel-rings .faint {
   stroke: rgba(23, 23, 23, 0.08);
+}
+
+.theme-dark .wheel-rings .faint {
+  stroke: rgba(245, 242, 235, 0.12);
 }
 
 .wheel-sectors line,
@@ -384,9 +397,20 @@ svg {
   stroke-width: 1;
 }
 
+.theme-dark .wheel-sectors line,
+.theme-dark .sign-band-dividers line,
+.theme-dark .natal-angle-lines line {
+  stroke: rgba(245, 242, 235, 0.28);
+}
+
 .ascendant-axis {
   stroke: rgba(23, 23, 23, 0.65);
   stroke-dasharray: 6 8;
+}
+
+.theme-dark .ascendant-axis,
+.theme-dark .natal-angle-lines .ascendant-axis {
+  stroke: rgba(245, 242, 235, 0.44);
 }
 
 .sign-labels text {
@@ -409,6 +433,11 @@ svg {
   text-anchor: middle;
 }
 
+.theme-dark .house-labels text,
+.theme-dark .angular-labels text {
+  fill: rgba(245, 242, 235, 0.5);
+}
+
 .planet-glyph {
   fill: var(--ink);
   font-size: 24px;
@@ -423,8 +452,16 @@ svg {
   text-anchor: middle;
 }
 
+.theme-dark .planet-degree {
+  fill: rgba(245, 242, 235, 0.58);
+}
+
 .planet-tick {
   stroke: rgba(23, 23, 23, 0.5);
+}
+
+.theme-dark .planet-tick {
+  stroke: rgba(245, 242, 235, 0.42);
 }
 
 .planet-hit-area {
@@ -1959,15 +1996,15 @@ svg {
 .friend-chart-legend {
   display: flex;
   justify-content: center;
-  gap: 14px 24px;
+  gap: 10px 22px;
   flex-wrap: wrap;
   width: min(100%, var(--relationship-wheel-size));
   max-width: 560px;
   margin: 0 auto;
   color: var(--ink);
-  font-size: clamp(0.82rem, 0.9vw, 0.98rem);
+  font-size: clamp(0.74rem, 0.78vw, 0.9rem);
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   line-height: 1.2;
   text-align: center;
   text-transform: uppercase;
@@ -1975,16 +2012,33 @@ svg {
 }
 
 .friend-chart-legend span {
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 0;
+  gap: 0.42em;
+  white-space: normal;
 }
 
 .friend-chart-legend b {
-  margin-right: 0.35em;
+  flex: 0 0 auto;
+  margin-right: 0;
+  color: var(--ink);
+}
+
+.friend-chart-legend strong {
+  display: block;
+  max-width: 14ch;
+  overflow: hidden;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .friend-chart-legend em {
   color: var(--muted);
   font-style: normal;
+  letter-spacing: 0.04em;
 }
 
 .friend-compare-control {
@@ -2126,7 +2180,7 @@ svg {
 
 .synastry-placement-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   overflow: hidden;
   gap: 1px;
   border: 1px solid var(--line);
@@ -2136,15 +2190,16 @@ svg {
 
 .synastry-placement-chip {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: 24px minmax(0, 1fr);
   grid-template-areas:
     "glyph name"
     "glyph meta";
   align-items: center;
+  align-content: center;
   min-width: 0;
-  min-height: 76px;
-  gap: 12px;
-  padding: 14px 12px;
+  min-height: 78px;
+  gap: 8px 12px;
+  padding: 14px;
   border-radius: 14px;
   background: var(--surface);
   overflow: hidden;
@@ -2152,12 +2207,16 @@ svg {
 
 .synastry-placement-chip > span:first-child {
   grid-area: glyph;
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
 .synastry-placement-chip b {
   grid-area: name;
   display: block;
   overflow: hidden;
+  font-size: 0.95rem;
+  line-height: 1.12;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2167,8 +2226,9 @@ svg {
   display: block;
   overflow: hidden;
   color: var(--muted);
+  line-height: 1.18;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .friend-placement-column {
@@ -3129,6 +3189,10 @@ button.settings-signout-row {
     order: 2;
     position: relative;
     top: auto;
+  }
+
+  .synastry-placement-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

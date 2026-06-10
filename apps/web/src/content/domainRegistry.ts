@@ -167,13 +167,18 @@ type PrimitiveMap = Record<string, {
 
 const planetTopic: Record<string, string> = {
   ascendant: "how you meet the world",
+  chiron: "sensitivity, repair, and the places that ask for care",
   jupiter: "growth, belief, and opportunity",
   mars: "action, desire, and conflict",
   mercury: "thinking, language, and decisions",
+  midheaven: "direction, visibility, reputation, and public life",
   moon: "feelings, needs, and daily rhythm",
   neptune: "imagination, longing, and blurred edges",
+  node: "direction, timing, and what feels newly relevant",
+  "north-node": "direction, timing, and what feels newly relevant",
   pluto: "power, control, and transformation",
   saturn: "structure, responsibility, and limits",
+  "south-node": "old patterns, familiar skills, and what is ready to loosen",
   sun: "attention, vitality, and self-expression",
   "true-node": "direction, timing, and what feels newly relevant",
   uranus: "change, disruption, and freedom",
@@ -492,11 +497,16 @@ function approvedVoiceStatus(value: VoiceContentItem["status"] | undefined) {
   return value === "APPROVED" || value === "LIVE";
 }
 
+function readablePointTopic(point: string, mode: "sky" | "natal") {
+  return (mode === "sky" ? skyPlanetTopic[point] ?? planetTopic[point] : planetTopic[point])
+    ?? `${titleize(point).toLowerCase()} themes`;
+}
+
 function readableAspectSummary(planetA: string, aspect: string, planetB: string, mode: "sky" | "natal") {
   const planetALabel = titleize(planetA);
   const planetBLabel = titleize(planetB);
-  const planetATheme = mode === "sky" ? skyPlanetTopic[planetA] ?? planetTopic[planetA] : planetTopic[planetA];
-  const planetBTheme = mode === "sky" ? skyPlanetTopic[planetB] ?? planetTopic[planetB] : planetTopic[planetB];
+  const planetATheme = readablePointTopic(planetA, mode);
+  const planetBTheme = readablePointTopic(planetB, mode);
   const verb = aspectVerb[aspect] ?? aspect;
 
   if (mode === "sky") {
