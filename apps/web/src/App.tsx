@@ -69,6 +69,59 @@ type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
 type SignupProvider = "email" | "google";
 
+type SegmentedOption<T extends string> = {
+  value: T;
+  label: ReactNode;
+};
+
+function SegmentedControl<T extends string>({
+  value,
+  options,
+  onChange,
+  ariaLabel,
+  className = "",
+  compact = false,
+  scroll = false,
+  id
+}: {
+  value: T;
+  options: Array<SegmentedOption<T>>;
+  onChange: (value: T) => void;
+  ariaLabel: string;
+  className?: string;
+  compact?: boolean;
+  scroll?: boolean;
+  id?: string;
+}) {
+  const classes = [
+    "segmented-control",
+    compact ? "segmented-control--compact" : "",
+    scroll ? "segmented-control--scroll" : "",
+    className
+  ].filter(Boolean).join(" ");
+
+  return (
+    <div className={classes} id={id} role="tablist" aria-label={ariaLabel}>
+      {options.map((option) => {
+        const isActive = option.value === value;
+
+        return (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            className={`segmented-control__item${isActive ? " segmented-control__item--active" : ""}`}
+            key={option.value}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 type UserChart = {
   id: string;
   name: string;
@@ -170,6 +223,7 @@ type TransitItem = {
   score?: number;
   significance?: string;
   timingBonuses?: string[];
+  isSlowGeneralWeather?: boolean;
 };
 
 type FriendProfileTab = "natal" | "synastry" | "composite";
@@ -1917,6 +1971,43 @@ function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   );
 }
 
+function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
+  if (position.transitStart && position.transitEnd) {
+    return formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd));
+  }
+
+  return placementTransitRange(position, generatedAt);
+}
+
+function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
+  if (position.transitRemainingLabel) {
+    return position.transitRemainingLabel;
+  }
+
+  if (!position.transitEnd) {
+    return null;
+  }
+
+  const endDate = new Date(position.transitEnd);
+  const currentDate = new Date(generatedAt);
+
+  if (Number.isNaN(endDate.getTime()) || Number.isNaN(currentDate.getTime())) {
+    return null;
+  }
+
+  const days = Math.max(1, Math.ceil((endDate.getTime() - currentDate.getTime()) / 86_400_000));
+
+  if (days < 90) {
+    return `${days}Ds`;
+  }
+
+  if (days <= 548) {
+    return `${Math.max(1, Math.round(days / 30.44))}Mos`;
+  }
+
+  return `${Math.max(1, Math.round(days / 365.25))}Yrs`;
+}
+
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const fastestPlanet = [aspect.from, aspect.to]
     .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
@@ -2196,6 +2287,8 @@ const transitAspectDefinitions = [
 ] as const;
 
 const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"]);
+const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
+const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
 
 function angularDistance(first: number, second: number) {
   const difference = Math.abs(normalizedAngle(first - second));
@@ -2256,6 +2349,14 @@ function transitNote(transitPlanet: string, aspect: string, natalPoint: string) 
   return `${transitPlanet} ${tones[aspect] ?? "contacts"} your natal ${natalPoint}. Read this as timing: today's sky is activating that part of your chart.`;
 }
 
+function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
+  if (!slowChapterPlanets.has(transitPlanet)) {
+    return true;
+  }
+
+  return orbValue <= 1.5 || transitPriorityTargets.has(natalPoint);
+}
+
 function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[]): TransitItem[] {
   return transitPositions.flatMap((transitPosition) => (
     natalPositions.flatMap((natalPosition) => {
@@ -2270,6 +2371,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
       }
 
       const id = `${transitPosition.planet}-${aspect.type}-${natalPosition.planet}`.toLowerCase().replace(/\s+/g, "-");
+      const elevatedSlowTransit = isElevatedSlowTransit(transitPosition.planet, natalPosition.planet, aspect.orbValue);
 
       return {
         id,
@@ -2284,7 +2386,8 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         orb: formatOrb(aspect.orbValue),
         direction: aspect.orbValue <= 1 ? "applying" : "separating",
         arc: [aspect.orbValue + 1.8, aspect.orbValue + 1.1, aspect.orbValue + 0.4, aspect.orbValue, aspect.orbValue + 0.5, aspect.orbValue + 1.2],
-        note: transitNote(transitPosition.planet, aspect.type, natalPosition.planet)
+        note: transitNote(transitPosition.planet, aspect.type, natalPosition.planet),
+        isSlowGeneralWeather: slowChapterPlanets.has(transitPosition.planet) && !elevatedSlowTransit
       } satisfies TransitItem;
     })
   ))
@@ -2466,13 +2569,23 @@ function rankedTransitItems(transits: TransitItem[], timing: FriendTimingContext
 
   return ranked.map((scored) => {
     const transit = transits[Number(scored.index)] ?? transits[0];
+    const isSlowGeneralWeather = transit.isSlowGeneralWeather ?? false;
 
     return {
       ...transit,
-      score: scored.score,
-      significance: scored.label,
+      score: isSlowGeneralWeather ? scored.score - 35 : scored.score,
+      significance: isSlowGeneralWeather ? "background" : scored.label,
       timingBonuses: scored.factors.bonuses
     };
+  }).sort((first, second) => {
+    const firstBackgroundPenalty = first.isSlowGeneralWeather ? 1 : 0;
+    const secondBackgroundPenalty = second.isSlowGeneralWeather ? 1 : 0;
+
+    if (firstBackgroundPenalty !== secondBackgroundPenalty) {
+      return firstBackgroundPenalty - secondBackgroundPenalty;
+    }
+
+    return (second.score ?? 0) - (first.score ?? 0);
   });
 }
 
@@ -2552,10 +2665,26 @@ function transitLifeAreaFocusScore(transit: TransitItem, focusAreas: LifeAreaFoc
 
 function rankTransitsByLifeAreaFocus<T extends TransitItem>(transits: T[], focusAreas: LifeAreaFocus[]) {
   if (focusAreas.length === 0) {
-    return transits;
+    return [...transits].sort((first, second) => {
+      const firstBackgroundPenalty = first.isSlowGeneralWeather ? 1 : 0;
+      const secondBackgroundPenalty = second.isSlowGeneralWeather ? 1 : 0;
+
+      if (firstBackgroundPenalty !== secondBackgroundPenalty) {
+        return firstBackgroundPenalty - secondBackgroundPenalty;
+      }
+
+      return (second.score ?? 0) - (first.score ?? 0);
+    });
   }
 
   return [...transits].sort((first, second) => {
+    const firstBackgroundPenalty = first.isSlowGeneralWeather ? 1 : 0;
+    const secondBackgroundPenalty = second.isSlowGeneralWeather ? 1 : 0;
+
+    if (firstBackgroundPenalty !== secondBackgroundPenalty) {
+      return firstBackgroundPenalty - secondBackgroundPenalty;
+    }
+
     const firstScore = transitLifeAreaFocusScore(first, focusAreas);
     const secondScore = transitLifeAreaFocusScore(second, focusAreas);
 
@@ -3567,7 +3696,9 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
     }
 
     transits.forEach((transit) => {
-      byPlanet.set(transit.transitPlanet, [...(byPlanet.get(transit.transitPlanet) ?? []), chart]);
+      if (!transit.isSlowGeneralWeather) {
+        byPlanet.set(transit.transitPlanet, [...(byPlanet.get(transit.transitPlanet) ?? []), chart]);
+      }
       const natalPoint = chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint);
 
       if (natalPoint?.house) {
@@ -3918,7 +4049,7 @@ export function App() {
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
 
     setSky(getCurrentSky(skyLocation, selectedDateTime));
-    getAstrodienstSky(skyLocation, selectedDateTime)
+    getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
       .then((nextSky) => {
         if (!cancelled) {
           setSky(nextSky);
@@ -4621,7 +4752,12 @@ export function App() {
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
-                <h1>the sky today.</h1>
+                <div className="sky-intro">
+                  <h1 className="sky-intro__lead">Today, simple.</h1>
+                  <p className="sky-intro__copy">
+                    What is up there today, and what it actually means down here.
+                  </p>
+                </div>
                 <div className="today-controls">
                   <button
                     className="today-pill"
@@ -5114,6 +5250,7 @@ function FriendPlacementTable({
               : liveGeneratedContent(generatedContent, placementContentId(row.label, row.sign))
             : null;
           const summary = compact ? null : generated?.summary?.trim();
+          const dignity = dignityFor(row.label, row.sign);
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
@@ -5130,6 +5267,7 @@ function FriendPlacementTable({
                     <span>{socialPlacementDegree(row.degree)}</span>
                     <span aria-hidden="true">·</span>
                     <span>{row.house ? `H${row.house}` : "H-"}</span>
+                    <DignityBadge dignity={dignity} />
                   </span>
                 </>
               ) : (
@@ -5145,6 +5283,7 @@ function FriendPlacementTable({
                     <span>{socialPlacementDegree(row.degree)}</span>
                     <span aria-hidden="true">·</span>
                     <span>{row.house ? `${ordinalHouse(row.house)} House` : "House pending"}</span>
+                    <DignityBadge dignity={dignity} />
                   </span>
                   {summary ? <span className="friend-placement-summary">{summary}</span> : null}
                 </>
@@ -5157,77 +5296,142 @@ function FriendPlacementTable({
   );
 }
 
-const planetDignities: Record<string, Partial<Record<string, { label: string; tone: "good" | "weak" }>>> = {
+type EssentialDignity = "domicile" | "exaltation" | "detriment" | "fall";
+type DignityTone = "good" | "weak" | "neutral";
+type PlacementDignity = {
+  dignity: EssentialDignity;
+  label: string;
+  tone: DignityTone;
+};
+
+const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: string; tone: DignityTone }> = {
+  domicile: { adjective: "Natural", name: "Domicile", tone: "good" },
+  exaltation: { adjective: "Empowered", name: "Exaltation", tone: "good" },
+  detriment: { adjective: "Constrained", name: "Detriment", tone: "weak" },
+  fall: { adjective: "Weakened", name: "Fall", tone: "weak" }
+};
+
+const planetDignities: Record<string, Partial<Record<string, EssentialDignity>>> = {
   Sun: {
-    Leo: { label: "Domicile", tone: "good" },
-    Aries: { label: "Exalted", tone: "good" },
-    Aquarius: { label: "Detriment", tone: "weak" },
-    Libra: { label: "Fall", tone: "weak" }
+    Leo: "domicile",
+    Aries: "exaltation",
+    Aquarius: "detriment",
+    Libra: "fall"
   },
   Moon: {
-    Cancer: { label: "Domicile", tone: "good" },
-    Taurus: { label: "Exalted", tone: "good" },
-    Capricorn: { label: "Detriment", tone: "weak" },
-    Scorpio: { label: "Fall", tone: "weak" }
+    Cancer: "domicile",
+    Taurus: "exaltation",
+    Capricorn: "detriment",
+    Scorpio: "fall"
   },
   Mercury: {
-    Gemini: { label: "Domicile", tone: "good" },
-    Virgo: { label: "Domicile", tone: "good" },
-    Sagittarius: { label: "Detriment", tone: "weak" },
-    Pisces: { label: "Fall", tone: "weak" }
+    Gemini: "domicile",
+    Virgo: "domicile",
+    Sagittarius: "detriment",
+    Pisces: "fall"
   },
   Venus: {
-    Taurus: { label: "Domicile", tone: "good" },
-    Libra: { label: "Domicile", tone: "good" },
-    Pisces: { label: "Exalted", tone: "good" },
-    Aries: { label: "Detriment", tone: "weak" },
-    Scorpio: { label: "Detriment", tone: "weak" },
-    Virgo: { label: "Fall", tone: "weak" }
+    Taurus: "domicile",
+    Libra: "domicile",
+    Pisces: "exaltation",
+    Aries: "detriment",
+    Scorpio: "detriment",
+    Virgo: "fall"
   },
   Mars: {
-    Aries: { label: "Domicile", tone: "good" },
-    Scorpio: { label: "Domicile", tone: "good" },
-    Capricorn: { label: "Exalted", tone: "good" },
-    Taurus: { label: "Detriment", tone: "weak" },
-    Libra: { label: "Detriment", tone: "weak" },
-    Cancer: { label: "Fall", tone: "weak" }
+    Aries: "domicile",
+    Scorpio: "domicile",
+    Capricorn: "exaltation",
+    Taurus: "detriment",
+    Libra: "detriment",
+    Cancer: "fall"
   },
   Jupiter: {
-    Sagittarius: { label: "Domicile", tone: "good" },
-    Pisces: { label: "Domicile", tone: "good" },
-    Cancer: { label: "Exalted", tone: "good" },
-    Gemini: { label: "Detriment", tone: "weak" },
-    Virgo: { label: "Detriment", tone: "weak" },
-    Capricorn: { label: "Fall", tone: "weak" }
+    Sagittarius: "domicile",
+    Pisces: "domicile",
+    Cancer: "exaltation",
+    Gemini: "detriment",
+    Virgo: "detriment",
+    Capricorn: "fall"
   },
   Saturn: {
-    Capricorn: { label: "Domicile", tone: "good" },
-    Aquarius: { label: "Domicile", tone: "good" },
-    Libra: { label: "Exalted", tone: "good" },
-    Cancer: { label: "Detriment", tone: "weak" },
-    Leo: { label: "Detriment", tone: "weak" },
-    Aries: { label: "Fall", tone: "weak" }
-  },
-  Uranus: {
-    Aquarius: { label: "Natural", tone: "good" },
-    Taurus: { label: "Constrained", tone: "weak" }
-  },
-  Neptune: {
-    Pisces: { label: "Natural", tone: "good" },
-    Virgo: { label: "Constrained", tone: "weak" }
-  },
-  Pluto: {
-    Scorpio: { label: "Natural", tone: "good" },
-    Taurus: { label: "Constrained", tone: "weak" }
+    Capricorn: "domicile",
+    Aquarius: "domicile",
+    Libra: "exaltation",
+    Cancer: "detriment",
+    Leo: "detriment",
+    Aries: "fall"
   }
 };
 
-function placementDignity(position: PlanetPosition) {
-  return planetDignities[position.planet]?.[position.sign] ?? null;
+function dignityFor(planet: string, sign: string): PlacementDignity | null {
+  const dignity = planetDignities[planet]?.[sign] ?? null;
+
+  if (!dignity) {
+    return null;
+  }
+
+  const labelParts = dignityLabelParts[dignity];
+
+  return {
+    dignity,
+    label: `${labelParts.adjective} · ${labelParts.name}`,
+    tone: labelParts.tone
+  };
 }
 
-function placementRangeLabel(position: PlanetPosition) {
-  return `${position.sign} 0°-30° · current degree ${formatPlanetDegree(position)}`;
+function placementDignity(position: PlanetPosition) {
+  return dignityFor(position.planet, position.sign);
+}
+
+function uppercaseDignityLabel(dignity: PlacementDignity) {
+  return dignity.label.toUpperCase();
+}
+
+function DignityBadge({ dignity, uppercase = false }: { dignity: PlacementDignity | null; uppercase?: boolean }) {
+  if (!dignity) {
+    return null;
+  }
+
+  return (
+    <span className={`spl-dig spl-dig--${dignity.tone}`}>
+      {uppercase ? uppercaseDignityLabel(dignity) : dignity.label}
+    </span>
+  );
+}
+
+type SolarPhaseStatus = {
+  label: string;
+  tone: "muted" | "alert";
+};
+
+function solarPhaseStatusFor(position: PlanetPosition, positions: PlanetPosition[]): SolarPhaseStatus | null {
+  if (position.planet === "Sun") {
+    return null;
+  }
+
+  const sun = positions.find((candidate) => candidate.planet === "Sun");
+
+  if (!sun) {
+    return null;
+  }
+
+  const separation = angularDistance(zodiacLongitude(position), zodiacLongitude(sun));
+  const roundedSeparation = Math.round(separation);
+
+  if (separation <= 0.3) {
+    return { label: "CAZIMI", tone: "alert" };
+  }
+
+  if (separation <= 8) {
+    return { label: `COMBUST · ${roundedSeparation}°`, tone: "alert" };
+  }
+
+  if (separation <= 17) {
+    return { label: `NEARING THE BEAMS · ${roundedSeparation}°`, tone: "muted" };
+  }
+
+  return null;
 }
 
 function placementStatuses(position: PlanetPosition) {
@@ -5281,10 +5485,14 @@ function retrogradeKnowledgeCopy(
   const knowledgeSummary = hookFallback.summary?.trim() || hookFallback.body?.trim() || hookFallback.detailParagraphs[0]?.trim();
 
   if (knowledgeSummary) {
-    return `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
+    return slowChapterPlanets.has(position.planet)
+      ? `${knowledgeSummary} This is a review period inside a longer ${position.sign} chapter, not the whole transit ending.`
+      : `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
   }
 
-  return `${position.planet} is retrograde in ${position.sign}: review the themes of ${position.planet} through the lens of ${position.sign}. Retrograde motion brings this same topic back for review before it moves forward.`;
+  return slowChapterPlanets.has(position.planet)
+    ? `${position.planet} is retrograde in ${position.sign}: a review period inside the longer ${position.sign} chapter. Notice what is being revised without treating it like an urgent ending.`
+    : `${position.planet} is retrograde in ${position.sign}: review the themes of ${position.planet} through the lens of ${position.sign}. Retrograde motion brings this same topic back for review before it moves forward.`;
 }
 
 function ordinalHouse(house: number) {
@@ -5561,7 +5769,10 @@ function SynastryPlacementColumn({
           {placements.map((position) => (
             <article className="synastry-placement-row" key={`${ringLabel}-${position.planet}`}>
               <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
-              <strong className="synastry-placement-sign">{position.sign}</strong>
+              <span className="synastry-placement-copy">
+                <strong className="synastry-placement-sign">{position.sign}</strong>
+                <DignityBadge dignity={placementDignity(position)} />
+              </span>
               <span className="synastry-placement-degree">{formatPlanetDegree(position)}</span>
               <span className="synastry-placement-house">{position.house ? `H${position.house}` : "House pending"}</span>
             </article>
@@ -6324,7 +6535,7 @@ function dateOnly(value: string | Date) {
 }
 
 function formatRetrogradeDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value.slice(0, 10)}T00:00:00Z`));
 }
 
 function formatRetrogradeDateRange(start: string, end: string) {
@@ -6386,7 +6597,7 @@ function retrogradeCardRange(window?: RetrogradeWindow) {
     return "Dates calculating";
   }
 
-  return `Until ${formatRetrogradeDate(window.retrogradeEnd)}`;
+  return `Review until ${formatRetrogradeDate(window.retrogradeEnd)}`;
 }
 
 function retrogradeDetailRange(window?: RetrogradeWindow) {
@@ -6395,6 +6606,21 @@ function retrogradeDetailRange(window?: RetrogradeWindow) {
   }
 
   return formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd);
+}
+
+function signChapterEndLabel(position: PlanetPosition) {
+  if (!position.transitEnd) {
+    return null;
+  }
+
+  return `${position.sign} chapter until ${formatRetrogradeDate(position.transitEnd)}`;
+}
+
+function compactRetrogradeTiming(position: PlanetPosition, window?: RetrogradeWindow) {
+  const review = window ? `Review until ${formatRetrogradeDate(window.retrogradeEnd)}` : "Review dates calculating";
+  const chapter = signChapterEndLabel(position);
+
+  return chapter ? `${review} · ${chapter}` : review;
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
@@ -6467,7 +6693,10 @@ function RetrogradeCallout({
           const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
-          const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+          const chapterLine = signChapterEndLabel(position);
+          const timelineLines = chapterLine
+            ? [...retrogradeTimelineLines(retrogradeWindow), `Sign chapter: ${placementTransitRangeLabel(position, generatedAt)}`]
+            : retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
             ...liveGeneratedBody(generated, content.detailParagraphs)
@@ -6482,7 +6711,7 @@ function RetrogradeCallout({
                 glyph: `${position.glyph} ℞`,
                 kicker: retrogradeDetailKicker(position),
                 title: generated?.headline ?? title,
-                meta: `${formatPlacementPosition(position).toUpperCase()} · ${retrogradeDetailRange(retrogradeWindow)}`,
+                meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
                 body: detailParagraphs,
                 sections: generatedDetailSections(generated),
                 astrologyDrilldown: generatedAstrologyDrilldown(generated),
@@ -6499,6 +6728,7 @@ function RetrogradeCallout({
                   <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
+                {chapterLine ? <span className="retro-chapter">{chapterLine}</span> : null}
                 <span className="retro-copy">{retrogradeKnowledgeCopy(position, generated, content)}</span>
               </span>
             </button>
@@ -6711,28 +6941,19 @@ function PlacementView({
     <>
       <div className="placements-heading">
         <p>Placements</p>
-        <h2>Today, simple.</h2>
-        <span>What is up there today, and what it actually means down here.</span>
       </div>
 
-      <div className="app-tabs placement-tabs segmented-control segmented-control--compact" role="tablist" aria-label="Placement view">
-        <button
-          className={`segmented-control__item${placementMode === "table" ? " segmented-control__item--active active" : ""}`}
-          onClick={() => setPlacementMode("table")}
-          role="tab"
-          aria-selected={placementMode === "table"}
-        >
-          List
-        </button>
-        <button
-          className={`segmented-control__item${placementMode === "paragraph" ? " segmented-control__item--active active" : ""}`}
-          onClick={() => setPlacementMode("paragraph")}
-          role="tab"
-          aria-selected={placementMode === "paragraph"}
-        >
-          Paragraph
-        </button>
-      </div>
+      <SegmentedControl
+        value={placementMode}
+        options={[
+          { value: "table", label: "List" },
+          { value: "paragraph", label: "Paragraph" }
+        ]}
+        onChange={setPlacementMode}
+        ariaLabel="Placement view"
+        className="app-tabs placement-tabs"
+        compact
+      />
 
       {placementMode === "table" ? (
         <PlacementTable
@@ -6923,7 +7144,10 @@ function PlacementTable({
           const activeAspects = aspectsForPlacement(position, aspects);
           const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
+          const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
+          const durationLabel = compactTransitDurationLabel(position, generatedAt);
+          const transitRangeLabel = placementTransitRangeLabel(position, generatedAt);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const placementHookKey = position.planet === "Sun"
@@ -6946,7 +7170,7 @@ function PlacementTable({
             glyph: detailGlyphForPlacement(position, activeAspects),
             kicker: placementDetailKicker(position, activeAspects),
             title: generated?.headline ?? title,
-            meta: `${formatPlacementPosition(position).toUpperCase()} · ${placementTransitRange(position, generatedAt)}`,
+            meta: `${formatPlacementPosition(position).toUpperCase()} · ${transitRangeLabel}`,
             body,
             sections: generatedDetailSections(generated),
             astrologyDrilldown: generatedAstrologyDrilldown(generated),
@@ -6964,23 +7188,28 @@ function PlacementTable({
               <span className="sky-pl-glyph" aria-hidden="true">{position.glyph}</span>
               <span className="sky-pl-body">
                 <span className="sky-pl-main">
-                  <span className="sky-pl-title">{title}</span>
+                  <span className="sky-pl-title">{natalPlacementTitle(position)}</span>
                   <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
                   {position.motion === "retrograde" ? <span className="sky-pl-rx" aria-label="Retrograde">℞</span> : null}
-                  {dignity ? (
-                    <span className={`spl-dig spl-dig-${dignity.tone}`}>
-                      {dignity.label}
-                    </span>
-                  ) : null}
+                  <DignityBadge dignity={dignity} uppercase />
                 </span>
-                <span className="sky-pl-range">{placementRangeLabel(position)}</span>
-                {statuses.length > 0 ? (
+                <span className="sky-pl-range">
+                  {durationLabel ? <span className="sky-pl-duration">{durationLabel}</span> : null}
+                  {durationLabel ? <span aria-hidden="true">·</span> : null}
+                  <span>{transitRangeLabel}</span>
+                </span>
+                {statuses.length > 0 || solarPhase ? (
                   <span className="sky-pl-status" aria-label={`${position.planet} status`}>
                     {statuses.map((status) => (
                       <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
-                        {status.label}
+                        {status.label.toUpperCase()}
                       </span>
                     ))}
+                    {solarPhase ? (
+                      <span className={`spl-status-item spl-status-${solarPhase.tone}`} key={solarPhase.label}>
+                        {solarPhase.label}
+                      </span>
+                    ) : null}
                   </span>
                 ) : null}
               </span>
@@ -8367,26 +8596,17 @@ function ProfileView({
         </div>
       </div>
 
-      <div className="app-tabs profile-tabs you-profile-tabs segmented-control" id="you-subtabs" role="tablist" aria-label="Profile sections">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={profileTab === "transits"}
-          className={`segmented-control__item${profileTab === "transits" ? " segmented-control__item--active on active" : ""}`}
-          onClick={() => setProfileTab("transits")}
-        >
-          Transits
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={profileTab === "chart"}
-          className={`segmented-control__item${profileTab === "chart" ? " segmented-control__item--active on active" : ""}`}
-          onClick={() => setProfileTab("chart")}
-        >
-          Natal Chart
-        </button>
-      </div>
+      <SegmentedControl
+        id="you-subtabs"
+        value={profileTab}
+        options={[
+          { value: "transits", label: "Updates" },
+          { value: "chart", label: "Natal Chart" }
+        ]}
+        onChange={setProfileTab}
+        ariaLabel="Profile sections"
+        className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
+      />
 
       {profileTab === "chart" && (
         <div className="subpane" id="sub-chart">
@@ -8437,7 +8657,10 @@ function ProfileView({
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☉</span>
               <span className="crb">
-                <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
+                <span className="placement-row-titleline">
+                  <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
+                  {natalSun ? <DignityBadge dignity={placementDignity(natalSun)} /> : null}
+                </span>
                 <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}</span>
               </span>
               {natalSun ? <span className="chart-row-meta">{natalPlacementMeta(natalSun)}</span> : null}
@@ -8445,7 +8668,10 @@ function ProfileView({
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☽</span>
               <span className="crb">
-                <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
+                <span className="placement-row-titleline">
+                  <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
+                  {natalMoon ? <DignityBadge dignity={placementDignity(natalMoon)} /> : null}
+                </span>
                 <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}</span>
               </span>
               {natalMoon ? <span className="chart-row-meta">{natalPlacementMeta(natalMoon)}</span> : null}
@@ -8460,7 +8686,10 @@ function ProfileView({
                   <div className="chart-row chart-row-static" key={position.planet}>
                     <span className="crg" aria-hidden="true">{position.glyph}</span>
                     <span className="crb">
-                      <span className="crt">{natalPlacementTitle(position)}</span>
+                      <span className="placement-row-titleline">
+                        <span className="crt">{natalPlacementTitle(position)}</span>
+                        <DignityBadge dignity={placementDignity(position)} />
+                      </span>
                       <span className="crs">{natalPlacementKnowledgeSummary(position, generatedContent)}</span>
                     </span>
                     <span className="chart-row-meta">{natalPlacementMeta(position)}</span>
@@ -8512,18 +8741,18 @@ function ProfileView({
       )}
 
       {profileTab === "transits" && (
-        <div className="subpane" id="sub-transits">
-          <span className="eyebrow section-label">Today’s aspects to your chart</span>
+        <div className="subpane updates-section" id="sub-transits">
+          <span className="eyebrow section-label">Today’s updates to your chart</span>
           {!hasSavedCurrentCity && (
             <section className="you-empty-card" aria-label="Current city needed">
-              <span>Daily transits</span>
+              <span>Updates</span>
               <h3>Add your current city.</h3>
               <p>We need your current city to localize today’s sky against your chart.</p>
               <button type="button" onClick={onCreateChart}>Add current city →</button>
             </section>
           )}
           {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
-            <div className="list you-aspects-list aspect-row-list" aria-label="Today’s aspects to your chart">
+            <div className="updates-aspect-list" aria-label="Today’s updates to your chart">
               {aspectRows.map((transit) => {
                 const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
                 const content = fallbackFromHook(
@@ -8537,22 +8766,31 @@ function ProfileView({
                 );
                 const generated = liveGeneratedContent(generatedContent, contentKey);
                 const rowSummary = liveGeneratedSummary(generated, content.summary);
+                const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
+                const metaLabel = isBackgroundUpdate ? "background" : transit.significance || "active";
 
                 return (
                   <button
                     type="button"
-                    className="aspect-row aspect-row-button"
+                    className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
                     key={transit.id}
                     onClick={() => setSelectedTransitId(transit.id)}
                   >
-                    <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
-                    <span className="aspect-row-copy">
-                      <h3>{transit.transitPlanet} {transit.aspect} {transit.natalPoint}</h3>
-                      <p>{rowSummary}</p>
+                    <span className="updates-aspect-row__glyphs">
+                      <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
                     </span>
-                    <span className="aspect-row-meta" aria-label={`${transit.significance ? `${transit.significance}, ` : ""}${transit.orb} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{transit.significance && transit.significance !== "low priority" ? `${transit.significance} · ` : ""}{transit.orb}</span>
+                    <span className="updates-aspect-row__content">
+                      <span className="updates-aspect-row__title">
+                        {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
+                      </span>
+                      <span className="updates-aspect-row__meta-line">
+                        {metaLabel} · {transit.orb}
+                      </span>
+                      <span className="updates-aspect-row__description">{rowSummary}</span>
+                    </span>
+                    <span className="updates-aspect-row__meta" aria-label={`${metaLabel}, ${transit.orb} orb`}>
+                      <span className="updates-aspect-row__dot" aria-hidden="true" />
+                      <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
                     </span>
                   </button>
                 );
@@ -8561,9 +8799,9 @@ function ProfileView({
           )}
           {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (
             <section className="you-empty-card" aria-label="Transit setup">
-              <span>Daily transits</span>
-              <h3>Your transit view is set.</h3>
-              <p>Update your birth details or current city any time if something changes.</p>
+              <span>Updates</span>
+              <h3>No major updates to your chart today.</h3>
+              <p>The sky is still moving, but nothing is pressing hard on your natal placements right now.</p>
               <button type="button" onClick={onCreateChart}>Edit details →</button>
             </section>
           )}
@@ -8898,23 +9136,16 @@ function ManualChartsPanel({
           <div className="friends-page-heading">
             <h2>friends.</h2>
           </div>
-          <div className="app-tabs profile-tabs friends-top-tabs segmented-control" role="tablist" aria-label="Friends views">
-            {([
-              ["circle", "Circle"],
-              ["charts", "Charts"]
-            ] as Array<[Exclude<FriendsMainView, "profile">, string]>).map(([view, label]) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={resolvedFriendsMainView === view}
-                className={`segmented-control__item${resolvedFriendsMainView === view ? " segmented-control__item--active on active" : ""}`}
-                key={view}
-                onClick={() => setFriendsMainView(view)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl<Exclude<FriendsMainView, "profile">>
+            value={resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView}
+            options={[
+              { value: "circle", label: "Circle" },
+              { value: "charts", label: "Charts" }
+            ]}
+            onChange={(view) => setFriendsMainView(view)}
+            ariaLabel="Friends views"
+            className="app-tabs profile-tabs friends-top-tabs friends-tabs"
+          />
         </>
       )}
 
@@ -9205,24 +9436,17 @@ function ManualChartsPanel({
               </button>
             </div>
 
-            <div className="app-tabs profile-tabs friend-tabs friend-view-tabs segmented-control" role="tablist" aria-label="Friend profile sections">
-              {([
-                ["natal", "Natal"],
-                ["synastry", "Synastry"],
-                ["composite", "Composite"]
-              ] as Array<[FriendProfileTab, string]>).map(([tab, label]) => (
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={friendProfileTab === tab}
-                  className={`segmented-control__item${friendProfileTab === tab ? " segmented-control__item--active on active" : ""}`}
-                  key={tab}
-                  onClick={() => setFriendProfileTab(tab)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl<FriendProfileTab>
+              value={friendProfileTab}
+              options={[
+                { value: "natal", label: "Natal" },
+                { value: "synastry", label: "Synastry" },
+                { value: "composite", label: "Composite" }
+              ]}
+              onChange={setFriendProfileTab}
+              ariaLabel="Friend profile sections"
+              className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
+            />
 
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">

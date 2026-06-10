@@ -38,6 +38,9 @@ type CalculatedPlanet = PlanetPosition & {
 };
 
 type MoonEvent = NonNullable<SkySnapshot["moonEvent"]>;
+type SkyCalculationOptions = {
+  includeTransitWindows?: boolean;
+};
 
 const aspectDefinitions = [
   ["conjunction", 0],
@@ -131,6 +134,95 @@ function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Dat
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
 
   return normalizeDegrees(swe.calc_ut(jd, planetId, flags)[0]);
+}
+
+function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date) {
+  return signForLongitude(exactPlanetLongitude(swe, planetId, date)).sign;
+}
+
+function transitSearchStepDays(planet: string) {
+  if (planet === "Moon") return 0.25;
+  if (["Sun", "Mercury", "Venus", "Mars"].includes(planet)) return 1;
+  if (planet === "Jupiter") return 4;
+  if (planet === "Saturn") return 8;
+  if (planet === "Uranus") return 16;
+  return 24;
+}
+
+function addDays(date: Date, days: number) {
+  return new Date(date.getTime() + days * 86_400_000);
+}
+
+function compactDurationLabelFromDays(days: number) {
+  const roundedDays = Math.max(1, Math.ceil(days));
+
+  if (roundedDays < 90) {
+    return `${roundedDays}Ds`;
+  }
+
+  if (roundedDays <= 548) {
+    return `${Math.max(1, Math.round(roundedDays / 30.44))}Mos`;
+  }
+
+  return `${Math.max(1, Math.round(roundedDays / 365.25))}Yrs`;
+}
+
+function refineSignBoundary(
+  swe: SwissEphInstance,
+  planetId: number,
+  currentSign: string,
+  sameSignDate: Date,
+  differentSignDate: Date
+) {
+  let same = sameSignDate;
+  let different = differentSignDate;
+
+  for (let index = 0; index < 50; index += 1) {
+    const midpoint = new Date((same.getTime() + different.getTime()) / 2);
+
+    if (exactPlanetSign(swe, planetId, midpoint) === currentSign) {
+      same = midpoint;
+    } else {
+      different = midpoint;
+    }
+  }
+
+  return new Date((same.getTime() + different.getTime()) / 2);
+}
+
+function signTransitWindowFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  date: Date,
+  currentSign: string
+) {
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil((365.25 * 32) / stepDays);
+  let previousDifferent = addDays(date, -stepDays);
+  let nextDifferent = addDays(date, stepDays);
+
+  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, previousDifferent) === currentSign; index += 1) {
+    previousDifferent = addDays(previousDifferent, -stepDays);
+  }
+
+  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, nextDifferent) === currentSign; index += 1) {
+    nextDifferent = addDays(nextDifferent, stepDays);
+  }
+
+  if (exactPlanetSign(swe, planetId, previousDifferent) === currentSign || exactPlanetSign(swe, planetId, nextDifferent) === currentSign) {
+    return {};
+  }
+
+  const transitStart = refineSignBoundary(swe, planetId, currentSign, date, previousDifferent);
+  const transitEnd = refineSignBoundary(swe, planetId, currentSign, date, nextDifferent);
+  const remainingDays = (transitEnd.getTime() - date.getTime()) / 86_400_000;
+
+  return {
+    transitStart: transitStart.toISOString(),
+    transitEnd: transitEnd.toISOString(),
+    transitRemainingLabel: compactDurationLabelFromDays(remainingDays)
+  };
 }
 
 function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
@@ -233,7 +325,11 @@ export const defaultLocation: LocationInput = {
   timeZone: "America/New_York"
 };
 
-export async function getAstrodienstSky(location: LocationInput = defaultLocation, date: Date = new Date()): Promise<SkySnapshot> {
+export async function getAstrodienstSky(
+  location: LocationInput = defaultLocation,
+  date: Date = new Date(),
+  options: SkyCalculationOptions = {}
+): Promise<SkySnapshot> {
   const swe = await getSwissEph();
   const jd = swe.julday(
     date.getUTCFullYear(),
@@ -266,6 +362,9 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
     const result = swe.calc_ut(jd, planetIds[index], flags);
     const longitude = normalizeDegrees(result[0]);
     const { sign, signGlyph, degree } = signForLongitude(longitude);
+    const transitWindow = options.includeTransitWindows
+      ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
+      : {};
 
     return {
       planet,
@@ -276,6 +375,7 @@ export async function getAstrodienstSky(location: LocationInput = defaultLocatio
       house: wholeSignHouse(sign, ascendant),
       motion: result[3] < -0.0001 ? "retrograde" : "direct",
       theme,
+      ...transitWindow,
       longitude,
       speed: result[3]
     };
