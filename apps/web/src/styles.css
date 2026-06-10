@@ -3376,7 +3376,7 @@ button.settings-signout-row {
 }
 
 .auth-shell {
-  width: min(520px, 100%);
+  width: min(640px, 100%);
   margin-inline: auto;
 }
 
@@ -4484,6 +4484,12 @@ body.modal-open {
 }
 
 @media (max-height: 780px) and (min-width: 721px) {
+  .auth-page {
+    align-items: flex-start;
+  }
+}
+
+@media (max-height: 900px) and (min-width: 721px) {
   .auth-page {
     align-items: flex-start;
   }
