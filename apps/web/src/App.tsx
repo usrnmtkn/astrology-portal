@@ -7444,7 +7444,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
       <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
         <X size={20} aria-hidden="true" />
       </button>
-      <div className="auth-shell auth-shell--split">
+      <div className="auth-shell">
         <form className="signup-form auth-card" onSubmit={submitSignup}>
           <div className="signup-heading">
             <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
@@ -7513,7 +7513,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                 value={form.birthCity}
                 onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
                 onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
-                placeholder="Start typing the city where you were born."
+                placeholder="Birth city"
                 className="signup-city-search"
               />
 
@@ -7620,17 +7620,6 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
           </button>
         </p>
         </form>
-        <aside className="signup-story auth-message-card">
-          <h2>
-            {isLogin ? "Welcome back." : "Know what the sky is doing."}
-            <em>{isLogin ? "See what is active now." : "Know what to do about it."}</em>
-          </h2>
-          <div className="signup-orbit" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-        </aside>
       </div>
     </section>
   );
