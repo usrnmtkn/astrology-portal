@@ -979,6 +979,23 @@ function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
 }
 
+function longitudeToChartAngle(longitudeDeg: number, ascendantDeg?: number, houseRotated = false) {
+  if (houseRotated && typeof ascendantDeg === "number") {
+    return 180 - normalizedAngle(longitudeDeg - ascendantDeg);
+  }
+
+  return 225 + longitudeDeg;
+}
+
+function polarToCartesian(centerX: number, centerY: number, radius: number, angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+
+  return {
+    x: centerX + Math.cos(rad) * radius,
+    y: centerY + Math.sin(rad) * radius
+  };
+}
+
 function zodiacSignForLongitude(longitude: number) {
   return zodiacSigns[Math.floor(normalizedAngle(longitude) / 30)] ?? "Aries";
 }
@@ -1714,7 +1731,7 @@ function SkyDetailArticle({
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
-      <button className="sky-detail-back" type="button" aria-label="Close detail" onClick={onClose}>
+      <button className="sky-detail-back floating-back-button" type="button" aria-label="Close detail" onClick={onClose}>
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
@@ -1972,78 +1989,6 @@ function wheelMarkerClusterLevels<T>(
   }
 
   return levels;
-}
-
-function wheelMarkerLabelAngles<T>(
-  items: T[],
-  keyForItem: (item: T) => string,
-  angleForItem: (item: T) => number,
-  threshold = 8,
-  separation = 11
-) {
-  const entries = items
-    .map((item) => ({
-      item,
-      key: keyForItem(item),
-      angle: normalizedAngle(angleForItem(item))
-    }))
-    .sort((first, second) => first.angle - second.angle);
-  const labelAngles = new Map<string, number>();
-
-  if (entries.length === 0) {
-    return labelAngles;
-  }
-
-  let clusters: Array<Array<(typeof entries)[number]>> = [];
-
-  entries.forEach((entry) => {
-    const currentCluster = clusters[clusters.length - 1];
-    const previous = currentCluster?.[currentCluster.length - 1];
-
-    if (previous && angularDistance(entry.angle, previous.angle) <= threshold) {
-      currentCluster.push(entry);
-    } else {
-      clusters.push([entry]);
-    }
-  });
-
-  if (clusters.length > 1) {
-    const firstCluster = clusters[0];
-    const lastCluster = clusters[clusters.length - 1];
-    const first = firstCluster[0];
-    const last = lastCluster[lastCluster.length - 1];
-
-    if (first && last && angularDistance(first.angle, last.angle) <= threshold) {
-      clusters = [
-        [
-          ...lastCluster,
-          ...firstCluster.map((entry) => ({
-            ...entry,
-            angle: entry.angle + 360
-          }))
-        ],
-        ...clusters.slice(1, -1)
-      ];
-    }
-  }
-
-  clusters.forEach((cluster) => {
-    if (cluster.length === 1) {
-      labelAngles.set(cluster[0].key, normalizedAngle(cluster[0].angle));
-      return;
-    }
-
-    const ordered = [...cluster].sort((first, second) => first.angle - second.angle);
-    const centerAngle = ordered.reduce((sum, entry) => sum + entry.angle, 0) / ordered.length;
-    const clusterSeparation = ordered.length >= 4 ? separation * 0.82 : separation;
-    const startAngle = centerAngle - ((ordered.length - 1) * clusterSeparation) / 2;
-
-    ordered.forEach((entry, index) => {
-      labelAngles.set(entry.key, normalizedAngle(startAngle + index * clusterSeparation));
-    });
-  });
-
-  return labelAngles;
 }
 
 function formatOrb(orb: number) {
@@ -4427,7 +4372,7 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-layout"}>
+          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <h1>the sky today.</h1>
@@ -4500,7 +4445,7 @@ export function App() {
             )}
 
             {!isSignupMode && !usesFullPageLayout && (
-              <section className="sky-panel sky-chart-column" aria-label="Current sky">
+              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
                     <SkyWheel positions={sky.positions} aspects={sky.aspects} variant="zodiac" />
@@ -4511,7 +4456,7 @@ export function App() {
               </section>
             )}
 
-            <section className="detail-panel sky-content-column" aria-label="Portal details">
+            <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
               {(mode === "guest" || mode === "member") && (
                 <RetrogradeCallout
                   positions={sky.positions}
@@ -5252,6 +5197,18 @@ function RelationshipComparePicker({
 
   return (
     <div className={`friend-compare-control friend-compare-control-${variant}`}>
+      {variant === "synastry" && (
+        <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
+          <span className="friend-chart-legend-item friend-chart-legend-item-outer">
+            <b aria-hidden="true" />
+            <strong>{outerName ?? outerInitials ?? "Outer"} · outer ring</strong>
+          </span>
+          <span className="friend-chart-legend-item friend-chart-legend-item-inner">
+            <b aria-hidden="true" />
+            <strong>{selectedOption.displayName} · inner ring</strong>
+          </span>
+        </div>
+      )}
       <button
         type="button"
         className="friend-compare-pill"
@@ -5288,17 +5245,11 @@ function RelationshipComparePicker({
           </div>
         </div>
       )}
-      {variant === "synastry" && (
-        <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
-          <span><b>A</b><strong>{outerName ?? outerInitials ?? "Outer"}</strong><em>Outer ring</em></span>
-          <span><b>B</b><strong>{selectedOption.displayName}</strong><em>Inner ring</em></span>
-        </div>
-      )}
     </div>
   );
 }
 
-function SynastryPlacementRows({
+function SynastryPlacementsComparison({
   outerName,
   outerSky,
   innerName,
@@ -5311,57 +5262,54 @@ function SynastryPlacementRows({
   innerSky: SkySnapshot | null | undefined;
   innerIsSelf: boolean;
 }) {
-  const rows = [
-    { id: "outer", name: outerName, sky: outerSky, label: "Outer" },
-    { id: "inner", name: innerName, sky: innerSky, label: "Inner", isSelf: innerIsSelf }
-  ];
+  const innerTitle = innerIsSelf ? "You" : innerName;
 
   return (
-    <div className="synastry-placement-rows" aria-label="Synastry natal placements">
-      {rows.map((row) => {
-        const placements = relationshipPlacementPreview(row.sky);
-
-        return (
-          <SynastryPlacementPanel
-            key={row.id}
-            title={`${relationshipPossessiveName(row.name, row.isSelf)} natal placements`}
-            ringLabel={`${row.isSelf ? "You" : row.name} · ${row.label} ring`}
-            placements={placements}
-          />
-        );
-      })}
-    </div>
+    <section className="synastry-placements-comparison" aria-label="Synastry placements comparison">
+      <span className="eyebrow section-label friend-section-label">Placements</span>
+      <div className="synastry-placement-columns">
+        <SynastryPlacementColumn
+          title={outerName}
+          ringLabel="Outer ring"
+          placements={relationshipPlacementPreview(outerSky)}
+          variant="outer"
+        />
+        <SynastryPlacementColumn
+          title={innerTitle}
+          ringLabel="Inner ring"
+          placements={relationshipPlacementPreview(innerSky)}
+          variant="inner"
+        />
+      </div>
+    </section>
   );
 }
 
-function SynastryPlacementPanel({
+function SynastryPlacementColumn({
   title,
   ringLabel,
-  placements
+  placements,
+  variant
 }: {
   title: string;
   ringLabel: string;
   placements: PlanetPosition[];
+  variant: "outer" | "inner";
 }) {
   return (
-    <section className="synastry-placement-panel">
-      <div className="synastry-placement-panel-header">
-        <span className="synastry-placement-panel-title">{title}</span>
+    <section className={`synastry-placement-column synastry-placement-column-${variant}`}>
+      <div className="synastry-placement-column-header">
+        <h3>{title}</h3>
         <strong className="synastry-placement-panel-ring">{ringLabel}</strong>
       </div>
       {placements.length > 0 ? (
-        <div className="synastry-placement-grid">
+        <div className="synastry-placement-table">
           {placements.map((position) => (
-            <article className="synastry-placement-card" key={`${ringLabel}-${position.planet}`}>
+            <article className="synastry-placement-row" key={`${ringLabel}-${position.planet}`}>
               <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
-              <span className="synastry-placement-copy">
-                <strong className="synastry-placement-planet">{position.planet}</strong>
-                <span className="synastry-placement-meta">
-                  <span>{position.sign}</span>
-                  <span>{formatPlanetDegree(position)}</span>
-                  <span>{position.house ? `H${position.house}` : "House pending"}</span>
-                </span>
-              </span>
+              <strong className="synastry-placement-sign">{position.sign}</strong>
+              <span className="synastry-placement-degree">{formatPlanetDegree(position)}</span>
+              <span className="synastry-placement-house">{position.house ? `H${position.house}` : "House pending"}</span>
             </article>
           ))}
         </div>
@@ -5434,11 +5382,7 @@ function SkyWheel({
   };
 
   function point(angle: number, distance: number) {
-    const rad = (angle * Math.PI) / 180;
-    return {
-      x: center + Math.cos(rad) * distance,
-      y: center + Math.sin(rad) * distance
-    };
+    return polarToCartesian(center, center, distance, angle);
   }
 
   function arcPath(startAngle: number, endAngle: number, distance: number) {
@@ -5452,11 +5396,7 @@ function SkyWheel({
   }
 
   function angleForLongitude(longitude: number) {
-    if (isNatalWheel) {
-      return 180 - normalizedAngle(longitude - ascendantLongitude);
-    }
-
-    return 225 + longitude;
+    return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
   }
 
   function planetAngle(position: PlanetPosition) {
@@ -5541,20 +5481,21 @@ function SkyWheel({
   const activeTooltipPosition = activeTooltipPlanet
     ? positions.find((position) => position.planet === activeTooltipPlanet)
     : null;
-  const planetLabelAngles = wheelMarkerLabelAngles(
+  const planetClusterLevels = wheelMarkerClusterLevels(
     positions,
     (position) => position.planet,
     planetAngle,
-    16,
-    17
+    6
   );
 
-  function planetLabelAngle(position: PlanetPosition) {
-    return planetLabelAngles.get(position.planet) ?? planetAngle(position);
+  function planetVisualRadius(position: PlanetPosition) {
+    const clusterLevel = planetClusterLevels.get(position.planet) ?? 0;
+
+    return radius.planet - clusterLevel * 18;
   }
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetLabelAngle(position), radius.planet);
+    const marker = point(planetAngle(position), planetVisualRadius(position));
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const aspectLines = aspectTooltipLines(position, aspects);
     const lines = [placementLine, ...aspectLines];
@@ -5594,7 +5535,7 @@ function SkyWheel({
 
       <g className="wheel-sectors">
         {signs.map((sign, index) => {
-          const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
           const outer = point(a, radius.signInner);
           const inner = point(a, radius.inner);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
@@ -5707,10 +5648,13 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const marker = point(planetLabelAngle(position), radius.planet);
-          const tickOuter = point(planetAngle(position), radius.signInner - 4);
-          const tickInner = point(planetAngle(position), radius.signInner - 18);
-          const label = point(planetLabelAngle(position), radius.planet - 22);
+          const angle = planetAngle(position);
+          const markerRadius = planetVisualRadius(position);
+          const degreeRadius = markerRadius - 22;
+          const marker = point(angle, markerRadius);
+          const tickOuter = point(angle, radius.signInner - 4);
+          const tickInner = point(angle, radius.signInner - 18);
+          const label = point(angle, degreeRadius);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -5810,11 +5754,7 @@ function SynastryWheel({
   const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
 
   function point(angle: number, distance: number) {
-    const rad = (angle * Math.PI) / 180;
-    return {
-      x: center + Math.cos(rad) * distance,
-      y: center + Math.sin(rad) * distance
-    };
+    return polarToCartesian(center, center, distance, angle);
   }
 
   function arcPath(startAngle: number, endAngle: number, distance: number) {
@@ -5827,12 +5767,27 @@ function SynastryWheel({
     return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${distance} ${distance} 0 0 ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
   }
 
-  function angleForLongitude(longitude: number) {
-    if (isNatalWheel) {
-      return 180 - normalizedAngle(longitude - ascendantLongitude);
-    }
+  function annularSectorPath(startAngle: number, endAngle: number, outerRadius: number, innerRadius: number) {
+    const delta = ((endAngle - startAngle + 540) % 360) - 180;
+    const resolvedEndAngle = startAngle + delta;
+    const largeArc = Math.abs(delta) > 180 ? 1 : 0;
+    const sweep = delta >= 0 ? 1 : 0;
+    const outerStart = point(startAngle, outerRadius);
+    const outerEnd = point(resolvedEndAngle, outerRadius);
+    const innerEnd = point(resolvedEndAngle, innerRadius);
+    const innerStart = point(startAngle, innerRadius);
 
-    return 225 + longitude;
+    return [
+      `M ${outerStart.x.toFixed(2)} ${outerStart.y.toFixed(2)}`,
+      `A ${outerRadius} ${outerRadius} 0 ${largeArc} ${sweep} ${outerEnd.x.toFixed(2)} ${outerEnd.y.toFixed(2)}`,
+      `L ${innerEnd.x.toFixed(2)} ${innerEnd.y.toFixed(2)}`,
+      `A ${innerRadius} ${innerRadius} 0 ${largeArc} ${sweep ? 0 : 1} ${innerStart.x.toFixed(2)} ${innerStart.y.toFixed(2)}`,
+      "Z"
+    ].join(" ");
+  }
+
+  function angleForLongitude(longitude: number) {
+    return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
   }
 
   function aspectClass(type: string) {
@@ -5934,10 +5889,38 @@ function SynastryWheel({
       </g>
       <g className="wheel-sectors">
         {signs.map((sign, index) => {
-          const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
           const outer = point(a, radius.signInner);
           const inner = point(a, radius.inner);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+        })}
+      </g>
+      <g className="synastry-ring-zebra synastry-ring-zebra-outer" aria-hidden="true">
+        {signs.map((sign, index) => {
+          const start = angleForLongitude(index * 30);
+          const end = angleForLongitude(index * 30 + 30);
+
+          return (
+            <path
+              key={`outer-zebra-${sign}`}
+              className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
+              d={annularSectorPath(start, end, radius.signInner - 3, radius.innerRingOuter + 3)}
+            />
+          );
+        })}
+      </g>
+      <g className="synastry-ring-zebra synastry-ring-zebra-inner" aria-hidden="true">
+        {signs.map((sign, index) => {
+          const start = angleForLongitude(index * 30);
+          const end = angleForLongitude(index * 30 + 30);
+
+          return (
+            <path
+              key={`inner-zebra-${sign}`}
+              className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
+              d={annularSectorPath(start, end, radius.innerRingOuter - 3, radius.innerRingInner + 3)}
+            />
+          );
         })}
       </g>
       <g className="sign-band-dividers">
@@ -5964,7 +5947,7 @@ function SynastryWheel({
         <circle cx={center} cy={center} r={radius.innerRingOuter} />
         <circle cx={center} cy={center} r={radius.innerRingInner} />
         {signs.map((sign, index) => {
-          const a = isNatalWheel ? angleForLongitude(wholeHouseStartLongitude + index * 30) : 225 + index * 30;
+          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
           const outer = point(a, radius.innerRingOuter);
           const inner = point(a, radius.innerRingInner);
 
@@ -6514,9 +6497,9 @@ function PlacementView({
         <span>What is up there today, and what it actually means down here.</span>
       </div>
 
-      <div className="app-tabs placement-tabs" role="tablist" aria-label="Placement view">
+      <div className="app-tabs placement-tabs segmented-control segmented-control--compact" role="tablist" aria-label="Placement view">
         <button
-          className={placementMode === "table" ? "active" : ""}
+          className={`segmented-control__item${placementMode === "table" ? " segmented-control__item--active active" : ""}`}
           onClick={() => setPlacementMode("table")}
           role="tab"
           aria-selected={placementMode === "table"}
@@ -6524,7 +6507,7 @@ function PlacementView({
           List
         </button>
         <button
-          className={placementMode === "paragraph" ? "active" : ""}
+          className={`segmented-control__item${placementMode === "paragraph" ? " segmented-control__item--active active" : ""}`}
           onClick={() => setPlacementMode("paragraph")}
           role="tab"
           aria-selected={placementMode === "paragraph"}
@@ -8125,48 +8108,9 @@ function ProfileView({
   }
 
   return (
-    <section className="you-page you-chart-page chart-page-layout page-shell" aria-label="You">
-      <div className="you-profile-card" aria-label="Profile summary">
-        <span className="you-profile-monogram" aria-hidden="true">
-          {profileInitials(profile.name, profile.email)}
-        </span>
-        <div className="you-profile-copy">
-          <h2>{profile.name}</h2>
-          {signaturesReady ? (
-            <div className="you-signature-row" aria-label="Big three">
-              <span><span aria-hidden="true">☉</span>{displaySun}</span>
-              <span><span aria-hidden="true">☽</span>{displayMoon}</span>
-              <span><span aria-hidden="true">↑</span>{displayRising}</span>
-            </div>
-          ) : (
-            <p className="you-profile-status">Calculating chart signatures...</p>
-          )}
-        </div>
-      </div>
-
-      <div className="app-tabs profile-tabs you-profile-tabs" id="you-subtabs" role="tablist" aria-label="Profile sections">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={profileTab === "transits"}
-          className={profileTab === "transits" ? "on active" : ""}
-          onClick={() => setProfileTab("transits")}
-        >
-          Transits
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={profileTab === "chart"}
-          className={profileTab === "chart" ? "on active" : ""}
-          onClick={() => setProfileTab("chart")}
-        >
-          Natal Chart
-        </button>
-      </div>
-
-      {profileTab === "chart" && (
-        <div className="subpane" id="sub-chart">
+    <section className="you-page you-chart-page page-shell" aria-label="You">
+      <div className="chart-layout">
+        <aside className="chart-layout__visual" aria-label="Natal chart">
           {natalSky && (
             <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
               <div className="chart-frame">
@@ -8189,7 +8133,50 @@ function ProfileView({
               <p>The chart wheel and core signatures will appear as soon as the calculation finishes.</p>
             </section>
           )}
+        </aside>
 
+        <main className="chart-layout__content">
+      <div className="you-profile-card" aria-label="Profile summary">
+        <span className="you-profile-monogram" aria-hidden="true">
+          {profileInitials(profile.name, profile.email)}
+        </span>
+        <div className="you-profile-copy">
+          <h2>{profile.name}</h2>
+          {signaturesReady ? (
+            <div className="you-signature-row" aria-label="Big three">
+              <span><span aria-hidden="true">☉</span>{displaySun}</span>
+              <span><span aria-hidden="true">☽</span>{displayMoon}</span>
+              <span><span aria-hidden="true">↑</span>{displayRising}</span>
+            </div>
+          ) : (
+            <p className="you-profile-status">Calculating chart signatures...</p>
+          )}
+        </div>
+      </div>
+
+      <div className="app-tabs profile-tabs you-profile-tabs segmented-control" id="you-subtabs" role="tablist" aria-label="Profile sections">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={profileTab === "transits"}
+          className={`segmented-control__item${profileTab === "transits" ? " segmented-control__item--active on active" : ""}`}
+          onClick={() => setProfileTab("transits")}
+        >
+          Transits
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={profileTab === "chart"}
+          className={`segmented-control__item${profileTab === "chart" ? " segmented-control__item--active on active" : ""}`}
+          onClick={() => setProfileTab("chart")}
+        >
+          Natal Chart
+        </button>
+      </div>
+
+      {profileTab === "chart" && (
+        <div className="subpane" id="sub-chart">
           <span className="eyebrow section-label">Your signatures</span>
           <section className="you-signatures-card" aria-label="Your signatures">
             <div className="you-signatures-main">
@@ -8366,6 +8353,8 @@ function ProfileView({
           )}
         </div>
       )}
+        </main>
+      </div>
     </section>
   );
 }
@@ -8683,7 +8672,7 @@ function ManualChartsPanel({
     <section className={`friends-page page-shell manual-charts-pane${isFriendDetailView ? ` friend-detail-page friend-detail-page--${friendProfileTab}` : ""}`} aria-label="Friends">
       {resolvedFriendsMainView === "profile" && selectedChart ? (
         <div className="page-back-row friend-back-row friend-detail-back-row">
-          <button className="friends-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
+          <button className="friends-back-button floating-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
             <ChevronLeft size={21} aria-hidden="true" />
             <span>Charts</span>
           </button>
@@ -8693,7 +8682,7 @@ function ManualChartsPanel({
           <div className="friends-page-heading">
             <h2>friends.</h2>
           </div>
-          <div className="app-tabs profile-tabs friends-top-tabs" role="tablist" aria-label="Friends views">
+          <div className="app-tabs profile-tabs friends-top-tabs segmented-control" role="tablist" aria-label="Friends views">
             {([
               ["circle", "Circle"],
               ["charts", "Charts"]
@@ -8702,7 +8691,7 @@ function ManualChartsPanel({
                 type="button"
                 role="tab"
                 aria-selected={resolvedFriendsMainView === view}
-                className={resolvedFriendsMainView === view ? "on active" : ""}
+                className={`segmented-control__item${resolvedFriendsMainView === view ? " segmented-control__item--active on active" : ""}`}
                 key={view}
                 onClick={() => setFriendsMainView(view)}
               >
@@ -8979,8 +8968,8 @@ function ManualChartsPanel({
         </div>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-page-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
-          <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-page-content">
+        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
+          <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
             <div className="friend-hero-card friend-profile-card">
               <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
                 {profileInitials(selectedChart.displayName, selectedChart.displayName)}
@@ -8998,7 +8987,7 @@ function ManualChartsPanel({
               </button>
             </div>
 
-            <div className="app-tabs profile-tabs friend-tabs friend-view-tabs" role="tablist" aria-label="Friend profile sections">
+            <div className="app-tabs profile-tabs friend-tabs friend-view-tabs segmented-control" role="tablist" aria-label="Friend profile sections">
               {([
                 ["natal", "Natal"],
                 ["synastry", "Synastry"],
@@ -9008,7 +8997,7 @@ function ManualChartsPanel({
                   type="button"
                   role="tab"
                   aria-selected={friendProfileTab === tab}
-                  className={friendProfileTab === tab ? "on active" : ""}
+                  className={`segmented-control__item${friendProfileTab === tab ? " segmented-control__item--active on active" : ""}`}
                   key={tab}
                   onClick={() => setFriendProfileTab(tab)}
                 >
@@ -9124,7 +9113,7 @@ function ManualChartsPanel({
                 Two charts, side by side: how {selectedChart.displayName}'s planets and {relationshipComparisonIsSelf ? "your planets" : `${relationshipComparisonName}'s planets`} actually meet, miss, and magnify each other.
               </p>
               <div className="friend-profile-copy-column">
-                <SynastryPlacementRows
+                <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
                   outerSky={selectedChart.natalChart}
                   innerName={relationshipComparisonName}
@@ -9218,19 +9207,21 @@ function ManualChartsPanel({
           )}
           </div>
 
-          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-page-visual" aria-label="Relationship chart">
+          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label="Relationship chart">
             {friendProfileTab === "natal" && selectedChart.natalChart && (
-              <div className="friend-synastry-wheel-shell chart-shell">
-                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                  <SkyWheel
-                    positions={selectedChart.natalChart.positions}
-                    aspects={selectedChart.natalChart.aspects}
-                    ascendant={selectedChart.natalChart.ascendant}
-                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                    midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                    showHouses
-                    variant="natal"
-                  />
+              <div className="friend-synastry-wheel-shell">
+                <div className="chart-shell">
+                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+                    <SkyWheel
+                      positions={selectedChart.natalChart.positions}
+                      aspects={selectedChart.natalChart.aspects}
+                      ascendant={selectedChart.natalChart.ascendant}
+                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                      midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                      showHouses
+                      variant="natal"
+                    />
+                  </div>
                 </div>
                 <div className="friend-chart-legend" aria-label="Natal chart label">
                   <span>{selectedChart.displayName}</span>
@@ -9238,15 +9229,17 @@ function ManualChartsPanel({
               </div>
             )}
             {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
-              <div className="friend-synastry-wheel-shell chart-shell">
-                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                  <SynastryWheel
-                    outerPositions={selectedChart.natalChart.positions}
-                    innerPositions={relationshipComparisonSky?.positions ?? []}
-                    interAspects={selectedSynastryAspectLines}
-                    ascendant={selectedChart.natalChart.ascendant}
-                    ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                  />
+              <div className="friend-synastry-wheel-shell">
+                <div className="chart-shell">
+                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
+                    <SynastryWheel
+                      outerPositions={selectedChart.natalChart.positions}
+                      innerPositions={relationshipComparisonSky?.positions ?? []}
+                      interAspects={selectedSynastryAspectLines}
+                      ascendant={selectedChart.natalChart.ascendant}
+                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                    />
+                  </div>
                 </div>
                 <RelationshipComparePicker
                   variant="synastry"
@@ -9264,17 +9257,19 @@ function ManualChartsPanel({
               </div>
             )}
             {friendProfileTab === "composite" && selectedCompositeSky && (
-              <div className="friend-synastry-wheel-shell chart-shell">
-                <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
-                  <SkyWheel
-                    positions={selectedCompositeSky.positions}
-                    aspects={selectedCompositeSky.aspects}
-                    ascendant={selectedCompositeSky.ascendant}
-                    ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-                    midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-                    showHouses
-                    variant="composite"
-                  />
+              <div className="friend-synastry-wheel-shell">
+                <div className="chart-shell">
+                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
+                    <SkyWheel
+                      positions={selectedCompositeSky.positions}
+                      aspects={selectedCompositeSky.aspects}
+                      ascendant={selectedCompositeSky.ascendant}
+                      ascendantLongitude={selectedCompositeSky.ascendantLongitude}
+                      midheavenLongitude={selectedCompositeSky.midheavenLongitude}
+                      showHouses
+                      variant="composite"
+                    />
+                  </div>
                 </div>
                 <RelationshipComparePicker
                   variant="composite"
