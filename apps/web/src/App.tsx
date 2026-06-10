@@ -2874,11 +2874,56 @@ function synastryVerb(aspect: string) {
   return verbs[aspect] ?? "contacts";
 }
 
-function synastryDirectionalWrapper(friendName: string, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
-  return `${friendName}'s ${contact.friendPoint.name} ${synastryVerb(contact.aspect)} your ${contact.yourPoint.name}, bringing ${comparisonPointRole(contact.friendPoint.name)} into contact with ${comparisonPointRole(contact.yourPoint.name)} between you.`;
+function possessiveLabel(name: string) {
+  return name.endsWith("s") ? `${name}'` : `${name}'s`;
 }
 
-function synastryContactSummary(friendName: string, contact: Omit<SynastryContact, "summary">, generatedContent?: GeneratedContentMap) {
+function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
+  return comparisonIsSelf ? `${primaryName} and you` : `${primaryName} and ${comparisonName}`;
+}
+
+function relationshipComparisonPossessive(comparisonName: string, comparisonIsSelf: boolean) {
+  return comparisonIsSelf ? "your" : possessiveLabel(comparisonName);
+}
+
+function relationshipGeneratedCopyForPerspective(text: string, primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
+  if (comparisonIsSelf) {
+    return text;
+  }
+
+  const pair = relationshipPairLabel(primaryName, comparisonName, comparisonIsSelf);
+  const possessivePrimary = possessiveLabel(primaryName);
+  const possessiveComparison = possessiveLabel(comparisonName);
+
+  return text
+    .replace(/\bYou both\b/g, pair)
+    .replace(/\byou both\b/g, pair)
+    .replace(/\bYour charts\b/g, `${possessivePrimary} and ${possessiveComparison} charts`)
+    .replace(/\byour charts\b/g, `${possessivePrimary} and ${possessiveComparison} charts`)
+    .replace(/\bYour chart\b/g, `${possessiveComparison} chart`)
+    .replace(/\byour chart\b/g, `${possessiveComparison} chart`)
+    .replace(/\bYour drives\b/g, "The shared drives")
+    .replace(/\byour drives\b/g, "the shared drives")
+    .replace(/\bYour\b/g, possessiveComparison)
+    .replace(/\byour\b/g, possessiveComparison)
+    .replace(/\bYou\b/g, pair)
+    .replace(/\byou\b/g, pair);
+}
+
+function synastryDirectionalWrapper(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
+  const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
+  const pairLabel = comparisonIsSelf ? "between you" : `between ${friendName} and ${comparisonName}`;
+
+  return `${possessiveLabel(friendName)} ${contact.friendPoint.name} ${synastryVerb(contact.aspect)} ${comparisonPossessive} ${contact.yourPoint.name}, bringing ${comparisonPointRole(contact.friendPoint.name)} into contact with ${comparisonPointRole(contact.yourPoint.name)} ${pairLabel}.`;
+}
+
+function synastryContactSummary(
+  friendName: string,
+  comparisonName: string,
+  comparisonIsSelf: boolean,
+  contact: Omit<SynastryContact, "summary">,
+  generatedContent?: GeneratedContentMap
+) {
   const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
   const hookFallback = fallbackFromHook(
     "friends.synastry-contact",
@@ -2891,10 +2936,21 @@ function synastryContactSummary(friendName: string, contact: Omit<SynastryContac
     { allowKnowledgeOnly: true }
   );
 
-  return liveGeneratedSummary(generated, hookFallback.summary);
+  return relationshipGeneratedCopyForPerspective(
+    liveGeneratedSummary(generated, hookFallback.summary),
+    friendName,
+    comparisonName,
+    comparisonIsSelf
+  );
 }
 
-function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): SynastryContact[] {
+function synastryContacts(
+  profileNatalSky: SkySnapshot | null,
+  chart: ManualChart,
+  generatedContent?: GeneratedContentMap,
+  comparisonName = "You",
+  comparisonIsSelf = true
+): SynastryContact[] {
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
 
@@ -2923,19 +2979,22 @@ function synastryContacts(profileNatalSky: SkySnapshot | null, chart: ManualChar
 
       return [{
         ...baseContact,
-        summary: synastryContactSummary(chart.displayName, baseContact, generatedContent)
+        summary: synastryContactSummary(chart.displayName, comparisonName, comparisonIsSelf, baseContact, generatedContent)
       }];
     }))
     .sort((first, second) => second.score - first.score || first.orb - second.orb)
     .slice(0, 16);
 }
 
-function synastryDetailCopy(friendName: string, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
+function synastryDetailCopy(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
   const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
   const generatedParagraphs = generatedContentParagraphs(generated);
 
   if (generatedParagraphs.length > 0) {
-    return [synastryDirectionalWrapper(friendName, contact), ...generatedParagraphs];
+    return [
+      synastryDirectionalWrapper(friendName, comparisonName, comparisonIsSelf, contact),
+      ...generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf))
+    ];
   }
 
   const hookFallback = fallbackFromHook(
@@ -2949,7 +3008,12 @@ function synastryDetailCopy(friendName: string, contact: SynastryContact, genera
     { allowKnowledgeOnly: true }
   );
 
-  return [synastryDirectionalWrapper(friendName, contact), ...liveGeneratedBody(generated, hookFallback.detailParagraphs)];
+  return [
+    synastryDirectionalWrapper(friendName, comparisonName, comparisonIsSelf, contact),
+    ...liveGeneratedBody(generated, hookFallback.detailParagraphs).map((paragraph) => (
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+    ))
+  ];
 }
 
 function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): HouseOverlay[] {
@@ -3177,7 +3241,13 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
   };
 }
 
-function compositeAspectSummary(aspect: { from: string; to: string; type: string; orb: number } | null, chartName: string, generatedContent?: GeneratedContentMap) {
+function compositeAspectSummary(
+  aspect: { from: string; to: string; type: string; orb: number } | null,
+  chartName: string,
+  comparisonName: string,
+  comparisonIsSelf: boolean,
+  generatedContent?: GeneratedContentMap
+) {
   if (!aspect) {
     return "No single aspect is dominating the relationship chart. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.";
   }
@@ -3187,7 +3257,7 @@ function compositeAspectSummary(aspect: { from: string; to: string; type: string
     : null;
 
   if (generated) {
-    return liveGeneratedSummary(generated, null);
+    return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf);
   }
 
   const hookFallback = fallbackFromHook(
@@ -3199,7 +3269,7 @@ function compositeAspectSummary(aspect: { from: string; to: string; type: string
     }
   );
 
-  return liveGeneratedSummary(generated, hookFallback.summary);
+  return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, hookFallback.summary), chartName, comparisonName, comparisonIsSelf);
 }
 
 function relationshipTiming(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
@@ -5133,6 +5203,7 @@ function relationshipPossessiveName(name: string, isSelf = false) {
 
 function RelationshipComparePicker({
   variant,
+  outerName,
   outerInitials,
   options,
   selectedId,
@@ -5141,6 +5212,7 @@ function RelationshipComparePicker({
   onSelect
 }: {
   variant: "synastry" | "composite";
+  outerName?: string;
   outerInitials?: string;
   options: RelationshipComparisonOption[];
   selectedId: string;
@@ -5194,8 +5266,8 @@ function RelationshipComparePicker({
       )}
       {variant === "synastry" && (
         <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
-          <span><b>A</b> {outerInitials ?? "A"} <em>- outer ring</em></span>
-          <span><b>B</b> {selectedOption.initials} <em>- inner ring</em></span>
+          <span><b>A</b><strong>{outerName ?? outerInitials ?? "Outer"}</strong><em>Outer ring</em></span>
+          <span><b>B</b><strong>{selectedOption.displayName}</strong><em>Inner ring</em></span>
         </div>
       )}
     </div>
@@ -5233,13 +5305,17 @@ function SynastryPlacementRows({
             </div>
             {placements.length > 0 ? (
               <div className="synastry-placement-strip">
-                {placements.map((position) => (
-                  <span className="synastry-placement-chip" key={`${row.id}-${position.planet}`}>
-                    <span aria-hidden="true">{position.glyph}</span>
-                    <b>{position.planet}</b>
-                    <small>{position.sign} {formatPlanetDegree(position)}</small>
-                  </span>
-                ))}
+                {placements.map((position) => {
+                  const placementDetail = `${position.sign} ${formatPlanetDegree(position)}${position.house ? ` · H${position.house}` : ""}`;
+
+                  return (
+                    <span className="synastry-placement-chip" key={`${row.id}-${position.planet}`}>
+                      <span aria-hidden="true">{position.glyph}</span>
+                      <b>{position.planet}</b>
+                      <small>{placementDetail}</small>
+                    </span>
+                  );
+                })}
               </div>
             ) : (
               <p>Complete this birth chart to show natal placements here.</p>
@@ -8308,7 +8384,18 @@ function ManualChartsPanel({
   const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
   const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
-  const selectedSynastryContacts = selectedChart ? rankSynastryContactsByLifeAreaFocus(synastryContacts(relationshipComparisonSky, selectedChart, relationshipGeneratedContent), lifeAreaFocus) : [];
+  const selectedSynastryContacts = selectedChart
+    ? rankSynastryContactsByLifeAreaFocus(
+        synastryContacts(
+          relationshipComparisonSky,
+          selectedChart,
+          relationshipGeneratedContent,
+          relationshipComparisonName,
+          relationshipComparisonIsSelf
+        ),
+        lifeAreaFocus
+      )
+    : [];
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 10).map((contact) => ({
     id: contact.id,
     fromLongitude: contact.friendPoint.longitude,
@@ -8984,7 +9071,7 @@ function ManualChartsPanel({
           {friendProfileTab === "synastry" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
               <p className="friend-compat-intro">
-                Two charts, side by side: how {selectedChart.displayName}'s and {relationshipComparisonIsSelf ? "your" : `${relationshipComparisonName}'s`} planets actually meet, miss, and magnify each other.
+                Two charts, side by side: how {selectedChart.displayName}'s planets and {relationshipComparisonIsSelf ? "your planets" : `${relationshipComparisonName}'s planets`} actually meet, miss, and magnify each other.
               </p>
               <div className="friend-profile-copy-column">
                 <SynastryPlacementRows
@@ -9034,7 +9121,7 @@ function ManualChartsPanel({
             <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
               <div className="friend-profile-copy-column">
                 <p className="friend-compat-intro">
-                  The midpoint of two charts. Each placement is the arc-midpoint of {selectedChart.displayName}'s and {relationshipComparisonIsSelf ? "your" : `${relationshipComparisonName}'s`} charts. Read the relationship as if it had a birth chart of its own.
+                  The midpoint of two charts. Each placement is the arc-midpoint between {selectedChart.displayName}'s chart and {relationshipComparisonIsSelf ? "your chart" : `${relationshipComparisonName}'s chart`}. Read the relationship as if it had a birth chart of its own.
                 </p>
                 {selectedCompositeSky && (
                   <FriendPlacementTable
@@ -9053,7 +9140,7 @@ function ManualChartsPanel({
                         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                         <span className="aspect-row-copy">
                           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                          <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipGeneratedContent)}</p>
+                          <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent)}</p>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                           <span className="aspect-row-dot" aria-hidden="true" />
@@ -9113,6 +9200,7 @@ function ManualChartsPanel({
                 </div>
                 <RelationshipComparePicker
                   variant="synastry"
+                  outerName={selectedChart.displayName}
                   outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
                   options={relationshipComparisonOptions}
                   selectedId={selectedRelationshipComparison?.id ?? "self"}
@@ -9127,7 +9215,7 @@ function ManualChartsPanel({
             )}
             {friendProfileTab === "composite" && selectedCompositeSky && (
               <div className="friend-synastry-wheel-shell">
-                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and you composite chart wheel`}>
+                <div className="wheel natal-wheel friend-wheel" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
                   <SkyWheel
                     positions={selectedCompositeSky.positions}
                     aspects={selectedCompositeSky.aspects}
