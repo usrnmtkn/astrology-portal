@@ -5,6 +5,8 @@
   --surface: #ffffff;
   --surface-2: #f5f4f1;
   --ink: #171717;
+  --text: #272520;
+  --text-muted: #66635f;
   --muted: #8c8984;
   --soft: #dcd9d2;
   --line: rgba(23, 23, 23, 0.1);
@@ -17,6 +19,17 @@
   --lavender: #f7e8fb;
   --shadow: 0 24px 70px rgba(23, 23, 23, 0.08);
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Roboto Mono", "Space Mono", monospace;
+  --font-display: var(--mono);
+  --font-body: var(--mono);
+  --page-max: 1680px;
+  --page-narrow: 760px;
+  --page-gutter: clamp(18px, 4vw, 72px);
+  --page-top: clamp(112px, 9vh, 148px);
+  --nav-height: 96px;
+  --card-radius: 24px;
+  --card-bg: var(--surface);
+  --card-border: var(--line);
+  --chart-size: min(760px, 72vh);
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
@@ -44,6 +57,8 @@
   --surface: #1f1f1f;
   --surface-2: #2a2a2a;
   --ink: #f5f2eb;
+  --text: #eee9df;
+  --text-muted: #b8b2aa;
   --muted: #aaa6a0;
   --soft: #3a3a38;
   --line: rgba(255, 255, 255, 0.12);
@@ -65,8 +80,8 @@ body {
   margin: 0;
   overflow-x: hidden;
   background: var(--bg);
-  color: var(--ink);
-  font-family: var(--mono);
+  color: var(--text);
+  font-family: var(--font-body);
   letter-spacing: 0;
 }
 
@@ -95,10 +110,117 @@ svg {
   max-width: 100%;
 }
 
+.type-display,
+.type-page-title,
+.type-card-title,
+.type-label {
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: 0;
+}
+
+.type-display {
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.type-page-title {
+  font-size: clamp(38px, 5vw, 56px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.type-card-title {
+  font-size: clamp(1.25rem, 1.55vw, 1.65rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.type-body,
+.type-body-mono {
+  color: var(--text-muted);
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.type-body-mono {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+.type-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.page-shell {
+  width: min(var(--page-max), 100%);
+  margin-inline: auto;
+  padding: var(--page-top) var(--page-gutter) 80px;
+}
+
+.page-shell--narrow {
+  width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.portal-grid.page-shell {
+  padding: 0;
+}
+
+.page-back-row {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 0 auto clamp(18px, 2vw, 28px);
+}
+
+.ui-card,
+.ui-list,
+.ui-row {
+  border-color: var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.chart-shell {
+  display: grid;
+  place-items: center;
+  width: min(100%, var(--chart-size));
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.chart-frame {
+  display: grid;
+  place-items: center;
+  width: min(100%, var(--chart-size));
+  max-width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+}
+
+.chart-frame > svg,
+.chart-frame > .sky-wheel,
+.chart-frame svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
 .app-shell {
   min-height: 100vh;
   overflow-x: hidden;
-  padding: clamp(112px, 9vh, 148px) clamp(24px, 4vw, 72px) 80px;
+  padding: var(--page-top) var(--page-gutter) 80px;
   background: var(--bg);
   color: var(--ink);
 }
@@ -281,7 +403,7 @@ svg {
   align-items: start;
   overflow: visible;
   gap: clamp(48px, 6vw, 112px);
-  width: min(1680px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
 }
 
@@ -330,14 +452,15 @@ svg {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: min(100%, var(--chart-size));
   min-width: 0;
+  max-width: 100%;
 }
 
 .sky-wheel {
   display: block;
   width: 100%;
-  max-width: min(760px, 72vh);
+  max-width: min(100%, var(--chart-size));
   height: auto;
   overflow: visible;
 }
@@ -578,6 +701,7 @@ svg {
 }
 
 .today-hero h1 {
+  font-family: var(--font-display);
   font-size: clamp(42px, 5vw, 64px);
   font-weight: 900;
   line-height: 1;
@@ -1020,7 +1144,7 @@ svg {
   display: block;
   color: var(--muted);
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -1107,7 +1231,8 @@ svg {
 
 .retro-copy,
 .retrograde-detail-line {
-  color: #66635f;
+  color: var(--text-muted);
+  font-weight: 500;
   line-height: 1.45;
 }
 
@@ -1214,8 +1339,9 @@ svg {
 }
 
 .placement-prose {
-  color: var(--muted);
-  font-size: 20px;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  font-weight: 500;
   line-height: 1.55;
 }
 
@@ -1255,16 +1381,19 @@ svg {
   gap: 6px;
 }
 
-.aspect-row-copy strong {
+.aspect-row-copy strong,
+.aspect-row-copy h3 {
   overflow-wrap: normal;
   word-break: normal;
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.15;
 }
 
-.aspect-row-copy span {
-  color: var(--muted);
+.aspect-row-copy span,
+.aspect-row-copy p {
+  color: var(--text-muted);
+  font-weight: 500;
   line-height: 1.45;
 }
 
@@ -1288,9 +1417,9 @@ svg {
   align-content: start;
   justify-items: center;
   gap: 26px;
-  width: min(1700px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
-  padding: clamp(156px, 12vh, 188px) clamp(18px, 5vw, 72px) 86px;
+  padding: var(--page-top) var(--page-gutter) 86px;
   overflow-x: clip;
 }
 
@@ -1303,6 +1432,7 @@ svg {
 
 .friends-page-heading h2 {
   margin: 0;
+  font-family: var(--font-display);
   font-size: clamp(4rem, 6vw, 6.75rem);
   font-weight: 900;
   line-height: 0.92;
@@ -1701,32 +1831,39 @@ svg {
 
 .friend-detail-page {
   position: relative;
-  width: min(1780px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
-  padding: clamp(148px, 12vh, 176px) clamp(48px, 6vw, 96px) 88px;
+  padding: var(--page-top) var(--page-gutter) 88px;
   overflow-x: clip;
 }
 
+.friend-back-row {
+  width: min(1280px, 100%);
+}
+
 .friends-back-button {
-  position: fixed;
-  top: clamp(118px, 10vh, 136px);
-  left: clamp(64px, 5vw, 128px);
-  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 0;
   border-radius: 999px;
   background: var(--surface);
-  padding: 16px 24px;
-  font-weight: 900;
+  color: var(--ink);
+  padding: 13px 18px;
+  font-weight: 800;
   box-shadow: var(--shadow);
 }
 
+.friend-detail-layout,
 .relationship-detail-layout {
-  --relationship-wheel-size: var(--friends-wheel-size, clamp(420px, 31vw, 560px));
+  --chart-size: clamp(420px, 31vw, 560px);
+  --relationship-wheel-size: var(--chart-size);
   display: grid;
-  grid-template-columns: minmax(580px, 1fr) minmax(400px, 560px);
+  grid-template-columns: minmax(520px, 720px) minmax(440px, 560px);
   align-items: start;
-  width: var(--friends-detail-width, min(1380px, calc(100vw - clamp(112px, 10vw, 176px))));
-  max-width: 1380px;
+  justify-content: center;
+  width: min(1280px, 100%);
+  max-width: 1280px;
   margin: 0 auto;
   gap: clamp(24px, 3vw, 48px);
   padding: 0;
@@ -1745,18 +1882,23 @@ svg {
   align-items: center;
 }
 
-.relationship-detail-layout > .friend-detail-content-column {
+.relationship-detail-layout > .friend-detail-content-column,
+.friend-detail-main {
   grid-column: 1;
   grid-row: 1;
-  max-width: 760px;
+  width: 100%;
+  max-width: 720px;
 }
 
-.relationship-detail-layout > .friend-detail-chart-column {
+.relationship-detail-layout > .friend-detail-chart-column,
+.friend-detail-chart-rail {
   grid-column: 2;
   grid-row: 1;
+  width: 100%;
   max-width: 560px;
   position: sticky;
-  top: clamp(124px, 10vh, 152px);
+  top: calc(var(--nav-height) + 24px);
+  align-self: start;
 }
 
 .relationship-detail-no-chart {
@@ -1776,10 +1918,9 @@ svg {
 .friend-synastry-wheel-shell {
   display: grid;
   place-items: center;
-  width: min(100%, var(--relationship-wheel-size));
-  max-width: var(--relationship-wheel-size);
+  width: min(100%, var(--chart-size));
+  max-width: 100%;
   min-width: 0;
-  aspect-ratio: 1 / 1;
   gap: 22px;
   overflow: visible;
 }
@@ -1900,8 +2041,9 @@ svg {
 
 .friend-compat-intro {
   max-width: 740px;
-  color: var(--muted);
-  font-size: clamp(1.35rem, 1.55vw, 2rem);
+  color: var(--text-muted);
+  font-size: clamp(1.05rem, 1.15vw, 1.25rem);
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: 0;
 }
@@ -1922,12 +2064,14 @@ svg {
 
 .you-signatures-main h3 {
   font-size: 26px;
+  font-weight: 800;
   line-height: 1.2;
 }
 
 .you-signatures-main p {
-  color: var(--muted);
-  font-size: 20px;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.08vw, 1.15rem);
+  font-weight: 500;
   line-height: 1.5;
 }
 
@@ -2351,6 +2495,7 @@ svg {
 
 .settings-header h2,
 .account-page-heading h2 {
+  font-family: var(--font-display);
   font-size: clamp(38px, 5vw, 56px);
   font-weight: 900;
 }
@@ -2426,6 +2571,29 @@ button.settings-signout-row {
 
 .settings-row p {
   color: var(--muted);
+}
+
+.settings-row-copy {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.settings-row-title {
+  display: block;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.settings-row-description {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .settings-theme-control {
@@ -3169,15 +3337,18 @@ button.settings-signout-row {
   }
 
   .relationship-detail-layout {
-    --relationship-wheel-size: clamp(360px, 74vw, 560px);
+    --chart-size: clamp(340px, 74vw, 560px);
+    --relationship-wheel-size: var(--chart-size);
     grid-template-columns: minmax(0, 1fr);
     width: min(920px, calc(100vw - 32px));
+    max-width: 920px;
   }
 
   .relationship-detail-layout > .friend-detail-content-column,
   .relationship-detail-layout > .friend-detail-chart-column {
     grid-column: 1;
     grid-row: auto;
+    width: 100%;
     max-width: 100%;
   }
 
@@ -3189,6 +3360,10 @@ button.settings-signout-row {
     order: 2;
     position: relative;
     top: auto;
+  }
+
+  .friend-back-row {
+    width: min(920px, calc(100vw - 32px));
   }
 
   .synastry-placement-strip {
@@ -3332,12 +3507,11 @@ button.settings-signout-row {
   }
 
   .friend-detail-page {
-    padding: 92px 14px 64px;
+    padding: var(--page-top) 14px 64px;
   }
 
   .friends-back-button {
-    position: static;
-    margin: 0 0 22px;
+    margin: 0;
   }
 
   .relationship-detail-layout {
