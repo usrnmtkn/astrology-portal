@@ -23,7 +23,8 @@ import {
   X,
 } from "lucide-react";
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import { createPortal } from "react-dom";
+import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
@@ -994,6 +995,185 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
     x: centerX + Math.cos(rad) * radius,
     y: centerY + Math.sin(rad) * radius
   };
+}
+
+function chartUprightTextRotation(_angleDeg: number) {
+  return 0;
+}
+
+function chartLabelPoint({
+  angleDeg,
+  center,
+  radius
+}: {
+  angleDeg: number;
+  center: number;
+  radius: number;
+}) {
+  const point = polarToCartesian(center, center, radius, angleDeg);
+
+  return {
+    ...point,
+    angle: angleDeg,
+    rotation: chartUprightTextRotation(angleDeg),
+    transform: `rotate(${chartUprightTextRotation(angleDeg)} ${point.x.toFixed(2)} ${point.y.toFixed(2)})`
+  };
+}
+
+function chartHouseLabelGeometry({
+  ascendant,
+  ascendantLongitude,
+  angleForLongitude,
+  center,
+  radius,
+  signs
+}: {
+  ascendant?: string;
+  ascendantLongitude?: number;
+  angleForLongitude: (longitude: number) => number;
+  center: number;
+  radius: number;
+  signs: string[];
+}) {
+  const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
+  const startLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
+  const hasAscendantAxis = typeof ascendantLongitude === "number";
+
+  return Array.from({ length: 12 }, (_, index) => {
+    const house = index + 1;
+    const midpointLongitude = startLongitude + index * 30 + 15;
+    const angle = angleForLongitude(midpointLongitude);
+    const label = chartLabelPoint({ angleDeg: angle, center, radius });
+
+    return {
+      house,
+      ...label,
+      ariaLabel: hasAscendantAxis || ascendant ? `${house} house` : `${house} natural house`
+    };
+  });
+}
+
+function chartAngularLabelGeometry({
+  ascendantLongitude,
+  angleForLongitude,
+  center,
+  radius
+}: {
+  ascendantLongitude?: number;
+  angleForLongitude: (longitude: number) => number;
+  center: number;
+  radius: number;
+}) {
+  if (typeof ascendantLongitude !== "number") {
+    return [];
+  }
+
+  return ([
+    ["ASC", ascendantLongitude],
+    ["DSC", ascendantLongitude + 180]
+  ] as const).map(([label, longitude]) => {
+    const angle = angleForLongitude(longitude);
+    const point = polarToCartesian(center, center, radius, angle);
+
+    return {
+      label,
+      x: point.x,
+      y: point.y
+    };
+  });
+}
+
+function ModalPortal({
+  children,
+  className = "",
+  onClose,
+  panelClassName = "",
+  titleId,
+  width
+}: {
+  children: ReactNode;
+  className?: string;
+  onClose: () => void;
+  panelClassName?: string;
+  titleId?: string;
+  width?: string;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.body.classList.add("modal-open");
+
+    const focusTimer = window.setTimeout(() => {
+      panelRef.current?.focus();
+    }, 0);
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab" || !panelRef.current) {
+        return;
+      }
+
+      const focusable = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(
+          "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+        )
+      ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null);
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        panelRef.current.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.classList.remove("modal-open");
+      restoreFocusRef.current?.focus();
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className={`modal-root${className ? ` ${className}` : ""}`}>
+      <div className="modal-overlay" role="presentation" onMouseDown={onClose} />
+      <div className="modal-positioner">
+        <div
+          className={`modal-panel${panelClassName ? ` ${panelClassName}` : ""}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          ref={panelRef}
+          style={width ? { "--modal-width": width } as CSSProperties : undefined}
+          tabIndex={-1}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          {children}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
 }
 
 function zodiacSignForLongitude(longitude: number) {
@@ -4581,14 +4761,13 @@ export function App() {
           )}
 
           {chartModalOpen && (
-            <div className="chart-modal-backdrop" role="presentation" onMouseDown={() => setChartModalOpen(false)}>
-              <section
-                className="chart-modal"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="chart-modal-title"
-                onMouseDown={(event) => event.stopPropagation()}
-              >
+            <ModalPortal
+              className="chart-modal-root"
+              panelClassName="chart-modal"
+              titleId="chart-modal-title"
+              width="640px"
+              onClose={() => setChartModalOpen(false)}
+            >
                 <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
                   ×
                 </button>
@@ -4600,8 +4779,7 @@ export function App() {
                   setStep={setChartModalStep}
                   onSave={drawTransitChart}
                 />
-              </section>
-            </div>
+            </ModalPortal>
           )}
         </>
       )}
@@ -4901,7 +5079,7 @@ function FriendPlacementTable({
                     <span>{row.sign}</span>
                     <span>{socialPlacementDegree(row.degree)}</span>
                     <span aria-hidden="true">·</span>
-                    <span>{row.house ? `H${row.house}` : "H-"}</span>
+                    <span>{row.house ? `${ordinalHouse(row.house)} House` : "House pending"}</span>
                   </span>
                   {summary ? <span className="friend-placement-summary">{summary}</span> : null}
                 </>
@@ -5075,7 +5253,11 @@ const natalSignatureDescriptions: Record<string, string> = {
 };
 
 function natalPlacementTitle(position: PlanetPosition) {
-  return `${position.planet} in ${position.sign} · ${ordinalHouse(position.house)} House`;
+  return `${position.planet} in ${position.sign}`;
+}
+
+function natalPlacementMeta(position: PlanetPosition) {
+  return `${ordinalHouse(position.house)} House · ${formatPlanetDegree(position)}`;
 }
 
 function natalPlacementDescription(planet: string) {
@@ -5212,7 +5394,7 @@ function RelationshipComparePicker({
       <button
         type="button"
         className="friend-compare-pill"
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
         aria-expanded={open}
         onClick={onToggle}
       >
@@ -5222,13 +5404,20 @@ function RelationshipComparePicker({
         <ChevronDown size={18} aria-hidden="true" />
       </button>
       {open && (
-        <div className="friend-compare-popover" role="menu" aria-label="Compare with saved chart">
+        <ModalPortal
+          className="friend-compare-modal-root"
+          panelClassName="friend-compare-popover friend-compare-modal"
+          titleId={`friend-compare-title-${variant}`}
+          width="420px"
+          onClose={onToggle}
+        >
           <span className="eyebrow section-label">Compare with</span>
+          <h3 className="sr-only" id={`friend-compare-title-${variant}`}>Compare with saved chart</h3>
           <div className="friend-compare-list">
             {options.map((option) => (
               <button
                 type="button"
-                role="menuitemradio"
+                role="radio"
                 aria-checked={option.id === selectedOption.id}
                 className={option.id === selectedOption.id ? "selected" : ""}
                 key={option.id}
@@ -5243,7 +5432,7 @@ function RelationshipComparePicker({
               </button>
             ))}
           </div>
-        </div>
+        </ModalPortal>
       )}
     </div>
   );
@@ -5415,17 +5604,6 @@ function SkyWheel({
     return "neutral";
   }
 
-  function houseNumberForSign(sign: string) {
-    const signIndex = signs.indexOf(sign);
-    const ascendantIndex = ascendant ? signs.indexOf(ascendant) : -1;
-
-    if (!showHouses || signIndex < 0 || ascendantIndex < 0) {
-      return null;
-    }
-
-    return ((signIndex - ascendantIndex + 12) % 12) + 1;
-  }
-
   const aspectPairs = aspects
     .map((aspect) => {
       const from = positions.find((position) => position.planet === aspect.from);
@@ -5458,6 +5636,20 @@ function SkyWheel({
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
   const tooltipMaxWidth = 520;
+  const houseLabels = chartHouseLabelGeometry({
+    ascendant,
+    ascendantLongitude,
+    angleForLongitude,
+    center,
+    radius: radius.house,
+    signs
+  });
+  const angularLabels = chartAngularLabelGeometry({
+    ascendantLongitude,
+    angleForLongitude,
+    center,
+    radius: radius.signInner - 38
+  });
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
@@ -5608,41 +5800,21 @@ function SkyWheel({
         </g>
       )}
 
-      {showHouses && ascendant && (
-        <g className="house-labels" aria-label="Whole sign houses">
-          {Array.from({ length: 12 }, (_, index) => {
-            const house = index + 1;
-            const p = isNatalWheel
-              ? point(angleForLongitude(wholeHouseStartLongitude + index * 30 + 15), radius.house)
-              : point(angleForLongitude((signs.indexOf(ascendant) + index) * 30 + 15), radius.house);
-
-            return (
-              <text key={house} x={p.x} y={p.y}>
-                {house}
-              </text>
-            );
-          })}
-        </g>
-      )}
+      <g className="house-labels" aria-label={showHouses && ascendant ? "Whole sign houses" : "Natural house labels"}>
+        {houseLabels.map(({ house, x, y, transform, ariaLabel }) => (
+          <text key={house} x={x} y={y} transform={transform} aria-label={ariaLabel}>
+            {house}
+          </text>
+        ))}
+      </g>
 
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
-          {[
-            ["ASC", ascendantLongitude],
-            ["DSC", ascendantLongitude + 180]
-          ].map(([label, longitude]) => {
-            if (typeof longitude !== "number") {
-              return null;
-            }
-
-            const p = point(angleForLongitude(longitude), radius.signInner - 38);
-
-            return (
-              <text key={label} x={p.x} y={p.y}>
-                {label}
-              </text>
-            );
-          })}
+          {angularLabels.map(({ label, x, y }) => (
+            <text key={label} x={x} y={y}>
+              {label}
+            </text>
+          ))}
         </g>
       )}
 
@@ -5803,6 +5975,20 @@ function SynastryWheel({
   }
 
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
+  const houseLabels = chartHouseLabelGeometry({
+    ascendant,
+    ascendantLongitude,
+    angleForLongitude,
+    center,
+    radius: radius.house,
+    signs
+  });
+  const angularLabels = chartAngularLabelGeometry({
+    ascendantLongitude,
+    angleForLongitude,
+    center,
+    radius: radius.signInner - 38
+  });
   const signLabelPaths = signs.map((sign, index) => {
     const isLong = sign.length >= 9;
     const inset = isLong ? 0.3 : 3.8;
@@ -5980,32 +6166,20 @@ function SynastryWheel({
           })()}
         </g>
       )}
-      {ascendant && (
-        <g className="house-labels" aria-label="Whole sign houses">
-          {Array.from({ length: 12 }, (_, index) => {
-            const house = index + 1;
-            const p = isNatalWheel
-              ? point(angleForLongitude(wholeHouseStartLongitude + index * 30 + 15), radius.house)
-              : point(angleForLongitude((signs.indexOf(ascendant) + index) * 30 + 15), radius.house);
-
-            return <text key={house} x={p.x} y={p.y}>{house}</text>;
-          })}
-        </g>
-      )}
+      <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "Natural house labels"}>
+        {houseLabels.map(({ house, x, y, transform, ariaLabel }) => (
+          <text key={house} x={x} y={y} transform={transform} aria-label={ariaLabel}>
+            {house}
+          </text>
+        ))}
+      </g>
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
-          {[
-            ["ASC", ascendantLongitude],
-            ["DSC", ascendantLongitude + 180]
-          ].map(([label, longitude]) => {
-            if (typeof longitude !== "number") {
-              return null;
-            }
-
-            const p = point(angleForLongitude(longitude), radius.signInner - 38);
-
-            return <text key={label} x={p.x} y={p.y}>{label}</text>;
-          })}
+          {angularLabels.map(({ label, x, y }) => (
+            <text key={label} x={x} y={y}>
+              {label}
+            </text>
+          ))}
         </g>
       )}
       <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
@@ -7270,10 +7444,10 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
       <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
         <X size={20} aria-hidden="true" />
       </button>
-      <div className="auth-shell">
+      <div className="auth-shell auth-shell--split">
         <form className="signup-form auth-card" onSubmit={submitSignup}>
           <div className="signup-heading">
-            <p>{isLogin ? "Log in" : "Create profile"}</p>
+            <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
             {isLogin && <h3>Return to your sky.</h3>}
           </div>
 
@@ -7284,7 +7458,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
         )}
 
         <div className="social-signons" aria-label="Social sign on">
-          <button type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
+          <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
             <GoogleIcon />
             Continue with Google
           </button>
@@ -7292,29 +7466,30 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
 
         {authMessage && <p className="auth-message">{authMessage}</p>}
 
-        <div className="email-divider"><span>or with email</span></div>
+        <div className="email-divider auth-divider"><span>or with email</span></div>
 
         <div className="signup-fields">
           {!isLogin && (
-            <label className="signup-field">
-              <span>Full name</span>
+            <label className="signup-field auth-field">
+              <span className="auth-label">Full name</span>
               <div>
-                <input value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
+                <input className="auth-input" value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
               </div>
             </label>
           )}
 
-          <label className="signup-field">
-            <span>Email</span>
+          <label className="signup-field auth-field">
+            <span className="auth-label">Email</span>
             <div>
-              <input type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
+              <input className="auth-input" type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
             </div>
           </label>
 
-          <label className="signup-field">
-            <span>Password</span>
+          <label className="signup-field auth-field">
+            <span className="auth-label">Password</span>
             <div className="password-control">
               <input
+                className="auth-input"
                 type={passwordVisible ? "text" : "password"}
                 value={form.password}
                 onChange={(event) => updateField("password", event.target.value)}
@@ -7342,11 +7517,12 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                 className="signup-city-search"
               />
 
-              <div className="signup-grid">
-                <label className="signup-field">
-                  <span>Birth date</span>
-                  <div className="signup-date-control">
+              <div className="signup-grid auth-birth-grid">
+                <label className="signup-field auth-field">
+                  <span className="auth-label">Birth date</span>
+                  <div className="signup-date-control auth-date-inputs">
                     <input
+                      className="auth-input"
                       aria-label="Birth month"
                       inputMode="numeric"
                       placeholder="MM"
@@ -7355,6 +7531,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                     />
                     <span aria-hidden="true">/</span>
                     <input
+                      className="auth-input"
                       aria-label="Birth day"
                       inputMode="numeric"
                       placeholder="DD"
@@ -7363,6 +7540,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                     />
                     <span aria-hidden="true">/</span>
                     <input
+                      className="auth-input"
                       aria-label="Birth year"
                       inputMode="numeric"
                       placeholder="YYYY"
@@ -7372,10 +7550,11 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                   </div>
                 </label>
 
-                <label className="signup-field">
-                  <span>Birth time</span>
-                  <div className="signup-time-control">
+                <label className="signup-field auth-field">
+                  <span className="auth-label">Birth time</span>
+                  <div className="signup-time-control auth-time-inputs">
                     <input
+                      className="auth-input"
                       aria-label="Birth hour"
                       inputMode="numeric"
                       placeholder="HH"
@@ -7385,6 +7564,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                     />
                     <span className="time-separator" aria-hidden="true">:</span>
                     <input
+                      className="auth-input"
                       aria-label="Birth minute"
                       inputMode="numeric"
                       placeholder="MM"
@@ -7392,12 +7572,12 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                       disabled={form.unknownBirthTime}
                       onChange={(event) => updateBirthTime("minute", event.target.value)}
                     />
-                    <div className="signup-meridiem" aria-label="AM or PM">
+                    <div className="signup-meridiem auth-ampm-toggle" aria-label="AM or PM">
                       {(["AM", "PM"] as const).map((period) => (
                         <button
                           key={period}
                           type="button"
-                          className={birthTimeParts.meridiem === period ? "active" : ""}
+                          className={birthTimeParts.meridiem === period ? "active is-active" : ""}
                           disabled={form.unknownBirthTime}
                           aria-pressed={birthTimeParts.meridiem === period}
                           onClick={() => updateBirthTime("meridiem", period)}
@@ -7410,7 +7590,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
                 </label>
               </div>
 
-              <label className="unknown-time">
+              <label className="unknown-time auth-checkbox-row">
                 <input
                   type="checkbox"
                   checked={form.unknownBirthTime}
@@ -7424,7 +7604,7 @@ function SignupView({ initialMode = "create", onClose, onCreateProfile }: { init
           )}
         </div>
 
-        <button className="signup-submit" type="submit" disabled={authStatus === "loading"}>
+        <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
           {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
         </button>
         <p className="signin-note">
@@ -8227,6 +8407,7 @@ function ProfileView({
                 <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
                 <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}</span>
               </span>
+              {natalSun ? <span className="chart-row-meta">{natalPlacementMeta(natalSun)}</span> : null}
             </div>
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☽</span>
@@ -8234,6 +8415,7 @@ function ProfileView({
                 <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
                 <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}</span>
               </span>
+              {natalMoon ? <span className="chart-row-meta">{natalPlacementMeta(natalMoon)}</span> : null}
             </div>
           </div>
 
@@ -8248,6 +8430,7 @@ function ProfileView({
                       <span className="crt">{natalPlacementTitle(position)}</span>
                       <span className="crs">{natalPlacementKnowledgeSummary(position, generatedContent)}</span>
                     </span>
+                    <span className="chart-row-meta">{natalPlacementMeta(position)}</span>
                   </div>
                 ))}
               </div>
@@ -8851,13 +9034,15 @@ function ManualChartsPanel({
       )}
 
       {friendChartModalOpen && (
-        <div className="chart-modal-backdrop friend-chart-modal-backdrop" role="presentation" onMouseDown={closeFriendChartModal}>
+        <ModalPortal
+          className="friend-chart-modal-root"
+          panelClassName="chart-modal friend-chart-modal"
+          titleId="friend-chart-modal-title"
+          width="640px"
+          onClose={closeFriendChartModal}
+        >
           <form
-            className="chart-modal manual-chart-form friend-chart-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="friend-chart-modal-title"
-            onMouseDown={(event) => event.stopPropagation()}
+            className="manual-chart-form friend-chart-modal-form"
             onSubmit={saveManualChart}
           >
             <button className="chart-modal-close" type="button" aria-label="Close friend chart" onClick={closeFriendChartModal}>
@@ -8965,7 +9150,7 @@ function ManualChartsPanel({
               {status === "saving" ? "Saving..." : editingChart ? "Save friend" : "Add friend"}
             </button>
           </form>
-        </div>
+        </ModalPortal>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
         <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
