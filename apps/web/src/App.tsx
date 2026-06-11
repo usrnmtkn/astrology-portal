@@ -5314,24 +5314,50 @@ export function App() {
           </button>
           {menuOpen && (
             <div className="site-menu" id="site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
+              <button
+                className={mode === "guest" || mode === "member" ? "active" : ""}
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setSelectedSkyDetail(null);
+                  setMode(userProfile ? "member" : "guest");
+                  setMenuOpen(false);
+                }}
+              >
+                <Sparkles size={20} aria-hidden="true" />
+                <span>Sky</span>
+              </button>
               {userProfile && (
                 <>
-                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { navigateToFriends(); setMenuOpen(false); }}>
+                  <button
+                    className={mode === "profile" ? "active" : ""}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setSelectedSkyDetail(null);
+                      setMode("profile");
+                      setMenuOpen(false);
+                    }}
+                  >
+                    <SmileNavIcon />
+                    <span>You</span>
+                  </button>
+                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}>
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => { setMode("account"); setMenuOpen(false); }}>
+                  <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); setMode("account"); setMenuOpen(false); }}>
                     <User size={20} aria-hidden="true" />
                     <span>Account</span>
                   </button>
                 </>
               )}
-              <button type="button" role="menuitem" onClick={() => { setMode("settings"); setMenuOpen(false); }}>
+              <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); setMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
               {userProfile ? (
-                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
+                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { setSelectedSkyDetail(null); await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
                   <LogOut size={20} aria-hidden="true" />
                   <span>Sign out</span>
                 </button>
@@ -5342,6 +5368,7 @@ export function App() {
                     type="button"
                     role="menuitem"
                     onClick={() => {
+                      setSelectedSkyDetail(null);
                       setAccountIntent("create");
                       setMode("profile");
                       setMenuOpen(false);
@@ -5354,6 +5381,7 @@ export function App() {
                     type="button"
                     role="menuitem"
                     onClick={() => {
+                      setSelectedSkyDetail(null);
                       setAccountIntent("login");
                       setMode("profile");
                       setMenuOpen(false);
@@ -7568,7 +7596,7 @@ function RetrogradeCallout({
   }
 
   return (
-    <section className="retrograde-section" aria-label="Retrograde planets">
+    <section className="retrograde-section chart-section" aria-label="Retrograde planets">
       <span className="section-label">Retrogrades</span>
       <div className="retro-list">
         {retrogrades.map((position) => {
@@ -7841,9 +7869,9 @@ function PlacementView({
   const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
 
   return (
-    <>
+    <section className="placement-section chart-section" aria-label="Placements">
       <div className="placements-heading">
-        <p>Placements</p>
+        <span className="eyebrow section-label chart-section-title">Placements</span>
       </div>
 
       <SegmentedControl
@@ -7870,7 +7898,7 @@ function PlacementView({
       ) : (
         <PlacementParagraph positions={positions} generatedAt={generatedAt} generatedContent={generatedContent} lifeAreaFocus={lifeAreaFocus} />
       )}
-    </>
+    </section>
   );
 }
 
@@ -7929,7 +7957,7 @@ function ActiveAspects({
   const orderedAspects = rankSkyAspectsByLifeAreaFocus(aspects, positions, lifeAreaFocus);
 
   return (
-    <section className="aspect-section" aria-label="Aspects">
+    <section className="aspect-section chart-section" aria-label="Aspects">
       <span className="eyebrow section-label aspect-section-label">Aspects</span>
       <div className="aspects-card aspect-row-card">
         <div className="aspect-row-list">
