@@ -1241,14 +1241,9 @@ function chartHouseLabelGeometry({
 
 const chartHouseLabelRadiusFactor = 0.48;
 
-function chartSignLabelRotation(angle: number) {
-  let rotation = normalizedAngle(angle + 90);
-
-  if (rotation > 90 && rotation < 270) {
-    rotation = normalizedAngle(rotation + 180);
-  }
-
-  return rotation > 180 ? rotation - 360 : rotation;
+function normalizeSignedAngle(angle: number) {
+  const normalized = normalizedAngle(angle);
+  return normalized > 180 ? normalized - 360 : normalized;
 }
 
 function chartSignLabelGeometry({
@@ -1262,17 +1257,24 @@ function chartSignLabelGeometry({
   radius: number;
   signs: string[];
 }) {
+  const labelArcSpan = 24;
+
   return signs.map((sign, index) => {
-    const angle = angleForLongitude(index * 30 + 15);
-    const point = polarToCartesian(center, center, radius, angle);
-    const rotation = chartSignLabelRotation(angle);
+    const midAngle = angleForLongitude(index * 30 + 15);
+    const clockwiseTangent = normalizeSignedAngle(midAngle + 90);
+    const useClockwisePath = Math.abs(clockwiseTangent) <= 90;
+    const startAngle = midAngle + (useClockwisePath ? -labelArcSpan / 2 : labelArcSpan / 2);
+    const endAngle = midAngle + (useClockwisePath ? labelArcSpan / 2 : -labelArcSpan / 2);
+    const start = polarToCartesian(center, center, radius, startAngle);
+    const end = polarToCartesian(center, center, radius, endAngle);
 
     return {
       sign,
       isLong: sign.length >= 9,
-      x: point.x,
-      y: point.y,
-      transform: `rotate(${rotation.toFixed(2)} ${point.x.toFixed(2)} ${point.y.toFixed(2)})`
+      path: [
+        `M ${start.x.toFixed(2)} ${start.y.toFixed(2)}`,
+        `A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 0 ${useClockwisePath ? 1 : 0} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`
+      ].join(" ")
     };
   });
 }
@@ -4348,6 +4350,28 @@ export function App() {
   }, [menuOpen]);
 
   useEffect(() => {
+    function updateScrolled() {
+      const scrollTop = Math.max(
+        window.scrollY,
+        document.documentElement.scrollTop,
+        document.body.scrollTop,
+        document.scrollingElement?.scrollTop ?? 0
+      );
+      document.documentElement.toggleAttribute("data-scrolled", scrollTop > 8);
+    }
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+    document.addEventListener("scroll", updateScrolled, { passive: true, capture: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolled);
+      document.removeEventListener("scroll", updateScrolled, { capture: true });
+      document.documentElement.removeAttribute("data-scrolled");
+    };
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const skyLocation = withTimeZone(location);
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
@@ -6338,6 +6362,7 @@ function SkyWheel({
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
+  const signLabelPathPrefix = `${wheelClipId}-sign-label`;
   const tooltipMaxWidth = 520;
   const shouldRenderHouseLabels = true;
   const houseLabels = chartHouseLabelGeometry({
@@ -6400,6 +6425,9 @@ function SkyWheel({
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
         </clipPath>
+        {signLabels.map(({ sign, path }) => (
+          <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
+        ))}
       </defs>
       <circle
         className="sign-band"
@@ -6549,12 +6577,14 @@ function SkyWheel({
       )}
 
       <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y, transform }) => {
+        {signLabels.map(({ sign, isLong }) => {
           const className = isLong ? "sign-label-long" : undefined;
           return (
             <g key={sign} className={className}>
-              <text className="zodiac-wheel__sign-label" x={x} y={y} transform={transform} stroke="none" paintOrder="normal" filter="none">
-                {sign}
+              <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
+                <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
+                  {sign}
+                </textPath>
               </text>
             </g>
           );
@@ -6642,6 +6672,7 @@ function SynastryWheel({
 
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
+  const signLabelPathPrefix = `${wheelClipId}-sign-label`;
   const houseLabels = chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -6732,6 +6763,9 @@ function SynastryWheel({
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
         </clipPath>
+        {signLabels.map(({ sign, path }) => (
+          <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
+        ))}
       </defs>
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings">
@@ -6842,9 +6876,13 @@ function SynastryWheel({
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
       <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y, transform }) => (
+        {signLabels.map(({ sign, isLong }) => (
           <g key={sign} className={isLong ? "sign-label-long" : undefined}>
-            <text className="zodiac-wheel__sign-label" x={x} y={y} transform={transform} stroke="none" paintOrder="normal" filter="none">{sign}</text>
+            <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
+              <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
+                {sign}
+              </textPath>
+            </text>
           </g>
         ))}
       </g>

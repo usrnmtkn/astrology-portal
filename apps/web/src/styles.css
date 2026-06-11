@@ -9,7 +9,7 @@
   */
 
   /* 1. PRIMITIVE TOKENS */
-  --color-bg-warm: #eceae4;
+  --color-bg-warm: #f1f1ef;
   --color-paper: var(--color-bg-warm);
   --color-white: #ffffff;
   --color-surface: var(--color-white);
@@ -170,6 +170,16 @@
   --nav-radius: var(--radius-pill);
   --nav-padding: var(--sp-half);
   --nav-link-size: var(--text-nav);
+  --nav-glass-bg: rgba(255, 255, 255, 0.64);
+  --nav-scrolled-bg: rgba(255, 255, 255, 0.92);
+  --nav-border: rgba(20, 20, 20, 0.1);
+  --nav-border-hover: rgba(20, 20, 20, 0.14);
+  --nav-blur: 18px;
+  --nav-saturate: 1.15;
+  --floating-button-bg: rgba(255, 255, 255, 0.68);
+  --floating-button-bg-hover: #ffffff;
+  --floating-button-border: rgba(20, 20, 20, 0.1);
+  --floating-button-border-hover: rgba(20, 20, 20, 0.14);
   --button-height: var(--sp-6);
   --button-radius: var(--radius-pill);
   --button-padding-x: var(--sp-3);
@@ -363,7 +373,16 @@
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
   --nav-surface: var(--nav-bg);
-  --nav-border: var(--line);
+  --nav-glass-bg: rgba(28, 28, 28, 0.64);
+  --nav-scrolled-bg: rgba(255, 255, 255, 0.92);
+  --nav-border: rgba(255, 255, 255, 0.12);
+  --nav-border-hover: rgba(255, 255, 255, 0.18);
+  --nav-blur: 18px;
+  --nav-saturate: 1.1;
+  --floating-button-bg: rgba(28, 28, 28, 0.72);
+  --floating-button-bg-hover: #ffffff;
+  --floating-button-border: rgba(255, 255, 255, 0.12);
+  --floating-button-border-hover: rgba(20, 20, 20, 0.14);
   --app-bg: var(--bg);
   --app-card: var(--surface);
   --app-text: var(--ink);
@@ -639,9 +658,9 @@ svg {
   gap: var(--sp-1);
   height: var(--top-control-height);
   padding: 0 var(--button-padding-x);
-  border: 1px solid var(--button-border, var(--app-border));
+  border: 1px solid var(--floating-button-border);
   border-radius: var(--button-radius);
-  background: var(--button-surface, var(--app-card));
+  background: var(--floating-button-bg);
   color: var(--app-text);
   box-shadow: var(--button-shadow, var(--shadow));
   font-family: var(--font-ui);
@@ -652,12 +671,15 @@ svg {
 }
 
 .floating-back-button:hover {
+  border-color: var(--floating-button-border-hover);
+  background: var(--floating-button-bg-hover);
+  color: var(--color-black);
   transform: translateY(-1px);
 }
 
 .theme-dark .floating-back-button {
-  border-color: var(--app-border);
-  background: var(--surface-2);
+  border-color: var(--floating-button-border);
+  background: var(--floating-button-bg);
   color: var(--app-text);
 }
 
@@ -887,9 +909,15 @@ svg {
   scrollbar-width: none;
   border: 1px solid var(--nav-border, var(--line));
   border-radius: var(--nav-radius);
-  background: var(--nav-surface);
+  background: var(--nav-glass-bg);
   box-shadow: var(--nav-shadow, var(--shadow));
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
   padding: var(--nav-padding) var(--sp-2) var(--nav-padding) var(--nav-padding);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .nav-pill::-webkit-scrollbar {
@@ -943,11 +971,39 @@ svg {
   letter-spacing: var(--tracking-nav);
   line-height: 1;
   white-space: nowrap;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
 }
 
 .site-nav button.active {
   background: var(--surface-2);
   color: var(--ink);
+}
+
+.nav-pill:hover,
+html[data-scrolled] .nav-pill {
+  border-color: var(--nav-border-hover);
+  background: var(--nav-scrolled-bg);
+}
+
+.site-nav button:not(.active):hover {
+  background: var(--floating-button-bg-hover);
+  color: var(--color-black);
+}
+
+html[data-scrolled] .theme-dark .nav-pill {
+  color: var(--color-black);
+}
+
+html[data-scrolled] .theme-dark .brand-word,
+html[data-scrolled] .theme-dark .site-nav button {
+  color: var(--color-black);
+}
+
+html[data-scrolled] .theme-dark .site-nav button.active {
+  background: rgba(20, 20, 20, 0.08);
+  color: var(--color-black);
 }
 
 .site-nav svg {
@@ -971,9 +1027,23 @@ svg {
   place-items: center;
   width: var(--top-icon-button-size);
   height: var(--top-icon-button-size);
-  border: 0;
+  border: 1px solid var(--floating-button-border);
   border-radius: var(--button-radius);
-  background: var(--nav-surface);
+  background: var(--floating-button-bg);
+  color: var(--ink);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.theme-toggle:hover,
+.menu-toggle:hover {
+  border-color: var(--floating-button-border-hover);
+  background: var(--floating-button-bg-hover);
+  color: var(--color-black);
+  transform: translateY(-1px);
 }
 
 .theme-toggle svg,
@@ -1017,6 +1087,8 @@ svg {
   border-radius: var(--radius-sm);
   background: var(--surface);
   box-shadow: var(--shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .site-menu button {
@@ -5883,6 +5955,72 @@ body.modal-open {
 [data-theme="dark"] .badge--countdown {
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
+}
+
+.theme-dark .nav-pill,
+[data-theme="dark"] .nav-pill {
+  border-color: var(--nav-border);
+  background: var(--nav-glass-bg);
+  color: var(--ink);
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+}
+
+.theme-dark .nav-pill:hover,
+[data-theme="dark"] .nav-pill:hover,
+html[data-scrolled] .theme-dark .nav-pill,
+html[data-scrolled] [data-theme="dark"] .nav-pill {
+  border-color: var(--floating-button-border-hover);
+  background: var(--nav-scrolled-bg);
+  color: var(--color-black);
+}
+
+html[data-scrolled] .theme-dark .brand-word,
+html[data-scrolled] .theme-dark .site-nav button,
+html[data-scrolled] [data-theme="dark"] .brand-word,
+html[data-scrolled] [data-theme="dark"] .site-nav button {
+  color: var(--color-black);
+}
+
+html[data-scrolled] .theme-dark .brand-dot,
+html[data-scrolled] [data-theme="dark"] .brand-dot {
+  background: var(--color-black);
+  color: #ffffff;
+}
+
+.theme-dark .theme-toggle,
+.theme-dark .menu-toggle,
+.theme-dark .floating-back-button,
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .menu-toggle,
+[data-theme="dark"] .floating-back-button {
+  border-color: var(--floating-button-border);
+  background: var(--floating-button-bg);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.theme-dark .theme-toggle:hover,
+.theme-dark .menu-toggle:hover,
+.theme-dark .floating-back-button:hover,
+[data-theme="dark"] .theme-toggle:hover,
+[data-theme="dark"] .menu-toggle:hover,
+[data-theme="dark"] .floating-back-button:hover {
+  border-color: var(--floating-button-border-hover);
+  background: var(--floating-button-bg-hover);
+  color: var(--color-black);
+}
+
+.site-menu,
+.menu-popover,
+.dropdown-popover,
+.nav-popover,
+.popover,
+.tooltip-panel,
+.manual-chart-overflow-menu,
+.friend-compare-popover {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @media (max-width: 1320px) and (min-width: 1181px) {
