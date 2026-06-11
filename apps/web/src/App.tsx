@@ -1354,6 +1354,11 @@ function ModalPortal({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -1366,7 +1371,7 @@ function ModalPortal({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -1406,11 +1411,11 @@ function ModalPortal({
       document.body.classList.remove("modal-open");
       restoreFocusRef.current?.focus();
     };
-  }, [onClose]);
+  }, []);
 
   return createPortal(
     <div className={`modal-root${className ? ` ${className}` : ""}`}>
-      <div className="modal-overlay" role="presentation" onMouseDown={onClose} />
+      <div className="modal-overlay" role="presentation" onMouseDown={() => onCloseRef.current()} />
       <div className="modal-positioner">
         <div
           className={`modal-panel${panelClassName ? ` ${panelClassName}` : ""}`}
@@ -4351,7 +4356,7 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadNatal = Boolean(userProfile) && ["profile", "friends", "account", "settings"].includes(mode);
+    const shouldLoadNatal = Boolean(userProfile) && ["profile", "friends"].includes(mode);
 
     if (!shouldLoadNatal) {
       setNatalGeneratedContent(new Map());
