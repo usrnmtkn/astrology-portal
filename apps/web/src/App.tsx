@@ -56,7 +56,7 @@ import {
   listManualCharts,
   updateManualChart
 } from "./services/manualCharts";
-import type { ManualChart, ManualChartInput } from "./services/manualCharts";
+import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
@@ -196,6 +196,7 @@ type TransitForm = {
 };
 
 type ManualChartForm = {
+  chartType: ManualChartType;
   displayName: string;
   relationshipType: string;
   birthDate: string;
@@ -203,7 +204,6 @@ type ManualChartForm = {
   birthTimeUnknown: boolean;
   birthPlace: string;
   birthLocation: LocationInput | null;
-  notes: string;
 };
 
 type TransitItem = {
@@ -892,14 +892,70 @@ const defaultTransitForm: TransitForm = {
 };
 
 const defaultManualChartForm: ManualChartForm = {
+  chartType: "person",
   displayName: "",
   relationshipType: "friend",
   birthDate: "",
   birthTime: "12:00",
   birthTimeUnknown: false,
   birthPlace: "",
-  birthLocation: null,
-  notes: ""
+  birthLocation: null
+};
+
+const chartFormCopy: Record<ManualChartType, {
+  title: string;
+  editTitle: string;
+  subtitle: string;
+  editSubtitle: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  dateLabel: string;
+  timeLabel: string;
+  placeLabel: string;
+  placePlaceholder: string;
+  unknownTime: string;
+  submit: string;
+  savingSubmit: string;
+  saveSubmit: string;
+  requiredMessage: string;
+  timeMessage: string;
+}> = {
+  person: {
+    title: "Add chart",
+    editTitle: "Edit chart",
+    subtitle: "Enter birth details to save this chart.",
+    editSubtitle: "Update birth details for this saved chart.",
+    nameLabel: "Name",
+    namePlaceholder: "Their name",
+    dateLabel: "Birth date",
+    timeLabel: "Birth time",
+    placeLabel: "Birth place",
+    placePlaceholder: "City, Country",
+    unknownTime: "I don't know their birth time.",
+    submit: "Add chart",
+    savingSubmit: "Saving...",
+    saveSubmit: "Save chart",
+    requiredMessage: "Add a name, birth date, and birth place.",
+    timeMessage: "Add a birth time, or mark it unknown."
+  },
+  event: {
+    title: "Add event chart",
+    editTitle: "Edit event chart",
+    subtitle: "Enter the event details to save this chart.",
+    editSubtitle: "Update event details for this saved chart.",
+    nameLabel: "Event name",
+    namePlaceholder: "Event name",
+    dateLabel: "Event date",
+    timeLabel: "Event time",
+    placeLabel: "Event place",
+    placePlaceholder: "City, Country",
+    unknownTime: "I don't know the event time.",
+    submit: "Add event chart",
+    savingSubmit: "Saving...",
+    saveSubmit: "Save event chart",
+    requiredMessage: "Add an event name, event date, and event place.",
+    timeMessage: "Add an event time, or mark it unknown."
+  }
 };
 
 const relationshipTypeLabels: Record<string, string> = {
@@ -1117,29 +1173,6 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
   };
 }
 
-function chartUprightTextRotation(_angleDeg: number) {
-  return 0;
-}
-
-function chartLabelPoint({
-  angleDeg,
-  center,
-  radius
-}: {
-  angleDeg: number;
-  center: number;
-  radius: number;
-}) {
-  const point = polarToCartesian(center, center, radius, angleDeg);
-
-  return {
-    ...point,
-    angle: angleDeg,
-    rotation: chartUprightTextRotation(angleDeg),
-    transform: `rotate(${chartUprightTextRotation(angleDeg)} ${point.x.toFixed(2)} ${point.y.toFixed(2)})`
-  };
-}
-
 function chartHouseLabelGeometry({
   ascendant,
   ascendantLongitude,
@@ -1158,17 +1191,60 @@ function chartHouseLabelGeometry({
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
   const startLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
   const hasAscendantAxis = typeof ascendantLongitude === "number";
+  const houseCusps = Array.from({ length: 12 }, (_, index) => normalizedAngle(startLongitude + index * 30));
 
   return Array.from({ length: 12 }, (_, index) => {
     const house = index + 1;
-    const midpointLongitude = startLongitude + index * 30 + 15;
+    const start = houseCusps[index];
+    const end = houseCusps[(index + 1) % 12];
+    const span = normalizedAngle(end - start) || 30;
+    const midpointLongitude = normalizedAngle(start + span / 2);
     const angle = angleForLongitude(midpointLongitude);
-    const label = chartLabelPoint({ angleDeg: angle, center, radius });
+    const label = polarToCartesian(center, center, radius, angle);
 
     return {
       house,
       ...label,
+      angle,
       ariaLabel: hasAscendantAxis || ascendant ? `${house} house` : `${house} natural house`
+    };
+  });
+}
+
+const chartHouseLabelRadiusFactor = 0.48;
+
+function chartSignLabelRotation(angle: number) {
+  let rotation = normalizedAngle(angle + 90);
+
+  if (rotation > 90 && rotation < 270) {
+    rotation = normalizedAngle(rotation + 180);
+  }
+
+  return rotation > 180 ? rotation - 360 : rotation;
+}
+
+function chartSignLabelGeometry({
+  angleForLongitude,
+  center,
+  radius,
+  signs
+}: {
+  angleForLongitude: (longitude: number) => number;
+  center: number;
+  radius: number;
+  signs: string[];
+}) {
+  return signs.map((sign, index) => {
+    const angle = angleForLongitude(index * 30 + 15);
+    const point = polarToCartesian(center, center, radius, angle);
+    const rotation = chartSignLabelRotation(angle);
+
+    return {
+      sign,
+      isLong: sign.length >= 9,
+      x: point.x,
+      y: point.y,
+      transform: `rotate(${rotation.toFixed(2)} ${point.x.toFixed(2)} ${point.y.toFixed(2)})`
     };
   });
 }
@@ -1614,14 +1690,14 @@ function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
   }
 
   return {
+    chartType: chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person"),
     displayName: chart.displayName,
     relationshipType: chart.relationshipType || "friend",
     birthDate: chart.birthDate,
     birthTime: displayTimeToTwentyFourHour(chart.birthTime),
     birthTimeUnknown: chart.birthTimeUnknown,
     birthPlace: chart.birthPlace,
-    birthLocation: chart.birthLocation,
-    notes: chart.notes ?? ""
+    birthLocation: chart.birthLocation
   };
 }
 
@@ -1639,8 +1715,9 @@ function manualChartBigThree(chart: ManualChart) {
 
 function manualChartSubtitle(chart: ManualChart) {
   const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+  const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
 
-  return `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
+  return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -1956,6 +2033,98 @@ function formatTransitRange(start: Date, end: Date) {
   return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
 
+function dateFromDurationInput(value: string | Date) {
+  const date = typeof value === "string"
+    ? new Date(`${value.slice(0, 10)}T00:00:00Z`)
+    : new Date(value);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function calendarMonthDiff(start: Date, end: Date) {
+  let months = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
+
+  if (end.getUTCDate() < start.getUTCDate()) {
+    months -= 1;
+  }
+
+  return Math.max(0, months);
+}
+
+function getDurationParts(startInput: string | Date, endInput: string | Date) {
+  const start = dateFromDurationInput(startInput);
+  const end = dateFromDurationInput(endInput);
+
+  if (!start || !end || end.getTime() < start.getTime()) {
+    return null;
+  }
+
+  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+  const months = days >= 30 ? Math.max(1, calendarMonthDiff(start, end)) : 0;
+  const normalizedMonths = days >= 365 ? Math.max(12, months) : months;
+  const years = Math.floor(normalizedMonths / 12);
+
+  return {
+    days,
+    months: normalizedMonths,
+    years,
+    remainingMonths: normalizedMonths % 12
+  };
+}
+
+function formatDurationCompact(startInput: string | Date, endInput: string | Date) {
+  const duration = getDurationParts(startInput, endInput);
+
+  if (!duration) {
+    return null;
+  }
+
+  if (duration.days < 1) {
+    return "TODAY";
+  }
+
+  if (duration.days < 30) {
+    return `${duration.days}D`;
+  }
+
+  if (duration.months < 12) {
+    return `${duration.months}M`;
+  }
+
+  return duration.remainingMonths > 0
+    ? `${duration.years}Y ${duration.remainingMonths}M`
+    : `${duration.years}Y`;
+}
+
+function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
+  const duration = getDurationParts(startInput, endInput);
+
+  if (!duration) {
+    return null;
+  }
+
+  const prefix = label ? `${label} for ` : "";
+
+  if (duration.days < 1) {
+    return label ? `${label} today` : "Today";
+  }
+
+  if (duration.days < 30) {
+    return `${prefix}${duration.days} ${duration.days === 1 ? "day" : "days"}`;
+  }
+
+  if (duration.months < 12) {
+    return `${prefix}${duration.months} ${duration.months === 1 ? "month" : "months"}`;
+  }
+
+  const yearsText = `${duration.years} ${duration.years === 1 ? "year" : "years"}`;
+  const monthsText = duration.remainingMonths > 0
+    ? ` ${duration.remainingMonths} ${duration.remainingMonths === 1 ? "month" : "months"}`
+    : "";
+
+  return `${prefix}${yearsText}${monthsText}`;
+}
+
 function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   const speed = averageDailyMotion[position.planet] ?? 1;
   const entryOffset = position.motion === "retrograde"
@@ -1980,32 +2149,11 @@ function placementTransitRangeLabel(position: PlanetPosition, generatedAt: strin
 }
 
 function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
-  if (position.transitRemainingLabel) {
-    return position.transitRemainingLabel;
-  }
-
   if (!position.transitEnd) {
     return null;
   }
 
-  const endDate = new Date(position.transitEnd);
-  const currentDate = new Date(generatedAt);
-
-  if (Number.isNaN(endDate.getTime()) || Number.isNaN(currentDate.getTime())) {
-    return null;
-  }
-
-  const days = Math.max(1, Math.ceil((endDate.getTime() - currentDate.getTime()) / 86_400_000));
-
-  if (days < 90) {
-    return `${days}Ds`;
-  }
-
-  if (days <= 548) {
-    return `${Math.max(1, Math.round(days / 30.44))}Mos`;
-  }
-
-  return `${Math.max(1, Math.round(days / 365.25))}Yrs`;
+  return formatDurationCompact(generatedAt, position.transitEnd);
 }
 
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
@@ -2295,11 +2443,48 @@ function angularDistance(first: number, second: number) {
   return difference > 180 ? 360 - difference : difference;
 }
 
-function wheelMarkerClusterLevels<T>(
+type WheelMarkerLayout = {
+  angle: number;
+  visualAngle: number;
+  marker: { x: number; y: number };
+  tickInner: { x: number; y: number };
+  tickOuter: { x: number; y: number };
+  leaderStart: { x: number; y: number };
+  leaderEnd: { x: number; y: number };
+  hasLeader: boolean;
+};
+
+function wheelMarkerLayouts<T>(
   items: T[],
   keyForItem: (item: T) => string,
   angleForItem: (item: T) => number,
-  threshold = 8
+  {
+    angleStep = 3.4,
+    baseRadius,
+    center,
+    clusterThreshold = 8,
+    leaderRadius,
+    maxAngleOffset = 8,
+    maxClusterSpan = 24,
+    maxRadius,
+    minRadius,
+    radiusStep = 11,
+    tickInnerRadius,
+    tickOuterRadius
+  }: {
+    angleStep?: number;
+    baseRadius: number;
+    center: number;
+    clusterThreshold?: number;
+    leaderRadius?: number;
+    maxAngleOffset?: number;
+    maxClusterSpan?: number;
+    maxRadius: number;
+    minRadius: number;
+    radiusStep?: number;
+    tickInnerRadius: number;
+    tickOuterRadius: number;
+  }
 ) {
   const entries = items
     .map((item) => ({
@@ -2308,26 +2493,75 @@ function wheelMarkerClusterLevels<T>(
       angle: normalizedAngle(angleForItem(item))
     }))
     .sort((first, second) => first.angle - second.angle);
-  const levels = new Map<string, number>();
-  let clusterLevel = 0;
+  const groups: typeof entries[] = [];
 
-  entries.forEach((entry, index) => {
-    if (index > 0 && angularDistance(entry.angle, entries[index - 1].angle) <= threshold) {
-      clusterLevel += 1;
-    } else {
-      clusterLevel = 0;
+  entries.forEach((entry) => {
+    const currentGroup = groups[groups.length - 1];
+    const previous = currentGroup?.[currentGroup.length - 1];
+    const firstInGroup = currentGroup?.[0];
+
+    if (
+      previous &&
+      firstInGroup &&
+      angularDistance(entry.angle, previous.angle) <= clusterThreshold &&
+      angularDistance(entry.angle, firstInGroup.angle) <= maxClusterSpan
+    ) {
+      currentGroup.push(entry);
+      return;
     }
 
-    levels.set(entry.key, clusterLevel);
+    groups.push([entry]);
   });
 
-  const first = entries[0];
-  const last = entries[entries.length - 1];
-  if (first && last && first !== last && angularDistance(first.angle, last.angle) <= threshold) {
-    levels.set(first.key, (levels.get(last.key) ?? 0) + 1);
+  if (groups.length > 1) {
+    const firstGroup = groups[0];
+    const lastGroup = groups[groups.length - 1];
+    const first = firstGroup[0];
+    const last = lastGroup[lastGroup.length - 1];
+
+    if (
+      first &&
+      last &&
+      angularDistance(first.angle, last.angle) <= clusterThreshold &&
+      angularDistance(firstGroup[firstGroup.length - 1].angle, lastGroup[0].angle) <= maxClusterSpan
+    ) {
+      groups[0] = [...lastGroup, ...firstGroup];
+      groups.pop();
+    }
   }
 
-  return levels;
+  const layouts = new Map<string, WheelMarkerLayout>();
+  const resolvedLeaderRadius = leaderRadius ?? baseRadius + 6;
+
+  groups.forEach((group) => {
+    group.forEach((entry, index) => {
+      const offset = index - (group.length - 1) / 2;
+      const spreadOffset = group.length === 2 ? offset * 2 : offset;
+      const angleOffset = Math.max(-maxAngleOffset, Math.min(maxAngleOffset, spreadOffset * angleStep));
+      const visualAngle = normalizedAngle(entry.angle + angleOffset);
+      const radiusOffset = group.length > 1 ? Math.abs(spreadOffset) * radiusStep : 0;
+      const markerRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius - radiusOffset));
+      const marker = polarToCartesian(center, center, markerRadius, visualAngle);
+      const tickInner = polarToCartesian(center, center, tickInnerRadius, entry.angle);
+      const tickOuter = polarToCartesian(center, center, tickOuterRadius, entry.angle);
+      const leaderStart = polarToCartesian(center, center, resolvedLeaderRadius, entry.angle);
+      const leaderEnd = polarToCartesian(center, center, markerRadius + 16, visualAngle);
+      const hasLeader = group.length > 1 || angularDistance(entry.angle, visualAngle) > 1.2 || radiusOffset > 4;
+
+      layouts.set(entry.key, {
+        angle: entry.angle,
+        visualAngle,
+        marker,
+        tickInner,
+        tickOuter,
+        leaderStart,
+        leaderEnd,
+        hasLeader
+      });
+    });
+  });
+
+  return layouts;
 }
 
 function formatOrb(orb: number) {
@@ -3782,7 +4016,7 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
     {
       label: "Friend updates",
       title: "Current astrology for each person",
-      body: "Add a friend to see what the current sky is bringing up in their chart."
+      body: "Add a chart to see what the current sky is bringing up in that person's chart."
     },
     {
       label: "Circle patterns",
@@ -4785,6 +5019,7 @@ export function App() {
                 {datePickerOpen && (
                   <SkyDatePicker
                     value={skyDate}
+                    onClose={() => setDatePickerOpen(false)}
                     onSelect={(nextDate) => {
                       setSkyDate(nextDate);
                       setDatePickerOpen(false);
@@ -5010,9 +5245,11 @@ function locationFromLabel(label: string): LocationInput {
 }
 
 function SkyDatePicker({
+  onClose,
   value,
   onSelect
 }: {
+  onClose: () => void;
   value: string;
   onSelect: (value: string) => void;
 }) {
@@ -5025,6 +5262,9 @@ function SkyDatePicker({
 
   return (
     <section className="date-picker" id="sky-date-picker" aria-label="Select sky date">
+      <button className="date-picker-close" type="button" aria-label="Close date picker" onClick={onClose}>
+        <X size={16} aria-hidden="true" />
+      </button>
       <div className="date-picker-header">
         <button type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
@@ -5068,9 +5308,14 @@ function SkyDatePicker({
         })}
       </div>
 
-      <button className="date-picker-today" type="button" onClick={() => onSelect(todayValue)}>
-        Today
-      </button>
+      <div className="date-picker-actions">
+        <button className="date-picker-cancel" type="button" onClick={onClose}>
+          Cancel
+        </button>
+        <button className="date-picker-today" type="button" onClick={() => onSelect(todayValue)}>
+          Today
+        </button>
+      </div>
     </section>
   );
 }
@@ -5244,50 +5489,18 @@ function FriendPlacementTable({
       <h3 className="friend-placement-column-title">{title}</h3>
       <div className="friend-placement-table">
         {rows.map((row) => {
-          const generated = generatedContent
-            ? generatedContext === "composite"
-              ? liveGeneratedContentByKeys(generatedContent, relationshipPlacementContentKeys(row.label, row.sign, "composite", row.house))
-              : liveGeneratedContent(generatedContent, placementContentId(row.label, row.sign))
-            : null;
-          const summary = compact ? null : generated?.summary?.trim();
           const dignity = dignityFor(row.label, row.sign);
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
-              {compact ? (
-                <>
-                  <span className="friend-placement-main">
-                    <span className="friend-placement-symbol" aria-hidden="true">
-                      {row.glyph}
-                    </span>
-                    <span className="friend-placement-label">{row.label}</span>
-                  </span>
-                  <span className="friend-placement-meta">
-                    <span>{row.sign}</span>
-                    <span>{socialPlacementDegree(row.degree)}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{row.house ? `H${row.house}` : "H-"}</span>
-                    <DignityBadge dignity={dignity} />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="friend-placement-main">
-                    <span className="friend-placement-symbol" aria-hidden="true">
-                      {row.glyph}
-                    </span>
-                    <span className="friend-placement-label">{row.label}</span>
-                  </span>
-                  <span className="friend-placement-meta">
-                    <span>{row.sign}</span>
-                    <span>{socialPlacementDegree(row.degree)}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{row.house ? `${ordinalHouse(row.house)} House` : "House pending"}</span>
-                    <DignityBadge dignity={dignity} />
-                  </span>
-                  {summary ? <span className="friend-placement-summary">{summary}</span> : null}
-                </>
-              )}
+              <PlanetPlacementRow
+                degree={socialPlacementDegree(row.degree)}
+                dignity={dignity}
+                glyph={row.glyph}
+                house={row.house}
+                title={`${row.label} in ${row.sign}`}
+                variant={generatedContext === "composite" ? "composite" : "friend"}
+              />
             </div>
           );
         })}
@@ -5400,6 +5613,100 @@ function DignityBadge({ dignity, uppercase = false }: { dignity: PlacementDignit
   );
 }
 
+type PlacementRowStatus = {
+  label: string;
+  tone: "muted" | "alert" | "retrograde";
+};
+
+function PlanetPlacementRow({
+  ariaLabel,
+  chevron = false,
+  degree,
+  dignity,
+  durationLabel,
+  glyph,
+  house,
+  onClick,
+  rangeLabel,
+  retrograde = false,
+  statuses = [],
+  title,
+  variant
+}: {
+  ariaLabel?: string;
+  chevron?: boolean;
+  degree: string;
+  dignity?: PlacementDignity | null;
+  durationLabel?: string | null;
+  glyph: string;
+  house?: number | null;
+  onClick?: () => void;
+  rangeLabel?: string | null;
+  retrograde?: boolean;
+  statuses?: PlacementRowStatus[];
+  title: string;
+  variant: "sky" | "natal" | "friend" | "synastry" | "composite";
+}) {
+  const hasTiming = Boolean(durationLabel || rangeLabel);
+  const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
+  const rowClassName = [
+    "planet-placement-row",
+    `planet-placement-row--${variant}`,
+    retrograde ? "is-retrograde" : ""
+  ].filter(Boolean).join(" ");
+  const content = (
+    <>
+      <span className="planet-placement-row__glyph" aria-hidden="true">{glyph}</span>
+      <span className="planet-placement-row__body">
+        <span className="planet-placement-row__topline">
+          <span className="planet-placement-row__title">{title}</span>
+          <span className="planet-placement-row__degree">{degree}</span>
+          {retrograde ? <span className="planet-placement-row__rx" aria-label="Retrograde">℞</span> : null}
+          <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
+        </span>
+        {hasTiming ? (
+          <span className="planet-placement-row__meta planet-placement-row__meta--timing">
+            {durationLabel ? <span className="planet-placement-row__duration">{durationLabel}</span> : null}
+            {durationLabel && rangeLabel ? <span aria-hidden="true">·</span> : null}
+            {rangeLabel ? <span>{rangeLabel}</span> : null}
+          </span>
+        ) : (
+          <span className="planet-placement-row__meta">{houseLabel}</span>
+        )}
+        {statuses.length > 0 ? (
+          <span className="planet-placement-row__status" aria-label={`${title} status`}>
+            {statuses.map((status) => (
+              <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
+                {status.label.toUpperCase()}
+              </span>
+            ))}
+          </span>
+        ) : null}
+      </span>
+      {chevron ? <ChevronRight className="planet-placement-row__chevron" aria-hidden="true" /> : null}
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        className={rowClassName}
+        type="button"
+        aria-label={ariaLabel ?? title}
+        onClick={onClick}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <article className={rowClassName} aria-label={ariaLabel ?? title}>
+      {content}
+    </article>
+  );
+}
+
 type SolarPhaseStatus = {
   label: string;
   tone: "muted" | "alert";
@@ -5435,10 +5742,10 @@ function solarPhaseStatusFor(position: PlanetPosition, positions: PlanetPosition
 }
 
 function placementStatuses(position: PlanetPosition) {
-  const statuses: Array<{ label: string; tone: "muted" | "alert" }> = [];
+  const statuses: Array<{ label: string; tone: "muted" | "alert" | "retrograde" }> = [];
 
   if (position.motion === "retrograde") {
-    statuses.push({ label: "Retrograde", tone: "alert" });
+    statuses.push({ label: "Retrograde", tone: "retrograde" });
   }
 
   if (position.degree >= 29) {
@@ -5469,30 +5776,24 @@ function retrogradeKnowledgeCopy(
     return generatedSummary;
   }
 
-  const hookFallback = fallbackFromHook(
-    "sky.retrograde",
-    {
-      planet: position.planet,
-      sign: position.sign
-    },
-    {
-      summary: content.summary ?? null,
-      body: content.body ?? null,
-      detailParagraphs: content.detailParagraphs
-    }
-  );
+  void content;
 
-  const knowledgeSummary = hookFallback.summary?.trim() || hookFallback.body?.trim() || hookFallback.detailParagraphs[0]?.trim();
-
-  if (knowledgeSummary) {
-    return slowChapterPlanets.has(position.planet)
-      ? `${knowledgeSummary} This is a review period inside a longer ${position.sign} chapter, not the whole transit ending.`
-      : `${knowledgeSummary} Retrograde motion brings this same topic back for review before it moves forward.`;
-  }
+  const fallbackByPlanet: Record<string, string> = {
+    Mercury: "Messages, timing, plans, and decisions may need a second pass. Slow down before assuming the first version is the final one.",
+    Venus: "Love, money, desire, and self-worth move into review. What looks valuable may need time to prove itself.",
+    Mars: "Energy turns inward before it moves cleanly forward. Anger, drive, and urgency may need a better direction.",
+    Jupiter: "Growth becomes less about expansion and more about meaning. Beliefs, risks, and opportunities may need a slower look.",
+    Saturn: "Pressure turns inward. Responsibilities, limits, and long-term commitments may need to be rebuilt from the inside.",
+    Uranus: "Change works under the surface. Restlessness, freedom, and disruption may be asking for a quieter kind of honesty.",
+    Neptune: "Fantasy thins out. Dreams, confusion, faith, and avoidance may become easier to see for what they are.",
+    Pluto: "Power moves inward. Control, release, fear, and deep change may need time before they can be handled directly.",
+    "True Node": "Direction comes under review. Old patterns and future choices may feel closer together than usual."
+  };
+  const fallback = fallbackByPlanet[position.planet] ?? `${position.planet} themes turn inward for review. Give the cycle time before forcing a final answer.`;
 
   return slowChapterPlanets.has(position.planet)
-    ? `${position.planet} is retrograde in ${position.sign}: a review period inside the longer ${position.sign} chapter. Notice what is being revised without treating it like an urgent ending.`
-    : `${position.planet} is retrograde in ${position.sign}: review the themes of ${position.planet} through the lens of ${position.sign}. Retrograde motion brings this same topic back for review before it moves forward.`;
+    ? `${fallback} This is a review period inside a longer ${position.sign} chapter, not an urgent ending.`
+    : fallback;
 }
 
 function ordinalHouse(house: number) {
@@ -5822,15 +6123,15 @@ function SynastryPlacementColumn({
       {placements.length > 0 ? (
         <div className="synastry-placement-table">
           {placements.map((position) => (
-            <article className="synastry-placement-row" key={`${ringLabel}-${position.planet}`}>
-              <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
-              <span className="synastry-placement-copy">
-                <strong className="synastry-placement-sign">{position.sign}</strong>
-                <DignityBadge dignity={placementDignity(position)} />
-              </span>
-              <span className="synastry-placement-degree">{formatPlanetDegree(position)}</span>
-              <span className="synastry-placement-house">{position.house ? `H${position.house}` : "House pending"}</span>
-            </article>
+            <PlanetPlacementRow
+              degree={formatPlanetDegree(position)}
+              dignity={placementDignity(position)}
+              glyph={position.glyph}
+              house={position.house}
+              key={`${ringLabel}-${position.planet}`}
+              title={natalPlacementTitle(position)}
+              variant="synastry"
+            />
           ))}
         </div>
       ) : (
@@ -5895,24 +6196,14 @@ function SkyWheel({
   const radius = {
     outer: 284,
     signInner: 240,
-    planet: 190,
-    aspect: 150,
-    house: 112,
+    planet: 200,
+    aspect: 132,
+    house: 240 * chartHouseLabelRadiusFactor,
     inner: 44
   };
 
   function point(angle: number, distance: number) {
     return polarToCartesian(center, center, distance, angle);
-  }
-
-  function arcPath(startAngle: number, endAngle: number, distance: number) {
-    const delta = ((endAngle - startAngle + 540) % 360) - 180;
-    const resolvedEndAngle = startAngle + delta;
-    const start = point(startAngle, distance);
-    const end = point(resolvedEndAngle, distance);
-    const sweep = delta >= 0 ? 1 : 0;
-
-    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${distance} ${distance} 0 0 ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
   }
 
   function angleForLongitude(longitude: number) {
@@ -5957,6 +6248,7 @@ function SkyWheel({
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer + 2;
   const tooltipMaxWidth = 520;
+  const shouldRenderHouseLabels = true;
   const houseLabels = chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -5972,43 +6264,37 @@ function SkyWheel({
     radius: radius.signInner - 38
   });
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
-  const signLabelPaths = signs.map((sign, index) => {
-    const isLong = sign.length >= 9;
-    const inset = isLong ? 0.3 : 3.8;
-    const startAngle = angleForLongitude(index * 30 + inset);
-    const endAngle = angleForLongitude(index * 30 + 30 - inset);
-    const labelAngle = angleForLongitude(index * 30 + 15);
-    const labelIsAboveCenter = Math.sin((labelAngle * Math.PI) / 180) < -0.05;
-    const shouldReversePath = isNatalWheel && labelIsAboveCenter;
-
-    return {
-      sign,
-      label: sign,
-      isLong,
-      id: `sign-label-path-${showHouses ? "houses" : "sky"}-${sign.toLowerCase()}`,
-      path: shouldReversePath
-        ? arcPath(endAngle, startAngle, signLabelRadius)
-        : arcPath(startAngle, endAngle, signLabelRadius)
-    };
+  const signLabels = chartSignLabelGeometry({
+    angleForLongitude,
+    center,
+    radius: signLabelRadius,
+    signs
   });
   const activeTooltipPosition = activeTooltipPlanet
     ? positions.find((position) => position.planet === activeTooltipPlanet)
     : null;
-  const planetClusterLevels = wheelMarkerClusterLevels(
+  const planetLayouts = wheelMarkerLayouts(
     positions,
     (position) => position.planet,
     planetAngle,
-    6
+    {
+      angleStep: 0,
+      baseRadius: radius.planet,
+      center,
+      clusterThreshold: 18,
+      leaderRadius: radius.planet + 12,
+      maxAngleOffset: 0,
+      maxClusterSpan: 24,
+      maxRadius: radius.signInner - 36,
+      minRadius: radius.aspect + 42,
+      radiusStep: 14,
+      tickInnerRadius: radius.signInner - 22,
+      tickOuterRadius: radius.signInner - 6
+    }
   );
 
-  function planetVisualRadius(position: PlanetPosition) {
-    const clusterLevel = planetClusterLevels.get(position.planet) ?? 0;
-
-    return radius.planet - clusterLevel * 18;
-  }
-
   function tooltipDetails(position: PlanetPosition) {
-    const marker = point(planetAngle(position), planetVisualRadius(position));
+    const marker = planetLayouts.get(position.planet)?.marker ?? point(planetAngle(position), radius.planet);
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const aspectLines = aspectTooltipLines(position, aspects);
     const lines = [placementLine, ...aspectLines];
@@ -6027,11 +6313,6 @@ function SkyWheel({
 
   return (
     <svg className={`sky-wheel sky-wheel-${variant}`} viewBox="0 0 600 600" role="img" aria-label="Planet positions">
-      <defs>
-        {signLabelPaths.map(({ id, path }) => (
-          <path id={id} key={id} d={path} />
-        ))}
-      </defs>
       <circle
         className="sign-band"
         cx={center}
@@ -6065,19 +6346,15 @@ function SkyWheel({
       </g>
 
       <g className="sign-labels">
-        {signLabelPaths.map(({ sign, label, id, isLong }) => {
+        {signLabels.map(({ sign, isLong, x, y, transform }) => {
           const className = isLong ? "sign-label-long" : undefined;
           return (
             <g key={sign} className={className}>
-              <text className="sign-label-halo">
-                <textPath href={`#${id}`} startOffset="50%">
-                  {label}
-                </textPath>
+              <text className="sign-label-halo" x={x} y={y} transform={transform}>
+                {sign}
               </text>
-              <text>
-                <textPath href={`#${id}`} startOffset="50%">
-                  {label}
-                </textPath>
+              <text x={x} y={y} transform={transform}>
+                {sign}
               </text>
             </g>
           );
@@ -6121,13 +6398,15 @@ function SkyWheel({
         </g>
       )}
 
-      <g className="house-labels" aria-label={showHouses && ascendant ? "Whole sign houses" : "Natural house labels"}>
-        {houseLabels.map(({ house, x, y, transform, ariaLabel }) => (
-          <text key={house} x={x} y={y} transform={transform} aria-label={ariaLabel}>
-            {house}
-          </text>
-        ))}
-      </g>
+      {shouldRenderHouseLabels && (
+        <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
+          {houseLabels.map(({ house, x, y, ariaLabel }) => (
+            <text key={house} x={x} y={y} className="zodiac-house-number" aria-label={ariaLabel}>
+              {house}
+            </text>
+          ))}
+        </g>
+      )}
 
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
@@ -6141,13 +6420,10 @@ function SkyWheel({
 
       <g className="planet-labels">
         {positions.map((position) => {
-          const angle = planetAngle(position);
-          const markerRadius = planetVisualRadius(position);
-          const degreeRadius = markerRadius - 22;
-          const marker = point(angle, markerRadius);
-          const tickOuter = point(angle, radius.signInner - 4);
-          const tickInner = point(angle, radius.signInner - 18);
-          const label = point(angle, degreeRadius);
+          const layout = planetLayouts.get(position.planet);
+          const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
+          const tickOuter = layout?.tickOuter ?? point(planetAngle(position), radius.signInner - 6);
+          const tickInner = layout?.tickInner ?? point(planetAngle(position), radius.signInner - 22);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -6163,13 +6439,16 @@ function SkyWheel({
               onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
             >
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-              <circle cx={marker.x} cy={marker.y} r="18" className="planet-hit-area" />
-              <text x={marker.x} y={marker.y + 5} className="planet-glyph">
-                {position.glyph}
-              </text>
-              <text x={label.x} y={label.y} className="planet-degree wheel-degree-hidden">
-                {formatPlanetDegree(position)}
-              </text>
+              <g className="planet-label-group" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+                <circle cx={0} cy={0} r="14" className="planet-hit-area" />
+                <text x={0} y={-4} className="planet-glyph">
+                  {position.glyph}
+                </text>
+                <text x={0} y={14} className="planet-degree">
+                  {formatPlanetDegree(position)}
+                  {position.motion === "retrograde" ? " ℞" : ""}
+                </text>
+              </g>
             </g>
           );
         })}
@@ -6239,7 +6518,7 @@ function SynastryWheel({
     innerTickInner: 160,
     innerTickOuter: 174,
     aspect: 92,
-    house: 112,
+    house: 240 * chartHouseLabelRadiusFactor,
     inner: 44
   };
   const isNatalWheel = typeof ascendantLongitude === "number";
@@ -6248,16 +6527,6 @@ function SynastryWheel({
 
   function point(angle: number, distance: number) {
     return polarToCartesian(center, center, distance, angle);
-  }
-
-  function arcPath(startAngle: number, endAngle: number, distance: number) {
-    const delta = ((endAngle - startAngle + 540) % 360) - 180;
-    const resolvedEndAngle = startAngle + delta;
-    const start = point(startAngle, distance);
-    const end = point(resolvedEndAngle, distance);
-    const sweep = delta >= 0 ? 1 : 0;
-
-    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${distance} ${distance} 0 0 ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
   }
 
   function annularSectorPath(startAngle: number, endAngle: number, outerRadius: number, innerRadius: number) {
@@ -6298,23 +6567,11 @@ function SynastryWheel({
     center,
     radius: radius.signInner - 38
   });
-  const signLabelPaths = signs.map((sign, index) => {
-    const isLong = sign.length >= 9;
-    const inset = isLong ? 0.3 : 3.8;
-    const startAngle = angleForLongitude(index * 30 + inset);
-    const endAngle = angleForLongitude(index * 30 + 30 - inset);
-    const labelAngle = angleForLongitude(index * 30 + 15);
-    const labelIsAboveCenter = Math.sin((labelAngle * Math.PI) / 180) < -0.05;
-    const shouldReversePath = isNatalWheel && labelIsAboveCenter;
-
-    return {
-      sign,
-      isLong,
-      id: `synastry-sign-label-path-${sign.toLowerCase()}`,
-      path: shouldReversePath
-        ? arcPath(endAngle, startAngle, signLabelRadius)
-        : arcPath(startAngle, endAngle, signLabelRadius)
-    };
+  const signLabels = chartSignLabelGeometry({
+    angleForLongitude,
+    center,
+    radius: signLabelRadius,
+    signs
   });
   const interAspectPairs = interAspects.map((aspect) => ({
     ...aspect,
@@ -6322,33 +6579,53 @@ function SynastryWheel({
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
   }));
   const interAspectRadius = radius.aspect + 12;
-  const outerPlanetClusterLevels = wheelMarkerClusterLevels(
+  const outerPlanetLayouts = wheelMarkerLayouts(
     outerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
-    8
+    {
+      angleStep: 0,
+      baseRadius: radius.outerPlanet,
+      center,
+      clusterThreshold: 10,
+      leaderRadius: radius.outerPlanet + 12,
+      maxAngleOffset: 0,
+      maxClusterSpan: 22,
+      maxRadius: radius.signInner - 34,
+      minRadius: radius.innerRingOuter + 22,
+      radiusStep: 10,
+      tickInnerRadius: radius.outerTickInner,
+      tickOuterRadius: radius.outerTickOuter
+    }
   );
-  const innerPlanetClusterLevels = wheelMarkerClusterLevels(
+  const innerPlanetLayouts = wheelMarkerLayouts(
     innerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
-    8
+    {
+      angleStep: 0,
+      baseRadius: radius.innerPlanet,
+      center,
+      clusterThreshold: 10,
+      leaderRadius: radius.innerPlanet + 10,
+      maxAngleOffset: 0,
+      maxClusterSpan: 22,
+      maxRadius: radius.innerRingOuter - 20,
+      minRadius: radius.aspect + 34,
+      radiusStep: 9,
+      tickInnerRadius: radius.innerTickInner,
+      tickOuterRadius: radius.innerTickOuter
+    }
   );
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
-    const clusterLevel = ring === "outer"
-      ? outerPlanetClusterLevels.get(position.planet) ?? 0
-      : innerPlanetClusterLevels.get(position.planet) ?? 0;
-    const clusterOffset = clusterLevel * (ring === "outer" ? 24 : 20);
-    const markerRadius = (ring === "outer" ? radius.outerPlanet : radius.innerPlanet) - clusterOffset;
-    const degreeRadius = (ring === "outer" ? radius.outerDegree : radius.innerDegree) - clusterOffset;
-    const tickInnerRadius = ring === "outer" ? radius.outerTickInner : radius.innerTickInner;
-    const tickOuterRadius = ring === "outer" ? radius.outerTickOuter : radius.innerTickOuter;
-    const marker = point(angle, markerRadius);
-    const label = point(angle, degreeRadius);
-    const tickInner = point(angle, tickInnerRadius);
-    const tickOuter = point(angle, tickOuterRadius);
+    const layout = ring === "outer"
+      ? outerPlanetLayouts.get(position.planet)
+      : innerPlanetLayouts.get(position.planet);
+    const marker = layout?.marker ?? point(angle, ring === "outer" ? radius.outerPlanet : radius.innerPlanet);
+    const tickInner = layout?.tickInner ?? point(angle, ring === "outer" ? radius.outerTickInner : radius.innerTickInner);
+    const tickOuter = layout?.tickOuter ?? point(angle, ring === "outer" ? radius.outerTickOuter : radius.innerTickOuter);
 
     return (
       <g
@@ -6358,24 +6635,22 @@ function SynastryWheel({
         aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
       >
         <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-        <circle cx={marker.x} cy={marker.y} r={ring === "outer" ? "18" : "15"} className="planet-hit-area" />
-        <text x={marker.x} y={marker.y + 5} className="planet-glyph">
-          {position.glyph}
-        </text>
-        <text x={label.x} y={label.y} className="planet-degree wheel-degree-hidden">
-          {formatPlanetDegree(position)}
-        </text>
+        <g className="planet-label-group" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+          <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
+          <text x={0} y={-4} className="planet-glyph">
+            {position.glyph}
+          </text>
+          <text x={0} y={14} className="planet-degree">
+            {formatPlanetDegree(position)}
+            {position.motion === "retrograde" ? " ℞" : ""}
+          </text>
+        </g>
       </g>
     );
   }
 
   return (
     <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox="0 0 600 600" role="img" aria-label="Synastry chart with two rings">
-      <defs>
-        {signLabelPaths.map(({ id, path }) => (
-          <path id={id} key={id} d={path} />
-        ))}
-      </defs>
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings">
         <circle cx={center} cy={center} r={radius.outer} />
@@ -6428,14 +6703,10 @@ function SynastryWheel({
         })}
       </g>
       <g className="sign-labels">
-        {signLabelPaths.map(({ sign, id, isLong }) => (
+        {signLabels.map(({ sign, isLong, x, y, transform }) => (
           <g key={sign} className={isLong ? "sign-label-long" : undefined}>
-            <text className="sign-label-halo">
-              <textPath href={`#${id}`} startOffset="50%">{sign}</textPath>
-            </text>
-            <text>
-              <textPath href={`#${id}`} startOffset="50%">{sign}</textPath>
-            </text>
+            <text className="sign-label-halo" x={x} y={y} transform={transform}>{sign}</text>
+            <text x={x} y={y} transform={transform}>{sign}</text>
           </g>
         ))}
       </g>
@@ -6477,8 +6748,8 @@ function SynastryWheel({
         </g>
       )}
       <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "Natural house labels"}>
-        {houseLabels.map(({ house, x, y, transform, ariaLabel }) => (
-          <text key={house} x={x} y={y} transform={transform} aria-label={ariaLabel}>
+        {houseLabels.map(({ house, x, y, ariaLabel }) => (
+          <text key={house} x={x} y={y} className="zodiac-house-number" aria-label={ariaLabel}>
             {house}
           </text>
         ))}
@@ -6597,6 +6868,24 @@ function formatRetrogradeDateRange(start: string, end: string) {
   return `${formatRetrogradeDate(start)} - ${formatRetrogradeDate(end)}`;
 }
 
+function formatRetrogradeEndDate(retrogradeEndDate?: string) {
+  return retrogradeEndDate ? `Until ${formatRetrogradeDate(retrogradeEndDate)}` : "Dates calculating";
+}
+
+function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDate?: string) {
+  if (!retrogradeStartDate || !retrogradeEndDate) {
+    return null;
+  }
+
+  const duration = formatDurationCompact(retrogradeStartDate, retrogradeEndDate);
+
+  return duration ? `${duration} RETROGRADE` : null;
+}
+
+function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
+  return signTransitEndDate ? `${sign} chapter until ${formatRetrogradeDate(signTransitEndDate)}` : null;
+}
+
 function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
   const currentDay = dateOnly(generatedAt);
 
@@ -6652,7 +6941,7 @@ function retrogradeCardRange(window?: RetrogradeWindow) {
     return "Dates calculating";
   }
 
-  return `Review until ${formatRetrogradeDate(window.retrogradeEnd)}`;
+  return formatRetrogradeEndDate(window.retrogradeEnd);
 }
 
 function retrogradeDetailRange(window?: RetrogradeWindow) {
@@ -6664,15 +6953,11 @@ function retrogradeDetailRange(window?: RetrogradeWindow) {
 }
 
 function signChapterEndLabel(position: PlanetPosition) {
-  if (!position.transitEnd) {
-    return null;
-  }
-
-  return `${position.sign} chapter until ${formatRetrogradeDate(position.transitEnd)}`;
+  return formatSignChapter(position.sign, position.transitEnd);
 }
 
 function compactRetrogradeTiming(position: PlanetPosition, window?: RetrogradeWindow) {
-  const review = window ? `Review until ${formatRetrogradeDate(window.retrogradeEnd)}` : "Review dates calculating";
+  const review = window ? formatRetrogradeEndDate(window.retrogradeEnd) : "Dates calculating";
   const chapter = signChapterEndLabel(position);
 
   return chapter ? `${review} · ${chapter}` : review;
@@ -6749,11 +7034,23 @@ function RetrogradeCallout({
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
           const chapterLine = signChapterEndLabel(position);
-          const timelineLines = chapterLine
-            ? [...retrogradeTimelineLines(retrogradeWindow), `Sign chapter: ${placementTransitRangeLabel(position, generatedAt)}`]
-            : retrogradeTimelineLines(retrogradeWindow);
+          const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
+          const durationDescription = retrogradeWindow
+            ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
+            : null;
+          const timelineLines = [
+            ...retrogradeTimelineLines(retrogradeWindow),
+            ...(chapterLine ? [`Sign chapter: ${placementTransitRangeLabel(position, generatedAt)}`] : [])
+          ];
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
+            ...(durationLine
+              ? [
+                  <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
+                    <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
+                  </span>
+                ]
+              : []),
             ...liveGeneratedBody(generated, content.detailParagraphs)
           ];
 
@@ -6783,6 +7080,11 @@ function RetrogradeCallout({
                   <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
+                {durationLine || chapterLine ? (
+                  <span className="retro-meta-row">
+                    {durationLine ? <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span> : null}
+                  </span>
+                ) : null}
                 {chapterLine ? <span className="retro-chapter">{chapterLine}</span> : null}
                 <span className="retro-copy">{retrogradeKnowledgeCopy(position, generated, content)}</span>
               </span>
@@ -7200,7 +7502,18 @@ function PlacementTable({
           const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
           const solarPhase = solarPhaseStatusFor(position, positions);
-          const statuses = placementStatuses(position);
+          const retrogradeWindow = position.motion === "retrograde"
+            ? retrogradeWindowFor(position, generatedAt)
+            : null;
+          const retrogradeDurationLabel = formatRetrogradeDuration(
+            retrogradeWindow?.retrogradeStart,
+            retrogradeWindow?.retrogradeEnd
+          );
+          const statuses = placementStatuses(position).map((status) => (
+            status.tone === "retrograde" && retrogradeDurationLabel
+              ? { ...status, label: retrogradeDurationLabel }
+              : status
+          ));
           const durationLabel = compactTransitDurationLabel(position, generatedAt);
           const transitRangeLabel = placementTransitRangeLabel(position, generatedAt);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
@@ -7234,42 +7547,20 @@ function PlacementTable({
 
           return (
             <div className="sky-pl-item" role="listitem" key={position.planet}>
-            <button
-              className={`sky-pl ${position.motion === "retrograde" ? "is-retrograde" : ""}`}
-              type="button"
-              aria-label={`Read more about ${title}`}
-              onClick={openDetail}
-            >
-              <span className="sky-pl-glyph" aria-hidden="true">{position.glyph}</span>
-              <span className="sky-pl-body">
-                <span className="sky-pl-main">
-                  <span className="sky-pl-title">{natalPlacementTitle(position)}</span>
-                  <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
-                  {position.motion === "retrograde" ? <span className="sky-pl-rx" aria-label="Retrograde">℞</span> : null}
-                  <DignityBadge dignity={dignity} uppercase />
-                </span>
-                <span className="sky-pl-range">
-                  {durationLabel ? <span className="sky-pl-duration">{durationLabel}</span> : null}
-                  {durationLabel ? <span aria-hidden="true">·</span> : null}
-                  <span>{transitRangeLabel}</span>
-                </span>
-                {statuses.length > 0 || solarPhase ? (
-                  <span className="sky-pl-status" aria-label={`${position.planet} status`}>
-                    {statuses.map((status) => (
-                      <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
-                        {status.label.toUpperCase()}
-                      </span>
-                    ))}
-                    {solarPhase ? (
-                      <span className={`spl-status-item spl-status-${solarPhase.tone}`} key={solarPhase.label}>
-                        {solarPhase.label}
-                      </span>
-                    ) : null}
-                  </span>
-                ) : null}
-              </span>
-              <ChevronRight className="sky-pl-chevron" aria-hidden="true" />
-            </button>
+              <PlanetPlacementRow
+                ariaLabel={`Read more about ${title}`}
+                chevron
+                degree={formatPlanetDegree(position)}
+                dignity={dignity}
+                durationLabel={durationLabel}
+                glyph={position.glyph}
+                onClick={openDetail}
+                rangeLabel={transitRangeLabel}
+                retrograde={position.motion === "retrograde"}
+                statuses={solarPhase ? [...statuses, solarPhase] : statuses}
+                title={natalPlacementTitle(position)}
+                variant="sky"
+              />
             </div>
           );
         })}
@@ -8575,6 +8866,7 @@ function ProfileView({
   const signatureBody = plutoSignature?.house === 7
     ? "Pluto sits angular in your 7th house, so partnership is where your deepest growth and power dynamics often play out. Nothing about love stays surface-level."
     : `${natalSun ? natalPlacementTitle(natalSun) : `Sun in ${safeSun}`} sets the center of gravity, while ${safeMoon} and ${safeRising} shape how the chart meets the world.`;
+  const showNatalSignatures = false;
 
   if (!hasSavedBirthDetails) {
     return (
@@ -8662,20 +8954,24 @@ function ProfileView({
 
       {profileTab === "chart" && (
         <div className="subpane" id="sub-chart">
-          <span className="eyebrow section-label">Your signatures</span>
-          <section className="you-signatures-card" aria-label="Your signatures">
-            <div className="you-signatures-main">
-              <h3>{signatureTitle}</h3>
-              <p>{signatureBody}</p>
-            </div>
-            <div className="elemental-balance" aria-label="Elemental balance">
-              <div className="elemental-balance-head">
-                <span className="eyebrow section-label">Elemental balance</span>
-                <span>{elementalSummary.label}</span>
-              </div>
-              <p>{elementalSummary.sentence}</p>
-            </div>
-          </section>
+          {showNatalSignatures && (
+            <>
+              <span className="eyebrow section-label">Your signatures</span>
+              <section className="you-signatures-card" aria-label="Your signatures">
+                <div className="you-signatures-main">
+                  <h3>{signatureTitle}</h3>
+                  <p>{signatureBody}</p>
+                </div>
+                <div className="elemental-balance" aria-label="Elemental balance">
+                  <div className="elemental-balance-head">
+                    <span className="eyebrow section-label">Elemental balance</span>
+                    <span>{elementalSummary.label}</span>
+                  </div>
+                  <p>{elementalSummary.sentence}</p>
+                </div>
+              </section>
+            </>
+          )}
 
           <span className="eyebrow section-label">Big Three</span>
           <div className="list you-list-card" aria-label="Big three">
@@ -8717,19 +9013,17 @@ function ProfileView({
           {planetRows.length > 0 && (
             <>
               <span className="eyebrow section-label">Planets</span>
-              <div className="list you-list-card" aria-label="Planets">
+              <div className="list you-list-card planet-placement-list" aria-label="Planets">
                 {planetRows.map((position) => (
-                  <div className="chart-row chart-row-static" key={position.planet}>
-                    <span className="crg" aria-hidden="true">{position.glyph}</span>
-                    <span className="crb">
-                      <span className="placement-row-titleline">
-                        <span className="crt">{natalPlacementTitle(position)}</span>
-                        <DignityBadge dignity={placementDignity(position)} />
-                      </span>
-                      <span className="crs">{natalPlacementKnowledgeSummary(position, generatedContent)}</span>
-                    </span>
-                    <span className="chart-row-meta">{natalPlacementMeta(position)}</span>
-                  </div>
+                  <PlanetPlacementRow
+                    degree={formatPlanetDegree(position)}
+                    dignity={placementDignity(position)}
+                    glyph={position.glyph}
+                    house={position.house}
+                    key={position.planet}
+                    title={natalPlacementTitle(position)}
+                    variant="natal"
+                  />
                 ))}
               </div>
             </>
@@ -8881,6 +9175,9 @@ function ManualChartsPanel({
   const [message, setMessage] = useState("");
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
+  const isEventForm = form.chartType === "event";
+  const formCopy = chartFormCopy[form.chartType];
+  const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
   const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
@@ -8895,7 +9192,7 @@ function ManualChartsPanel({
       isSelf: true
     };
     const chartOptions = charts
-      .filter((chart) => chart.id !== selectedChart?.id)
+      .filter((chart) => chart.id !== selectedChart?.id && chart.chartType !== "event")
       .map((chart) => ({
         id: chart.id,
         displayName: chart.displayName,
@@ -8912,7 +9209,9 @@ function ManualChartsPanel({
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
   const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
   const selectedSynastryContacts = selectedChart
-    ? rankSynastryContactsByLifeAreaFocus(
+    ? selectedChartIsEvent
+      ? []
+      : rankSynastryContactsByLifeAreaFocus(
         synastryContacts(
           relationshipComparisonSky,
           selectedChart,
@@ -8930,10 +9229,12 @@ function ManualChartsPanel({
     type: contact.aspect,
     orb: contact.orb
   }));
-  const selectedCompositeSky = selectedChart ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
+  const selectedCompositeSky = selectedChart && !selectedChartIsEvent ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
-    : friendProfileTab === "synastry"
+    : selectedChartIsEvent
+      ? false
+      : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
@@ -8959,6 +9260,12 @@ function ManualChartsPanel({
     setRelationshipComparisonPickerOpen(false);
     setOpenChartMenuId(null);
   }, [landingKey]);
+
+  useEffect(() => {
+    if (selectedChartIsEvent && friendProfileTab !== "natal") {
+      setFriendProfileTab("natal");
+    }
+  }, [friendProfileTab, selectedChartIsEvent]);
   const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus), [currentSky, charts, natalGeneratedContent, lifeAreaFocus]);
   const isLoadingCharts = status === "loading";
 
@@ -9052,6 +9359,14 @@ function ManualChartsPanel({
     setForm({ ...form, [key]: value });
   }
 
+  function updateChartType(chartType: ManualChartType) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      chartType,
+      relationshipType: chartType === "event" ? "friend" : currentForm.relationshipType || "friend"
+    }));
+  }
+
   async function saveManualChart(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -9065,12 +9380,12 @@ function ManualChartsPanel({
       : null;
 
     if (!displayName || !birthDate || !birthPlace || !birthLocation) {
-      setMessage("Add a name, birth date, and birth place.");
+      setMessage(formCopy.requiredMessage);
       return;
     }
 
     if (!form.birthTimeUnknown && !form.birthTime) {
-      setMessage("Add a birth time, or mark it unknown.");
+      setMessage(formCopy.timeMessage);
       return;
     }
 
@@ -9087,17 +9402,18 @@ function ManualChartsPanel({
       );
       const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
       const input: ManualChartInput = {
+        chartType: form.chartType,
         displayName,
         firstName,
         lastName: lastNameParts.join(" ") || null,
-        relationshipType: form.relationshipType || "friend",
+        relationshipType: form.chartType === "event" ? null : form.relationshipType || "friend",
         birthDate,
         birthTime: form.birthTimeUnknown ? null : form.birthTime,
         birthTimeUnknown: form.birthTimeUnknown,
         birthPlace: birthLocation.label,
         birthLocation,
         natalChart,
-        notes: form.notes.trim() || null
+        notes: null
       };
       const savedChart = editingChartId
         ? await updateManualChart(profile.id, editingChartId, input)
@@ -9115,10 +9431,10 @@ function ManualChartsPanel({
       setFriendProfileTab("natal");
       setRelationshipComparisonChartId("self");
       setRelationshipComparisonPickerOpen(false);
-      resetForm(editingChartId ? "Manual chart updated." : "Manual chart created.");
+      resetForm(editingChartId ? "Chart updated." : "Chart created.");
       setFriendChartModalOpen(false);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save manual chart.");
+      setMessage(error instanceof Error ? error.message : "Could not save chart.");
     } finally {
       setStatus("idle");
     }
@@ -9145,9 +9461,9 @@ function ManualChartsPanel({
       if (editingChartId === chart.id) {
         resetForm();
       }
-      setMessage("Manual chart deleted.");
+      setMessage("Chart deleted.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not delete manual chart.");
+      setMessage(error instanceof Error ? error.message : "Could not delete chart.");
     } finally {
       setStatus("idle");
     }
@@ -9262,13 +9578,13 @@ function ManualChartsPanel({
               <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
                 <span>Charts</span>
                 <h3>Loading saved charts.</h3>
-                <p>Your saved friends and comparison charts will appear here.</p>
+                <p>Your saved charts and comparison charts will appear here.</p>
               </section>
             )}
             {status !== "loading" && charts.length === 0 && (
               <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
                 <span>Charts</span>
-                <h3>No saved friends yet.</h3>
+                <h3>No saved charts yet.</h3>
                 <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
               </section>
             )}
@@ -9333,57 +9649,72 @@ function ManualChartsPanel({
       {friendChartModalOpen && (
         <ModalPortal
           className="friend-chart-modal-root"
-          panelClassName="chart-modal friend-chart-modal"
+          panelClassName="chart-modal friend-chart-modal add-chart-modal"
           titleId="friend-chart-modal-title"
-          width="640px"
+          width="440px"
           onClose={closeFriendChartModal}
         >
           <form
-            className="manual-chart-form friend-chart-modal-form"
+            className="manual-chart-form friend-chart-modal-form add-chart-form"
             onSubmit={saveManualChart}
           >
-            <button className="chart-modal-close" type="button" aria-label="Close friend chart" onClick={closeFriendChartModal}>
-              <X size={20} />
+            <button className="chart-modal-close add-chart-modal__close" type="button" aria-label="Close" onClick={closeFriendChartModal}>
+              <X size={16} />
             </button>
-            <div className="manual-chart-form-heading friend-chart-modal-heading">
+            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
               <div>
-                <h3 id="friend-chart-modal-title">{editingChart ? "Edit friend" : "Add friend"}</h3>
-                <p>{editingChart ? editingChart.displayName : "Add birth details to read this person's chart and compare it with yours."}</p>
+                <h3 className="add-chart-modal__title" id="friend-chart-modal-title">{editingChart ? formCopy.editTitle : formCopy.title}</h3>
+                <p className="add-chart-modal__subtitle">{editingChart ? formCopy.editSubtitle : formCopy.subtitle}</p>
               </div>
             </div>
 
-            <label className="signup-field">
-              <span>Name</span>
-              <div>
-                <input
-                  value={form.displayName}
-                  onChange={(event) => updateField("displayName", event.target.value)}
-                  placeholder="Their name"
-                />
-              </div>
-            </label>
-
-            <label className="signup-field">
-              <span>Relationship</span>
+            <label className="signup-field add-chart-field">
+              <span>Chart type</span>
               <div>
                 <select
-                  value={form.relationshipType}
-                  onChange={(event) => updateField("relationshipType", event.target.value)}
-                  aria-label="Relationship type"
+                  value={form.chartType}
+                  onChange={(event) => updateChartType(event.target.value as ManualChartType)}
+                  aria-label="Chart type"
                 >
-                  <option value="friend">Friend</option>
-                  <option value="family">Family</option>
-                  <option value="partner">Partner</option>
-                  <option value="work">Work</option>
+                  <option value="person">Person</option>
                   <option value="event">Event</option>
-                  <option value="other">Other</option>
                 </select>
               </div>
             </label>
 
-            <div className="manual-chart-grid">
-              <label className="signup-field">
-                <span>Birth date</span>
+            <label className="signup-field add-chart-field">
+              <span>{formCopy.nameLabel}</span>
+              <div>
+                <input
+                  value={form.displayName}
+                  onChange={(event) => updateField("displayName", event.target.value)}
+                  placeholder={formCopy.namePlaceholder}
+                />
+              </div>
+            </label>
+
+            {!isEventForm && (
+              <label className="signup-field add-chart-field">
+                <span>Relationship</span>
+                <div>
+                  <select
+                    value={form.relationshipType}
+                    onChange={(event) => updateField("relationshipType", event.target.value)}
+                    aria-label="Relationship type"
+                  >
+                    <option value="friend">Friend</option>
+                    <option value="partner">Partner</option>
+                    <option value="family">Family</option>
+                    <option value="work">Coworker</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </label>
+            )}
+
+            <div className="manual-chart-grid add-chart-birth-grid">
+              <label className="signup-field add-chart-field">
+                <span>{formCopy.dateLabel}</span>
                 <div>
                   <input
                     type="date"
@@ -9393,30 +9724,31 @@ function ManualChartsPanel({
                 </div>
               </label>
 
-              <label className="signup-field">
-                <span>Birth time</span>
-                <div>
+              <div className="signup-field add-chart-field birth-time-field">
+                <label>
+                  <span>{formCopy.timeLabel}</span>
+                  <div>
+                    <input
+                      type="time"
+                      value={form.birthTime}
+                      disabled={form.birthTimeUnknown}
+                      onChange={(event) => updateField("birthTime", event.target.value)}
+                    />
+                  </div>
+                </label>
+                <label className="unknown-time manual-chart-unknown-time checkbox-row">
                   <input
-                    type="time"
-                    value={form.birthTime}
-                    disabled={form.birthTimeUnknown}
-                    onChange={(event) => updateField("birthTime", event.target.value)}
+                    type="checkbox"
+                    checked={form.birthTimeUnknown}
+                    onChange={(event) => updateField("birthTimeUnknown", event.target.checked)}
                   />
-                </div>
-              </label>
+                  <span>{formCopy.unknownTime}</span>
+                </label>
+              </div>
             </div>
 
-            <label className="unknown-time manual-chart-unknown-time">
-              <input
-                type="checkbox"
-                checked={form.birthTimeUnknown}
-                onChange={(event) => updateField("birthTimeUnknown", event.target.checked)}
-              />
-              <span>I don't know their birth time.</span>
-            </label>
-
             <CitySearchField
-              label="Birth place"
+              label={formCopy.placeLabel}
               value={form.birthPlace}
               onChange={(value) => {
                 setForm({ ...form, birthPlace: value, birthLocation: null });
@@ -9424,33 +9756,20 @@ function ManualChartsPanel({
               onSelect={(suggestion) => {
                 setForm({ ...form, birthPlace: suggestion.label, birthLocation: suggestion });
               }}
-              placeholder="Manhattan, NY"
-              className="signup-city-search manual-chart-city-search"
+              placeholder={formCopy.placePlaceholder}
+              className="signup-city-search manual-chart-city-search add-chart-city-search"
             />
-
-            <label className="signup-field">
-              <span>Notes</span>
-              <div>
-                <textarea
-                  value={form.notes}
-                  onChange={(event) => updateField("notes", event.target.value)}
-                  placeholder="Optional context"
-                  rows={3}
-                />
-              </div>
-            </label>
 
             {message && <p className="manual-chart-message">{message}</p>}
 
-            <button className="manual-chart-save" type="submit" disabled={status === "saving" || status === "deleting"}>
-              <Plus size={18} aria-hidden="true" />
-              {status === "saving" ? "Saving..." : editingChart ? "Save friend" : "Add friend"}
+            <button className="manual-chart-save add-chart-submit" type="submit" disabled={status === "saving" || status === "deleting"}>
+              {status === "saving" ? formCopy.savingSubmit : editingChart ? formCopy.saveSubmit : formCopy.submit}
             </button>
           </form>
         </ModalPortal>
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} friend profile`}>
+        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} chart profile`}>
           <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
             <div className="friend-hero-card friend-profile-card">
               <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
@@ -9471,20 +9790,22 @@ function ManualChartsPanel({
 
             <SegmentedControl<FriendProfileTab>
               value={friendProfileTab}
-              options={[
-                { value: "natal", label: "Natal" },
-                { value: "synastry", label: "Synastry" },
-                { value: "composite", label: "Composite" }
-              ]}
+              options={selectedChartIsEvent
+                ? [{ value: "natal", label: "Chart" }]
+                : [
+                    { value: "natal", label: "Natal" },
+                    { value: "synastry", label: "Synastry" },
+                    { value: "composite", label: "Composite" }
+                  ]}
               onChange={setFriendProfileTab}
-              ariaLabel="Friend profile sections"
+              ariaLabel={selectedChartIsEvent ? "Event chart sections" : "Chart profile sections"}
               className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
             />
 
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
               <div className="friend-profile-copy-column">
-                <span className="eyebrow section-label friend-section-label">{selectedChart.displayName}'s signatures</span>
+                <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event chart signature" : `${selectedChart.displayName}'s signatures`}</span>
                 <section className="you-signatures-card friend-signature-card" aria-label={`${selectedChart.displayName} chart signature`}>
                   <div className="you-signatures-main">
                     <h3>{selectedFriendSignatureTitle}</h3>
@@ -9498,9 +9819,27 @@ function ManualChartsPanel({
                     <p>{selectedFriendElementalSummary.sentence}</p>
                   </div>
                 </section>
+                <span className="eyebrow section-label friend-section-label">Big three</span>
+                <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
+                  {[
+                    ["↑", `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `${selectedChart.displayName}'s chart meets the world through ${selectedFriendBigThree?.rising}.`],
+                    ["☉", `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.`],
+                    ["☽", `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.`]
+                  ].map(([glyph, title, body]) => (
+                    <article className="aspect-row aspect-row-static friend-aspect-row" key={title}>
+                      <span className="aspect-row-glyphs" aria-hidden="true">
+                        <span>{glyph}</span>
+                      </span>
+                      <span className="aspect-row-copy">
+                        <h3>{title}</h3>
+                        <p>{body}</p>
+                      </span>
+                    </article>
+                  ))}
+                </div>
                 {selectedChart.natalChart && (
                   <FriendPlacementTable
-                    title={`${selectedChart.displayName}'s natal placements`}
+                    title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
                     rows={socialPlacementRows(selectedChart.natalChart)}
                     generatedContent={relationshipGeneratedContent}
                     generatedContext="natal"
@@ -9544,24 +9883,6 @@ function ManualChartsPanel({
                     </div>
                   </>
                 ) : null}
-                <span className="eyebrow section-label friend-section-label">Big three</span>
-                <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
-                  {[
-                    ["↑", `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `${selectedChart.displayName}'s chart meets the world through ${selectedFriendBigThree?.rising}.`],
-                    ["☉", `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.`],
-                    ["☽", `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.`]
-                  ].map(([glyph, title, body]) => (
-                    <article className="aspect-row aspect-row-static friend-aspect-row" key={title}>
-                      <span className="aspect-row-glyphs" aria-hidden="true">
-                        <span>{glyph}</span>
-                      </span>
-                      <span className="aspect-row-copy">
-                        <h3>{title}</h3>
-                        <p>{body}</p>
-                      </span>
-                    </article>
-                  ))}
-                </div>
               </div>
             </div>
           )}
@@ -9666,7 +9987,7 @@ function ManualChartsPanel({
           )}
           </div>
 
-          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label="Relationship chart">
+          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
             {friendProfileTab === "natal" && selectedChart.natalChart && (
               <div className="friend-synastry-wheel-shell">
                 <div className="chart-shell">

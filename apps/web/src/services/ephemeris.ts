@@ -154,17 +154,28 @@ function addDays(date: Date, days: number) {
 }
 
 function compactDurationLabelFromDays(days: number) {
-  const roundedDays = Math.max(1, Math.ceil(days));
+  const roundedDays = Math.ceil(days);
 
-  if (roundedDays < 90) {
-    return `${roundedDays}Ds`;
+  if (roundedDays < 1) {
+    return "TODAY";
   }
 
-  if (roundedDays <= 548) {
-    return `${Math.max(1, Math.round(roundedDays / 30.44))}Mos`;
+  if (roundedDays < 30) {
+    return `${roundedDays}D`;
   }
 
-  return `${Math.max(1, Math.round(roundedDays / 365.25))}Yrs`;
+  const months = roundedDays >= 365
+    ? Math.max(12, Math.round(roundedDays / 30.44))
+    : Math.max(1, Math.round(roundedDays / 30.44));
+
+  if (months < 12) {
+    return `${months}M`;
+  }
+
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  return remainingMonths > 0 ? `${years}Y ${remainingMonths}M` : `${years}Y`;
 }
 
 function refineSignBoundary(

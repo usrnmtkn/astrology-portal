@@ -1,14 +1,17 @@
 import { supabase } from "./auth";
 import type { LocationInput, SkySnapshot } from "../types";
 
+export type ManualChartType = "person" | "event";
+
 export type ManualChart = {
   id: string;
   ownerUserId: string;
   claimedByUserId?: string | null;
+  chartType: ManualChartType;
   displayName: string;
   firstName?: string | null;
   lastName?: string | null;
-  relationshipType: string;
+  relationshipType?: string | null;
   birthDate: string;
   birthTime: string | null;
   birthTimeUnknown: boolean;
@@ -21,10 +24,11 @@ export type ManualChart = {
 };
 
 export type ManualChartInput = {
+  chartType: ManualChartType;
   displayName: string;
   firstName?: string | null;
   lastName?: string | null;
-  relationshipType: string;
+  relationshipType?: string | null;
   birthDate: string;
   birthTime: string | null;
   birthTimeUnknown: boolean;
@@ -58,14 +62,17 @@ type ManualChartRow = {
 const localManualChartsKey = (userId: string) => `tldrastro:manualCharts:${userId}`;
 
 function rowToManualChart(row: ManualChartRow): ManualChart {
+  const chartType = row.relationship_type === "event" ? "event" : "person";
+
   return {
     id: row.id,
     ownerUserId: row.owner_user_id,
     claimedByUserId: row.claimed_by_user_id,
+    chartType,
     displayName: row.display_name,
     firstName: row.first_name,
     lastName: row.last_name,
-    relationshipType: row.relationship_type,
+    relationshipType: chartType === "event" ? null : row.relationship_type,
     birthDate: row.birth_date,
     birthTime: row.birth_time,
     birthTimeUnknown: row.birth_time_unknown,
@@ -89,7 +96,7 @@ function inputToRow(userId: string, input: ManualChartInput) {
     display_name: input.displayName,
     first_name: input.firstName ?? null,
     last_name: input.lastName ?? null,
-    relationship_type: input.relationshipType || "friend",
+    relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend",
     birth_date: input.birthDate,
     birth_time: input.birthTimeUnknown ? null : input.birthTime,
     birth_time_unknown: input.birthTimeUnknown,
@@ -107,7 +114,17 @@ function readLocalManualCharts(userId: string): ManualChart[] {
     const savedCharts = window.localStorage.getItem(localManualChartsKey(userId));
     const parsedCharts = savedCharts ? JSON.parse(savedCharts) as unknown : [];
 
-    return Array.isArray(parsedCharts) ? parsedCharts as ManualChart[] : [];
+    return Array.isArray(parsedCharts)
+      ? (parsedCharts as ManualChart[]).map((chart) => {
+          const chartType = chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person");
+
+          return {
+            ...chart,
+            chartType,
+            relationshipType: chartType === "event" ? null : chart.relationshipType ?? "friend"
+          };
+        })
+      : [];
   } catch {
     return [];
   }
@@ -224,7 +241,7 @@ export async function createManualChart(userId: string, input: ManualChartInput)
       owner_user_id: userId,
       manual_chart_id: chart.id,
       status: "active",
-      relationship_type: chart.relationshipType,
+      relationship_type: chart.chartType === "event" ? "event" : chart.relationshipType || "friend",
       created_from: "manual_chart"
     });
 
@@ -265,7 +282,7 @@ export async function updateManualChart(userId: string, chartId: string, input: 
 
   await client
     .from("connections")
-    .update({ relationship_type: input.relationshipType || "friend" })
+    .update({ relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend" })
     .eq("owner_user_id", userId)
     .eq("manual_chart_id", chartId);
 
