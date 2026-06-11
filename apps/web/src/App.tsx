@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Eye,
   EyeOff,
   LogOut,
@@ -228,6 +229,7 @@ type TransitItem = {
 
 type FriendProfileTab = "natal" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
+type FriendsTab = Exclude<FriendsMainView, "profile">;
 type WheelVariant = "zodiac" | "natal" | "synastry" | "composite";
 
 type FriendTimingContext = {
@@ -716,6 +718,7 @@ const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
+const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const EXTENDED_SUNRISE_ORB_DEGREES = 3;
@@ -830,9 +833,100 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+const friendsTabs: FriendsTab[] = ["circle", "charts"];
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
+}
+
+function parseFriendsTab(value: string | null): FriendsTab {
+  return value === "charts" || value === "circle" ? value : "circle";
+}
+
+function friendsHashParts(hash: string) {
+  const cleanHash = hash.replace(/^#/, "");
+  const [path = "", query = ""] = cleanHash.split("?");
+
+  return { path, params: new URLSearchParams(query) };
+}
+
+function friendsTabFromUrl(): FriendsTab {
+  try {
+    const url = new URL(window.location.href);
+    const searchTab = url.searchParams.get("tab");
+
+    if (friendsTabs.includes(searchTab as FriendsTab)) {
+      return parseFriendsTab(searchTab);
+    }
+
+    const { path, params } = friendsHashParts(url.hash);
+
+    return path === "friends" ? parseFriendsTab(params.get("tab")) : "circle";
+  } catch {
+    return "circle";
+  }
+}
+
+function isFriendsUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const { path } = friendsHashParts(url.hash);
+
+    return url.pathname === "/friends" || path === "friends";
+  } catch {
+    return false;
+  }
+}
+
+function portalModeFromUrl(): PortalMode | null {
+  return isFriendsUrl() ? "friends" : null;
+}
+
+function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      url.searchParams.set("tab", tab);
+    } else {
+      const { path, params } = friendsHashParts(url.hash);
+      const nextParams = path === "friends" ? params : new URLSearchParams();
+      nextParams.set("tab", tab);
+      url.hash = `friends?${nextParams.toString()}`;
+    }
+
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep the tab usable if history is unavailable.
+  }
+}
+
+function storePortalMode(mode: PortalMode) {
+  try {
+    window.localStorage.setItem(portalModeStorageKey, mode);
+  } catch {
+    return;
+  }
+}
+
+function getStoredFriendsTab() {
+  try {
+    return parseFriendsTab(window.localStorage.getItem(friendsTabStorageKey));
+  } catch {
+    return "circle";
+  }
+}
+
+function initialFriendsTab(): FriendsTab {
+  return isFriendsUrl() ? friendsTabFromUrl() : getStoredFriendsTab();
+}
+
+function storeFriendsTab(tab: FriendsTab) {
+  try {
+    window.localStorage.setItem(friendsTabStorageKey, tab);
+  } catch {
+    return;
+  }
 }
 
 function isAuthenticatedPortalMode(value: PortalMode): value is Exclude<PortalMode, "guest"> {
@@ -850,10 +944,18 @@ function getStoredPortalMode() {
 }
 
 function getInitialPortalMode(): PortalMode {
-  return getStoredPortalMode() ?? getInitialAccountMode();
+  const urlMode = portalModeFromUrl();
+
+  return urlMode ?? getStoredPortalMode() ?? getInitialAccountMode();
 }
 
 function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalMode | null): PortalMode {
+  const urlMode = portalModeFromUrl();
+
+  if (urlMode && isAuthenticatedPortalMode(urlMode)) {
+    return urlMode;
+  }
+
   if (isAuthenticatedPortalMode(currentMode)) {
     return currentMode;
   }
@@ -866,11 +968,15 @@ function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalM
 }
 
 function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
+  if (portalModeFromUrl() === "friends" || currentMode === "friends") {
+    return "friends";
+  }
+
   if (currentMode === "member") {
     return "guest";
   }
 
-  if (currentMode === "friends" || currentMode === "account" || currentMode === "settings") {
+  if (currentMode === "account" || currentMode === "settings") {
     return "profile";
   }
 
@@ -1734,6 +1840,65 @@ function manualChartSubtitle(chart: ManualChart) {
   const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
 
   return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
+}
+
+function manualChartNeedsBirthTime(chart: ManualChart) {
+  return chart.chartType !== "event" && (chart.birthTimeUnknown || !chart.birthTime);
+}
+
+function nextManualChartBirthday(chart: ManualChart, currentDateValue: string) {
+  const [, rawYear = "", rawMonth = "", rawDay = ""] = chart.birthDate.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const currentDate = new Date(currentDateValue);
+
+  if (chart.chartType === "event" || !rawYear || Number.isNaN(currentDate.getTime())) {
+    return null;
+  }
+
+  const month = Number(rawMonth);
+  const day = Number(rawDay);
+  const currentDay = localDayStart(currentDate);
+  let birthday = new Date(currentDay.getFullYear(), month - 1, day);
+
+  if (birthday.getTime() < currentDay.getTime()) {
+    birthday = new Date(currentDay.getFullYear() + 1, month - 1, day);
+  }
+
+  const daysUntil = Math.round((birthday.getTime() - currentDay.getTime()) / 86_400_000);
+
+  return {
+    chart,
+    date: birthday,
+    daysUntil
+  };
+}
+
+function upcomingBirthdayChiclet(charts: ManualChart[], currentDateValue: string) {
+  const birthdays = charts.flatMap((chart) => {
+    const birthday = nextManualChartBirthday(chart, currentDateValue);
+
+    return birthday && birthday.daysUntil >= 0 && birthday.daysUntil < 35 ? [birthday] : [];
+  });
+
+  return birthdays.sort((first, second) => first.daysUntil - second.daysUntil)[0] ?? null;
+}
+
+function birthdayCountdownLabel(daysUntil: number) {
+  if (daysUntil === 0) {
+    return "today";
+  }
+
+  if (daysUntil === 1) {
+    return "tomorrow";
+  }
+
+  return `in ${daysUntil} days`;
+}
+
+function birthdayDateLabel(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric"
+  }).format(date);
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -4218,9 +4383,36 @@ export function App() {
   const activeSunriseOrbDegrees = sunriseOrbDegrees(sunriseOrbEnabled);
 
   function navigateToFriends() {
+    const nextTab = initialFriendsTab();
+
+    updateFriendsTabUrl(nextTab, "push");
+    storeFriendsTab(nextTab);
+    storePortalMode("friends");
     setFriendsLandingKey((currentKey) => currentKey + 1);
     setMode("friends");
   }
+
+  useEffect(() => {
+    function handlePortalUrlChange() {
+      const urlMode = portalModeFromUrl();
+
+      if (urlMode !== "friends") {
+        return;
+      }
+
+      storePortalMode("friends");
+      setMode("friends");
+      setFriendsLandingKey((currentKey) => currentKey + 1);
+    }
+
+    window.addEventListener("popstate", handlePortalUrlChange);
+    window.addEventListener("hashchange", handlePortalUrlChange);
+
+    return () => {
+      window.removeEventListener("popstate", handlePortalUrlChange);
+      window.removeEventListener("hashchange", handlePortalUrlChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -4473,12 +4665,20 @@ export function App() {
       return;
     }
 
-    try {
-      window.localStorage.setItem(portalModeStorageKey, mode);
-    } catch {
+    storePortalMode(mode);
+  }, [mode, userProfile]);
+
+  useEffect(() => {
+    if (mode !== "friends") {
       return;
     }
-  }, [mode, userProfile]);
+
+    storePortalMode("friends");
+
+    if (!isFriendsUrl()) {
+      updateFriendsTabUrl(initialFriendsTab(), "replace");
+    }
+  }, [mode]);
 
   useEffect(() => {
     if (!hasLocationPreference) {
@@ -5197,8 +5397,8 @@ export function App() {
                       onSelect={applyCitySuggestion}
                     />
                     <div className="city-picker-actions">
-                      <button type="submit">Update</button>
                       <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+                      <button type="submit">Update</button>
                     </div>
                   </form>
                 )}
@@ -5344,7 +5544,7 @@ export function App() {
               width="640px"
               onClose={() => setChartModalOpen(false)}
             >
-                <button className="chart-modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
+                <button className="chart-modal-close modal-close" type="button" aria-label="Close create chart" onClick={() => setChartModalOpen(false)}>
                   ×
                 </button>
                 <CreateChartFlow
@@ -5402,17 +5602,19 @@ function SkyDatePicker({
 
   return (
     <section className="date-picker" id="sky-date-picker" aria-label="Select sky date">
-      <button className="date-picker-close" type="button" aria-label="Close date picker" onClick={onClose}>
-        <X size={16} aria-hidden="true" />
-      </button>
       <div className="date-picker-header">
-        <button type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
+        <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <strong>{monthLabel(visibleMonth)}</strong>
-        <button type="button" aria-label="Next month" onClick={() => setVisibleMonth((month) => addMonths(month, 1))}>
-          <ChevronRight size={16} aria-hidden="true" />
-        </button>
+        <span className="date-picker-header-actions">
+          <button className="date-picker-nav" type="button" aria-label="Next month" onClick={() => setVisibleMonth((month) => addMonths(month, 1))}>
+            <ChevronRight size={16} aria-hidden="true" />
+          </button>
+          <button className="date-picker-close picker-close" type="button" aria-label="Close date picker" onClick={onClose}>
+            <X size={16} aria-hidden="true" />
+          </button>
+        </span>
       </div>
 
       <div className="date-picker-weekdays" aria-hidden="true">
@@ -5568,6 +5770,7 @@ type SocialPlacementRow = {
   sign: string;
   degree: number;
   house: number | null;
+  retrograde: boolean;
 };
 
 function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow[] {
@@ -5585,7 +5788,8 @@ function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow[] {
         label: "Ascendant",
         sign: sky.ascendant,
         degree: normalizedAngle(sky.ascendantLongitude ?? 0) % 30,
-        house: 1
+        house: 1,
+        retrograde: false
       }];
     }
 
@@ -5601,7 +5805,8 @@ function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow[] {
       label: point,
       sign: position.sign,
       degree: position.degree,
-      house: position.house || null
+      house: position.house || null,
+      retrograde: position.motion === "retrograde"
     }];
   });
 }
@@ -5641,6 +5846,7 @@ function FriendPlacementTable({
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
+                retrograde={row.retrograde}
                 title={`${row.label} in ${row.sign}`}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
               />
@@ -5784,6 +5990,7 @@ function PlacementTableRow({
   glyph,
   house,
   onClick,
+  retrograde = false,
   title,
   variant = "natal"
 }: {
@@ -5795,6 +6002,7 @@ function PlacementTableRow({
   glyph: string;
   house?: number | null;
   onClick?: () => void;
+  retrograde?: boolean;
   title: string;
   variant?: "natal" | "friend" | "composite";
 }) {
@@ -5806,6 +6014,7 @@ function PlacementTableRow({
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
+          {retrograde ? <span className="placement-table-row__rx" aria-label="Retrograde">℞</span> : null}
           <DignityBadge dignity={dignity ?? null} />
         </span>
         {description ? <span className="placement-table-row__description">{description}</span> : null}
@@ -5871,6 +6080,7 @@ function PlanetPlacementRow({
         glyph={glyph}
         house={house}
         onClick={onClick}
+        retrograde={retrograde}
         title={title}
         variant={variant === "composite" ? "composite" : variant === "friend" ? "friend" : "natal"}
       />
@@ -8616,11 +8826,11 @@ function SettingsView({
                     className="settings-city-search"
                   />
                   <div className="settings-location-actions">
-                    <button className="settings-location-save" type="button" onClick={saveCurrentLocation}>
-                      Save location
-                    </button>
                     <button className="settings-location-cancel" type="button" onClick={cancelCurrentLocationEdit}>
                       Cancel
+                    </button>
+                    <button className="settings-location-save" type="button" onClick={saveCurrentLocation}>
+                      Save location
                     </button>
                   </div>
                 </div>
@@ -9183,6 +9393,7 @@ function ProfileView({
                     glyph={position.glyph}
                     house={position.house}
                     key={position.planet}
+                    retrograde={position.motion === "retrograde"}
                     title={natalPlacementTitle(position)}
                     variant="natal"
                   />
@@ -9328,7 +9539,7 @@ function ManualChartsPanel({
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
-  const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>("circle");
+  const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("natal");
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
@@ -9343,6 +9554,10 @@ function ManualChartsPanel({
   const formCopy = chartFormCopy[form.chartType];
   const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
+  const upcomingBirthday = useMemo(
+    () => upcomingBirthdayChiclet(charts, currentSky.generatedAt),
+    [charts, currentSky.generatedAt]
+  );
   const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
   const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
@@ -9415,15 +9630,51 @@ function ManualChartsPanel({
       ? `${natalPlacementTitle(selectedFriendSun)} sets the main signature, while the elements stay more evenly distributed.`
     : "Add complete birth details to read the chart's elemental balance, angles, and strongest signatures.";
 
-  useEffect(() => {
-    setFriendsMainView("circle");
+  function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
+    storeFriendsTab(nextTab);
+    setFriendsMainView(nextTab);
     setSelectedChartId(null);
     setFriendProfileTab("natal");
     setSelectedSynastryContactId(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setOpenChartMenuId(null);
+    updateFriendsTabUrl(nextTab, historyMode);
+  }
+
+  useEffect(() => {
+    const nextTab = initialFriendsTab();
+    storeFriendsTab(nextTab);
+    setFriendsMainView(nextTab);
+    setSelectedChartId(null);
+    setFriendProfileTab("natal");
+    setSelectedSynastryContactId(null);
+    setRelationshipComparisonChartId("self");
+    setRelationshipComparisonPickerOpen(false);
+    setOpenChartMenuId(null);
+    updateFriendsTabUrl(nextTab, "replace");
   }, [landingKey]);
+
+  useEffect(() => {
+    function handlePopState() {
+      const nextTab = initialFriendsTab();
+      storeFriendsTab(nextTab);
+      setFriendsMainView(nextTab);
+      setSelectedChartId(null);
+      setFriendProfileTab("natal");
+      setSelectedSynastryContactId(null);
+      setRelationshipComparisonPickerOpen(false);
+      setOpenChartMenuId(null);
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("hashchange", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("hashchange", handlePopState);
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedChartIsEvent && friendProfileTab !== "natal") {
@@ -9543,6 +9794,18 @@ function ManualChartsPanel({
     setFriendChartModalOpen(true);
   }
 
+  function addBirthTime(chart: ManualChart) {
+    setEditingChartId(chart.id);
+    setForm({
+      ...manualChartFormFromChart(chart),
+      birthTime: "",
+      birthTimeUnknown: false
+    });
+    setOpenChartMenuId(null);
+    setMessage("");
+    setFriendChartModalOpen(true);
+  }
+
   function openFriendProfile(chart: ManualChart) {
     setOpenChartMenuId(null);
     setSelectedChartId(chart.id);
@@ -9649,7 +9912,7 @@ function ManualChartsPanel({
       setRelationshipComparisonPickerOpen(false);
       setSelectedChartId((currentId) => {
         if (currentId === chart.id) {
-          setFriendsMainView("charts");
+          selectFriendsTab("charts", "replace");
           return null;
         }
 
@@ -9672,7 +9935,7 @@ function ManualChartsPanel({
     <section className={`friends-page page-shell manual-charts-pane${isFriendDetailView ? ` friend-detail-page friend-detail-page--${friendProfileTab}` : ""}`} aria-label="Friends">
       {resolvedFriendsMainView === "profile" && selectedChart ? (
         <div className="page-back-row friend-back-row friend-detail-back-row">
-          <button className="friends-back-button floating-back-button" type="button" onClick={() => setFriendsMainView("charts")}>
+          <button className="friends-back-button floating-back-button" type="button" onClick={() => selectFriendsTab("charts")}>
             <ChevronLeft size={21} aria-hidden="true" />
             <span>Charts</span>
           </button>
@@ -9688,7 +9951,7 @@ function ManualChartsPanel({
               { value: "circle", label: "Circle" },
               { value: "charts", label: "Charts" }
             ]}
-            onChange={(view) => setFriendsMainView(view)}
+            onChange={(view) => selectFriendsTab(view)}
             ariaLabel="Friends views"
             className="app-tabs profile-tabs friends-top-tabs friends-tabs"
           />
@@ -9765,6 +10028,14 @@ function ManualChartsPanel({
       {resolvedFriendsMainView === "charts" && (
         <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
           <div className="friends-chart-toolbar">
+            {upcomingBirthday && (
+              <div className="friends-birthday-chiclet" aria-label={`${upcomingBirthday.chart.displayName}'s birthday is ${birthdayDateLabel(upcomingBirthday.date)}`}>
+                <span aria-hidden="true">🎂</span>
+                <strong>{upcomingBirthday.chart.displayName}'s birthday</strong>
+                <span>{birthdayDateLabel(upcomingBirthday.date)}</span>
+                <b>{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
+              </div>
+            )}
             <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
               <span>Add chart</span>
             </button>
@@ -9789,6 +10060,7 @@ function ManualChartsPanel({
               <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
                 {charts.map((chart) => {
                   const bigThree = manualChartBigThree(chart);
+                  const needsBirthTime = manualChartNeedsBirthTime(chart);
 
                   return (
                     <div className="manual-chart-row chart-row" key={chart.id}>
@@ -9811,6 +10083,14 @@ function ManualChartsPanel({
                           </span>
                         </span>
                       </button>
+                      {needsBirthTime && (
+                        <span className="manual-chart-row-cta">
+                          <button className="manual-chart-birth-time-button" type="button" onClick={() => addBirthTime(chart)}>
+                            <Clock size={16} aria-hidden="true" />
+                            <span>Add birth time</span>
+                          </button>
+                        </span>
+                      )}
                       <span className="manual-chart-actions">
                         <button
                           className="manual-chart-menu-trigger"
@@ -9855,7 +10135,7 @@ function ManualChartsPanel({
             className="manual-chart-form friend-chart-modal-form add-chart-form"
             onSubmit={saveManualChart}
           >
-            <button className="chart-modal-close add-chart-modal__close" type="button" aria-label="Close" onClick={closeFriendChartModal}>
+            <button className="chart-modal-close modal-close add-chart-modal__close" type="button" aria-label="Close" onClick={closeFriendChartModal}>
               <X size={16} />
             </button>
             <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
@@ -10033,12 +10313,16 @@ function ManualChartsPanel({
                   ))}
                 </div>
                 {selectedChart.natalChart && (
-                  <FriendPlacementTable
-                    title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
-                    rows={socialPlacementRows(selectedChart.natalChart)}
-                    generatedContent={relationshipGeneratedContent}
-                    generatedContext="natal"
-                  />
+                  <>
+                    <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}</span>
+                    <FriendPlacementTable
+                      title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
+                      rows={socialPlacementRows(selectedChart.natalChart)}
+                      generatedContent={relationshipGeneratedContent}
+                      generatedContext="natal"
+                      showTitle={false}
+                    />
+                  </>
                 )}
                 {selectedChart.natalChart?.aspects.length ? (
                   <>
