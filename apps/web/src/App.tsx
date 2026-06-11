@@ -3488,6 +3488,35 @@ function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect:
   return titles[pair] ?? fallbackTone;
 }
 
+function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: string, comparisonPossessive: string, secondPoint: string) {
+  return `${possessiveLabel(ownerName)} ${firstPoint} ${aspect} ${comparisonPossessive} ${secondPoint}`;
+}
+
+function synastryContactDescription(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
+  const friendRole = comparisonPointRole(contact.friendPoint.name);
+  const comparisonRole = comparisonPointRole(contact.yourPoint.name);
+  const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
+  const friendPossessive = possessiveLabel(friendName);
+
+  if (contact.aspect === "opposition") {
+    return `${friendPossessive} ${friendRole} may challenge ${comparisonPossessive} ${comparisonRole}.`;
+  }
+
+  if (contact.aspect === "square") {
+    return `${friendPossessive} ${friendRole} and ${comparisonPossessive} ${comparisonRole} can press on each other.`;
+  }
+
+  if (contact.aspect === "trine") {
+    return `${friendPossessive} ${friendRole} can support ${comparisonPossessive} ${comparisonRole} naturally.`;
+  }
+
+  if (contact.aspect === "sextile") {
+    return `${friendPossessive} ${friendRole} can open a useful path to ${comparisonPossessive} ${comparisonRole}.`;
+  }
+
+  return `${friendPossessive} ${friendRole} and ${comparisonPossessive} ${comparisonRole} meet directly.`;
+}
+
 function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
   if (!sky) {
     return [];
@@ -5570,17 +5599,19 @@ function FriendPlacementTable({
   rows,
   compact = false,
   generatedContent,
-  generatedContext = "natal"
+  generatedContext = "natal",
+  showTitle = true
 }: {
   title: string;
   rows: SocialPlacementRow[];
   compact?: boolean;
   generatedContent?: GeneratedContentMap;
   generatedContext?: "natal" | "composite";
+  showTitle?: boolean;
 }) {
   return (
     <section className={`friend-placement-column ${compact ? "friend-placement-column-compact" : ""}`} aria-label={`${title} placements`}>
-      <h3 className="friend-placement-column-title">{title}</h3>
+      {showTitle ? <h3 className="friend-placement-column-title">{title}</h3> : null}
       <div className="friend-placement-table">
         {rows.map((row) => {
           const dignity = dignityFor(row.label, row.sign);
@@ -7074,10 +7105,7 @@ function signChapterEndLabel(position: PlanetPosition) {
 }
 
 function compactRetrogradeTiming(position: PlanetPosition, window?: RetrogradeWindow) {
-  const review = window ? formatRetrogradeEndDate(window.retrogradeEnd) : "Dates calculating";
-  const chapter = signChapterEndLabel(position);
-
-  return chapter ? `${review} · ${chapter}` : review;
+  return window ? formatRetrogradeEndDate(window.retrogradeEnd) : "Dates calculating";
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
@@ -7188,15 +7216,11 @@ function RetrogradeCallout({
           const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
-          const chapterLine = signChapterEndLabel(position);
           const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
           const durationDescription = retrogradeWindow
             ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
             : null;
-          const timelineLines = [
-            ...retrogradeTimelineLines(retrogradeWindow),
-            ...(chapterLine ? [`Sign chapter: ${placementTransitRangeLabel(position, generatedAt)}`] : [])
-          ];
+          const timelineLines = retrogradeTimelineLines(retrogradeWindow);
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
             ...(durationLine
@@ -7235,12 +7259,11 @@ function RetrogradeCallout({
                   <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
                 </span>
                 <span className="retro-sub">{formatPlacementPosition(position)}</span>
-                {durationLine || chapterLine ? (
+                {durationLine ? (
                   <span className="retro-meta-row">
-                    {durationLine ? <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span> : null}
+                    <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
                   </span>
                 ) : null}
-                {chapterLine ? <span className="retro-chapter">{chapterLine}</span> : null}
                 <span className="retro-copy">{retrogradeKnowledgeCopy(position, generated, content)}</span>
               </span>
             </button>
@@ -10045,7 +10068,7 @@ function ManualChartsPanel({
           {friendProfileTab === "synastry" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
               <p className="friend-compat-intro">
-                Two charts, side by side: how {selectedChart.displayName}'s planets and {relationshipComparisonIsSelf ? "your planets" : `${relationshipComparisonName}'s planets`} actually meet, miss, and magnify each other.
+                Where {selectedChart.displayName}'s planets meet yours and what happens when they do. Why some things come easily between you and others take more work.
               </p>
               <div className="friend-profile-copy-column">
                 <SynastryPlacementsComparison
@@ -10057,28 +10080,36 @@ function ManualChartsPanel({
                 />
                 <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
-                  {selectedSynastryContacts.map((contact) => (
-                    <button
-                      type="button"
-                      className="aspect-row aspect-row-button friend-aspect-row"
-                      key={contact.id}
-                      onClick={() => setSelectedSynastryContactId(contact.id)}
-                    >
-                      <span className="aspect-row-glyphs" aria-hidden="true">
-                        <span>{contact.friendPoint.glyph}</span>
-                        <span>{aspectGlyph(contact.aspect)}</span>
-                        <span>{contact.yourPoint.glyph}</span>
-                      </span>
-                      <span className="aspect-row-copy">
-                        <h3>{relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect)}</h3>
-                        <p>{contact.summary}</p>
-                      </span>
-                      <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
-                        <span className="aspect-row-dot" aria-hidden="true" />
-                        <span>{wholeDegreeOrb(contact.orb)}</span>
-                      </span>
-                    </button>
-                  ))}
+                  {selectedSynastryContacts.map((contact) => {
+                    const comparisonPossessive = relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf);
+                    const title = relationshipAspectTitle(selectedChart.displayName, contact.friendPoint.name, contact.aspect, comparisonPossessive, contact.yourPoint.name);
+                    const subtitle = relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect);
+                    const description = synastryContactDescription(selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, contact);
+
+                    return (
+                      <button
+                        type="button"
+                        className="aspect-row aspect-row-button friend-aspect-row"
+                        key={contact.id}
+                        onClick={() => setSelectedSynastryContactId(contact.id)}
+                      >
+                        <span className="aspect-row-glyphs" aria-hidden="true">
+                          <span>{contact.friendPoint.glyph}</span>
+                          <span>{aspectGlyph(contact.aspect)}</span>
+                          <span>{contact.yourPoint.glyph}</span>
+                        </span>
+                        <span className="aspect-row-copy">
+                          <h3>{title}</h3>
+                          <span className="aspect-row-subtitle">{subtitle}</span>
+                          <p>{description}</p>
+                        </span>
+                        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
+                          <span className="aspect-row-dot" aria-hidden="true" />
+                          <span>{wholeDegreeOrb(contact.orb)}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
                   {selectedSynastryContacts.length === 0 && (
                     <article className="friends-logic-card">
                       <span>Interaspects</span>
@@ -10095,16 +10126,20 @@ function ManualChartsPanel({
             <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
               <div className="friend-profile-copy-column">
                 <p className="friend-compat-intro">
-                  The midpoint of two charts. Each placement is the arc-midpoint between {selectedChart.displayName}'s chart and {relationshipComparisonIsSelf ? "your chart" : `${relationshipComparisonName}'s chart`}. Read the relationship as if it had a birth chart of its own.
+                  The composite chart reads the relationship as its own entity. The difference between knowing two people and knowing what they become together.
                 </p>
                 {selectedCompositeSky && (
-                  <FriendPlacementTable
-                    title="Composite placements"
-                    rows={socialPlacementRows(selectedCompositeSky)}
-                    compact
-                    generatedContent={relationshipGeneratedContent}
-                    generatedContext="composite"
-                  />
+                  <section className="composite-placements-section">
+                    <span className="eyebrow section-label friend-section-label">Composite placements</span>
+                    <FriendPlacementTable
+                      title="Composite placements"
+                      rows={socialPlacementRows(selectedCompositeSky)}
+                      compact
+                      generatedContent={relationshipGeneratedContent}
+                      generatedContext="composite"
+                      showTitle={false}
+                    />
+                  </section>
                 )}
                 <span className="eyebrow section-label friend-section-label">Composite aspects · by strength</span>
                 {selectedCompositeSky ? (
@@ -10114,6 +10149,7 @@ function ManualChartsPanel({
                         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                         <span className="aspect-row-copy">
                           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+                          <span className="aspect-row-subtitle">{relationshipThemeTitle(aspect.from, aspect.to, aspect.type)}</span>
                           <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent)}</p>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
