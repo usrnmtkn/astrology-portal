@@ -4005,6 +4005,26 @@ button.planet-placement-row {
   letter-spacing: var(--tracking-normal);
 }
 
+.composite-placements-section {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.composite-placements-section .friend-section-label {
+  margin: 0;
+}
+
+.friend-chart-page .composite-placements-section .placement-table-card {
+  width: 100%;
+}
+
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 20px;
+  padding: 24px 30px;
+}
+
 .you-signatures-card,
 .friend-signature-card {
   overflow: hidden;
@@ -6598,6 +6618,12 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
 }
 
 @media (max-width: 560px) {
+  .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px 18px;
+  }
+
   .placement-table-row {
     grid-template-columns: 40px minmax(0, 1fr);
     align-items: start;
