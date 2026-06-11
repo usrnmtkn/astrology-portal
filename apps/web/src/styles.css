@@ -425,7 +425,10 @@
 html,
 body,
 #root {
+  width: 100%;
+  max-width: 100%;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 html {
@@ -886,6 +889,10 @@ svg {
   padding-top: var(--chart-page-top);
 }
 
+.app-shell.mode-detail {
+  padding: 0;
+}
+
 .app-shell.auth-mode {
   padding: 0;
 }
@@ -1110,12 +1117,25 @@ html[data-scrolled] .floating-back-button {
 }
 
 .site-menu button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
   padding: 12px var(--sp-2);
+  color: var(--ink);
   text-align: left;
   font-weight: var(--weight-semibold);
+}
+
+.site-menu button.active {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.site-menu button svg {
+  flex: 0 0 auto;
 }
 
 .site-menu button:hover {
@@ -2144,7 +2164,7 @@ html[data-scrolled] .floating-back-button {
 
 .article-body-inner {
   max-width: 720px;
-  margin-right: auto;
+  margin-inline: auto;
 }
 
 .sky-detail-statement {
@@ -2275,6 +2295,7 @@ html[data-scrolled] .floating-back-button {
   font-size: 24px;
 }
 
+.chart-section,
 .retrograde-section,
 .aspect-section {
   display: flex;
@@ -2283,6 +2304,8 @@ html[data-scrolled] .floating-back-button {
   overflow: visible;
 }
 
+.chart-section-title,
+.section-title,
 .section-label,
 .aspect-section-label,
 .placements-heading .eyebrow,
@@ -2292,9 +2315,10 @@ html[data-scrolled] .floating-back-button {
 .friend-placement-column-title small,
 .eyebrow {
   display: block;
+  margin: 0;
   color: var(--muted);
   font-size: var(--type-xs);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: var(--tracking-label);
   line-height: 1.2;
   text-transform: uppercase;
@@ -2313,10 +2337,10 @@ html[data-scrolled] .floating-back-button {
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   width: 100%;
-  gap: 18px;
-  padding: var(--card-padding);
+  gap: clamp(18px, 2.4vw, 26px);
+  padding: clamp(24px, 3vw, 34px) clamp(24px, 3.4vw, 38px);
   border: 1px solid var(--card-border);
-  border-radius: var(--card-radius-sm);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
   text-align: left;
   min-height: auto;
@@ -2327,57 +2351,76 @@ html[data-scrolled] .floating-back-button {
   position: relative;
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 74px;
+  height: 74px;
   border-radius: 50%;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
-  font-size: 28px;
+  font-size: 34px;
+  line-height: 1;
 }
 
 .retro-badge .rx {
   position: absolute;
   top: 0;
-  right: 0;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
   background: var(--retrograde-accent);
   color: var(--pill-fg);
-  padding: 4px 6px;
-  font-size: 13px;
+  padding: 0;
+  font-size: 14px;
   font-weight: 900;
+  line-height: 1;
 }
 
 .retro-main {
   display: grid;
   min-width: 0;
-  gap: 10px;
+  gap: 12px;
 }
 
 .retro-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 24px;
 }
 
 .retro-top strong {
-  font-size: var(--type-xl);
-  letter-spacing: var(--tracking-tight);
-  line-height: 1.15;
+  display: block;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(22px, 2.1vw, 26px);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.06;
 }
 
 .retro-until {
   flex: 0 0 auto;
+  margin-top: 3px;
   color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-md);
   font-style: normal;
-  font-weight: 800;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.1;
+  text-align: right;
   white-space: nowrap;
 }
 
 .retro-sub {
+  margin-top: 2px;
   color: var(--muted);
-  font-weight: 900;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.16em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
@@ -2393,9 +2436,9 @@ html[data-scrolled] .floating-back-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 1.65em;
+  min-height: 1.6em;
   max-width: 100%;
-  padding: 0 0.72em;
+  padding: 0 0.78em;
   border-radius: 999px;
   font-size: var(--type-xs);
   font-weight: var(--font-weight-bold);
@@ -2422,9 +2465,11 @@ html[data-scrolled] .floating-back-button {
 .retro-copy,
 .retrograde-detail-line {
   color: var(--text-muted);
-  font-size: var(--type-sm);
+  max-width: 760px;
+  font-family: var(--font-body);
+  font-size: var(--type-md);
   font-weight: var(--font-weight-regular);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .retrograde-detail-meta {
@@ -2442,6 +2487,7 @@ html[data-scrolled] .floating-back-button {
 
 .placement-tabs {
   align-self: flex-start;
+  margin: 0;
 }
 
 .placement-table-wrap,
@@ -3990,7 +4036,17 @@ button.planet-placement-row {
 
   .article-page,
   .sky-detail-page {
-    padding-top: clamp(88px, 14vh, 120px);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 148px 18px 56px;
+  }
+
+  .article-shell,
+  .sky-detail-article {
+    width: min(100%, 560px);
+    margin-inline: auto;
+    gap: 24px;
   }
 
   .article-hero,
@@ -3999,6 +4055,23 @@ button.planet-placement-row {
   .sky-detail-statement,
   .sky-detail-body {
     border-radius: 24px;
+  }
+
+  .article-hero,
+  .sky-detail-hero,
+  .article-card,
+  .sky-detail-statement,
+  .sky-detail-body {
+    width: 100%;
+    max-width: 100%;
+    padding: 32px 30px;
+  }
+
+  .article-title,
+  .sky-detail-hero h1,
+  .sky-detail-hero h2 {
+    font-size: clamp(52px, 14vw, 72px);
+    letter-spacing: -0.06em;
   }
 
   .segmented-control {
@@ -4835,7 +4908,8 @@ button.planet-placement-row {
   display: grid;
   width: min(760px, 100%);
   margin: 0 auto;
-  gap: 28px;
+  align-content: start;
+  gap: clamp(24px, 4vw, 36px);
 }
 
 .settings-header,
@@ -4848,14 +4922,21 @@ button.planet-placement-row {
 
 .settings-header h2,
 .account-page-heading h2 {
+  margin: 0;
   font-family: var(--font-display);
   font-size: clamp(38px, 5vw, 56px);
   font-weight: 900;
+  line-height: 0.95;
+}
+
+.settings-panel {
+  display: grid;
+  gap: clamp(28px, 4vw, 42px);
 }
 
 .settings-group {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .settings-card,
@@ -4877,6 +4958,10 @@ button.planet-placement-row {
   padding: var(--row-padding-y) var(--row-padding-x);
   border-bottom: 1px solid var(--card-border);
   background: var(--card-bg);
+}
+
+.settings-row-control {
+  align-items: start;
 }
 
 .settings-row-button {
@@ -4989,7 +5074,10 @@ button.settings-signout-row {
 }
 
 .settings-theme-control {
-  display: flex;
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: start;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface-2);
@@ -5001,7 +5089,8 @@ button.settings-signout-row {
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
-  padding: 12px 28px;
+  min-width: 104px;
+  padding: 12px 24px;
   font-weight: 900;
 }
 
@@ -6438,14 +6527,14 @@ body.modal-open {
   color: var(--muted);
 }
 
-.theme-dark .retro-icon,
-[data-theme="dark"] .retro-icon {
+.theme-dark .retro-badge,
+[data-theme="dark"] .retro-badge {
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
 }
 
-.theme-dark .retro-rx,
-[data-theme="dark"] .retro-rx {
+.theme-dark .retro-badge .rx,
+[data-theme="dark"] .retro-badge .rx {
   background: var(--retrograde-accent);
   color: var(--pill-fg);
 }
@@ -6816,6 +6905,22 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
     --top-action-icon-size: 21px;
   }
 
+  html,
+  body,
+  #root,
+  .app-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .topbar {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: auto auto;
+    align-items: start;
+  }
+
   .nav-pill {
     gap: 0;
     border-color: transparent;
@@ -6846,13 +6951,15 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   }
 
   .floating-back-button {
+    top: calc(var(--top-control-top) + var(--top-control-height) + 12px);
     left: 16px;
+    max-width: calc(100vw - 32px);
     padding: 0 20px;
     font-size: 0.95rem;
   }
 
   .app-shell {
-    padding: 112px 18px 48px;
+    padding: 128px 18px 48px;
   }
 
   .brand-word {
@@ -6881,6 +6988,57 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .menu-toggle {
     width: var(--top-icon-button-size);
     height: var(--top-icon-button-size);
+  }
+
+  .site-menu {
+    top: calc(var(--top-control-top) + var(--top-control-height) + 10px);
+    right: 20px;
+    width: min(260px, calc(100vw - 40px));
+    max-width: calc(100vw - 40px);
+  }
+
+  .page-shell,
+  .page-shell--narrow,
+  .portal-grid.page-shell,
+  .chart-layout,
+  .sky-layout,
+  .chart-page-layout,
+  .chart-page-shell,
+  .relationship-detail-layout,
+  .friend-chart-page,
+  .friend-focus-panel,
+  .detail-panel,
+  .sky-content-column,
+  .chart-layout__content,
+  .chart-layout__visual {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .chart-shell,
+  .chart-frame,
+  .wheel,
+  .sky-wheel,
+  .friend-wheel,
+  .natal-wheel,
+  .synastry-wheel,
+  .composite-wheel {
+    max-width: min(100%, 420px);
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+    overflow: hidden;
+  }
+
+  .chart-frame > .sky-wheel,
+  .sky-wheel svg,
+  .wheel svg {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
   }
 
   .sky-wheel {
@@ -6948,10 +7106,18 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
 
   .retro {
     grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 26px 24px;
   }
 
   .retro-top {
     display: grid;
+    gap: 10px;
+  }
+
+  .retro-until {
+    text-align: left;
+    white-space: normal;
   }
 
   .placements-heading {
@@ -7086,5 +7252,38 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .settings-signout-row,
   .account-editable-row {
     grid-template-columns: 1fr;
+  }
+
+  .settings-page,
+  .account-page {
+    width: min(100%, 560px);
+    gap: 24px;
+  }
+
+  .settings-header,
+  .account-page-heading {
+    min-height: 0;
+  }
+
+  .settings-panel {
+    gap: 30px;
+  }
+
+  .settings-card,
+  .settings-account-card {
+    border-radius: 28px;
+  }
+
+  .settings-row-control {
+    gap: 18px;
+  }
+
+  .settings-theme-control {
+    max-width: calc(100vw - 84px);
+  }
+
+  .settings-theme-control button {
+    min-width: 96px;
+    padding-inline: 22px;
   }
 }
