@@ -109,6 +109,33 @@ function inputToRow(userId: string, input: ManualChartInput) {
   };
 }
 
+function manualChartToInput(chart: ManualChart): ManualChartInput {
+  return {
+    chartType: chart.chartType,
+    displayName: chart.displayName,
+    firstName: chart.firstName ?? null,
+    lastName: chart.lastName ?? null,
+    relationshipType: chart.chartType === "event" ? null : chart.relationshipType ?? "friend",
+    birthDate: chart.birthDate,
+    birthTime: chart.birthTimeUnknown ? null : chart.birthTime,
+    birthTimeUnknown: chart.birthTimeUnknown,
+    birthPlace: chart.birthPlace,
+    birthLocation: chart.birthLocation,
+    natalChart: chart.natalChart ?? null,
+    notes: chart.notes ?? null
+  };
+}
+
+function chartIdentity(chart: Pick<ManualChart, "chartType" | "displayName" | "birthDate" | "birthTime" | "birthTimeUnknown" | "birthPlace">) {
+  return [
+    chart.chartType,
+    chart.displayName.trim().toLowerCase(),
+    chart.birthDate,
+    chart.birthTimeUnknown ? "time-unknown" : chart.birthTime ?? "",
+    chart.birthPlace.trim().toLowerCase()
+  ].join("|");
+}
+
 function readLocalManualCharts(userId: string): ManualChart[] {
   try {
     const savedCharts = window.localStorage.getItem(localManualChartsKey(userId));
@@ -189,6 +216,46 @@ async function hasRemoteUser(userId: string) {
   return data.user?.id === userId;
 }
 
+async function insertRemoteManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
+  const client = supabase;
+
+  if (!client) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { data, error } = await client
+    .from("manual_charts")
+    .insert(inputToRow(userId, input))
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const chart = rowToManualChart(data as ManualChartRow);
+  const { error: connectionError } = await client
+    .from("connections")
+    .insert({
+      owner_user_id: userId,
+      manual_chart_id: chart.id,
+      status: "active",
+      relationship_type: chart.chartType === "event" ? "event" : chart.relationshipType || "friend",
+      created_from: "manual_chart"
+    });
+
+  if (connectionError) {
+    await client
+      .from("manual_charts")
+      .delete()
+      .eq("id", chart.id)
+      .eq("owner_user_id", userId);
+    throw connectionError;
+  }
+
+  return chart;
+}
+
 export async function listManualCharts(userId: string): Promise<ManualChart[]> {
   if (!(await hasRemoteUser(userId))) {
     return readLocalManualCharts(userId);
@@ -224,37 +291,41 @@ export async function createManualChart(userId: string, input: ManualChartInput)
     return createLocalManualChart(userId, input);
   }
 
-  const { data, error } = await client
-    .from("manual_charts")
-    .insert(inputToRow(userId, input))
-    .select("*")
-    .single();
+  return insertRemoteManualChart(userId, input);
+}
 
-  if (error) {
-    throw error;
+export async function migrateLocalManualChartsToRemote(userId: string, localUserIds: Array<string | null | undefined>) {
+  if (!(await hasRemoteUser(userId))) {
+    return { imported: 0, skipped: 0 };
   }
 
-  const chart = rowToManualChart(data as ManualChartRow);
-  const { error: connectionError } = await client
-    .from("connections")
-    .insert({
-      owner_user_id: userId,
-      manual_chart_id: chart.id,
-      status: "active",
-      relationship_type: chart.chartType === "event" ? "event" : chart.relationshipType || "friend",
-      created_from: "manual_chart"
-    });
+  const uniqueLocalUserIds = [...new Set(localUserIds.filter((id): id is string => Boolean(id)))];
+  const localCharts = uniqueLocalUserIds.flatMap((localUserId) => readLocalManualCharts(localUserId));
 
-  if (connectionError) {
-    await client
-      .from("manual_charts")
-      .delete()
-      .eq("id", chart.id)
-      .eq("owner_user_id", userId);
-    throw connectionError;
+  if (localCharts.length === 0) {
+    return { imported: 0, skipped: 0 };
   }
 
-  return chart;
+  const remoteCharts = await listManualCharts(userId);
+  const remoteIdentities = new Set(remoteCharts.map(chartIdentity));
+  let imported = 0;
+  let skipped = 0;
+
+  for (const localChart of localCharts) {
+    const identity = chartIdentity(localChart);
+
+    if (remoteIdentities.has(identity)) {
+      skipped += 1;
+      continue;
+    }
+
+    const importedChart = await insertRemoteManualChart(userId, manualChartToInput(localChart));
+
+    remoteIdentities.add(chartIdentity(importedChart));
+    imported += 1;
+  }
+
+  return { imported, skipped };
 }
 
 export async function updateManualChart(userId: string, chartId: string, input: ManualChartInput): Promise<ManualChart> {

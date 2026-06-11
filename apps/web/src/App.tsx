@@ -55,6 +55,7 @@ import {
   createManualChart,
   deleteManualChart,
   listManualCharts,
+  migrateLocalManualChartsToRemote,
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
@@ -1038,11 +1039,21 @@ function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalM
 }
 
 function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
-  if (portalModeFromUrl() === "friends" || currentMode === "friends") {
+  const urlMode = portalModeFromUrl();
+
+  if (urlMode === "friends" || currentMode === "friends") {
     return "friends";
   }
 
-  if (currentMode === "member") {
+  if (urlMode === "settings") {
+    return "settings";
+  }
+
+  if (urlMode === "profile") {
+    return "profile";
+  }
+
+  if (urlMode === "member" || currentMode === "member") {
     return "guest";
   }
 
@@ -1705,6 +1716,17 @@ function getInitialUserProfile(): UserProfile | null {
   } catch {
     return null;
   }
+}
+
+function profileForAuthAccount(profile: UserProfile, account: AuthAccount): UserProfile {
+  return {
+    ...profile,
+    id: account.id,
+    email: account.email || profile.email,
+    name: profile.name || account.name,
+    provider: normalizeSignupProvider(account.provider, profile.provider),
+    avatarUrl: account.avatarUrl ?? profile.avatarUrl
+  };
 }
 
 function zodiacFromBirthDate(value: string) {
@@ -4470,6 +4492,7 @@ export function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
   const [remoteAccountId, setRemoteAccountId] = useState<string | null>(null);
   const [remoteProfileReady, setRemoteProfileReady] = useState(false);
+  const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
@@ -4966,11 +4989,14 @@ export function App() {
     let cancelled = false;
 
     async function applyAuthAccount(account: AuthAccount | null) {
+      setAuthAccountChecked(false);
+
       if (!account) {
         setRemoteAccountId(null);
         setRemoteProfileReady(false);
         lastRemoteProfileSaveRef.current = "";
         setMode(unauthenticatedLandingMode);
+        setAuthAccountChecked(true);
         return;
       }
 
@@ -4978,6 +5004,8 @@ export function App() {
       setRemoteProfileReady(false);
 
       const pendingForm = readPendingSignupForm();
+      const cachedLocalProfile = getInitialUserProfile();
+      let persistedProfileId: string | null = null;
 
       try {
         const persistedProfile = await loadPersistedProfile(account.id);
@@ -4987,12 +5015,14 @@ export function App() {
         }
 
         if (isProfilePersistencePayload(persistedProfile)) {
+          persistedProfileId = persistedProfile.profile.id;
           const remoteTheme = persistedProfile.preferences?.theme;
           const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
           const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
           const remoteLocation = persistedProfile.preferences?.selectedLocation;
+          const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
 
-          setUserProfile(persistedProfile.profile);
+          setUserProfile(accountProfile);
           if (remoteTheme === "light" || remoteTheme === "dark") {
             setTheme(remoteTheme);
           }
@@ -5010,22 +5040,41 @@ export function App() {
             setHasLocationPreference(true);
           }
         } else {
-          setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
+          setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
         }
 
+        try {
+          await migrateLocalManualChartsToRemote(account.id, [
+            cachedLocalProfile?.id,
+            persistedProfileId,
+            account.id
+          ]);
+        } catch (migrationError) {
+          console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
+        }
         clearPendingSignupForm();
         setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
         setRemoteProfileReady(true);
+        setAuthAccountChecked(true);
       } catch (error) {
         if (cancelled) {
           return;
         }
 
         console.warn("Supabase profile load failed; using local profile cache.", error);
-        setUserProfile((currentProfile) => currentProfile ?? createUserProfile(pendingForm, "email", account));
+        setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
+        try {
+          await migrateLocalManualChartsToRemote(account.id, [
+            cachedLocalProfile?.id,
+            account.id
+          ]);
+        } catch (migrationError) {
+          console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
+        }
         clearPendingSignupForm();
         setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
         setRemoteProfileReady(true);
+        setAuthAccountChecked(true);
       }
     }
 
@@ -5038,6 +5087,9 @@ export function App() {
         void applyAuthAccount(account);
       })
       .catch(() => {
+        if (!cancelled) {
+          setAuthAccountChecked(true);
+        }
         return;
       });
 
@@ -5310,7 +5362,7 @@ export function App() {
     if (nextStep) {
       setChartModalStep(nextStep);
     }
-    setMode(userProfile ? "profile" : "guest");
+    navigateToPortalMode(userProfile ? "profile" : "guest");
   }
 
   const isTodayMode = mode === "guest" || mode === "member";
@@ -5439,7 +5491,7 @@ export function App() {
                 <span>Settings</span>
               </button>
               {userProfile ? (
-                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { setSelectedSkyDetail(null); await signOutAuth(); setUserProfile(null); setMode("profile"); setMenuOpen(false); }}>
+                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { setSelectedSkyDetail(null); await signOutAuth(); setUserProfile(null); navigateToPortalMode("profile"); setMenuOpen(false); }}>
                   <LogOut size={20} aria-hidden="true" />
                   <span>Sign out</span>
                 </button>
@@ -5621,11 +5673,11 @@ export function App() {
                     initialMode={accountIntent}
                     onClose={() => {
                       setAccountIntent("create");
-                      setMode(userProfile ? "profile" : "guest");
+                      navigateToPortalMode(userProfile ? "profile" : "guest");
                     }}
                     onCreateProfile={(nextProfile) => {
                       setUserProfile(nextProfile);
-                      setMode("profile");
+                      navigateToPortalMode("profile");
                     }}
                   />
                 )
@@ -5640,6 +5692,8 @@ export function App() {
                   relationshipGeneratedContent={relationshipGeneratedContent}
                   landingKey={friendsLandingKey}
                   sunriseOrbDegrees={activeSunriseOrbDegrees}
+                  chartOwnerUserId={remoteAccountId ?? userProfile.id}
+                  chartsReady={authAccountChecked && (!remoteAccountId || remoteProfileReady)}
                 />
               )}
               {mode === "account" && userProfile && (
@@ -5648,7 +5702,7 @@ export function App() {
                   onSignOut={async () => {
                     await signOutAuth();
                     setUserProfile(null);
-                    setMode("profile");
+                    navigateToPortalMode("profile");
                   }}
                   onUpdateProfile={setUserProfile}
                 />
@@ -9680,7 +9734,9 @@ function ManualChartsPanel({
   natalGeneratedContent,
   relationshipGeneratedContent,
   landingKey,
-  sunriseOrbDegrees
+  sunriseOrbDegrees,
+  chartOwnerUserId,
+  chartsReady
 }: {
   profile: UserProfile;
   currentSky: SkySnapshot;
@@ -9690,6 +9746,8 @@ function ManualChartsPanel({
   relationshipGeneratedContent: GeneratedContentMap;
   landingKey: number;
   sunriseOrbDegrees: number;
+  chartOwnerUserId: string;
+  chartsReady: boolean;
 }) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
@@ -9846,8 +9904,15 @@ function ManualChartsPanel({
   useEffect(() => {
     let cancelled = false;
 
+    if (!chartsReady) {
+      setStatus("loading");
+      return () => {
+        cancelled = true;
+      };
+    }
+
     setStatus("loading");
-    listManualCharts(profile.id)
+    listManualCharts(chartOwnerUserId)
       .then((nextCharts) => {
         if (!cancelled) {
           setCharts(nextCharts);
@@ -9873,7 +9938,7 @@ function ManualChartsPanel({
     return () => {
       cancelled = true;
     };
-  }, [profile.id]);
+  }, [chartOwnerUserId, chartsReady]);
 
   useEffect(() => {
     setSelectedSynastryContactId(null);
@@ -10032,8 +10097,8 @@ function ManualChartsPanel({
         notes: null
       };
       const savedChart = editingChartId
-        ? await updateManualChart(profile.id, editingChartId, input)
-        : await createManualChart(profile.id, input);
+        ? await updateManualChart(chartOwnerUserId, editingChartId, input)
+        : await createManualChart(chartOwnerUserId, input);
 
       setCharts((currentCharts) => {
         const nextCharts = editingChartId
@@ -10062,7 +10127,7 @@ function ManualChartsPanel({
     setMessage("");
 
     try {
-      await deleteManualChart(profile.id, chart.id);
+      await deleteManualChart(chartOwnerUserId, chart.id);
       setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
       setRelationshipComparisonChartId((currentId) => currentId === chart.id ? "self" : currentId);
       setRelationshipComparisonPickerOpen(false);
