@@ -215,6 +215,7 @@
   --font-display-old: var(--font-display);
   --font-weight-regular: var(--weight-regular);
   --font-weight-medium: var(--weight-medium);
+  --font-weight-semibold: var(--weight-semibold);
   --font-weight-bold: var(--weight-bold);
   --tracking-tight: var(--tracking-display);
   --tracking-normal: 0;
@@ -1324,6 +1325,16 @@ svg {
   paint-order: normal;
 }
 
+.planet-glyph-sun-symbol {
+  fill: var(--chart-glyph);
+  stroke: none;
+  paint-order: normal;
+}
+
+.planet-glyph-sun-symbol path {
+  fill: inherit;
+}
+
 .planet-degree {
   fill: var(--chart-label);
   font-family: var(--font-body);
@@ -1332,6 +1343,16 @@ svg {
   dominant-baseline: central;
   letter-spacing: 0;
   text-anchor: middle;
+}
+
+.wheel-placement__retrograde {
+  fill: var(--chart-glyph);
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: var(--weight-semibold);
+  dominant-baseline: text-after-edge;
+  text-anchor: start;
+  opacity: 0.9;
 }
 
 .planet-tick,
@@ -1447,7 +1468,8 @@ svg {
 }
 
 .inner-planet-labels .planet-glyph,
-.inner-planet-labels .planet-degree {
+.inner-planet-labels .planet-degree,
+.inner-planet-labels .wheel-placement__retrograde {
   fill: var(--synastry-accent);
 }
 
