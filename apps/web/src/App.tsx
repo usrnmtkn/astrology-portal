@@ -22,7 +22,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
+import { isValidElement, lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
@@ -717,6 +717,8 @@ const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
+const DEFAULT_SUNRISE_ORB_DEGREES = 0;
+const EXTENDED_SUNRISE_ORB_DEGREES = 3;
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
 const zodiacSigns = [
@@ -1152,6 +1154,32 @@ function zodiacLongitude(position?: PlanetPosition) {
   return (Math.max(signIndex, 0) * 30 + position.degree) % 360;
 }
 
+function positionFromLongitude({
+  planet,
+  glyph,
+  longitude,
+  theme
+}: {
+  planet: string;
+  glyph: string;
+  longitude: number;
+  theme: string;
+}): PlanetPosition {
+  const normalizedLongitude = normalizedAngle(longitude);
+  const sign = zodiacSignForLongitude(normalizedLongitude);
+
+  return {
+    planet,
+    glyph,
+    sign,
+    signGlyph: zodiacGlyphText(sign),
+    degree: normalizedLongitude % 30,
+    house: 0,
+    motion: "direct",
+    theme
+  };
+}
+
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
 }
@@ -1554,7 +1582,17 @@ function getInitialTheme(): UiTheme {
 
 function getInitialSunriseOrb() {
   try {
-    return window.localStorage.getItem(sunriseOrbStorageKey) !== "off";
+    const savedValue = window.localStorage.getItem(sunriseOrbStorageKey);
+
+    if (savedValue === "true" || savedValue === "on") {
+      return true;
+    }
+
+    if (savedValue === "false" || savedValue === "off") {
+      return false;
+    }
+
+    return true;
   } catch {
     return true;
   }
@@ -1562,7 +1600,9 @@ function getInitialSunriseOrb() {
 
 function getInitialDyslexiaFont() {
   try {
-    return window.localStorage.getItem(dyslexiaFontStorageKey) === "on";
+    const savedValue = window.localStorage.getItem(dyslexiaFontStorageKey);
+
+    return savedValue === "true" || savedValue === "on";
   } catch {
     return false;
   }
@@ -2061,6 +2101,10 @@ function detailMetaRows(meta: string) {
     const lower = part.toLowerCase();
     const label = lower.includes("orb")
       ? "Orb"
+      : lower.includes("house")
+        ? "House"
+        : lower.includes("chapter")
+          ? "Chapter"
       : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
         ? "Timing"
         : index === 0
@@ -2265,6 +2309,20 @@ function detailSectionTitle(index: number) {
   return titles[index] ?? "Further notes";
 }
 
+function isTimingOnlyArticleSection(section: { heading: string; body: ReactNode }) {
+  const bodyText = typeof section.body === "string" ? section.body.trim() : "";
+
+  return /^(pre-shadow|retrograde|post-shadow):/i.test(bodyText);
+}
+
+function isRetrogradeTimelineNode(node: ReactNode) {
+  if (!isValidElement<{ className?: string }>(node)) {
+    return false;
+  }
+
+  return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
+}
+
 function SkyDetailArticle({
   detail,
   onClose
@@ -2274,14 +2332,15 @@ function SkyDetailArticle({
 }) {
   const metaRows = detailMetaRows(detail.meta);
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
-  const paragraphs = detail.body.length > 0 ? detail.body : ["This field guide is still being written."];
-  const generatedSections = detail.sections ?? [];
+  const articleBody = detail.body.filter((node) => !isRetrogradeTimelineNode(node));
+  const paragraphs = articleBody.length > 0 ? articleBody : ["This field guide is still being written."];
+  const generatedSections = (detail.sections ?? []).filter((section) => !isTimingOnlyArticleSection(section));
   const drilldown = detail.astrologyDrilldown;
   const [lede, ...sectionParagraphs] = paragraphs;
 
   return (
     <section
-      className="sky-detail-page"
+      className="article-page sky-detail-page"
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -2289,44 +2348,51 @@ function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article className="sky-detail-article">
-        <header className="sky-detail-hero">
-          <div className="sky-detail-glyph" aria-hidden="true">{detail.glyph}</div>
-          {detail.kicker ? <span className="sky-detail-kicker">{detail.kicker}</span> : null}
-          <h2 id="sky-detail-title">{detail.title}</h2>
-          <dl className="sky-detail-meta">
+      <article className="article-shell sky-detail-article">
+        <header className="article-hero sky-detail-hero">
+          <div className="article-hero__kicker-row">
+            <div className="article-symbol-badge sky-detail-glyph" aria-hidden="true">{detail.glyph}</div>
+            {detail.kicker ? <span className="article-kicker sky-detail-kicker">{detail.kicker}</span> : null}
+          </div>
+          <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
+          <dl className={`article-meta-grid sky-detail-meta ${metaRows.length >= 3 ? "article-meta-grid--three" : ""}`}>
             {metaRows.map((row) => (
-              <div className="sky-detail-meta-row" key={`${row.label}-${row.value}`}>
-                <dt>{row.label}</dt>
-                <dd>{row.value}</dd>
+              <div className="article-meta sky-detail-meta-row" key={`${row.label}-${row.value}`}>
+                <dt className="article-meta__label">{row.label}</dt>
+                <dd className="article-meta__value">{row.value}</dd>
               </div>
             ))}
           </dl>
         </header>
 
         {statement ? (
-          <aside className="sky-detail-statement">
+          <aside className="article-card sky-detail-statement">
             <span aria-hidden="true" />
             <p>{statement}</p>
           </aside>
         ) : null}
 
-        <div className="sky-detail-body">
+        <div className="article-card article-body-card sky-detail-body">
+          <div className="article-body-inner">
           {generatedSections.length > 0 ? (
             generatedSections.map((section, index) => (
-              <section className="sky-detail-section" key={`${section.heading}-${index}`}>
-                <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {section.heading}</span>
-                <h3>{section.heading}</h3>
+              <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
+                <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
+                <h2>{section.heading}</h2>
                 <p>{section.body}</p>
               </section>
             ))
           ) : (
             <>
-              <p className="sky-detail-lede">{lede}</p>
+              <section className="article-section sky-detail-section">
+                <span className="article-section__eyebrow sky-detail-section-num">01 · What it means</span>
+                <h2>What it means</h2>
+                <p className="sky-detail-lede">{lede}</p>
+              </section>
               {sectionParagraphs.map((paragraph, index) => (
-                <section className="sky-detail-section" key={index}>
-                  <span className="sky-detail-section-num">{String(index + 1).padStart(2, "0")} - {detailSectionTitle(index)}</span>
-                  <h3>{detailSectionTitle(index)}</h3>
+                <section className="article-section sky-detail-section" key={index}>
+                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + 2).padStart(2, "0")} · {detailSectionTitle(index)}</span>
+                  <h2>{detailSectionTitle(index)}</h2>
                   <p>{paragraph}</p>
                 </section>
               ))}
@@ -2356,6 +2422,7 @@ function SkyDetailArticle({
             </details>
           ) : null}
           <div className="sky-detail-end" aria-hidden="true">✦</div>
+          </div>
         </div>
       </article>
     </section>
@@ -2506,6 +2573,10 @@ const transitAspectDefinitions = [
 const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"]);
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
+
+function sunriseOrbDegrees(enabled: boolean) {
+  return enabled ? EXTENDED_SUNRISE_ORB_DEGREES : DEFAULT_SUNRISE_ORB_DEGREES;
+}
 
 function angularDistance(first: number, second: number) {
   const difference = Math.abs(normalizedAngle(first - second));
@@ -2663,13 +2734,21 @@ function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbVal
   return orbValue <= 1.5 || transitPriorityTargets.has(natalPoint);
 }
 
-function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[]): TransitItem[] {
+function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number], transitPosition: PlanetPosition, natalPosition: PlanetPosition, sunriseOrb: number) {
+  const isSunHorizonContact = transitPosition.planet === "Sun"
+    && ["Ascendant", "Descendant"].includes(natalPosition.planet)
+    && ["conjunction", "opposition"].includes(definition.type);
+
+  return isSunHorizonContact ? definition.orb + sunriseOrb : definition.orb;
+}
+
+function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES): TransitItem[] {
   return transitPositions.flatMap((transitPosition) => (
     natalPositions.flatMap((natalPosition) => {
       const separation = angularDistance(zodiacLongitude(transitPosition), zodiacLongitude(natalPosition));
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= definition.orb)
+        .filter((definition) => definition.orbValue <= transitAspectOrb(definition, transitPosition, natalPosition, sunriseOrb))
         .sort((first, second) => first.orbValue - second.orbValue)[0];
 
       if (!aspect) {
@@ -2895,21 +2974,45 @@ function rankedTransitItems(transits: TransitItem[], timing: FriendTimingContext
   });
 }
 
-function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, birthDate: string) {
+function natalTransitTargets(natalSky: SkySnapshot) {
+  if (typeof natalSky.ascendantLongitude !== "number") {
+    return natalSky.positions;
+  }
+
+  return [
+    ...natalSky.positions,
+    positionFromLongitude({
+      planet: "Ascendant",
+      glyph: pointGlyph("Ascendant"),
+      longitude: natalSky.ascendantLongitude,
+      theme: "Presence, horizon, and first contact"
+    }),
+    positionFromLongitude({
+      planet: "Descendant",
+      glyph: pointGlyph("Descendant"),
+      longitude: natalSky.ascendantLongitude + 180,
+      theme: "Partnership, encounter, and the setting horizon"
+    })
+  ];
+}
+
+function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, birthDate: string, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
+  const natalPositions = natalTransitTargets(natalSky);
   const timing = timingContextForChart({
     birthDate,
     currentDate: currentSky.generatedAt,
     ascendant: natalSky.ascendant,
-    natalPositions: natalSky.positions
+    natalPositions
   });
 
-  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalSky.positions), timing);
+  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing);
 }
 
-function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart) {
+function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
   const timing = friendTimingContext(chart, currentSky);
+  const natalPositions = chart.natalChart ? natalTransitTargets(chart.natalChart) : [];
 
-  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, chart.natalChart?.positions ?? []), timing);
+  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing);
 }
 
 function transitLifeArea(transit: TransitItem, chart: ManualChart) {
@@ -4008,12 +4111,12 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
   }));
 }
 
-function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], focusAreas: LifeAreaFocus[] = []) {
+function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
   const rows = charts
     .filter((chart) => chart.natalChart)
     .map((chart) => ({
       chart,
-      transits: rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart), focusAreas).slice(0, 5),
+      transits: rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas).slice(0, 5),
       timing: friendTimingContext(chart, currentSky)
     }));
   const byPlanet = new Map<string, ManualChart[]>();
@@ -4078,9 +4181,9 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
   return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
 }
 
-function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap, focusAreas: LifeAreaFocus[] = []) {
+function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap, focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
   const calculatedCharts = charts.filter((chart) => chart.natalChart);
-  const circleCards = circleActivationCards(currentSky, charts, focusAreas);
+  const circleCards = circleActivationCards(currentSky, charts, focusAreas, sunriseOrb);
 
   if (circleCards.length > 0) {
     return circleCards.map((card) => ({
@@ -4091,7 +4194,7 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
 
   if (calculatedCharts.length === 1) {
     const chart = calculatedCharts[0];
-    const topTransit = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart), focusAreas)[0];
+    const topTransit = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas)[0];
     const timing = friendTimingContext(chart, currentSky);
 
     return [
@@ -4205,6 +4308,7 @@ export function App() {
   const isFriendsMode = mode === "friends";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode;
+  const activeSunriseOrbDegrees = sunriseOrbDegrees(sunriseOrbEnabled);
 
   function navigateToFriends() {
     setFriendsLandingKey((currentKey) => currentKey + 1);
@@ -4434,7 +4538,7 @@ export function App() {
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(sunriseOrbStorageKey, sunriseOrbEnabled ? "on" : "off");
+      window.localStorage.setItem(sunriseOrbStorageKey, sunriseOrbEnabled ? "true" : "false");
     } catch {
       return;
     }
@@ -4442,10 +4546,19 @@ export function App() {
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(dyslexiaFontStorageKey, dyslexiaFriendlyFont ? "on" : "off");
+      window.localStorage.setItem(dyslexiaFontStorageKey, dyslexiaFriendlyFont ? "true" : "false");
     } catch {
       return;
     }
+  }, [dyslexiaFriendlyFont]);
+
+  useEffect(() => {
+    document.documentElement.dataset.sunriseOrb = sunriseOrbEnabled ? "true" : "false";
+    document.documentElement.style.setProperty("--sunrise-orb-degrees", `${activeSunriseOrbDegrees}`);
+  }, [activeSunriseOrbDegrees, sunriseOrbEnabled]);
+
+  useEffect(() => {
+    document.documentElement.dataset.dyslexiaFont = dyslexiaFriendlyFont ? "true" : "false";
   }, [dyslexiaFriendlyFont]);
 
   useEffect(() => {
@@ -4553,7 +4666,7 @@ export function App() {
         }
 
         const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
-        const nextTransits = rankedProfileTransits(sky, natalSky, birthDate);
+        const nextTransits = rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees);
 
         setProfileNatalSky(natalSky);
         setProfileTransits(nextTransits);
@@ -4610,7 +4723,8 @@ export function App() {
     userProfile?.charts[0]?.birthCity,
     userProfile?.charts[0]?.birthLocation?.label,
     userProfile?.charts[0]?.birthLocation?.timeZone,
-    sky.generatedAt
+    sky.generatedAt,
+    activeSunriseOrbDegrees
   ]);
 
   useEffect(() => {
@@ -4933,7 +5047,7 @@ export function App() {
         );
         const natalSky = await getAstrodienstSky(birthLocation, birthDateTime);
         const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
-        const nextTransits = rankedProfileTransits(sky, natalSky, nextBirthDate);
+        const nextTransits = rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees);
 
         nextSun = natalBigThree.sun;
         nextMoon = natalBigThree.moon;
@@ -5262,6 +5376,7 @@ export function App() {
                   natalGeneratedContent={natalGeneratedContent}
                   relationshipGeneratedContent={relationshipGeneratedContent}
                   landingKey={friendsLandingKey}
+                  sunriseOrbDegrees={activeSunriseOrbDegrees}
                 />
               )}
               {mode === "account" && userProfile && (
@@ -5286,11 +5401,6 @@ export function App() {
                     onSunriseOrbChange={setSunriseOrbEnabled}
                     dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                     onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                    onSignOut={async () => {
-                      await signOutAuth();
-                      setUserProfile(null);
-                      setMode("profile");
-                    }}
                   />
                 ) : (
                   <GuestSettingsView
@@ -5620,6 +5730,7 @@ function FriendPlacementTable({
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
               <PlanetPlacementRow
                 degree={socialPlacementDegree(row.degree)}
+                description={natalPlacementDescription(row.label)}
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
@@ -5743,10 +5854,79 @@ type PlacementRowStatus = {
   tone: "muted" | "alert" | "retrograde";
 };
 
+function placementTableMeta(house?: number | null, degree?: string | null) {
+  const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : degree ? "House pending" : null;
+
+  if (degree && houseLabel) {
+    return `${houseLabel} · ${degree}`;
+  }
+
+  if (degree) {
+    return degree;
+  }
+
+  return houseLabel;
+}
+
+function PlacementTableRow({
+  ariaLabel,
+  asButton = false,
+  degree,
+  description,
+  dignity,
+  glyph,
+  house,
+  onClick,
+  title,
+  variant = "natal"
+}: {
+  ariaLabel?: string;
+  asButton?: boolean;
+  degree?: string | null;
+  description?: string | null;
+  dignity?: PlacementDignity | null;
+  glyph: string;
+  house?: number | null;
+  onClick?: () => void;
+  title: string;
+  variant?: "natal" | "friend" | "composite";
+}) {
+  const meta = placementTableMeta(house, degree);
+  const className = `placement-table-row placement-table-row--${variant}`;
+  const content = (
+    <>
+      <span className="placement-table-row__glyph" aria-hidden="true">{glyph}</span>
+      <span className="placement-table-row__body">
+        <span className="placement-table-row__topline">
+          <span className="placement-table-row__title">{title}</span>
+          <DignityBadge dignity={dignity ?? null} />
+        </span>
+        {description ? <span className="placement-table-row__description">{description}</span> : null}
+      </span>
+      {meta ? <span className="placement-table-row__meta placement-row__house placement-row__degree">{meta}</span> : null}
+    </>
+  );
+
+  if (asButton || onClick) {
+    return (
+      <button className={className} type="button" aria-label={ariaLabel ?? title} onClick={onClick}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className={className} aria-label={ariaLabel ?? title}>
+      {content}
+    </div>
+  );
+}
+
 function PlanetPlacementRow({
   ariaLabel,
   chevron = false,
   degree,
+  description,
   dignity,
   durationLabel,
   glyph,
@@ -5761,6 +5941,7 @@ function PlanetPlacementRow({
   ariaLabel?: string;
   chevron?: boolean;
   degree: string;
+  description?: string | null;
   dignity?: PlacementDignity | null;
   durationLabel?: string | null;
   glyph: string;
@@ -5772,6 +5953,23 @@ function PlanetPlacementRow({
   title: string;
   variant: "sky" | "natal" | "friend" | "synastry" | "composite";
 }) {
+  if (variant !== "sky") {
+    return (
+      <PlacementTableRow
+        ariaLabel={ariaLabel}
+        asButton={Boolean(onClick)}
+        degree={degree}
+        description={description}
+        dignity={dignity}
+        glyph={glyph}
+        house={house}
+        onClick={onClick}
+        title={title}
+        variant={variant === "composite" ? "composite" : variant === "friend" ? "friend" : "natal"}
+      />
+    );
+  }
+
   const hasTiming = Boolean(durationLabel || rangeLabel);
   const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
   const rowClassName = [
@@ -7221,6 +7419,13 @@ function RetrogradeCallout({
             ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
             : null;
           const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+          const fallbackDetailParagraphs = [
+            retrogradeKnowledgeCopy(position, generated, content),
+            generated?.summary,
+            content.body,
+            content.summary,
+            ...content.detailParagraphs
+          ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
           const detailParagraphs = [
             ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
             ...(durationLine
@@ -7230,7 +7435,7 @@ function RetrogradeCallout({
                   </span>
                 ]
               : []),
-            ...liveGeneratedBody(generated, content.detailParagraphs)
+            ...liveGeneratedBody(generated, fallbackDetailParagraphs)
           ];
 
           return (
@@ -8430,8 +8635,7 @@ function SettingsView({
   dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
-  onDyslexiaFontChange,
-  onSignOut
+  onDyslexiaFontChange
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
@@ -8441,140 +8645,11 @@ function SettingsView({
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
-  onSignOut: () => void | Promise<void>;
 }) {
-  const primaryChart = profile.charts[0];
-  const savedBirthDate = primaryChart?.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(primaryChart.birthDate) ? primaryChart.birthDate : "";
-  const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed" ? primaryChart.birthTime : "";
-  const [profileName, setProfileName] = useState(profile.name);
-  const [profileEmail, setProfileEmail] = useState(profile.email);
-  const [birthCity, setBirthCity] = useState(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "");
-  const [birthLocation, setBirthLocation] = useState<LocationInput | null>(primaryChart?.birthLocation ?? null);
-  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(savedBirthDate));
-  const [birthTime, setBirthTime] = useState(savedBirthTime === "Time unknown" ? "12:00 PM" : savedBirthTime);
-  const [unknownBirthTime, setUnknownBirthTime] = useState(savedBirthTime === "Time unknown");
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
-  const [settings, setSettings] = useState<ChartSettings>(() => normalizeChartSettings(profile.settings));
-  const [activeSettingsTab, setActiveSettingsTab] = useState<"account" | "chart" | "preferences">("account");
-  const [settingsEditing, setSettingsEditing] = useState(false);
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
-  const birthTimeParts = splitSignupBirthTime(birthTime);
-  const birthDateDisplay = savedBirthDate ? formatProfileBirthDate(savedBirthDate) : "Not set";
-  const birthTimeDisplay = savedBirthTime || "Not set";
-  const birthCityDisplay = primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "Not set";
   const currentCityDisplay = profile.currentLocation || defaultLocation.label;
-
-  function resetSettingsDraft() {
-    setProfileName(profile.name);
-    setProfileEmail(profile.email);
-    setBirthCity(primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "");
-    setBirthLocation(primaryChart?.birthLocation ?? null);
-    setBirthDateParts(splitSignupBirthDate(savedBirthDate));
-    setBirthTime(savedBirthTime === "Time unknown" ? "12:00 PM" : savedBirthTime);
-    setUnknownBirthTime(savedBirthTime === "Time unknown");
-    setCurrentCity(profile.currentLocation ?? "");
-    setCurrentLocationData(profile.currentLocationData ?? null);
-    setSettings(normalizeChartSettings(profile.settings));
-    setCurrentLocationEditing(false);
-  }
-
-  function updateBirthDate(part: keyof SignupDateParts, value: string) {
-    const maxLength = part === "year" ? 4 : 2;
-    setBirthDateParts({
-      ...birthDateParts,
-      [part]: value.replace(/\D/g, "").slice(0, maxLength)
-    });
-  }
-
-  function updateBirthTime(part: keyof SignupTimeParts, value: string) {
-    const nextParts = {
-      ...birthTimeParts,
-      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
-    };
-
-    setBirthTime(formatSignupBirthTime(nextParts));
-  }
-
-  async function saveSettings() {
-    const nextName = profileName.trim() || profile.name;
-    const nextEmail = profileEmail.trim() || profile.email;
-    const nextBirthDate = formatSignupBirthDate(birthDateParts);
-    const nextBirthTime = unknownBirthTime ? "Time unknown" : birthTime || "Birth time needed";
-    let chart: UserChart = {
-      id: primaryChart?.id ?? `chart-${Date.now()}`,
-      name: primaryChart?.name && primaryChart.name !== chartNameFromProfile(profile.name)
-        ? primaryChart.name
-        : chartNameFromProfile(nextName),
-      type: "Birth chart",
-      birthDate: nextBirthDate || "Birth date needed",
-      birthTime: nextBirthTime,
-      birthCity: birthCity.trim() || "Birth city needed",
-      birthLocation
-    };
-    let nextSun = nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun;
-    let nextMoon = profile.moon;
-    let nextRising = unknownBirthTime || nextBirthTime === "Birth time needed" ? "Rising pending" : profile.rising;
-    const nextBirthCity = birthCity.trim();
-    const resolvedBirthLocation = nextBirthCity
-      ? birthLocation?.label === nextBirthCity
-        ? withTimeZone(birthLocation)
-        : locationFromLabel(nextBirthCity)
-      : null;
-
-    if (nextBirthDate && resolvedBirthLocation && nextBirthTime !== "Birth time needed") {
-      const birthDateTime = zonedDateTimeToUtc(nextBirthDate, unknownBirthTime ? "12:00 PM" : nextBirthTime, resolvedBirthLocation.timeZone);
-      const natalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
-      const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
-
-      nextSun = natalBigThree.sun;
-      nextMoon = natalBigThree.moon;
-      nextRising = natalBigThree.rising;
-      chart = { ...chart, birthLocation: resolvedBirthLocation };
-    }
-
-    onUpdateProfile({
-      ...profile,
-      name: nextName,
-      email: nextEmail,
-      sun: nextSun,
-      moon: nextMoon,
-      rising: nextRising,
-      currentLocation: currentCity.trim(),
-      currentLocationData,
-      settings: normalizeChartSettings(settings),
-      charts: [chart, ...profile.charts.slice(1)]
-    });
-    setSettingsEditing(false);
-  }
-
-  function handleSettingsAction() {
-    if (settingsEditing) {
-      onUpdateProfile({
-        ...profile,
-        settings: normalizeChartSettings(settings)
-      });
-      setSettingsEditing(false);
-      return;
-    }
-
-    resetSettingsDraft();
-    setSettingsEditing(true);
-  }
-
-  function toggleLifeAreaFocus(area: LifeAreaFocus) {
-    setSettings((currentSettings) => {
-      const currentFocus = normalizeChartSettings(currentSettings).lifeAreaFocus;
-      const nextFocus = currentFocus.includes(area)
-        ? currentFocus.filter((currentArea) => currentArea !== area)
-        : [...currentFocus, area];
-
-      return {
-        ...currentSettings,
-        lifeAreaFocus: nextFocus
-      };
-    });
-  }
 
   function startCurrentLocationEdit() {
     setCurrentCity(profile.currentLocation || defaultLocation.label);
@@ -8610,16 +8685,13 @@ function SettingsView({
     <section className="settings-page page-shell--narrow" aria-label="Settings">
       <div className="settings-header">
         <h2>settings.</h2>
-        <button className="settings-save" type="button" onClick={handleSettingsAction}>
-          {settingsEditing ? "Save changes" : "Edit settings"}
-        </button>
       </div>
 
       <div className="settings-panel">
         <section className="settings-group" aria-label="Personalization settings">
-          <span className="settings-group-label">Personalize</span>
+          <span className="settings-group-label">Account</span>
           <div className="settings-card">
-            <div className="settings-list" aria-label="Personalization settings">
+            <div className="settings-list" aria-label="Account settings">
               {currentLocationEditing ? (
                 <div className="settings-row settings-location-editor">
                   <CitySearchField
@@ -8647,27 +8719,26 @@ function SettingsView({
                 </div>
               ) : (
                 <button className="settings-row settings-row-button" type="button" onClick={startCurrentLocationEdit}>
-                  <span>Current location</span>
-                  <strong>{currentCityDisplay}</strong>
+                  <span className="settings-row__label">Current location</span>
+                  <span className="settings-row__value">{currentCityDisplay}</span>
                 </button>
               )}
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Display settings">
+          <span className="settings-group-label">Display</span>
+          <div className="settings-card">
+            <div className="settings-list" aria-label="Display settings">
               <div className="settings-row settings-row-control">
-                <span>Theme</span>
+                <span className="settings-row__label">Theme</span>
                 <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
               </div>
               <div className="settings-row settings-row-control">
-                <div>
-                  <span>Sunrise orb</span>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle sunrise orb"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div>
-                  <span>Dyslexia-friendly font</span>
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">Dyslexia-friendly font</span>
+                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
                 </div>
                 <SwitchControl
                   checked={dyslexiaFriendlyFont}
@@ -8679,35 +8750,32 @@ function SettingsView({
           </div>
         </section>
 
-        <section className="settings-group" aria-label="Content focus settings">
-          <span className="settings-group-label">Content focus</span>
+        <section className="settings-group" aria-label="Astrology settings">
+          <span className="settings-group-label">Astrology settings</span>
           <div className="settings-card">
-            <div className="settings-list" aria-label="Life area focus">
-              {lifeAreaFocusOptions.map((option) => (
-                <div className="settings-row settings-row-control" key={option.value}>
-                  <div className="settings-row-copy">
-                    <span className="settings-row-title">{option.label}</span>
-                    <small className="settings-row-description">{option.description}</small>
-                  </div>
-                  <SwitchControl
-                    checked={settings.lifeAreaFocus.includes(option.value)}
-                    disabled={!settingsEditing}
-                    label={`Focus more on ${option.label}`}
-                    onChange={() => toggleLifeAreaFocus(option.value)}
-                  />
+            <div className="settings-list" aria-label="Astrology settings">
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">Sunrise orb</span>
+                  <small className="settings-row-description">Count near-sunrise and near-sunset contacts with a little more room.</small>
                 </div>
-              ))}
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle sunrise orb"
+                  onChange={onSunriseOrbChange}
+                />
+              </div>
             </div>
           </div>
         </section>
 
         <section className="settings-group" aria-label="Chart defaults">
-          <span className="settings-group-label">Chart defaults</span>
+          <span className="settings-group-label">Birth chart</span>
           <div className="settings-card">
-            <div className="settings-list" aria-label="Chart defaults">
+            <div className="settings-list" aria-label="Birth chart settings">
               <div className="settings-row">
-                <span>House system</span>
-                <strong>Whole House</strong>
+                <span className="settings-row__label">House system</span>
+                <span className="settings-row__value">Whole House</span>
               </div>
             </div>
           </div>
@@ -8742,35 +8810,53 @@ function GuestSettingsView({
 
       <div className="settings-panel">
         <section className="settings-group" aria-label="Personal settings">
-          <span className="settings-group-label">Personalize</span>
+          <span className="settings-group-label">Account</span>
           <div className="settings-card">
             <div className="settings-list">
               <div className="settings-row">
-                <span>Current location</span>
-                <strong>{location.label}</strong>
+                <span className="settings-row__label">Current location</span>
+                <span className="settings-row__value">{location.label}</span>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Display settings">
+          <span className="settings-group-label">Display</span>
+          <div className="settings-card">
+            <div className="settings-list">
               <div className="settings-row settings-row-control">
-                <span>Theme</span>
+                <span className="settings-row__label">Theme</span>
                 <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
               </div>
               <div className="settings-row settings-row-control">
-                <div>
-                  <span>Sunrise orb</span>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle sunrise orb"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div>
-                  <span>Dyslexia-friendly font</span>
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">Dyslexia-friendly font</span>
+                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
                 </div>
                 <SwitchControl
                   checked={dyslexiaFriendlyFont}
                   label="Toggle dyslexia-friendly font"
                   onChange={onDyslexiaFontChange}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-group" aria-label="Astrology settings">
+          <span className="settings-group-label">Astrology settings</span>
+          <div className="settings-card">
+            <div className="settings-list">
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">Sunrise orb</span>
+                  <small className="settings-row-description">Count near-sunrise and near-sunset contacts with a little more room.</small>
+                </div>
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle sunrise orb"
+                  onChange={onSunriseOrbChange}
                 />
               </div>
             </div>
@@ -8907,19 +8993,19 @@ function AccountView({
 
         <div className="settings-list">
           <div className="settings-row">
-            <span>Name</span>
-            <strong>{profile.name}</strong>
+            <span className="settings-row__label">Name</span>
+            <span className="settings-row__value">{profile.name}</span>
           </div>
           <div className="settings-row">
-            <span>Email</span>
-            <strong>{profile.email}</strong>
+            <span className="settings-row__label">Email</span>
+            <span className="settings-row__value">{profile.email}</span>
           </div>
           <div className="settings-row">
-            <span>Signed in with</span>
-            <strong>{profile.provider === "google" ? "Google" : "Email"}</strong>
+            <span className="settings-row__label">Signed in with</span>
+            <span className="settings-row__value settings-row__value--provider">{profile.provider === "google" ? "Google" : "Email"}</span>
           </div>
           <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
-            <span>Sign out</span>
+            <span className="settings-row__action">Sign out</span>
             <ChevronRight size={18} aria-hidden="true" />
           </button>
         </div>
@@ -8963,8 +9049,8 @@ function AccountView({
               />
             </label>
             <div className="settings-row">
-              <span>House system</span>
-              <strong>Whole House</strong>
+              <span className="settings-row__label">House system</span>
+              <span className="settings-row__value">Whole House</span>
             </div>
             {birthDraftDirty && (
               <div className="settings-row account-birth-save-row">
@@ -9017,7 +9103,6 @@ function ProfileView({
   const [profileTab, setProfileTab] = useState<"transits" | "chart">("chart");
   const setupStepsLeft = chartFlowStepsLeft(profile);
   const summaryBirthDateDisplay = savedBirthDate ? formatProfileBirthDateLong(savedBirthDate) : "";
-  const birthCityDisplay = savedBirthCity ? compactCityLabel(savedBirthCity) : "Birth city needed";
   const unknownBirthTime = savedBirthTime === "Time unknown";
   const calculatedBigThree = natalSky ? natalBigThreeFromSky(natalSky, unknownBirthTime) : null;
   const profileSun = profile.sun && profile.sun !== "Sun pending" ? profile.sun : "";
@@ -9153,39 +9238,30 @@ function ProfileView({
 
           <span className="eyebrow section-label">Big Three</span>
           <div className="list you-list-card" aria-label="Big three">
-            <div className="chart-row chart-row-static">
-              <span className="crg" aria-hidden="true">↑</span>
-              <span className="crb">
-                <span className="crt">
-                  {displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
-                </span>
-                <span className="crs">
-                  {displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
-                </span>
-              </span>
-            </div>
-            <div className="chart-row chart-row-static">
-              <span className="crg" aria-hidden="true">☉</span>
-              <span className="crb">
-                <span className="placement-row-titleline">
-                  <span className="crt">{natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}</span>
-                  {natalSun ? <DignityBadge dignity={placementDignity(natalSun)} /> : null}
-                </span>
-                <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}</span>
-              </span>
-              {natalSun ? <span className="chart-row-meta big-three-row__house big-three-row__degree">{natalPlacementMeta(natalSun)}</span> : null}
-            </div>
-            <div className="chart-row chart-row-static">
-              <span className="crg" aria-hidden="true">☽</span>
-              <span className="crb">
-                <span className="placement-row-titleline">
-                  <span className="crt">{natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}</span>
-                  {natalMoon ? <DignityBadge dignity={placementDignity(natalMoon)} /> : null}
-                </span>
-                <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}</span>
-              </span>
-              {natalMoon ? <span className="chart-row-meta big-three-row__house big-three-row__degree">{natalPlacementMeta(natalMoon)}</span> : null}
-            </div>
+            <PlacementTableRow
+              glyph="↑"
+              title={displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
+              description={displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
+              variant="natal"
+            />
+            <PlacementTableRow
+              degree={natalSun ? formatPlanetDegree(natalSun) : null}
+              description={natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}
+              dignity={natalSun ? placementDignity(natalSun) : null}
+              glyph="☉"
+              house={natalSun?.house ?? null}
+              title={natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
+              variant="natal"
+            />
+            <PlacementTableRow
+              degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
+              description={natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}
+              dignity={natalMoon ? placementDignity(natalMoon) : null}
+              glyph="☽"
+              house={natalMoon?.house ?? null}
+              title={natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
+              variant="natal"
+            />
           </div>
 
           {planetRows.length > 0 && (
@@ -9195,6 +9271,7 @@ function ProfileView({
                 {planetRows.map((position) => (
                   <PlanetPlacementRow
                     degree={formatPlanetDegree(position)}
+                    description={natalPlacementDescription(position.planet)}
                     dignity={placementDignity(position)}
                     glyph={position.glyph}
                     house={position.house}
@@ -9328,7 +9405,8 @@ function ManualChartsPanel({
   profileTransits,
   natalGeneratedContent,
   relationshipGeneratedContent,
-  landingKey
+  landingKey,
+  sunriseOrbDegrees
 }: {
   profile: UserProfile;
   currentSky: SkySnapshot;
@@ -9337,6 +9415,7 @@ function ManualChartsPanel({
   natalGeneratedContent: GeneratedContentMap;
   relationshipGeneratedContent: GeneratedContentMap;
   landingKey: number;
+  sunriseOrbDegrees: number;
 }) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
@@ -9444,7 +9523,10 @@ function ManualChartsPanel({
       setFriendProfileTab("natal");
     }
   }, [friendProfileTab, selectedChartIsEvent]);
-  const circleCards = useMemo(() => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus), [currentSky, charts, natalGeneratedContent, lifeAreaFocus]);
+  const circleCards = useMemo(
+    () => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees),
+    [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
+  );
   const isLoadingCharts = status === "loading";
 
   useEffect(() => {
@@ -9498,6 +9580,36 @@ function ManualChartsPanel({
   useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
   }, [friendProfileTab]);
+
+  useEffect(() => {
+    if (!openChartMenuId) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (target instanceof Element && target.closest(".manual-chart-actions")) {
+        return;
+      }
+
+      setOpenChartMenuId(null);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpenChartMenuId(null);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [openChartMenuId]);
 
   function resetForm(nextMessage = "") {
     setForm(defaultManualChartForm);
@@ -10004,15 +10116,13 @@ function ManualChartsPanel({
                     ["☉", `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.`],
                     ["☽", `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.`]
                   ].map(([glyph, title, body]) => (
-                    <article className="aspect-row aspect-row-static friend-aspect-row" key={title}>
-                      <span className="aspect-row-glyphs" aria-hidden="true">
-                        <span>{glyph}</span>
-                      </span>
-                      <span className="aspect-row-copy">
-                        <h3>{title}</h3>
-                        <p>{body}</p>
-                      </span>
-                    </article>
+                    <PlacementTableRow
+                      description={body}
+                      glyph={glyph}
+                      key={title}
+                      title={title}
+                      variant="friend"
+                    />
                   ))}
                 </div>
                 {selectedChart.natalChart && (
