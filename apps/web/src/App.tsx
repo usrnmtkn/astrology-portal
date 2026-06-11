@@ -1173,6 +1173,34 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
   };
 }
 
+function inwardMarkerOffset(center: number, marker: { x: number; y: number }, distance: number) {
+  const dx = center - marker.x;
+  const dy = center - marker.y;
+  const length = Math.hypot(dx, dy) || 1;
+
+  return {
+    x: (dx / length) * distance,
+    y: (dy / length) * distance
+  };
+}
+
+function retrogradeMarkerOffset(layout?: WheelMarkerLayout) {
+  if ((layout?.clusterSize ?? 1) > 1) {
+    const clusterMidpoint = ((layout?.clusterSize ?? 1) - 1) / 2;
+    const isLeadingClusterMarker = (layout?.clusterIndex ?? 0) <= clusterMidpoint;
+
+    return {
+      x: isLeadingClusterMarker ? -3 : 9,
+      y: 26
+    };
+  }
+
+  return {
+    x: 8,
+    y: 8
+  };
+}
+
 function chartHouseLabelGeometry({
   ascendant,
   ascendantLongitude,
@@ -2484,34 +2512,53 @@ function angularDistance(first: number, second: number) {
 
 type WheelMarkerLayout = {
   angle: number;
+  clusterIndex: number;
+  clusterSize: number;
   visualAngle: number;
   marker: { x: number; y: number };
 };
+
+function clusterTangentOffsets(size: number) {
+  const presetOffsets: Record<number, number[]> = {
+    1: [0],
+    2: [-8, 8],
+    3: [-12, 0, 12],
+    4: [-16, -5, 5, 16],
+    5: [-20, -10, 0, 10, 20]
+  };
+
+  if (presetOffsets[size]) {
+    return presetOffsets[size];
+  }
+
+  const spacing = 10;
+  const centerOffset = (size - 1) / 2;
+
+  return Array.from({ length: size }, (_, index) => Math.max(-24, Math.min(24, (index - centerOffset) * spacing)));
+}
+
+function clusterRadialOffset(index: number, size: number) {
+  if (size < 4) {
+    return 0;
+  }
+
+  return index % 2 === 0 ? -4 : 4;
+}
 
 function wheelMarkerLayouts<T>(
   items: T[],
   keyForItem: (item: T) => string,
   angleForItem: (item: T) => number,
   {
-    angleStep = 3.4,
     baseRadius,
     center,
-    clusterThreshold = 8,
-    maxAngleOffset = 8,
-    maxClusterSpan = 24,
-    maxRadius,
-    minRadius,
-    radiusStep = 11
+    clusterThreshold = 6,
+    maxClusterSpan = 24
   }: {
-    angleStep?: number;
     baseRadius: number;
     center: number;
     clusterThreshold?: number;
-    maxAngleOffset?: number;
     maxClusterSpan?: number;
-    maxRadius: number;
-    minRadius: number;
-    radiusStep?: number;
   }
 ) {
   const entries = items
@@ -2560,17 +2607,24 @@ function wheelMarkerLayouts<T>(
 
   const layouts = new Map<string, WheelMarkerLayout>();
   groups.forEach((group) => {
+    const tangentOffsets = clusterTangentOffsets(group.length);
+
     group.forEach((entry, index) => {
-      const offset = index - (group.length - 1) / 2;
-      const spreadOffset = group.length === 2 ? offset * 2 : offset;
-      const angleOffset = Math.max(-maxAngleOffset, Math.min(maxAngleOffset, spreadOffset * angleStep));
-      const visualAngle = normalizedAngle(entry.angle + angleOffset);
-      const radiusOffset = group.length > 1 ? Math.abs(spreadOffset) * radiusStep : 0;
-      const markerRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius - radiusOffset));
-      const marker = polarToCartesian(center, center, markerRadius, visualAngle);
+      const visualAngle = entry.angle;
+      const radialOffset = clusterRadialOffset(index, group.length);
+      const markerRadius = baseRadius + radialOffset;
+      const markerBase = polarToCartesian(center, center, markerRadius, visualAngle);
+      const tangentRad = ((visualAngle + 90) * Math.PI) / 180;
+      const tangentOffset = tangentOffsets[index] ?? 0;
+      const marker = {
+        x: markerBase.x + Math.cos(tangentRad) * tangentOffset,
+        y: markerBase.y + Math.sin(tangentRad) * tangentOffset
+      };
 
       layouts.set(entry.key, {
         angle: entry.angle,
+        clusterIndex: index,
+        clusterSize: group.length,
         visualAngle,
         marker
       });
@@ -5980,6 +6034,22 @@ function formatWheelDegree(position: PlanetPosition) {
   return `${Math.floor(position.degree)}°`;
 }
 
+function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
+  if (position.planet === "Sun") {
+    return (
+      <g className="planet-glyph planet-glyph-sun-symbol wheel-placement__glyph" transform="translate(0 -4) scale(0.64)" aria-hidden="true">
+        <path transform="translate(-25 -25)" d="m7,25a18,18 0 1,1 0,.1zm3,0a15,15 0 1,0 0-.1zm11,0a4,4 0 1,0 0-.1z" />
+      </g>
+    );
+  }
+
+  return (
+    <text x={0} y={-4} className="planet-glyph wheel-placement__glyph">
+      {position.glyph}
+    </text>
+  );
+}
+
 const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"];
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
@@ -6299,15 +6369,10 @@ function SkyWheel({
     (position) => position.planet,
     planetAngle,
     {
-      angleStep: 2.2,
       baseRadius: radius.planet,
       center,
-      clusterThreshold: 18,
-      maxAngleOffset: 4,
-      maxClusterSpan: 24,
-      maxRadius: radius.planet + 4,
-      minRadius: radius.planet - 10,
-      radiusStep: 3
+      clusterThreshold: 6,
+      maxClusterSpan: 24
     }
   );
 
@@ -6432,6 +6497,8 @@ function SkyWheel({
           const tickAngle = planetAngle(position);
           const tickOuter = point(tickAngle, radius.signInner - 5);
           const tickInner = point(tickAngle, radius.signInner - 17);
+          const degreeOffset = inwardMarkerOffset(center, marker, 24);
+          const retrogradeOffset = retrogradeMarkerOffset(layout);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -6449,12 +6516,12 @@ function SkyWheel({
               <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
               <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                 <circle cx={0} cy={0} r="14" className="planet-hit-area" />
-                <text x={0} y={-4} className={`planet-glyph wheel-placement__glyph${position.planet === "Sun" ? " planet-glyph-sun" : ""}`}>
-                  {position.glyph}
-                </text>
-                <text x={0} y={15} className="planet-degree wheel-placement__degree">
+                <WheelPlanetGlyph position={position} />
+                {position.motion === "retrograde" ? (
+                  <text x={retrogradeOffset.x} y={retrogradeOffset.y} className="wheel-placement__retrograde" aria-label="Retrograde">r</text>
+                ) : null}
+                <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
                   {formatWheelDegree(position)}
-                  {position.motion === "retrograde" ? " ℞" : ""}
                 </text>
               </g>
             </g>
@@ -6606,15 +6673,10 @@ function SynastryWheel({
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     {
-      angleStep: 2.2,
       baseRadius: radius.outerPlanet,
       center,
-      clusterThreshold: 10,
-      maxAngleOffset: 4,
-      maxClusterSpan: 22,
-      maxRadius: radius.outerPlanet + 4,
-      minRadius: radius.outerPlanet - 10,
-      radiusStep: 3
+      clusterThreshold: 6,
+      maxClusterSpan: 22
     }
   );
   const innerPlanetLayouts = wheelMarkerLayouts(
@@ -6622,15 +6684,10 @@ function SynastryWheel({
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     {
-      angleStep: 2.2,
       baseRadius: radius.innerPlanet,
       center,
-      clusterThreshold: 10,
-      maxAngleOffset: 4,
-      maxClusterSpan: 22,
-      maxRadius: radius.innerPlanet + 4,
-      minRadius: radius.innerPlanet - 10,
-      radiusStep: 3
+      clusterThreshold: 6,
+      maxClusterSpan: 22
     }
   );
 
@@ -6644,6 +6701,8 @@ function SynastryWheel({
     const tickInnerRadius = ring === "outer" ? radius.signInner - 17 : radius.innerRingOuter - 17;
     const tickOuter = point(angle, tickOuterRadius);
     const tickInner = point(angle, tickInnerRadius);
+    const degreeOffset = inwardMarkerOffset(center, marker, 23);
+    const retrogradeOffset = retrogradeMarkerOffset(layout);
 
     return (
       <g
@@ -6655,12 +6714,12 @@ function SynastryWheel({
         <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
         <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
-          <text x={0} y={-4} className={`planet-glyph wheel-placement__glyph${position.planet === "Sun" ? " planet-glyph-sun" : ""}`}>
-            {position.glyph}
-          </text>
-          <text x={0} y={15} className="planet-degree wheel-placement__degree">
+          <WheelPlanetGlyph position={position} />
+          {position.motion === "retrograde" ? (
+            <text x={retrogradeOffset.x} y={retrogradeOffset.y} className="wheel-placement__retrograde" aria-label="Retrograde">r</text>
+          ) : null}
+          <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
-            {position.motion === "retrograde" ? " ℞" : ""}
           </text>
         </g>
       </g>
