@@ -4053,6 +4053,56 @@ button.planet-placement-row {
   letter-spacing: var(--tracking-normal);
 }
 
+.compat-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  margin: 0 0 26px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.compat-info-ic {
+  display: grid;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+
+.compat-info-ic svg {
+  width: 20px;
+  height: 20px;
+}
+
+.compat-info-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.compat-info-lab {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.compat-info .compat-intro {
+  max-width: none;
+  margin: 0;
+}
+
 .composite-placements-section {
   display: grid;
   gap: 14px;
@@ -7004,6 +7054,11 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .friend-compat-intro {
     font-size: clamp(1.2rem, 5.7vw, 1.6rem);
     line-height: 1.4;
+  }
+
+  .compat-info .friend-compat-intro {
+    font-size: 14.5px;
+    line-height: 1.55;
   }
 
   .friend-placement-row {
