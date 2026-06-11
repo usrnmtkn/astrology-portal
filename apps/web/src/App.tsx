@@ -5785,7 +5785,7 @@ function PlanetPlacementRow({
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
-          <span className="planet-placement-row__degree">{degree}</span>
+          <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
           {retrograde ? <span className="planet-placement-row__rx" aria-label="Retrograde">℞</span> : null}
           <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
         </span>
@@ -5796,7 +5796,7 @@ function PlanetPlacementRow({
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>
         ) : (
-          <span className="planet-placement-row__meta">{houseLabel}</span>
+          <span className="planet-placement-row__meta placement-row__house">{houseLabel}</span>
         )}
         {statuses.length > 0 ? (
           <span className="planet-placement-row__status" aria-label={`${title} status`}>
@@ -9173,7 +9173,7 @@ function ProfileView({
                 </span>
                 <span className="crs">{natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}</span>
               </span>
-              {natalSun ? <span className="chart-row-meta">{natalPlacementMeta(natalSun)}</span> : null}
+              {natalSun ? <span className="chart-row-meta big-three-row__house big-three-row__degree">{natalPlacementMeta(natalSun)}</span> : null}
             </div>
             <div className="chart-row chart-row-static">
               <span className="crg" aria-hidden="true">☽</span>
@@ -9184,7 +9184,7 @@ function ProfileView({
                 </span>
                 <span className="crs">{natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}</span>
               </span>
-              {natalMoon ? <span className="chart-row-meta">{natalPlacementMeta(natalMoon)}</span> : null}
+              {natalMoon ? <span className="chart-row-meta big-three-row__house big-three-row__degree">{natalPlacementMeta(natalMoon)}</span> : null}
             </div>
           </div>
 
