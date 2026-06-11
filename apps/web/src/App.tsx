@@ -2132,6 +2132,52 @@ function FriendsNavIcon({ size = 20 }: { size?: number }) {
   );
 }
 
+function SynastryInfoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="9" cy="12" r="6" />
+      <circle cx="15" cy="12" r="6" />
+    </svg>
+  );
+}
+
+function CompositeInfoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="8.5" />
+      <polygon points="12,3.5 19.4,16.25 4.6,16.25" />
+      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="3.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="19.4" cy="16.25" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4.6" cy="16.25" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function CompatInfoCard({
+  children,
+  id,
+  label,
+  mode
+}: {
+  children: ReactNode;
+  id: string;
+  label: string;
+  mode: "synastry" | "composite";
+}) {
+  return (
+    <div className="compat-info">
+      <span className="compat-info-ic" aria-hidden="true">
+        {mode === "synastry" ? <SynastryInfoIcon /> : <CompositeInfoIcon />}
+      </span>
+      <div className="compat-info-body">
+        <span className="compat-info-lab">{label}</span>
+        <p className="compat-intro friend-compat-intro" id={id}>{children}</p>
+      </div>
+    </div>
+  );
+}
+
 function BrandAsterisk({ size = 28 }: { size?: number }) {
   return (
     <svg
@@ -10368,9 +10414,9 @@ function ManualChartsPanel({
 
           {friendProfileTab === "synastry" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
-              <p className="friend-compat-intro">
+              <CompatInfoCard id="fc-syn-intro" label="What synastry shows" mode="synastry">
                 Where {selectedChart.displayName}'s planets meet yours and what happens when they do. Why some things come easily between you and others take more work.
-              </p>
+              </CompatInfoCard>
               <div className="friend-profile-copy-column">
                 <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
@@ -10425,10 +10471,10 @@ function ManualChartsPanel({
 
           {friendProfileTab === "composite" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
+              <CompatInfoCard id="fc-composite-intro" label="What a composite chart is" mode="composite">
+                A composite chart is the relationship's own chart, built from the midpoints between two people's planets. It's read like a natal chart, but the placements describe the relationship instead of either person.
+              </CompatInfoCard>
               <div className="friend-profile-copy-column">
-                <p className="friend-compat-intro">
-                  The composite chart reads the relationship as its own entity. The difference between knowing two people and knowing what they become together.
-                </p>
                 {selectedCompositeSky && (
                   <section className="composite-placements-section">
                     <span className="eyebrow section-label friend-section-label">Composite placements</span>
