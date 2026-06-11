@@ -22,7 +22,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
@@ -1417,6 +1417,45 @@ function formatMoonCountdown(days: number) {
   return `${Math.round(days)} days`;
 }
 
+function zodiacGlyphText(sign: string) {
+  const glyph = zodiacSignGlyphs[sign];
+
+  return glyph ? `${glyph}\uFE0E` : "";
+}
+
+function localDayStart(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function lunationCountdownLabel(selectedDate: Date, exactAt: Date) {
+  const daysUntil = Math.max(0, Math.round((localDayStart(exactAt).getTime() - localDayStart(selectedDate).getTime()) / 86_400_000));
+
+  if (daysUntil === 0) {
+    return "TODAY";
+  }
+
+  if (daysUntil === 1) {
+    return "TOMORROW";
+  }
+
+  return `IN ${daysUntil} DAYS`;
+}
+
+function formatLunationDateTime(exactAt: Date) {
+  const date = exactAt.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  });
+  const time = exactAt.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short"
+  });
+
+  return `${date} · ${time}`;
+}
+
 function monthLabel(date: Date) {
   return date.toLocaleDateString(undefined, {
     month: "long",
@@ -2447,11 +2486,6 @@ type WheelMarkerLayout = {
   angle: number;
   visualAngle: number;
   marker: { x: number; y: number };
-  tickInner: { x: number; y: number };
-  tickOuter: { x: number; y: number };
-  leaderStart: { x: number; y: number };
-  leaderEnd: { x: number; y: number };
-  hasLeader: boolean;
 };
 
 function wheelMarkerLayouts<T>(
@@ -2463,27 +2497,21 @@ function wheelMarkerLayouts<T>(
     baseRadius,
     center,
     clusterThreshold = 8,
-    leaderRadius,
     maxAngleOffset = 8,
     maxClusterSpan = 24,
     maxRadius,
     minRadius,
-    radiusStep = 11,
-    tickInnerRadius,
-    tickOuterRadius
+    radiusStep = 11
   }: {
     angleStep?: number;
     baseRadius: number;
     center: number;
     clusterThreshold?: number;
-    leaderRadius?: number;
     maxAngleOffset?: number;
     maxClusterSpan?: number;
     maxRadius: number;
     minRadius: number;
     radiusStep?: number;
-    tickInnerRadius: number;
-    tickOuterRadius: number;
   }
 ) {
   const entries = items
@@ -2531,8 +2559,6 @@ function wheelMarkerLayouts<T>(
   }
 
   const layouts = new Map<string, WheelMarkerLayout>();
-  const resolvedLeaderRadius = leaderRadius ?? baseRadius + 6;
-
   groups.forEach((group) => {
     group.forEach((entry, index) => {
       const offset = index - (group.length - 1) / 2;
@@ -2542,21 +2568,11 @@ function wheelMarkerLayouts<T>(
       const radiusOffset = group.length > 1 ? Math.abs(spreadOffset) * radiusStep : 0;
       const markerRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius - radiusOffset));
       const marker = polarToCartesian(center, center, markerRadius, visualAngle);
-      const tickInner = polarToCartesian(center, center, tickInnerRadius, entry.angle);
-      const tickOuter = polarToCartesian(center, center, tickOuterRadius, entry.angle);
-      const leaderStart = polarToCartesian(center, center, resolvedLeaderRadius, entry.angle);
-      const leaderEnd = polarToCartesian(center, center, markerRadius + 16, visualAngle);
-      const hasLeader = group.length > 1 || angularDistance(entry.angle, visualAngle) > 1.2 || radiusOffset > 4;
 
       layouts.set(entry.key, {
         angle: entry.angle,
         visualAngle,
-        marker,
-        tickInner,
-        tickOuter,
-        leaderStart,
-        leaderEnd,
-        hasLeader
+        marker
       });
     });
   });
@@ -5960,6 +5976,10 @@ function formatPlanetDegree(position: PlanetPosition) {
   return `${degree}°${String(minutes).padStart(2, "0")}'`;
 }
 
+function formatWheelDegree(position: PlanetPosition) {
+  return `${Math.floor(position.degree)}°`;
+}
+
 const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"];
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
@@ -6246,7 +6266,8 @@ function SkyWheel({
     );
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const signDividerInnerRadius = radius.signInner - 2;
-  const signDividerOuterRadius = radius.outer + 2;
+  const signDividerOuterRadius = radius.outer;
+  const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const tooltipMaxWidth = 520;
   const shouldRenderHouseLabels = true;
   const houseLabels = chartHouseLabelGeometry({
@@ -6278,18 +6299,15 @@ function SkyWheel({
     (position) => position.planet,
     planetAngle,
     {
-      angleStep: 0,
+      angleStep: 2.2,
       baseRadius: radius.planet,
       center,
       clusterThreshold: 18,
-      leaderRadius: radius.planet + 12,
-      maxAngleOffset: 0,
+      maxAngleOffset: 4,
       maxClusterSpan: 24,
-      maxRadius: radius.signInner - 36,
-      minRadius: radius.aspect + 42,
-      radiusStep: 14,
-      tickInnerRadius: radius.signInner - 22,
-      tickOuterRadius: radius.signInner - 6
+      maxRadius: radius.planet + 4,
+      minRadius: radius.planet - 10,
+      radiusStep: 3
     }
   );
 
@@ -6313,6 +6331,11 @@ function SkyWheel({
 
   return (
     <svg className={`sky-wheel sky-wheel-${variant}`} viewBox="0 0 600 600" role="img" aria-label="Planet positions">
+      <defs>
+        <clipPath id={wheelClipId}>
+          <circle cx={center} cy={center} r={radius.outer} />
+        </clipPath>
+      </defs>
       <circle
         className="sign-band"
         cx={center}
@@ -6336,28 +6359,12 @@ function SkyWheel({
         })}
       </g>
 
-      <g className="sign-band-dividers">
+      <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
         {signs.map((sign, index) => {
           const a = angleForLongitude(index * 30);
           const outer = point(a, signDividerOuterRadius);
           const inner = point(a, signDividerInnerRadius);
-          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-
-      <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y, transform }) => {
-          const className = isLong ? "sign-label-long" : undefined;
-          return (
-            <g key={sign} className={className}>
-              <text className="sign-label-halo" x={x} y={y} transform={transform}>
-                {sign}
-              </text>
-              <text x={x} y={y} transform={transform}>
-                {sign}
-              </text>
-            </g>
-          );
+          return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
       </g>
 
@@ -6401,7 +6408,7 @@ function SkyWheel({
       {shouldRenderHouseLabels && (
         <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
           {houseLabels.map(({ house, x, y, ariaLabel }) => (
-            <text key={house} x={x} y={y} className="zodiac-house-number" aria-label={ariaLabel}>
+            <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
               {house}
             </text>
           ))}
@@ -6422,8 +6429,9 @@ function SkyWheel({
         {positions.map((position) => {
           const layout = planetLayouts.get(position.planet);
           const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
-          const tickOuter = layout?.tickOuter ?? point(planetAngle(position), radius.signInner - 6);
-          const tickInner = layout?.tickInner ?? point(planetAngle(position), radius.signInner - 22);
+          const tickAngle = planetAngle(position);
+          const tickOuter = point(tickAngle, radius.signInner - 5);
+          const tickInner = point(tickAngle, radius.signInner - 17);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -6438,14 +6446,14 @@ function SkyWheel({
               onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
               onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
             >
-              <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-              <g className="planet-label-group" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+              <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
+              <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                 <circle cx={0} cy={0} r="14" className="planet-hit-area" />
-                <text x={0} y={-4} className="planet-glyph">
+                <text x={0} y={-4} className={`planet-glyph wheel-placement__glyph${position.planet === "Sun" ? " planet-glyph-sun" : ""}`}>
                   {position.glyph}
                 </text>
-                <text x={0} y={14} className="planet-degree">
-                  {formatPlanetDegree(position)}
+                <text x={0} y={15} className="planet-degree wheel-placement__degree">
+                  {formatWheelDegree(position)}
                   {position.motion === "retrograde" ? " ℞" : ""}
                 </text>
               </g>
@@ -6472,6 +6480,19 @@ function SkyWheel({
           })()}
         </g>
       )}
+
+      <g className="sign-labels">
+        {signLabels.map(({ sign, isLong, x, y, transform }) => {
+          const className = isLong ? "sign-label-long" : undefined;
+          return (
+            <g key={sign} className={className}>
+              <text className="zodiac-wheel__sign-label" x={x} y={y} transform={transform} stroke="none" paintOrder="normal" filter="none">
+                {sign}
+              </text>
+            </g>
+          );
+        })}
+      </g>
     </svg>
   );
 }
@@ -6553,6 +6574,7 @@ function SynastryWheel({
   }
 
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
+  const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const houseLabels = chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -6584,18 +6606,15 @@ function SynastryWheel({
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     {
-      angleStep: 0,
+      angleStep: 2.2,
       baseRadius: radius.outerPlanet,
       center,
       clusterThreshold: 10,
-      leaderRadius: radius.outerPlanet + 12,
-      maxAngleOffset: 0,
+      maxAngleOffset: 4,
       maxClusterSpan: 22,
-      maxRadius: radius.signInner - 34,
-      minRadius: radius.innerRingOuter + 22,
-      radiusStep: 10,
-      tickInnerRadius: radius.outerTickInner,
-      tickOuterRadius: radius.outerTickOuter
+      maxRadius: radius.outerPlanet + 4,
+      minRadius: radius.outerPlanet - 10,
+      radiusStep: 3
     }
   );
   const innerPlanetLayouts = wheelMarkerLayouts(
@@ -6603,18 +6622,15 @@ function SynastryWheel({
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     {
-      angleStep: 0,
+      angleStep: 2.2,
       baseRadius: radius.innerPlanet,
       center,
       clusterThreshold: 10,
-      leaderRadius: radius.innerPlanet + 10,
-      maxAngleOffset: 0,
+      maxAngleOffset: 4,
       maxClusterSpan: 22,
-      maxRadius: radius.innerRingOuter - 20,
-      minRadius: radius.aspect + 34,
-      radiusStep: 9,
-      tickInnerRadius: radius.innerTickInner,
-      tickOuterRadius: radius.innerTickOuter
+      maxRadius: radius.innerPlanet + 4,
+      minRadius: radius.innerPlanet - 10,
+      radiusStep: 3
     }
   );
 
@@ -6624,8 +6640,10 @@ function SynastryWheel({
       ? outerPlanetLayouts.get(position.planet)
       : innerPlanetLayouts.get(position.planet);
     const marker = layout?.marker ?? point(angle, ring === "outer" ? radius.outerPlanet : radius.innerPlanet);
-    const tickInner = layout?.tickInner ?? point(angle, ring === "outer" ? radius.outerTickInner : radius.innerTickInner);
-    const tickOuter = layout?.tickOuter ?? point(angle, ring === "outer" ? radius.outerTickOuter : radius.innerTickOuter);
+    const tickOuterRadius = ring === "outer" ? radius.signInner - 5 : radius.innerRingOuter - 5;
+    const tickInnerRadius = ring === "outer" ? radius.signInner - 17 : radius.innerRingOuter - 17;
+    const tickOuter = point(angle, tickOuterRadius);
+    const tickInner = point(angle, tickInnerRadius);
 
     return (
       <g
@@ -6634,14 +6652,14 @@ function SynastryWheel({
         role="img"
         aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
       >
-        <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick" />
-        <g className="planet-label-group" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+        <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
+        <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
-          <text x={0} y={-4} className="planet-glyph">
+          <text x={0} y={-4} className={`planet-glyph wheel-placement__glyph${position.planet === "Sun" ? " planet-glyph-sun" : ""}`}>
             {position.glyph}
           </text>
-          <text x={0} y={14} className="planet-degree">
-            {formatPlanetDegree(position)}
+          <text x={0} y={15} className="planet-degree wheel-placement__degree">
+            {formatWheelDegree(position)}
             {position.motion === "retrograde" ? " ℞" : ""}
           </text>
         </g>
@@ -6651,6 +6669,11 @@ function SynastryWheel({
 
   return (
     <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox="0 0 600 600" role="img" aria-label="Synastry chart with two rings">
+      <defs>
+        <clipPath id={wheelClipId}>
+          <circle cx={center} cy={center} r={radius.outer} />
+        </clipPath>
+      </defs>
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings">
         <circle cx={center} cy={center} r={radius.outer} />
@@ -6694,21 +6717,13 @@ function SynastryWheel({
           );
         })}
       </g>
-      <g className="sign-band-dividers">
+      <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
         {signs.map((sign, index) => {
           const a = angleForLongitude(index * 30);
-          const outer = point(a, radius.outer + 2);
+          const outer = point(a, radius.outer);
           const inner = point(a, radius.signInner - 2);
-          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+          return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
-      </g>
-      <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y, transform }) => (
-          <g key={sign} className={isLong ? "sign-label-long" : undefined}>
-            <text className="sign-label-halo" x={x} y={y} transform={transform}>{sign}</text>
-            <text x={x} y={y} transform={transform}>{sign}</text>
-          </g>
-        ))}
       </g>
       <g className="synastry-chart-rings" aria-hidden="true">
         <circle cx={center} cy={center} r={radius.innerRingOuter} />
@@ -6730,8 +6745,6 @@ function SynastryWheel({
             return (
               <g key={id} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                <circle cx={a.x} cy={a.y} r="1.9" className="aspect-endpoint aspect-endpoint-from" />
-                <circle cx={b.x} cy={b.y} r="1.9" className="aspect-endpoint aspect-endpoint-to" />
               </g>
             );
           })}
@@ -6749,7 +6762,7 @@ function SynastryWheel({
       )}
       <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "Natural house labels"}>
         {houseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text key={house} x={x} y={y} className="zodiac-house-number" aria-label={ariaLabel}>
+          <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
             {house}
           </text>
         ))}
@@ -6768,6 +6781,13 @@ function SynastryWheel({
       </g>
       <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
+      </g>
+      <g className="sign-labels">
+        {signLabels.map(({ sign, isLong, x, y, transform }) => (
+          <g key={sign} className={isLong ? "sign-label-long" : undefined}>
+            <text className="zodiac-wheel__sign-label" x={x} y={y} transform={transform} stroke="none" paintOrder="normal" filter="none">{sign}</text>
+          </g>
+        ))}
       </g>
     </svg>
   );
@@ -7002,7 +7022,45 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
           </span>
         </span>
       </div>
+      <NextLunationChicklet sky={sky} />
     </section>
+  );
+}
+
+function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
+  const event = nextMoonEvent(sky);
+  const exactAt = event?.occursAt;
+  const selectedDate = new Date(sky.generatedAt);
+  const glyph = zodiacGlyphText(event?.sign ?? "");
+
+  if (!event || !exactAt || Number.isNaN(exactAt.getTime()) || Number.isNaN(selectedDate.getTime()) || !glyph) {
+    return null;
+  }
+
+  const title = `${event.name} in ${event.sign}`;
+  const dateTimeLabel = formatLunationDateTime(exactAt);
+  const countdownLabel = lunationCountdownLabel(selectedDate, exactAt);
+
+  return (
+    <div
+      className="next-lun"
+      role="group"
+      aria-label={`Next lunation: ${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
+    >
+      <span className="nl-badge" aria-hidden="true">
+        <span className="g">{glyph}</span>
+      </span>
+
+      <div className="nl-main">
+        <div className="nl-top">
+          <h4>{title}</h4>
+          <span className="nl-until">{countdownLabel}</span>
+        </div>
+        <span className="nl-sub" data-when={exactAt.toISOString()}>
+          {dateTimeLabel}
+        </span>
+      </div>
+    </div>
   );
 }
 

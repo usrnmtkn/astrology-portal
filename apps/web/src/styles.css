@@ -79,7 +79,10 @@
   --accent-bg: var(--color-accent-bg);
   --wheel-line: var(--color-wheel-line);
   --wheel-soft: var(--color-wheel-soft);
+  --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);
+  --wheel-muted: var(--color-wheel-label);
+  --wheel-sign-label: var(--ink);
   --wheel-glyph: var(--color-wheel-glyph);
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
@@ -87,6 +90,9 @@
   --chart-glyph: var(--wheel-glyph);
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
+  --chart-sign-label-size: 13px;
+  --chart-planet-glyph-size: 24px;
+  --chart-degree-size: 10px;
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
   --retrograde-bg: var(--color-retrograde-bg);
@@ -322,7 +328,10 @@
   --accent-bg: var(--color-accent-bg);
   --wheel-line: var(--color-wheel-line);
   --wheel-soft: var(--color-wheel-soft);
+  --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);
+  --wheel-muted: var(--color-wheel-label);
+  --wheel-sign-label: var(--ink);
   --wheel-glyph: var(--color-wheel-glyph);
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
@@ -1134,12 +1143,12 @@ svg {
 .theme-dark .natal-angle-lines line,
 [data-theme="dark"] .wheel-sectors line,
 [data-theme="dark"] .natal-angle-lines line {
-  opacity: 0.92;
+  opacity: 0.58;
 }
 
 .theme-dark .sign-band-dividers line,
 [data-theme="dark"] .sign-band-dividers line {
-  opacity: 0.95;
+  opacity: 0.68;
 }
 
 .wheel-rings circle {
@@ -1203,12 +1212,17 @@ svg {
 .natal-angle-lines line {
   stroke: var(--chart-label);
   stroke-width: 0.9;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
   opacity: 0.78;
 }
 
-.sign-band-dividers line {
+.sign-band-dividers line,
+.zodiac-wheel__divider {
   stroke: var(--chart-label);
   stroke-width: 1.08;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
   opacity: 0.86;
 }
 
@@ -1222,40 +1236,33 @@ svg {
   stroke: var(--chart-label);
 }
 
-.sign-labels text {
-  fill: var(--ink);
-  font-size: var(--text-description);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.08em;
+.sign-labels text,
+.zodiac-wheel__sign-label {
+  fill: var(--wheel-sign-label, var(--ink));
+  stroke: none;
+  filter: none;
+  font-family: var(--font-body);
+  font-size: var(--chart-sign-label-size, 13px);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  paint-order: normal;
   text-anchor: middle;
+  text-shadow: none;
   dominant-baseline: middle;
+  text-transform: uppercase;
+  -webkit-text-stroke: 0 transparent;
 }
 
-.sign-labels .sign-label-halo {
-  fill: none;
-  stroke: var(--app-bg);
-  stroke-linejoin: round;
-  stroke-width: 4px;
-  opacity: 0.78;
-}
-
-.sign-label-long text {
-  font-size: calc(var(--text-description) * 0.9);
-}
-
-.theme-dark .sign-labels text {
-  fill: var(--ink);
-}
-
-.theme-dark .sign-labels .sign-label-halo,
-[data-theme="dark"] .sign-labels .sign-label-halo {
-  fill: none;
-  stroke: var(--app-bg);
+.sign-label-long text,
+.sign-label-long .zodiac-wheel__sign-label {
+  font-size: var(--chart-sign-label-size, 13px);
 }
 
 .theme-dark .zodiac-house-number,
+.theme-dark .zodiac-wheel__house-label,
 .theme-dark .angular-labels text,
 [data-theme="dark"] .zodiac-house-number,
+[data-theme="dark"] .zodiac-wheel__house-label,
 [data-theme="dark"] .angular-labels text {
   fill: var(--wheel-label);
   opacity: 0.8;
@@ -1271,11 +1278,6 @@ svg {
   fill: rgba(255, 255, 255, 0.72);
 }
 
-.theme-dark .planet-tick,
-[data-theme="dark"] .planet-tick {
-  opacity: 0.82;
-}
-
 .angular-labels text {
   fill: var(--chart-label);
   font-size: var(--text-description);
@@ -1285,7 +1287,8 @@ svg {
   text-anchor: middle;
 }
 
-.zodiac-house-number {
+.zodiac-house-number,
+.zodiac-wheel__house-label {
   fill: var(--wheel-label);
   font-family: var(--font-body);
   font-size: var(--chart-house-label-size, 13px);
@@ -1298,33 +1301,46 @@ svg {
 }
 
 .theme-dark .zodiac-house-number,
-[data-theme="dark"] .zodiac-house-number {
+.theme-dark .zodiac-wheel__house-label,
+[data-theme="dark"] .zodiac-house-number,
+[data-theme="dark"] .zodiac-wheel__house-label {
   fill: var(--wheel-label);
   opacity: 0.8;
 }
 
 .planet-glyph {
   fill: var(--chart-glyph);
-  font-size: calc(var(--text-glyph) * 0.9);
-  font-weight: var(--weight-bold);
+  font-family: var(--font-glyph);
+  font-size: var(--chart-planet-glyph-size, 24px);
+  font-weight: var(--weight-semibold);
   dominant-baseline: central;
   text-anchor: middle;
 }
 
+.planet-glyph-sun {
+  font-size: calc(var(--chart-planet-glyph-size, 24px) * 1.02);
+  font-weight: var(--weight-semibold);
+  stroke: none;
+  paint-order: normal;
+}
+
 .planet-degree {
   fill: var(--chart-label);
-  font-size: 8.5px;
+  font-family: var(--font-body);
+  font-size: var(--chart-degree-size, 10px);
   font-weight: var(--weight-bold);
   dominant-baseline: central;
   letter-spacing: 0;
   text-anchor: middle;
 }
 
-.planet-tick {
-  stroke: var(--chart-label);
+.planet-tick,
+.wheel-placement__tick {
+  stroke: var(--wheel-line);
   stroke-linecap: round;
-  stroke-width: 0.82;
-  opacity: 0.66;
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.72;
 }
 
 .planet-hit-area {
@@ -1427,14 +1443,7 @@ svg {
 [data-theme="dark"] .aspect-lines path,
 [data-theme="dark"] .interchart-aspect-lines line,
 [data-theme="dark"] .interchart-aspect-lines path {
-  opacity: var(--aspect-line-opacity, 0.62);
-}
-
-.aspect-endpoint {
-  fill: var(--aspect-line-stroke, var(--aspect-muted));
-  stroke: var(--app-bg);
-  stroke-width: 0.8;
-  opacity: var(--aspect-line-opacity, 0.55);
+  opacity: var(--aspect-line-opacity, 0.5);
 }
 
 .inner-planet-labels .planet-glyph,
@@ -1522,6 +1531,95 @@ svg {
 .moon-phase-art {
   overflow: hidden;
   border-radius: 50%;
+}
+
+.next-lun {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 54px;
+  margin-top: 8px;
+  padding: 8px 16px 8px 8px;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.nl-badge {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.nl-badge .g {
+  color: var(--wheel-glyph);
+  font-family: var(--font-glyph);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.nl-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.nl-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
+}
+
+.nl-top h4 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-until {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nl-sub {
+  display: block;
+  max-width: 100%;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .today-hero {
@@ -2177,14 +2275,14 @@ svg {
 
 .sky-pl {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: start;
   width: 100%;
   min-width: 0;
   gap: 16px;
   padding: var(--row-padding-y) var(--row-padding-x);
   border: 0;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--line-2);
   background: var(--card-bg);
   text-align: left;
 }
@@ -2194,7 +2292,17 @@ svg {
 }
 
 .sky-pl-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
+  font-family: var(--font-glyph);
   font-size: 24px;
+  line-height: 1;
   text-align: center;
 }
 
@@ -2211,11 +2319,14 @@ svg {
 }
 
 .sky-pl-title {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
   font-size: var(--type-xl);
   font-weight: var(--font-weight-bold);
-  line-height: 1.12;
+  line-height: 1.29;
   letter-spacing: var(--tracking-tight);
 }
 
@@ -2224,8 +2335,13 @@ svg {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.6em;
-  margin-top: 6px;
+  margin-top: 5px;
   color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
 }
 
 .sky-pl-degree,
@@ -2254,13 +2370,17 @@ svg {
 .sky-pl-duration {
   display: inline-flex;
   align-items: center;
-  min-height: 1.55em;
-  padding: 0 0.55em;
-  border-radius: 999px;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 7px;
+  border-radius: 5px;
   background: var(--surface-2);
   color: var(--ink);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
   line-height: 1;
 }
 
@@ -2273,14 +2393,14 @@ svg {
 
 .planet-placement-row {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: start;
   width: 100%;
   min-width: 0;
   gap: 16px;
   padding: var(--row-padding-y) var(--row-padding-x);
   border: 0;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--line-2);
   background: var(--card-bg);
   color: var(--ink);
   text-align: left;
@@ -2301,7 +2421,11 @@ button.planet-placement-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 0;
+  align-self: start;
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
   color: var(--ink);
   font-family: var(--font-glyph);
   font-size: 24px;
@@ -2318,19 +2442,22 @@ button.planet-placement-row {
 .planet-placement-row__topline {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   min-width: 0;
   gap: 6px 10px;
 }
 
 .planet-placement-row__title {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--font-weight-bold);
-  line-height: 1.12;
+  line-height: 1.29;
   letter-spacing: var(--tracking-tight);
 }
 
@@ -2353,9 +2480,11 @@ button.planet-placement-row {
   align-items: baseline;
   gap: 0.6em;
   font-family: var(--font-body);
-  font-size: var(--type-sm);
+  font-size: 12.5px;
   font-weight: var(--font-weight-regular);
-  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
 }
 
 .planet-placement-row__rx {
@@ -2366,13 +2495,17 @@ button.planet-placement-row {
 .planet-placement-row__duration {
   display: inline-flex;
   align-items: center;
-  min-height: 1.55em;
-  padding: 0 0.55em;
-  border-radius: 999px;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 7px;
+  border-radius: 5px;
   background: var(--surface-2);
   color: var(--ink);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
   line-height: 1;
 }
 
@@ -2397,7 +2530,7 @@ button.planet-placement-row {
 .planet-placement-row--friend,
 .planet-placement-row--synastry,
 .planet-placement-row--composite {
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
 }
 
 .planet-placement-row--natal .planet-placement-row__title,
@@ -2490,15 +2623,15 @@ button.planet-placement-row {
 .aspect-row-button,
 .aspect-row-static {
   display: grid;
-  grid-template-columns: minmax(88px, 128px) minmax(0, 1fr) minmax(44px, 64px);
+  grid-template-columns: 48px minmax(0, 1fr) 30px;
   align-items: start;
   width: 100%;
   min-width: 0;
-  gap: 24px;
+  gap: 16px;
   padding: var(--row-padding-y) var(--row-padding-x);
   border: 0;
-  border-bottom: 1px solid var(--card-border);
-  background: transparent;
+  border-bottom: 1px solid var(--line-2);
+  background: var(--card-bg);
   color: var(--ink);
   text-align: left;
 }
@@ -2527,8 +2660,16 @@ button.planet-placement-row {
 
 .aspect-row-glyphs {
   display: flex;
-  gap: 12px;
-  font-size: 1.65rem;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
+  gap: 6px;
+  font-family: var(--font-glyph);
+  font-size: 21px;
   line-height: 1;
   white-space: nowrap;
 }
@@ -2541,11 +2682,14 @@ button.planet-placement-row {
 
 .aspect-row-copy strong,
 .aspect-row-copy h3 {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
   font-size: var(--type-xl);
   font-weight: var(--font-weight-bold);
-  line-height: 1.12;
+  line-height: 1.29;
   letter-spacing: var(--tracking-tight);
 }
 
@@ -2553,22 +2697,31 @@ button.planet-placement-row {
 .aspect-row-copy p {
   margin-top: 2px;
   color: var(--text-muted);
-  font-size: var(--type-md);
+  font-size: 14px;
   font-weight: var(--font-weight-regular);
   line-height: 1.42;
 }
 
 .aspect-row-meta {
   display: grid;
-  justify-items: end;
-  gap: 8px;
+  align-content: start;
+  justify-items: center;
+  width: 30px;
+  min-width: 30px;
+  gap: 6px;
+  padding-top: 2px;
   color: var(--muted);
-  text-align: right;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .aspect-row-dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--muted);
 }
@@ -2590,14 +2743,14 @@ button.planet-placement-row {
 
 .updates-aspect-row {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) 44px;
+  grid-template-columns: 48px minmax(0, 1fr) 30px;
   align-items: start;
   width: 100%;
   min-width: 0;
-  gap: var(--sp-2);
+  gap: 16px;
   padding: var(--sp-3) var(--row-px);
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-2);
   background: var(--card-bg);
   color: var(--ink);
   text-align: left;
@@ -2616,11 +2769,16 @@ button.planet-placement-row {
 .updates-aspect-row__glyphs .aspect-row-glyphs {
   display: flex;
   align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
   gap: var(--sp-1);
-  min-width: 0;
   color: var(--ink);
   font-family: var(--font-glyph);
-  font-size: var(--text-glyph);
+  font-size: 21px;
   line-height: 1;
   white-space: nowrap;
 }
@@ -2642,7 +2800,9 @@ button.planet-placement-row {
 }
 
 .updates-aspect-row__title {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
@@ -2673,21 +2833,26 @@ button.planet-placement-row {
 }
 
 .updates-aspect-row__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  width: 30px;
+  min-width: 30px;
   gap: 6px;
+  padding-top: 2px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--text-description);
+  font-size: 13px;
   font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
   line-height: 1;
+  text-align: center;
   white-space: nowrap;
 }
 
 .updates-aspect-row__dot {
-  width: var(--sp-1);
-  height: var(--sp-1);
+  width: 8px;
+  height: 8px;
   border-radius: var(--radius-pill);
   background: var(--muted);
   opacity: 0.85;
@@ -4051,21 +4216,23 @@ button.planet-placement-row {
 .friend-chart-page .aspect-row,
 .friend-chart-page .aspect-row-button,
 .friend-chart-page .aspect-row-static {
-  grid-template-columns: minmax(92px, 104px) minmax(0, 1fr) 48px;
-  align-items: center;
-  gap: 22px;
+  grid-template-columns: 48px minmax(0, 1fr) 30px;
+  align-items: start;
+  gap: 16px;
   padding: 22px 28px;
   border-color: var(--app-border);
 }
 
 .friend-chart-page .aspect-row-glyphs {
-  font-size: 1.3rem;
+  width: 48px;
+  min-width: 48px;
+  font-size: 21px;
 }
 
 .friend-chart-page .aspect-row-copy h3,
 .friend-chart-page .aspect-row-copy strong {
   font-size: clamp(1.25rem, 1.5vw, 1.55rem);
-  line-height: 1.12;
+  line-height: 1.29;
 }
 
 .friend-chart-page .aspect-row-copy p,
@@ -4078,8 +4245,10 @@ button.planet-placement-row {
 }
 
 .friend-chart-page .aspect-row-meta {
+  width: 30px;
+  min-width: 30px;
   color: var(--app-muted);
-  font-size: 0.95rem;
+  font-size: 13px;
   font-weight: var(--font-weight-bold);
 }
 
@@ -5862,14 +6031,17 @@ body.modal-open {
   }
 
   .updates-aspect-row {
-    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr);
   }
 
   .updates-aspect-row__meta {
     grid-column: 2;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
+    display: inline-grid;
+    grid-auto-flow: column;
+    justify-content: start;
+    justify-items: start;
+    width: auto;
+    min-width: 0;
     margin-top: var(--sp-1);
   }
 }
@@ -5937,6 +6109,11 @@ body.modal-open {
     grid-template-columns: 40px minmax(0, 1fr) auto;
     gap: var(--sp-1);
     padding: var(--sp-2);
+  }
+
+  .planet-placement-row__glyph {
+    width: 40px;
+    min-width: 40px;
   }
 
   .planet-placement-row__topline {
