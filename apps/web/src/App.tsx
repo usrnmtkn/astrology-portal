@@ -6237,15 +6237,15 @@ function SynastryPlacementColumn({
       {placements.length > 0 ? (
         <div className="synastry-placement-table">
           {placements.map((position) => (
-            <PlanetPlacementRow
-              degree={formatPlanetDegree(position)}
-              dignity={placementDignity(position)}
-              glyph={position.glyph}
-              house={position.house}
-              key={`${ringLabel}-${position.planet}`}
-              title={natalPlacementTitle(position)}
-              variant="synastry"
-            />
+            <div className="synastry-placement-row" key={`${ringLabel}-${position.planet}`}>
+              <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
+              <span className="synastry-placement-sign">{position.sign}</span>
+              <span className="synastry-placement-meta">
+                <span>{formatPlanetDegree(position)}</span>
+                <span aria-hidden="true">·</span>
+                <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
+              </span>
+            </div>
           ))}
         </div>
       ) : (
