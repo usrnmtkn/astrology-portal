@@ -850,6 +850,24 @@ function friendsHashParts(hash: string) {
   return { path, params: new URLSearchParams(query) };
 }
 
+function portalModeFromHashPath(path: string): PortalMode | null {
+  switch (path) {
+    case "sky":
+      return "member";
+    case "you":
+    case "profile":
+      return "profile";
+    case "friends":
+      return "friends";
+    case "account":
+      return "account";
+    case "settings":
+      return "settings";
+    default:
+      return null;
+  }
+}
+
 function friendsTabFromUrl(): FriendsTab {
   try {
     const url = new URL(window.location.href);
@@ -879,7 +897,59 @@ function isFriendsUrl() {
 }
 
 function portalModeFromUrl(): PortalMode | null {
-  return isFriendsUrl() ? "friends" : null;
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      return "friends";
+    }
+
+    const { path } = friendsHashParts(url.hash);
+
+    return portalModeFromHashPath(path);
+  } catch {
+    return null;
+  }
+}
+
+function portalHashForMode(mode: PortalMode) {
+  switch (mode) {
+    case "guest":
+    case "member":
+      return "sky";
+    case "profile":
+      return "you";
+    case "friends":
+      return "friends";
+    case "account":
+      return "account";
+    case "settings":
+      return "settings";
+    default:
+      return "";
+  }
+}
+
+function updatePortalModeUrl(nextMode: PortalMode, mode: "push" | "replace" = "push") {
+  if (nextMode === "friends") {
+    updateFriendsTabUrl(initialFriendsTab(), mode);
+    return;
+  }
+
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      url.pathname = "/";
+    }
+
+    url.searchParams.delete("tab");
+    url.hash = portalHashForMode(nextMode);
+
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep navigation usable if history is unavailable.
+  }
 }
 
 function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push") {
@@ -4438,17 +4508,29 @@ export function App() {
     setMode("friends");
   }
 
+  function navigateToPortalMode(nextMode: PortalMode) {
+    updatePortalModeUrl(nextMode, "push");
+    storePortalMode(nextMode);
+    setMode(nextMode);
+  }
+
   useEffect(() => {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
 
-      if (urlMode !== "friends") {
+      if (!urlMode) {
         return;
       }
 
-      storePortalMode("friends");
-      setMode("friends");
-      setFriendsLandingKey((currentKey) => currentKey + 1);
+      const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
+
+      storePortalMode(nextMode);
+      setSelectedSkyDetail(null);
+      setMode(nextMode);
+
+      if (nextMode === "friends") {
+        setFriendsLandingKey((currentKey) => currentKey + 1);
+      }
     }
 
     window.addEventListener("popstate", handlePortalUrlChange);
@@ -4458,7 +4540,7 @@ export function App() {
       window.removeEventListener("popstate", handlePortalUrlChange);
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
-  }, []);
+  }, [userProfile]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -5243,7 +5325,7 @@ export function App() {
               className="brand-dot"
               type="button"
               aria-label="Home"
-              onClick={() => setMode(userProfile ? "member" : "guest")}
+              onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}
             >
               <BrandAsterisk size={22} />
             </button>
@@ -5251,13 +5333,13 @@ export function App() {
               className="brand-word"
               type="button"
               aria-label="TLDR Astro home"
-              onClick={() => setMode(userProfile ? "member" : "guest")}
+              onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}
             >
               TLDR Astro
             </button>
 
             <nav className="site-nav" aria-label="Primary navigation">
-              <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => setMode(userProfile ? "member" : "guest")}>
+              <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}>
                 <Sparkles size={18} aria-hidden="true" />
                 <span>Sky</span>
               </button>
@@ -5266,7 +5348,7 @@ export function App() {
                   <button
                     className={`account-nav ${mode === "profile" ? "active" : ""}`}
                     type="button"
-                    onClick={() => setMode("profile")}
+                    onClick={() => navigateToPortalMode("profile")}
                   >
                     <SmileNavIcon />
                     <span>You</span>
@@ -5320,7 +5402,7 @@ export function App() {
                 role="menuitem"
                 onClick={() => {
                   setSelectedSkyDetail(null);
-                  setMode(userProfile ? "member" : "guest");
+                  navigateToPortalMode(userProfile ? "member" : "guest");
                   setMenuOpen(false);
                 }}
               >
@@ -5335,7 +5417,7 @@ export function App() {
                     role="menuitem"
                     onClick={() => {
                       setSelectedSkyDetail(null);
-                      setMode("profile");
+                      navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
                   >
@@ -5346,13 +5428,13 @@ export function App() {
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); setMode("account"); setMenuOpen(false); }}>
+                  <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
                     <User size={20} aria-hidden="true" />
                     <span>Account</span>
                   </button>
                 </>
               )}
-              <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); setMode("settings"); setMenuOpen(false); }}>
+              <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
@@ -5370,7 +5452,7 @@ export function App() {
                     onClick={() => {
                       setSelectedSkyDetail(null);
                       setAccountIntent("create");
-                      setMode("profile");
+                      navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
                   >
@@ -5383,7 +5465,7 @@ export function App() {
                     onClick={() => {
                       setSelectedSkyDetail(null);
                       setAccountIntent("login");
-                      setMode("profile");
+                      navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
                   >
