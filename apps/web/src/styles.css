@@ -748,30 +748,6 @@ svg {
   background: var(--modal-bg);
 }
 
-.theme-dark .nav-pill,
-[data-theme="dark"] .nav-pill {
-  border-color: var(--nav-border);
-  background: var(--nav-surface);
-  color: var(--ink);
-  box-shadow: var(--nav-rest-shadow);
-}
-
-.theme-dark .brand-word,
-[data-theme="dark"] .brand-word {
-  color: var(--ink);
-}
-
-.theme-dark .site-nav button,
-[data-theme="dark"] .site-nav button {
-  color: var(--ink-2);
-}
-
-.theme-dark .site-nav button.active,
-[data-theme="dark"] .site-nav button.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--ink);
-}
-
 .theme-dark .theme-toggle,
 .theme-dark .menu-toggle,
 [data-theme="dark"] .theme-toggle,
@@ -780,12 +756,6 @@ svg {
   background: var(--floating-button-bg);
   color: var(--ink);
   box-shadow: none;
-}
-
-.theme-dark .brand-dot,
-[data-theme="dark"] .brand-dot {
-  background: var(--pill-bg);
-  color: var(--pill-fg);
 }
 
 .tldr-card,
@@ -6125,7 +6095,6 @@ body.modal-open {
   text-align: center;
 }
 
-.theme-dark .nav-pill,
 .theme-dark .theme-toggle,
 .theme-dark .menu-toggle,
 .theme-dark .today-pill,
@@ -6248,30 +6217,6 @@ body.modal-open {
   background: var(--surface-2);
 }
 
-.theme-dark .segmented-control,
-[data-theme="dark"] .segmented-control {
-  border-color: var(--segmented-border);
-  background: var(--segmented-bg);
-  box-shadow: none;
-}
-
-.theme-dark .segmented-control .segmented-control__item,
-[data-theme="dark"] .segmented-control .segmented-control__item {
-  color: var(--segmented-inactive-fg);
-}
-
-.theme-dark .segmented-control .segmented-control__item.segmented-control__item--active,
-[data-theme="dark"] .segmented-control .segmented-control__item.segmented-control__item--active {
-  background: var(--segmented-active-bg);
-  color: var(--segmented-active-fg);
-}
-
-.theme-dark .segmented-control .segmented-control__item:not(.segmented-control__item--active):hover,
-[data-theme="dark"] .segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
-  background: var(--surface-2);
-  color: var(--ink);
-}
-
 .theme-dark input,
 .theme-dark select,
 .theme-dark textarea,
@@ -6377,8 +6322,27 @@ body.modal-open {
   border-color: var(--nav-border);
   background: var(--nav-surface);
   color: var(--ink);
+  box-shadow: var(--nav-rest-shadow);
   backdrop-filter: blur(0) saturate(1);
   -webkit-backdrop-filter: blur(0) saturate(1);
+}
+
+.theme-dark .nav-pill .brand-word,
+.theme-dark .nav-pill .site-nav button,
+[data-theme="dark"] .nav-pill .brand-word,
+[data-theme="dark"] .nav-pill .site-nav button {
+  color: var(--ink-2);
+}
+
+.theme-dark .nav-pill .brand-word,
+[data-theme="dark"] .nav-pill .brand-word {
+  color: var(--ink);
+}
+
+.theme-dark .nav-pill .site-nav button.active,
+[data-theme="dark"] .nav-pill .site-nav button.active {
+  background: var(--accent-bg);
+  color: var(--ink);
 }
 
 html[data-scrolled] .theme-dark .nav-pill,
@@ -6391,16 +6355,21 @@ html[data-scrolled] [data-theme="dark"] .nav-pill {
   -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
 }
 
-html[data-scrolled] .theme-dark .brand-word,
-html[data-scrolled] .theme-dark .site-nav button,
-html[data-scrolled] [data-theme="dark"] .brand-word,
-html[data-scrolled] [data-theme="dark"] .site-nav button {
+html[data-scrolled] .theme-dark .nav-pill .brand-word,
+html[data-scrolled] .theme-dark .nav-pill .site-nav button,
+html[data-scrolled] [data-theme="dark"] .nav-pill .brand-word,
+html[data-scrolled] [data-theme="dark"] .nav-pill .site-nav button {
   color: var(--ink-2);
 }
 
-html[data-scrolled] .theme-dark .site-nav button.active,
-html[data-scrolled] [data-theme="dark"] .site-nav button.active {
-  background: rgba(255, 255, 255, 0.1);
+html[data-scrolled] .theme-dark .nav-pill .site-nav button.active,
+html[data-scrolled] [data-theme="dark"] .nav-pill .site-nav button.active {
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+
+html[data-scrolled] .theme-dark .nav-pill .brand-word,
+html[data-scrolled] [data-theme="dark"] .nav-pill .brand-word {
   color: var(--ink);
 }
 
