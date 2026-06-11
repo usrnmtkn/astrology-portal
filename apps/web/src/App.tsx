@@ -6057,7 +6057,7 @@ function FriendPlacementTable({
                 glyph={row.glyph}
                 house={row.house}
                 retrograde={row.retrograde}
-                title={`${row.label} in ${row.sign}`}
+                title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
               />
             </div>
@@ -6224,7 +6224,6 @@ function PlacementTableRow({
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
-          {retrograde ? <span className="placement-table-row__rx" aria-label="Retrograde">℞</span> : null}
           <DignityBadge dignity={dignity ?? null} />
         </span>
         {description ? <span className="placement-table-row__description">{description}</span> : null}
@@ -6311,7 +6310,6 @@ function PlanetPlacementRow({
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
-          {retrograde ? <span className="planet-placement-row__rx" aria-label="Retrograde">℞</span> : null}
           <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
         </span>
         {hasTiming ? (
@@ -6477,7 +6475,11 @@ const natalSignatureDescriptions: Record<string, string> = {
 };
 
 function natalPlacementTitle(position: PlanetPosition) {
-  return `${position.planet} in ${position.sign}`;
+  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+}
+
+function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
+  return `${planet}${retrograde ? " Rx" : ""} in ${sign}`;
 }
 
 function natalPlacementMeta(position: PlanetPosition) {
@@ -7736,7 +7738,7 @@ function RetrogradeCallout({
       <span className="section-label">Retrogrades</span>
       <div className="retro-list">
         {retrogrades.map((position) => {
-          const title = `${position.planet} retrograde`;
+          const title = natalPlacementTitle(position);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
@@ -7773,7 +7775,7 @@ function RetrogradeCallout({
               onClick={() => onOpenDetail({
                 glyph: `${position.glyph} ℞`,
                 kicker: retrogradeDetailKicker(position),
-                title: generated?.headline ?? title,
+                title,
                 meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
                 body: detailParagraphs,
                 sections: generatedDetailSections(generated),
@@ -8062,17 +8064,15 @@ function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnaps
 }
 
 function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  if (position.planet === "Sun") {
-    return `Sun in ${position.sign}`;
-  }
+  const baseTitle = natalPlacementTitle(position);
 
   const primaryAspect = activeAspects[0];
   if (primaryAspect) {
     const otherPlanet = primaryAspect.from === position.planet ? primaryAspect.to : primaryAspect.from;
-    return `${position.planet} in ${position.sign} ${primaryAspect.type} ${otherPlanet}`;
+    return `${baseTitle} ${primaryAspect.type} ${otherPlanet}`;
   }
 
-  return `${position.planet} in ${position.sign}`;
+  return baseTitle;
 }
 
 function ActiveAspects({
