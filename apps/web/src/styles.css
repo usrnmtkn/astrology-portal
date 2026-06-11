@@ -9,7 +9,7 @@
   */
 
   /* 1. PRIMITIVE TOKENS */
-  --color-bg-warm: #f1f1ef;
+  --color-bg-warm: #f1f2f3;
   --color-paper: var(--color-bg-warm);
   --color-white: #ffffff;
   --color-surface: var(--color-white);
@@ -1872,25 +1872,28 @@ html[data-scrolled] .floating-back-button {
 
 .city-picker-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 12px;
+  margin-top: 6px;
 }
 
 .city-picker-actions button {
   border: 0;
   border-radius: 999px;
-  padding: 10px 14px;
+  min-height: 42px;
+  padding: 0 18px;
   font-weight: 900;
 }
 
 .city-picker-actions button:first-child {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .city-picker-actions button:last-child {
-  background: var(--surface-2);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
 }
 
 .date-picker {
@@ -1907,34 +1910,27 @@ html[data-scrolled] .floating-back-button {
   padding: 16px;
 }
 
-.date-picker-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--ink);
-}
-
 .date-picker-header {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding-right: 36px;
+  gap: 10px;
 }
 
 .date-picker-header strong {
   text-align: center;
   font-weight: 900;
+  line-height: 1;
 }
 
-.date-picker-header button,
+.date-picker-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-picker-nav,
+.picker-close,
 .date-picker-today,
 .date-picker-cancel {
   border: 0;
@@ -1944,7 +1940,8 @@ html[data-scrolled] .floating-back-button {
   font-weight: 900;
 }
 
-.date-picker-header button {
+.date-picker-nav,
+.picker-close {
   display: grid;
   place-items: center;
   width: 40px;
@@ -1998,13 +1995,16 @@ html[data-scrolled] .floating-back-button {
 
 .date-picker-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 12px;
+  margin-top: 6px;
 }
 
 .date-picker-today,
 .date-picker-cancel {
-  padding: 10px 16px;
+  min-height: 42px;
+  padding: 0 18px;
 }
 
 .date-picker-today {
@@ -2642,6 +2642,16 @@ button.placement-table-row {
   letter-spacing: -0.015em;
 }
 
+.placement-table-row__rx {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.78em;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  margin-left: -2px;
+  vertical-align: 0.04em;
+}
+
 .placement-table-row__description {
   color: var(--muted);
   font-family: var(--font-body);
@@ -3236,11 +3246,45 @@ button.planet-placement-row {
 
 .friends-chart-toolbar {
   display: flex;
+  align-items: center;
+  gap: 12px;
   justify-content: flex-end;
   width: 100%;
   min-height: 46px;
   margin: 0;
   overflow: hidden;
+}
+
+.friends-birthday-chiclet {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  margin-right: auto;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.friends-birthday-chiclet strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+}
+
+.friends-birthday-chiclet b {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-bg) 78%, transparent);
+  color: var(--accent);
+  padding: 6px 11px;
+  font-weight: var(--weight-semibold);
 }
 
 .manual-chart-add-button,
@@ -3386,7 +3430,7 @@ button.planet-placement-row {
 .manual-chart-row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 68px;
+  grid-template-columns: minmax(0, 1fr) auto 68px;
   min-width: 0;
   min-height: 124px;
   gap: 0;
@@ -3507,11 +3551,45 @@ button.planet-placement-row {
 .manual-chart-actions {
   position: relative;
   z-index: 2;
+  grid-column: 3;
   display: grid;
   place-items: center;
   width: 68px;
   min-width: 68px;
   padding: 0;
+}
+
+.manual-chart-row-cta {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  padding: 22px 6px;
+}
+
+.manual-chart-birth-time-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.manual-chart-birth-time-button:hover,
+.manual-chart-birth-time-button:focus-visible {
+  background: var(--ink);
+  color: var(--surface);
 }
 
 .manual-chart-menu-trigger,
@@ -5449,6 +5527,30 @@ button.settings-signout-row {
   line-height: 1;
 }
 
+.modal-close,
+.picker-close {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+}
+
+.modal-close:focus-visible,
+.picker-close:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .auth-close-button {
   position: fixed;
   top: 40px;
@@ -5587,6 +5689,7 @@ body.modal-open {
 
 .chart-modal,
 .friend-chart-modal {
+  position: relative;
   width: min(640px, 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow: auto;
@@ -5636,17 +5739,7 @@ body.modal-open {
 }
 
 .add-chart-modal__close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface-2);
   color: var(--ink-2);
-  cursor: pointer;
 }
 
 .add-chart-modal__heading {
@@ -5655,7 +5748,7 @@ body.modal-open {
 
 .add-chart-modal__title {
   margin: 0;
-  margin-right: 38px;
+  margin-right: 48px;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: 24px;
@@ -6845,7 +6938,14 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   }
 
   .friends-chart-toolbar {
+    flex-wrap: wrap;
     justify-content: stretch;
+  }
+
+  .friends-birthday-chiclet {
+    width: 100%;
+    margin-right: 0;
+    justify-content: center;
   }
 
   .manual-chart-add-button {
@@ -6856,6 +6956,12 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .manual-chart-row {
     grid-template-columns: minmax(0, 1fr);
     min-height: 0;
+  }
+
+  .manual-chart-row-cta {
+    grid-column: 1;
+    justify-content: flex-start;
+    padding: 0 58px 20px 94px;
   }
 
   .manual-chart-select {
@@ -6872,6 +6978,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
 
   .manual-chart-actions {
     position: absolute;
+    grid-column: auto;
     top: 18px;
     right: 12px;
     width: 42px;
