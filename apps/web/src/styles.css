@@ -189,6 +189,13 @@
   --table-radius: var(--card-radius);
   --table-row-bg: var(--card-bg);
   --table-row-border: var(--line-2);
+  --overlay-bg: var(--card-bg);
+  --overlay-border: var(--card-border);
+  --overlay-radius: var(--card-radius);
+  --overlay-shadow: var(--card-shadow);
+  --control-bg: var(--surface-2);
+  --control-border: var(--line);
+  --control-radius: var(--card-radius-sm);
   --row-padding-y: var(--row-py);
   --row-padding-x: var(--row-px);
   --row-gap: var(--sp-2);
@@ -810,12 +817,32 @@ svg {
   .friend-signature-card,
   .friend-placement-column,
   .synastry-placement-table,
-  .compat-info
+  .compat-info,
+  .article-card,
+  .article-hero,
+  .sky-detail-hero,
+  .sky-detail-statement,
+  .sky-detail-body,
+  .placement-table-card,
+  .friend-compare-list
 ) {
   border-color: var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
+}
+
+:where(
+  .date-picker,
+  .hero-city-picker,
+  .friend-compare-popover,
+  .manual-chart-overflow-menu,
+  .add-chart-modal
+) {
+  border-color: var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
 }
 
 :where(
@@ -1745,11 +1772,11 @@ html[data-scrolled] .floating-back-button {
   min-height: 54px;
   margin-top: 8px;
   padding: 8px 16px 8px 8px;
-  gap: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  box-shadow: none;
+  gap: var(--sp-1);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius-sm);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .nl-badge {
@@ -1885,13 +1912,13 @@ html[data-scrolled] .floating-back-button {
   position: absolute;
   z-index: 40;
   display: grid;
-  gap: 14px;
+  gap: var(--card-padding-sm);
   width: min(420px, calc(100vw - 48px));
   margin-top: 12px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
   padding: 18px;
 }
 
@@ -1910,9 +1937,9 @@ html[data-scrolled] .floating-back-button {
 
 .hero-city-picker input {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface-2);
+  border: 1px solid var(--control-border);
+  border-radius: var(--control-radius);
+  background: var(--control-bg);
   color: var(--ink);
   padding: 14px 16px;
 }
@@ -1996,10 +2023,10 @@ html[data-scrolled] .floating-back-button {
   gap: 12px;
   width: min(360px, calc(100vw - 48px));
   margin-top: 12px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
   padding: 16px;
 }
 
@@ -2130,10 +2157,10 @@ html[data-scrolled] .floating-back-button {
 .sky-detail-hero,
 .sky-detail-statement,
 .sky-detail-body {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl, 32px);
-  background: var(--surface);
-  box-shadow: none;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .article-hero,
@@ -2343,8 +2370,8 @@ html[data-scrolled] .floating-back-button {
 .sky-detail-drilldown-body dl > div {
   display: grid;
   gap: 4px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius-sm);
   padding: 14px;
 }
 
@@ -2951,9 +2978,9 @@ html[data-scrolled] .floating-back-button {
 
 .placement-table-card {
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card, 28px);
-  background: var(--surface);
+  border: 1px solid var(--table-border);
+  border-radius: var(--table-radius);
+  background: var(--table-bg);
 }
 
 .placement-table-row {
@@ -2965,8 +2992,8 @@ html[data-scrolled] .floating-back-button {
   min-width: 0;
   padding: 22px 24px;
   border: 0;
-  border-bottom: 1px solid var(--line-2);
-  background: var(--surface);
+  border-bottom: 1px solid var(--table-row-border);
+  background: var(--table-row-bg);
   color: var(--ink);
   text-align: left;
 }
@@ -3671,9 +3698,9 @@ button.planet-placement-row {
   min-width: 0;
   margin-right: auto;
   padding: 10px 12px 10px 16px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--card-bg);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 0.9rem;
@@ -4025,10 +4052,10 @@ button.planet-placement-row {
   min-width: 180px;
   max-width: min(260px, calc(100vw - 40px));
   padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
 }
 
 .manual-chart-overflow-menu button {
@@ -4711,7 +4738,7 @@ button.planet-placement-row {
   width: min(100%, var(--relationship-wheel-size));
   max-width: 560px;
   margin: 0 auto;
-  gap: 12px;
+  gap: var(--sp-1);
 }
 
 .friend-compare-pill {
@@ -4723,9 +4750,9 @@ button.planet-placement-row {
   min-height: 44px;
   gap: 10px;
   padding: 6px 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
-  background: var(--surface-2);
+  background: var(--control-bg);
   font-weight: var(--weight-semibold);
   overflow: hidden;
 }
@@ -4759,10 +4786,10 @@ button.planet-placement-row {
   z-index: 100;
   width: min(420px, calc(100vw - 48px));
   transform: translateX(-50%);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
   padding: 18px;
 }
 
@@ -4770,19 +4797,19 @@ button.planet-placement-row {
   display: grid;
   overflow: hidden;
   margin-top: 12px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .friend-compare-list button {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: var(--row-gap);
   padding: 16px;
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--table-row-border);
   background: transparent;
   text-align: left;
   font-weight: 900;
@@ -5489,9 +5516,9 @@ button.settings-signout-row {
   width: fit-content;
   max-width: 100%;
   justify-self: start;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
-  background: var(--surface-2);
+  background: var(--control-bg);
   padding: 4px;
 }
 
@@ -5515,9 +5542,9 @@ button.settings-signout-row {
   justify-content: flex-start;
   width: 72px;
   height: 38px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
-  background: var(--surface-2);
+  background: var(--control-bg);
   padding: 4px;
 }
 
@@ -5606,9 +5633,9 @@ button.settings-signout-row {
   gap: 12px;
   width: 100%;
   min-height: 54px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 14px;
-  background: var(--surface);
+  background: var(--card-bg);
   color: var(--ink);
   padding: 14px 18px;
   font-weight: 800;
@@ -6271,9 +6298,9 @@ body.modal-open {
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--card-bg);
   color: var(--ink);
 }
 
@@ -6355,9 +6382,9 @@ body.modal-open {
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: var(--surface);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
   color: var(--ink);
   padding: clamp(24px, 4vw, 32px);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
