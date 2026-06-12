@@ -1,0 +1,1546 @@
+.friends-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  justify-items: center;
+  gap: 26px;
+  width: min(var(--page-max), 100%);
+  margin: 0 auto;
+  padding: var(--page-top) var(--page-gutter) 86px;
+  overflow-x: clip;
+}
+
+.friends-page:not(.friend-detail-page) .friends-page-heading,
+.friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
+.friends-page:not(.friend-detail-page) .friends-feed-view {
+  width: min(var(--friends-content-width), calc(100vw - var(--gut) * 2));
+  max-width: var(--friends-content-width);
+  margin-inline: auto;
+}
+
+.friends-page-heading h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 6vw, 6.75rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.friends-top-tabs {
+  justify-self: center;
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
+.manual-chart-workspace-list-only {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.friends-chart-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.friends-birthday-chiclet {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  margin-right: auto;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.friends-birthday-chiclet strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+}
+
+.friends-birthday-chiclet b {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-bg) 78%, transparent);
+  color: var(--accent);
+  padding: 6px 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.manual-chart-add-button,
+.you-empty-cta,
+.signup-submit,
+.manual-chart-save,
+.account-birth-save-button,
+.settings-location-save,
+.settings-header button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  padding: 18px 34px;
+  font-weight: 900;
+}
+
+.manual-chart-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-height: 46px;
+  margin-left: auto;
+  padding: 0 22px;
+  font-size: 0.92rem;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0;
+  overflow: hidden;
+}
+
+.you-empty-state {
+  display: grid;
+  gap: 18px;
+  width: min(860px, calc(100vw - clamp(36px, 8vw, 136px)));
+  margin: clamp(56px, 8vh, 96px) auto 0;
+  padding: clamp(28px, 5vw, 48px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.you-empty-state h2 {
+  margin: 0;
+  font-size: clamp(2.15rem, 5vw, 4rem);
+  line-height: 0.98;
+}
+
+.you-empty-state p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.4vw, 1.3rem);
+  line-height: 1.45;
+}
+
+.you-empty-cta {
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  justify-self: start;
+  gap: 12px;
+  text-align: left;
+}
+
+.you-empty-cta-icon {
+  display: grid;
+  place-items: center;
+}
+
+.you-empty-cta-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.you-empty-cta-copy em {
+  font-style: italic;
+  opacity: 0.86;
+}
+
+.you-empty-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  color: var(--ink);
+}
+
+.you-empty-card,
+.friends-logic-card {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.you-empty-card > span,
+.friends-logic-card > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.you-empty-card h3,
+.friends-logic-card h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  line-height: 1.12;
+}
+
+.you-empty-card p,
+.friends-logic-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.you-empty-card button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  padding: 13px 18px;
+  font-weight: 900;
+}
+
+.manual-chart-cards {
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.manual-chart-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 68px;
+  min-width: 0;
+  min-height: 124px;
+  gap: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  overflow: visible;
+}
+
+.manual-chart-row:first-child {
+  border-top-left-radius: 23px;
+  border-top-right-radius: 23px;
+}
+
+.manual-chart-row:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 23px;
+  border-bottom-left-radius: 23px;
+}
+
+.manual-chart-select {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  gap: 24px;
+  padding: 22px 20px 22px 32px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  overflow: hidden;
+}
+
+.manual-chart-avatar,
+.friend-profile-avatar,
+.you-profile-monogram,
+.friend-compare-avatar,
+.friends-feed-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.friend-profile-card .friend-profile-avatar,
+.you-profile-card .you-profile-monogram {
+  width: var(--id-avatar-size);
+  height: var(--id-avatar-size);
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.16), transparent 38%),
+    var(--ink);
+  box-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
+  color: var(--surface);
+  font-size: 21px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0;
+}
+
+.manual-chart-avatar {
+  width: 68px;
+  height: 68px;
+  font-size: 1.08rem;
+}
+
+.crb {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.crt {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.12;
+  letter-spacing: var(--tracking-tight);
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.crs,
+.manual-chart-signatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 15px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: var(--id-signature-size);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.35;
+  letter-spacing: var(--tracking-normal);
+}
+
+.chart-row-meta {
+  display: inline-flex;
+  align-items: baseline;
+  justify-self: end;
+  gap: 0.45em;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-placement-meta);
+  font-weight: var(--weight-regular);
+  line-height: 1.35;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.manual-chart-actions {
+  position: relative;
+  z-index: 2;
+  grid-column: 3;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  min-width: 68px;
+  padding: 0;
+}
+
+.manual-chart-row-cta {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  padding: 22px 6px;
+}
+
+.manual-chart-birth-time-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.manual-chart-birth-time-button:hover,
+.manual-chart-birth-time-button:focus-visible {
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.manual-chart-menu-trigger,
+.friend-kebab {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  padding: 0;
+}
+
+.manual-chart-overflow-menu {
+  position: absolute;
+  top: 54px;
+  right: 16px;
+  z-index: var(--z-picker);
+  display: grid;
+  width: max-content;
+  min-width: 180px;
+  max-width: min(260px, calc(100vw - 40px));
+  padding: 8px;
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
+}
+
+.manual-chart-overflow-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.friends-feed-view {
+  display: grid;
+  gap: var(--section-gap);
+  margin-top: 0;
+}
+
+.friends-feed-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--card-padding);
+  padding: 28px;
+  width: 100%;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.friends-circle-strip,
+.manual-chart-list,
+.friends-charts-view {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+}
+
+.friends-feed-avatar-stack {
+  display: flex;
+}
+
+.friends-feed-avatar {
+  width: 58px;
+  height: 58px;
+  border: 2px solid var(--surface);
+}
+
+.friends-feed-avatar + .friends-feed-avatar {
+  margin-left: -14px;
+  background: #e9eefb;
+  color: var(--ink);
+}
+
+.friends-feed-card-body {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.friends-feed-card-body h3 {
+  font-size: var(--text-card-title-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1.18;
+}
+
+.friends-feed-card-body p {
+  color: var(--ink-2);
+  font-size: var(--text-row-body-size);
+  line-height: var(--leading-body);
+}
+
+.friend-detail-page {
+  position: relative;
+  width: min(var(--page-max), 100%);
+  margin: 0 auto;
+  padding: var(--chart-page-top) var(--page-gutter) 88px;
+  overflow-x: clip;
+}
+
+.friend-back-row {
+  width: auto;
+}
+
+.friend-detail-back-row {
+  display: contents;
+}
+
+.friends-back-button {
+  margin: 0;
+}
+
+.friend-detail-layout,
+.relationship-detail-layout {
+  --relationship-wheel-size: var(--shared-chart-size);
+  justify-content: initial;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0;
+  overflow: visible;
+}
+
+.friend-chart-page {
+  --friend-detail-content-max: 720px;
+  --friend-detail-chart-max: 680px;
+  --friend-detail-no-chart-max: 760px;
+  --friend-section-label-margin: 12px 0 -10px;
+  --friend-composite-row-template: 56px minmax(0, 1fr) auto;
+  --friend-composite-row-gap: 20px;
+  --friend-composite-row-padding: 24px 30px;
+  --friend-placement-column-title-padding: 20px 28px;
+  --friend-placement-symbol-size: 1.35rem;
+  --friend-placement-label-size: clamp(1.25rem, 1.5vw, 1.55rem);
+  --friend-placement-meta-size: 1rem;
+  --friend-placement-summary-size: 0.95rem;
+  --friend-placement-compact-padding: 18px 24px;
+  display: grid;
+  grid-template-columns: var(--chart-column-width) var(--content-column-width);
+  gap: var(--chart-layout-gap);
+  align-items: start;
+  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.friend-chart-page .chart-layout__content,
+.friend-chart-page .friend-detail-main {
+  gap: var(--stack-gap);
+}
+
+.friend-chart-page .section-block,
+.friend-chart-page .section-label,
+.friend-chart-page .friend-section-label {
+  scroll-margin-top: var(--chart-sticky-top);
+}
+
+.relationship-detail-left,
+.relationship-detail-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--stack-gap);
+}
+
+.relationship-detail-left {
+  align-items: center;
+}
+
+.relationship-detail-layout > .friend-detail-content-column,
+.friend-detail-main {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  max-width: var(--friend-detail-content-max);
+}
+
+.relationship-detail-layout > .friend-detail-chart-column,
+.friend-detail-chart-rail {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: var(--friend-detail-chart-max);
+  align-self: start;
+}
+
+.relationship-detail-no-chart {
+  grid-template-columns: minmax(0, var(--friend-detail-no-chart-max));
+  justify-content: center;
+  width: min(var(--friend-detail-no-chart-max), calc(100vw - clamp(32px, 8vw, 144px)));
+}
+
+.relationship-detail-no-chart > .friend-detail-content-column {
+  max-width: var(--friend-detail-no-chart-max);
+}
+
+.relationship-detail-no-chart > .friend-detail-chart-column {
+  display: none;
+}
+
+.friend-synastry-wheel-shell {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: 22px;
+  overflow: visible;
+}
+
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel,
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.friend-hero-card,
+.you-profile-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  gap: 16px;
+  padding: var(--id-card-padding-y) var(--id-card-padding-x);
+  border: 1px solid var(--card-border);
+  border-radius: var(--id-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.friend-profile-card {
+  gap: 16px;
+  padding: 18px var(--id-card-padding-x);
+  border-color: var(--card-border);
+  border-radius: var(--id-card-radius);
+  background: var(--card-bg);
+}
+
+.friend-profile-card .friend-profile-avatar {
+  width: var(--id-avatar-size);
+  height: var(--id-avatar-size);
+}
+
+.friend-profile-card .friend-hero-copy h2 {
+  font-size: var(--id-name-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.friend-profile-card .manual-chart-signatures {
+  margin-top: 4px;
+  color: var(--app-muted);
+  font-size: var(--id-signature-size);
+  line-height: 1.2;
+}
+
+.friend-profile-avatar {
+  width: var(--id-avatar-size);
+  height: var(--id-avatar-size);
+}
+
+.friend-hero-copy,
+.you-profile-copy {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.friend-hero-copy h2,
+.you-profile-copy h2 {
+  overflow-wrap: anywhere;
+  font-size: var(--id-name-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.friend-hero-copy p,
+.you-signature-row {
+  color: var(--muted);
+  font-size: var(--id-signature-size);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.35;
+}
+
+.you-signature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  min-width: 0;
+  letter-spacing: 0;
+}
+
+.you-signature-row > span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+}
+
+.you-signature-row > span > span,
+.manual-chart-signatures > span::first-letter {
+  font-family: var(--font-glyph);
+}
+
+.you-profile-tabs,
+.friend-chart-tabs {
+  align-self: stretch;
+  width: 100%;
+  margin: var(--id-tabs-margin);
+}
+
+.segmented-control {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 3px;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--segmented-padding);
+  border: 1px solid var(--segmented-border);
+  border-radius: var(--segmented-radius);
+  background: var(--segmented-bg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.segmented-control--wide {
+  display: grid;
+  grid-auto-columns: 1fr;
+  width: 100%;
+}
+
+.segmented-control--scroll {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.segmented-control--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.segmented-control--scroll .segmented-control__item {
+  flex: 0 0 auto;
+}
+
+.segmented-control .segmented-control__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: max-content;
+  height: 40px;
+  min-height: 0;
+  padding: 0 var(--segmented-item-px);
+  border: 0;
+  border-radius: var(--segmented-radius);
+  background: transparent;
+  color: var(--segmented-inactive-fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.segmented-control .segmented-control__item.segmented-control__item--active {
+  background: var(--segmented-active-bg);
+  color: var(--segmented-active-fg);
+}
+
+.segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.segmented-control .segmented-control__item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.segmented-control--compact .segmented-control__item {
+  height: 40px;
+  padding: 0 18px;
+  font-size: var(--text-row-value);
+}
+
+
+.friend-compat-stage,
+.friend-natal-stage,
+.friend-profile-copy-column {
+  display: grid;
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+  gap: var(--section-gap);
+}
+
+.friend-chart-page .friend-compat-stage,
+.friend-chart-page .friend-natal-stage,
+.friend-chart-page .friend-profile-copy-column {
+  max-width: 100%;
+  gap: var(--stack-gap);
+}
+
+.friend-chart-page .friend-profile-copy-column > .friend-section-label,
+.friend-chart-page .friend-profile-copy-column > .section-label,
+.friend-chart-page .synastry-placements-comparison > .friend-section-label {
+  margin: var(--friend-section-label-margin);
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.16em;
+}
+
+.friend-chart-page .friend-profile-copy-column > .friend-section-label:first-child,
+.friend-chart-page .friend-profile-copy-column > .section-label:first-child {
+  margin-top: 0;
+}
+
+.composite-placements-section {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.composite-placements-section .friend-section-label {
+  margin: 0;
+}
+
+.friend-chart-page .composite-placements-section .placement-table-card {
+  width: 100%;
+}
+
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
+  grid-template-columns: var(--friend-composite-row-template);
+  gap: var(--friend-composite-row-gap);
+  padding: var(--friend-composite-row-padding);
+}
+
+.you-signatures-card,
+.friend-signature-card {
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.friend-chart-page .friend-signature-card {
+  border-color: var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.friend-chart-page .friend-signature-card .you-signatures-main {
+  padding: 28px 32px;
+}
+
+.friend-chart-page .friend-signature-card .you-signatures-main h3 {
+  font-size: clamp(1.6rem, 2vw, 2.15rem);
+  line-height: 1.1;
+}
+
+.friend-chart-page .friend-signature-card .you-signatures-main p {
+  margin-top: 0;
+  color: var(--app-muted);
+  font-size: 1rem;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.45;
+}
+
+.friend-chart-page .friend-signature-card .elemental-balance {
+  padding: 14px 32px 18px;
+}
+
+.you-signatures-main {
+  display: grid;
+  gap: 12px;
+  padding: 26px;
+}
+
+.you-signatures-main h3 {
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-tight);
+}
+
+.you-signatures-main p {
+  color: var(--text-muted);
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+}
+
+.elemental-balance {
+  display: grid;
+  gap: 6px;
+  padding: 14px var(--card-padding) 16px;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-muted);
+}
+
+.elemental-balance-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.elemental-balance-head > span:last-child {
+  color: var(--muted);
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.elemental-balance p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.4;
+}
+
+.friend-chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 10px 24px;
+  flex-wrap: wrap;
+  width: min(100%, var(--relationship-wheel-size));
+  max-width: 560px;
+  margin: 0 auto;
+  color: var(--ink);
+  font-size: clamp(0.74rem, 0.78vw, 0.9rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.friend-chart-legend span,
+.friend-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 0.58em;
+  white-space: normal;
+}
+
+.friend-chart-legend b {
+  flex: 0 0 auto;
+  margin-right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  color: var(--ink);
+}
+
+.friend-chart-legend-item-inner b {
+  border-color: var(--synastry-accent);
+  background: color-mix(in srgb, var(--synastry-accent) 28%, transparent);
+}
+
+.friend-chart-legend strong {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  color: var(--ink);
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.friend-chart-legend em {
+  color: var(--muted);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.friend-compare-control {
+  position: relative;
+  display: grid;
+  width: min(100%, var(--relationship-wheel-size));
+  max-width: 560px;
+  margin: 0 auto;
+  gap: var(--sp-1);
+}
+
+.friend-compare-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--control-bg);
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+}
+
+.friend-compare-pill svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
+.friend-compare-customise {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.friend-compare-avatar {
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+}
+
+.friend-compare-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  z-index: var(--z-popover);
+  width: min(420px, calc(100vw - 48px));
+  transform: translateX(-50%);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
+  padding: 18px;
+}
+
+.friend-compare-list {
+  display: grid;
+  overflow: hidden;
+  margin-top: 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.friend-compare-list button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--row-gap);
+  padding: 16px;
+  border: 0;
+  border-bottom: 1px solid var(--table-row-border);
+  background: transparent;
+  text-align: left;
+  font-weight: 900;
+}
+
+.friend-compare-list button:last-child {
+  border-bottom: 0;
+}
+
+.friend-compare-option-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  line-height: 1.18;
+}
+
+.friend-compare-option-copy strong,
+.friend-compare-option-copy small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-compare-option-copy small {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.synastry-placements-comparison,
+.synastry-placement-rows {
+  display: grid;
+  gap: 14px;
+}
+
+.synastry-placement-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.synastry-placement-column,
+.synastry-placement-panel {
+  display: grid;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.synastry-placement-column {
+  align-self: start;
+}
+
+.synastry-placement-column-inner {
+  border-color: transparent;
+}
+
+.synastry-placement-column-header,
+.synastry-placement-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 0 0 11px;
+  border-bottom: 1px solid var(--line);
+}
+
+.synastry-placement-column-header h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.synastry-placement-panel-title {
+  color: var(--muted);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.85rem;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.synastry-placement-panel-ring {
+  color: var(--muted);
+  font-weight: var(--weight-semibold);
+  font-size: 11px;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.synastry-placement-table {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: 1fr;
+  margin-top: 12px;
+  border: 1px solid var(--table-border);
+  border-radius: var(--table-radius);
+  background: var(--table-bg);
+}
+
+.synastry-placement-column-inner .synastry-placement-table {
+  border-color: color-mix(in srgb, var(--synastry-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+}
+
+.synastry-placement-row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--table-row-border);
+  background: var(--table-row-bg);
+  overflow: visible;
+}
+
+.synastry-placement-column-inner .synastry-placement-row {
+  border-bottom-color: color-mix(in srgb, var(--synastry-accent) 14%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+}
+
+.friend-chart-page .synastry-placement-row {
+  min-height: 0;
+  padding: 12px 14px;
+}
+
+.friend-chart-page .synastry-placement-sign {
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+}
+
+.friend-chart-page .synastry-placement-degree,
+.friend-chart-page .synastry-placement-house,
+.friend-chart-page .synastry-placement-meta {
+  color: var(--app-muted);
+  font-size: 12.5px;
+}
+
+.synastry-placement-row:last-child {
+  border-bottom: 0;
+}
+
+.synastry-placement-lead {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 2px;
+}
+
+.synastry-placement-glyph {
+  position: relative;
+  display: inline-flex;
+  place-items: center;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  color: var(--wheel-glyph);
+  font-family: var(--font-glyph);
+  font-size: 19px;
+  line-height: 1;
+}
+
+.synastry-rx-glyph-svg {
+  display: block;
+  width: 23px;
+  height: auto;
+  filter: var(--filter-synastry-outer-glyph);
+  overflow: visible;
+  object-fit: contain;
+}
+
+.synastry-placement-rx-mark {
+  color: var(--retrograde-accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.synastry-placement-column-inner .synastry-rx-glyph-svg {
+  filter: var(--filter-synastry-inner-glyph);
+}
+
+.synastry-placement-sign,
+.synastry-placement-copy {
+  min-width: 0;
+}
+
+.synastry-placement-copy {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.synastry-placement-sign,
+.synastry-placement-planet,
+.synastry-placement-chip b {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+  line-height: 1.12;
+}
+
+.synastry-placement-column-inner .synastry-placement-glyph,
+.synastry-placement-column-inner .synastry-placement-sign {
+  color: var(--synastry-accent);
+}
+
+.synastry-placement-degree,
+.synastry-placement-house {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: var(--weight-regular);
+  line-height: 1.1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.synastry-placement-meta,
+.synastry-placement-chip small,
+.synastry-placement-empty {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.25;
+}
+
+.synastry-placement-empty {
+  padding: 0 28px 24px;
+}
+
+.friend-placement-column {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.friend-placement-column-title {
+  margin: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--muted);
+  font-size: var(--type-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.friend-placement-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.friend-chart-page .friend-placement-column {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+}
+
+.friend-chart-page .friend-placement-table {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.friend-chart-page .friend-placement-column-title {
+  padding: var(--friend-placement-column-title-padding);
+  color: var(--app-muted);
+}
+
+.friend-placement-main {
+  display: contents;
+}
+
+.friend-placement-symbol {
+  grid-area: symbol;
+  width: 42px;
+  min-width: 42px;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.friend-chart-page .friend-placement-symbol {
+  font-size: var(--friend-placement-symbol-size);
+}
+
+.friend-placement-label {
+  grid-area: label;
+  min-width: 0;
+  overflow: visible;
+  font-size: var(--type-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.friend-chart-page .friend-placement-label {
+  font-size: var(--friend-placement-label-size);
+  line-height: 1.12;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-placement-meta {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  grid-area: meta;
+  justify-self: end;
+  min-width: 0;
+  color: var(--muted);
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.friend-chart-page .friend-placement-meta {
+  color: var(--app-muted);
+  font-size: var(--friend-placement-meta-size);
+  font-weight: var(--font-weight-bold);
+}
+
+.friend-placement-summary {
+  grid-area: summary;
+  color: var(--muted);
+  font-size: var(--type-sm);
+  line-height: 1.38;
+  overflow-wrap: normal;
+}
+
+.friend-chart-page .friend-placement-summary {
+  margin-top: 0;
+  color: var(--app-muted);
+  font-size: var(--friend-placement-summary-size);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.3;
+}
+
+.friend-placement-row,
+.friend-chart-page .friend-placement-row,
+.friend-chart-page .friend-placement-row-compact,
+.friend-placement-column-compact .friend-placement-row {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  border-bottom: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.friend-placement-row .planet-placement-row {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.friend-placement-row .placement-table-row {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.friend-chart-page .friend-placement-row .planet-placement-row {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+}
+
+.friend-chart-page .friend-placement-row .placement-table-row {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+}
+
+.friend-placement-row:last-child .planet-placement-row {
+  border-bottom: 0;
+}
+
+.friend-placement-row:last-child .placement-table-row {
+  border-bottom: 0;
+}
+
+.friend-chart-page .friend-placement-row-compact .planet-placement-row {
+  padding: var(--friend-placement-compact-padding);
+}
+
+.friend-chart-page .friend-placement-row-compact .placement-table-row {
+  padding: var(--friend-placement-compact-padding);
+}
+
+.synastry-placement-table {
+  overflow: hidden;
+}
+
+.synastry-placement-table .planet-placement-row {
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+
+.synastry-placement-table .planet-placement-row:last-child {
+  border-bottom: 0;
+}
+
+.friend-chart-page .synastry-placement-table .planet-placement-row {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+}
+
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static {
+  --aspect-row-template: 56px minmax(0, 1fr) 30px;
+  --aspect-row-gap: 14px;
+  --aspect-row-padding: 18px 22px;
+  --aspect-row-glyph-width: 56px;
+  --aspect-row-glyph-size: 17px;
+  --aspect-row-title-size: var(--friend-row-title-size);
+  --aspect-row-title-weight: var(--weight-semibold);
+  --aspect-row-title-line: var(--friend-card-title-line);
+  --aspect-row-title-tracking: -0.015em;
+  --aspect-row-copy-margin: 4px;
+  --aspect-row-copy-color: var(--app-muted);
+  --aspect-row-copy-size: var(--friend-row-description-size);
+  --aspect-row-copy-line: 1.45;
+  --aspect-row-meta-width: 30px;
+  --aspect-row-meta-size: var(--text-meta-size);
+  --aspect-row-meta-weight: var(--weight-bold);
+  border-color: var(--card-border);
+}
+
+.friend-chart-page .aspect-row-copy .aspect-row-subtitle {
+  margin-top: 4px;
+  color: var(--app-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.friend-placement-column-compact .friend-placement-table {
+  grid-template-columns: 1fr;
+}
+
+.friend-placement-column-compact .friend-placement-row {
+  border-right: 0;
+}
+
