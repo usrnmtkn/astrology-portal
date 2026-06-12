@@ -1,0 +1,172 @@
+.page-shell {
+  width: min(var(--page-max), 100%);
+  margin-inline: auto;
+  padding: var(--page-top) var(--page-gutter) 80px;
+}
+
+.page-shell--narrow {
+  width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.portal-grid.page-shell {
+  padding: 0;
+}
+
+.chart-page-shell {
+  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
+  padding-top: var(--chart-page-top);
+  padding-bottom: 96px;
+}
+
+.chart-layout,
+.sky-layout,
+.chart-page-layout {
+  display: grid;
+  grid-template-columns: var(--chart-column-width) var(--content-column-width);
+  gap: var(--chart-layout-gap);
+  align-items: start;
+  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.chart-layout__visual,
+.chart-page-visual,
+.sky-chart-column {
+  position: sticky;
+  top: var(--chart-sticky-top);
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  padding-top: 0;
+  margin-top: 0;
+  transform: none;
+}
+
+.chart-layout__content,
+.chart-page-content,
+.sky-content-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--stack-gap);
+  padding-top: 0;
+}
+
+.chart-layout,
+.chart-layout__content,
+.chart-layout__visual,
+.subpane,
+.section-label,
+.you-signatures-card,
+.you-list-card,
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.chart-row,
+.chart-row-static {
+  scroll-margin-top: var(--nav-safe-offset);
+}
+
+.sky-layout .sky-panel {
+  grid-row: 1 / span 2;
+}
+
+.you-chart-page.page-shell {
+  padding: 0;
+}
+
+.page-back-row {
+  display: contents;
+}
+
+.floating-back-button {
+  position: fixed;
+  top: var(--top-control-top);
+  left: 36px;
+  z-index: var(--z-floating);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1);
+  height: var(--top-control-height);
+  padding: 0 var(--button-padding-x);
+  border: 1px solid var(--floating-button-border);
+  border-radius: var(--button-radius);
+  background: var(--floating-button-bg);
+  color: var(--app-text);
+  box-shadow: var(--nav-rest-shadow);
+  backdrop-filter: blur(0) saturate(1);
+  -webkit-backdrop-filter: blur(0) saturate(1);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  transition:
+    background-color 320ms cubic-bezier(.4, 0, .2, 1),
+    border-color 320ms cubic-bezier(.4, 0, .2, 1),
+    box-shadow 320ms cubic-bezier(.4, 0, .2, 1),
+    color 320ms cubic-bezier(.4, 0, .2, 1),
+    backdrop-filter 320ms cubic-bezier(.4, 0, .2, 1),
+    transform 160ms ease;
+  cursor: pointer;
+}
+
+.floating-back-button:hover {
+  border-color: var(--floating-button-border-hover);
+  background: var(--floating-button-bg-hover);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .floating-back-button {
+  border-color: var(--floating-button-border);
+  background: var(--floating-button-bg);
+  color: var(--ink);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .auth-card,
+  .auth-message-card,
+  .auth-close-button,
+  .google-auth-button
+) {
+  border-color: var(--app-border);
+  background: var(--surface-2);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .auth-input,
+  .auth-select,
+  .auth-page .signup-field input,
+  .auth-page .signup-field select,
+  .auth-page .signup-city-search .city-search-control,
+  .auth-page .city-search-control input,
+  .auth-ampm-toggle
+) {
+  border-color: var(--app-border);
+  background: var(--surface);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .modal-overlay {
+  background: rgba(0, 0, 0, 0.48);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .modal-panel {
+  border-color: var(--modal-border);
+  background: var(--modal-bg);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle) {
+  border: 1px solid var(--floating-button-border);
+  background: var(--floating-button-bg);
+  color: var(--ink);
+  box-shadow: none;
+}
+

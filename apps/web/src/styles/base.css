@@ -1,0 +1,282 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  font-family: var(--font-ui);
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: var(--tracking-normal);
+}
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-ui);
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.screen-title,
+.page-title,
+.profile-name,
+.card-display-title,
+.modal h2,
+.detail-modal h2,
+.today-hero h1,
+.you-profile-copy h2,
+.friend-hero-card h2,
+.brand-word {
+  font-family: var(--font-display);
+}
+
+.astro-glyph,
+.planet-glyph,
+.sign-glyph,
+.chart-glyph,
+.crg,
+.friend-placement-symbol,
+.synastry-placement-glyph {
+  font-family: var(--font-glyph);
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.type-hero,
+.type-display,
+.type-page-title,
+.type-card-title,
+.type-section-label,
+.type-label {
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: 0;
+}
+
+.type-hero,
+.type-display {
+  font-size: var(--text-display);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.type-page-title {
+  font-size: var(--text-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.type-card-title {
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+}
+
+.type-row-title {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  line-height: 1.12;
+  letter-spacing: var(--tracking-title);
+}
+
+.type-body,
+.type-body-muted,
+.type-body-mono,
+.type-body-strong {
+  color: var(--ink-2);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+  text-wrap: pretty;
+}
+
+.type-body-muted,
+.type-meta {
+  color: var(--muted);
+}
+
+.type-body-mono {
+  font-family: var(--font-body);
+}
+
+.type-body-strong {
+  color: var(--ink);
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+}
+
+.type-section-label,
+.type-label {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.type-meta {
+  font-family: var(--font-ui);
+  font-size: var(--text-description);
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-normal);
+}
+
+:where(
+  .eyebrow,
+  .section-label,
+  .chart-section-title,
+  .aspect-section-label,
+  .friend-section-label,
+  .settings-group-label,
+  .friends-feed-meta,
+  .article-kicker,
+  .sky-detail-kicker,
+  .article-section__eyebrow,
+  .sky-detail-section-num,
+  .synastry-placement-panel-title,
+  .synastry-placement-panel-ring,
+  .add-chart-field > span,
+  .add-chart-field > label > span,
+  .add-chart-city-search label > span
+) {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+:where(
+  .placement-table-row__title,
+  .planet-placement-row__title,
+  .aspect-row-copy h3,
+  .aspect-row-copy strong,
+  .updates-aspect-row__title,
+  .settings-row-title,
+  .friends-feed-card-body h3,
+  .crt,
+  .synastry-placement-column-header h3,
+  .add-chart-modal__title
+) {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-title);
+  line-height: 1.18;
+}
+
+:where(
+  .placement-table-row__description,
+  .aspect-row-copy p,
+  .aspect-row-copy span,
+  .updates-aspect-row__description,
+  .settings-row-description,
+  .friends-feed-card-body p,
+  .add-chart-modal__subtitle
+) {
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-row-body-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-body);
+  text-wrap: pretty;
+}
+
+:where(
+  .placement-table-row__meta,
+  .planet-placement-row__degree,
+  .planet-placement-row__meta,
+  .placement-row__degree,
+  .placement-row__house,
+  .big-three-row__degree,
+  .big-three-row__house,
+  .friend-placement-row__degree,
+  .friend-placement-row__house,
+  .composite-placement-row__degree,
+  .composite-placement-row__house,
+  .aspect-row-meta,
+  .updates-aspect-row__meta,
+  .updates-aspect-row__meta-line,
+  .synastry-placement-degree,
+  .synastry-placement-house,
+  .synastry-placement-meta,
+  .synastry-placement-chip small,
+  .settings-row__value
+) {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-normal);
+}
+
+:where(
+  .placement-table-row__glyph,
+  .planet-placement-row__glyph,
+  .aspect-row-glyphs,
+  .updates-aspect-row__glyphs,
+  .synastry-placement-glyph,
+  .friends-feed-symbols
+) {
+  font-family: var(--font-glyph);
+}

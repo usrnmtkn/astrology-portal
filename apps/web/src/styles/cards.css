@@ -1,0 +1,199 @@
+.tldr-card,
+.tldr-list-card,
+.ui-card,
+.ui-list,
+.ui-row {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .placement-table-wrap,
+  .list,
+  .you-list-card,
+  .aspects-card,
+  .you-empty-card,
+  .friends-logic-card,
+  .friends-feed-card,
+  .manual-chart-cards,
+  .you-signatures-card,
+  .friend-signature-card,
+  .friend-placement-column,
+  .synastry-placement-table,
+  .article-card,
+  .article-hero,
+  .sky-detail-hero,
+  .sky-detail-statement,
+  .sky-detail-body,
+  .placement-table-card,
+  .friend-compare-list
+) {
+  border-color: var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .date-picker,
+  .hero-city-picker,
+  .friend-compare-popover,
+  .manual-chart-overflow-menu,
+  .add-chart-modal
+) {
+  border-color: var(--overlay-border);
+  border-radius: var(--overlay-radius);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
+}
+
+:where(
+  .placement-table-row,
+  .planet-placement-row,
+  .aspect-row,
+  .aspect-row-button,
+  .aspect-row-static,
+  .updates-aspect-row,
+  .synastry-placement-row,
+  .friend-placement-row,
+  .manual-chart-row,
+  .chart-row:not(.manual-chart-row),
+  .chart-row-static
+) {
+  background: var(--table-row-bg);
+  border-bottom-color: var(--table-row-border);
+}
+
+.tldr-card {
+  overflow: hidden;
+  padding: var(--card-padding);
+}
+
+.tldr-card__section {
+  padding: var(--card-padding);
+  border-top: 1px solid var(--card-border);
+}
+
+.tldr-card__section:first-child {
+  border-top: 0;
+}
+
+.tldr-list-card {
+  overflow: hidden;
+}
+
+.tldr-list-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  gap: var(--row-gap);
+  padding: var(--row-padding-y) var(--row-padding-x);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.tldr-list-row:last-child {
+  border-bottom: 0;
+}
+
+.tldr-list-row__glyph {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  color: var(--ink);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.tldr-list-row__content {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.tldr-list-row__title {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1.18;
+  letter-spacing: var(--tracking-title);
+}
+
+.tldr-list-row__subtitle {
+  color: var(--ink-2);
+  font-size: var(--text-row-body-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+}
+
+.tldr-list-row__meta {
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.chart-shell {
+  display: block;
+  width: var(--shared-chart-size);
+  height: var(--shared-chart-size);
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+  margin: 0;
+  margin-top: 0;
+  padding: 0;
+  padding-top: 0;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+}
+
+.chart-shell--expandable {
+  position: relative;
+}
+
+.chart-fullscreen-trigger {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--ink);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.chart-fullscreen-trigger svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chart-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+}
+
+.chart-frame > svg,
+.chart-frame > .sky-wheel,
+.chart-frame svg {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+
