@@ -183,9 +183,9 @@ body,
 }
 
 .admin-breadcrumb {
-  color: rgba(245, 243, 238, 0.58) !important;
-  font-size: 14px !important;
-  margin: 0 !important;
+  color: rgba(245, 243, 238, 0.58);
+  font-size: 14px;
+  margin: 0;
 }
 
 .admin-header-actions,
@@ -559,11 +559,11 @@ body,
   opacity: 0.45;
 }
 
-.admin-primary-button,
+.admin-dashboard .admin-primary-button,
 .admin-dashboard .admin-live-button {
-  background: var(--admin-accent) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #fff !important;
+  background: var(--admin-accent);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .admin-dashboard .admin-danger-button {
@@ -701,7 +701,7 @@ body,
 }
 
 .admin-preview-empty {
-  color: var(--admin-muted-dark) !important;
+  color: var(--admin-muted-dark);
 }
 
 .admin-release-page {
