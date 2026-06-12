@@ -28,6 +28,7 @@ import type { CSSProperties, FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
 import { ModalPortal } from "./components/ModalPortal";
+import { SegmentedControl } from "./components/SegmentedControl";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
@@ -64,65 +65,11 @@ import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
-type PlacementMode = "paragraph" | "table";
 type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
 type SignupProvider = "email" | "google";
-
-type SegmentedOption<T extends string> = {
-  value: T;
-  label: ReactNode;
-};
-
-function SegmentedControl<T extends string>({
-  value,
-  options,
-  onChange,
-  ariaLabel,
-  className = "",
-  compact = false,
-  scroll = false,
-  id
-}: {
-  value: T;
-  options: Array<SegmentedOption<T>>;
-  onChange: (value: T) => void;
-  ariaLabel: string;
-  className?: string;
-  compact?: boolean;
-  scroll?: boolean;
-  id?: string;
-}) {
-  const classes = [
-    "segmented-control",
-    compact ? "segmented-control--compact" : "",
-    scroll ? "segmented-control--scroll" : "",
-    className
-  ].filter(Boolean).join(" ");
-
-  return (
-    <div className={classes} id={id} role="tablist" aria-label={ariaLabel}>
-      {options.map((option) => {
-        const isActive = option.value === value;
-
-        return (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={isActive}
-            className={`segmented-control__item${isActive ? " segmented-control__item--active" : ""}`}
-            key={option.value}
-            onClick={() => onChange(option.value)}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 type UserChart = {
   id: string;
@@ -8733,38 +8680,20 @@ function PlacementView({
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const [placementMode, setPlacementMode] = useState<PlacementMode>("table");
-
   return (
     <section className="placement-section chart-section" aria-label="Placements">
       <div className="placements-heading">
         <span className="eyebrow section-label chart-section-title">Placements</span>
       </div>
 
-      <SegmentedControl
-        value={placementMode}
-        options={[
-          { value: "table", label: "List" },
-          { value: "paragraph", label: "Paragraph" }
-        ]}
-        onChange={setPlacementMode}
-        ariaLabel="Placement view"
-        className="app-tabs placement-tabs"
-        compact
+      <PlacementTable
+        positions={positions}
+        aspects={aspects}
+        generatedAt={generatedAt}
+        generatedContent={generatedContent}
+        lifeAreaFocus={lifeAreaFocus}
+        onOpenDetail={onOpenDetail}
       />
-
-      {placementMode === "table" ? (
-        <PlacementTable
-          positions={positions}
-          aspects={aspects}
-          generatedAt={generatedAt}
-          generatedContent={generatedContent}
-          lifeAreaFocus={lifeAreaFocus}
-          onOpenDetail={onOpenDetail}
-        />
-      ) : (
-        <PlacementParagraph positions={positions} generatedAt={generatedAt} generatedContent={generatedContent} lifeAreaFocus={lifeAreaFocus} />
-      )}
     </section>
   );
 }
@@ -8875,42 +8804,6 @@ function ActiveAspects({
         </div>
       </div>
     </section>
-  );
-}
-
-function PlacementParagraph({
-  positions,
-  generatedAt,
-  generatedContent,
-  lifeAreaFocus
-}: {
-  positions: PlanetPosition[];
-  generatedAt: string;
-  generatedContent: GeneratedContentMap;
-  lifeAreaFocus: LifeAreaFocus[];
-}) {
-  const orderedPositions = rankSkyPositionsByLifeAreaFocus(positions, lifeAreaFocus);
-
-  return (
-    <div className="placement-prose">
-      {orderedPositions.map((position, index) => {
-        const contentKey = placementContentId(position.planet, position.sign, "sky");
-        const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-        const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
-        const summary = liveGeneratedSummary(generated, content.summary);
-
-        return (
-          <p key={position.planet}>
-            {index === 0 ? "Today’s " : ""}
-            <strong>{position.planet}</strong>
-            {" at "}
-            <span>{formatPlacementPosition(position).toUpperCase()}</span>
-            {" "}
-            {summary}
-          </p>
-        );
-      })}
-    </div>
   );
 }
 
