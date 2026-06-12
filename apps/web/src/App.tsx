@@ -24,7 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { isValidElement, lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
-import type { CSSProperties, FormEvent, ReactNode } from "react";
+import type { CSSProperties, FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
 import { ModalPortal } from "./components/ModalPortal";
@@ -138,8 +138,11 @@ type ChartSettings = {
   houseSystem: "Whole House";
   zodiac: "Tropical";
   aspects: "Standard" | "Tight";
+  houseSignLabelStyle: HouseSignLabelStyle;
   lifeAreaFocus: LifeAreaFocus[];
 };
+
+type HouseSignLabelStyle = "text" | "glyph";
 
 type LifeAreaFocus =
   | "career"
@@ -355,6 +358,8 @@ type RelationshipComparisonOption = {
   natalChart: SkySnapshot | null;
   isSelf: boolean;
 };
+
+type RelationshipChartFullscreenMode = "synastry" | "composite";
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 type SignupTimeParts = {
@@ -718,6 +723,7 @@ const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
+const houseSignLabelStyleStorageKey = "tldrastro:houseSignLabelStyle";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
 const friendsTabStorageKey = "tldrastro:friendsTab";
@@ -754,6 +760,109 @@ const zodiacSignGlyphs: Record<string, string> = {
   Aquarius: "♒",
   Pisces: "♓"
 };
+const zodiacSignIconFiles: Record<string, string> = {
+  Aries: "aries.svg",
+  Taurus: "taurus.svg",
+  Gemini: "gemini.svg",
+  Cancer: "cancer.svg",
+  Leo: "leo.svg",
+  Virgo: "virgo.svg",
+  Libra: "libra.svg",
+  Scorpio: "scorpio.svg",
+  Sagittarius: "sagittarius.svg",
+  Capricorn: "capricorn.svg",
+  Aquarius: "aquarius.svg",
+  Pisces: "pisces.svg"
+};
+const wheelPlanetIconFiles: Record<string, string> = {
+  Sun: "sun-wheel-glyph.svg",
+  Moon: "moon.svg",
+  Mercury: "mercury.svg",
+  Venus: "venus.svg",
+  Mars: "mars.svg",
+  Jupiter: "jupiter.svg",
+  Saturn: "saturn.svg",
+  Uranus: "uranus.svg",
+  Neptune: "neptune.svg",
+  Pluto: "pluto.svg",
+  Chiron: "chiron.svg",
+  Lilith: "lilith.svg",
+  Ceres: "ceres.svg",
+  "True Node": "true-node.svg",
+  "North Node": "north-node.svg"
+};
+const wheelPlanetRetrogradeIconFiles: Record<string, string> = {
+  Mercury: "mercury_rx.svg",
+  Venus: "venus_rx.svg",
+  Mars: "mars_rx.svg",
+  Jupiter: "jupiter_rx.svg",
+  Saturn: "saturn_rx.svg",
+  Uranus: "uranus_rx.svg",
+  Neptune: "neptune_rx.svg",
+  Pluto: "pluto_rx.svg",
+  Chiron: "chiron_rx.svg",
+  Lilith: "lilith_rx.svg",
+  Ceres: "ceres_rx.svg",
+  "True Node": "true_node_rx.svg",
+  "North Node": "true_node_rx.svg"
+};
+const wheelAngleIconFiles: Record<string, string> = {
+  ASC: "ascendant.svg",
+  DSC: "descendant.svg",
+  MC: "mc.svg",
+  IC: "ic.svg"
+};
+const aspectIconFiles: Record<string, string> = {
+  conjunction: "conjunction.svg",
+  square: "square.svg",
+  trine: "trine.svg",
+  sextile: "sextile.svg"
+};
+const pointIconFiles: Record<string, string> = {
+  Sun: "sun.svg",
+  Moon: "moon.svg",
+  Mercury: "mercury.svg",
+  Venus: "venus.svg",
+  Mars: "mars.svg",
+  Jupiter: "jupiter.svg",
+  Saturn: "saturn.svg",
+  Uranus: "uranus.svg",
+  Neptune: "neptune.svg",
+  Pluto: "pluto.svg",
+  Chiron: "chiron.svg",
+  Lilith: "lilith.svg",
+  Ceres: "ceres.svg",
+  Pallas: "pallas.svg",
+  Juno: "juno.svg",
+  Vesta: "vesta.svg",
+  "True Node": "true-node.svg",
+  "North Node": "north-node.svg",
+  Ascendant: "ascendant.svg",
+  Descendant: "descendant.svg",
+  Midheaven: "mc.svg",
+  "Imum Coeli": "ic.svg"
+};
+const pointRetrogradeIconFiles: Record<string, string> = {
+  Mercury: "mercury_rx.svg",
+  Venus: "venus_rx.svg",
+  Mars: "mars_rx.svg",
+  Jupiter: "jupiter_rx.svg",
+  Saturn: "saturn_rx.svg",
+  Uranus: "uranus_rx.svg",
+  Neptune: "neptune_rx.svg",
+  Pluto: "pluto_rx.svg",
+  Chiron: "chiron_rx.svg",
+  Lilith: "lilith_rx.svg",
+  Ceres: "ceres_rx.svg",
+  "True Node": "true_node_rx.svg",
+  "North Node": "true_node_rx.svg"
+};
+const zodiacAssetPath = "/zodiac/";
+
+function zodiacAssetHref(fileName?: string) {
+  return fileName ? `${zodiacAssetPath}${fileName}` : null;
+}
+
 const traditionalSignRulers: Record<string, string> = {
   Aries: "Mars",
   Taurus: "Venus",
@@ -1161,8 +1270,13 @@ const defaultChartSettings: ChartSettings = {
   houseSystem: "Whole House",
   zodiac: "Tropical",
   aspects: "Standard",
+  houseSignLabelStyle: "text",
   lifeAreaFocus: []
 };
+
+function normalizeHouseSignLabelStyle(value: unknown): HouseSignLabelStyle {
+  return value === "glyph" ? "glyph" : "text";
+}
 
 function normalizeChartSettings(settings?: Partial<ChartSettings> | null): ChartSettings {
   const lifeAreaFocus = Array.isArray(settings?.lifeAreaFocus)
@@ -1173,6 +1287,7 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
     houseSystem: "Whole House",
     zodiac: "Tropical",
     aspects: settings?.aspects === "Tight" ? "Tight" : "Standard",
+    houseSignLabelStyle: normalizeHouseSignLabelStyle(settings?.houseSignLabelStyle),
     lifeAreaFocus: Array.from(new Set(lifeAreaFocus))
   };
 }
@@ -1400,23 +1515,6 @@ function inwardMarkerOffset(center: number, marker: { x: number; y: number }, di
   };
 }
 
-function retrogradeMarkerOffset(layout?: WheelMarkerLayout) {
-  if ((layout?.clusterSize ?? 1) > 1) {
-    const clusterMidpoint = ((layout?.clusterSize ?? 1) - 1) / 2;
-    const isLeadingClusterMarker = (layout?.clusterIndex ?? 0) <= clusterMidpoint;
-
-    return {
-      x: isLeadingClusterMarker ? -3 : 9,
-      y: 26
-    };
-  }
-
-  return {
-    x: 8,
-    y: 8
-  };
-}
-
 function chartHouseLabelGeometry({
   ascendant,
   ascendantLongitude,
@@ -1456,6 +1554,9 @@ function chartHouseLabelGeometry({
 }
 
 const chartHouseLabelRadiusFactor = 0.48;
+const wheelViewBox = "-20 -20 640 640";
+const angleAxisOuterPadding = 20;
+const angleLabelOuterPadding = 20;
 
 function normalizeSignedAngle(angle: number) {
   const normalized = normalizedAngle(angle);
@@ -1481,12 +1582,15 @@ function chartSignLabelGeometry({
     const useClockwisePath = Math.abs(clockwiseTangent) <= 90;
     const startAngle = midAngle + (useClockwisePath ? -labelArcSpan / 2 : labelArcSpan / 2);
     const endAngle = midAngle + (useClockwisePath ? labelArcSpan / 2 : -labelArcSpan / 2);
+    const label = polarToCartesian(center, center, radius, midAngle);
     const start = polarToCartesian(center, center, radius, startAngle);
     const end = polarToCartesian(center, center, radius, endAngle);
 
     return {
       sign,
       isLong: sign.length >= 9,
+      x: label.x,
+      y: label.y,
       path: [
         `M ${start.x.toFixed(2)} ${start.y.toFixed(2)}`,
         `A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 0 ${useClockwisePath ? 1 : 0} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`
@@ -1700,6 +1804,14 @@ function getInitialDyslexiaFont() {
     return savedValue === "true" || savedValue === "on";
   } catch {
     return false;
+  }
+}
+
+function getInitialHouseSignLabelStyle(): HouseSignLabelStyle {
+  try {
+    return normalizeHouseSignLabelStyle(window.localStorage.getItem(houseSignLabelStyleStorageKey));
+  } catch {
+    return "text";
   }
 }
 
@@ -2526,6 +2638,12 @@ function isTimingOnlyArticleSection(section: { heading: string; body: ReactNode 
   return /^(pre-shadow|retrograde|post-shadow):/i.test(bodyText);
 }
 
+function isSuppressedSkyDetailSectionHeading(heading: string) {
+  const normalized = heading.trim().toLowerCase();
+
+  return normalized === "logic" || normalized === "large scale" || normalized === "large-scale";
+}
+
 function isRetrogradeTimelineNode(node: ReactNode) {
   if (!isValidElement<{ className?: string }>(node)) {
     return false;
@@ -2545,7 +2663,9 @@ function SkyDetailArticle({
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const articleBody = detail.body.filter((node) => !isRetrogradeTimelineNode(node));
   const paragraphs = articleBody.length > 0 ? articleBody : ["This field guide is still being written."];
-  const generatedSections = (detail.sections ?? []).filter((section) => !isTimingOnlyArticleSection(section));
+  const generatedSections = (detail.sections ?? []).filter(
+    (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
+  );
   const drilldown = detail.astrologyDrilldown;
   const [lede, ...sectionParagraphs] = paragraphs;
 
@@ -4474,6 +4594,7 @@ export function App() {
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
+  const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
@@ -4485,7 +4606,10 @@ export function App() {
   const [friendsLandingKey, setFriendsLandingKey] = useState(0);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const datePickerRef = useRef<HTMLElement | null>(null);
+  const datePickerTriggerRef = useRef<HTMLButtonElement | null>(null);
   const cityPickerRef = useRef<HTMLFormElement | null>(null);
+  const cityPickerInputRef = useRef<HTMLInputElement | null>(null);
   const cityPickerTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
@@ -4514,6 +4638,9 @@ export function App() {
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
+  const activeHouseSignLabelStyle = userProfile
+    ? normalizeChartSettings(userProfile.settings).houseSignLabelStyle
+    : guestHouseSignLabelStyle;
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
@@ -4666,8 +4793,62 @@ export function App() {
   }, [mode, skyDate, userProfile]);
 
   useEffect(() => {
+    if (!datePickerOpen) {
+      return;
+    }
+
+    const firstPickerButton = datePickerRef.current?.querySelector<HTMLButtonElement>("button");
+    firstPickerButton?.focus();
+
+    function closeDatePicker(restoreFocus = true) {
+      setDatePickerOpen(false);
+      if (restoreFocus) {
+        datePickerTriggerRef.current?.focus();
+      }
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node | null;
+
+      if (
+        !target ||
+        datePickerRef.current?.contains(target) ||
+        datePickerTriggerRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeDatePicker(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeDatePicker();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [datePickerOpen]);
+
+  useEffect(() => {
     if (!cityPickerOpen) {
       return;
+    }
+
+    cityPickerInputRef.current?.focus();
+
+    function closeCityPicker(restoreFocus = true) {
+      setCityPickerOpen(false);
+      if (restoreFocus) {
+        cityPickerTriggerRef.current?.focus();
+      }
     }
 
     function handlePointerDown(event: PointerEvent) {
@@ -4681,12 +4862,13 @@ export function App() {
         return;
       }
 
-      setCityPickerOpen(false);
+      closeCityPicker(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setCityPickerOpen(false);
+        event.preventDefault();
+        closeCityPicker();
       }
     }
 
@@ -4704,6 +4886,16 @@ export function App() {
       return;
     }
 
+    const firstMenuItem = menuRef.current?.querySelector<HTMLButtonElement>("[role='menuitem']");
+    firstMenuItem?.focus();
+
+    function closeMenu(restoreFocus = true) {
+      setMenuOpen(false);
+      if (restoreFocus) {
+        menuTriggerRef.current?.focus();
+      }
+    }
+
     function handlePointerDown(event: PointerEvent) {
       const target = event.target as Node | null;
 
@@ -4715,12 +4907,43 @@ export function App() {
         return;
       }
 
-      setMenuOpen(false);
+      closeMenu(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setMenuOpen(false);
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (!menuRef.current?.contains(document.activeElement)) {
+        return;
+      }
+
+      const menuItems = Array.from(menuRef.current.querySelectorAll<HTMLButtonElement>("[role='menuitem']"));
+      const currentIndex = menuItems.findIndex((item) => item === document.activeElement);
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const direction = event.key === "ArrowDown" ? 1 : -1;
+        const nextIndex = currentIndex < 0
+          ? 0
+          : (currentIndex + direction + menuItems.length) % menuItems.length;
+
+        menuItems[nextIndex]?.focus();
+        return;
+      }
+
+      if (event.key === "Home") {
+        event.preventDefault();
+        menuItems[0]?.focus();
+        return;
+      }
+
+      if (event.key === "End") {
+        event.preventDefault();
+        menuItems[menuItems.length - 1]?.focus();
       }
     }
 
@@ -4802,6 +5025,14 @@ export function App() {
       return;
     }
   }, [dyslexiaFriendlyFont]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(houseSignLabelStyleStorageKey, guestHouseSignLabelStyle);
+    } catch {
+      return;
+    }
+  }, [guestHouseSignLabelStyle]);
 
   useEffect(() => {
     document.documentElement.dataset.sunriseOrb = sunriseOrbEnabled ? "true" : "false";
@@ -5208,6 +5439,7 @@ export function App() {
     setManualLocation(nextLocation.label);
     setHasLocationPreference(true);
     setCityPickerOpen(false);
+    cityPickerTriggerRef.current?.focus();
   }
 
   function applyCitySuggestion(suggestion: CitySuggestion) {
@@ -5222,6 +5454,7 @@ export function App() {
     setCitySuggestions([]);
     setCitySearchStatus("idle");
     setCityPickerOpen(false);
+    cityPickerTriggerRef.current?.focus();
   }
 
   function openCreateChartModal({
@@ -5549,6 +5782,7 @@ export function App() {
                   <button
                     className="today-pill"
                     type="button"
+                    ref={datePickerTriggerRef}
                     aria-expanded={datePickerOpen}
                     aria-controls="sky-date-picker"
                     onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
@@ -5572,10 +5806,15 @@ export function App() {
                 {datePickerOpen && (
                   <SkyDatePicker
                     value={skyDate}
-                    onClose={() => setDatePickerOpen(false)}
+                    pickerRef={datePickerRef}
+                    onClose={() => {
+                      setDatePickerOpen(false);
+                      datePickerTriggerRef.current?.focus();
+                    }}
                     onSelect={(nextDate) => {
                       setSkyDate(nextDate);
                       setDatePickerOpen(false);
+                      datePickerTriggerRef.current?.focus();
                     }}
                   />
                 )}
@@ -5592,6 +5831,7 @@ export function App() {
                     <label>
                       <span>City</span>
                       <input
+                        ref={cityPickerInputRef}
                         value={manualLocation}
                         onChange={(event) => setManualLocation(event.target.value)}
                         aria-label="City"
@@ -5606,7 +5846,15 @@ export function App() {
                       onSelect={applyCitySuggestion}
                     />
                     <div className="city-picker-actions">
-                      <button type="button" onClick={() => setCityPickerOpen(false)}>Cancel</button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCityPickerOpen(false);
+                          cityPickerTriggerRef.current?.focus();
+                        }}
+                      >
+                        Cancel
+                      </button>
                       <button type="submit">Update</button>
                     </div>
                   </form>
@@ -5619,7 +5867,14 @@ export function App() {
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
-                    <SkyWheel positions={sky.positions} aspects={sky.aspects} variant="zodiac" />
+                    <SkyWheel
+                      positions={sky.positions}
+                      aspects={sky.aspects}
+                      ascendant={sky.ascendant}
+                      ascendantLongitude={sky.ascendantLongitude}
+                      houseSignLabelStyle={activeHouseSignLabelStyle}
+                      variant="zodiac"
+                    />
                   </div>
                 </div>
               </section>
@@ -5719,6 +5974,7 @@ export function App() {
                     onSunriseOrbChange={setSunriseOrbEnabled}
                     dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                     onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                    onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                   />
                 ) : (
                   <GuestSettingsView
@@ -5729,6 +5985,8 @@ export function App() {
                     onSunriseOrbChange={setSunriseOrbEnabled}
                     dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                     onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                    houseSignLabelStyle={guestHouseSignLabelStyle}
+                    onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                   />
                 )
               )}
@@ -5797,10 +6055,12 @@ function locationFromLabel(label: string): LocationInput {
 
 function SkyDatePicker({
   onClose,
+  pickerRef,
   value,
   onSelect
 }: {
   onClose: () => void;
+  pickerRef?: Ref<HTMLElement>;
   value: string;
   onSelect: (value: string) => void;
 }) {
@@ -5812,7 +6072,7 @@ function SkyDatePicker({
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <section className="date-picker" id="sky-date-picker" aria-label="Select sky date">
+    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Select sky date">
       <div className="date-picker-header">
         <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
@@ -5957,6 +6217,18 @@ function pointGlyph(point: string) {
   return glyphs[point] ?? point.slice(0, 1);
 }
 
+function InlineGlyphIcon({ fallback, href, label }: { fallback: string; href: string | null; label: string }) {
+  if (!href) {
+    return <span>{fallback}</span>;
+  }
+
+  return (
+    <span className="inline-glyph-icon" aria-label={label}>
+      <img src={href} alt="" aria-hidden="true" />
+    </span>
+  );
+}
+
 function wholeDegreeOrb(orb: number) {
   return `${Math.round(orb)}°`;
 }
@@ -5964,9 +6236,9 @@ function wholeDegreeOrb(orb: number) {
 function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: string }) {
   return (
     <span className="aspect-row-glyphs" aria-hidden="true">
-      <span>{pointGlyph(from)}</span>
-      <span>{aspectGlyph(aspect)}</span>
-      <span>{pointGlyph(to)}</span>
+      <InlineGlyphIcon fallback={pointGlyph(from)} href={zodiacAssetHref(pointIconFiles[from])} label={from} />
+      <InlineGlyphIcon fallback={aspectGlyph(aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(aspect)])} label={aspect} />
+      <InlineGlyphIcon fallback={pointGlyph(to)} href={zodiacAssetHref(pointIconFiles[to])} label={to} />
     </span>
   );
 }
@@ -6057,6 +6329,7 @@ function FriendPlacementTable({
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
+                pointName={row.label}
                 retrograde={row.retrograde}
                 title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
@@ -6192,6 +6465,31 @@ function placementTableMeta(house?: number | null, degree?: string | null) {
   return houseLabel;
 }
 
+function PlacementGlyphIcon({
+  className,
+  fallback,
+  pointName,
+  retrograde = false
+}: {
+  className: string;
+  fallback: string;
+  pointName?: string;
+  retrograde?: boolean;
+}) {
+  const fileName = pointName
+    ? retrograde
+      ? pointRetrogradeIconFiles[pointName] ?? pointIconFiles[pointName]
+      : pointIconFiles[pointName]
+    : undefined;
+  const href = zodiacAssetHref(fileName);
+
+  return (
+    <span className={className} aria-hidden="true">
+      {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
+    </span>
+  );
+}
+
 function PlacementTableRow({
   ariaLabel,
   asButton = false,
@@ -6201,6 +6499,7 @@ function PlacementTableRow({
   glyph,
   house,
   onClick,
+  pointName,
   retrograde = false,
   title,
   variant = "natal"
@@ -6213,6 +6512,7 @@ function PlacementTableRow({
   glyph: string;
   house?: number | null;
   onClick?: () => void;
+  pointName?: string;
   retrograde?: boolean;
   title: string;
   variant?: "natal" | "friend" | "composite";
@@ -6225,7 +6525,7 @@ function PlacementTableRow({
   ].filter(Boolean).join(" ");
   const content = (
     <>
-      <span className="placement-table-row__glyph" aria-hidden="true">{glyph}</span>
+      <PlacementGlyphIcon className="placement-table-row__glyph" fallback={glyph} pointName={pointName} retrograde={retrograde} />
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
@@ -6262,6 +6562,7 @@ function PlanetPlacementRow({
   glyph,
   house,
   onClick,
+  pointName,
   rangeLabel,
   retrograde = false,
   statuses = [],
@@ -6277,6 +6578,7 @@ function PlanetPlacementRow({
   glyph: string;
   house?: number | null;
   onClick?: () => void;
+  pointName?: string;
   rangeLabel?: string | null;
   retrograde?: boolean;
   statuses?: PlacementRowStatus[];
@@ -6294,6 +6596,7 @@ function PlanetPlacementRow({
         glyph={glyph}
         house={house}
         onClick={onClick}
+        pointName={pointName}
         retrograde={retrograde}
         title={title}
         variant={variant === "composite" ? "composite" : variant === "friend" ? "friend" : "natal"}
@@ -6310,7 +6613,7 @@ function PlanetPlacementRow({
   ].filter(Boolean).join(" ");
   const content = (
     <>
-      <span className="planet-placement-row__glyph" aria-hidden="true">{glyph}</span>
+      <PlacementGlyphIcon className="planet-placement-row__glyph" fallback={glyph} pointName={pointName} retrograde={retrograde} />
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
@@ -6621,7 +6924,33 @@ function formatWheelDegree(position: PlanetPosition) {
   return `${Math.floor(position.degree)}°`;
 }
 
+function wheelPlanetIconFile(position: PlanetPosition) {
+  if (position.motion === "retrograde") {
+    return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
+  }
+
+  return wheelPlanetIconFiles[position.planet];
+}
+
 function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
+  const iconHref = zodiacAssetHref(wheelPlanetIconFile(position));
+  const iconSize = position.planet === "Sun" ? 26 : 24;
+
+  if (iconHref) {
+    return (
+      <image
+        href={iconHref}
+        x={-iconSize / 2}
+        y={-iconSize / 2 - 4}
+        width={iconSize}
+        height={iconSize}
+        className="planet-glyph planet-glyph-image wheel-placement__glyph"
+        aria-hidden="true"
+        preserveAspectRatio="xMidYMid meet"
+      />
+    );
+  }
+
   if (position.planet === "Sun") {
     return (
       <g className="planet-glyph planet-glyph-sun-symbol wheel-placement__glyph" transform="translate(0 -4) scale(0.64)" aria-hidden="true">
@@ -6744,6 +7073,119 @@ function RelationshipComparePicker({
   );
 }
 
+function RelationshipChartFullscreenOverlay({
+  chart,
+  compositeSky,
+  comparisonName,
+  comparisonOptions,
+  comparisonPickerOpen,
+  comparisonSelectedId,
+  comparisonIsSelf,
+  interAspects,
+  mode,
+  houseSignLabelStyle,
+  onClose,
+  onComparisonSelect,
+  onComparisonToggle,
+  profile,
+  selectedComparisonSky
+}: {
+  chart: ManualChart;
+  compositeSky: SkySnapshot | null;
+  comparisonName: string;
+  comparisonOptions: RelationshipComparisonOption[];
+  comparisonPickerOpen: boolean;
+  comparisonSelectedId: string;
+  comparisonIsSelf: boolean;
+  interAspects: InterChartAspectLine[];
+  mode: RelationshipChartFullscreenMode;
+  houseSignLabelStyle: HouseSignLabelStyle;
+  onClose: () => void;
+  onComparisonSelect: (id: string) => void;
+  onComparisonToggle: () => void;
+  profile: UserProfile;
+  selectedComparisonSky: SkySnapshot | null;
+}) {
+  const title = `${chart.displayName} × ${comparisonName} · ${mode === "synastry" ? "Synastry" : "Composite"}`;
+  const titleId = `relationship-chart-fullscreen-title-${mode}`;
+
+  if (mode === "synastry" && (!chart.natalChart || !selectedComparisonSky)) {
+    return null;
+  }
+
+  if (mode === "composite" && !compositeSky) {
+    return null;
+  }
+
+  return (
+    <ModalPortal
+      className="chart-fullscreen-modal-root"
+      panelClassName="chart-fullscreen-panel"
+      titleId={titleId}
+      width="1240px"
+      onClose={onClose}
+    >
+      <div className="chart-fullscreen-overlay">
+        <div className="chart-fullscreen-header">
+          <h2 className="chart-fullscreen-title" id={titleId}>{title}</h2>
+          <button className="chart-fullscreen-close" type="button" aria-label="Close full-screen chart" onClick={onClose}>
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="chart-fullscreen-wheel-wrap">
+          <div className="chart-shell chart-shell--fullscreen">
+            <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={title}>
+              {mode === "synastry" ? (
+                <SynastryWheel
+                  outerPositions={chart.natalChart?.positions ?? []}
+                  innerPositions={selectedComparisonSky?.positions ?? []}
+                  interAspects={interAspects}
+                  ascendant={chart.natalChart?.ascendant}
+                  ascendantLongitude={chart.natalChart?.ascendantLongitude}
+                  houseSignLabelStyle={houseSignLabelStyle}
+                />
+              ) : (
+                <SkyWheel
+                  positions={compositeSky?.positions ?? []}
+                  aspects={compositeSky?.aspects ?? []}
+                  ascendant={compositeSky?.ascendant}
+                  ascendantLongitude={compositeSky?.ascendantLongitude}
+                  midheavenLongitude={compositeSky?.midheavenLongitude}
+                  showHouses
+                  houseSignLabelStyle={houseSignLabelStyle}
+                  variant="composite"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="chart-fullscreen-footer">
+          {mode === "composite" ? (
+            <div className="friend-chart-legend chart-fullscreen-legend" aria-label="Composite chart label">
+              <span>Composite chart</span>
+            </div>
+          ) : null}
+
+          <div className="chart-fullscreen-controls">
+            <RelationshipComparePicker
+              variant={mode}
+              outerName={mode === "synastry" ? chart.displayName : undefined}
+              outerInitials={mode === "synastry" ? profileInitials(chart.displayName, chart.displayName) : undefined}
+              options={comparisonOptions}
+              selectedId={comparisonSelectedId}
+              open={comparisonPickerOpen}
+              onToggle={onComparisonToggle}
+              onSelect={onComparisonSelect}
+            />
+          </div>
+        </div>
+      </div>
+    </ModalPortal>
+  );
+}
+
 function SynastryPlacementsComparison({
   outerName,
   outerSky,
@@ -6801,7 +7243,7 @@ function SynastryPlacementColumn({
         <div className="synastry-placement-table">
           {placements.map((position) => (
             <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${ringLabel}-${position.planet}`}>
-              <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
+              <SynastryPlacementLead position={position} />
               <span className="synastry-placement-sign">{position.sign}</span>
               <span className="synastry-placement-meta">
                 <span>{formatPlanetDegree(position)}</span>
@@ -6815,6 +7257,24 @@ function SynastryPlacementColumn({
         <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
       )}
     </section>
+  );
+}
+
+function SynastryPlacementLead({ position }: { position: PlanetPosition }) {
+  const isRetrograde = position.motion === "retrograde" && position.planet !== "Ascendant";
+  const retrogradeHref = isRetrograde ? zodiacAssetHref(pointRetrogradeIconFiles[position.planet]) : null;
+
+  return (
+    <span className="synastry-placement-lead" aria-hidden="true">
+      <span className="synastry-placement-glyph">
+        {retrogradeHref ? (
+          <img className="synastry-rx-glyph-svg" src={retrogradeHref} alt="" aria-hidden="true" />
+        ) : (
+          position.glyph
+        )}
+      </span>
+      {isRetrograde ? <span className="synastry-placement-rx-mark">Rx</span> : null}
+    </span>
   );
 }
 
@@ -6842,6 +7302,7 @@ function SkyWheel({
   ascendantLongitude,
   midheavenLongitude,
   showHouses = false,
+  houseSignLabelStyle = "text",
   variant = "zodiac"
 }: {
   positions: PlanetPosition[];
@@ -6850,6 +7311,7 @@ function SkyWheel({
   ascendantLongitude?: number;
   midheavenLongitude?: number;
   showHouses?: boolean;
+  houseSignLabelStyle?: HouseSignLabelStyle;
   variant?: Exclude<WheelVariant, "synastry">;
 }) {
   const signs = [
@@ -6867,6 +7329,7 @@ function SkyWheel({
     "Pisces"
   ];
   const isNatalWheel = showHouses && typeof ascendantLongitude === "number";
+  const hasAscendantAxis = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
   const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
   const center = 300;
@@ -6940,7 +7403,7 @@ function SkyWheel({
     ascendantLongitude,
     angleForLongitude,
     center,
-    radius: radius.signInner - 38
+    radius: radius.outer + angleLabelOuterPadding
   });
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const signLabels = chartSignLabelGeometry({
@@ -6983,7 +7446,7 @@ function SkyWheel({
   }
 
   return (
-    <svg className={`sky-wheel sky-wheel-${variant}`} viewBox="0 0 600 600" role="img" aria-label="Planet positions">
+    <svg className={`sky-wheel sky-wheel-${variant}`} viewBox={wheelViewBox} role="img" aria-label="Planet positions">
       <defs>
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
@@ -7042,11 +7505,17 @@ function SkyWheel({
         })}
       </g>
 
-      {isNatalWheel && (
+      {hasAscendantAxis && (
         <g className="natal-angle-lines" aria-label="Ascendant axis">
           {(() => {
-            const asc = point(angleForLongitude(ascendantLongitude), radius.signInner - 12);
-            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.signInner - 12);
+            if (typeof ascendantLongitude !== "number") {
+              return null;
+            }
+
+            const ascAngle = angleForLongitude(ascendantLongitude);
+            const dscAngle = angleForLongitude(ascendantLongitude + 180);
+            const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
+            const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
 
             return (
               <line
@@ -7071,13 +7540,30 @@ function SkyWheel({
         </g>
       )}
 
-      {isNatalWheel && (
+      {hasAscendantAxis && (
         <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => (
-            <text key={label} x={x} y={y}>
-              {label}
-            </text>
-          ))}
+          {angularLabels.map(({ label, x, y }) => {
+            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
+            const iconSize = 30;
+
+            return iconHref ? (
+              <image
+                key={label}
+                href={iconHref}
+                x={x - iconSize / 2}
+                y={y - iconSize / 2}
+                width={iconSize}
+                height={iconSize}
+                className="zodiac-wheel__angle-icon"
+                aria-label={label}
+                preserveAspectRatio="xMidYMid meet"
+              />
+            ) : (
+              <text key={label} x={x} y={y}>
+                {label}
+              </text>
+            );
+          })}
         </g>
       )}
 
@@ -7089,7 +7575,6 @@ function SkyWheel({
           const tickOuter = point(tickAngle, radius.signInner - 5);
           const tickInner = point(tickAngle, radius.signInner - 17);
           const degreeOffset = inwardMarkerOffset(center, marker, 24);
-          const retrogradeOffset = retrogradeMarkerOffset(layout);
           const { lines: tooltipLines } = tooltipDetails(position);
 
           return (
@@ -7108,9 +7593,6 @@ function SkyWheel({
               <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                 <circle cx={0} cy={0} r="14" className="planet-hit-area" />
                 <WheelPlanetGlyph position={position} />
-                {position.motion === "retrograde" ? (
-                  <text x={retrogradeOffset.x} y={retrogradeOffset.y} className="wheel-placement__retrograde" aria-label="Retrograde">r</text>
-                ) : null}
                 <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
                   {formatWheelDegree(position)}
                 </text>
@@ -7140,15 +7622,29 @@ function SkyWheel({
       )}
 
       <g className="sign-labels">
-        {signLabels.map(({ sign, isLong }) => {
+        {signLabels.map(({ sign, isLong, x, y }) => {
+          const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
+          const iconSize = sign === "Sagittarius" ? 25 : 23;
           const className = isLong ? "sign-label-long" : undefined;
+
           return (
-            <g key={sign} className={className}>
-              <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
-                <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
-                  {sign}
-                </textPath>
-              </text>
+            <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
+              {houseSignLabelStyle === "glyph" && iconHref ? (
+                <image
+                  href={iconHref}
+                  x={x - iconSize / 2}
+                  y={y - iconSize / 2}
+                  width={iconSize}
+                  height={iconSize}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              ) : (
+                <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
+                  <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
+                    {sign}
+                  </textPath>
+                </text>
+              )}
             </g>
           );
         })}
@@ -7162,13 +7658,15 @@ function SynastryWheel({
   innerPositions,
   interAspects,
   ascendant,
-  ascendantLongitude
+  ascendantLongitude,
+  houseSignLabelStyle = "text"
 }: {
   outerPositions: PlanetPosition[];
   innerPositions: PlanetPosition[];
   interAspects: InterChartAspectLine[];
   ascendant?: string;
   ascendantLongitude?: number;
+  houseSignLabelStyle?: HouseSignLabelStyle;
 }) {
   const signs = [
     "Aries",
@@ -7248,7 +7746,7 @@ function SynastryWheel({
     ascendantLongitude,
     angleForLongitude,
     center,
-    radius: radius.signInner - 38
+    radius: radius.outer + angleLabelOuterPadding
   });
   const signLabels = chartSignLabelGeometry({
     angleForLongitude,
@@ -7296,7 +7794,6 @@ function SynastryWheel({
     const tickOuter = point(angle, tickOuterRadius);
     const tickInner = point(angle, tickInnerRadius);
     const degreeOffset = inwardMarkerOffset(center, marker, 23);
-    const retrogradeOffset = retrogradeMarkerOffset(layout);
 
     return (
       <g
@@ -7309,9 +7806,6 @@ function SynastryWheel({
         <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
           <WheelPlanetGlyph position={position} />
-          {position.motion === "retrograde" ? (
-            <text x={retrogradeOffset.x} y={retrogradeOffset.y} className="wheel-placement__retrograde" aria-label="Retrograde">r</text>
-          ) : null}
           <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
           </text>
@@ -7321,7 +7815,7 @@ function SynastryWheel({
   }
 
   return (
-    <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox="0 0 600 600" role="img" aria-label="Synastry chart with two rings">
+    <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox={wheelViewBox} role="img" aria-label="Synastry chart with two rings">
       <defs>
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
@@ -7409,8 +7903,8 @@ function SynastryWheel({
       {isNatalWheel && (
         <g className="natal-angle-lines" aria-label="Ascendant axis">
           {(() => {
-            const asc = point(angleForLongitude(ascendantLongitude), radius.signInner - 12);
-            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.signInner - 12);
+            const asc = point(angleForLongitude(ascendantLongitude), radius.outer + angleAxisOuterPadding);
+            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.outer + angleAxisOuterPadding);
 
             return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
           })()}
@@ -7425,11 +7919,28 @@ function SynastryWheel({
       </g>
       {isNatalWheel && (
         <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => (
-            <text key={label} x={x} y={y}>
-              {label}
-            </text>
-          ))}
+          {angularLabels.map(({ label, x, y }) => {
+            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
+            const iconSize = 30;
+
+            return iconHref ? (
+              <image
+                key={label}
+                href={iconHref}
+                x={x - iconSize / 2}
+                y={y - iconSize / 2}
+                width={iconSize}
+                height={iconSize}
+                className="zodiac-wheel__angle-icon"
+                aria-label={label}
+                preserveAspectRatio="xMidYMid meet"
+              />
+            ) : (
+              <text key={label} x={x} y={y}>
+                {label}
+              </text>
+            );
+          })}
         </g>
       )}
       <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
@@ -7439,15 +7950,32 @@ function SynastryWheel({
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
       <g className="sign-labels">
-        {signLabels.map(({ sign, isLong }) => (
-          <g key={sign} className={isLong ? "sign-label-long" : undefined}>
-            <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
-              <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
-                {sign}
-              </textPath>
-            </text>
-          </g>
-        ))}
+        {signLabels.map(({ sign, isLong, x, y }) => {
+          const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
+          const iconSize = sign === "Sagittarius" ? 25 : 23;
+          const className = isLong ? "sign-label-long" : undefined;
+
+          return (
+            <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
+              {houseSignLabelStyle === "glyph" && iconHref ? (
+                <image
+                  href={iconHref}
+                  x={x - iconSize / 2}
+                  y={y - iconSize / 2}
+                  width={iconSize}
+                  height={iconSize}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              ) : (
+                <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
+                  <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
+                    {sign}
+                  </textPath>
+                </text>
+              )}
+            </g>
+          );
+        })}
       </g>
     </svg>
   );
@@ -7886,7 +8414,12 @@ function RetrogradeCallout({
         aria-label={`Read more about ${retrogradePlacementTitle(position)}`}
         onClick={() => onOpenDetail(row.detail)}
       >
-        <span className="sky-pl-glyph" aria-hidden="true">{position.glyph}</span>
+        <PlacementGlyphIcon
+          className="sky-pl-glyph"
+          fallback={position.glyph}
+          pointName={position.planet}
+          retrograde={position.motion === "retrograde"}
+        />
         <span className="sky-pl-body">
           <span className="sky-pl-main">
             <span className="sky-pl-title">
@@ -7920,7 +8453,13 @@ function RetrogradeCallout({
             </div>
             <div className="ro-cluster" aria-hidden="true">
               {retrogrades.map((position) => (
-                <span className="ro-cluster-badge" key={`cluster-${position.planet}`}>{position.glyph}</span>
+                <PlacementGlyphIcon
+                  className="ro-cluster-badge"
+                  fallback={position.glyph}
+                  key={`cluster-${position.planet}`}
+                  pointName={position.planet}
+                  retrograde={position.motion === "retrograde"}
+                />
               ))}
             </div>
           </div>
@@ -7961,7 +8500,13 @@ function RetrogradeCallout({
               >
                 <span className="ro-more-cluster" aria-hidden="true">
                   {outerRetrogrades.map((position) => (
-                    <span className="ro-more-badge" key={`outer-${position.planet}`}>{position.glyph}</span>
+                    <PlacementGlyphIcon
+                      className="ro-more-badge"
+                      fallback={position.glyph}
+                      key={`outer-${position.planet}`}
+                      pointName={position.planet}
+                      retrograde={position.motion === "retrograde"}
+                    />
                   ))}
                 </span>
                 <span className="ro-more-copy">
@@ -8450,6 +8995,7 @@ function PlacementTable({
                 durationLabel={durationLabel}
                 glyph={position.glyph}
                 onClick={openDetail}
+                pointName={position.planet}
                 rangeLabel={transitRangeLabel}
                 retrograde={position.motion === "retrograde"}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
@@ -9147,7 +9693,8 @@ function SettingsView({
   dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
-  onDyslexiaFontChange
+  onDyslexiaFontChange,
+  onHouseSignLabelStyleChange
 }: {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
@@ -9157,11 +9704,24 @@ function SettingsView({
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
+  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
   const currentCityDisplay = profile.currentLocation || defaultLocation.label;
+  const chartSettings = normalizeChartSettings(profile.settings);
+
+  function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
+    onHouseSignLabelStyleChange(houseSignLabelStyle);
+    onUpdateProfile({
+      ...profile,
+      settings: {
+        ...chartSettings,
+        houseSignLabelStyle
+      }
+    });
+  }
 
   function startCurrentLocationEdit() {
     setCurrentCity(profile.currentLocation || defaultLocation.label);
@@ -9277,6 +9837,16 @@ function SettingsView({
                   onChange={onSunriseOrbChange}
                 />
               </div>
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">House sign labels</span>
+                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
+                </div>
+                <HouseSignLabelToggle
+                  value={chartSettings.houseSignLabelStyle}
+                  onChange={updateHouseSignLabelStyle}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -9304,7 +9874,9 @@ function GuestSettingsView({
   dyslexiaFriendlyFont,
   onThemeChange,
   onSunriseOrbChange,
-  onDyslexiaFontChange
+  onDyslexiaFontChange,
+  houseSignLabelStyle,
+  onHouseSignLabelStyleChange
 }: {
   theme: UiTheme;
   location: LocationInput;
@@ -9313,6 +9885,8 @@ function GuestSettingsView({
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
+  houseSignLabelStyle: HouseSignLabelStyle;
+  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
   return (
     <section className="settings-page page-shell--narrow guest-settings-page" aria-label="Settings">
@@ -9371,6 +9945,16 @@ function GuestSettingsView({
                   onChange={onSunriseOrbChange}
                 />
               </div>
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
+                  <span className="settings-row-title">House sign labels</span>
+                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
+                </div>
+                <HouseSignLabelToggle
+                  value={houseSignLabelStyle}
+                  onChange={onHouseSignLabelStyleChange}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -9398,6 +9982,30 @@ function AppearanceToggle({
           onClick={() => onThemeChange(themeOption)}
         >
           {themeOption}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function HouseSignLabelToggle({
+  value,
+  onChange
+}: {
+  value: HouseSignLabelStyle;
+  onChange: (style: HouseSignLabelStyle) => void;
+}) {
+  return (
+    <div className="settings-theme-control" aria-label="House sign labels">
+      {(["text", "glyph"] as const).map((option) => (
+        <button
+          key={option}
+          type="button"
+          className={value === option ? "active" : ""}
+          aria-pressed={value === option}
+          onClick={() => onChange(option)}
+        >
+          {option}
         </button>
       ))}
     </div>
@@ -9632,7 +10240,9 @@ function ProfileView({
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
   const planetRows = natalPositions.filter((position) => !["Sun", "Moon", "True Node"].includes(position.planet));
   const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
-  const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
+  const chartSettings = normalizeChartSettings(profile.settings);
+  const lifeAreaFocus = chartSettings.lifeAreaFocus;
+  const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const aspectRows = rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus).slice(0, 8);
   const elementalBalance = natalElementBalance(natalPositions);
   const elementalSummary = elementalBalanceSummary(elementalBalance);
@@ -9682,6 +10292,7 @@ function ProfileView({
                   ascendantLongitude={natalSky.ascendantLongitude}
                   midheavenLongitude={natalSky.midheavenLongitude}
                   showHouses
+                  houseSignLabelStyle={houseSignLabelStyle}
                   variant="natal"
                 />
               </div>
@@ -9752,6 +10363,7 @@ function ProfileView({
           <div className="list you-list-card" aria-label="Big three">
             <PlacementTableRow
               glyph="↑"
+              pointName="Ascendant"
               title={displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
               description={displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
               variant="natal"
@@ -9762,6 +10374,7 @@ function ProfileView({
               dignity={natalSun ? placementDignity(natalSun) : null}
               glyph="☉"
               house={natalSun?.house ?? null}
+              pointName="Sun"
               title={natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
               variant="natal"
             />
@@ -9771,6 +10384,7 @@ function ProfileView({
               dignity={natalMoon ? placementDignity(natalMoon) : null}
               glyph="☽"
               house={natalMoon?.house ?? null}
+              pointName="Moon"
               title={natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
               variant="natal"
             />
@@ -9788,6 +10402,7 @@ function ProfileView({
                     glyph={position.glyph}
                     house={position.house}
                     key={position.planet}
+                    pointName={position.planet}
                     retrograde={position.motion === "retrograde"}
                     title={natalPlacementTitle(position)}
                     variant="natal"
@@ -9940,6 +10555,7 @@ function ManualChartsPanel({
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("natal");
+  const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -9957,7 +10573,9 @@ function ManualChartsPanel({
     () => upcomingBirthdayChiclet(charts, currentSky.generatedAt),
     [charts, currentSky.generatedAt]
   );
-  const lifeAreaFocus = normalizeChartSettings(profile.settings).lifeAreaFocus;
+  const chartSettings = normalizeChartSettings(profile.settings);
+  const lifeAreaFocus = chartSettings.lifeAreaFocus;
+  const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
   const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
     const selfInitials = profileInitials(profile.name, profile.email);
@@ -10034,6 +10652,7 @@ function ManualChartsPanel({
     setFriendsMainView(nextTab);
     setSelectedChartId(null);
     setFriendProfileTab("natal");
+    setRelationshipChartFullscreenMode(null);
     setSelectedSynastryContactId(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
@@ -10047,6 +10666,7 @@ function ManualChartsPanel({
     setFriendsMainView(nextTab);
     setSelectedChartId(null);
     setFriendProfileTab("natal");
+    setRelationshipChartFullscreenMode(null);
     setSelectedSynastryContactId(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
@@ -10061,6 +10681,7 @@ function ManualChartsPanel({
       setFriendsMainView(nextTab);
       setSelectedChartId(null);
       setFriendProfileTab("natal");
+      setRelationshipChartFullscreenMode(null);
       setSelectedSynastryContactId(null);
       setRelationshipComparisonPickerOpen(false);
       setOpenChartMenuId(null);
@@ -10144,6 +10765,32 @@ function ManualChartsPanel({
   useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
   }, [friendProfileTab]);
+
+  useEffect(() => {
+    if (!relationshipChartFullscreenMode) {
+      return;
+    }
+
+    if (!selectedChart || selectedChartIsEvent) {
+      setRelationshipChartFullscreenMode(null);
+      return;
+    }
+
+    if (relationshipChartFullscreenMode === "synastry" && !(selectedChart.natalChart && relationshipComparisonSky)) {
+      setRelationshipChartFullscreenMode(null);
+      return;
+    }
+
+    if (relationshipChartFullscreenMode === "composite" && !selectedCompositeSky) {
+      setRelationshipChartFullscreenMode(null);
+    }
+  }, [
+    relationshipChartFullscreenMode,
+    relationshipComparisonSky,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedCompositeSky
+  ]);
 
   useEffect(() => {
     if (!openChartMenuId) {
@@ -10651,6 +11298,31 @@ function ManualChartsPanel({
           </form>
         </ModalPortal>
       )}
+      {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
+        <RelationshipChartFullscreenOverlay
+          chart={selectedChart}
+          compositeSky={selectedCompositeSky}
+          comparisonName={relationshipComparisonName}
+          comparisonOptions={relationshipComparisonOptions}
+          comparisonPickerOpen={relationshipComparisonPickerOpen}
+          comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
+          comparisonIsSelf={relationshipComparisonIsSelf}
+          interAspects={selectedSynastryAspectLines}
+          mode={relationshipChartFullscreenMode}
+          houseSignLabelStyle={houseSignLabelStyle}
+          onClose={() => {
+            setRelationshipComparisonPickerOpen(false);
+            setRelationshipChartFullscreenMode(null);
+          }}
+          onComparisonSelect={(id) => {
+            setRelationshipComparisonChartId(id);
+            setRelationshipComparisonPickerOpen(false);
+          }}
+          onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+          profile={profile}
+          selectedComparisonSky={relationshipComparisonSky}
+        />
+      )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
         <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} chart profile`}>
           <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
@@ -10705,14 +11377,15 @@ function ManualChartsPanel({
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {[
-                    ["↑", `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `${selectedChart.displayName}'s chart meets the world through ${selectedFriendBigThree?.rising}.`],
-                    ["☉", `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.`],
-                    ["☽", `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.`]
-                  ].map(([glyph, title, body]) => (
+                    { glyph: "↑", pointName: "Ascendant", title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `${selectedChart.displayName}'s chart meets the world through ${selectedFriendBigThree?.rising}.` },
+                    { glyph: "☉", pointName: "Sun", title: `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, body: `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.` },
+                    { glyph: "☽", pointName: "Moon", title: `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, body: `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.` }
+                  ].map(({ glyph, pointName, title, body }) => (
                     <PlacementTableRow
                       description={body}
                       glyph={glyph}
                       key={title}
+                      pointName={pointName}
                       title={title}
                       variant="friend"
                     />
@@ -10774,9 +11447,6 @@ function ManualChartsPanel({
 
           {friendProfileTab === "synastry" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
-              <CompatInfoCard id="fc-syn-intro" label="What synastry shows" mode="synastry">
-                Where {selectedChart.displayName}'s planets meet yours and what happens when they do. Why some things come easily between you and others take more work.
-              </CompatInfoCard>
               <div className="friend-profile-copy-column">
                 <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
@@ -10801,9 +11471,9 @@ function ManualChartsPanel({
                         onClick={() => setSelectedSynastryContactId(contact.id)}
                       >
                         <span className="aspect-row-glyphs" aria-hidden="true">
-                          <span>{contact.friendPoint.glyph}</span>
-                          <span>{aspectGlyph(contact.aspect)}</span>
-                          <span>{contact.yourPoint.glyph}</span>
+                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} />
+                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} />
+                          <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} />
                         </span>
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>
@@ -10831,9 +11501,6 @@ function ManualChartsPanel({
 
           {friendProfileTab === "composite" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
-              <CompatInfoCard id="fc-composite-intro" label="What a composite chart is" mode="composite">
-                A composite chart is the relationship's own chart, built from the midpoints between two people's planets. It's read like a natal chart, but the placements describe the relationship instead of either person.
-              </CompatInfoCard>
               <div className="friend-profile-copy-column">
                 {selectedCompositeSky && (
                   <section className="composite-placements-section">
@@ -10897,6 +11564,7 @@ function ManualChartsPanel({
                       ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
                       midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
                       showHouses
+                      houseSignLabelStyle={houseSignLabelStyle}
                       variant="natal"
                     />
                   </div>
@@ -10916,6 +11584,7 @@ function ManualChartsPanel({
                       interAspects={selectedSynastryAspectLines}
                       ascendant={selectedChart.natalChart.ascendant}
                       ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                      houseSignLabelStyle={houseSignLabelStyle}
                     />
                   </div>
                 </div>
@@ -10945,6 +11614,7 @@ function ManualChartsPanel({
                       ascendantLongitude={selectedCompositeSky.ascendantLongitude}
                       midheavenLongitude={selectedCompositeSky.midheavenLongitude}
                       showHouses
+                      houseSignLabelStyle={houseSignLabelStyle}
                       variant="composite"
                     />
                   </div>

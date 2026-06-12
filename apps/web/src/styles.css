@@ -36,6 +36,10 @@
   --color-status-alert: #a8772f;
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
+  --filter-synastry-outer-glyph: none;
+  --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(58%) sepia(88%) saturate(1263%) hue-rotate(342deg) brightness(99%) contrast(91%);
+  --synastry-inner-glyph: #f28a3d;
   --color-dig-good: #3f7a3a;
   --color-dig-good-bg: rgba(63, 122, 58, 0.13);
   --color-aspect-hard: rgba(176, 112, 63, 0.62);
@@ -339,6 +343,10 @@
   --color-status-alert: #d6a24b;
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);
+  --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
+  --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(70%) sepia(82%) saturate(873%) hue-rotate(340deg) brightness(101%) contrast(98%);
+  --synastry-inner-glyph: #ffad66;
   --color-dig-good: #84c57c;
   --color-dig-good-bg: rgba(110, 180, 100, 0.16);
   --color-aspect-hard: rgba(214, 148, 94, 0.78);
@@ -444,6 +452,11 @@ body {
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   letter-spacing: var(--tracking-normal);
+}
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 button,
@@ -857,6 +870,32 @@ svg {
   flex: 0 0 auto;
 }
 
+.chart-shell--expandable {
+  position: relative;
+}
+
+.chart-fullscreen-trigger {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--ink);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.chart-fullscreen-trigger svg {
+  width: 18px;
+  height: 18px;
+}
+
 .chart-frame {
   display: block;
   width: 100%;
@@ -1140,6 +1179,14 @@ html[data-scrolled] .floating-back-button {
 
 .site-menu button:hover {
   background: var(--surface-2);
+}
+
+.site-menu button:focus {
+  background: var(--surface-2);
+}
+
+.site-menu button:focus-visible {
+  outline-offset: -3px;
 }
 
 .portal-grid:not(.chart-layout) {
@@ -1445,6 +1492,13 @@ html[data-scrolled] .floating-back-button {
   fill: inherit;
 }
 
+.planet-glyph-image,
+.zodiac-wheel__angle-icon,
+.zodiac-wheel__sign-icon image {
+  overflow: visible;
+  pointer-events: none;
+}
+
 .planet-degree {
   fill: var(--chart-label);
   font-family: var(--font-body);
@@ -1453,16 +1507,6 @@ html[data-scrolled] .floating-back-button {
   dominant-baseline: central;
   letter-spacing: 0;
   text-anchor: middle;
-}
-
-.wheel-placement__retrograde {
-  fill: var(--chart-glyph);
-  font-family: var(--font-body);
-  font-size: 10.5px;
-  font-weight: var(--weight-semibold);
-  dominant-baseline: text-after-edge;
-  text-anchor: start;
-  opacity: 0.9;
 }
 
 .planet-tick,
@@ -1578,9 +1622,16 @@ html[data-scrolled] .floating-back-button {
 }
 
 .inner-planet-labels .planet-glyph,
-.inner-planet-labels .planet-degree,
-.inner-planet-labels .wheel-placement__retrograde {
+.inner-planet-labels .planet-degree {
   fill: var(--synastry-accent);
+}
+
+.inner-planet-labels .planet-glyph {
+  fill: var(--synastry-inner-glyph);
+}
+
+.inner-planet-labels .planet-glyph-image {
+  filter: var(--filter-synastry-inner-glyph);
 }
 
 .sky-lunar-brief {
@@ -2749,6 +2800,46 @@ html[data-scrolled] .floating-back-button {
   text-align: center;
 }
 
+.placement-glyph-svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+}
+
+.sky-pl-glyph .placement-glyph-svg,
+.planet-placement-row__glyph .placement-glyph-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.placement-table-row__glyph .placement-glyph-svg {
+  width: 23px;
+  height: 23px;
+}
+
+.ro-screen .sky-pl-glyph .placement-glyph-svg,
+.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
+.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ro-cluster-badge .placement-glyph-svg,
+.ro-more-badge .placement-glyph-svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ro-screen .sky-pl-glyph .placement-glyph-svg,
+.ro-cluster-badge .placement-glyph-svg,
+.ro-more-badge .placement-glyph-svg,
+.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
+.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg,
+.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg {
+  filter: var(--filter-retrograde-glyph);
+}
+
 .sky-pl-body,
 .sky-pl-main {
   min-width: 0;
@@ -2886,6 +2977,7 @@ button.placement-table-row {
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--retrograde-accent) 24%, transparent);
 }
 
 .placement-table-row__body {
@@ -2995,6 +3087,7 @@ button.planet-placement-row {
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--retrograde-accent) 24%, transparent);
 }
 
 .planet-placement-row__body {
@@ -3288,6 +3381,21 @@ button.planet-placement-row {
   font-size: 21px;
   line-height: 1;
   white-space: nowrap;
+}
+
+.inline-glyph-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
+.inline-glyph-icon img {
+  display: block;
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
 }
 
 .aspect-row-copy {
@@ -4761,17 +4869,27 @@ button.planet-placement-row {
   background: var(--surface);
 }
 
+.synastry-placement-column-inner .synastry-placement-table {
+  border-color: color-mix(in srgb, var(--synastry-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+}
+
 .synastry-placement-row {
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr) auto;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
   align-items: center;
   min-width: 0;
-  gap: 12px;
+  gap: 10px;
   padding: 12px 14px;
   border: 0;
   border-bottom: 1px solid var(--line-2);
   background: var(--surface);
   overflow: visible;
+}
+
+.synastry-placement-column-inner .synastry-placement-row {
+  border-bottom-color: color-mix(in srgb, var(--synastry-accent) 14%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
 }
 
 .friend-chart-page .synastry-placement-row {
@@ -4795,27 +4913,48 @@ button.planet-placement-row {
   border-bottom: 0;
 }
 
+.synastry-placement-lead {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 2px;
+}
+
 .synastry-placement-glyph {
-  color: var(--ink);
+  position: relative;
+  display: inline-flex;
+  place-items: center;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 15px;
+  font-size: 19px;
   line-height: 1;
 }
 
-.synastry-placement-row.is-retrograde .synastry-placement-glyph {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  background: var(--retrograde-bg);
-  color: var(--retrograde-accent);
+.synastry-rx-glyph-svg {
+  display: block;
+  width: 23px;
+  height: auto;
+  filter: var(--filter-synastry-outer-glyph);
+  overflow: visible;
+  object-fit: contain;
 }
 
-.synastry-placement-column-inner .synastry-placement-glyph,
-.synastry-placement-column-inner .synastry-placement-sign {
-  color: var(--synastry-accent);
+.synastry-placement-rx-mark {
+  color: var(--retrograde-accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.synastry-placement-column-inner .synastry-rx-glyph-svg {
+  filter: var(--filter-synastry-inner-glyph);
 }
 
 .synastry-placement-sign,
@@ -4838,6 +4977,11 @@ button.planet-placement-row {
   font-size: 15px;
   font-weight: var(--weight-medium);
   line-height: 1.12;
+}
+
+.synastry-placement-column-inner .synastry-placement-glyph,
+.synastry-placement-column-inner .synastry-placement-sign {
+  color: var(--synastry-accent);
 }
 
 .synastry-placement-degree,
@@ -6055,6 +6199,99 @@ body.modal-open {
   padding: 22px;
 }
 
+.chart-fullscreen-panel {
+  width: min(1240px, 100%);
+  max-height: min(960px, calc(100svh - 28px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.24);
+}
+
+.chart-fullscreen-overlay {
+  --chart-fullscreen-wheel-size: min(
+    calc(100svh - 220px),
+    calc(100vw - 180px),
+    820px
+  );
+  --chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 760px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  min-height: min(960px, calc(100svh - 28px));
+  padding: clamp(18px, 3vw, 30px);
+  box-sizing: border-box;
+}
+
+.chart-fullscreen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.chart-fullscreen-title {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.chart-fullscreen-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.chart-fullscreen-wheel-wrap {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  overflow: hidden;
+  padding-top: clamp(4px, 1vh, 12px);
+}
+
+.chart-shell--fullscreen {
+  width: var(--chart-fullscreen-wheel-size);
+  height: var(--chart-fullscreen-wheel-size);
+  max-width: min(100%, 820px);
+  max-height: min(100%, 820px);
+  justify-self: center;
+  margin-inline: auto;
+}
+
+.chart-fullscreen-footer {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 12px;
+}
+
+.chart-fullscreen-controls,
+.chart-fullscreen-legend,
+.chart-fullscreen-footer .friend-compare-control {
+  width: min(100%, var(--chart-fullscreen-rail-width));
+  max-width: var(--chart-fullscreen-rail-width);
+}
+
+.chart-fullscreen-footer .friend-chart-legend {
+  margin-top: -2px;
+}
+
 .friend-compare-modal .friend-compare-list {
   margin-top: 14px;
 }
@@ -6680,6 +6917,18 @@ body.modal-open {
   color: var(--ink);
 }
 
+.theme-dark .synastry-placement-column-inner .synastry-placement-table,
+[data-theme="dark"] .synastry-placement-column-inner .synastry-placement-table {
+  border-color: color-mix(in srgb, var(--synastry-accent) 24%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
+}
+
+.theme-dark .synastry-placement-column-inner .synastry-placement-row,
+[data-theme="dark"] .synastry-placement-column-inner .synastry-placement-row {
+  border-bottom-color: color-mix(in srgb, var(--synastry-accent) 18%, transparent);
+  background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
+}
+
 .theme-dark .chart-row:not(.manual-chart-row):hover,
 .theme-dark .sky-pl-row:hover,
 .theme-dark .placement-row:hover,
@@ -7241,6 +7490,14 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
     max-width: calc(100vw - 40px);
   }
 
+  .date-picker,
+  .hero-city-picker {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2px;
+  }
+
   .page-shell,
   .page-shell--narrow,
   .portal-grid.page-shell,
@@ -7319,7 +7576,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   }
 
   .synastry-placement-row {
-    grid-template-columns: 30px minmax(0, 1fr) auto;
+    grid-template-columns: 62px minmax(0, 1fr) auto;
     grid-template-areas:
       "glyph sign degree"
       "glyph house house";
@@ -7327,7 +7584,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
     padding: 16px 18px;
   }
 
-  .synastry-placement-glyph {
+  .synastry-placement-lead {
     grid-area: glyph;
   }
 
@@ -7529,5 +7786,35 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .settings-theme-control button {
     min-width: 96px;
     padding-inline: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .chart-fullscreen-panel {
+    width: min(100%, calc(100vw - 20px));
+    max-height: calc(100svh - 16px);
+    border-radius: 22px;
+  }
+
+  .chart-fullscreen-overlay {
+    --chart-fullscreen-wheel-size: min(
+      calc(100svh - 206px),
+      calc(100vw - 32px)
+    );
+    --chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 100%);
+    min-height: calc(100svh - 16px);
+    padding: 16px 14px 18px;
+    gap: 12px;
+  }
+
+  .chart-shell--fullscreen {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .chart-fullscreen-controls,
+  .chart-fullscreen-legend,
+  .chart-fullscreen-footer .friend-compare-control {
+    width: min(100%, var(--chart-fullscreen-rail-width));
   }
 }
