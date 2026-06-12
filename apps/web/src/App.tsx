@@ -27,10 +27,15 @@ import { isValidElement, lazy, Suspense, useEffect, useId, useMemo, useRef, useS
 import type { CSSProperties, FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
+import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
+import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { SegmentedControl } from "./components/SegmentedControl";
+import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
+import { SkyTodayView } from "./features/sky/SkyToday";
+import { YouPage } from "./features/you/YouPage";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
   getAuthAccount,
@@ -2127,17 +2132,6 @@ function providerLabel(provider: SignupProvider) {
   return labels[provider];
 }
 
-function profileInitials(name: string, email: string) {
-  const source = name.trim() || email.split("@")[0] || "tldr";
-  const parts = source.split(/\s+/).filter(Boolean);
-
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-  }
-
-  return source.slice(0, 2).toUpperCase();
-}
-
 function profileFirstName(name: string, email: string) {
   const source = name.trim() || email.split("@")[0] || "Profile";
   return source.split(/\s+/).filter(Boolean)[0] ?? "Profile";
@@ -2252,18 +2246,6 @@ function chartFlowStepsLeft(profile: UserProfile) {
   ].filter(Boolean).length;
 }
 
-function ProfileAvatar({ profile, size = "regular" }: { profile: UserProfile; size?: "regular" | "large" }) {
-  return (
-    <span className={`profile-avatar profile-avatar-${size}`} aria-hidden="true">
-      {profile.avatarUrl ? (
-        <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" />
-      ) : (
-        profileInitials(profile.name, profile.email)
-      )}
-    </span>
-  );
-}
-
 function SmileNavIcon({ size = 18 }: { size?: number }) {
   return (
     <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
@@ -2281,52 +2263,6 @@ function FriendsNavIcon({ size = 20 }: { size?: number }) {
       <circle cx="10" cy="9" r="6.25" stroke="currentColor" strokeWidth="2" />
       <circle cx="18" cy="9" r="6.25" stroke="currentColor" strokeWidth="2" />
     </svg>
-  );
-}
-
-function SynastryInfoIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="9" cy="12" r="6" />
-      <circle cx="15" cy="12" r="6" />
-    </svg>
-  );
-}
-
-function CompositeInfoIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5" />
-      <polygon points="12,3.5 19.4,16.25 4.6,16.25" />
-      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="3.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="19.4" cy="16.25" r="1" fill="currentColor" stroke="none" />
-      <circle cx="4.6" cy="16.25" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function CompatInfoCard({
-  children,
-  id,
-  label,
-  mode
-}: {
-  children: ReactNode;
-  id: string;
-  label: string;
-  mode: "synastry" | "composite";
-}) {
-  return (
-    <div className="compat-info">
-      <span className="compat-info-ic" aria-hidden="true">
-        {mode === "synastry" ? <SynastryInfoIcon /> : <CompositeInfoIcon />}
-      </span>
-      <div className="compat-info-body">
-        <span className="compat-info-lab">{label}</span>
-        <p className="compat-intro friend-compat-intro" id={id}>{children}</p>
-      </div>
-    </div>
   );
 }
 
@@ -8644,60 +8580,30 @@ function TodayView({
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   return (
-    <>
-      <PlacementView
-        positions={positions}
-        aspects={aspects}
-        generatedAt={generatedAt}
-        generatedContent={generatedContent}
-        lifeAreaFocus={lifeAreaFocus}
-        onOpenDetail={onOpenDetail}
-      />
-      <ActiveAspects
-        aspects={aspects}
-        positions={positions}
-        generatedAt={generatedAt}
-        generatedContent={generatedContent}
-        lifeAreaFocus={lifeAreaFocus}
-        onOpenDetail={onOpenDetail}
-      />
-    </>
+    <SkyTodayView
+      placements={(
+        <PlacementTable
+          positions={positions}
+          aspects={aspects}
+          generatedAt={generatedAt}
+          generatedContent={generatedContent}
+          lifeAreaFocus={lifeAreaFocus}
+          onOpenDetail={onOpenDetail}
+        />
+      )}
+      aspects={(
+        <ActiveAspects
+          aspects={aspects}
+          positions={positions}
+          generatedAt={generatedAt}
+          generatedContent={generatedContent}
+          lifeAreaFocus={lifeAreaFocus}
+          onOpenDetail={onOpenDetail}
+        />
+      )}
+    />
   );
 }
-
-function PlacementView({
-  positions,
-  aspects,
-  generatedAt,
-  generatedContent,
-  lifeAreaFocus,
-  onOpenDetail
-}: {
-  positions: PlanetPosition[];
-  aspects: SkySnapshot["aspects"];
-  generatedAt: string;
-  generatedContent: GeneratedContentMap;
-  lifeAreaFocus: LifeAreaFocus[];
-  onOpenDetail: (detail: SkyDetail) => void;
-}) {
-  return (
-    <section className="placement-section chart-section" aria-label="Placements">
-      <div className="placements-heading">
-        <span className="eyebrow section-label chart-section-title">Placements</span>
-      </div>
-
-      <PlacementTable
-        positions={positions}
-        aspects={aspects}
-        generatedAt={generatedAt}
-        generatedContent={generatedContent}
-        lifeAreaFocus={lifeAreaFocus}
-        onOpenDetail={onOpenDetail}
-      />
-    </section>
-  );
-}
-
 function aspectTone(type: string) {
   if (["trine", "sextile"].includes(type)) {
     return "Flow";
@@ -9857,79 +9763,6 @@ function GuestSettingsView({
   );
 }
 
-function AppearanceToggle({
-  theme,
-  onThemeChange
-}: {
-  theme: UiTheme;
-  onThemeChange: (theme: UiTheme) => void;
-}) {
-  return (
-    <div className="settings-theme-control" aria-label="Theme">
-      {(["light", "dark"] as const).map((themeOption) => (
-        <button
-          key={themeOption}
-          type="button"
-          className={theme === themeOption ? "active" : ""}
-          aria-pressed={theme === themeOption}
-          onClick={() => onThemeChange(themeOption)}
-        >
-          {themeOption}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function HouseSignLabelToggle({
-  value,
-  onChange
-}: {
-  value: HouseSignLabelStyle;
-  onChange: (style: HouseSignLabelStyle) => void;
-}) {
-  return (
-    <div className="settings-theme-control" aria-label="House sign labels">
-      {(["text", "glyph"] as const).map((option) => (
-        <button
-          key={option}
-          type="button"
-          className={value === option ? "active" : ""}
-          aria-pressed={value === option}
-          onClick={() => onChange(option)}
-        >
-          {option}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function SwitchControl({
-  checked,
-  disabled = false,
-  label,
-  onChange
-}: {
-  checked: boolean;
-  disabled?: boolean;
-  label: string;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={`settings-switch ${checked ? "is-on" : ""}`}
-      aria-label={label}
-      aria-pressed={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-    >
-      <span aria-hidden="true" />
-    </button>
-  );
-}
-
 function AccountView({
   profile,
   onSignOut,
@@ -9997,7 +9830,7 @@ function AccountView({
 
       <section className="settings-card settings-account-card" aria-label="Account details">
         <div className="settings-profile-row">
-          <ProfileAvatar profile={profile} size="large" />
+          <ProfileAvatar avatarUrl={profile.avatarUrl} email={profile.email} name={profile.name} size="large" />
           <div>
             <h3>{profile.name}</h3>
             <span>{profile.email}</span>
@@ -10113,9 +9946,7 @@ function ProfileView({
   const savedBirthCity = primaryChart?.birthCity && primaryChart.birthCity !== "Birth city needed" ? primaryChart.birthCity : "";
   const hasSavedBirthDetails = Boolean(savedBirthDate && savedBirthTime && savedBirthCity);
   const hasSavedCurrentCity = Boolean(profile.currentLocation?.trim());
-  const [profileTab, setProfileTab] = useState<"transits" | "chart">("chart");
   const setupStepsLeft = chartFlowStepsLeft(profile);
-  const summaryBirthDateDisplay = savedBirthDate ? formatProfileBirthDateLong(savedBirthDate) : "";
   const unknownBirthTime = savedBirthTime === "Time unknown";
   const calculatedBigThree = natalSky ? natalBigThreeFromSky(natalSky, unknownBirthTime) : null;
   const profileSun = profile.sun && profile.sun !== "Sun pending" ? profile.sun : "";
@@ -10145,277 +9976,167 @@ function ProfileView({
     ? "Pluto sits angular in your 7th house, so partnership is where your deepest growth and power dynamics often play out. Nothing about love stays surface-level."
     : `${natalSun ? natalPlacementTitle(natalSun) : `Sun in ${safeSun}`} sets the center of gravity, while ${safeMoon} and ${safeRising} shape how the chart meets the world.`;
   const showNatalSignatures = false;
-
-  if (!hasSavedBirthDetails) {
-    return (
-      <section className="you-empty-state" aria-label="Create your chart">
-        <h2>Create your chart.</h2>
-        <p>
-          Add your birth details to see your natal placements and what today's sky may be bringing up.
-        </p>
-        <button type="button" className="you-empty-cta" onClick={onCreateChart}>
-          <span className="you-empty-cta-icon" aria-hidden="true">
-            <Sparkles size={22} />
-          </span>
-          <span className="you-empty-cta-copy">
-            <strong>Create your chart</strong>
-            <em>{setupStepsLeft} steps left</em>
-          </span>
-        </button>
-        <div className="you-empty-features" aria-label="Chart unlocks">
-          <span>☉ Placements</span>
-          <span>△ Aspects</span>
-          <span>↗ Daily transits</span>
-        </div>
-      </section>
+  const bigThreeRows = [
+    <PlacementTableRow
+      glyph="↑"
+      pointName="Ascendant"
+      title={displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
+      description={displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
+      variant="natal"
+      key="ascendant"
+    />,
+    <PlacementTableRow
+      degree={natalSun ? formatPlanetDegree(natalSun) : null}
+      description={natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}
+      dignity={natalSun ? placementDignity(natalSun) : null}
+      glyph="☉"
+      house={natalSun?.house ?? null}
+      pointName="Sun"
+      title={natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
+      variant="natal"
+      key="sun"
+    />,
+    <PlacementTableRow
+      degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
+      description={natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}
+      dignity={natalMoon ? placementDignity(natalMoon) : null}
+      glyph="☽"
+      house={natalMoon?.house ?? null}
+      pointName="Moon"
+      title={natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
+      variant="natal"
+      key="moon"
+    />
+  ];
+  const planetPlacementRows = planetRows.map((position) => (
+    <PlanetPlacementRow
+      degree={formatPlanetDegree(position)}
+      description={natalPlacementDescription(position.planet)}
+      dignity={placementDignity(position)}
+      glyph={position.glyph}
+      house={position.house}
+      key={position.planet}
+      pointName={position.planet}
+      retrograde={position.motion === "retrograde"}
+      title={natalPlacementTitle(position)}
+      variant="natal"
+    />
+  ));
+  const natalAspectItems = natalAspectRows.map((aspect) => {
+    const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
+    const content = fallbackFromHook(
+      "you.natal-aspect",
+      {
+        planetA: aspect.from,
+        aspect: aspect.type,
+        planetB: aspect.to
+      },
+      approvedVoiceOrKnowledgeFallback(contentKey)
     );
-  }
+    const generated = liveGeneratedContent(generatedContent, contentKey);
+    const rowSummary = liveGeneratedSummary(generated, content.summary);
+
+    return (
+      <div
+        className="aspect-row aspect-row-static"
+        key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+      >
+        <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+        <span className="aspect-row-copy">
+          <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
+          <p>{rowSummary}</p>
+        </span>
+        <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+          <span className="aspect-row-dot" aria-hidden="true" />
+          <span>{wholeDegreeOrb(aspect.orb)}</span>
+        </span>
+      </div>
+    );
+  });
+  const updateAspectRows = aspectRows.map((transit) => {
+    const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
+    const content = fallbackFromHook(
+      "you.transit-to-natal",
+      {
+        transitPlanet: transit.transitPlanet,
+        aspect: transit.aspect,
+        natalPoint: transit.natalPoint
+      },
+      approvedVoiceOrKnowledgeFallback(contentKey)
+    );
+    const generated = liveGeneratedContent(generatedContent, contentKey);
+    const rowSummary = liveGeneratedSummary(generated, content.summary);
+    const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
+    const metaLabel = isBackgroundUpdate ? "background" : transit.significance || "active";
+
+    return (
+      <button
+        type="button"
+        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
+        key={transit.id}
+        onClick={() => setSelectedTransitId(transit.id)}
+      >
+        <span className="updates-aspect-row__glyphs">
+          <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
+        </span>
+        <span className="updates-aspect-row__content">
+          <span className="updates-aspect-row__title">
+            {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
+          </span>
+          <span className="updates-aspect-row__meta-line">
+            {metaLabel} · {transit.orb}
+          </span>
+          <span className="updates-aspect-row__description">{rowSummary}</span>
+        </span>
+        <span className="updates-aspect-row__meta" aria-label={`${metaLabel}, ${transit.orb} orb`}>
+          <span className="updates-aspect-row__dot" aria-hidden="true" />
+          <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
+        </span>
+      </button>
+    );
+  });
+  const natalChart = natalSky ? (
+    <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
+      <div className="chart-frame">
+        <SkyWheel
+          positions={natalSky.positions}
+          aspects={natalSky.aspects}
+          ascendant={natalSky.ascendant}
+          ascendantLongitude={natalSky.ascendantLongitude}
+          midheavenLongitude={natalSky.midheavenLongitude}
+          showHouses
+          houseSignLabelStyle={houseSignLabelStyle}
+          variant="natal"
+        />
+      </div>
+    </div>
+  ) : null;
 
   return (
-    <section className="you-page you-chart-page page-shell" aria-label="You">
-      <div className="chart-layout">
-        <aside className="chart-layout__visual" aria-label="Natal chart">
-          {natalSky && (
-            <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
-              <div className="chart-frame">
-                <SkyWheel
-                  positions={natalSky.positions}
-                  aspects={natalSky.aspects}
-                  ascendant={natalSky.ascendant}
-                  ascendantLongitude={natalSky.ascendantLongitude}
-                  midheavenLongitude={natalSky.midheavenLongitude}
-                  showHouses
-                  houseSignLabelStyle={houseSignLabelStyle}
-                  variant="natal"
-                />
-              </div>
-            </div>
-          )}
-          {!natalSky && (
-            <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
-              <span>Chart</span>
-              <h3>Reading your chart.</h3>
-              <p>The chart wheel and core signatures will appear as soon as the calculation finishes.</p>
-            </section>
-          )}
-        </aside>
-
-        <main className="chart-layout__content">
-      <div className="you-profile-card" aria-label="Profile summary">
-        <span className="you-profile-monogram" aria-hidden="true">
-          {profileInitials(profile.name, profile.email)}
-        </span>
-        <div className="you-profile-copy">
-          <h2>{profile.name}</h2>
-          {signaturesReady ? (
-            <div className="you-signature-row" aria-label="Big three">
-              <span><span aria-hidden="true">☉</span>{displaySun}</span>
-              <span><span aria-hidden="true">☽</span>{displayMoon}</span>
-              <span><span aria-hidden="true">↑</span>{displayRising}</span>
-            </div>
-          ) : (
-            <p className="you-profile-status">Calculating chart signatures...</p>
-          )}
-        </div>
-      </div>
-
-      <SegmentedControl
-        id="you-subtabs"
-        value={profileTab}
-        options={[
-          { value: "transits", label: "Updates" },
-          { value: "chart", label: "Natal Chart" }
-        ]}
-        onChange={setProfileTab}
-        ariaLabel="Profile sections"
-        className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
-      />
-
-      {profileTab === "chart" && (
-        <div className="subpane" id="sub-chart">
-          {showNatalSignatures && (
-            <>
-              <span className="eyebrow section-label">Your signatures</span>
-              <section className="you-signatures-card" aria-label="Your signatures">
-                <div className="you-signatures-main">
-                  <h3>{signatureTitle}</h3>
-                  <p>{signatureBody}</p>
-                </div>
-                <div className="elemental-balance" aria-label="Elemental balance">
-                  <div className="elemental-balance-head">
-                    <span className="eyebrow section-label">Elemental balance</span>
-                    <span>{elementalSummary.label}</span>
-                  </div>
-                  <p>{elementalSummary.sentence}</p>
-                </div>
-              </section>
-            </>
-          )}
-
-          <span className="eyebrow section-label">Big Three</span>
-          <div className="list you-list-card" aria-label="Big three">
-            <PlacementTableRow
-              glyph="↑"
-              pointName="Ascendant"
-              title={displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
-              description={displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
-              variant="natal"
-            />
-            <PlacementTableRow
-              degree={natalSun ? formatPlanetDegree(natalSun) : null}
-              description={natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}
-              dignity={natalSun ? placementDignity(natalSun) : null}
-              glyph="☉"
-              house={natalSun?.house ?? null}
-              pointName="Sun"
-              title={natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
-              variant="natal"
-            />
-            <PlacementTableRow
-              degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
-              description={natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}
-              dignity={natalMoon ? placementDignity(natalMoon) : null}
-              glyph="☽"
-              house={natalMoon?.house ?? null}
-              pointName="Moon"
-              title={natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
-              variant="natal"
-            />
-          </div>
-
-          {planetRows.length > 0 && (
-            <>
-              <span className="eyebrow section-label">Planets</span>
-              <div className="list you-list-card planet-placement-list" aria-label="Planets">
-                {planetRows.map((position) => (
-                  <PlanetPlacementRow
-                    degree={formatPlanetDegree(position)}
-                    description={natalPlacementDescription(position.planet)}
-                    dignity={placementDignity(position)}
-                    glyph={position.glyph}
-                    house={position.house}
-                    key={position.planet}
-                    pointName={position.planet}
-                    retrograde={position.motion === "retrograde"}
-                    title={natalPlacementTitle(position)}
-                    variant="natal"
-                  />
-                ))}
-              </div>
-            </>
-          )}
-
-          {natalAspectRows.length > 0 && (
-            <>
-              <span className="eyebrow section-label">Aspects</span>
-              <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects">
-                {natalAspectRows.map((aspect) => {
-                  const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
-                  const content = fallbackFromHook(
-                    "you.natal-aspect",
-                    {
-                      planetA: aspect.from,
-                      aspect: aspect.type,
-                      planetB: aspect.to
-                    },
-                    approvedVoiceOrKnowledgeFallback(contentKey)
-                  );
-                  const generated = liveGeneratedContent(generatedContent, contentKey);
-                  const rowSummary = liveGeneratedSummary(generated, content.summary);
-
-                  return (
-                    <div
-                      className="aspect-row aspect-row-static"
-                      key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                    >
-                      <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                      <span className="aspect-row-copy">
-                        <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                        <p>{rowSummary}</p>
-                      </span>
-                      <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                        <span className="aspect-row-dot" aria-hidden="true" />
-                        <span>{wholeDegreeOrb(aspect.orb)}</span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {profileTab === "transits" && (
-        <div className="subpane updates-section" id="sub-transits">
-          <span className="eyebrow section-label">Today’s updates to your chart</span>
-          {!hasSavedCurrentCity && (
-            <section className="you-empty-card" aria-label="Current city needed">
-              <span>Updates</span>
-              <h3>Add your current city.</h3>
-              <p>We need your current city to localize today’s sky against your chart.</p>
-              <button type="button" onClick={onCreateChart}>Add current city →</button>
-            </section>
-          )}
-          {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
-            <div className="updates-aspect-list" aria-label="Today’s updates to your chart">
-              {aspectRows.map((transit) => {
-                const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
-                const content = fallbackFromHook(
-                  "you.transit-to-natal",
-                  {
-                    transitPlanet: transit.transitPlanet,
-                    aspect: transit.aspect,
-                    natalPoint: transit.natalPoint
-                  },
-                  approvedVoiceOrKnowledgeFallback(contentKey)
-                );
-                const generated = liveGeneratedContent(generatedContent, contentKey);
-                const rowSummary = liveGeneratedSummary(generated, content.summary);
-                const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
-                const metaLabel = isBackgroundUpdate ? "background" : transit.significance || "active";
-
-                return (
-                  <button
-                    type="button"
-                    className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
-                    key={transit.id}
-                    onClick={() => setSelectedTransitId(transit.id)}
-                  >
-                    <span className="updates-aspect-row__glyphs">
-                      <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
-                    </span>
-                    <span className="updates-aspect-row__content">
-                      <span className="updates-aspect-row__title">
-                        {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
-                      </span>
-                      <span className="updates-aspect-row__meta-line">
-                        {metaLabel} · {transit.orb}
-                      </span>
-                      <span className="updates-aspect-row__description">{rowSummary}</span>
-                    </span>
-                    <span className="updates-aspect-row__meta" aria-label={`${metaLabel}, ${transit.orb} orb`}>
-                      <span className="updates-aspect-row__dot" aria-hidden="true" />
-                      <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (
-            <section className="you-empty-card" aria-label="Transit setup">
-              <span>Updates</span>
-              <h3>No major updates to your chart today.</h3>
-              <p>The sky is still moving, but nothing is pressing hard on your natal placements right now.</p>
-              <button type="button" onClick={onCreateChart}>Edit details →</button>
-            </section>
-          )}
-        </div>
-      )}
-        </main>
-      </div>
-    </section>
+    <YouPage
+      aspectRows={updateAspectRows}
+      bigThreeRows={bigThreeRows}
+      displayMoon={displayMoon}
+      displayRising={displayRising}
+      displaySun={displaySun}
+      elementalSummaryLabel={elementalSummary.label}
+      elementalSummarySentence={elementalSummary.sentence}
+      hasSavedBirthDetails={hasSavedBirthDetails}
+      hasSavedCurrentCity={hasSavedCurrentCity}
+      natalAspectRows={natalAspectItems}
+      natalChart={natalChart}
+      natalChartPending={!natalSky}
+      onCreateChart={onCreateChart}
+      planetRows={planetPlacementRows}
+      profileEmail={profile.email}
+      profileName={profile.name}
+      setupStepsLeft={setupStepsLeft}
+      showNatalSignatures={showNatalSignatures}
+      signatureBody={signatureBody}
+      signatureTitle={signatureTitle}
+      signaturesReady={signaturesReady}
+      transitsDrawn={transitsDrawn}
+    />
   );
 }
 
@@ -10878,31 +10599,13 @@ function ManualChartsPanel({
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
 
   return (
-    <section className={`friends-page page-shell manual-charts-pane${isFriendDetailView ? ` friend-detail-page friend-detail-page--${friendProfileTab}` : ""}`} aria-label="Friends">
-      {resolvedFriendsMainView === "profile" && selectedChart ? (
-        <div className="page-back-row friend-back-row friend-detail-back-row">
-          <button className="friends-back-button floating-back-button" type="button" onClick={() => selectFriendsTab("charts")}>
-            <ChevronLeft size={21} aria-hidden="true" />
-            <span>Charts</span>
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="friends-page-heading">
-            <h2>friends.</h2>
-          </div>
-          <SegmentedControl<Exclude<FriendsMainView, "profile">>
-            value={resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView}
-            options={[
-              { value: "circle", label: "Circle" },
-              { value: "charts", label: "Charts" }
-            ]}
-            onChange={(view) => selectFriendsTab(view)}
-            ariaLabel="Friends views"
-            className="app-tabs profile-tabs friends-top-tabs friends-tabs"
-          />
-        </>
-      )}
+    <FriendsPageShell
+      activeView={resolvedFriendsMainView}
+      detailVariant={friendProfileTab}
+      isDetailView={isFriendDetailView}
+      onBackToCharts={() => selectFriendsTab("charts")}
+      onSelectView={(view) => selectFriendsTab(view)}
+    >
 
       {resolvedFriendsMainView === "circle" && (
         <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
@@ -11528,6 +11231,6 @@ function ManualChartsPanel({
           </div>
         </section>
       )}
-    </section>
+    </FriendsPageShell>
   );
 }
