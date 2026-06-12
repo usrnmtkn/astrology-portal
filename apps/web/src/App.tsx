@@ -375,6 +375,7 @@ type SkyDetail = {
   kicker: string;
   title: string;
   meta: string;
+  retrograde?: boolean;
   body: ReactNode[];
   sections?: Array<{
     heading: string;
@@ -2561,7 +2562,7 @@ function SkyDetailArticle({
       <article className="article-shell sky-detail-article">
         <header className="article-hero sky-detail-hero">
           <div className="article-hero__kicker-row">
-            <div className="article-symbol-badge sky-detail-glyph" aria-hidden="true">{detail.glyph}</div>
+            <div className={`article-symbol-badge sky-detail-glyph${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}</div>
             {detail.kicker ? <span className="article-kicker sky-detail-kicker">{detail.kicker}</span> : null}
           </div>
           <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
@@ -6217,7 +6218,11 @@ function PlacementTableRow({
   variant?: "natal" | "friend" | "composite";
 }) {
   const meta = placementTableMeta(house, degree);
-  const className = `placement-table-row placement-table-row--${variant}`;
+  const className = [
+    "placement-table-row",
+    `placement-table-row--${variant}`,
+    retrograde ? "is-retrograde" : ""
+  ].filter(Boolean).join(" ");
   const content = (
     <>
       <span className="placement-table-row__glyph" aria-hidden="true">{glyph}</span>
@@ -6795,7 +6800,7 @@ function SynastryPlacementColumn({
       {placements.length > 0 ? (
         <div className="synastry-placement-table">
           {placements.map((position) => (
-            <div className="synastry-placement-row" key={`${ringLabel}-${position.planet}`}>
+            <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${ringLabel}-${position.planet}`}>
               <span className="synastry-placement-glyph" aria-hidden="true">{position.glyph}</span>
               <span className="synastry-placement-sign">{position.sign}</span>
               <span className="synastry-placement-meta">
@@ -7557,6 +7562,85 @@ function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDat
   return duration ? `${duration} RETROGRADE` : null;
 }
 
+const personalRetrogradePlanets = new Set(["Mercury", "Venus", "Mars"]);
+
+function isPersonalRetrogradePlanet(planet: string) {
+  return personalRetrogradePlanets.has(planet);
+}
+
+function formatRetrogradeCountChip(retrogradeStartDate?: string, retrogradeEndDate?: string) {
+  if (!retrogradeStartDate || !retrogradeEndDate) {
+    return null;
+  }
+
+  const duration = getDurationParts(retrogradeStartDate, retrogradeEndDate);
+
+  if (!duration) {
+    return null;
+  }
+
+  if (duration.days < 1) {
+    return "TODAY";
+  }
+
+  if (duration.days < 30) {
+    return `${duration.days}D`;
+  }
+
+  if (duration.days < 84) {
+    return `${Math.max(1, Math.round(duration.days / 7))}W`;
+  }
+
+  if (duration.months < 12) {
+    return `${duration.months}M`;
+  }
+
+  return duration.remainingMonths > 0
+    ? `${duration.years}Y ${duration.remainingMonths}M`
+    : `${duration.years}Y`;
+}
+
+function joinRetrogradeNames(names: string[]) {
+  if (names.length <= 1) {
+    return names[0] ?? "";
+  }
+
+  if (names.length === 2) {
+    return `${names[0]} and ${names[1]}`;
+  }
+
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+function retrogradeSummaryCaption(personal: PlanetPosition[], outer: PlanetPosition[]) {
+  if (personal.length > 0 && outer.length > 0) {
+    const personalNames = joinRetrogradeNames(personal.map((position) => position.planet));
+    const singular = personal.length === 1;
+
+    return `${personalNames} ${singular ? "is" : "are"} the ${singular ? "one" : "ones"} you may feel most in daily life. The slower retrogrades work in the background, helping you revisit old patterns, notice what is no longer working, and make adjustments over time.`;
+  }
+
+  if (personal.length > 0) {
+    const personalNames = joinRetrogradeNames(personal.map((position) => position.planet));
+
+    return `${personalNames} ${personal.length === 1 ? "is" : "are"} retrograde among your faster, daily-felt planets - expect plans, feelings, and timing to ask for a second pass.`;
+  }
+
+  return "These are all slow outer-planet retrogrades. They work quietly in the background, helping you revisit old patterns and make adjustments over the months ahead.";
+}
+
+function retrogradePlacementTitle(position: PlanetPosition) {
+  return `${position.planet} Rx in ${position.sign}`;
+}
+
+function retrogradeRangeText(window?: RetrogradeWindow) {
+  if (!window) {
+    return "Dates calculating";
+  }
+
+  return formatRetrogradeDateRange(window.retrogradeStart, window.retrogradeEnd);
+}
+
 function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
   return signTransitEndDate ? `${sign} chapter until ${formatRetrogradeDate(signTransitEndDate)}` : null;
 }
@@ -7728,82 +7812,182 @@ function RetrogradeCallout({
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const retrogrades = activeRetrogradePositions(positions, generatedAt);
+  const [showOuterRetrogrades, setShowOuterRetrogrades] = useState(false);
 
   if (retrogrades.length === 0) {
     return null;
   }
 
-  return (
-    <section className="retrograde-section chart-section" aria-label="Retrograde planets">
-      <span className="section-label">Retrogrades</span>
-      <div className="retro-list">
-        {retrogrades.map((position) => {
-          const title = natalPlacementTitle(position);
-          const contentKey = placementContentId(position.planet, position.sign, "sky");
-          const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-          const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
-          const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
-          const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
-          const durationDescription = retrogradeWindow
-            ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
-            : null;
-          const timelineLines = retrogradeTimelineLines(retrogradeWindow);
-          const fallbackDetailParagraphs = [
-            retrogradeKnowledgeCopy(position, generated, content),
-            generated?.summary,
-            content.body,
-            content.summary,
-            ...content.detailParagraphs
-          ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
-          const detailParagraphs = [
-            ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
-            ...(durationLine
-              ? [
-                  <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
-                    <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
-                  </span>
-                ]
-              : []),
-            ...liveGeneratedBody(generated, fallbackDetailParagraphs)
-          ];
+  const personalRetrogrades = retrogrades.filter((position) => isPersonalRetrogradePlanet(position.planet));
+  const outerRetrogrades = retrogrades.filter((position) => !isPersonalRetrogradePlanet(position.planet));
+  const showSummary = retrogrades.length >= 3;
+  const eyebrow = retrogrades.length === 1 ? "Retrograde" : "Retrogrades";
 
-          return (
-            <button
-              key={position.planet}
-              className="retro"
-              type="button"
-              onClick={() => onOpenDetail({
-                glyph: `${position.glyph} ℞`,
-                kicker: retrogradeDetailKicker(position),
-                title,
-                meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
-                body: detailParagraphs,
-                sections: generatedDetailSections(generated),
-                astrologyDrilldown: generatedAstrologyDrilldown(generated),
-                content: content.bundle
-              })}
-            >
-              <span className="retro-badge" aria-hidden="true">
-                {position.glyph}
-                <span className="rx">℞</span>
+  const buildRetrogradeDetail = (position: PlanetPosition) => {
+    const contentKey = placementContentId(position.planet, position.sign, "sky");
+    const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+    const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
+    const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
+    const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
+    const durationDescription = retrogradeWindow
+      ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
+      : null;
+    const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+    const fallbackDetailParagraphs = [
+      retrogradeKnowledgeCopy(position, generated, content),
+      generated?.summary,
+      content.body,
+      content.summary,
+      ...content.detailParagraphs
+    ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
+    const detailParagraphs = [
+      ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
+      ...(durationLine
+        ? [
+            <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
+              <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
+            </span>
+          ]
+        : []),
+      ...liveGeneratedBody(generated, fallbackDetailParagraphs)
+    ];
+
+    return {
+      blurb: retrogradeKnowledgeCopy(position, generated, content),
+      count: formatRetrogradeCountChip(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
+      detail: {
+        glyph: `${position.glyph} ℞`,
+        kicker: retrogradeDetailKicker(position),
+        title: retrogradePlacementTitle(position),
+        meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
+        retrograde: true,
+        body: detailParagraphs,
+        sections: generatedDetailSections(generated),
+        astrologyDrilldown: generatedAstrologyDrilldown(generated),
+        content: content.bundle
+      } satisfies SkyDetail,
+      range: retrogradeRangeText(retrogradeWindow)
+    };
+  };
+
+  function RetrogradePlacementRow({
+    position,
+    compact = false
+  }: {
+    position: PlanetPosition;
+    compact?: boolean;
+  }) {
+    const row = buildRetrogradeDetail(position);
+
+    return (
+      <button
+        className={`sky-pl ro-sky-pl${compact ? " ro-sky-pl--compact" : ""}`}
+        type="button"
+        aria-label={`Read more about ${retrogradePlacementTitle(position)}`}
+        onClick={() => onOpenDetail(row.detail)}
+      >
+        <span className="sky-pl-glyph" aria-hidden="true">{position.glyph}</span>
+        <span className="sky-pl-body">
+          <span className="sky-pl-main">
+            <span className="sky-pl-title">
+              <span className="ro-sky-pl__name">
+                {position.planet} <span className="sky-pl-rx">Rx</span> in {position.sign}
               </span>
-              <span className="retro-main">
-                <span className="retro-top">
-                  <strong>{title}</strong>
-                  <em className="retro-until">{retrogradeCardRange(retrogradeWindow)}</em>
+              <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
+            </span>
+          </span>
+          <span className="sky-pl-range">
+            {row.count ? <span className="sky-pl-duration">{row.count}</span> : null}
+            <span>{row.range}</span>
+          </span>
+          {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
+        </span>
+        <ChevronRight className="sky-pl-chevron" aria-hidden="true" />
+      </button>
+    );
+  }
+
+  return (
+    <section className={`retrograde-section chart-section ro-screen${showSummary ? " ro-screen--summary" : ""}`} aria-label="Retrograde planets">
+      <span className="section-label">{eyebrow}</span>
+
+      {showSummary ? (
+        <div className="ro-sum">
+          <div className="ro-sum-head">
+            <div>
+              <div className="ro-sum-n">{retrogrades.length}</div>
+              <div className="ro-sum-label">planets retrograde</div>
+            </div>
+            <div className="ro-cluster" aria-hidden="true">
+              {retrogrades.map((position) => (
+                <span className="ro-cluster-badge" key={`cluster-${position.planet}`}>{position.glyph}</span>
+              ))}
+            </div>
+          </div>
+          <p className="ro-sum-cap">{retrogradeSummaryCaption(personalRetrogrades, outerRetrogrades)}</p>
+        </div>
+      ) : null}
+
+      {!showSummary ? (
+        <div className="ro-rows">
+          {retrogrades.map((position) => (
+            <div className="sky-pl-item" key={position.planet}>
+              <RetrogradePlacementRow position={position} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          {personalRetrogrades.length > 0 ? (
+            <div className="ro-group">
+              <span className="ro-group-label">Felt now</span>
+              <div className="ro-rows">
+                {personalRetrogrades.map((position) => (
+                  <div className="sky-pl-item" key={position.planet}>
+                    <RetrogradePlacementRow position={position} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {outerRetrogrades.length > 0 ? (
+            <div className="ro-group">
+              <button
+                className="ro-more"
+                type="button"
+                aria-expanded={showOuterRetrogrades}
+                onClick={() => setShowOuterRetrogrades((current) => !current)}
+              >
+                <span className="ro-more-cluster" aria-hidden="true">
+                  {outerRetrogrades.map((position) => (
+                    <span className="ro-more-badge" key={`outer-${position.planet}`}>{position.glyph}</span>
+                  ))}
                 </span>
-                <span className="retro-sub">{formatPlacementPosition(position)}</span>
-                {durationLine ? (
-                  <span className="retro-meta-row">
-                    <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
+                <span className="ro-more-copy">
+                  <span className="ro-group-label">Long-term</span>
+                  <span className="ro-more-text">
+                    {showOuterRetrogrades
+                      ? "Show less"
+                      : `Show ${outerRetrogrades.length} outer-planet retrograde${outerRetrogrades.length === 1 ? "" : "s"}`}
                   </span>
-                ) : null}
-                <span className="retro-copy">{retrogradeKnowledgeCopy(position, generated, content)}</span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                </span>
+                <ChevronRight className={`ro-more-chevron${showOuterRetrogrades ? " is-open" : ""}`} aria-hidden="true" />
+              </button>
+
+              {showOuterRetrogrades ? (
+                <div className="ro-rows">
+                  {outerRetrogrades.map((position) => (
+                    <div className="sky-pl-item" key={position.planet}>
+                      <RetrogradePlacementRow position={position} compact />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </>
+      )}
     </section>
   );
 }
@@ -8249,6 +8433,7 @@ function PlacementTable({
             kicker: placementDetailKicker(position, activeAspects),
             title: generated?.headline ?? title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${transitRangeLabel}`,
+            retrograde: position.motion === "retrograde",
             body,
             sections: generatedDetailSections(generated),
             astrologyDrilldown: generatedAstrologyDrilldown(generated),

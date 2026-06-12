@@ -2092,6 +2092,11 @@ html[data-scrolled] .floating-back-button {
   line-height: 1;
 }
 
+.sky-detail-glyph.is-retrograde {
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+}
+
 .article-kicker,
 .sky-detail-kicker {
   color: var(--muted);
@@ -2332,6 +2337,213 @@ html[data-scrolled] .floating-back-button {
   gap: 16px;
 }
 
+.ro-screen {
+  gap: 12px;
+}
+
+.ro-group {
+  display: grid;
+  gap: 10px;
+}
+
+.ro-group-label {
+  display: block;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--type-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ro-rows {
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.ro-sum {
+  display: grid;
+  gap: 14px;
+  padding: 20px 22px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+}
+
+.ro-sum-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ro-sum-n {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.4rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 0.95;
+  letter-spacing: var(--tracking-tight);
+}
+
+.ro-sum-label {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--type-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ro-cluster,
+.ro-more-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  padding-left: 10px;
+}
+
+.ro-cluster-badge,
+.ro-more-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-left: -10px;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+  font-family: var(--font-glyph);
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--card-bg);
+}
+
+.ro-sum-cap {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.ro-more {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  color: var(--ink);
+  text-align: left;
+}
+
+.ro-more-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ro-more-text {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.ro-more-chevron {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  transition: transform 160ms ease;
+}
+
+.ro-more-chevron.is-open {
+  transform: rotate(90deg);
+}
+
+.ro-screen .sky-pl {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.ro-screen .sky-pl-glyph {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  margin-top: 0;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+  font-size: 21px;
+}
+
+.ro-screen .sky-pl-main {
+  align-items: center;
+}
+
+.ro-screen .sky-pl-title {
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.29;
+}
+
+.ro-screen .sky-pl-degree {
+  font-family: var(--font-body);
+  font-size: var(--text-placement-degree);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.ro-screen .sky-pl-rx {
+  color: var(--ink);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ro-screen .sky-pl-range {
+  margin-top: 4px;
+}
+
+.ro-screen .sky-pl-duration {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.ro-sky-pl__blurb {
+  display: block;
+  margin: 7px 0 0;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.ro-screen .sky-pl-chevron {
+  align-self: flex-start;
+  margin-top: 3px;
+}
+
+.ro-sky-pl--compact {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.ro-sky-pl--compact .sky-pl-title {
+  font-size: 17px;
+}
+
 .retro {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -2555,6 +2767,8 @@ html[data-scrolled] .floating-back-button {
   min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
+  color: var(--ink);
+  font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.29;
@@ -2665,6 +2879,15 @@ button.placement-table-row {
   line-height: 1;
 }
 
+.placement-table-row.is-retrograde .placement-table-row__glyph {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+}
+
 .placement-table-row__body {
   display: grid;
   min-width: 0;
@@ -2762,6 +2985,16 @@ button.planet-placement-row {
   font-size: 24px;
   line-height: 1;
   text-align: center;
+}
+
+.planet-placement-row.is-retrograde .planet-placement-row__glyph {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  margin-top: 0;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
 }
 
 .planet-placement-row__body {
@@ -4567,6 +4800,17 @@ button.planet-placement-row {
   font-family: var(--font-glyph);
   font-size: 15px;
   line-height: 1;
+}
+
+.synastry-placement-row.is-retrograde .synastry-placement-glyph {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
 }
 
 .synastry-placement-column-inner .synastry-placement-glyph,
