@@ -164,6 +164,10 @@
   --row-py: var(--sp-2);
   --row-px: var(--sp-3);
   --sec-gap: var(--sp-4);
+  --section-gap: var(--sp-3);
+  --stack-gap: var(--sp-4);
+  --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
+  --layout-gap: clamp(var(--sp-5), 6vw, 112px);
   --gut: clamp(16px, 5vw, 24px);
   --col: 560px;
   --radius: 20px;
@@ -175,8 +179,16 @@
   --card-border: var(--line);
   --card-radius: var(--radius);
   --card-radius-sm: var(--radius-sm);
+  --card-shadow: var(--shadow);
   --card-padding: var(--sp-3);
+  --card-padding-sm: var(--sp-2);
+  --card-padding-lg: var(--sp-4);
   --card-section-padding: var(--sp-3);
+  --table-bg: var(--card-bg);
+  --table-border: var(--card-border);
+  --table-radius: var(--card-radius);
+  --table-row-bg: var(--card-bg);
+  --table-row-border: var(--line-2);
   --row-padding-y: var(--row-py);
   --row-padding-x: var(--row-px);
   --row-gap: var(--sp-2);
@@ -212,7 +224,7 @@
   --segmented-active-bg: var(--pill-bg);
   --segmented-active-fg: var(--pill-fg);
   --segmented-inactive-fg: var(--muted);
-  --id-card-radius: 28px;
+  --id-card-radius: var(--card-radius);
   --id-card-padding-y: 22px;
   --id-card-padding-x: 20px;
   --id-avatar-size: 60px;
@@ -660,7 +672,7 @@ svg {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 32px;
+  gap: var(--stack-gap);
   padding-top: 0;
 }
 
@@ -782,6 +794,45 @@ svg {
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .placement-table-wrap,
+  .list,
+  .you-list-card,
+  .aspects-card,
+  .you-empty-card,
+  .friends-logic-card,
+  .friends-feed-card,
+  .manual-chart-cards,
+  .you-signatures-card,
+  .friend-signature-card,
+  .friend-placement-column,
+  .synastry-placement-table,
+  .compat-info
+) {
+  border-color: var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .placement-table-row,
+  .planet-placement-row,
+  .aspect-row,
+  .aspect-row-button,
+  .aspect-row-static,
+  .updates-aspect-row,
+  .synastry-placement-row,
+  .friend-placement-row,
+  .manual-chart-row,
+  .chart-row:not(.manual-chart-row),
+  .chart-row-static
+) {
+  background: var(--table-row-bg);
+  border-bottom-color: var(--table-row-border);
 }
 
 .tldr-card {
@@ -1147,10 +1198,10 @@ html[data-scrolled] .floating-back-button {
   gap: var(--sp-half);
   width: 260px;
   padding: var(--sp-1);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius-sm);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -1194,7 +1245,7 @@ html[data-scrolled] .floating-back-button {
   grid-template-columns: minmax(520px, 760px) minmax(480px, 760px);
   align-items: start;
   overflow: visible;
-  gap: clamp(48px, 6vw, 112px);
+  gap: var(--layout-gap);
   width: min(var(--page-max), 100%);
   margin: 0 auto;
 }
@@ -1205,7 +1256,7 @@ html[data-scrolled] .floating-back-button {
   flex-direction: column;
   align-items: center;
   min-width: 0;
-  gap: 28px;
+  gap: var(--stack-gap);
 }
 
 .detail-panel {
@@ -1213,7 +1264,7 @@ html[data-scrolled] .floating-back-button {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 32px;
+  gap: var(--stack-gap);
 }
 
 .mode-friends .portal-grid,
@@ -1326,40 +1377,11 @@ html[data-scrolled] .floating-back-button {
   stroke-width: 0.9;
 }
 
-.synastry-ring-zebra path {
+.synastry-ring-zebra path,
+.synastry-ring-zebra .zebra-even,
+.synastry-ring-zebra .zebra-odd {
+  fill: transparent;
   stroke: none;
-}
-
-.synastry-ring-zebra-outer .zebra-even {
-  fill: color-mix(in srgb, var(--ink) 6%, transparent);
-}
-
-.synastry-ring-zebra-outer .zebra-odd {
-  fill: color-mix(in srgb, var(--ink) 2.5%, transparent);
-}
-
-.synastry-ring-zebra-inner .zebra-even {
-  fill: color-mix(in srgb, var(--synastry-accent) 12%, transparent);
-}
-
-.synastry-ring-zebra-inner .zebra-odd {
-  fill: color-mix(in srgb, var(--synastry-accent) 5%, transparent);
-}
-
-.theme-dark .synastry-ring-zebra-outer .zebra-even {
-  fill: color-mix(in srgb, var(--ink) 9%, transparent);
-}
-
-.theme-dark .synastry-ring-zebra-outer .zebra-odd {
-  fill: color-mix(in srgb, var(--ink) 4%, transparent);
-}
-
-.theme-dark .synastry-ring-zebra-inner .zebra-even {
-  fill: color-mix(in srgb, var(--synastry-accent) 18%, transparent);
-}
-
-.theme-dark .synastry-ring-zebra-inner .zebra-odd {
-  fill: color-mix(in srgb, var(--synastry-accent) 8%, transparent);
 }
 
 .wheel-rings .faint {
@@ -2356,7 +2378,7 @@ html[data-scrolled] .floating-back-button {
 .aspect-section {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--section-gap);
   overflow: visible;
 }
 
@@ -3710,9 +3732,10 @@ button.planet-placement-row {
   width: min(860px, calc(100vw - clamp(36px, 8vw, 136px)));
   margin: clamp(56px, 8vh, 96px) auto 0;
   padding: clamp(28px, 5vw, 48px);
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .you-empty-state h2 {
@@ -3767,9 +3790,9 @@ button.planet-placement-row {
   width: 100%;
   min-width: 0;
   padding: clamp(22px, 3vw, 34px);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .you-empty-card > span,
@@ -3809,9 +3832,9 @@ button.planet-placement-row {
   width: 100%;
   max-width: 100%;
   overflow: visible;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .manual-chart-row {
@@ -4022,7 +4045,7 @@ button.planet-placement-row {
 
 .friends-feed-view {
   display: grid;
-  gap: 20px;
+  gap: var(--section-gap);
   margin-top: 0;
 }
 
@@ -4030,12 +4053,12 @@ button.planet-placement-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
+  gap: var(--card-padding);
   padding: 28px;
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .friends-circle-strip,
@@ -4120,7 +4143,7 @@ button.planet-placement-row {
 
 .friend-chart-page .chart-layout__content,
 .friend-chart-page .friend-detail-main {
-  gap: 28px;
+  gap: var(--stack-gap);
 }
 
 .friend-chart-page .section-block,
@@ -4134,7 +4157,7 @@ button.planet-placement-row {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 32px;
+  gap: var(--stack-gap);
 }
 
 .relationship-detail-left {
@@ -4199,19 +4222,19 @@ button.planet-placement-row {
   min-width: 0;
   gap: 16px;
   padding: var(--id-card-padding-y) var(--id-card-padding-x);
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: var(--id-card-radius);
-  background: var(--surface);
-  box-shadow: none;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
 }
 
 .friend-profile-card {
   gap: 16px;
   padding: 18px var(--id-card-padding-x);
-  border-color: var(--line);
+  border-color: var(--card-border);
   border-radius: var(--id-card-radius);
-  background: var(--surface);
+  background: var(--card-bg);
 }
 
 .friend-profile-card .friend-profile-avatar {
@@ -4433,14 +4456,14 @@ button.planet-placement-row {
   width: 100%;
   max-width: 760px;
   min-width: 0;
-  gap: 24px;
+  gap: var(--section-gap);
 }
 
 .friend-chart-page .friend-compat-stage,
 .friend-chart-page .friend-natal-stage,
 .friend-chart-page .friend-profile-copy-column {
   max-width: 100%;
-  gap: 28px;
+  gap: var(--stack-gap);
 }
 
 .friend-chart-page .friend-profile-copy-column > .friend-section-label,
@@ -4474,9 +4497,9 @@ button.planet-placement-row {
   min-width: 0;
   margin: 0 0 26px;
   padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .compat-info-ic {
@@ -4546,9 +4569,9 @@ button.planet-placement-row {
 }
 
 .friend-chart-page .friend-signature-card {
-  border-color: var(--app-border);
-  border-radius: 28px;
-  background: var(--app-card);
+  border-color: var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
 }
 
 .friend-chart-page .friend-signature-card .you-signatures-main {
@@ -4864,9 +4887,9 @@ button.planet-placement-row {
   overflow: hidden;
   grid-template-columns: 1fr;
   margin-top: 12px;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--surface);
+  border: 1px solid var(--table-border);
+  border-radius: var(--table-radius);
+  background: var(--table-bg);
 }
 
 .synastry-placement-column-inner .synastry-placement-table {
@@ -4882,8 +4905,8 @@ button.planet-placement-row {
   gap: 10px;
   padding: 12px 14px;
   border: 0;
-  border-bottom: 1px solid var(--line-2);
-  background: var(--surface);
+  border-bottom: 1px solid var(--table-row-border);
+  background: var(--table-row-bg);
   overflow: visible;
 }
 
@@ -5060,9 +5083,9 @@ button.planet-placement-row {
 }
 
 .friend-chart-page .friend-placement-column {
-  border-color: var(--app-border);
-  background: var(--app-card);
-  border-radius: 28px;
+  border-color: var(--card-border);
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
 }
 
 .friend-chart-page .friend-placement-table {
@@ -5080,8 +5103,8 @@ button.planet-placement-row {
   min-height: 82px;
   gap: 6px 20px;
   padding: 22px 28px;
-  border-color: var(--app-border);
-  background: var(--app-card);
+  border-color: var(--card-border);
+  background: var(--card-bg);
 }
 
 .friend-chart-page .friend-placement-row-compact {
@@ -5182,13 +5205,13 @@ button.planet-placement-row {
 }
 
 .friend-chart-page .friend-placement-row .planet-placement-row {
-  border-color: var(--app-border);
-  background: var(--app-card);
+  border-color: var(--card-border);
+  background: var(--card-bg);
 }
 
 .friend-chart-page .friend-placement-row .placement-table-row {
-  border-color: var(--app-border);
-  background: var(--app-card);
+  border-color: var(--card-border);
+  background: var(--card-bg);
 }
 
 .friend-placement-row:last-child .planet-placement-row {
@@ -5221,8 +5244,8 @@ button.planet-placement-row {
 }
 
 .friend-chart-page .synastry-placement-table .planet-placement-row {
-  border-color: var(--app-border);
-  background: var(--app-card);
+  border-color: var(--card-border);
+  background: var(--card-bg);
 }
 
 .friend-chart-page .aspect-row,
@@ -5232,7 +5255,7 @@ button.planet-placement-row {
   align-items: start;
   gap: 14px;
   padding: 18px 22px;
-  border-color: var(--app-border);
+  border-color: var(--card-border);
 }
 
 .friend-chart-page .aspect-row-glyphs {
@@ -5297,7 +5320,7 @@ button.planet-placement-row {
   width: min(760px, 100%);
   margin: 0 auto;
   align-content: start;
-  gap: clamp(24px, 4vw, 36px);
+  gap: var(--page-stack-gap);
 }
 
 .settings-header,
@@ -6754,7 +6777,7 @@ body.modal-open {
 
 .you-page {
   display: grid;
-  gap: clamp(24px, 3vw, 42px);
+  gap: var(--page-stack-gap);
   width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
   margin: 0 auto;
 }
@@ -6768,7 +6791,7 @@ body.modal-open {
   display: grid;
   grid-template-columns: minmax(520px, 760px) minmax(480px, 760px);
   align-items: start;
-  gap: clamp(48px, 6vw, 112px);
+  gap: var(--layout-gap);
   width: min(1700px, 100%);
   overflow: visible;
 }
@@ -6784,7 +6807,7 @@ body.modal-open {
 
 .subpane {
   display: grid;
-  gap: 24px;
+  gap: var(--section-gap);
 }
 
 .chart-row:not(.manual-chart-row),
@@ -6808,31 +6831,33 @@ body.modal-open {
   text-align: center;
 }
 
-.theme-dark .theme-toggle,
-.theme-dark .menu-toggle,
-.theme-dark .today-pill,
-.theme-dark .friends-back-button,
-.theme-dark .friend-compare-pill,
-.theme-dark .retro,
-.theme-dark .sky-lunar-pill,
-.theme-dark .settings-card,
-.theme-dark .settings-account-card,
-.theme-dark .friend-placement-column,
-.theme-dark .synastry-placement-row,
-.theme-dark .friend-hero-card,
-.theme-dark .you-profile-card,
-.theme-dark .you-signatures-card,
-.theme-dark .friend-signature-card,
-.theme-dark .manual-chart-cards,
-.theme-dark .friends-feed-card,
-.theme-dark .placement-table-wrap,
-.theme-dark .list,
-.theme-dark .you-list-card,
-.theme-dark .aspects-card {
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .theme-toggle,
+  .menu-toggle,
+  .today-pill,
+  .friends-back-button,
+  .friend-compare-pill,
+  .retro,
+  .sky-lunar-pill,
+  .settings-card,
+  .settings-account-card,
+  .friend-placement-column,
+  .synastry-placement-row,
+  .friend-hero-card,
+  .you-profile-card,
+  .you-signatures-card,
+  .friend-signature-card,
+  .manual-chart-cards,
+  .friends-feed-card,
+  .placement-table-wrap,
+  .list,
+  .you-list-card,
+  .aspects-card
+) {
   background: var(--card-bg);
   border-color: var(--card-border);
   color: var(--ink);
-  box-shadow: none;
+  box-shadow: var(--card-shadow);
 }
 
 .theme-dark .floating-back-button {
@@ -6842,103 +6867,70 @@ body.modal-open {
   box-shadow: none;
 }
 
-.theme-dark .sky-card,
-.theme-dark .sky-chicklet,
-.theme-dark .sky-lunar-summary,
-.theme-dark .sky-pl-card,
-.theme-dark .sky-pl-detail-card,
-.theme-dark .retro,
-.theme-dark .retrograde-detail-card,
-.theme-dark .you-profile-card,
-.theme-dark .you-signatures-card,
-.theme-dark .you-list-card,
-.theme-dark .aspects-card,
-.theme-dark .friend-hero-card,
-.theme-dark .friend-signature-card,
-.theme-dark .friend-placement-column,
-.theme-dark .synastry-placement-column,
-.theme-dark .synastry-placement-row,
-.theme-dark .synastry-placement-table,
-.theme-dark .composite-section-card,
-.theme-dark .manual-chart-cards,
-.theme-dark .manual-chart-row,
-.theme-dark .friends-feed-card,
-.theme-dark .settings-card,
-.theme-dark .settings-account-card,
-.theme-dark .modal-panel,
-[data-theme="dark"] .sky-card,
-[data-theme="dark"] .sky-chicklet,
-[data-theme="dark"] .sky-lunar-summary,
-[data-theme="dark"] .sky-pl-card,
-[data-theme="dark"] .sky-pl-detail-card,
-[data-theme="dark"] .retro,
-[data-theme="dark"] .retrograde-detail-card,
-[data-theme="dark"] .you-profile-card,
-[data-theme="dark"] .you-signatures-card,
-[data-theme="dark"] .you-list-card,
-[data-theme="dark"] .aspects-card,
-[data-theme="dark"] .friend-hero-card,
-[data-theme="dark"] .friend-signature-card,
-[data-theme="dark"] .friend-placement-column,
-[data-theme="dark"] .synastry-placement-column,
-[data-theme="dark"] .synastry-placement-row,
-[data-theme="dark"] .synastry-placement-table,
-[data-theme="dark"] .composite-section-card,
-[data-theme="dark"] .manual-chart-cards,
-[data-theme="dark"] .manual-chart-row,
-[data-theme="dark"] .friends-feed-card,
-[data-theme="dark"] .settings-card,
-[data-theme="dark"] .settings-account-card,
-[data-theme="dark"] .modal-panel {
-  border-color: var(--line);
-  background: var(--surface);
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .sky-card,
+  .sky-chicklet,
+  .sky-lunar-summary,
+  .sky-pl-card,
+  .sky-pl-detail-card,
+  .retro,
+  .retrograde-detail-card,
+  .you-profile-card,
+  .you-signatures-card,
+  .you-list-card,
+  .aspects-card,
+  .friend-hero-card,
+  .friend-signature-card,
+  .friend-placement-column,
+  .synastry-placement-column,
+  .synastry-placement-row,
+  .synastry-placement-table,
+  .composite-section-card,
+  .manual-chart-cards,
+  .manual-chart-row,
+  .friends-feed-card,
+  .settings-card,
+  .settings-account-card,
+  .modal-panel
+) {
+  border-color: var(--card-border);
+  background: var(--card-bg);
   color: var(--ink);
-  box-shadow: none;
+  box-shadow: var(--card-shadow);
 }
 
-.theme-dark .chart-row:not(.manual-chart-row),
-.theme-dark .chart-row-static,
-.theme-dark .sky-pl-row,
-.theme-dark .placement-row,
-.theme-dark .aspect-row,
-.theme-dark .synastry-placement-row,
-.theme-dark .settings-row,
-.theme-dark .focus-row,
-[data-theme="dark"] .chart-row:not(.manual-chart-row),
-[data-theme="dark"] .chart-row-static,
-[data-theme="dark"] .sky-pl-row,
-[data-theme="dark"] .placement-row,
-[data-theme="dark"] .aspect-row,
-[data-theme="dark"] .synastry-placement-row,
-[data-theme="dark"] .settings-row,
-[data-theme="dark"] .focus-row {
-  border-bottom-color: var(--line-2);
-  background: var(--surface);
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .chart-row:not(.manual-chart-row),
+  .chart-row-static,
+  .sky-pl-row,
+  .placement-row,
+  .aspect-row,
+  .synastry-placement-row,
+  .settings-row,
+  .focus-row
+) {
+  border-bottom-color: var(--table-row-border);
+  background: var(--table-row-bg);
   color: var(--ink);
 }
 
-.theme-dark .synastry-placement-column-inner .synastry-placement-table,
-[data-theme="dark"] .synastry-placement-column-inner .synastry-placement-table {
+:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-table {
   border-color: color-mix(in srgb, var(--synastry-accent) 24%, transparent);
   background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
 }
 
-.theme-dark .synastry-placement-column-inner .synastry-placement-row,
-[data-theme="dark"] .synastry-placement-column-inner .synastry-placement-row {
+:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-row {
   border-bottom-color: color-mix(in srgb, var(--synastry-accent) 18%, transparent);
   background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
 }
 
-.theme-dark .chart-row:not(.manual-chart-row):hover,
-.theme-dark .sky-pl-row:hover,
-.theme-dark .placement-row:hover,
-.theme-dark .aspect-row:hover,
-.theme-dark .settings-row:hover,
-[data-theme="dark"] .chart-row:not(.manual-chart-row):hover,
-[data-theme="dark"] .sky-pl-row:hover,
-[data-theme="dark"] .placement-row:hover,
-[data-theme="dark"] .aspect-row:hover,
-[data-theme="dark"] .settings-row:hover {
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .chart-row:not(.manual-chart-row),
+  .sky-pl-row,
+  .placement-row,
+  .aspect-row,
+  .settings-row
+):hover {
   background: var(--surface-2);
 }
 
@@ -7646,7 +7638,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   }
 
   .friends-page:not(.friend-detail-page) {
-    gap: 22px;
+    gap: var(--section-gap);
     padding: 92px 14px 56px;
   }
 
@@ -7715,7 +7707,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   }
 
   .relationship-detail-layout {
-    gap: 28px;
+    gap: var(--stack-gap);
   }
 
   .friend-compat-intro {
@@ -7758,7 +7750,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
   .settings-page,
   .account-page {
     width: min(100%, 560px);
-    gap: 24px;
+    gap: var(--section-gap);
   }
 
   .settings-header,
@@ -7772,7 +7764,7 @@ html[data-scrolled] [data-theme="dark"] .brand-dot {
 
   .settings-card,
   .settings-account-card {
-    border-radius: 28px;
+    border-radius: var(--card-radius);
   }
 
   .settings-row-control {
