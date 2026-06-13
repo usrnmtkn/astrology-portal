@@ -4,9 +4,15 @@
   "planetA": "moon",
   "planetB": "saturn",
   "aspect": "square",
-  "plainTranslation": "Closeness pulls hard against restriction. One reaches for reassurance; the other withholds, criticizes, or goes distant, and it can feel like affection on ration. Failure mode: the Moon person keeps earning a love that never quite arrives and calls the deprivation depth. Loosen the grip and reassure freely - or be honest that the coldness is the problem, not a phase.",
+  "plainTranslation": "This aspect can make emotional needs feel heavy. The Moon person may want warmth or reassurance, while the Saturn person may respond with caution, distance, duty, or restraint.",
+  "summaryShort": "This aspect can make emotional needs feel heavy. The Moon person may want warmth or reassurance, while the Saturn person may respond with caution, distance, duty, or restraint.",
+  "summaryDeep": "The Moon needs care. Saturn needs control, time, structure, and proof. When these two square each other, emotional expression can feel complicated. The Moon person may feel like their needs are too much. The Saturn person may feel responsible for emotions they do not know how to meet.\n\nThe Saturn person may not be cold on purpose. They may be afraid of doing the wrong thing, afraid of being needed, afraid of failing, or simply used to handling feelings through silence and discipline. But to the Moon person, this can feel like rejection.\n\nThis aspect can create loyalty, especially over time. Saturn may stay. Saturn may show up in practical ways. Saturn may protect the Moon person through consistency, effort, and responsibility. But the relationship cannot live on duty alone. The Moon still needs warmth, responsiveness, and emotional presence.\n\nWhen this works, both people mature. The Moon learns not to collapse into need. Saturn learns not to punish vulnerability. When it does not, one person becomes hungry for care while the other becomes the gatekeeper of warmth.\n\nIt may show up as one person feeling emotionally shut out, practical support replacing affection, fear of being too needy, delayed vulnerability, or loyalty that grows slowly.",
+  "tension": "Emotional needs can feel judged, delayed, minimized, or burdensome.",
+  "advice": "Do not make someone earn basic care. Do not demand emotional availability from someone who has not learned how to offer it. Name what support looks like in practical terms.",
+  "weight": 5,
+  "authoringStatus": "locked",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "note": "Gold standard Batch 2. Gift: devotion, steadiness, emotional maturity, and care that proves itself over time. Shadow: withholding, guilt, emotional loneliness, fear of need, or staying because the bond feels like a responsibility.",
   "voiceNeutral": true,
   "status": "REVIEWED"
 }

@@ -111,6 +111,12 @@ type SynastryHouseOverlayEntry = {
   planet?: string;
   house?: string | number;
   plainTranslation?: string;
+  summaryShort?: string;
+  summaryDeep?: string;
+  tension?: string;
+  advice?: string;
+  weight?: number;
+  authoringStatus?: string;
   policy?: string;
   status?: string;
 };
@@ -495,6 +501,10 @@ function placementPriority(planet: string | undefined, sign: string | undefined,
 
 function approvedVoiceStatus(value: VoiceContentItem["status"] | undefined) {
   return value === "APPROVED" || value === "LIVE";
+}
+
+function approvedKnowledgeStatus(value: KnowledgeItem["status"] | undefined) {
+  return value === "APPROVED" || value === "SOURCE_BACKED" || value === "LIVE";
 }
 
 function readablePointTopic(point: string, mode: "sky" | "natal") {
@@ -1051,7 +1061,9 @@ export function createDomainRegistry(bundleInput: unknown) {
 
     const planet = normalizeIdPart(entry.planet);
     const house = String(entry.house);
-    const summary = summarySentence(entry.plainTranslation) || `${titleize(planet)} in the ${house} house`;
+    const preview = cleanText(entry.summaryShort) || cleanText(entry.plainTranslation);
+    const expanded = cleanText(entry.summaryDeep) || preview || cleanText(entry.plainTranslation);
+    const summary = preview || summarySentence(entry.plainTranslation) || `${titleize(planet)} in the ${house} house`;
     const knowledgeItem: KnowledgeItem = {
       id: entry.id,
       type: "synastry-overlay",
@@ -1066,10 +1078,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: summary,
         displaySummary: summary,
-        detailParagraphs: cleanParagraphs([entry.plainTranslation, entry.policy]),
-        livedExperience: cleanText(entry.plainTranslation) || summary,
-        gift: "",
-        challenge: ""
+        detailParagraphs: cleanParagraphs([expanded, entry.tension, entry.advice, entry.policy]),
+        livedExperience: expanded || summary,
+        gift: cleanText(entry.advice),
+        challenge: cleanText(entry.tension)
       },
       sources: ["@tldr/astro-knowledge/synastry"],
       status: reviewStatus(entry.status)
@@ -1284,7 +1296,7 @@ export function createDomainRegistry(bundleInput: unknown) {
       };
     }
 
-    if (bundle.knowledge) {
+    if (bundle.knowledge && approvedKnowledgeStatus(bundle.knowledge.status)) {
       const knowledgeDetailParagraphs = bundle.knowledge.interpretation.detailParagraphs ?? [];
       const fallbackDetailParagraphs = knowledgeDetailParagraphs.length > 0
         ? knowledgeDetailParagraphs

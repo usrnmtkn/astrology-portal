@@ -4,9 +4,15 @@
   "planetA": "moon",
   "planetB": "pluto",
   "aspect": "conjunction",
-  "plainTranslation": "A's feelings meets B's depth and power. The conjunction fuses them - intense and inseparable.",
+  "plainTranslation": "This can feel emotionally consuming. The Pluto person may reach places in the Moon person that are usually hidden, while the Moon person can awaken deep attachment, fear, protectiveness, or control in the Pluto person.",
+  "summaryShort": "This can feel emotionally consuming. The Pluto person may reach places in the Moon person that are usually hidden, while the Moon person can awaken deep attachment, fear, protectiveness, or control in the Pluto person.",
+  "summaryDeep": "The Moon is instinct, memory, need, and emotional safety. Pluto is depth, power, fear, compulsion, and transformation. When these two meet, the connection rarely feels casual. Something private gets touched.\n\nThe Moon person may feel seen in a way that is both magnetic and exposing. They may feel pulled toward the Pluto person, even when the intensity is uncomfortable. The Pluto person may feel deeply affected by the Moon person's vulnerability, moods, softness, or need for care. The bond can bring up old emotional material without asking permission.\n\nThis aspect can create real trust when both people are honest and self-aware. It can feel like being known beneath the surface. But it also has to be handled carefully. Pluto can grip. The Moon can cling. The relationship can start to revolve around fear of loss, emotional testing, jealousy, or the need to know what the other person is feeling at all times.\n\nIntensity is not the same as intimacy. This aspect becomes healthier when both people can tell the truth without trying to possess, punish, or psychologically manage each other.\n\nIt may show up as feeling bonded quickly, intense eye contact, emotional reactions that feel bigger than the moment, fear of abandonment or betrayal, or wanting to know everything the other person feels.",
+  "tension": "The emotional bond can become too consuming. One person may feel invaded while the other feels afraid of losing control.",
+  "advice": "Do not use vulnerability as leverage. Do not use silence as punishment. Let depth build through trust, not fear.",
+  "weight": 5,
+  "authoringStatus": "locked",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Gold standard Batch 2. Gift: emotional honesty, deep loyalty, psychological insight, and the courage to meet each other below the surface. Shadow: obsession, jealousy, control, emotional surveillance, manipulation, or mistaking pain for proof of love.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }
