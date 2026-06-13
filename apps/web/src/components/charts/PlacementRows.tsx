@@ -27,6 +27,7 @@ export type PlacementDignity = {
   dignity: EssentialDignity;
   label: string;
   tone: DignityTone;
+  description: string;
 };
 
 export type PlacementRowStatus = {
@@ -56,6 +57,13 @@ const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: str
   exaltation: { adjective: "Empowered", name: "Exaltation", tone: "good" },
   detriment: { adjective: "Constrained", name: "Detriment", tone: "weak" },
   fall: { adjective: "Weakened", name: "Fall", tone: "weak" }
+};
+
+const dignityDescriptions: Record<EssentialDignity, string> = {
+  domicile: "Domicile: the planet is in one of its own signs, so its topics tend to have direct access and familiar tools.",
+  exaltation: "Exaltation: the planet is honored in this sign, so its topics can be amplified, supported, or especially visible.",
+  detriment: "Detriment: the planet is opposite one of its own signs, so its topics may need translation, effort, or less familiar tools.",
+  fall: "Fall: the planet is opposite its exaltation, so its topics can feel less supported and may need extra care or adjustment."
 };
 
 const planetDignities: Record<string, Partial<Record<string, EssentialDignity>>> = {
@@ -186,7 +194,8 @@ export function dignityFor(planet: string, sign: string): PlacementDignity | nul
   return {
     dignity,
     label: `${labelParts.adjective} · ${labelParts.name}`,
-    tone: labelParts.tone
+    tone: labelParts.tone,
+    description: dignityDescriptions[dignity]
   };
 }
 
@@ -233,9 +242,16 @@ export function DignityBadge({ dignity, uppercase = false }: { dignity: Placemen
     return null;
   }
 
+  const label = uppercase ? uppercaseDignityLabel(dignity) : dignity.label;
+
   return (
-    <span className={`spl-dig spl-dig--${dignity.tone}`}>
-      {uppercase ? uppercaseDignityLabel(dignity) : dignity.label}
+    <span
+      className={`spl-dig spl-dig--${dignity.tone}`}
+      aria-label={`${label}. ${dignity.description}`}
+      data-tooltip={dignity.description}
+      tabIndex={0}
+    >
+      {label}
     </span>
   );
 }

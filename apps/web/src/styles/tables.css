@@ -496,6 +496,7 @@ button.planet-placement-row {
 }
 
 .spl-dig {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 1.55em;
@@ -510,6 +511,50 @@ button.planet-placement-row {
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+  cursor: help;
+}
+
+.spl-dig[data-tooltip]::after {
+  position: absolute;
+  z-index: var(--z-tooltip, 80);
+  bottom: calc(100% + 10px);
+  left: 50%;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--tooltip-border);
+  border-radius: 12px;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
+  box-shadow: var(--tooltip-shadow);
+  content: attr(data-tooltip);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.25;
+  opacity: 0;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  text-align: left;
+  text-transform: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+  visibility: hidden;
+  white-space: normal;
+}
+
+.spl-dig[data-tooltip]:hover::after,
+.spl-dig[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.spl-dig:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .spl-dig--good {

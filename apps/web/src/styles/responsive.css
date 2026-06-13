@@ -632,50 +632,27 @@
   }
 }
 @media (max-width: 640px) {
-  .article-meta-grid,
-  .article-meta-grid--three,
-  .sky-detail-meta {
-    grid-template-columns: 1fr;
-  }
-
   .article-page,
   .sky-detail-page {
-    display: flex;
-    justify-content: center;
     width: 100%;
-    padding: 148px 18px 56px;
+    padding: 120px 18px 96px;
   }
 
   .article-shell,
   .sky-detail-article {
     width: min(100%, 560px);
     margin-inline: auto;
-    gap: 24px;
-  }
-
-  .article-hero,
-  .article-card,
-  .sky-detail-hero,
-  .sky-detail-statement,
-  .sky-detail-body {
-    border-radius: 24px;
-  }
-
-  .article-hero,
-  .sky-detail-hero,
-  .article-card,
-  .sky-detail-statement,
-  .sky-detail-body {
-    width: 100%;
-    max-width: 100%;
-    padding: 32px 30px;
   }
 
   .article-title,
-  .sky-detail-hero h1,
-  .sky-detail-hero h2 {
-    font-size: clamp(52px, 14vw, 72px);
-    letter-spacing: -0.06em;
+  .sky-detail-id h1 {
+    font-size: clamp(38px, 12vw, 54px);
+  }
+
+  .article-share {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .segmented-control {
