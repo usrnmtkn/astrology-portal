@@ -1229,6 +1229,7 @@
   display: block;
   width: 1em;
   height: 1em;
+  filter: var(--filter-glyph-current);
   object-fit: contain;
 }
 
@@ -1820,6 +1821,7 @@ button.planet-placement-row {
   display: block;
   width: 1em;
   height: 1em;
+  filter: var(--filter-glyph-current);
   object-fit: contain;
 }
 
@@ -2704,6 +2706,17 @@ body.modal-open {
   padding: 22px;
 }
 
+.friend-compare-close {
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+}
+
+.friend-compare-modal .section-label {
+  padding-right: 42px;
+}
+
 .chart-fullscreen-panel {
   width: min(1240px, 100%);
   max-height: min(960px, calc(100svh - 28px));
@@ -2942,6 +2955,45 @@ body.modal-open {
   line-height: 1.2;
   padding: 12px 14px;
   text-transform: none;
+}
+
+.add-chart-field input[type="date"],
+.add-chart-field input[type="time"],
+.add-chart-field select {
+  color-scheme: light;
+}
+
+.add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
+.add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0.72;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--surface) 94%, #ffffff 6%);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
+  color: var(--ink);
+  stroke: currentColor;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-modal__close {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: color-mix(in srgb, var(--surface-2) 88%, #ffffff 12%);
+  color: var(--ink);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"],
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"],
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field select {
+  color-scheme: dark;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
+:is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) grayscale(1) brightness(1.55);
+  opacity: 0.9;
 }
 
 .add-chart-field select {
@@ -3314,6 +3366,8 @@ body.modal-open {
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(
+  .segmented-control,
+  .section-segmented,
   .theme-toggle,
   .menu-toggle,
   .today-pill,
@@ -3331,7 +3385,9 @@ body.modal-open {
   .friend-signature-card,
   .manual-chart-cards,
   .friends-feed-card,
+  .placement-table-card,
   .placement-table-wrap,
+  .planet-placement-list,
   .list,
   .you-list-card,
   .aspects-card
@@ -3364,6 +3420,8 @@ body.modal-open {
   .manual-chart-cards,
   .manual-chart-row,
   .friends-feed-card,
+  .placement-table-card,
+  .planet-placement-list,
   .settings-card,
   .settings-account-card,
   .modal-panel
@@ -3379,9 +3437,14 @@ body.modal-open {
   .chart-row-static,
   .sky-pl-row,
   .placement-row,
+  .placement-table-row,
+  .planet-placement-row,
   .aspect-row,
   .synastry-placement-row,
   .settings-row,
+  .settings-profile-row,
+  .settings-signout-row,
+  .account-editable-row,
   .focus-row
 ) {
   border-bottom-color: var(--table-row-border);
@@ -3403,6 +3466,8 @@ body.modal-open {
   .chart-row:not(.manual-chart-row),
   .sky-pl-row,
   .placement-row,
+  .placement-table-row,
+  .planet-placement-row,
   .aspect-row,
   .settings-row
 ):hover {
@@ -3435,8 +3500,12 @@ body.modal-open {
   .type-page-title,
   .type-card-title,
   .row-title,
+  .placement-table-row__title,
+  .planet-placement-row__title,
   .sky-pl-title,
-  .retro-title
+  .retro-title,
+  .settings-row__action,
+  .settings-row__value
 ) {
   color: var(--ink);
 }
@@ -3447,6 +3516,8 @@ body.modal-open {
   .retro-copy,
   .sky-intro__copy,
   .row-description,
+  .placement-table-row__description,
+  .planet-placement-row__meta,
   .synastry-intro
 ) {
   color: var(--ink-2);
@@ -3459,7 +3530,10 @@ body.modal-open {
   .retro-until,
   .retro-chapter,
   .sky-pl-meta,
-  .sky-pl-degree
+  .sky-pl-degree,
+  .placement-table-row__meta,
+  .settings-row__label,
+  .account-editable-row > span
 ) {
   color: var(--muted);
 }
@@ -3566,4 +3640,3 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-

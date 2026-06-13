@@ -36,6 +36,7 @@
   --color-status-alert: #a8772f;
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
+  --filter-glyph-current: none;
   --filter-synastry-outer-glyph: none;
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(58%) sepia(88%) saturate(1263%) hue-rotate(342deg) brightness(99%) contrast(91%);
@@ -92,6 +93,7 @@
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
   --chart-glyph: var(--wheel-glyph);
+  --chart-glyph-filter: var(--filter-glyph-current);
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
   --chart-sign-label-size: 13px;
@@ -396,17 +398,18 @@
   --color-status-alert: #d6a24b;
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);
+  --filter-glyph-current: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(70%) sepia(82%) saturate(873%) hue-rotate(340deg) brightness(101%) contrast(98%);
   --synastry-inner-glyph: #ffad66;
   --color-dig-good: #84c57c;
   --color-dig-good-bg: rgba(110, 180, 100, 0.16);
-  --color-aspect-hard: rgba(214, 148, 94, 0.78);
-  --color-aspect-flow: rgba(166, 150, 206, 0.66);
-  --color-aspect-adjust: #a8bd88;
-  --color-aspect-union: #b8b0a7;
-  --color-aspect-muted: rgba(255, 255, 255, 0.22);
+  --color-aspect-hard: rgba(232, 166, 104, 0.9);
+  --color-aspect-flow: rgba(190, 174, 238, 0.84);
+  --color-aspect-adjust: rgba(188, 212, 148, 0.82);
+  --color-aspect-union: rgba(224, 216, 206, 0.78);
+  --color-aspect-muted: rgba(255, 255, 255, 0.38);
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
@@ -436,6 +439,7 @@
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
   --chart-glyph: var(--wheel-glyph);
+  --chart-glyph-filter: var(--filter-glyph-current);
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
   --retrograde-bg: var(--color-retrograde-bg);

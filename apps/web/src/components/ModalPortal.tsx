@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 type ModalPortalProps = {
   children: ReactNode;
   className?: string;
+  closeOnBackdrop?: boolean;
   onClose: () => void;
   panelClassName?: string;
   titleId?: string;
@@ -14,6 +15,7 @@ type ModalPortalProps = {
 export function ModalPortal({
   children,
   className = "",
+  closeOnBackdrop = false,
   onClose,
   panelClassName = "",
   titleId,
@@ -82,8 +84,15 @@ export function ModalPortal({
 
   return createPortal(
     <div className={`modal-root${className ? ` ${className}` : ""}`}>
-      <div className="modal-overlay" role="presentation" onMouseDown={() => onCloseRef.current()} />
-      <div className="modal-positioner">
+      <div className="modal-overlay" role="presentation" />
+      <div
+        className="modal-positioner"
+        onMouseDown={(event) => {
+          if (closeOnBackdrop && event.target === event.currentTarget) {
+            onCloseRef.current();
+          }
+        }}
+      >
         <div
           className={`modal-panel${panelClassName ? ` ${panelClassName}` : ""}`}
           role="dialog"
