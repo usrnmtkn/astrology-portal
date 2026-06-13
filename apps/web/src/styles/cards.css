@@ -22,11 +22,6 @@
   .friend-signature-card,
   .friend-placement-column,
   .synastry-placement-table,
-  .article-card,
-  .article-hero,
-  .sky-detail-hero,
-  .sky-detail-statement,
-  .sky-detail-body,
   .placement-table-card,
   .friend-compare-list
 ) {
@@ -196,4 +191,3 @@
   max-width: 100%;
   height: 100%;
 }
-

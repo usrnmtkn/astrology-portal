@@ -82,6 +82,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
+  --article-link: #2a55c8;
   --wheel-line: var(--color-wheel-line);
   --wheel-soft: var(--color-wheel-soft);
   --wheel-line-soft: var(--color-wheel-soft);
@@ -131,11 +132,11 @@
   --friend-row-meta-size: 13px;
   --text-placement-degree: 14px;
   --text-placement-meta: 14px;
-  --article-title-size: clamp(52px, 7vw, 96px);
-  --article-h2-size: clamp(30px, 4vw, 48px);
-  --article-body-size: clamp(16px, 2vw, 18px);
-  --article-meta-size: 14px;
-  --article-label-size: 11px;
+  --article-title-size: var(--article-h2-size);
+  --article-h2-size: clamp(22px, 3vw, 27px);
+  --article-body-size: 17px;
+  --article-meta-size: 16px;
+  --article-label-size: 14.5px;
   --text-body: 16px;
   --text-row-value: 15px;
   --text-description: 13px;
@@ -207,6 +208,11 @@
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
   --overlay-shadow: var(--card-shadow);
+  --tooltip-bg: #1a1a1a;
+  --tooltip-fg: #f2f2f1;
+  --tooltip-muted: rgba(242, 242, 241, 0.78);
+  --tooltip-border: rgba(242, 242, 241, 0.26);
+  --tooltip-shadow: 0 18px 42px rgba(20, 20, 20, 0.22);
   --control-bg: var(--surface-2);
   --control-border: var(--line);
   --control-radius: var(--card-radius-sm);
@@ -428,6 +434,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
+  --article-link: #8fb0ff;
   --wheel-line: var(--color-wheel-line);
   --wheel-soft: var(--color-wheel-soft);
   --wheel-line-soft: var(--color-wheel-soft);

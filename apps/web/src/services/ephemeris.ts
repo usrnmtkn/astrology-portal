@@ -109,19 +109,16 @@ function utcHour(date: Date) {
 
 function moonPhaseName(sunLongitude: number, moonLongitude: number) {
   const phase = normalizeDegrees(moonLongitude - sunLongitude);
-  const names = [
-    "New Moon",
-    "Waxing Crescent",
-    "First Quarter",
-    "Waxing Gibbous",
-    "Full Moon",
-    "Waning Gibbous",
-    "Last Quarter",
-    "Waning Crescent"
-  ];
-  const index = Math.floor(((phase + 22.5) % 360) / 45);
 
-  return names[index];
+  if (phase < 8) return "New Moon";
+  if (phase < 67.5) return "Waxing Crescent";
+  if (phase < 112.5) return "First Quarter";
+  if (phase < 157.5) return "Waxing Gibbous";
+  if (phase < 202.5) return "Full Moon";
+  if (phase < 247.5) return "Waning Gibbous";
+  if (phase < 292.5) return "Last Quarter";
+
+  return "Waning Crescent";
 }
 
 function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -240,6 +237,227 @@ function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
   return normalizeDegrees(
     exactPlanetLongitude(swe, swe.SE_MOON, date) - exactPlanetLongitude(swe, swe.SE_SUN, date)
   );
+}
+
+function timeZoneOffsetMs(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const asUtc = Date.UTC(
+    Number(values.year),
+    Number(values.month) - 1,
+    Number(values.day),
+    Number(values.hour),
+    Number(values.minute),
+    Number(values.second)
+  );
+
+  return asUtc - date.getTime();
+}
+
+function zonedDateTimeToUtc(timeZone: string, year: number, month: number, day: number, hour = 0, minute = 0, second = 0) {
+  const targetUtc = Date.UTC(year, month - 1, day, hour, minute, second);
+  let utcDate = new Date(targetUtc);
+
+  for (let index = 0; index < 2; index += 1) {
+    utcDate = new Date(targetUtc - timeZoneOffsetMs(utcDate, timeZone));
+  }
+
+  return utcDate;
+}
+
+function localDayRange(date: Date, timeZone?: string) {
+  const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const year = Number(values.year);
+  const month = Number(values.month);
+  const day = Number(values.day);
+  const start = zonedDateTimeToUtc(zone, year, month, day);
+  const end = zonedDateTimeToUtc(zone, year, month, day + 1);
+
+  return { start, end };
+}
+
+function moonSignAt(swe: SwissEphInstance, date: Date) {
+  return signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, date)).sign;
+}
+
+function moonIngressAfter(swe: SwissEphInstance, date: Date) {
+  const from = moonSignAt(swe, date);
+  let upper = new Date(date.getTime() + 60 * 60_000);
+
+  while (moonSignAt(swe, upper) === from && upper.getTime() - date.getTime() < 72 * 60 * 60_000) {
+    upper = new Date(upper.getTime() + 60 * 60_000);
+  }
+
+  const to = moonSignAt(swe, upper);
+
+  if (to === from) {
+    return null;
+  }
+
+  let lower = date;
+
+  for (let index = 0; index < 48; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+
+    if (moonSignAt(swe, midpoint) === from) {
+      lower = midpoint;
+    } else {
+      upper = midpoint;
+    }
+  }
+
+  return {
+    from,
+    to,
+    occursAt: upper
+  };
+}
+
+function moonSignTransitionForDay(swe: SwissEphInstance, date: Date, timeZone?: string): SkySnapshot["moonSignTransition"] {
+  const { start, end } = localDayRange(date, timeZone);
+  const from = moonSignAt(swe, start);
+  const to = moonSignAt(swe, new Date(end.getTime() - 1));
+
+  if (from === to) {
+    return null;
+  }
+
+  let lower = start;
+  let upper = end;
+
+  for (let index = 0; index < 48; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+
+    if (moonSignAt(swe, midpoint) === from) {
+      lower = midpoint;
+    } else {
+      upper = midpoint;
+    }
+  }
+
+  return {
+    from,
+    to,
+    occursAt: upper.toISOString()
+  };
+}
+
+function shortestAngleDistance(degrees: number) {
+  const normalized = normalizeDegrees(degrees);
+
+  return normalized > 180 ? normalized - 360 : normalized;
+}
+
+function moonAspectDistance(swe: SwissEphInstance, planetId: number, date: Date, targetDegrees: number) {
+  const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, date);
+  const planetLongitude = exactPlanetLongitude(swe, planetId, date);
+
+  return shortestAngleDistance(normalizeDegrees(moonLongitude - planetLongitude) - targetDegrees);
+}
+
+function hasMoonAspectBeforeIngress(swe: SwissEphInstance, date: Date, ingressDate: Date) {
+  const planetIds = [
+    swe.SE_SUN,
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const aspectTargets = [0, 60, 90, 120, 180, 240, 270, 300];
+  const stepMs = 15 * 60_000;
+
+  for (const planetId of planetIds) {
+    for (const target of aspectTargets) {
+      let previousDistance = moonAspectDistance(swe, planetId, date, target);
+
+      for (
+        let time = Math.min(date.getTime() + stepMs, ingressDate.getTime());
+        time <= ingressDate.getTime();
+        time += stepMs
+      ) {
+        const currentDate = new Date(time);
+        const currentDistance = moonAspectDistance(swe, planetId, currentDate, target);
+
+        if (Math.abs(currentDistance) < 0.03 || previousDistance === 0 || previousDistance * currentDistance < 0) {
+          return true;
+        }
+
+        previousDistance = currentDistance;
+      }
+    }
+  }
+
+  return false;
+}
+
+function compactHoursRemaining(start: Date, end: Date) {
+  const minutes = Math.max(0, Math.round((end.getTime() - start.getTime()) / 60_000));
+
+  if (minutes < 60) {
+    return `${Math.max(1, minutes)}min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  const hourLabel = `${hours}hr${hours === 1 ? "" : "s"}`;
+
+  return remainingMinutes > 0 ? `${hourLabel} ${remainingMinutes}min` : hourLabel;
+}
+
+function moonStatusFor(swe: SwissEphInstance, date: Date): SkySnapshot["moonStatus"] {
+  const currentSign = moonSignAt(swe, date);
+  const ingress = moonIngressAfter(swe, date);
+
+  if (!ingress) {
+    return {
+      kind: "sign",
+      label: currentSign,
+      sign: currentSign
+    };
+  }
+
+  const hasApplyingAspect = hasMoonAspectBeforeIngress(swe, date, ingress.occursAt);
+
+  if (!hasApplyingAspect) {
+    const remainingLabel = compactHoursRemaining(date, ingress.occursAt);
+
+    return {
+      kind: "void",
+      label: `VoC (${remainingLabel})`,
+      sign: currentSign,
+      nextSign: ingress.to,
+      until: ingress.occursAt.toISOString(),
+      remainingLabel
+    };
+  }
+
+  return {
+    kind: "sign",
+    label: currentSign,
+    sign: currentSign,
+    nextSign: ingress.to,
+    until: ingress.occursAt.toISOString()
+  };
 }
 
 function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
@@ -402,6 +620,8 @@ export async function getAstrodienstSky(
     midheaven,
     midheavenLongitude,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
+    moonStatus: moonStatusFor(swe, date),
+    moonSignTransition: moonSignTransitionForDay(swe, date, location.timeZone),
     moonEvent: nextMoonEvent(swe, date),
     dominantElement: elementForSign(sun.sign),
     positions: positions.map(({ longitude, speed, ...position }) => position),
@@ -444,6 +664,12 @@ export function getCurrentSky(location: LocationInput = defaultLocation, date: D
     midheaven: positions[4].sign,
     midheavenLongitude: signs.findIndex(([name]) => name === positions[4].sign) * 30,
     moonPhase: "Waxing Crescent",
+    moonStatus: {
+      kind: "sign",
+      label: positions[1]?.sign ?? "Moon",
+      sign: positions[1]?.sign ?? "Moon"
+    },
+    moonSignTransition: null,
     dominantElement: ["Fire", "Earth", "Air", "Water"][Math.abs(locationSeed + daySeed) % 4] as SkySnapshot["dominantElement"],
     positions,
     aspects: [

@@ -246,10 +246,10 @@
   height: 100%;
   gap: 5px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--surface) 26%, transparent);
+  border: 1px solid var(--tooltip-border);
   border-radius: 12px;
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-family: var(--font-ui);
   line-height: 1.25;
   white-space: normal;
@@ -270,19 +270,19 @@
 }
 
 .planet-tooltip-box span {
-  color: color-mix(in srgb, var(--surface) 78%, transparent);
+  color: var(--tooltip-muted);
   font-size: 12px;
   font-weight: var(--font-weight-medium);
 }
 
 .planet-tooltip rect {
-  fill: var(--ink);
-  stroke: color-mix(in srgb, var(--surface) 26%, transparent);
+  fill: var(--tooltip-bg);
+  stroke: var(--tooltip-border);
   stroke-width: 1;
 }
 
 .planet-tooltip text {
-  fill: var(--surface);
+  fill: var(--tooltip-fg);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;

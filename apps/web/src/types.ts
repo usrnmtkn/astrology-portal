@@ -31,6 +31,19 @@ export type SkySnapshot = {
   midheaven: string;
   midheavenLongitude?: number;
   moonPhase: string;
+  moonStatus?: {
+    kind: "sign" | "void";
+    label: string;
+    sign: string;
+    nextSign?: string;
+    until?: string;
+    remainingLabel?: string;
+  } | null;
+  moonSignTransition?: {
+    from: string;
+    to: string;
+    occursAt: string;
+  } | null;
   moonEvent?: {
     name: "Full Moon" | "New Moon";
     sign: string;

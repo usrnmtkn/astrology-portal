@@ -76,7 +76,7 @@
 
 .sky-lunar-pills {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   width: 100%;
 }
@@ -146,6 +146,15 @@
   letter-spacing: 0;
 }
 
+.sky-lunar-pill-sub {
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 0.82rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
 .moon-phase-art {
   overflow: hidden;
   border-radius: 50%;
@@ -197,6 +206,9 @@
 }
 
 .nl-top h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   min-width: 0;
   margin: 0;
   overflow: hidden;
@@ -208,6 +220,20 @@
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.nl-top h4 > span:not(.nl-prefix) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nl-prefix {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .nl-until {

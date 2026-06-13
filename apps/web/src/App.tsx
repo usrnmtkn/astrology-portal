@@ -7,6 +7,7 @@ import {
   Clock,
   Eye,
   EyeOff,
+  Link,
   LogOut,
   MapPin,
   Moon,
@@ -2146,6 +2147,37 @@ function formatDurationCompact(startInput: string | Date, endInput: string | Dat
     : `${duration.years}Y`;
 }
 
+function exactDateFromInput(value: string | Date) {
+  const date = typeof value === "string" ? new Date(value) : new Date(value);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatRemainingClockCompact(startInput: string | Date, endInput: string | Date) {
+  const start = exactDateFromInput(startInput);
+  const end = exactDateFromInput(endInput);
+
+  if (!start || !end) {
+    return null;
+  }
+
+  const remainingMs = end.getTime() - start.getTime();
+
+  if (remainingMs < 0) {
+    return null;
+  }
+
+  if (remainingMs >= 86_400_000) {
+    return formatDurationCompact(startInput, endInput);
+  }
+
+  const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
+  const hours = Math.floor(remainingMinutes / 60);
+  const minutes = remainingMinutes % 60;
+
+  return `${hours}H ${minutes}MIN`;
+}
+
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
   const duration = getDurationParts(startInput, endInput);
 
@@ -2203,7 +2235,7 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
     return null;
   }
 
-  return formatDurationCompact(generatedAt, position.transitEnd);
+  return formatRemainingClockCompact(generatedAt, position.transitEnd);
 }
 
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
@@ -2276,12 +2308,32 @@ function SkyDetailArticle({
   const metaRows = detailMetaRows(detail.meta);
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const articleBody = detail.body.filter((node) => !isRetrogradeTimelineNode(node));
-  const paragraphs = articleBody.length > 0 ? articleBody : ["This field guide is still being written."];
+  const paragraphs = articleBody;
   const generatedSections = (detail.sections ?? []).filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   );
   const drilldown = detail.astrologyDrilldown;
   const [lede, ...sectionParagraphs] = paragraphs;
+  const articleSub = statement || (typeof lede === "string" ? lede : "");
+  const shareTitle = `${detail.title} · TLDR Astro`;
+  const visibleMetaRows = metaRows.filter((row) => row.label.toLowerCase() !== "signature");
+
+  function copyArticleLink() {
+    void navigator.clipboard?.writeText(window.location.href);
+  }
+
+  function shareArticle() {
+    if (navigator.share) {
+      void navigator.share({
+        title: shareTitle,
+        text: articleSub,
+        url: window.location.href
+      });
+      return;
+    }
+
+    copyArticleLink();
+  }
 
   return (
     <section
@@ -2294,30 +2346,37 @@ function SkyDetailArticle({
         <span>Back</span>
       </button>
       <article className="article-shell sky-detail-article">
-        <header className="article-hero sky-detail-hero">
-          <div className="article-hero__kicker-row">
-            <div className={`article-symbol-badge sky-detail-glyph${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}</div>
-            {detail.kicker ? <span className="article-kicker sky-detail-kicker">{detail.kicker}</span> : null}
-          </div>
+        <header className="article-id sky-detail-id">
           <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-          <dl className={`article-meta-grid sky-detail-meta ${metaRows.length >= 3 ? "article-meta-grid--three" : ""}`}>
-            {metaRows.map((row) => (
-              <div className="article-meta sky-detail-meta-row" key={`${row.label}-${row.value}`}>
-                <dt className="article-meta__label">{row.label}</dt>
-                <dd className="article-meta__value">{row.value}</dd>
-              </div>
+          <p className="article-sub">
+            <span className={`article-sub__glyph${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}&#xFE0E;</span>
+            {articleSub}
+          </p>
+          <div className="article-byline">
+            <span className="by-author">By tldr astro</span>
+          </div>
+          <div className="article-share" aria-label="Share this article">
+            <span className="share-lab">Share:</span>
+            <div className="share-btns">
+              <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
+                <Link size={18} aria-hidden="true" />
+              </button>
+              <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+          <hr className="article-rule" />
+          <div className="article-meta sky-detail-meta">
+            {visibleMetaRows.map((row) => (
+              <p className="m-row" key={`${row.label}-${row.value}`}>
+                <b>{row.label}:</b> {row.value}
+              </p>
             ))}
-          </dl>
+          </div>
         </header>
 
-        {statement ? (
-          <aside className="article-card sky-detail-statement">
-            <span aria-hidden="true" />
-            <p>{statement}</p>
-          </aside>
-        ) : null}
-
-        <div className="article-card article-body-card sky-detail-body">
+        <div className="article-body-card sky-detail-body">
           <div className="article-body-inner">
           {generatedSections.length > 0 ? (
             generatedSections.map((section, index) => (
@@ -7034,10 +7093,12 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sunDegree = formatBriefPlacementDegree(sun);
   const moonDegree = formatBriefPlacementDegree(moon);
+  const moonSignLabel = sky.moonStatus?.label ?? moon?.sign ?? "Current";
+  const shouldShowMoonDegree = sky.moonStatus?.kind !== "void";
 
   return (
     <section className="sky-lunar-brief" aria-label="Sky highlights">
-      <div className="sky-lunar-pills" aria-label="Current Sun, Moon, and phase">
+      <div className="sky-lunar-pills" aria-label="Current Sun and Moon phase">
         <span className="sky-lunar-pill">
           <span className="sky-lunar-pill-icon" aria-hidden="true">☉</span>
           <span className="sky-lunar-pill-copy">
@@ -7048,23 +7109,17 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
             </h3>
           </span>
         </span>
-        <span className="sky-lunar-pill">
-          <span className="sky-lunar-pill-icon" aria-hidden="true">☽</span>
-          <span className="sky-lunar-pill-copy">
-            <em>Moon</em>
-            <h3>
-              <span>{moon?.sign ?? "Current"}</span>
-              {moonDegree && <small>{moonDegree}</small>}
-            </h3>
-          </span>
-        </span>
-        <span className="sky-lunar-pill">
+        <span className="sky-lunar-pill sky-lunar-pill--moon">
           <span className="sky-lunar-pill-icon sky-lunar-pill-phase" aria-hidden="true">
             <MoonPhaseArt phase={sky.moonPhase} />
           </span>
           <span className="sky-lunar-pill-copy">
-            <em>Phase</em>
-            <h3>{sky.moonPhase}</h3>
+            <em>Moon</em>
+            <h3>
+              <span>{moonSignLabel}</span>
+              {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}
+            </h3>
+            <small className="sky-lunar-pill-sub">{sky.moonPhase}</small>
           </span>
         </span>
       </div>
@@ -7099,7 +7154,10 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
 
       <div className="nl-main">
         <div className="nl-top">
-          <h4>{title}</h4>
+          <h4>
+            <span className="nl-prefix">Next:</span>
+            <span>{title}</span>
+          </h4>
           <span className="nl-until">{countdownLabel}</span>
         </div>
         <span className="nl-sub" data-when={exactAt.toISOString()}>
