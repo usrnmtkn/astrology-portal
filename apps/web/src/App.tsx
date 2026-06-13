@@ -4886,6 +4886,8 @@ export function App() {
   }, [location, skyDate, skyRefreshKey]);
 
   useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+
     try {
       window.localStorage.setItem(selectedThemeStorageKey, theme);
     } catch {
@@ -6925,10 +6927,14 @@ function RelationshipComparePicker({
         <ModalPortal
           className="friend-compare-modal-root"
           panelClassName="friend-compare-popover friend-compare-modal"
+          closeOnBackdrop
           titleId={`friend-compare-title-${variant}`}
           width="420px"
           onClose={onToggle}
         >
+          <button className="friend-compare-close modal-close" type="button" aria-label="Close compare picker" onClick={onToggle}>
+            <X size={16} aria-hidden="true" />
+          </button>
           <span className="eyebrow section-label">Compare with</span>
           <h3 className="sr-only" id={`friend-compare-title-${variant}`}>Compare with saved chart</h3>
           <div className="friend-compare-list">
