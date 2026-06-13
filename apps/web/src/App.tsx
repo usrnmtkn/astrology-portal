@@ -2,8 +2,6 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   CalendarDays,
-  Check,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -34,6 +32,9 @@ import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
+import { FriendChartModal } from "./features/friends/FriendChartModal";
+import { RelationshipChartFullscreen, type RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
+import { RelationshipComparePicker, type RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { SkyTodayView } from "./features/sky/SkyToday";
 import { YouPage } from "./features/you/YouPage";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
@@ -301,17 +302,6 @@ type HouseOverlay = {
   detailParagraphs: string[];
   contentKeys: string[];
 };
-
-type RelationshipComparisonOption = {
-  id: string;
-  displayName: string;
-  initials: string;
-  subtitle: string;
-  natalChart: SkySnapshot | null;
-  isSelf: boolean;
-};
-
-type RelationshipChartFullscreenMode = "synastry" | "composite";
 
 type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
 type SignupTimeParts = {
@@ -645,6 +635,29 @@ function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParag
     : fallbackParagraphs.length > 0
       ? fallbackParagraphs
       : interpretationInReviewParagraphs;
+}
+
+const synastryCardPreviewCharacterLimit = 220;
+
+function textPreview(text: string, characterLimit = synastryCardPreviewCharacterLimit) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= characterLimit) {
+    return normalized;
+  }
+
+  const slice = normalized.slice(0, characterLimit);
+  const lastBreak = Math.max(slice.lastIndexOf(". "), slice.lastIndexOf("? "), slice.lastIndexOf("! "));
+  const trimmed = lastBreak > characterLimit * 0.55 ? slice.slice(0, lastBreak + 1) : slice.replace(/\s+\S*$/, "");
+
+  return `${trimmed.trim()}...`;
+}
+
+function fallbackPreviewText(fallback: ContentFallback) {
+  return fallback.summary
+    || fallback.detailParagraphs.find((paragraph) => paragraph.trim())?.trim()
+    || fallback.body?.split(/\n{2,}/).find((paragraph) => paragraph.trim())?.trim()
+    || null;
 }
 
 function importContentRegistry(domain: ContentDomain): Promise<LazyContentRegistry> {
@@ -1505,7 +1518,7 @@ function chartHouseLabelGeometry({
   });
 }
 
-const chartHouseLabelRadiusFactor = 0.48;
+const chartHouseLabelRadiusFactor = 0.38;
 const wheelViewBox = "-20 -20 640 640";
 const angleAxisOuterPadding = 20;
 const angleLabelOuterPadding = 20;
@@ -3810,28 +3823,29 @@ function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: 
 }
 
 function synastryContactDescription(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
-  const friendRole = comparisonPointRole(contact.friendPoint.name);
-  const comparisonRole = comparisonPointRole(contact.yourPoint.name);
   const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
   const friendPossessive = possessiveLabel(friendName);
+  const pairLabel = comparisonIsSelf ? "between you" : `between ${friendName} and ${comparisonName}`;
+  const friendPoint = `${friendPossessive} ${contact.friendPoint.name}`;
+  const comparisonPoint = `${comparisonPossessive} ${contact.yourPoint.name}`;
 
   if (contact.aspect === "opposition") {
-    return `${friendPossessive} ${friendRole} may challenge ${comparisonPossessive} ${comparisonRole}.`;
+    return `${friendPoint} and ${comparisonPoint} can pull the connection into contrast. The attraction may be real, but the two sides need room to speak without turning the pattern into a standoff.`;
   }
 
   if (contact.aspect === "square") {
-    return `${friendPossessive} ${friendRole} and ${comparisonPossessive} ${comparisonRole} can press on each other.`;
+    return `${friendPoint} presses on ${comparisonPoint}, which can make this contact hard to ignore. It can create movement, but it needs honesty before the pressure turns into irritation.`;
   }
 
   if (contact.aspect === "trine") {
-    return `${friendPossessive} ${friendRole} can support ${comparisonPossessive} ${comparisonRole} naturally.`;
+    return `${friendPoint} and ${comparisonPoint} tend to understand each other without much effort. The ease is useful when ${pairLabel} lets it become an actual gesture, not just a good feeling.`;
   }
 
   if (contact.aspect === "sextile") {
-    return `${friendPossessive} ${friendRole} can open a useful path to ${comparisonPossessive} ${comparisonRole}.`;
+    return `${friendPoint} creates an opening with ${comparisonPoint}. It may not force itself into the room, but when ${pairLabel} uses it on purpose, the contact can become warm, helpful, and easy to build on.`;
   }
 
-  return `${friendPossessive} ${friendRole} and ${comparisonPossessive} ${comparisonRole} meet directly.`;
+  return `${friendPoint} meets ${comparisonPoint} directly. This contact can feel immediate because the two parts of the charts keep activating each other.`;
 }
 
 function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
@@ -3954,9 +3968,11 @@ function synastryContactSummary(
     {},
     { allowKnowledgeOnly: true }
   );
+  const fallbackPreview = fallbackPreviewText(hookFallback);
+  const generatedPreview = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || null;
 
   return relationshipGeneratedCopyForPerspective(
-    liveGeneratedSummary(generated, hookFallback.summary),
+    textPreview(generatedPreview || fallbackPreview || synastryContactDescription(friendName, comparisonName, comparisonIsSelf, contact)),
     friendName,
     comparisonName,
     comparisonIsSelf
@@ -4026,10 +4042,17 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
     {},
     { allowKnowledgeOnly: true }
   );
+  const fallbackParagraphs = hookFallback.detailParagraphs.length > 0
+    ? hookFallback.detailParagraphs
+    : hookFallback.body
+      ? hookFallback.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+      : fallbackPreviewText(hookFallback)
+        ? [fallbackPreviewText(hookFallback) ?? ""]
+        : [];
 
   return [
     synastryDirectionalWrapper(friendName, comparisonName, comparisonIsSelf, contact),
-    ...liveGeneratedBody(generated, hookFallback.detailParagraphs).map((paragraph) => (
+    ...liveGeneratedBody(generated, fallbackParagraphs).map((paragraph) => (
       relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
     ))
   ];
@@ -6870,209 +6893,6 @@ function relationshipPossessiveName(name: string, isSelf = false) {
   }
 
   return name.endsWith("s") ? `${name}'` : `${name}'s`;
-}
-
-function RelationshipComparePicker({
-  variant,
-  outerName,
-  outerInitials,
-  options,
-  selectedId,
-  open,
-  onToggle,
-  onSelect
-}: {
-  variant: "synastry" | "composite";
-  outerName?: string;
-  outerInitials?: string;
-  options: RelationshipComparisonOption[];
-  selectedId: string;
-  open: boolean;
-  onToggle: () => void;
-  onSelect: (id: string) => void;
-}) {
-  const selectedOption = options.find((option) => option.id === selectedId) ?? options[0];
-
-  if (!selectedOption) {
-    return null;
-  }
-
-  return (
-    <div className={`friend-compare-control friend-compare-control-${variant}`}>
-      {variant === "synastry" && (
-        <div className="friend-chart-legend friend-chart-legend-target" aria-label="Chart comparison legend">
-          <span className="friend-chart-legend-item friend-chart-legend-item-outer">
-            <b aria-hidden="true" />
-            <strong>{outerName ?? outerInitials ?? "Outer"} · outer ring</strong>
-          </span>
-          <span className="friend-chart-legend-item friend-chart-legend-item-inner">
-            <b aria-hidden="true" />
-            <strong>{selectedOption.displayName} · inner ring</strong>
-          </span>
-        </div>
-      )}
-      <button
-        type="button"
-        className="friend-compare-pill"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        onClick={onToggle}
-      >
-        <span className="friend-compare-customise">With</span>
-        <span className="friend-compare-avatar" aria-hidden="true">{selectedOption.initials}</span>
-        <strong>{selectedOption.displayName}</strong>
-        <ChevronDown size={18} aria-hidden="true" />
-      </button>
-      {open && (
-        <ModalPortal
-          className="friend-compare-modal-root"
-          panelClassName="friend-compare-popover friend-compare-modal"
-          closeOnBackdrop
-          titleId={`friend-compare-title-${variant}`}
-          width="420px"
-          onClose={onToggle}
-        >
-          <button className="friend-compare-close modal-close" type="button" aria-label="Close compare picker" onClick={onToggle}>
-            <X size={16} aria-hidden="true" />
-          </button>
-          <span className="eyebrow section-label">Compare with</span>
-          <h3 className="sr-only" id={`friend-compare-title-${variant}`}>Compare with saved chart</h3>
-          <div className="friend-compare-list">
-            {options.map((option) => (
-              <button
-                type="button"
-                role="radio"
-                aria-checked={option.id === selectedOption.id}
-                className={option.id === selectedOption.id ? "selected" : ""}
-                key={option.id}
-                onClick={() => onSelect(option.id)}
-              >
-                <span className="friend-compare-avatar" aria-hidden="true">{option.initials}</span>
-                <span className="friend-compare-option-copy">
-                  <strong>{option.displayName}</strong>
-                  <small>{option.subtitle}</small>
-                </span>
-                {option.id === selectedOption.id && <Check size={20} aria-hidden="true" />}
-              </button>
-            ))}
-          </div>
-        </ModalPortal>
-      )}
-    </div>
-  );
-}
-
-function RelationshipChartFullscreenOverlay({
-  chart,
-  compositeSky,
-  comparisonName,
-  comparisonOptions,
-  comparisonPickerOpen,
-  comparisonSelectedId,
-  comparisonIsSelf,
-  interAspects,
-  mode,
-  houseSignLabelStyle,
-  onClose,
-  onComparisonSelect,
-  onComparisonToggle,
-  profile,
-  selectedComparisonSky
-}: {
-  chart: ManualChart;
-  compositeSky: SkySnapshot | null;
-  comparisonName: string;
-  comparisonOptions: RelationshipComparisonOption[];
-  comparisonPickerOpen: boolean;
-  comparisonSelectedId: string;
-  comparisonIsSelf: boolean;
-  interAspects: InterChartAspectLine[];
-  mode: RelationshipChartFullscreenMode;
-  houseSignLabelStyle: HouseSignLabelStyle;
-  onClose: () => void;
-  onComparisonSelect: (id: string) => void;
-  onComparisonToggle: () => void;
-  profile: UserProfile;
-  selectedComparisonSky: SkySnapshot | null;
-}) {
-  const title = `${chart.displayName} × ${comparisonName} · ${mode === "synastry" ? "Synastry" : "Composite"}`;
-  const titleId = `relationship-chart-fullscreen-title-${mode}`;
-
-  if (mode === "synastry" && (!chart.natalChart || !selectedComparisonSky)) {
-    return null;
-  }
-
-  if (mode === "composite" && !compositeSky) {
-    return null;
-  }
-
-  return (
-    <ModalPortal
-      className="chart-fullscreen-modal-root"
-      panelClassName="chart-fullscreen-panel"
-      titleId={titleId}
-      width="1240px"
-      onClose={onClose}
-    >
-      <div className="chart-fullscreen-overlay">
-        <div className="chart-fullscreen-header">
-          <h2 className="chart-fullscreen-title" id={titleId}>{title}</h2>
-          <button className="chart-fullscreen-close" type="button" aria-label="Close full-screen chart" onClick={onClose}>
-            <X size={18} aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="chart-fullscreen-wheel-wrap">
-          <div className="chart-shell chart-shell--fullscreen">
-            <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={title}>
-              {mode === "synastry" ? (
-                <SynastryWheel
-                  outerPositions={chart.natalChart?.positions ?? []}
-                  innerPositions={selectedComparisonSky?.positions ?? []}
-                  interAspects={interAspects}
-                  ascendant={chart.natalChart?.ascendant}
-                  ascendantLongitude={chart.natalChart?.ascendantLongitude}
-                  houseSignLabelStyle={houseSignLabelStyle}
-                />
-              ) : (
-                <SkyWheel
-                  positions={compositeSky?.positions ?? []}
-                  aspects={compositeSky?.aspects ?? []}
-                  ascendant={compositeSky?.ascendant}
-                  ascendantLongitude={compositeSky?.ascendantLongitude}
-                  midheavenLongitude={compositeSky?.midheavenLongitude}
-                  showHouses
-                  houseSignLabelStyle={houseSignLabelStyle}
-                  variant="composite"
-                />
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="chart-fullscreen-footer">
-          {mode === "composite" ? (
-            <div className="friend-chart-legend chart-fullscreen-legend" aria-label="Composite chart label">
-              <span>Composite chart</span>
-            </div>
-          ) : null}
-
-          <div className="chart-fullscreen-controls">
-            <RelationshipComparePicker
-              variant={mode}
-              outerName={mode === "synastry" ? chart.displayName : undefined}
-              outerInitials={mode === "synastry" ? profileInitials(chart.displayName, chart.displayName) : undefined}
-              options={comparisonOptions}
-              selectedId={comparisonSelectedId}
-              open={comparisonPickerOpen}
-              onToggle={onComparisonToggle}
-              onSelect={onComparisonSelect}
-            />
-          </div>
-        </div>
-      </div>
-    </ModalPortal>
-  );
 }
 
 function SynastryPlacementsComparison({
@@ -10779,106 +10599,8 @@ function ManualChartsPanel({
       )}
 
       {friendChartModalOpen && (
-        <ModalPortal
-          className="friend-chart-modal-root"
-          panelClassName="chart-modal friend-chart-modal add-chart-modal"
-          titleId="friend-chart-modal-title"
-          width="440px"
-          onClose={closeFriendChartModal}
-        >
-          <form
-            className="manual-chart-form friend-chart-modal-form add-chart-form"
-            onSubmit={saveManualChart}
-          >
-            <button className="chart-modal-close modal-close add-chart-modal__close" type="button" aria-label="Close" onClick={closeFriendChartModal}>
-              <X size={16} />
-            </button>
-            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
-              <div>
-                <h3 className="add-chart-modal__title" id="friend-chart-modal-title">{editingChart ? formCopy.editTitle : formCopy.title}</h3>
-                <p className="add-chart-modal__subtitle">{editingChart ? formCopy.editSubtitle : formCopy.subtitle}</p>
-              </div>
-            </div>
-
-            <label className="signup-field add-chart-field">
-              <span>Chart type</span>
-              <div>
-                <select
-                  value={form.chartType}
-                  onChange={(event) => updateChartType(event.target.value as ManualChartType)}
-                  aria-label="Chart type"
-                >
-                  <option value="person">Person</option>
-                  <option value="event">Event</option>
-                </select>
-              </div>
-            </label>
-
-            <label className="signup-field add-chart-field">
-              <span>{formCopy.nameLabel}</span>
-              <div>
-                <input
-                  value={form.displayName}
-                  onChange={(event) => updateField("displayName", event.target.value)}
-                  placeholder={formCopy.namePlaceholder}
-                />
-              </div>
-            </label>
-
-            {!isEventForm && (
-              <label className="signup-field add-chart-field">
-                <span>Relationship</span>
-                <div>
-                  <select
-                    value={form.relationshipType}
-                    onChange={(event) => updateField("relationshipType", event.target.value)}
-                    aria-label="Relationship type"
-                  >
-                    <option value="friend">Friend</option>
-                    <option value="partner">Partner</option>
-                    <option value="family">Family</option>
-                    <option value="work">Coworker</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-              </label>
-            )}
-
-            <div className="manual-chart-grid add-chart-birth-grid">
-              <label className="signup-field add-chart-field">
-                <span>{formCopy.dateLabel}</span>
-                <div>
-                  <input
-                    type="date"
-                    value={form.birthDate}
-                    onChange={(event) => updateField("birthDate", event.target.value)}
-                  />
-                </div>
-              </label>
-
-              <div className="signup-field add-chart-field birth-time-field">
-                <label>
-                  <span>{formCopy.timeLabel}</span>
-                  <div>
-                    <input
-                      type="time"
-                      value={form.birthTime}
-                      disabled={form.birthTimeUnknown}
-                      onChange={(event) => updateField("birthTime", event.target.value)}
-                    />
-                  </div>
-                </label>
-                <label className="unknown-time manual-chart-unknown-time checkbox-row">
-                  <input
-                    type="checkbox"
-                    checked={form.birthTimeUnknown}
-                    onChange={(event) => updateField("birthTimeUnknown", event.target.checked)}
-                  />
-                  <span>{formCopy.unknownTime}</span>
-                </label>
-              </div>
-            </div>
-
+        <FriendChartModal
+          citySearchField={(
             <CitySearchField
               label={formCopy.placeLabel}
               value={form.birthPlace}
@@ -10891,39 +10613,77 @@ function ManualChartsPanel({
               placeholder={formCopy.placePlaceholder}
               className="signup-city-search manual-chart-city-search add-chart-city-search"
             />
-
-            {message && <p className="manual-chart-message">{message}</p>}
-
-            <button className="manual-chart-save add-chart-submit" type="submit" disabled={status === "saving" || status === "deleting"}>
-              {status === "saving" ? formCopy.savingSubmit : editingChart ? formCopy.saveSubmit : formCopy.submit}
-            </button>
-          </form>
-        </ModalPortal>
+          )}
+          form={form}
+          formCopy={formCopy}
+          isEditing={Boolean(editingChart)}
+          isEventForm={isEventForm}
+          isSubmitting={status === "saving" || status === "deleting"}
+          message={message}
+          onChartTypeChange={updateChartType}
+          onClose={closeFriendChartModal}
+          onFieldChange={updateField}
+          onSubmit={saveManualChart}
+        />
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
-        <RelationshipChartFullscreenOverlay
-          chart={selectedChart}
-          compositeSky={selectedCompositeSky}
-          comparisonName={relationshipComparisonName}
+        relationshipChartFullscreenMode === "synastry" && selectedChart.natalChart && relationshipComparisonSky ? (
+          <RelationshipChartFullscreen
+            comparisonOptions={relationshipComparisonOptions}
+            comparisonPickerOpen={relationshipComparisonPickerOpen}
+            comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
+            mode="synastry"
+            outerName={selectedChart.displayName}
+            outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Synastry`}
+            onClose={() => {
+              setRelationshipComparisonPickerOpen(false);
+              setRelationshipChartFullscreenMode(null);
+            }}
+            onComparisonSelect={(id) => {
+              setRelationshipComparisonChartId(id);
+              setRelationshipComparisonPickerOpen(false);
+            }}
+            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+          >
+            <SynastryWheel
+              outerPositions={selectedChart.natalChart.positions}
+              innerPositions={relationshipComparisonSky.positions}
+              interAspects={selectedSynastryAspectLines}
+              ascendant={selectedChart.natalChart.ascendant}
+              ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+              houseSignLabelStyle={houseSignLabelStyle}
+            />
+          </RelationshipChartFullscreen>
+        ) : relationshipChartFullscreenMode === "composite" && selectedCompositeSky ? (
+          <RelationshipChartFullscreen
           comparisonOptions={relationshipComparisonOptions}
           comparisonPickerOpen={relationshipComparisonPickerOpen}
           comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-          comparisonIsSelf={relationshipComparisonIsSelf}
-          interAspects={selectedSynastryAspectLines}
-          mode={relationshipChartFullscreenMode}
-          houseSignLabelStyle={houseSignLabelStyle}
-          onClose={() => {
-            setRelationshipComparisonPickerOpen(false);
-            setRelationshipChartFullscreenMode(null);
-          }}
-          onComparisonSelect={(id) => {
-            setRelationshipComparisonChartId(id);
-            setRelationshipComparisonPickerOpen(false);
-          }}
-          onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-          profile={profile}
-          selectedComparisonSky={relationshipComparisonSky}
-        />
+            mode="composite"
+            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Composite`}
+            onClose={() => {
+              setRelationshipComparisonPickerOpen(false);
+              setRelationshipChartFullscreenMode(null);
+            }}
+            onComparisonSelect={(id) => {
+              setRelationshipComparisonChartId(id);
+              setRelationshipComparisonPickerOpen(false);
+            }}
+            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+          >
+            <SkyWheel
+              positions={selectedCompositeSky.positions}
+              aspects={selectedCompositeSky.aspects}
+              ascendant={selectedCompositeSky.ascendant}
+              ascendantLongitude={selectedCompositeSky.ascendantLongitude}
+              midheavenLongitude={selectedCompositeSky.midheavenLongitude}
+              showHouses
+              houseSignLabelStyle={houseSignLabelStyle}
+              variant="composite"
+            />
+          </RelationshipChartFullscreen>
+        ) : null
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
         <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} chart profile`}>
@@ -11063,14 +10823,25 @@ function ManualChartsPanel({
                     const comparisonPossessive = relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf);
                     const title = relationshipAspectTitle(selectedChart.displayName, contact.friendPoint.name, contact.aspect, comparisonPossessive, contact.yourPoint.name);
                     const subtitle = relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect);
-                    const description = synastryContactDescription(selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, contact);
+                    const expanded = selectedSynastryContactId === contact.id;
+                    const fullDescription = synastryDetailCopy(
+                      selectedChart.displayName,
+                      relationshipComparisonName,
+                      relationshipComparisonIsSelf,
+                      contact,
+                      relationshipGeneratedContent
+                    ).filter(Boolean).join("\n\n");
+                    const description = expanded
+                      ? fullDescription
+                      : contact.summary || textPreview(fullDescription || synastryContactDescription(selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, contact));
 
                     return (
                       <button
                         type="button"
-                        className="aspect-row aspect-row-button friend-aspect-row"
+                        className={`aspect-row aspect-row-button friend-aspect-row${expanded ? " expanded" : ""}`}
                         key={contact.id}
-                        onClick={() => setSelectedSynastryContactId(contact.id)}
+                        aria-expanded={expanded}
+                        onClick={() => setSelectedSynastryContactId((current) => current === contact.id ? null : contact.id)}
                       >
                         <span className="aspect-row-glyphs" aria-hidden="true">
                           <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} />
@@ -11080,7 +10851,8 @@ function ManualChartsPanel({
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>
                           <span className="aspect-row-subtitle">{subtitle}</span>
-                          <p>{description}</p>
+                          <p className="synastry-contact-description">{description}</p>
+                          <span className="synastry-contact-read-more">{expanded ? "Show less" : "Read more"}</span>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
                           <span className="aspect-row-dot" aria-hidden="true" />
