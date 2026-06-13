@@ -146,12 +146,6 @@
   }
 }
 
-@media (max-height: 780px) and (min-width: 721px) {
-  .auth-page {
-    align-items: flex-start;
-  }
-}
-
 @media (max-height: 900px) and (min-width: 721px) {
   .auth-page {
     align-items: flex-start;

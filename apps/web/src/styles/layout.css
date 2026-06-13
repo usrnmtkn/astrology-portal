@@ -154,6 +154,90 @@
   background: var(--surface);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  isolation: isolate;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.modal-positioner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 4vw, 56px);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.modal-panel {
+  width: min(var(--modal-width), 100%);
+  max-height: min(780px, calc(100svh - 80px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid var(--modal-border);
+  border-radius: var(--modal-radius);
+  background: var(--modal-bg);
+  color: var(--app-text);
+  box-shadow: var(--modal-shadow, var(--shadow));
+}
+
+.modal-panel:focus {
+  outline: none;
+}
+
+.chart-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.chart-modal {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: min(780px, calc(100svh - 80px));
+  overflow: auto;
+  border-radius: 32px;
+  background: var(--app-card);
+  color: var(--app-text);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.18);
+  padding: 28px;
+}
+
+.chart-modal-heading {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.chart-modal-heading h3 {
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 0.95;
+  font-weight: 900;
+}
+
+.chart-modal-heading p {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 :is(.theme-dark, [data-theme="dark"]) .modal-overlay {
   background: rgba(0, 0, 0, 0.48);
 }
@@ -169,4 +253,3 @@
   color: var(--ink);
   box-shadow: none;
 }
-
