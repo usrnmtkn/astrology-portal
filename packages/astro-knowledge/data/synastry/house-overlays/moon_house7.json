@@ -3,9 +3,15 @@
   "kind": "house-overlay",
   "planet": "moon",
   "house": "7",
-  "plainTranslation": "Their Moon in your 7th house: deep emotional partnership feeling - they sense what you need in a relationship and you feel met. Failure mode: emotional dependency dressed as commitment. Build the partnership; keep your own footing.",
+  "plainTranslation": "This overlay can make the house person feel emotionally drawn into partnership with the Moon person. The Moon person may naturally activate the house person's desire to bond, respond, care, or be chosen.",
+  "summaryShort": "This overlay can make the house person feel emotionally drawn into partnership with the Moon person. The Moon person may naturally activate the house person's desire to bond, respond, care, or be chosen.",
+  "summaryDeep": "The 7th house is where we meet the other. It is the place of partnership, reflection, commitment, projection, and the people who pull us out of ourselves. When someone's Moon falls here, their emotional presence can feel relational right away.\n\nThe house person may experience the Moon person as someone who fits into the role of partner, mirror, confidant, or emotional counterpart. The Moon person may feel needed by the house person and may instinctively respond to their moods, preferences, and expectations.\n\nThis overlay can feel intimate because the Moon person brings feeling into the house person's relationship space. It may be romantic, but it does not have to be. It can show up between close friends, family members, collaborators, or anyone who becomes emotionally significant through one-on-one exchange.\n\nThe risk is projection. The house person may place expectations on the Moon person before the relationship has earned them. The Moon person may begin responding to those expectations without realizing they are taking on a role.\n\nIt may show up as feeling like natural partners, emotional conversations one-on-one, wanting reassurance from each other, quickly caring about the other person's reactions, or feeling chosen, mirrored, or emotionally claimed.",
+  "tension": "The connection can create attachment quickly. One person may start treating the other like a partner, even before the relationship is defined.",
+  "advice": "Let the bond become what it actually is, not just what it seems to promise. Notice where you are responding to the person in front of you and where you are responding to an old relationship pattern.",
+  "weight": 4,
+  "authoringStatus": "locked",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from approved project marquee synastry house overlay material. Source file was not copied into the repository.",
+  "note": "Gold standard Batch 2. Gift: emotional attunement, partnership instinct, care, responsiveness, and the feeling of being met. Shadow: projection, dependency, people-pleasing, emotional role-play, or expecting the other person to complete the picture.",
   "voiceNeutral": true,
   "status": "REVIEWED"
 }

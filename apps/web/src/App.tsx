@@ -475,7 +475,7 @@ function emptyContentFallback(id: string): ContentFallback {
 function fallbackFromHook(
   hookKey: string,
   context: FallbackHookContext = {},
-  localFallback: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> = {},
+  _localFallback: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> = {},
   options: { allowKnowledgeOnly?: boolean } = {}
 ): ContentFallback {
   const hook = fallbackHookByKey(hookKey);
@@ -489,17 +489,7 @@ function fallbackFromHook(
     }
   }
 
-  return {
-    bundle: {
-      id: hookKey,
-      knowledge: null,
-      voice: null,
-      status: "INCOMPLETE"
-    },
-    summary: localFallback.summary ?? null,
-    body: localFallback.body ?? null,
-    detailParagraphs: localFallback.detailParagraphs ?? []
-  };
+  return emptyContentFallback(hookKey);
 }
 
 function retrogradePlanetMeaning(planet: string, domain: ContentDomain = "sky") {
@@ -3550,32 +3540,6 @@ function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: 
   return `${possessiveLabel(ownerName)} ${firstPoint} ${aspect} ${comparisonPossessive} ${secondPoint}`;
 }
 
-function synastryContactDescription(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
-  const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
-  const friendPossessive = possessiveLabel(friendName);
-  const pairLabel = comparisonIsSelf ? "between you" : `between ${friendName} and ${comparisonName}`;
-  const friendPoint = `${friendPossessive} ${contact.friendPoint.name}`;
-  const comparisonPoint = `${comparisonPossessive} ${contact.yourPoint.name}`;
-
-  if (contact.aspect === "opposition") {
-    return `${friendPoint} and ${comparisonPoint} can pull the connection into contrast. The attraction may be real, but the two sides need room to speak without turning the pattern into a standoff.`;
-  }
-
-  if (contact.aspect === "square") {
-    return `${friendPoint} presses on ${comparisonPoint}, which can make this contact hard to ignore. It can create movement, but it needs honesty before the pressure turns into irritation.`;
-  }
-
-  if (contact.aspect === "trine") {
-    return `${friendPoint} and ${comparisonPoint} tend to understand each other without much effort. The ease is useful when ${pairLabel} lets it become an actual gesture, not just a good feeling.`;
-  }
-
-  if (contact.aspect === "sextile") {
-    return `${friendPoint} creates an opening with ${comparisonPoint}. It may not force itself into the room, but when ${pairLabel} uses it on purpose, the contact can become warm, helpful, and easy to build on.`;
-  }
-
-  return `${friendPoint} meets ${comparisonPoint} directly. This contact can feel immediate because the two parts of the charts keep activating each other.`;
-}
-
 function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
   if (!sky) {
     return [];
@@ -3623,18 +3587,6 @@ function synastryTone(aspect: string) {
   return "Fusion";
 }
 
-function synastryVerb(aspect: string) {
-  const verbs: Record<string, string> = {
-    conjunction: "meets",
-    opposition: "challenges",
-    square: "challenges",
-    trine: "flows with",
-    sextile: "flows with"
-  };
-
-  return verbs[aspect] ?? "contacts";
-}
-
 function possessiveLabel(name: string) {
   return name.endsWith("s") ? `${name}'` : `${name}'s`;
 }
@@ -3671,13 +3623,6 @@ function relationshipGeneratedCopyForPerspective(text: string, primaryName: stri
     .replace(/\byou\b/g, pair);
 }
 
-function synastryDirectionalWrapper(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: Pick<SynastryContact, "friendPoint" | "yourPoint" | "aspect">) {
-  const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
-  const pairLabel = comparisonIsSelf ? "between you" : `between ${friendName} and ${comparisonName}`;
-
-  return `${possessiveLabel(friendName)} ${contact.friendPoint.name} ${synastryVerb(contact.aspect)} ${comparisonPossessive} ${contact.yourPoint.name}, bringing ${comparisonPointRole(contact.friendPoint.name)} into contact with ${comparisonPointRole(contact.yourPoint.name)} ${pairLabel}.`;
-}
-
 function synastryContactSummary(
   friendName: string,
   comparisonName: string,
@@ -3700,7 +3645,7 @@ function synastryContactSummary(
   const generatedPreview = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || null;
 
   return relationshipGeneratedCopyForPerspective(
-    textPreview(generatedPreview || fallbackPreview || synastryContactDescription(friendName, comparisonName, comparisonIsSelf, contact)),
+    textPreview(generatedPreview || fallbackPreview || ""),
     friendName,
     comparisonName,
     comparisonIsSelf
@@ -3754,10 +3699,7 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
   const generatedParagraphs = generatedContentParagraphs(generated);
 
   if (generatedParagraphs.length > 0) {
-    return [
-      synastryDirectionalWrapper(friendName, comparisonName, comparisonIsSelf, contact),
-      ...generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf))
-    ];
+    return generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf));
   }
 
   const hookFallback = fallbackFromHook(
@@ -3778,12 +3720,9 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
         ? [fallbackPreviewText(hookFallback) ?? ""]
         : [];
 
-  return [
-    synastryDirectionalWrapper(friendName, comparisonName, comparisonIsSelf, contact),
-    ...liveGeneratedBody(generated, fallbackParagraphs).map((paragraph) => (
-      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
-    ))
-  ];
+  return liveGeneratedBody(generated, fallbackParagraphs).map((paragraph) => (
+    relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+  ));
 }
 
 function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap): HouseOverlay[] {
@@ -5896,24 +5835,7 @@ function retrogradeKnowledgeCopy(
     return generatedSummary;
   }
 
-  void content;
-
-  const fallbackByPlanet: Record<string, string> = {
-    Mercury: "Messages, timing, plans, and decisions may need a second pass. Slow down before assuming the first version is the final one.",
-    Venus: "Love, money, desire, and self-worth move into review. What looks valuable may need time to prove itself.",
-    Mars: "Energy turns inward before it moves cleanly forward. Anger, drive, and urgency may need a better direction.",
-    Jupiter: "Growth becomes less about expansion and more about meaning. Beliefs, risks, and opportunities may need a slower look.",
-    Saturn: "Pressure turns inward. Responsibilities, limits, and long-term commitments may need to be rebuilt from the inside.",
-    Uranus: "Change works under the surface. Restlessness, freedom, and disruption may be asking for a quieter kind of honesty.",
-    Neptune: "Fantasy thins out. Dreams, confusion, faith, and avoidance may become easier to see for what they are.",
-    Pluto: "Power moves inward. Control, release, fear, and deep change may need time before they can be handled directly.",
-    "True Node": "Direction comes under review. Old patterns and future choices may feel closer together than usual."
-  };
-  const fallback = fallbackByPlanet[position.planet] ?? `${position.planet} themes turn inward for review. Give the cycle time before forcing a final answer.`;
-
-  return slowChapterPlanets.has(position.planet)
-    ? `${fallback} This is a review period inside a longer ${position.sign} chapter, not an urgent ending.`
-    : fallback;
+  return content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || "";
 }
 
 function ordinalHouse(house: number) {
@@ -5959,7 +5881,7 @@ function natalPlacementMeta(position: PlanetPosition) {
 }
 
 function natalPlacementDescription(planet: string) {
-  return natalSignatureDescriptions[planet] ?? "A signature in your chart";
+  return natalSignatureDescriptions[planet] ?? "";
 }
 
 function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedContent?: GeneratedContentMap) {
@@ -9984,7 +9906,7 @@ function ManualChartsPanel({
                     ).filter(Boolean).join("\n\n");
                     const description = expanded
                       ? fullDescription
-                      : contact.summary || textPreview(fullDescription || synastryContactDescription(selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, contact));
+                      : contact.summary || textPreview(fullDescription);
 
                     return (
                       <button

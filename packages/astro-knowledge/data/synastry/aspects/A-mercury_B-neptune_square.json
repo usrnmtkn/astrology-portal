@@ -4,9 +4,15 @@
   "planetA": "mercury",
   "planetB": "neptune",
   "aspect": "square",
-  "plainTranslation": "A's mind meets B's dreams. The square puts them in friction.",
+  "plainTranslation": "This aspect can make communication feel dreamy, confusing, inspired, or slippery. One person may hear what they hope was said instead of what was actually meant.",
+  "summaryShort": "This aspect can make communication feel dreamy, confusing, inspired, or slippery. One person may hear what they hope was said instead of what was actually meant.",
+  "summaryDeep": "Mercury wants words, facts, timing, and clarity. Neptune wants feeling, imagination, longing, and the space between things. When these two square each other, the connection can create beautiful misunderstandings and painful ones.\n\nThe Mercury person may try to define what is happening. The Neptune person may blur it, avoid it, romanticize it, or respond from a place that is more emotional than literal. Sometimes this creates magic. The two people may inspire each other creatively, spiritually, or imaginatively. They may feel like they can speak through symbols, music, silence, or mood.\n\nBut when clarity is needed, this aspect can become difficult. Plans can be vague. Promises can be misread. One person may assume there is an understanding that was never actually spoken. The other may feel accused when they were only being unclear.\n\nThis aspect needs clean language. Not because the connection lacks feeling, but because feeling alone cannot hold the whole truth. Without honesty, Mercury-Neptune can become projection, disappointment, excuses, or the slow ache of realizing the story was not the same for both people.\n\nIt may show up as vague texts, romantic assumptions, misunderstandings around plans, feeling psychically connected, or disappointment after clarity arrives.",
+  "tension": "Fantasy can replace facts. One person may avoid directness while the other keeps trying to solve the fog.",
+  "advice": "Repeat back what you heard. Put plans in writing. Ask direct questions. Do not build a whole relationship on hints.",
+  "weight": 4,
+  "authoringStatus": "locked",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Gold standard Batch 2. Gift: imagination, empathy, poetic communication, creative inspiration, and the ability to sense what words cannot fully hold. Shadow: confusion, mixed signals, idealization, denial, avoidance, or feeling misled when nothing was clearly defined.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

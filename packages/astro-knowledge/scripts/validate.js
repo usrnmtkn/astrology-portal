@@ -161,9 +161,9 @@ const entryShapes = {
   synastryHouseOverlay: {
     schemaFile: "synastry-house-overlay.schema.json",
     required: ["id", "kind", "planet", "house", "plainTranslation", "policy", "voiceNeutral", "status"],
-    optional: ["note"],
-    types: { id: "string", kind: "string", planet: "string", house: "string", plainTranslation: "string", policy: "string", note: "string" },
-    enums: { kind: ["house-overlay"] }
+    optional: ["note", "summaryShort", "summaryDeep", "tension", "advice", "weight", "authoringStatus"],
+    types: { id: "string", kind: "string", planet: "string", house: "string", plainTranslation: "string", policy: "string", note: "string", summaryShort: "string", summaryDeep: "string", tension: "string", advice: "string", weight: "number", authoringStatus: "string" },
+    enums: { kind: ["house-overlay"], authoringStatus: ["draft", "approved", "locked"] }
   },
   content: {
     schemaFile: "content.schema.json",

@@ -199,7 +199,7 @@ export function placementTitleFromParts(planet: string, sign: string, retrograde
 }
 
 export function natalPlacementDescription(planet: string) {
-  return natalSignatureDescriptions[planet] ?? "A signature in your chart";
+  return natalSignatureDescriptions[planet] ?? "";
 }
 
 export function InlineGlyphIcon({ fallback, href, label }: { fallback: string; href: string | null; label: string }) {
