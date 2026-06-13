@@ -4,9 +4,9 @@
   "planetA": "moon",
   "planetB": "sun",
   "aspect": "square",
-  "plainTranslation": "The Moon person's needs and the Sun person's way of being can rub in a place both people feel quickly. One person's normal self-expression may land as emotional disruption to the other. This can work, but only when both people stop treating their own rhythm as the only reasonable one.",
+  "plainTranslation": "There's a connection here, but it can rub the wrong way. One person's natural style may clash with what the other person needs to feel safe, cared for, or understood.\n\nIt can show up in ordinary little moments. One person wants to move on, the other wants to talk it through. One person needs space, the other needs reassurance. Nobody has to be doing anything terrible for it to still feel frustrating.\n\nThe problem is taking the mismatch personally. You can start thinking, \"Why are they like this?\" when really, the two of you may just have different settings.\n\nDon't let every small rub become a larger story about the relationship. Name the pattern, adjust, and stop expecting the other person to magically know what would make you feel better.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Refined from approved project relationship source material. Source files were not copied into the repository.",
+  "note": "Imported from authored synastry material (synastry-authored__19_ (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

@@ -4,9 +4,9 @@
   "planetA": "moon",
   "planetB": "uranus",
   "aspect": "sextile",
-  "plainTranslation": "A's feelings meets B's need for freedom. The sextile supports them, if you act on it.",
+  "plainTranslation": "This relationship usually feels easy and refreshing.\n\nThe Uranus person brings new ideas, surprises, and a different way of looking at things. The Moon person brings kindness, emotional support, and a sense of comfort. Together, you can enjoy being close without feeling like you have to give up your independence.\n\nOne of the best things about this connection is that it rarely feels stuck. You keep learning new things about each other, and there is often a feeling of curiosity between you. The Moon person may feel more comfortable sharing unusual or personal feelings. The Uranus person may feel accepted for who they are without having to change themselves.\n\nThe challenge is that things can stay on the surface.\n\nYou may have fun together and genuinely enjoy each other's company, but avoid the deeper conversations that build a stronger emotional connection. It is easy to focus on what is interesting and exciting while skipping over what feels vulnerable or uncomfortable.\n\nSometimes what this relationship needs is not another new experience. It needs a quiet evening, an honest conversation, or a moment where both people slow down and talk about what is really going on inside.\n\nThis aspect works best when you make room for both fun and depth. Talk about your fears, your needs, your expectations, and the things that matter most to you. Enjoy the freedom this connection offers, but do not let independence get in the way of real closeness.\n\nThe freedom is a strength. Just make sure it does not replace emotional intimacy.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (moon_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

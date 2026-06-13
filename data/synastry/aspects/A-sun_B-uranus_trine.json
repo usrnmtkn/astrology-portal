@@ -4,9 +4,9 @@
   "planetA": "sun",
   "planetB": "uranus",
   "aspect": "trine",
-  "plainTranslation": "A's identity meets B's need for freedom. The trine lets them flow together easily.",
+  "plainTranslation": "This connection makes freedom feel natural.\n\nBoth people may feel like they can be themselves without fighting for it. The Uranus person brings originality and new ideas. The Sun person brings warmth and confidence. You can challenge each other without making each other feel unsafe.\n\nAt its best, this aspect gives the relationship room to breathe. Neither person has to shrink. The Uranus person can be unusual without being judged. The Sun person can keep growing without feeling held back.\n\nThe challenge is that the relationship can become too separate. Because both people give each other so much space, they may forget to actively choose each other. Over time, the connection can become more parallel than close.\n\nSpace is healthy. Distance is different.\n\nThis works best when you keep making shared plans and checking in with each other. Let the relationship stay free, but do not let it drift.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (sun_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

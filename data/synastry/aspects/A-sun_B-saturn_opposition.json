@@ -4,9 +4,9 @@
   "planetA": "sun",
   "planetB": "saturn",
   "aspect": "opposition",
-  "plainTranslation": "Self-expression meets restriction across the relationship. The Saturn person's caution opposes the Sun person's drive - useful brakes, or a constant no. Failure mode: one is always the adult, one always the kid. Hold the line that matters, loosen the rest, and check who's in charge of whom.",
+  "plainTranslation": "This person may feel like a reality check.\n\nThey may slow you down, question your choices, or bring attention to responsibilities you would rather not deal with yet. At times, this can feel grounding. At other times, it can feel like they are standing between you and your own light.\n\nWhen this works, they help you build more discipline. They may bring steadiness where you bring momentum. They may help you think long-term, make better decisions, and stop skipping the steps that matter. Their influence can make you more intentional.\n\nThe challenge is that the difference can turn into a standoff. You may feel judged or restricted. They may feel like you are not taking things seriously enough. You want room to be yourself. They want proof that you can handle what you are trying to become. This can create a painful pattern where one person feels controlled and the other feels responsible for holding everything together. Nobody feels fully seen. Nobody feels fully trusted.\n\nThis connection works best when seriousness becomes collaboration, not correction. Let them help you ground your life, but do not hand them the authority to define your worth. You can learn from someone without making them the judge of who you are.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (synastry-authored__19_ (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "DRAFT"
 }

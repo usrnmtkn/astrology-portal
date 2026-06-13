@@ -4,9 +4,9 @@
   "planetA": "sun",
   "planetB": "uranus",
   "aspect": "square",
-  "plainTranslation": "A's identity meets B's need for freedom. The square puts them in friction.",
+  "plainTranslation": "This connection can be exciting and exhausting.\n\nThe Sun person may want consistency. The Uranus person may need freedom and change. The Sun person may try to build trust through routine or reassurance, while the Uranus person may feel trapped by too much predictability.\n\nThis can create a difficult pattern. The Sun person reaches for stability. Uranus pulls away. The Sun person feels unsafe and tries to create more structure. Uranus feels controlled and pushes back harder.\n\nThe attraction can be strong, but so can the instability. The Uranus person may feel thrilling to the Sun person, but also hard to rely on. The Sun person may feel grounding to Uranus, but also like a pressure they want to escape.\n\nThe danger is using freedom as a weapon. Canceling plans without warning, threatening to leave, creating drama when things are calm, or refusing to be consistent can make the Sun person feel like peace is never safe.\n\nThis aspect can create growth, but growth should not mean constant stress. Excitement is not the same as security.\n\nFor this to work, the Sun person needs to stay steady without becoming controlling. The Uranus person needs to ask for space without blowing up the relationship to get it.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (sun_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

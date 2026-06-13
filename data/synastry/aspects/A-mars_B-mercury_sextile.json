@@ -4,9 +4,9 @@
   "planetA": "mars",
   "planetB": "mercury",
   "aspect": "sextile",
-  "plainTranslation": "A's drive meets B's mind. The sextile supports them, if you act on it.",
+  "plainTranslation": "This person helps you get to the point.\n\nThey can help you put your thoughts into words, make decisions, and move conversations forward when you've been going in circles. Talking to them often feels productive. Ideas turn into plans. Questions get clearer. Problems feel easier to tackle.\n\nThe potential is there, but it usually takes some effort from both people. The more willing you are to talk things through, be honest, and stay engaged, the easier it is to understand each other and make progress together.\n\nThe challenge is not settling for what's easy. It can be tempting to stick to familiar topics or avoid conversations that feel a little more vulnerable. But this connection tends to grow when both people are willing to go a bit deeper.\n\nBe direct. The more openly you communicate, the more useful this connection becomes.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (synastry-authored__19_ (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

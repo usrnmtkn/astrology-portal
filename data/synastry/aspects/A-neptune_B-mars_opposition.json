@@ -4,9 +4,9 @@
   "planetA": "neptune",
   "planetB": "mars",
   "aspect": "opposition",
-  "plainTranslation": "A's dreams meets B's drive. The opposition pulls them into push-and-pull.",
+  "plainTranslation": "This connection can make it feel like you do not understand each other.\n\nMars moves through directness, desire, action, and the body. Neptune moves through feeling, image, intuition, and receptivity. Mars may experience Neptune as evasive or hard to reach. Neptune may experience Mars as too forceful, too impatient, or too literal. Neither person has to be wrong for both to feel misunderstood.\n\nThe pull can be strong, but the timing may be difficult. Mars may be ready to act right when Neptune needs space. Neptune may finally open right when Mars has become guarded. One reaches, the other dissolves. One pushes, the other retreats. Then the roles can switch, and both are left wondering why closeness keeps slipping away.\n\nAt its best, this aspect teaches both people something they need. Mars learns that action without sensitivity can become blunt. Neptune learns that feeling without action can become avoidance. Together, you can create something that includes both instinct and imagination, body and spirit, movement and surrender.\n\nBut the shadow is projection.\n\nMars may demand that Neptune become clearer, stronger, more decisive. Neptune may demand that Mars become more patient, more receptive, less direct. Both may be asking the other to develop the quality they are avoiding in themselves.\n\nThe work is to learn from the other person's nature.\n\nMars needs to understand that Neptune's pause is not always rejection. Neptune needs to understand that Mars's directness is not always an attack. When you learn each other's language, the opposition stops being a battle between force and feeling and becomes a bridge between them.\n\nMake something together where both modes have a real job. Let Mars act. Let Neptune imagine. Let the body and the dream meet in something practical. This aspect works best when neither person has to disappear for the other one to feel safe.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (mars_neptune (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

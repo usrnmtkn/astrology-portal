@@ -4,9 +4,9 @@
   "planetA": "moon",
   "planetB": "saturn",
   "aspect": "opposition",
-  "plainTranslation": "Need versus distance, across the table. One wants more closeness; the other guards the gate, often from fear rather than malice. Failure mode: a pursue-withdraw loop where both feel wronged. Set terms you both say out loud, and don't mistake someone's walls for emotional depth.",
+  "plainTranslation": "This person may seem emotionally distant, even when they care.\n\nYou might look for comfort, reassurance, or a sense of emotional closeness, while they respond with caution, restraint, or practical advice. What feels supportive to them may feel cold to you. What feels like a reasonable emotional need to you may feel overwhelming to them. It is easy for both people to misunderstand each other's intentions.\n\nAt its best, this connection creates balance. They can help you step back from emotional overwhelm and see situations more clearly. Their steadiness can offer perspective when feelings become consuming. In return, you can help them stay connected to emotions they might otherwise avoid or suppress.\n\nThe challenge comes when the relationship falls into a cycle that neither person intends. One person reaches for reassurance, and the other responds by creating more distance. That distance then increases the need for reassurance, which can keep the pattern going. The goal is not to decide who is right, but to recognize the pattern together and create space for both emotional needs and healthy boundaries.\n\nThis aspect works best when both people resist turning differences into proof that they are unloved. Be clear about what you need, and stay open to what the other person is actually able to offer.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (synastry-authored__19_ (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "DRAFT"
 }

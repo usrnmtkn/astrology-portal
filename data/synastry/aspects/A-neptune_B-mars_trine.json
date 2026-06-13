@@ -4,9 +4,9 @@
   "planetA": "neptune",
   "planetB": "mars",
   "aspect": "trine",
-  "plainTranslation": "A's dreams meets B's drive. The trine lets them flow together easily.",
+  "plainTranslation": "This connection can make inspiration move easily into action.\n\nMars may act from something deeper than ordinary will. Neptune may feel that its visions can take shape without being distorted or forced. Together, you may find that the right movement happens naturally. A creative project begins without too much planning. A shared rhythm forms. Ordinary hours can feel lit from within.\n\nAt its best, this aspect gives grace to action. Mars does not have to push so hard. Neptune does not have to drift so far away. Desire, imagination, and movement can flow together. You may inspire each other to create, help, heal, dream, move, and make something real.\n\nBut the ease can also become the trap.\n\nBecause the connection feels good, you may assume it is healthy. Because there is beauty, you may stop asking what is being avoided. A trine can carry a lot of unspoken truth without immediate symptoms. Nothing has to explode. The difficult things simply remain underground while the surface still looks lovely.\n\nThere can also be passivity here. You both wait for the feeling to return, for the right moment, for inspiration, for the other person to begin. The aspect gives energy, but not always direction.\n\nGive the inspiration a deadline. Finish the work. Make the plan. Say the thing that does not fit the beautiful mood.\n\nThe bond can hold reality. Let it.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (mars_neptune (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }
