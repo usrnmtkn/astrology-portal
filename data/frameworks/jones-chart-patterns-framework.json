@@ -1,0 +1,66 @@
+{
+  "id": "jones-chart-patterns-framework",
+  "kind": "framework",
+  "title": "Jones Chart Patterns Framework",
+  "role": "natal-synthesis-method",
+  "category": "chart-pattern",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Jones chart patterns describe the distribution of the ten planets around the wheel. They are whole-chart temperament signals, not replacements for planets, houses, aspects, sect, dignity, or the chart ruler."
+    },
+    {
+      "id": "detection-rules",
+      "heading": "Detection Rules",
+      "body": "Use the ten planets only unless a product mode explicitly includes points. Check the occupied span, empty spans, clusters, and singleton planets. Some patterns overlap in real charts, so mark uncertain detections as low confidence rather than forcing a label."
+    },
+    {
+      "id": "patterns",
+      "heading": "Patterns",
+      "body": "These labels help summarize chart distribution before detailed delineation.",
+      "items": [
+        {
+          "label": "bundle",
+          "body": "Most or all planets fall within about 120 degrees. This concentrates life force into a narrow range of concerns. Gift: focus and specialization. Watch: limited perspective outside the concentration."
+        },
+        {
+          "label": "bowl",
+          "body": "Planets occupy about half the chart, leaving the opposite half empty. This can show self-containment and a strong orientation toward the occupied side, with the empty side acting as a balancing prompt."
+        },
+        {
+          "label": "bucket",
+          "body": "A bowl pattern has one planet set apart as a handle. The handle planet becomes especially important because it channels or carries the weight of the rest of the chart."
+        },
+        {
+          "label": "locomotive",
+          "body": "Planets occupy roughly 240 degrees, leaving about 120 degrees open. The planet leading after the empty span can act as a driver. This pattern often reads as drive, momentum, and a problem or absence the person tries to answer."
+        },
+        {
+          "label": "splay",
+          "body": "Planets form three separated groups, like a tripod. This can show independence and varied talents, with the developmental task of coordinating abilities that may not naturally point in one direction."
+        },
+        {
+          "label": "seesaw",
+          "body": "Planets form two opposing groups with empty space between them. This can show polarization, comparison, and movement between two sides of life. Oppositions often become important."
+        },
+        {
+          "label": "splash",
+          "body": "Planets are widely distributed around the chart, often occupying many signs or houses. This can show breadth, versatility, and multiple interests, but may need prioritization."
+        }
+      ]
+    },
+    {
+      "id": "product-use",
+      "heading": "Product Use",
+      "body": "Use Jones patterns as a first-pass chart overview. They are especially helpful for explaining why a chart feels concentrated, polarized, scattered, driven, or broadly distributed before moving into specific placements."
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local review PDFs supplied June 2026: Seven Stars Astrology lessons on planetary prominence and aspects, Astrodienst Astrowiki pages for Grand Cross, Grand Trine, T-Square, Yod, and Astrodienst/Astrowiki Jones chart-pattern material. Source PDFs were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

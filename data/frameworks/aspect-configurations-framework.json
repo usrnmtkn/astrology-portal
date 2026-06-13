@@ -1,0 +1,63 @@
+{
+  "id": "aspect-configurations-framework",
+  "kind": "framework",
+  "title": "Aspect Configurations Framework",
+  "role": "natal-synthesis-method",
+  "category": "chart-pattern",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Named aspect configurations are synthesis signals. They show how several planets behave as one connected system, so read the figure before reading each aspect in isolation."
+    },
+    {
+      "id": "detection",
+      "heading": "Detection",
+      "body": "Detect configurations from actual aspect geometry, then identify the focal planet, missing leg, element, modality, houses, and any release points. Do not infer a configuration from sign symbolism alone when the aspect pattern is not present."
+    },
+    {
+      "id": "configurations",
+      "heading": "Configurations",
+      "body": "Use these patterns as chart-level emphasis and as prompts for synthesis.",
+      "items": [
+        {
+          "label": "t-square",
+          "body": "Two planets oppose each other and both square a third planet. The squared planet is the focal point where the tension concentrates. This pattern creates pressure that asks for action, and a planet trine or sextile the opposition can show a release route."
+        },
+        {
+          "label": "grand-cross",
+          "body": "Four planets form a closed square-and-opposition pattern. The figure is stable, persistent, and difficult to ignore. It can build resilience and skill through repeated effort, but can also become rigid if the person cannot change tactics."
+        },
+        {
+          "label": "grand-trine",
+          "body": "Three planets trine one another, usually emphasizing one element. This can show natural support, talent, and ease, but ease can become passivity if the chart does not have enough friction or conscious use."
+        },
+        {
+          "label": "kite",
+          "body": "A grand trine becomes a kite when a fourth planet opposes one trine planet and sextiles the other two. Read the opposition as the point that gives the easy circuit a direction."
+        },
+        {
+          "label": "yod",
+          "body": "Two planets in sextile both quincunx a focal planet. The focal planet carries subtle pressure and a need for adjustment. Treat the yod as a modern midpoint-like configuration, useful but not as universally traditional as the major aspect figures."
+        }
+      ]
+    },
+    {
+      "id": "interpretive-rules",
+      "heading": "Interpretive Rules",
+      "body": "Always read the planets, houses, signs, and rulers involved. A configuration is not automatically good or bad; it describes how energy circulates. Hard figures need constructive outlets. Easy figures need deliberate use."
+    },
+    {
+      "id": "product-use",
+      "heading": "Product Use",
+      "body": "When a configuration is present, group its member aspects together in chart synthesis. Show the user the pattern, the focal planet or missing balance point, and one practical way to work with it."
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local review PDFs supplied June 2026: Seven Stars Astrology lessons on planetary prominence and aspects, Astrodienst Astrowiki pages for Grand Cross, Grand Trine, T-Square, Yod, and Astrodienst/Astrowiki Jones chart-pattern material. Source PDFs were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

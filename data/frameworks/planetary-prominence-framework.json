@@ -1,0 +1,67 @@
+{
+  "id": "planetary-prominence-framework",
+  "kind": "framework",
+  "title": "Planetary Prominence Framework",
+  "role": "natal-synthesis-method",
+  "category": "natal-chart",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Separate a planet's prominence from whether it is easy, difficult, dignified, or helpful. Prominence answers how loudly a planet speaks in the chart; benefit, harm, dignity, and condition answer what quality that voice carries."
+    },
+    {
+      "id": "do-not-overload-signs",
+      "heading": "Do Not Overload Signs",
+      "body": "Do not make sign placement carry the whole interpretation. A sign colors a planet, but prominence comes from placement, motion, visibility, angularity, repetition, and direct contact with chart-defining points. A weakly emphasized planet in a vivid sign can still be a side note."
+    },
+    {
+      "id": "primary-prominence-factors",
+      "heading": "Primary Prominence Factors",
+      "body": "Use several independent signals before calling a planet dominant. Angularity, stations, direct contact with the Sun or Moon, tight aspects, rulership of major chart points, and repeated thematic testimony all increase signal. The luminaries begin with natural visibility, but they still need context."
+    },
+    {
+      "id": "factors",
+      "heading": "Factors",
+      "body": "These factors are weighting inputs for synthesis, not final interpretations.",
+      "items": [
+        {
+          "label": "angularity",
+          "body": "Planets near the Ascendant, Midheaven, Descendant, or IC are easier to see in the life. Angular placement raises volume and makes the planet more eventful."
+        },
+        {
+          "label": "station",
+          "body": "A planet near a station can become more noticeable because its motion is emphasized. Treat station as prominence, not automatically as crisis."
+        },
+        {
+          "label": "solar-visibility",
+          "body": "Relationship to the Sun matters for visibility. Combustion, under-the-beams, heliacal emergence, and cazimi should modify how clearly the planet can act."
+        },
+        {
+          "label": "luminary-contact",
+          "body": "Close contact with the Sun or Moon makes a planet more personal because it shapes identity, vitality, instinct, or daily emotional pattern."
+        },
+        {
+          "label": "rulership-and-regard",
+          "body": "A planet that rules, aspects, or otherwise strongly testifies to a key point may describe that point more directly than a planet with only abstract dignity points."
+        },
+        {
+          "label": "repetition",
+          "body": "Treat a planet as central when its topics repeat through sign, house, aspect, rulership, and chart pattern. One indicator raises a question; repeated indicators make a through-line."
+        }
+      ]
+    },
+    {
+      "id": "use-in-product",
+      "heading": "Use In Product",
+      "body": "Use prominence to decide which chart factors deserve user-facing emphasis. Do not present every planet equally. Name the loudest two or three planetary through-lines, then explain the evidence and the choice point."
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local review PDFs supplied June 2026: Seven Stars Astrology lessons on planetary prominence and aspects, Astrodienst Astrowiki pages for Grand Cross, Grand Trine, T-Square, Yod, and Astrodienst/Astrowiki Jones chart-pattern material. Source PDFs were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
