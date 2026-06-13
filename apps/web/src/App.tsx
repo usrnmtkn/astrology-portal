@@ -4558,6 +4558,7 @@ export function App() {
   function navigateToFriends() {
     const nextTab = initialFriendsTab();
 
+    setSelectedSkyDetail(null);
     updateFriendsTabUrl(nextTab, "push");
     storeFriendsTab(nextTab);
     storePortalMode("friends");
@@ -4566,6 +4567,7 @@ export function App() {
   }
 
   function navigateToPortalMode(nextMode: PortalMode) {
+    setSelectedSkyDetail(null);
     updatePortalModeUrl(nextMode, "push");
     storePortalMode(nextMode);
     setMode(nextMode);

@@ -165,6 +165,14 @@ function writeLocalManualCharts(userId: string, charts: ManualChart[]) {
   }
 }
 
+function clearLocalManualCharts(userId: string) {
+  try {
+    window.localStorage.removeItem(localManualChartsKey(userId));
+  } catch {
+    return;
+  }
+}
+
 function createLocalManualChart(userId: string, input: ManualChartInput): ManualChart {
   const now = new Date().toISOString();
   const nextChart: ManualChart = {
@@ -204,6 +212,20 @@ function deleteLocalManualChart(userId: string, chartId: string) {
     userId,
     readLocalManualCharts(userId).filter((chart) => chart.id !== chartId)
   );
+}
+
+function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart) {
+  const deletedIdentity = chartIdentity(deletedChart);
+  const nextCharts = readLocalManualCharts(userId).filter((chart) => (
+    chart.id !== deletedChart.id && chartIdentity(chart) !== deletedIdentity
+  ));
+
+  if (nextCharts.length === 0) {
+    clearLocalManualCharts(userId);
+    return;
+  }
+
+  writeLocalManualCharts(userId, nextCharts);
 }
 
 async function hasRemoteUser(userId: string) {
@@ -325,6 +347,8 @@ export async function migrateLocalManualChartsToRemote(userId: string, localUser
     imported += 1;
   }
 
+  uniqueLocalUserIds.forEach(clearLocalManualCharts);
+
   return { imported, skipped };
 }
 
@@ -373,6 +397,17 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
     return;
   }
 
+  const { data: deletedChartData, error: lookupError } = await client
+    .from("manual_charts")
+    .select("*")
+    .eq("id", chartId)
+    .eq("owner_user_id", userId)
+    .maybeSingle();
+
+  if (lookupError) {
+    throw lookupError;
+  }
+
   await client
     .from("connections")
     .delete()
@@ -387,5 +422,11 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
 
   if (error) {
     throw error;
+  }
+
+  if (deletedChartData) {
+    deleteLocalManualChartCopies(userId, rowToManualChart(deletedChartData as ManualChartRow));
+  } else {
+    deleteLocalManualChart(userId, chartId);
   }
 }
