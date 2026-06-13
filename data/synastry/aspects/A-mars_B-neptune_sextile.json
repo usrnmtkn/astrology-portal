@@ -4,9 +4,9 @@
   "planetA": "mars",
   "planetB": "neptune",
   "aspect": "sextile",
-  "plainTranslation": "A's drive meets B's dreams. The sextile supports them, if you act on it.",
+  "plainTranslation": "This connection can make action feel guided by something quieter than force.\n\nMars may find more purpose through Neptune's sensitivity and imagination. Neptune may find more traction through Mars's willingness to begin. Together, you can turn a feeling into a plan, an idea into a ritual, a private longing into something that actually happens. The movement here is not loud. It builds through small choices.\n\nAt its best, this aspect can make ordinary life feel more meaningful. Cooking together, helping each other through a hard day, working on a shared project, or creating something side by side can all carry a quiet charge. Mars brings effort. Neptune brings atmosphere. The result can feel both useful and inspired.\n\nBut because the energy is gentle, it can also stay too pleasant.\n\nYou may avoid friction because neither of you wants to disturb the feeling between you. Mars may hold back a frustration because it seems too harsh. Neptune may leave a need unnamed because it feels too difficult to explain. Over time, what stays unspoken begins to dull the clarity between you.\n\nThe danger is avoiding it until the connection goes vague.\n\nSay the hard thing before it becomes resentment. Make a practice of naming one thing that is working and one thing that needs care. Let the inspiration become real through action, not just through feeling.\n\nThis aspect gives you a channel. Use it. Ship the project. Make the plan. Let the private vision become something the world can actually touch.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (mars_neptune (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

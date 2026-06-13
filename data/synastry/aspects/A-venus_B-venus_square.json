@@ -4,9 +4,9 @@
   "planetA": "venus",
   "planetB": "venus",
   "aspect": "square",
-  "plainTranslation": "Clashing values or styles of affection. You want different things from love, or show it in ways the other doesn't read. Failure mode: each feeling unappreciated in their own language. Learn how the other gives and wants love - the clash is workable with translation.",
+  "plainTranslation": "This person can make you question your own taste without ever meaning to. You look at what they want, buy, or prize, and some part of you doesn't get it. Maybe you even feel a flicker of judgment, and then a flicker of doubt, because they are looking back at your choices with the same quiet question. The things that feel obviously worth it to you do not register the same way to them.\n\nIt usually shows up somewhere ordinary and a little exposing. The thermostat. The grocery cart. How much is reasonable to spend on a good time. Whether a nice thing is a treat or a waste. One of you treats pleasure as something you have earned and need, the other treats it as a little suspect, and you can each feel faintly criticized by the other's whole approach to enjoying life.\n\nWhen this works, the friction does something useful. It shows you where your taste has gone on autopilot. You may catch that some of what you call practical is actually fear of letting yourself have things. Some of what you call beautiful is a need you have not fully admitted to. The other person becomes a mirror you did not ask for and learn from anyway.\n\nThe harder part is how fast different taste becomes a story about character. Shallow. Boring. Reckless. Cheap. Once you are quietly assigning those words, every small choice becomes more evidence.\n\nGet curious before you get superior. Ask why it matters to them, and tell the truth about why it matters to you. This eases the moment you stop hearing their preference as a comment on yours.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from approved project marquee synastry aspect material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (synastry-authored__19_ (2).json). Source file was not copied into the repository.",
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "DRAFT"
 }

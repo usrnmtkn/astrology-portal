@@ -4,9 +4,9 @@
   "planetA": "mercury",
   "planetB": "uranus",
   "aspect": "sextile",
-  "plainTranslation": "A's mind meets B's need for freedom. The sextile supports them, if you act on it.",
+  "plainTranslation": "This connection makes thinking together feel easy.\n\nThe ideas come quickly, but usually without the chaos of the harder aspects. One person brings a fresh angle. The other knows what to do with it. You may enjoy trying new things, reading unusual books, asking strange questions, or finding a smarter way through a problem that felt stuck.\n\nAt its best, this aspect keeps the relationship mentally alive. You make each other more curious. You are less likely to get trapped in stale opinions or repeat the same conversations forever. There is enough freedom here for both people to think out loud.\n\nThe challenge is that the spark does not automatically become depth.\n\nYou may have interesting conversations without ever doing much with them. You may keep things light, clever, or unusual while avoiding the subject that actually matters. Sometimes it is easier to reach for a new idea than to sit with an old pattern.\n\nThere is also a subtle trap in needing to be different. You may reject the ordinary choice just because it feels too normal. But sometimes the obvious answer is the right one. Not everything has to be reinvented to be true.\n\nThis works best when you use the curiosity instead of just enjoying it. Pick one shared interest and go deeper. Try the experiment instead of only talking about it. Let the connection stay open, but make sure it turns into something.\n\nThe freedom is real. Use it well.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (mercury_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

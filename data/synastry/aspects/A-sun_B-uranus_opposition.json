@@ -4,9 +4,9 @@
   "planetA": "sun",
   "planetB": "uranus",
   "aspect": "opposition",
-  "plainTranslation": "A's identity meets B's need for freedom. The opposition pulls them into push-and-pull.",
+  "plainTranslation": "This connection can swing between closeness and distance.\n\nThe Sun person may want consistency and reassurance. The Uranus person may need freedom and the right to change. The Sun person may feel unsettled by Uranus's unpredictability. Uranus may feel pressured by the Sun person's need to know where things stand.\n\nThe attraction can be strong, but the rhythm may be uneven. When you are close, the connection can feel exciting and alive. When there is distance, it can feel sudden and cold. There may not be much middle ground at first.\n\nThe challenge is not to make every gap mean something is wrong. Sometimes Uranus needs space. Sometimes the Sun needs reassurance. Both needs are real.\n\nThis aspect works best when both people build stability outside the relationship too. Have your own friends, routines, work, and sense of self. That makes the ups and downs easier to handle.\n\nDo not try to force this connection into a perfectly steady shape. It needs space. It also needs care.\n\nThe gift is aliveness. The risk is emotional whiplash.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (sun_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }

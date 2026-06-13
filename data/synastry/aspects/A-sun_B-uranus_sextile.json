@@ -4,9 +4,9 @@
   "planetA": "sun",
   "planetB": "uranus",
   "aspect": "sextile",
-  "plainTranslation": "A's identity meets B's need for freedom. The sextile supports them, if you act on it.",
+  "plainTranslation": "This connection keeps things fresh.\n\nThe Uranus person brings new ideas and a different way of seeing things. The Sun person brings warmth, focus, and a stronger sense of direction. Together, you can help each other stay open, curious, and interested.\n\nAt its best, this aspect makes the relationship feel alive without creating too much chaos. You may enjoy talking, trying new things, and encouraging each other to grow. There is usually enough freedom for both people to be themselves.\n\nThe challenge is that the connection can stay too light. You may talk about ideas more than feelings. You may keep things interesting without going deeper. The Uranus person may stay engaged but still keep part of themselves at a distance.\n\nThis aspect works best when you make space for real conversations too. Talk about what you feel, what you need, and what you are afraid to say.\n\nFreedom is part of the gift here, but it should not replace intimacy.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Imported from authored synastry material (sun_uranus.json). Source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "DRAFT"
 }
