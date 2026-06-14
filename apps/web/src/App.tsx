@@ -3650,6 +3650,31 @@ function possessiveLabel(name: string) {
   return name.endsWith("s") ? `${name}'` : `${name}'s`;
 }
 
+function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
+  const subject = ownerKind === "chart" ? "This chart" : ownerName;
+  const possessive = ownerKind === "chart" ? "This chart's" : possessiveLabel(ownerName);
+
+  return text
+    .replace(/\bYou are\b/g, `${subject} is`)
+    .replace(/\byou are\b/g, `${subject} is`)
+    .replace(/\bYou have\b/g, `${subject} has`)
+    .replace(/\byou have\b/g, `${subject} has`)
+    .replace(/\bYou need\b/g, `${subject} needs`)
+    .replace(/\byou need\b/g, `${subject} needs`)
+    .replace(/\bYou tend\b/g, `${subject} tends`)
+    .replace(/\byou tend\b/g, `${subject} tends`)
+    .replace(/\bYou feel\b/g, `${subject} feels`)
+    .replace(/\byou feel\b/g, `${subject} feels`)
+    .replace(/\bYou want\b/g, `${subject} wants`)
+    .replace(/\byou want\b/g, `${subject} wants`)
+    .replace(/\bYou may\b/g, `${subject} may`)
+    .replace(/\byou may\b/g, `${subject} may`)
+    .replace(/\bYour\b/g, possessive)
+    .replace(/\byour\b/g, possessive)
+    .replace(/\bYou\b/g, subject)
+    .replace(/\byou\b/g, subject);
+}
+
 function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
   return comparisonIsSelf ? `${primaryName} and you` : `${primaryName} and ${comparisonName}`;
 }
@@ -9890,8 +9915,10 @@ function ManualChartsPanel({
                     <FriendPlacementTable
                       title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
                       rows={socialPlacementRows(selectedChart.natalChart)}
+                      descriptionContext={selectedChartIsEvent ? "chart" : "person"}
                       generatedContent={relationshipGeneratedContent}
                       generatedContext="natal"
+                      ownerName={selectedChart.displayName}
                       showTitle={false}
                     />
                   </>
@@ -9912,7 +9939,8 @@ function ManualChartsPanel({
                           approvedVoiceOrKnowledgeFallback(contentKey)
                         );
                         const generated = liveGeneratedContent(relationshipGeneratedContent, contentKey);
-                        const rowSummary = liveGeneratedSummary(generated, content.summary);
+                        const rawSummary = liveGeneratedSummary(generated, content.summary);
+                        const rowSummary = natalGeneratedCopyForOwner(rawSummary, selectedChart.displayName, selectedChartIsEvent ? "chart" : "person");
 
                         return (
                           <div
@@ -10014,6 +10042,7 @@ function ManualChartsPanel({
                       title="Composite placements"
                       rows={socialPlacementRows(selectedCompositeSky)}
                       compact
+                      descriptionContext="composite"
                       generatedContent={relationshipGeneratedContent}
                       generatedContext="composite"
                       showTitle={false}
