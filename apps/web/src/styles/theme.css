@@ -112,7 +112,7 @@
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
   --synastry-accent: var(--color-synastry-accent);
-  --shadow: none;
+  --shadow: 0 18px 44px rgba(20, 20, 20, 0.06), 0 2px 8px rgba(20, 20, 20, 0.04);
   --bg-grad: none;
 
   --font-display: var(--font-sans);
@@ -201,13 +201,14 @@
   --table-bg: var(--card-bg);
   --table-border: var(--card-border);
   --table-radius: var(--card-radius);
+  --table-shadow: var(--card-shadow);
   --table-row-bg: var(--card-bg);
   --table-row-border: var(--line-2);
   --table-row-gap: var(--sp-2);
   --overlay-bg: var(--card-bg);
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
-  --overlay-shadow: var(--card-shadow);
+  --overlay-shadow: 0 24px 70px rgba(20, 20, 20, 0.12), 0 4px 16px rgba(20, 20, 20, 0.06);
   --tooltip-bg: #1a1a1a;
   --tooltip-fg: #f2f2f1;
   --tooltip-muted: rgba(242, 242, 241, 0.78);
@@ -416,6 +417,7 @@
   --color-aspect-adjust: rgba(188, 212, 148, 0.82);
   --color-aspect-union: rgba(224, 216, 206, 0.78);
   --color-aspect-muted: rgba(255, 255, 255, 0.38);
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.42), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
@@ -460,6 +462,9 @@
   --aspect-muted: var(--color-aspect-muted);
   --card-bg: var(--surface);
   --card-border: var(--line);
+  --card-shadow: var(--shadow);
+  --table-shadow: var(--card-shadow);
+  --overlay-shadow: 0 30px 90px rgba(0, 0, 0, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
   --segmented-bg: var(--surface);
   --segmented-border: var(--line);
   --segmented-active-bg: var(--pill-bg);

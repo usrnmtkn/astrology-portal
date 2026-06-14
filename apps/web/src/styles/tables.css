@@ -6,6 +6,7 @@
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--table-shadow);
 }
 
 .placement-table {
@@ -517,7 +518,7 @@ button.planet-placement-row {
 .spl-dig[data-tooltip]::after {
   position: absolute;
   z-index: var(--z-tooltip, 80);
-  bottom: calc(100% + 10px);
+  top: calc(100% + 10px);
   left: 50%;
   box-sizing: border-box;
   width: max-content;
@@ -539,7 +540,7 @@ button.planet-placement-row {
   pointer-events: none;
   text-align: left;
   text-transform: none;
-  transform: translate(-50%, 4px);
+  transform: translate(-50%, -4px);
   transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
   visibility: hidden;
   white-space: normal;

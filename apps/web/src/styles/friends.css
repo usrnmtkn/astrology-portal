@@ -1512,34 +1512,11 @@
   --aspect-row-meta-width: 30px;
   --aspect-row-meta-size: var(--text-meta-size);
   --aspect-row-meta-weight: var(--weight-bold);
+  --aspect-row-subtitle-size: 12px;
+  --aspect-row-subtitle-tracking: 0.08em;
+  --aspect-row-action-margin: 8px;
+  --aspect-row-action-color: var(--app-text);
   border-color: var(--card-border);
-}
-
-.friend-chart-page .aspect-row-copy .aspect-row-subtitle {
-  margin-top: 4px;
-  color: var(--app-muted);
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.friend-chart-page .synastry-contact-description {
-  white-space: pre-line;
-}
-
-.friend-chart-page .synastry-contact-read-more {
-  display: inline-flex;
-  margin-top: 8px;
-  color: var(--app-text);
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
 }
 
 .friend-chart-modal-backdrop {
