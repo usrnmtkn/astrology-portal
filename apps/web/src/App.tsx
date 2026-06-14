@@ -3774,21 +3774,10 @@ function synastryContactSummary(
   generatedContent?: GeneratedContentMap
 ) {
   const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, contact.contentKeys) : null;
-  const hookFallback = fallbackFromHook(
-    "friends.synastry-contact",
-    {
-      planetA: contact.friendPoint.name,
-      aspect: contact.aspect,
-      planetB: contact.yourPoint.name
-    },
-    {},
-    { allowKnowledgeOnly: true }
-  );
-  const fallbackPreview = fallbackPreviewText(hookFallback);
   const generatedPreview = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || null;
 
   return relationshipGeneratedCopyForPerspective(
-    textPreview(generatedPreview || fallbackPreview || ""),
+    textPreview(generatedPreview || ""),
     friendName,
     comparisonName,
     comparisonIsSelf
@@ -3845,25 +3834,7 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
     return generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf));
   }
 
-  const hookFallback = fallbackFromHook(
-    "friends.synastry-contact",
-    {
-      planetA: contact.friendPoint.name,
-      aspect: contact.aspect,
-      planetB: contact.yourPoint.name
-    },
-    {},
-    { allowKnowledgeOnly: true }
-  );
-  const fallbackParagraphs = hookFallback.detailParagraphs.length > 0
-    ? hookFallback.detailParagraphs
-    : hookFallback.body
-      ? hookFallback.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
-      : fallbackPreviewText(hookFallback)
-        ? [fallbackPreviewText(hookFallback) ?? ""]
-        : [];
-
-  return liveGeneratedBody(generated, fallbackParagraphs).map((paragraph) => (
+  return liveGeneratedBody(generated, []).map((paragraph) => (
     relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
   ));
 }
@@ -5670,6 +5641,7 @@ export function App() {
                   sunriseOrbDegrees={activeSunriseOrbDegrees}
                   chartOwnerUserId={remoteAccountId ?? userProfile.id}
                   chartsReady={authAccountChecked && (!remoteAccountId || remoteProfileReady)}
+                  onOpenDetail={setSelectedSkyDetail}
                 />
               )}
               {mode === "account" && userProfile && (
@@ -9202,7 +9174,8 @@ function ManualChartsPanel({
   landingKey,
   sunriseOrbDegrees,
   chartOwnerUserId,
-  chartsReady
+  chartsReady,
+  onOpenDetail
 }: {
   profile: UserProfile;
   currentSky: SkySnapshot;
@@ -9214,6 +9187,7 @@ function ManualChartsPanel({
   sunriseOrbDegrees: number;
   chartOwnerUserId: string;
   chartsReady: boolean;
+  onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const [charts, setCharts] = useState<ManualChart[]>([]);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
@@ -9222,7 +9196,6 @@ function ManualChartsPanel({
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("natal");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
-  const [selectedSynastryContactId, setSelectedSynastryContactId] = useState<string | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
@@ -9319,7 +9292,6 @@ function ManualChartsPanel({
     setSelectedChartId(null);
     setFriendProfileTab("natal");
     setRelationshipChartFullscreenMode(null);
-    setSelectedSynastryContactId(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setOpenChartMenuId(null);
@@ -9333,7 +9305,6 @@ function ManualChartsPanel({
     setSelectedChartId(null);
     setFriendProfileTab("natal");
     setRelationshipChartFullscreenMode(null);
-    setSelectedSynastryContactId(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setOpenChartMenuId(null);
@@ -9348,7 +9319,6 @@ function ManualChartsPanel({
       setSelectedChartId(null);
       setFriendProfileTab("natal");
       setRelationshipChartFullscreenMode(null);
-      setSelectedSynastryContactId(null);
       setRelationshipComparisonPickerOpen(false);
       setOpenChartMenuId(null);
     }
@@ -9413,7 +9383,6 @@ function ManualChartsPanel({
   }, [chartOwnerUserId, chartsReady]);
 
   useEffect(() => {
-    setSelectedSynastryContactId(null);
     setRelationshipComparisonPickerOpen(false);
     setRelationshipComparisonChartId((currentId) => {
       if (currentId === "self") {
@@ -10051,25 +10020,29 @@ function ManualChartsPanel({
                     const comparisonPossessive = relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf);
                     const title = relationshipAspectTitle(selectedChart.displayName, contact.friendPoint.name, contact.aspect, comparisonPossessive, contact.yourPoint.name);
                     const subtitle = relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect);
-                    const expanded = selectedSynastryContactId === contact.id;
-                    const fullDescription = synastryDetailCopy(
+                    const detailParagraphs = synastryDetailCopy(
                       selectedChart.displayName,
                       relationshipComparisonName,
                       relationshipComparisonIsSelf,
                       contact,
                       relationshipGeneratedContent
-                    ).filter(Boolean).join("\n\n");
-                    const description = expanded
-                      ? fullDescription
-                      : contact.summary || textPreview(fullDescription);
+                    ).filter(Boolean);
+                    const description = contact.summary || textPreview(detailParagraphs.join("\n\n"));
 
                     return (
                       <button
                         type="button"
-                        className={`aspect-row aspect-row-button friend-aspect-row${expanded ? " expanded" : ""}`}
+                        className="aspect-row aspect-row-button friend-aspect-row"
                         key={contact.id}
-                        aria-expanded={expanded}
-                        onClick={() => setSelectedSynastryContactId((current) => current === contact.id ? null : contact.id)}
+                        aria-label={`Read more about ${title}`}
+                        onClick={() => onOpenDetail({
+                          glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
+                          kicker: "Synastry",
+                          title,
+                          meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+                          body: detailParagraphs.length > 0 ? detailParagraphs : ["Content gap: this interaspect needs authored copy."],
+                          content: emptyContentFallback(contact.contentKeys[0] ?? contact.id).bundle
+                        })}
                       >
                         <span className="aspect-row-glyphs" aria-hidden="true">
                           <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} />
@@ -10079,8 +10052,7 @@ function ManualChartsPanel({
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>
                           <span className="aspect-row-subtitle">{subtitle}</span>
-                          <p className="synastry-contact-description">{description}</p>
-                          <span className="synastry-contact-read-more">{expanded ? "Show less" : "Read more"}</span>
+                          {description ? <p className="synastry-contact-description">{description}</p> : null}
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
                           <span className="aspect-row-dot" aria-hidden="true" />
