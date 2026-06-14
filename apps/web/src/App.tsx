@@ -4,7 +4,6 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Eye,
   EyeOff,
   Link,
@@ -18,7 +17,6 @@ import {
   Sparkles,
   Star,
   Sun,
-  Trash2,
   User,
   X,
 } from "lucide-react";
@@ -72,6 +70,7 @@ import {
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
 import { FriendChartModal } from "./features/friends/FriendChartModal";
+import { FriendChartsList } from "./features/friends/FriendChartsList";
 import { RelationshipChartFullscreen, type RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { SkyTodayView } from "./features/sky/SkyToday";
@@ -9346,6 +9345,30 @@ function ManualChartsPanel({
     [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
   );
   const isLoadingCharts = status === "loading";
+  const friendChartListItems = useMemo(
+    () => charts.map((chart) => {
+      const bigThree = manualChartBigThree(chart);
+
+      return {
+        chart,
+        initials: profileInitials(chart.displayName, chart.displayName),
+        sun: bigThree.sun,
+        moon: bigThree.moon,
+        rising: bigThree.rising,
+        needsBirthTime: manualChartNeedsBirthTime(chart),
+        active: selectedChart?.id === chart.id
+      };
+    }),
+    [charts, selectedChart?.id]
+  );
+  const birthdayChiclet = upcomingBirthday ? (
+    <div className="friends-birthday-chiclet" aria-label={`${upcomingBirthday.chart.displayName}'s birthday is ${birthdayDateLabel(upcomingBirthday.date)}`}>
+      <span aria-hidden="true">🎂</span>
+      <strong>{upcomingBirthday.chart.displayName}'s birthday</strong>
+      <span>{birthdayDateLabel(upcomingBirthday.date)}</span>
+      <b>{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
+    </div>
+  ) : null;
 
   useEffect(() => {
     let cancelled = false;
@@ -9700,100 +9723,20 @@ function ManualChartsPanel({
       )}
 
       {resolvedFriendsMainView === "charts" && (
-        <section className="manual-chart-workspace manual-chart-workspace-list-only friends-charts-view" aria-label="Friend charts">
-          <div className="friends-chart-toolbar">
-            {upcomingBirthday && (
-              <div className="friends-birthday-chiclet" aria-label={`${upcomingBirthday.chart.displayName}'s birthday is ${birthdayDateLabel(upcomingBirthday.date)}`}>
-                <span aria-hidden="true">🎂</span>
-                <strong>{upcomingBirthday.chart.displayName}'s birthday</strong>
-                <span>{birthdayDateLabel(upcomingBirthday.date)}</span>
-                <b>{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
-              </div>
-            )}
-            <button className="manual-chart-add-button" type="button" onClick={openAddChartModal}>
-              <span>Add chart</span>
-            </button>
-          </div>
-          <section className="manual-chart-list" aria-label="Saved manual charts">
-            {message && !friendChartModalOpen && <p className="manual-chart-message">{message}</p>}
-            {status === "loading" && (
-              <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
-                <span>Charts</span>
-                <h3>Loading saved charts.</h3>
-                <p>Your saved charts and comparison charts will appear here.</p>
-              </section>
-            )}
-            {status !== "loading" && charts.length === 0 && (
-              <section className="you-empty-card manual-chart-empty" aria-label="No manual charts">
-                <span>Charts</span>
-                <h3>No saved charts yet.</h3>
-                <p>Add someone's birth details to compare signs, synastry contacts, house overlays, composite patterns, and current timing.</p>
-              </section>
-            )}
-            {charts.length > 0 && (
-              <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
-                {charts.map((chart) => {
-                  const bigThree = manualChartBigThree(chart);
-                  const needsBirthTime = manualChartNeedsBirthTime(chart);
-
-                  return (
-                    <div className="manual-chart-row chart-row" key={chart.id}>
-                      <button
-                        type="button"
-                        className={`manual-chart-select ${selectedChart?.id === chart.id ? "active" : ""}`}
-                        onClick={() => openFriendProfile(chart)}
-                        aria-label={`Open ${chart.displayName}`}
-                      >
-                        <span className="manual-chart-avatar" aria-hidden="true">
-                          {profileInitials(chart.displayName, chart.displayName)}
-                        </span>
-                        <span className="crb">
-                          <span className="crt">{chart.displayName}</span>
-                          <span className="manual-chart-signatures">
-                            <span>☉ {bigThree.sun}</span>
-                            <span>☽ {bigThree.moon}</span>
-                            <span>↑ {bigThree.rising}</span>
-                          </span>
-                        </span>
-                      </button>
-                      {needsBirthTime && (
-                        <span className="manual-chart-row-cta">
-                          <button className="manual-chart-birth-time-button" type="button" onClick={() => addBirthTime(chart)}>
-                            <Clock size={16} aria-hidden="true" />
-                            <span>Add birth time</span>
-                          </button>
-                        </span>
-                      )}
-                      <span className="manual-chart-actions">
-                        <button
-                          className="manual-chart-menu-trigger"
-                          type="button"
-                          aria-label={`More actions for ${chart.displayName}`}
-                          aria-expanded={openChartMenuId === chart.id}
-                          onClick={() => setOpenChartMenuId((currentId) => currentId === chart.id ? null : chart.id)}
-                        >
-                          <MoreVertical size={20} aria-hidden="true" />
-                        </button>
-                        {openChartMenuId === chart.id && (
-                          <span className="manual-chart-overflow-menu" role="menu" aria-label={`${chart.displayName} actions`}>
-                            <button type="button" role="menuitem" onClick={() => editChart(chart)}>
-                              <Pencil size={17} aria-hidden="true" />
-                              <span>Edit chart</span>
-                            </button>
-                            <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => removeChart(chart)}>
-                              <Trash2 size={17} aria-hidden="true" />
-                              <span>Delete chart</span>
-                            </button>
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-        </section>
+        <FriendChartsList
+          birthdayChiclet={birthdayChiclet}
+          charts={friendChartListItems}
+          isLoading={isLoadingCharts}
+          message={message}
+          openChartMenuId={openChartMenuId}
+          showMessage={!friendChartModalOpen}
+          onAddBirthTime={addBirthTime}
+          onAddChart={openAddChartModal}
+          onDeleteChart={removeChart}
+          onEditChart={editChart}
+          onOpenChart={openFriendProfile}
+          onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
+        />
       )}
 
       {friendChartModalOpen && (
