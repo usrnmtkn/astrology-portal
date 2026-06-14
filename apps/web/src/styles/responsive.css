@@ -241,7 +241,7 @@
     --top-nav-icon-size: 19px;
     --top-action-icon-size: 21px;
     --page-gutter: var(--mobile-page-gutter);
-    --page-top: 128px;
+    --page-top: calc(var(--top-control-height) + 76px);
     --row-padding-y: var(--sp-2);
     --row-padding-x: var(--sp-2);
   }
@@ -469,7 +469,7 @@
 
   .friends-page:not(.friend-detail-page) {
     gap: var(--section-gap);
-    padding: 92px var(--mobile-edge-inset) 56px;
+    padding: var(--mobile-page-padding);
   }
 
   .friends-top-tabs {
@@ -529,7 +529,7 @@
   }
 
   .friend-detail-page {
-    padding: var(--page-top) var(--mobile-edge-inset) 64px;
+    padding: var(--mobile-page-padding);
   }
 
   .friends-back-button {
@@ -579,7 +579,7 @@
   }
 
   .settings-panel {
-    gap: 30px;
+    gap: var(--section-gap);
   }
 
   .settings-card,
@@ -635,7 +635,7 @@
   .article-page,
   .sky-detail-page {
     width: 100%;
-    padding: 120px 18px 96px;
+    padding: var(--mobile-page-padding);
   }
 
   .article-shell,

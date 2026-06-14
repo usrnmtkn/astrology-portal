@@ -4,7 +4,7 @@
   width: min(760px, 100%);
   margin: 0 auto;
   align-content: start;
-  gap: var(--page-stack-gap);
+  gap: var(--stack-gap);
 }
 
 .settings-header,
@@ -26,12 +26,12 @@
 
 .settings-panel {
   display: grid;
-  gap: clamp(28px, 4vw, 42px);
+  gap: var(--section-gap);
 }
 
 .settings-group {
   display: grid;
-  gap: 14px;
+  gap: var(--sp-2);
 }
 
 .settings-card,
@@ -217,4 +217,3 @@ button.settings-signout-row {
   justify-content: flex-end;
   background: var(--ink);
 }
-

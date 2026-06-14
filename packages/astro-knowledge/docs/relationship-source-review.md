@@ -6,7 +6,6 @@ This document records how the supplied relationship astrology resources should i
 
 - Hayden's Book of Synastry, Ajani Abdul-Khaliq
 - Skymates 2: The Composite Chart, Steven Forrest and Jodie Forrest
-- Composites, Dark Pixie Astrology
 - Saturn: A New Look at an Old Devil, Liz Greene and Robert Hand
 - Fate And Fortune, Ancient Astrology in Theory and Practice
 

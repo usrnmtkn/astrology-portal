@@ -18,12 +18,19 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: var(--orb-grad), var(--bg-grad);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--ink);
   font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   letter-spacing: var(--tracking-normal);
+}
+
+html.orb-off body {
+  background-image: var(--bg-grad);
 }
 
 :where(button, a, input, select, textarea, [tabindex]):focus-visible {

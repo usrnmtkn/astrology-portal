@@ -36,20 +36,20 @@ export type PlacementRowStatus = {
 };
 
 export const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
-const socialPlacementOrder = [...placementPlanetOrder, "Ascendant"];
+const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 
 const natalSignatureDescriptions: Record<string, string> = {
-  Ascendant: "Your motivation for living life",
-  Sun: "Your identity and where you shine",
-  Moon: "Your inner world and emotions",
-  Mercury: "How and where you communicate",
-  Venus: "How and where you connect",
-  Mars: "How and where you take action",
-  Jupiter: "How and where you grow",
-  Saturn: "Where you build and commit",
-  Uranus: "How and where you break free",
-  Neptune: "How and where you dream",
-  Pluto: "How and where you transform"
+  Sun: "Your core self and vitality",
+  Moon: "Your inner world and what you need to feel safe",
+  Ascendant: "How you meet the world and come across",
+  Mercury: "How you think and communicate",
+  Venus: "What you value and who you're drawn to",
+  Mars: "How you direct your energy and act",
+  Jupiter: "Where you grow and reach for more",
+  Saturn: "What you commit to and build",
+  Uranus: "Where you break the pattern",
+  Neptune: "Where you dream and idealize",
+  Pluto: "Where you transform and reclaim power"
 };
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
@@ -98,17 +98,17 @@ function namedPlacementDescription(planet: string, ownerName: string) {
   const subject = owner || "they";
 
   const descriptions: Record<string, string> = {
-    Ascendant: `${possessive} way of meeting life`,
-    Sun: `${possessive} identity and life force`,
-    Moon: `${possessive} inner world and emotions`,
-    Mercury: `How ${subject} communicates`,
-    Venus: `How ${subject} connects`,
-    Mars: `How ${subject} takes action`,
-    Jupiter: `How ${subject} grows`,
-    Saturn: `Where ${subject} builds and commits`,
-    Uranus: `How ${subject} breaks from pattern`,
-    Neptune: `How ${subject} dreams and imagines`,
-    Pluto: `How ${subject} transforms`
+    Sun: `${possessive} core self and vitality`,
+    Moon: `${possessive} inner world and what they need to feel safe`,
+    Ascendant: `How ${subject} meets the world and comes across`,
+    Mercury: `How ${subject} thinks and communicates`,
+    Venus: `What ${subject} values and who they're drawn to`,
+    Mars: `How ${subject} directs their energy and acts`,
+    Jupiter: `Where ${subject} grows and reaches for more`,
+    Saturn: `What ${subject} commits to and builds`,
+    Uranus: `Where ${subject} breaks the pattern`,
+    Neptune: `Where ${subject} dreams and idealizes`,
+    Pluto: `Where ${subject} transforms and reclaims power`
   };
 
   return descriptions[planet] ?? "";
@@ -580,7 +580,7 @@ export function FriendPlacementTable({
                 house={row.house}
                 pointName={row.label}
                 retrograde={row.retrograde}
-                title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
+                title={placementTitleFromParts(row.label, row.sign)}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
               />
             </div>

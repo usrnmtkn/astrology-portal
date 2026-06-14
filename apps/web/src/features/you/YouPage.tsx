@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import { profileInitials } from "../../components/ProfileAvatar";
+import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 
 type YouTab = "transits" | "chart";
@@ -21,6 +21,7 @@ export type YouPageProps = {
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
   planetRows: ReactNode[];
+  profileAvatarUrl?: string;
   profileEmail: string;
   profileName: string;
   setupStepsLeft: number;
@@ -66,6 +67,7 @@ function YouProfileSummary({
   displayMoon,
   displayRising,
   displaySun,
+  profileAvatarUrl,
   profileEmail,
   profileName,
   signaturesReady
@@ -73,15 +75,20 @@ function YouProfileSummary({
   displayMoon: string;
   displayRising: string;
   displaySun: string;
+  profileAvatarUrl?: string;
   profileEmail: string;
   profileName: string;
   signaturesReady: boolean;
 }) {
   return (
     <div className="you-profile-card" aria-label="Profile summary">
-      <span className="you-profile-monogram" aria-hidden="true">
-        {profileInitials(profileName, profileEmail)}
-      </span>
+      <ProfileAvatar
+        avatarUrl={profileAvatarUrl}
+        className="you-profile-monogram"
+        email={profileEmail}
+        name={profileName}
+        size="large"
+      />
       <div className="you-profile-copy">
         <h2>{profileName}</h2>
         {signaturesReady ? (
@@ -239,6 +246,7 @@ export function YouPage({
   natalChartPending,
   onCreateChart,
   planetRows,
+  profileAvatarUrl,
   profileEmail,
   profileName,
   setupStepsLeft,
@@ -264,6 +272,7 @@ export function YouPage({
             displayMoon={displayMoon}
             displayRising={displayRising}
             displaySun={displaySun}
+            profileAvatarUrl={profileAvatarUrl}
             profileEmail={profileEmail}
             profileName={profileName}
             signaturesReady={signaturesReady}

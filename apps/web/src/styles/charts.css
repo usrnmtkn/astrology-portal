@@ -26,7 +26,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .sign-band {
-  stroke: #101010;
+  stroke: var(--wheel-band);
 }
 
 .wheel-rings circle {
@@ -107,7 +107,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .planet-degree {
-  fill: rgba(255, 255, 255, 0.72);
+  fill: var(--chart-label);
 }
 
 .angular-labels text {
@@ -186,7 +186,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(.planet-tick, .wheel-placement__tick) {
-  stroke: rgba(255, 255, 255, 0.52);
+  stroke: var(--wheel-label);
   opacity: 0.92;
 }
 
@@ -195,18 +195,18 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .wheel-rings .faint {
-  stroke: rgba(255, 255, 255, 0.18);
+  stroke: var(--wheel-soft);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .wheel-sectors line,
 :is(.theme-dark, [data-theme="dark"]) .natal-angle-lines line {
-  stroke: rgba(255, 255, 255, 0.44);
+  stroke: var(--wheel-soft);
   opacity: 0.72;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .sign-band-dividers line,
 :is(.theme-dark, [data-theme="dark"]) .zodiac-wheel__divider {
-  stroke: rgba(255, 255, 255, 0.5);
+  stroke: var(--wheel-band-line);
   opacity: 0.68;
 }
 

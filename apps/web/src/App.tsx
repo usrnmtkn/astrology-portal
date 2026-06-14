@@ -657,7 +657,6 @@ const portalModeStorageKey = "tldrastro:portalMode";
 const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
-const EXTENDED_SUNRISE_ORB_DEGREES = 3;
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
 const zodiacSigns = [
@@ -2595,10 +2594,6 @@ const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "P
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
 
-function sunriseOrbDegrees(enabled: boolean) {
-  return enabled ? EXTENDED_SUNRISE_ORB_DEGREES : DEFAULT_SUNRISE_ORB_DEGREES;
-}
-
 function angularDistance(first: number, second: number) {
   const difference = Math.abs(normalizedAngle(first - second));
   return difference > 180 ? 360 - difference : difference;
@@ -4334,7 +4329,7 @@ export function App() {
   const isFriendsMode = mode === "friends";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode;
-  const activeSunriseOrbDegrees = sunriseOrbDegrees(sunriseOrbEnabled);
+  const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
 
   function navigateToFriends() {
     const nextTab = initialFriendsTab();
@@ -4727,6 +4722,7 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.dataset.sunriseOrb = sunriseOrbEnabled ? "true" : "false";
+    document.documentElement.classList.toggle("orb-off", !sunriseOrbEnabled);
     document.documentElement.style.setProperty("--sunrise-orb-degrees", `${activeSunriseOrbDegrees}`);
   }, [activeSunriseOrbDegrees, sunriseOrbEnabled]);
 
@@ -5970,21 +5966,25 @@ function ordinalHouse(house: number) {
 }
 
 const natalSignatureDescriptions: Record<string, string> = {
-  Ascendant: "Your motivation for living life",
-  Sun: "Your identity and where you shine",
-  Moon: "Your inner world and emotions",
-  Mercury: "How and where you communicate",
-  Venus: "How and where you connect",
-  Mars: "How and where you take action",
-  Jupiter: "How and where you grow",
-  Saturn: "Where you build and commit",
-  Uranus: "How and where you break free",
-  Neptune: "How and where you dream",
-  Pluto: "How and where you transform"
+  Sun: "Your core self and vitality",
+  Moon: "Your inner world and what you need to feel safe",
+  Ascendant: "How you meet the world and come across",
+  Mercury: "How you think and communicate",
+  Venus: "What you value and who you're drawn to",
+  Mars: "How you direct your energy and act",
+  Jupiter: "Where you grow and reach for more",
+  Saturn: "What you commit to and build",
+  Uranus: "Where you break the pattern",
+  Neptune: "Where you dream and idealize",
+  Pluto: "Where you transform and reclaim power"
 };
 
 function natalPlacementTitle(position: PlanetPosition) {
   return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+}
+
+function natalPlacementSignTitle(position: PlanetPosition) {
+  return `${position.planet} in ${position.sign}`;
 }
 
 function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
@@ -7278,7 +7278,7 @@ function RetrogradeCallout({
 
     return {
       blurb: retrogradeKnowledgeCopy(position, generated, content),
-      count: formatRetrogradeCountChip(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
+      count: formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
       detail: {
         glyph: `${position.glyph} ℞`,
         kicker: retrogradeDetailKicker(position),
@@ -7326,7 +7326,7 @@ function RetrogradeCallout({
             </span>
           </span>
           <span className="sky-pl-range">
-            {row.count ? <span className="sky-pl-duration">{row.count}</span> : null}
+            {row.count ? <span className="sky-pl-duration sky-pl-duration--retrograde">{row.count}</span> : null}
             <span>{row.range}</span>
           </span>
           {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
@@ -8632,6 +8632,17 @@ function SettingsView({
               </div>
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
+                  <span className="settings-row-title">Gradient</span>
+                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
+                </div>
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle gradient background"
+                  onChange={onSunriseOrbChange}
+                />
+              </div>
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
                   <span className="settings-row-title">Dyslexia-friendly font</span>
                   <small className="settings-row-description">Use a more open, readable text face across the app.</small>
                 </div>
@@ -8649,17 +8660,6 @@ function SettingsView({
           <span className="settings-group-label">Astrology settings</span>
           <div className="settings-card">
             <div className="settings-list" aria-label="Astrology settings">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Sunrise orb</span>
-                  <small className="settings-row-description">Count near-sunrise and near-sunset contacts with a little more room.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle sunrise orb"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
                   <span className="settings-row-title">House sign labels</span>
@@ -8740,6 +8740,17 @@ function GuestSettingsView({
               </div>
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
+                  <span className="settings-row-title">Gradient</span>
+                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
+                </div>
+                <SwitchControl
+                  checked={sunriseOrbEnabled}
+                  label="Toggle gradient background"
+                  onChange={onSunriseOrbChange}
+                />
+              </div>
+              <div className="settings-row settings-row-control">
+                <div className="settings-row-copy">
                   <span className="settings-row-title">Dyslexia-friendly font</span>
                   <small className="settings-row-description">Use a more open, readable text face across the app.</small>
                 </div>
@@ -8757,17 +8768,6 @@ function GuestSettingsView({
           <span className="settings-group-label">Astrology settings</span>
           <div className="settings-card">
             <div className="settings-list">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Sunrise orb</span>
-                  <small className="settings-row-description">Count near-sunrise and near-sunset contacts with a little more room.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle sunrise orb"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
                   <span className="settings-row-title">House sign labels</span>
@@ -8986,7 +8986,10 @@ function ProfileView({
   const natalPositions = natalSky?.positions ?? [];
   const natalSun = natalPositions.find((position) => position.planet === "Sun");
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
-  const planetRows = natalPositions.filter((position) => !["Sun", "Moon", "True Node"].includes(position.planet));
+  const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+  const planetRows = natalListOrder
+    .map((planet) => natalPositions.find((position) => position.planet === planet))
+    .filter((position): position is PlanetPosition => Boolean(position));
   const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
@@ -9002,34 +9005,34 @@ function ProfileView({
   const showNatalSignatures = false;
   const bigThreeRows = [
     <PlacementTableRow
-      glyph="↑"
-      pointName="Ascendant"
-      title={displayRising && displayRising !== "Rising pending" ? `${displayRising} Rising` : displayRising || "Rising calculating"}
-      description={displayRising && displayRising !== "Rising pending" ? natalRisingKnowledgeSummary(displayRising, generatedContent) : natalSignatureDescriptions.Ascendant}
-      variant="natal"
-      key="ascendant"
-    />,
-    <PlacementTableRow
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
-      description={natalSun ? natalPlacementKnowledgeSummary(natalSun, generatedContent) : natalSignatureDescriptions.Sun}
+      description={natalSignatureDescriptions.Sun}
       dignity={natalSun ? placementDignity(natalSun) : null}
       glyph="☉"
       house={natalSun?.house ?? null}
       pointName="Sun"
-      title={natalSun ? natalPlacementTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
+      title={natalSun ? natalPlacementSignTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
       variant="natal"
       key="sun"
     />,
     <PlacementTableRow
       degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
-      description={natalMoon ? natalPlacementKnowledgeSummary(natalMoon, generatedContent) : natalSignatureDescriptions.Moon}
+      description={natalSignatureDescriptions.Moon}
       dignity={natalMoon ? placementDignity(natalMoon) : null}
       glyph="☽"
       house={natalMoon?.house ?? null}
       pointName="Moon"
-      title={natalMoon ? natalPlacementTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
+      title={natalMoon ? natalPlacementSignTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
       variant="natal"
       key="moon"
+    />,
+    <PlacementTableRow
+      glyph="↑"
+      pointName="Ascendant"
+      title={displayRising && displayRising !== "Rising pending" ? `Ascendant in ${displayRising}` : displayRising || "Rising calculating"}
+      description={natalSignatureDescriptions.Ascendant}
+      variant="natal"
+      key="ascendant"
     />
   ];
   const planetPlacementRows = planetRows.map((position) => (
@@ -9042,7 +9045,7 @@ function ProfileView({
       key={position.planet}
       pointName={position.planet}
       retrograde={position.motion === "retrograde"}
-      title={natalPlacementTitle(position)}
+      title={natalPlacementSignTitle(position)}
       variant="natal"
     />
   ));
@@ -9152,6 +9155,7 @@ function ProfileView({
       natalChartPending={!natalSky}
       onCreateChart={onCreateChart}
       planetRows={planetPlacementRows}
+      profileAvatarUrl={profile.avatarUrl}
       profileEmail={profile.email}
       profileName={profile.name}
       setupStepsLeft={setupStepsLeft}
@@ -9933,9 +9937,9 @@ function ManualChartsPanel({
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {[
-                    { glyph: "↑", pointName: "Ascendant", title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `${selectedChart.displayName}'s chart meets the world through ${selectedFriendBigThree?.rising}.` },
-                    { glyph: "☉", pointName: "Sun", title: `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, body: `${selectedChart.displayName}'s core expression moves through ${selectedFriendBigThree?.sun}.` },
-                    { glyph: "☽", pointName: "Moon", title: `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, body: `${selectedChart.displayName}'s emotional rhythm moves through ${selectedFriendBigThree?.moon}.` }
+                    { glyph: "☉", pointName: "Sun", title: `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, body: `${selectedChart.displayName}'s core self and vitality` },
+                    { glyph: "☽", pointName: "Moon", title: `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, body: `${selectedChart.displayName}'s inner world and what they need to feel safe` },
+                    { glyph: "↑", pointName: "Ascendant", title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `How ${selectedChart.displayName} meets the world and comes across` }
                   ].map(({ glyph, pointName, title, body }) => (
                     <PlacementTableRow
                       description={body}
@@ -10034,7 +10038,7 @@ function ManualChartsPanel({
                         type="button"
                         className="aspect-row aspect-row-button friend-aspect-row"
                         key={contact.id}
-                        aria-label={`Read more about ${title}`}
+                        aria-label={`Open full entry for ${title}`}
                         onClick={() => onOpenDetail({
                           glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
                           kicker: "Synastry",

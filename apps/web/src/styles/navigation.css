@@ -1,8 +1,8 @@
 .app-shell {
   min-height: 100vh;
   overflow-x: hidden;
-  padding: var(--page-top) var(--page-gutter) 80px;
-  background: var(--bg);
+  padding: var(--page-top) var(--page-gutter) var(--page-bottom);
+  background: transparent;
   color: var(--ink);
 }
 
@@ -122,7 +122,7 @@ html[data-scrolled] .topbar {
 }
 
 .site-nav button.active {
-  background: var(--surface-2);
+  background: var(--nav-link-active-bg, var(--surface-2));
   color: var(--ink);
 }
 
@@ -135,7 +135,12 @@ html[data-scrolled] .nav-pill {
 }
 
 .site-nav button:not(.active):hover {
-  background: var(--accent-bg);
+  background: var(--nav-link-hover-bg, var(--accent-bg));
+  color: var(--ink);
+}
+
+.site-nav button.active:hover {
+  background: var(--nav-link-active-bg, var(--surface-2));
   color: var(--ink);
 }
 
@@ -282,4 +287,3 @@ html[data-scrolled] .floating-back-button {
   width: min(var(--page-max), 100%);
   margin: 0 auto;
 }
-

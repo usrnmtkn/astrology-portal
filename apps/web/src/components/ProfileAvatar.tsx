@@ -2,6 +2,7 @@ export type ProfileAvatarSize = "regular" | "large";
 
 export type ProfileAvatarProps = {
   avatarUrl?: string;
+  className?: string;
   email: string;
   name: string;
   size?: ProfileAvatarSize;
@@ -18,9 +19,9 @@ export function profileInitials(name: string, email: string) {
   return source.slice(0, 2).toUpperCase();
 }
 
-export function ProfileAvatar({ avatarUrl, email, name, size = "regular" }: ProfileAvatarProps) {
+export function ProfileAvatar({ avatarUrl, className, email, name, size = "regular" }: ProfileAvatarProps) {
   return (
-    <span className={`profile-avatar profile-avatar-${size}`} aria-hidden="true">
+    <span className={["profile-avatar", `profile-avatar-${size}`, className].filter(Boolean).join(" ")} aria-hidden="true">
       {avatarUrl ? (
         <img src={avatarUrl} alt="" referrerPolicy="no-referrer" />
       ) : (
