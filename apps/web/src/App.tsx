@@ -2239,16 +2239,9 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
 }
 
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
-  const fastestPlanet = [aspect.from, aspect.to]
-    .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
-    .filter((item) => item.order >= 0)
-    .sort((first, second) => first.order - second.order)[0]?.planet;
+  const fastestPlanet = fastestSkyAspectPlanet(aspect);
   const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
-  const aspectWindowOrb = fastestPlanet === "Moon"
-    ? 6
-    : ["Sun", "Mercury", "Venus", "Mars"].includes(fastestPlanet ?? "")
-      ? 3
-      : 1.5;
+  const aspectWindowOrb = skyAspectWindowOrb(fastestPlanet);
   const remainingOrb = Math.max(0.2, aspectWindowOrb - aspect.orb);
   const currentOffsetDays = remainingOrb / speed;
 
@@ -2256,6 +2249,30 @@ function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], ge
     daysFrom(generatedAt, -currentOffsetDays),
     daysFrom(generatedAt, currentOffsetDays)
   );
+}
+
+function fastestSkyAspectPlanet(aspect: SkySnapshot["aspects"][number]) {
+  return [aspect.from, aspect.to]
+    .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
+    .filter((item) => item.order >= 0)
+    .sort((first, second) => first.order - second.order)[0]?.planet ?? null;
+}
+
+function skyAspectWindowOrb(fastestPlanet: string | null) {
+  if (fastestPlanet === "Moon") {
+    return 6;
+  }
+
+  return ["Sun", "Mercury", "Venus", "Mars"].includes(fastestPlanet ?? "")
+    ? 3
+    : 1.5;
+}
+
+function skyAspectEstimatedDurationDays(aspect: SkySnapshot["aspects"][number]) {
+  const fastestPlanet = fastestSkyAspectPlanet(aspect);
+  const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
+
+  return (skyAspectWindowOrb(fastestPlanet) * 2) / speed;
 }
 
 function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
@@ -3187,40 +3204,82 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
   });
 }
 
-function skyAspectLifeAreaFocusScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
-  if (focusAreas.length === 0) {
-    return 0;
-  }
-
-  const firstPosition = positions.find((position) => position.planet === aspect.from);
-  const secondPosition = positions.find((position) => position.planet === aspect.to);
-
-  return focusAreas.reduce((score, area) => {
-    const astrology = lifeAreaFocusAstrology[area];
-    const houseScore = [firstPosition?.house, secondPosition?.house].filter((house) => house && astrology.houses.includes(house)).length * 8;
-    const planetScore = [aspect.from, aspect.to].filter((planet) => astrology.planets.includes(planet)).length * 3;
-    const aspectScore = astrology.aspects?.includes(aspect.type) ? 1 : 0;
-    const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.theme ?? ""} ${secondPosition?.theme ?? ""}`, [area]);
-
-    return score + houseScore + planetScore + aspectScore + keywordScore;
-  }, 0);
-}
-
-function rankSkyAspectsByLifeAreaFocus(aspects: SkySnapshot["aspects"], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
-  if (focusAreas.length === 0) {
-    return aspects;
-  }
-
+function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
   return [...aspects].sort((first, second) => {
-    const firstScore = skyAspectLifeAreaFocusScore(first, positions, focusAreas);
-    const secondScore = skyAspectLifeAreaFocusScore(second, positions, focusAreas);
+    const durationDiff = skyAspectEstimatedDurationDays(first) - skyAspectEstimatedDurationDays(second);
 
-    if (firstScore !== secondScore) {
-      return secondScore - firstScore;
+    if (Math.abs(durationDiff) > 0.001) {
+      return durationDiff;
     }
 
-    return first.orb - second.orb;
+    if (first.orb !== second.orb) {
+      return first.orb - second.orb;
+    }
+
+    const firstFastestPlanet = fastestSkyAspectPlanet(first);
+    const secondFastestPlanet = fastestSkyAspectPlanet(second);
+
+    return placementPlanetOrder.indexOf(firstFastestPlanet ?? "") - placementPlanetOrder.indexOf(secondFastestPlanet ?? "");
   });
+}
+
+function lifeAreaFocusLabel(area: LifeAreaFocus) {
+  return lifeAreaFocusOptions.find((option) => option.value === area)?.label ?? area;
+}
+
+function skyAspectLifeAreaScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], area: LifeAreaFocus) {
+  const astrology = lifeAreaFocusAstrology[area];
+  const firstPosition = positions.find((position) => position.planet === aspect.from);
+  const secondPosition = positions.find((position) => position.planet === aspect.to);
+  const houseScore = [firstPosition?.house, secondPosition?.house].filter((house) => house && astrology.houses.includes(house)).length * 8;
+  const planetScore = [aspect.from, aspect.to].filter((planet) => astrology.planets.includes(planet)).length * 3;
+  const aspectScore = astrology.aspects?.includes(aspect.type) ? 1 : 0;
+  const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.theme ?? ""} ${secondPosition?.theme ?? ""}`, [area]);
+
+  return houseScore + planetScore + aspectScore + keywordScore;
+}
+
+function skyAspectPrimaryLifeArea(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
+  return focusAreas
+    .map((area) => ({ area, score: skyAspectLifeAreaScore(aspect, positions, area) }))
+    .filter((item) => item.score > 0)
+    .sort((first, second) => second.score - first.score)[0]?.area ?? null;
+}
+
+function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
+  const orderedAspects = rankSkyAspectsByTransitDuration(aspects);
+
+  if (focusAreas.length === 0) {
+    return [{ key: "all", label: null, aspects: orderedAspects }];
+  }
+
+  const groups = new Map<string, { key: string; label: string; aspects: SkySnapshot["aspects"] }>();
+  const unmatched: SkySnapshot["aspects"] = [];
+
+  orderedAspects.forEach((aspect) => {
+    const primaryArea = skyAspectPrimaryLifeArea(aspect, positions, focusAreas);
+
+    if (!primaryArea) {
+      unmatched.push(aspect);
+      return;
+    }
+
+    const group = groups.get(primaryArea) ?? {
+      key: primaryArea,
+      label: lifeAreaFocusLabel(primaryArea),
+      aspects: []
+    };
+    group.aspects.push(aspect);
+    groups.set(primaryArea, group);
+  });
+
+  return [
+    ...focusAreas.flatMap((area) => {
+      const group = groups.get(area);
+      return group ? [group] : [];
+    }),
+    ...(unmatched.length > 0 ? [{ key: "other", label: "Other sky contacts", aspects: unmatched }] : [])
+  ];
 }
 
 function currentSkyHouseActivations(currentSky: SkySnapshot, chart: ManualChart) {
@@ -7636,14 +7695,23 @@ function ActiveAspects({
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const orderedAspects = rankSkyAspectsByLifeAreaFocus(aspects, positions, lifeAreaFocus);
+  const aspectGroups = groupSkyAspectsByLifeArea(aspects, positions, lifeAreaFocus);
+  const showGroupLabels = lifeAreaFocus.length > 0;
 
   return (
     <section className="aspect-section chart-section" aria-label="Aspects">
       <span className="eyebrow section-label aspect-section-label">Aspects</span>
       <div className="aspects-card aspect-row-card">
         <div className="aspect-row-list">
-          {orderedAspects.map((aspect) => {
+          {aspectGroups.map((group) => (
+            <div className="aspect-row-group" key={group.key}>
+              {showGroupLabels && group.label ? (
+                <div className="aspect-row-group-label">
+                  <span>{group.label}</span>
+                  <em>Shortest first</em>
+                </div>
+              ) : null}
+              {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
             const content = fallbackFromHook(
@@ -7660,35 +7728,37 @@ function ActiveAspects({
             const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
             const body = detailParagraphs;
 
-            return (
-              <button
-                type="button"
-                className="aspect-row aspect-row-button"
-                key={`${aspect.from}-${aspect.to}`}
-                aria-label={`Read more about ${title}`}
-                onClick={() => onOpenDetail({
-                  glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
-                  kicker: "",
-                  title: generated?.headline ?? title,
-                  meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
-                  content: content.bundle,
-                  body,
-                  sections: generatedDetailSections(generated),
-                  astrologyDrilldown: generatedAstrologyDrilldown(generated)
-                })}
-              >
-                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                <div className="aspect-row-copy">
-                  <h3>{title}</h3>
-                  <p>{rowSummary}</p>
-                </div>
-                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                  <span className="aspect-row-dot" aria-hidden="true" />
-                  <span>{wholeDegreeOrb(aspect.orb)}</span>
-                </span>
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    type="button"
+                    className="aspect-row aspect-row-button"
+                    key={`${aspect.from}-${aspect.to}`}
+                    aria-label={`Read more about ${title}`}
+                    onClick={() => onOpenDetail({
+                      glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
+                      kicker: "",
+                      title: generated?.headline ?? title,
+                      meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
+                      content: content.bundle,
+                      body,
+                      sections: generatedDetailSections(generated),
+                      astrologyDrilldown: generatedAstrologyDrilldown(generated)
+                    })}
+                  >
+                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                    <div className="aspect-row-copy">
+                      <h3>{title}</h3>
+                      <p>{rowSummary}</p>
+                    </div>
+                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                      <span className="aspect-row-dot" aria-hidden="true" />
+                      <span>{wholeDegreeOrb(aspect.orb)}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -9706,7 +9776,6 @@ function ManualChartsPanel({
                         </span>
                         <span className="crb">
                           <span className="crt">{chart.displayName}</span>
-                          <span className="crs">{manualChartSubtitle(chart)}</span>
                           <span className="manual-chart-signatures">
                             <span>☉ {bigThree.sun}</span>
                             <span>☽ {bigThree.moon}</span>

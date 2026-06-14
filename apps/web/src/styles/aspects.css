@@ -145,6 +145,33 @@
   background: var(--muted);
 }
 
+.aspect-row-group + .aspect-row-group {
+  border-top: 1px solid var(--line-2);
+}
+
+.aspect-row-group-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 14px var(--row-padding-x) 10px;
+  background: var(--card-bg);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-label-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.aspect-row-group-label em {
+  color: var(--ink-3);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
 .updates-section {
   margin-top: var(--sp-4);
 }

@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 
 export function SkyPlacementSection({ children }: { children: ReactNode }) {
   return (
-    <section className="placement-section chart-section" aria-label="Placements">
+    <section className="placement-section chart-section" aria-label="Transits">
       <div className="placements-heading">
-        <span className="eyebrow section-label chart-section-title">Placements</span>
+        <span className="eyebrow section-label chart-section-title">Transits</span>
       </div>
 
       {children}
