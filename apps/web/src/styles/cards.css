@@ -32,6 +32,21 @@
 }
 
 :where(
+  .placement-table-wrap,
+  .placement-table-card,
+  .planet-placement-list,
+  .synastry-placement-table,
+  .friend-placement-column,
+  .friend-compare-list,
+  .you-list-card,
+  .aspects-card,
+  .manual-chart-cards,
+  .friends-feed-card
+) {
+  box-shadow: var(--table-shadow);
+}
+
+:where(
   .date-picker,
   .hero-city-picker,
   .friend-compare-popover,
