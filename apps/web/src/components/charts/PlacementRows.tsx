@@ -52,6 +52,68 @@ const natalSignatureDescriptions: Record<string, string> = {
   Pluto: "How and where you transform"
 };
 
+type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
+
+const chartPlacementDescriptions: Record<string, string> = {
+  Ascendant: "How this chart meets the world",
+  Sun: "This chart's identity and life force",
+  Moon: "This chart's emotional rhythm",
+  Mercury: "How this chart communicates",
+  Venus: "How this chart connects",
+  Mars: "How this chart takes action",
+  Jupiter: "How this chart grows",
+  Saturn: "Where this chart builds and commits",
+  Uranus: "How this chart breaks from pattern",
+  Neptune: "How this chart dreams and imagines",
+  Pluto: "How this chart transforms"
+};
+
+const compositePlacementDescriptions: Record<string, string> = {
+  Ascendant: "How the relationship meets the world",
+  Sun: "The relationship's identity and life force",
+  Moon: "The relationship's emotional rhythm",
+  Mercury: "How the relationship communicates",
+  Venus: "How the relationship connects",
+  Mars: "How the relationship takes action",
+  Jupiter: "How the relationship grows",
+  Saturn: "Where the relationship builds and commits",
+  Uranus: "How the relationship breaks from pattern",
+  Neptune: "How the relationship dreams and imagines",
+  Pluto: "How the relationship transforms"
+};
+
+function possessiveName(name: string) {
+  const trimmed = name.trim();
+
+  if (!trimmed) {
+    return "Their";
+  }
+
+  return trimmed.endsWith("s") ? `${trimmed}'` : `${trimmed}'s`;
+}
+
+function namedPlacementDescription(planet: string, ownerName: string) {
+  const owner = ownerName.trim();
+  const possessive = possessiveName(owner);
+  const subject = owner || "they";
+
+  const descriptions: Record<string, string> = {
+    Ascendant: `${possessive} way of meeting life`,
+    Sun: `${possessive} identity and life force`,
+    Moon: `${possessive} inner world and emotions`,
+    Mercury: `How ${subject} communicates`,
+    Venus: `How ${subject} connects`,
+    Mars: `How ${subject} takes action`,
+    Jupiter: `How ${subject} grows`,
+    Saturn: `Where ${subject} builds and commits`,
+    Uranus: `How ${subject} breaks from pattern`,
+    Neptune: `How ${subject} dreams and imagines`,
+    Pluto: `How ${subject} transforms`
+  };
+
+  return descriptions[planet] ?? "";
+}
+
 const dignityLabelParts: Record<EssentialDignity, { adjective: string; name: string; tone: DignityTone }> = {
   domicile: { adjective: "Natural", name: "Domicile", tone: "good" },
   exaltation: { adjective: "Empowered", name: "Exaltation", tone: "good" },
@@ -207,7 +269,19 @@ export function placementTitleFromParts(planet: string, sign: string, retrograde
   return `${planet}${retrograde ? " Rx" : ""} in ${sign}`;
 }
 
-export function natalPlacementDescription(planet: string) {
+export function natalPlacementDescription(planet: string, context: PlacementDescriptionContext = "self", ownerName?: string) {
+  if (context === "person" && ownerName?.trim()) {
+    return namedPlacementDescription(planet, ownerName);
+  }
+
+  if (context === "chart") {
+    return chartPlacementDescriptions[planet] ?? "";
+  }
+
+  if (context === "composite") {
+    return compositePlacementDescriptions[planet] ?? "";
+  }
+
   return natalSignatureDescriptions[planet] ?? "";
 }
 
@@ -472,15 +546,19 @@ export function FriendPlacementTable({
   title,
   rows,
   compact = false,
+  descriptionContext = "person",
   generatedContent,
   generatedContext = "natal",
+  ownerName,
   showTitle = true
 }: {
   title: string;
   rows: SocialPlacementRow[];
   compact?: boolean;
+  descriptionContext?: PlacementDescriptionContext;
   generatedContent?: unknown;
   generatedContext?: "natal" | "composite";
+  ownerName?: string;
   showTitle?: boolean;
 }) {
   void generatedContent;
@@ -496,7 +574,7 @@ export function FriendPlacementTable({
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
               <PlanetPlacementRow
                 degree={socialPlacementDegree(row.degree)}
-                description={natalPlacementDescription(row.label)}
+                description={natalPlacementDescription(row.label, generatedContext === "composite" ? "composite" : descriptionContext, ownerName)}
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
