@@ -1,7 +1,7 @@
 .sky-detail-page {
   width: 100%;
   min-height: 100svh;
-  padding: clamp(150px, 20vh, 220px) var(--gut) 140px;
+  padding: var(--chart-page-top) var(--page-gutter) var(--page-bottom);
   background: var(--article-bg);
   color: var(--ink);
   font-family: var(--font-body);
@@ -15,7 +15,7 @@
 .article-shell,
 .sky-detail-article {
   display: grid;
-  width: min(760px, calc(100vw - var(--gut) * 2));
+  width: min(760px, 100%);
   margin-inline: auto;
   gap: 0;
 }
@@ -504,6 +504,17 @@
 .ro-screen .sky-pl-duration {
   background: var(--surface-2);
   color: var(--ink);
+}
+
+.ro-screen .sky-pl-duration--retrograde {
+  padding-inline: 10px;
+  border-radius: 999px;
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--retrograde-accent) 10%, transparent);
 }
 
 .ro-sky-pl__blurb {

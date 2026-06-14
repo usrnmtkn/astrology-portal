@@ -97,8 +97,7 @@
   line-height: var(--aspect-row-copy-line, var(--leading-body));
 }
 
-.aspect-row-copy .aspect-row-subtitle,
-.synastry-contact-read-more {
+.aspect-row-copy .aspect-row-subtitle {
   margin-top: var(--aspect-row-subtitle-margin, 4px);
   color: var(--aspect-row-subtitle-color, var(--muted));
   font-family: var(--font-body);
@@ -111,13 +110,6 @@
 
 .synastry-contact-description {
   white-space: pre-line;
-}
-
-.synastry-contact-read-more {
-  display: inline-flex;
-  width: max-content;
-  margin-top: var(--aspect-row-action-margin, var(--aspect-row-subtitle-margin, 4px));
-  color: var(--aspect-row-action-color, var(--ink));
 }
 
 .aspect-row-meta {

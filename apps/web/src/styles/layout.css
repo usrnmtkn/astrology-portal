@@ -1,11 +1,11 @@
 .page-shell {
-  width: min(var(--page-max), 100%);
+  width: var(--page-content-width);
   margin-inline: auto;
-  padding: var(--page-top) var(--page-gutter) 80px;
+  padding: var(--page-top) 0 var(--page-bottom);
 }
 
 .page-shell--narrow {
-  width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
+  width: var(--page-narrow-width);
   margin-inline: auto;
 }
 
@@ -14,10 +14,10 @@
 }
 
 .chart-page-shell {
-  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  width: var(--chart-content-width);
   margin-inline: auto;
   padding-top: var(--chart-page-top);
-  padding-bottom: 96px;
+  padding-bottom: var(--page-bottom);
 }
 
 .chart-layout,
@@ -27,7 +27,7 @@
   grid-template-columns: var(--chart-column-width) var(--content-column-width);
   gap: var(--chart-layout-gap);
   align-items: start;
-  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  width: var(--chart-content-width);
   margin-inline: auto;
 }
 

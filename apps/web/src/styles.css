@@ -169,7 +169,7 @@
   padding: 8px 16px 8px 8px;
   gap: var(--sp-1);
   border: 1px solid var(--card-border);
-  border-radius: var(--card-radius-sm);
+  border-radius: 22px;
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -1375,7 +1375,7 @@
 .you-page {
   display: grid;
   gap: var(--page-stack-gap);
-  width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
+  width: var(--page-content-width);
   margin: 0 auto;
 }
 
@@ -1389,7 +1389,7 @@
   grid-template-columns: minmax(520px, 760px) minmax(480px, 760px);
   align-items: start;
   gap: var(--layout-gap);
-  width: min(1700px, 100%);
+  width: var(--chart-content-width);
   overflow: visible;
 }
 
@@ -1617,7 +1617,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
-  background: var(--accent-bg);
+  background: var(--nav-link-active-bg);
   color: var(--ink);
 }
 
@@ -1635,7 +1635,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill :where(.bran
 }
 
 html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
-  background: var(--accent-bg);
+  background: var(--nav-link-active-bg);
   color: var(--ink);
 }
 
@@ -1649,7 +1649,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .brand-word 
 }
 
 :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button:not(.active):hover {
-  background: var(--accent-bg);
+  background: var(--nav-link-hover-bg);
   color: var(--ink);
 }
 

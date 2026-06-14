@@ -3,17 +3,17 @@
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   justify-items: center;
-  gap: 26px;
-  width: min(var(--page-max), 100%);
+  gap: var(--page-stack-gap);
+  width: var(--page-content-width);
   margin: 0 auto;
-  padding: var(--page-top) var(--page-gutter) 86px;
+  padding: var(--page-top) 0 var(--page-bottom);
   overflow-x: clip;
 }
 
 .friends-page:not(.friend-detail-page) .friends-page-heading,
 .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
 .friends-page:not(.friend-detail-page) .friends-feed-view {
-  width: min(var(--friends-content-width), calc(100vw - var(--gut) * 2));
+  width: min(var(--friends-content-width), 100%);
   max-width: var(--friends-content-width);
   margin-inline: auto;
 }
@@ -277,6 +277,37 @@
   font-variant-numeric: tabular-nums;
 }
 
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.profile-avatar-regular {
+  width: 48px;
+  height: 48px;
+  font-size: 0.9rem;
+}
+
+.profile-avatar-large {
+  width: var(--id-avatar-size);
+  height: var(--id-avatar-size);
+  font-size: 21px;
+}
+
+.profile-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .friend-profile-card .friend-profile-avatar,
 .you-profile-card .you-profile-monogram {
   width: var(--id-avatar-size);
@@ -491,9 +522,9 @@
 
 .friend-detail-page {
   position: relative;
-  width: min(var(--page-max), 100%);
+  width: var(--page-content-width);
   margin: 0 auto;
-  padding: var(--chart-page-top) var(--page-gutter) 88px;
+  padding: var(--chart-page-top) 0 var(--page-bottom);
   overflow-x: clip;
 }
 
@@ -524,7 +555,7 @@
   --friend-detail-chart-max: 680px;
   --friend-wheel-stack-gap: 22px;
   --friend-detail-no-chart-max: 760px;
-  --friend-section-label-margin: 12px 0 -10px;
+  --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
   --friend-composite-row-template: 56px minmax(0, 1fr) auto;
   --friend-composite-row-gap: 20px;
   --friend-composite-row-padding: 24px 30px;
@@ -538,7 +569,7 @@
   grid-template-columns: var(--chart-column-width) var(--content-column-width);
   gap: var(--chart-layout-gap);
   align-items: start;
-  width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
+  width: var(--chart-content-width);
   margin-inline: auto;
 }
 
@@ -1438,6 +1469,21 @@
   border-bottom: 0;
 }
 
+.friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-top-left-radius: calc(var(--card-radius) - 1px);
+  border-top-right-radius: calc(var(--card-radius) - 1px);
+}
+
+.friend-placement-column-title + .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.friend-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
+  border-bottom-right-radius: calc(var(--card-radius) - 1px);
+  border-bottom-left-radius: calc(var(--card-radius) - 1px);
+}
+
 .friend-chart-page .friend-placement-row-compact .planet-placement-row {
   padding: var(--friend-placement-compact-padding);
 }
@@ -1457,6 +1503,18 @@
 
 .synastry-placement-table .planet-placement-row:last-child {
   border-bottom: 0;
+}
+
+.synastry-placement-table > .synastry-placement-row:first-child,
+.synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-top-left-radius: calc(var(--card-radius) - 1px);
+  border-top-right-radius: calc(var(--card-radius) - 1px);
+}
+
+.synastry-placement-table > .synastry-placement-row:last-child,
+.synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
+  border-bottom-right-radius: calc(var(--card-radius) - 1px);
+  border-bottom-left-radius: calc(var(--card-radius) - 1px);
 }
 
 .friend-chart-page .synastry-placement-table .planet-placement-row {
