@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useId, useRef, useState } from "react";
+import { memo, useId, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
@@ -148,7 +148,7 @@ type SkyWheelProps = {
   variant?: Exclude<WheelVariant, "synastry">;
 };
 
-export function SkyWheel({
+export const SkyWheel = memo(function SkyWheel({
   positions,
   aspects,
   ascendant,
@@ -443,7 +443,7 @@ export function SkyWheel({
       />
     </>
   );
-}
+});
 
 type SynastryWheelProps = {
   outerPositions: PlanetPosition[];
@@ -454,7 +454,7 @@ type SynastryWheelProps = {
   houseSignLabelStyle?: HouseSignLabelStyle;
 };
 
-export function SynastryWheel({
+export const SynastryWheel = memo(function SynastryWheel({
   outerPositions,
   innerPositions,
   interAspects,
@@ -724,4 +724,4 @@ export function SynastryWheel({
       </g>
     </svg>
   );
-}
+});

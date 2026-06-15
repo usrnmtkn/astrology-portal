@@ -13,6 +13,10 @@
   padding: 0;
 }
 
+.feature-loading-fallback {
+  min-height: min(42vh, 420px);
+}
+
 .chart-page-shell {
   width: var(--chart-content-width);
   margin-inline: auto;

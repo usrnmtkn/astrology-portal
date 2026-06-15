@@ -51,14 +51,9 @@ import {
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
-import { FriendCircleFeed } from "./features/friends/FriendCircleFeed";
-import { FriendChartModal } from "./features/friends/FriendChartModal";
-import { FriendChartsList } from "./features/friends/FriendChartsList";
-import { FriendDetail } from "./features/friends/FriendDetail";
-import { RelationshipChartFullscreen, type RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
-import { RelationshipComparePicker, type RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
+import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { SkyTodayView } from "./features/sky/SkyToday";
-import { YouPage } from "./features/you/YouPage";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
   getAuthAccount,
@@ -4258,6 +4253,52 @@ const GeneratedContentAdminDashboard = lazy(() =>
   }))
 );
 
+const YouPage = lazy(() =>
+  import("./features/you/YouPage").then((module) => ({
+    default: module.YouPage
+  }))
+);
+
+const FriendCircleFeed = lazy(() =>
+  import("./features/friends/FriendCircleFeed").then((module) => ({
+    default: module.FriendCircleFeed
+  }))
+);
+
+const FriendChartsList = lazy(() =>
+  import("./features/friends/FriendChartsList").then((module) => ({
+    default: module.FriendChartsList
+  }))
+);
+
+const FriendChartModal = lazy(() =>
+  import("./features/friends/FriendChartModal").then((module) => ({
+    default: module.FriendChartModal
+  }))
+);
+
+const FriendDetail = lazy(() =>
+  import("./features/friends/FriendDetail").then((module) => ({
+    default: module.FriendDetail
+  }))
+);
+
+const RelationshipChartFullscreen = lazy(() =>
+  import("./features/friends/RelationshipChartFullscreen").then((module) => ({
+    default: module.RelationshipChartFullscreen
+  }))
+);
+
+const RelationshipComparePicker = lazy(() =>
+  import("./features/friends/RelationshipComparePicker").then((module) => ({
+    default: module.RelationshipComparePicker
+  }))
+);
+
+function FeatureLoadingFallback() {
+  return <div className="feature-loading-fallback" aria-hidden="true" />;
+}
+
 export function App() {
   if (isAdminContentPath()) {
     return (
@@ -8390,31 +8431,33 @@ function ProfileView({
   ) : null;
 
   return (
-    <YouPage
-      aspectRows={updateAspectRows}
-      bigThreeRows={bigThreeRows}
-      displayMoon={displayMoon}
-      displayRising={displayRising}
-      displaySun={displaySun}
-      elementalSummaryLabel={elementalSummary.label}
-      elementalSummarySentence={elementalSummary.sentence}
-      hasSavedBirthDetails={hasSavedBirthDetails}
-      hasSavedCurrentCity={hasSavedCurrentCity}
-      natalAspectRows={natalAspectItems}
-      natalChart={natalChart}
-      natalChartPending={!natalSky}
-      onCreateChart={onCreateChart}
-      planetRows={planetPlacementRows}
-      profileAvatarUrl={profile.avatarUrl}
-      profileEmail={profile.email}
-      profileName={profile.name}
-      setupStepsLeft={setupStepsLeft}
-      showNatalSignatures={showNatalSignatures}
-      signatureBody={signatureBody}
-      signatureTitle={signatureTitle}
-      signaturesReady={signaturesReady}
-      transitsDrawn={transitsDrawn}
-    />
+    <Suspense fallback={<FeatureLoadingFallback />}>
+      <YouPage
+        aspectRows={updateAspectRows}
+        bigThreeRows={bigThreeRows}
+        displayMoon={displayMoon}
+        displayRising={displayRising}
+        displaySun={displaySun}
+        elementalSummaryLabel={elementalSummary.label}
+        elementalSummarySentence={elementalSummary.sentence}
+        hasSavedBirthDetails={hasSavedBirthDetails}
+        hasSavedCurrentCity={hasSavedCurrentCity}
+        natalAspectRows={natalAspectItems}
+        natalChart={natalChart}
+        natalChartPending={!natalSky}
+        onCreateChart={onCreateChart}
+        planetRows={planetPlacementRows}
+        profileAvatarUrl={profile.avatarUrl}
+        profileEmail={profile.email}
+        profileName={profile.name}
+        setupStepsLeft={setupStepsLeft}
+        showNatalSignatures={showNatalSignatures}
+        signatureBody={signatureBody}
+        signatureTitle={signatureTitle}
+        signaturesReady={signaturesReady}
+        transitsDrawn={transitsDrawn}
+      />
+    </Suspense>
   );
 }
 
@@ -8910,13 +8953,14 @@ function ManualChartsPanel({
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
 
   return (
-    <FriendsPageShell
-      activeView={resolvedFriendsMainView}
-      detailVariant={friendProfileTab}
-      isDetailView={isFriendDetailView}
-      onBackToCharts={() => selectFriendsTab("charts")}
-      onSelectView={(view) => selectFriendsTab(view)}
-    >
+    <Suspense fallback={<FeatureLoadingFallback />}>
+      <FriendsPageShell
+        activeView={resolvedFriendsMainView}
+        detailVariant={friendProfileTab}
+        isDetailView={isFriendDetailView}
+        onBackToCharts={() => selectFriendsTab("charts")}
+        onSelectView={(view) => selectFriendsTab(view)}
+      >
 
       {resolvedFriendsMainView === "circle" && (
         <FriendCircleFeed
@@ -9343,6 +9387,7 @@ function ManualChartsPanel({
           )}
         </FriendDetail>
       )}
-    </FriendsPageShell>
+      </FriendsPageShell>
+    </Suspense>
   );
 }
