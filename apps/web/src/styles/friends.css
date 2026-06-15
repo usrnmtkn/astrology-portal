@@ -1151,7 +1151,8 @@
 
 .synastry-placement-table {
   display: grid;
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   grid-template-columns: 1fr;
   margin-top: 12px;
   border: 1px solid var(--table-border);
@@ -1311,7 +1312,8 @@
 }
 
 .friend-placement-column {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   min-width: 0;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
@@ -1322,6 +1324,9 @@
   margin: 0;
   padding: 20px 24px;
   border-bottom: 1px solid var(--card-border);
+  border-top-left-radius: calc(var(--card-radius) - 1px);
+  border-top-right-radius: calc(var(--card-radius) - 1px);
+  background: var(--card-bg);
   color: var(--muted);
   font-size: var(--type-xs);
   font-weight: var(--font-weight-bold);
@@ -1493,7 +1498,7 @@
 }
 
 .synastry-placement-table {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .synastry-placement-table .planet-placement-row {
@@ -1509,12 +1514,14 @@
 .synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
   border-top-left-radius: calc(var(--card-radius) - 1px);
   border-top-right-radius: calc(var(--card-radius) - 1px);
+  background-clip: padding-box;
 }
 
 .synastry-placement-table > .synastry-placement-row:last-child,
 .synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
   border-bottom-right-radius: calc(var(--card-radius) - 1px);
   border-bottom-left-radius: calc(var(--card-radius) - 1px);
+  background-clip: padding-box;
 }
 
 .friend-chart-page .synastry-placement-table .planet-placement-row {

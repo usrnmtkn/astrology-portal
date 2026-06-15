@@ -164,18 +164,26 @@
   background: var(--muted);
 }
 
+.aspect-row-groups {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.aspect-row-group {
+  display: grid;
+  gap: var(--sp-2);
+}
+
 .aspect-row-group + .aspect-row-group {
-  border-top: 1px solid var(--line-2);
+  margin-top: var(--sp-1);
 }
 
 .aspect-row-group-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-2);
-  padding: 16px var(--row-padding-x) 12px;
-  border-bottom: 1px solid var(--line-2);
-  background: color-mix(in srgb, var(--card-bg) 88%, var(--app-bg));
+  justify-content: flex-start;
+  gap: var(--sp-1);
+  padding: 0;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-label-size);
@@ -186,6 +194,7 @@
 }
 
 .aspect-row-group-label em {
+  display: none;
   color: var(--ink-3);
   font-style: normal;
   font-weight: var(--weight-semibold);

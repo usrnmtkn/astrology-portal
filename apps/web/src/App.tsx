@@ -6835,16 +6835,16 @@ function ActiveAspects({
   return (
     <section className="aspect-section chart-section" aria-label="Aspects">
       <span className="eyebrow section-label aspect-section-label">Aspects</span>
-      <div className="aspects-card aspect-row-card">
-        <div className="aspect-row-list">
-          {aspectGroups.map((group) => (
-            <div className="aspect-row-group" key={group.key}>
-              {group.label ? (
-                <div className="aspect-row-group-label">
-                  <span>{group.label}</span>
-                  <em>{group.key === "all" ? "Shortest first" : "Life area · shortest first"}</em>
-                </div>
-              ) : null}
+      <div className="aspect-row-groups">
+        {aspectGroups.map((group) => (
+          <div className="aspect-row-group" key={group.key}>
+            {group.label ? (
+              <div className="aspect-row-group-label">
+                <span>{group.label}</span>
+              </div>
+            ) : null}
+            <div className="aspects-card aspect-row-card">
+              <div className="aspect-row-list">
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timingLabel = skyAspectTimingLabel(aspect, generatedAt);
@@ -6893,9 +6893,10 @@ function ActiveAspects({
                   </button>
                 );
               })}
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );
