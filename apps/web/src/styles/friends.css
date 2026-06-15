@@ -1563,11 +1563,11 @@
 .friend-chart-page .aspect-row,
 .friend-chart-page .aspect-row-button,
 .friend-chart-page .aspect-row-static {
-  --aspect-row-template: 56px minmax(0, 1fr) 30px;
+  --aspect-row-template: 82px minmax(0, 1fr) 30px;
   --aspect-row-gap: 14px;
   --aspect-row-padding: 18px 22px;
-  --aspect-row-glyph-width: 56px;
-  --aspect-row-glyph-size: 17px;
+  --aspect-row-glyph-width: 82px;
+  --aspect-row-glyph-size: 22px;
   --aspect-row-title-size: var(--friend-row-title-size);
   --aspect-row-title-weight: var(--weight-semibold);
   --aspect-row-title-line: var(--friend-card-title-line);

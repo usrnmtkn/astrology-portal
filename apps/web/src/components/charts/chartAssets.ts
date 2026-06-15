@@ -66,7 +66,8 @@ export const wheelPlanetIconFiles: Record<string, string> = {
   Lilith: "lilith.svg",
   Ceres: "ceres.svg",
   "True Node": "true-node.svg",
-  "North Node": "north-node.svg"
+  "North Node": "north-node.svg",
+  "South Node": "south-node.svg"
 };
 
 export const wheelPlanetRetrogradeIconFiles: Record<string, string> = {
@@ -81,8 +82,9 @@ export const wheelPlanetRetrogradeIconFiles: Record<string, string> = {
   Chiron: "chiron_rx.svg",
   Lilith: "lilith_rx.svg",
   Ceres: "ceres_rx.svg",
-  "True Node": "true_node_rx.svg",
-  "North Node": "true_node_rx.svg"
+  "True Node": "north-node-rx.svg",
+  "North Node": "north-node-rx.svg",
+  "South Node": "south-node-rx.svg"
 };
 
 export const wheelAngleIconFiles: Record<string, string> = {
@@ -118,6 +120,7 @@ export const pointIconFiles: Record<string, string> = {
   Vesta: "vesta.svg",
   "True Node": "true-node.svg",
   "North Node": "north-node.svg",
+  "South Node": "south-node.svg",
   Ascendant: "ascendant.svg",
   Descendant: "descendant.svg",
   Midheaven: "mc.svg",
@@ -136,8 +139,9 @@ export const pointRetrogradeIconFiles: Record<string, string> = {
   Chiron: "chiron_rx.svg",
   Lilith: "lilith_rx.svg",
   Ceres: "ceres_rx.svg",
-  "True Node": "true_node_rx.svg",
-  "North Node": "true_node_rx.svg"
+  "True Node": "north-node-rx.svg",
+  "North Node": "north-node-rx.svg",
+  "South Node": "south-node-rx.svg"
 };
 
 const zodiacAssetPath = "/zodiac/";

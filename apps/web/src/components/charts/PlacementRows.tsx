@@ -287,7 +287,11 @@ export function natalPlacementDescription(planet: string, context: PlacementDesc
 
 export function InlineGlyphIcon({ fallback, href, label }: { fallback: string; href: string | null; label: string }) {
   if (!href) {
-    return <span>{fallback}</span>;
+    return (
+      <span className="inline-glyph-icon inline-glyph-icon--fallback" aria-label={label}>
+        {fallback}
+      </span>
+    );
   }
 
   return (
@@ -691,13 +695,13 @@ function SynastryPlacementColumn({
 
 function SynastryPlacementLead({ position }: { position: PlanetPosition }) {
   const isRetrograde = position.motion === "retrograde" && position.planet !== "Ascendant";
-  const retrogradeHref = isRetrograde ? zodiacAssetHref(pointRetrogradeIconFiles[position.planet]) : null;
+  const iconHref = zodiacAssetHref(isRetrograde ? pointRetrogradeIconFiles[position.planet] ?? pointIconFiles[position.planet] : pointIconFiles[position.planet]);
 
   return (
     <span className="synastry-placement-lead" aria-hidden="true">
       <span className="synastry-placement-glyph">
-        {retrogradeHref ? (
-          <img className="synastry-rx-glyph-svg" src={retrogradeHref} alt="" aria-hidden="true" />
+        {iconHref ? (
+          <img className="synastry-rx-glyph-svg" src={iconHref} alt="" aria-hidden="true" />
         ) : (
           position.glyph
         )}
