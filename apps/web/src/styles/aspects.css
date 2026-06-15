@@ -2,7 +2,7 @@
 .aspect-row-button,
 .aspect-row-static {
   display: grid;
-  grid-template-columns: var(--aspect-row-template, 48px minmax(0, 1fr) 30px);
+  grid-template-columns: var(--aspect-row-template, 82px minmax(0, 1fr) 30px);
   align-items: start;
   width: 100%;
   min-width: 0;
@@ -42,13 +42,13 @@
   align-items: center;
   justify-content: center;
   align-self: start;
-  width: var(--aspect-row-glyph-width, 48px);
-  min-width: var(--aspect-row-glyph-width, 48px);
-  height: 22px;
+  width: var(--aspect-row-glyph-width, 82px);
+  min-width: var(--aspect-row-glyph-width, 82px);
+  height: 24px;
   margin-top: 2px;
   gap: 6px;
   font-family: var(--font-glyph);
-  font-size: var(--aspect-row-glyph-size, 21px);
+  font-size: var(--aspect-row-glyph-size, 22px);
   line-height: 1;
   white-space: nowrap;
 }
@@ -56,17 +56,26 @@
 .inline-glyph-icon {
   display: inline-grid;
   place-items: center;
-  width: 1em;
-  height: 1em;
+  flex: 0 0 var(--aspect-inline-icon-size, 22px);
+  width: var(--aspect-inline-icon-size, 22px);
+  height: var(--aspect-inline-icon-size, 22px);
+  color: currentColor;
+  font-family: var(--font-glyph);
+  font-size: var(--aspect-inline-icon-size, 22px);
   line-height: 1;
+  text-align: center;
 }
 
 .inline-glyph-icon img {
   display: block;
-  width: 1em;
-  height: 1em;
+  width: 100%;
+  height: 100%;
   filter: var(--filter-glyph-current);
   object-fit: contain;
+}
+
+.inline-glyph-icon--fallback {
+  transform: translateY(-0.01em);
 }
 
 .aspect-row-copy {
@@ -233,27 +242,21 @@
   align-items: center;
   justify-content: center;
   align-self: start;
-  width: 48px;
-  min-width: 48px;
-  height: 22px;
+  width: var(--aspect-row-glyph-width, 82px);
+  min-width: var(--aspect-row-glyph-width, 82px);
+  height: 24px;
   margin-top: 2px;
-  gap: var(--sp-1);
+  gap: 6px;
   color: var(--ink);
   font-family: var(--font-glyph);
-  font-size: 21px;
+  font-size: var(--aspect-row-glyph-size, 22px);
   line-height: 1;
   white-space: nowrap;
 }
 
 .updates-aspect-row__glyphs .aspect-row-glyphs {
-  gap: var(--sp-1);
+  gap: 6px;
   font-size: inherit;
-}
-
-.updates-aspect-row__glyphs .aspect-row-glyphs span:last-child {
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: var(--weight-medium);
 }
 
 .updates-aspect-row__title {
