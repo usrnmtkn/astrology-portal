@@ -108,6 +108,24 @@
   text-transform: uppercase;
 }
 
+.aspect-row-timing {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 2px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--chip-bg);
+  color: var(--ink-3);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
 .synastry-contact-description {
   white-space: pre-line;
 }
@@ -146,8 +164,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-2);
-  padding: 14px var(--row-padding-x) 10px;
-  background: var(--card-bg);
+  padding: 16px var(--row-padding-x) 12px;
+  border-bottom: 1px solid var(--line-2);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--app-bg));
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-label-size);
