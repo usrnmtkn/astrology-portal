@@ -206,6 +206,78 @@ html[data-scrolled] .floating-back-button {
   height: var(--top-action-icon-size);
 }
 
+:is(.theme-dark, [data-theme="dark"]) .nav-pill {
+  border-color: var(--nav-border);
+  background: var(--nav-surface);
+  color: var(--ink);
+  box-shadow: var(--nav-rest-shadow);
+  backdrop-filter: blur(0) saturate(1);
+  -webkit-backdrop-filter: blur(0) saturate(1);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .nav-pill :where(.brand-word, .site-nav button) {
+  color: var(--ink-2);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .nav-pill .brand-word {
+  color: var(--ink);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
+  background: var(--nav-link-active-bg);
+  color: var(--ink);
+}
+
+html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill {
+  border-color: var(--nav-border-hover);
+  background: var(--nav-scrolled-bg);
+  color: var(--ink);
+  box-shadow: var(--nav-scrolled-shadow);
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+}
+
+html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill :where(.brand-word, .site-nav button) {
+  color: var(--ink-2);
+}
+
+html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
+  background: var(--nav-link-active-bg);
+  color: var(--ink);
+}
+
+html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .brand-word {
+  color: var(--ink);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .nav-pill .brand-dot {
+  background: var(--button-bg);
+  color: var(--button-fg);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button:not(.active):hover {
+  background: var(--nav-link-hover-bg);
+  color: var(--ink);
+}
+
+html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
+  background: var(--button-bg);
+  color: var(--button-fg);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button) {
+  border-color: var(--floating-button-border);
+  background: var(--floating-button-bg);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button):hover {
+  border-color: var(--floating-button-border-hover);
+  background: var(--floating-button-bg-hover);
+  color: var(--ink);
+}
+
 .hamburger-icon {
   display: grid;
   place-items: center;

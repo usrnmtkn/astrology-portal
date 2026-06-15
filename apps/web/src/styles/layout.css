@@ -125,12 +125,6 @@
   transform: translateY(-1px);
 }
 
-:is(.theme-dark, [data-theme="dark"]) .floating-back-button {
-  border-color: var(--floating-button-border);
-  background: var(--floating-button-bg);
-  color: var(--ink);
-}
-
 :is(.theme-dark, [data-theme="dark"]) :where(
   .auth-card,
   .auth-message-card,
@@ -245,11 +239,4 @@ body.modal-open {
 :is(.theme-dark, [data-theme="dark"]) .modal-panel {
   border-color: var(--modal-border);
   background: var(--modal-bg);
-}
-
-:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle) {
-  border: 1px solid var(--floating-button-border);
-  background: var(--floating-button-bg);
-  color: var(--ink);
-  box-shadow: none;
 }

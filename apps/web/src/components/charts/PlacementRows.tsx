@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { FloatingTooltip } from "../ui/FloatingTooltip";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -323,14 +324,13 @@ export function DignityBadge({ dignity, uppercase = false }: { dignity: Placemen
   const label = uppercase ? uppercaseDignityLabel(dignity) : dignity.label;
 
   return (
-    <span
+    <FloatingTooltip
+      ariaLabel={`${label}. ${dignity.description}`}
       className={`spl-dig spl-dig--${dignity.tone}`}
-      aria-label={`${label}. ${dignity.description}`}
-      data-tooltip={dignity.description}
-      tabIndex={0}
+      content={dignity.description}
     >
       {label}
-    </span>
+    </FloatingTooltip>
   );
 }
 
