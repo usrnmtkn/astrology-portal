@@ -230,66 +230,29 @@
   fill: transparent;
 }
 
-.planet-tooltip {
-  pointer-events: none;
-}
-
-.planet-tooltip foreignObject {
-  overflow: visible;
-}
-
-.planet-tooltip-box {
-  box-sizing: border-box;
+.floating-tooltip--planet {
   display: grid;
-  width: max-content;
   max-width: min(520px, calc(100vw - 32px));
-  height: 100%;
   gap: 5px;
-  padding: 12px 14px;
-  border: 1px solid var(--tooltip-border);
-  border-radius: 12px;
-  background: var(--tooltip-bg);
-  color: var(--tooltip-fg);
-  font-family: var(--font-ui);
-  line-height: 1.25;
-  white-space: normal;
-  overflow-wrap: break-word;
 }
 
-.planet-tooltip-box strong,
-.planet-tooltip-box span {
+.floating-tooltip--planet strong,
+.floating-tooltip--planet span {
   display: block;
   min-width: 0;
   max-width: 100%;
   overflow-wrap: break-word;
 }
 
-.planet-tooltip-box strong {
+.floating-tooltip--planet strong {
   font-size: 12px;
   font-weight: var(--font-weight-bold);
 }
 
-.planet-tooltip-box span {
+.floating-tooltip--planet span {
   color: var(--tooltip-muted);
   font-size: 12px;
   font-weight: var(--font-weight-medium);
-}
-
-.planet-tooltip rect {
-  fill: var(--tooltip-bg);
-  stroke: var(--tooltip-border);
-  stroke-width: 1;
-}
-
-.planet-tooltip text {
-  fill: var(--tooltip-fg);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.planet-tooltip-title {
-  font-weight: 900;
 }
 
 .aspect-lines line,

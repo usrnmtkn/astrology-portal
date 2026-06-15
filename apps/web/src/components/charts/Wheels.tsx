@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
   aspectIconFiles,
   normalizeAspectType,
@@ -217,7 +218,6 @@ export function SkyWheel({
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
-  const tooltipMaxWidth = 520;
   const houseLabels = chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -233,6 +233,7 @@ export function SkyWheel({
     radius: radius.outer + angleLabelOuterPadding
   });
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
+  const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
   const signLabels = chartSignLabelGeometry({
     angleForLongitude,
     center,
@@ -255,191 +256,192 @@ export function SkyWheel({
   );
 
   function tooltipDetails(position: PlanetPosition) {
-    const marker = planetLayouts.get(position.planet)?.marker ?? point(planetAngle(position), radius.planet);
     const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
     const aspectLines = aspectTooltipLines(position, aspects);
     const lines = [placementLine, ...aspectLines];
     const aspectLine = aspectLines.join(" · ");
-    const longestLine = [placementLine, aspectLine].reduce((longest, line) => Math.max(longest, line.length), 0);
-    const width = Math.min(tooltipMaxWidth, Math.max(190, longestLine * 7 + 28));
-    const charactersPerLine = Math.max(18, Math.floor((width - 28) / 7));
-    const aspectLineCount = aspectLine ? Math.ceil(aspectLine.length / charactersPerLine) : 0;
-    const height = Math.min(580, aspectLine ? 58 + aspectLineCount * 18 : 48);
-    const preferredX = marker.x > center ? marker.x - width - 18 : marker.x + 18;
-    const x = Math.min(Math.max(preferredX, 10), 600 - width - 10);
-    const y = Math.min(Math.max(marker.y - height / 2, 10), 600 - height - 10);
 
-    return { aspectLine, height, lines, placementLine, width, x, y };
+    return { aspectLine, lines, placementLine };
   }
 
   return (
-    <svg className={`sky-wheel sky-wheel-${variant}`} viewBox={wheelViewBox} role="img" aria-label="Planet positions">
-      <defs>
-        <clipPath id={wheelClipId}>
+    <>
+      <svg className={`sky-wheel sky-wheel-${variant}`} viewBox={wheelViewBox} role="img" aria-label="Planet positions">
+        <defs>
+          <clipPath id={wheelClipId}>
+            <circle cx={center} cy={center} r={radius.outer} />
+          </clipPath>
+          {signLabels.map(({ sign, path }) => (
+            <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
+          ))}
+        </defs>
+        <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
+        <g className="wheel-rings">
           <circle cx={center} cy={center} r={radius.outer} />
-        </clipPath>
-        {signLabels.map(({ sign, path }) => (
-          <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
-        ))}
-      </defs>
-      <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
-      <g className="wheel-rings">
-        <circle cx={center} cy={center} r={radius.outer} />
-        <circle cx={center} cy={center} r={radius.signInner} />
-        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-        <circle cx={center} cy={center} r={radius.inner} />
-      </g>
-      <g className="wheel-sectors">
-        {signs.map((sign, index) => {
-          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
-          const outer = point(a, radius.signInner);
-          const inner = point(a, radius.inner);
-          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-      <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
-        {signs.map((sign, index) => {
-          const a = angleForLongitude(index * 30);
-          const outer = point(a, signDividerOuterRadius);
-          const inner = point(a, signDividerInnerRadius);
-          return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-      <g className="aspect-lines">
-        {aspectPairs.map(({ from, to, type, className, lineStyle }) => {
-          const a = point(planetAngle(from), radius.aspect);
-          const b = point(planetAngle(to), radius.aspect);
-
-          return (
-            <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
-              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-            </g>
-          );
-        })}
-      </g>
-      {hasAscendantAxis && (
-        <g className="natal-angle-lines" aria-label="Ascendant axis">
-          {(() => {
-            if (typeof ascendantLongitude !== "number") {
-              return null;
-            }
-
-            const ascAngle = angleForLongitude(ascendantLongitude);
-            const dscAngle = angleForLongitude(ascendantLongitude + 180);
-            const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
-            const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
-
-            return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
-          })()}
+          <circle cx={center} cy={center} r={radius.signInner} />
+          <circle cx={center} cy={center} r={radius.aspect} className="faint" />
+          <circle cx={center} cy={center} r={radius.inner} />
         </g>
-      )}
-      <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
-        {houseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
-            {house}
-          </text>
-        ))}
-      </g>
-      {hasAscendantAxis && (
-        <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => {
-            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-            const iconSize = 30;
+        <g className="wheel-sectors">
+          {signs.map((sign, index) => {
+            const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
+            const outer = point(a, radius.signInner);
+            const inner = point(a, radius.inner);
+            return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+          })}
+        </g>
+        <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
+          {signs.map((sign, index) => {
+            const a = angleForLongitude(index * 30);
+            const outer = point(a, signDividerOuterRadius);
+            const inner = point(a, signDividerInnerRadius);
+            return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
+          })}
+        </g>
+        <g className="aspect-lines">
+          {aspectPairs.map(({ from, to, type, className, lineStyle }) => {
+            const a = point(planetAngle(from), radius.aspect);
+            const b = point(planetAngle(to), radius.aspect);
 
-            return iconHref ? (
-              <image
-                key={label}
-                href={iconHref}
-                x={x - iconSize / 2}
-                y={y - iconSize / 2}
-                width={iconSize}
-                height={iconSize}
-                className="zodiac-wheel__angle-icon"
-                aria-label={label}
-                preserveAspectRatio="xMidYMid meet"
-              />
-            ) : (
-              <text key={label} x={x} y={y}>
-                {label}
-              </text>
+            return (
+              <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
+                <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+              </g>
             );
           })}
         </g>
-      )}
-      <g className="planet-labels">
-        {positions.map((position) => {
-          const layout = planetLayouts.get(position.planet);
-          const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
-          const tickAngle = planetAngle(position);
-          const tickOuter = point(tickAngle, radius.signInner - 5);
-          const tickInner = point(tickAngle, radius.signInner - 17);
-          const degreeOffset = inwardMarkerOffset(center, marker, 24);
-          const { lines: tooltipLines } = tooltipDetails(position);
+        {hasAscendantAxis && (
+          <g className="natal-angle-lines" aria-label="Ascendant axis">
+            {(() => {
+              if (typeof ascendantLongitude !== "number") {
+                return null;
+              }
 
-          return (
-            <g
-              key={position.planet}
-              className="planet-marker"
-              tabIndex={0}
-              role="img"
-              aria-label={tooltipLines.join(". ")}
-              onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
-              onFocus={() => setActiveTooltipPlanet(position.planet)}
-              onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
-              onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
-            >
-              <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
-              <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-                <circle cx={0} cy={0} r="14" className="planet-hit-area" />
-                <WheelPlanetGlyph position={position} />
-                <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
-                  {formatWheelDegree(position)}
+              const ascAngle = angleForLongitude(ascendantLongitude);
+              const dscAngle = angleForLongitude(ascendantLongitude + 180);
+              const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
+              const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
+
+              return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
+            })()}
+          </g>
+        )}
+        <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
+          {houseLabels.map(({ house, x, y, ariaLabel }) => (
+            <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
+              {house}
+            </text>
+          ))}
+        </g>
+        {hasAscendantAxis && (
+          <g className="angular-labels" aria-label="Chart angles">
+            {angularLabels.map(({ label, x, y }) => {
+              const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
+              const iconSize = 30;
+
+              return iconHref ? (
+                <image
+                  key={label}
+                  href={iconHref}
+                  x={x - iconSize / 2}
+                  y={y - iconSize / 2}
+                  width={iconSize}
+                  height={iconSize}
+                  className="zodiac-wheel__angle-icon"
+                  aria-label={label}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              ) : (
+                <text key={label} x={x} y={y}>
+                  {label}
                 </text>
-              </g>
-            </g>
-          );
-        })}
-      </g>
-      {activeTooltipPosition && (
-        <g className="planet-tooltips" aria-hidden="true">
-          {(() => {
-            const { aspectLine, height, placementLine, width, x, y } = tooltipDetails(activeTooltipPosition);
+              );
+            })}
+          </g>
+        )}
+        <g className="planet-labels">
+          {positions.map((position) => {
+            const layout = planetLayouts.get(position.planet);
+            const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
+            const tickAngle = planetAngle(position);
+            const tickOuter = point(tickAngle, radius.signInner - 5);
+            const tickInner = point(tickAngle, radius.signInner - 17);
+            const degreeOffset = inwardMarkerOffset(center, marker, 24);
+            const { lines: tooltipLines } = tooltipDetails(position);
 
             return (
-              <g className="planet-tooltip planet-tooltip-active" transform={`translate(${x} ${y})`}>
-                <foreignObject width={width} height={height}>
-                  <div className="planet-tooltip-box">
-                    <strong>{placementLine}</strong>
-                    {aspectLine ? <span>{aspectLine}</span> : null}
-                  </div>
-                </foreignObject>
+              <g
+                key={position.planet}
+                ref={(node) => {
+                  if (node) {
+                    planetMarkerRefs.current.set(position.planet, node);
+                  } else {
+                    planetMarkerRefs.current.delete(position.planet);
+                  }
+                }}
+                className="planet-marker"
+                tabIndex={0}
+                role="img"
+                aria-label={tooltipLines.join(". ")}
+                onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
+                onFocus={() => setActiveTooltipPlanet(position.planet)}
+                onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
+                onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
+              >
+                <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
+                <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
+                  <circle cx={0} cy={0} r="14" className="planet-hit-area" />
+                  <WheelPlanetGlyph position={position} />
+                  <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
+                    {formatWheelDegree(position)}
+                  </text>
+                </g>
               </g>
             );
-          })()}
+          })}
         </g>
-      )}
-      <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y }) => {
-          const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-          const iconSize = sign === "Sagittarius" ? 25 : 23;
-          const className = isLong ? "sign-label-long" : undefined;
+        <g className="sign-labels">
+          {signLabels.map(({ sign, isLong, x, y }) => {
+            const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
+            const iconSize = sign === "Sagittarius" ? 25 : 23;
+            const className = isLong ? "sign-label-long" : undefined;
 
-          return (
-            <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
-              {houseSignLabelStyle === "glyph" && iconHref ? (
-                <image href={iconHref} x={x - iconSize / 2} y={y - iconSize / 2} width={iconSize} height={iconSize} preserveAspectRatio="xMidYMid meet" />
-              ) : (
-                <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
-                  <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
-                    {sign}
-                  </textPath>
-                </text>
-              )}
-            </g>
-          );
-        })}
-      </g>
-    </svg>
+            return (
+              <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
+                {houseSignLabelStyle === "glyph" && iconHref ? (
+                  <image href={iconHref} x={x - iconSize / 2} y={y - iconSize / 2} width={iconSize} height={iconSize} preserveAspectRatio="xMidYMid meet" />
+                ) : (
+                  <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
+                    <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
+                      {sign}
+                    </textPath>
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+      <FloatingTooltipPortal
+        anchor={activeTooltipPlanet ? planetMarkerRefs.current.get(activeTooltipPlanet) ?? null : null}
+        className="floating-tooltip--planet"
+        content={
+          activeTooltipPosition
+            ? (() => {
+                const { aspectLine, placementLine } = tooltipDetails(activeTooltipPosition);
+
+                return (
+                  <>
+                    <strong>{placementLine}</strong>
+                    {aspectLine ? <span>{aspectLine}</span> : null}
+                  </>
+                );
+              })()
+            : null
+        }
+        open={Boolean(activeTooltipPosition)}
+      />
+    </>
   );
 }
 
