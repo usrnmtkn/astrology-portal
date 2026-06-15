@@ -1,5 +1,3 @@
-import { ChevronRight } from "lucide-react";
-
 export type FriendCircleFeedCard = {
   label: string;
   title: string;
@@ -40,7 +38,6 @@ export function FriendCircleFeed({
                 <i className="friends-card-skeleton friends-card-skeleton-line" />
                 <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
               </span>
-              <span className="friends-card-skeleton friends-card-skeleton-chevron" />
             </article>
           ))
         ) : (
@@ -79,7 +76,6 @@ export function FriendCircleFeed({
                     </span>
                   )}
                 </span>
-                <ChevronRight className="friends-feed-chevron" size={24} aria-hidden="true" />
               </article>
             );
           })

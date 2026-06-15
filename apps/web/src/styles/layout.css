@@ -15,6 +15,20 @@
 
 .feature-loading-fallback {
   min-height: min(42vh, 420px);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+}
+
+.deferred-render-placeholder {
+  min-height: var(--deferred-placeholder-height, 180px);
+}
+
+.deferred-render-placeholder--table {
+  --deferred-placeholder-height: 320px;
+}
+
+.deferred-render-placeholder--aspects {
+  --deferred-placeholder-height: 220px;
 }
 
 .chart-page-shell {
@@ -61,6 +75,15 @@
   min-width: 0;
   gap: var(--stack-gap);
   padding-top: 0;
+}
+
+@supports (content-visibility: auto) {
+  .chart-layout__content > .chart-section,
+  .chart-page-content > .chart-section,
+  .sky-content-column > .chart-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 520px;
+  }
 }
 
 .chart-layout,

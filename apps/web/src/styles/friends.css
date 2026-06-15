@@ -215,12 +215,15 @@
 }
 
 .manual-chart-cards {
+  display: grid;
+  gap: var(--card-list-gap);
   width: 100%;
   max-width: 100%;
   overflow: visible;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .manual-chart-row {
@@ -231,20 +234,22 @@
   min-height: 108px;
   gap: 0;
   padding: 0;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   overflow: visible;
 }
 
 .manual-chart-row:first-child {
-  border-top-left-radius: 23px;
-  border-top-right-radius: 23px;
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
 }
 
 .manual-chart-row:last-child {
-  border-bottom: 0;
-  border-bottom-right-radius: 23px;
-  border-bottom-left-radius: 23px;
+  border-bottom: 1px solid var(--card-border);
+  border-bottom-right-radius: var(--card-radius);
+  border-bottom-left-radius: var(--card-radius);
 }
 
 .manual-chart-select {
@@ -255,7 +260,7 @@
   min-width: 0;
   max-width: 100%;
   gap: 24px;
-  padding: 20px 20px 20px 32px;
+  padding: 16px 20px;
   border: 0;
   background: transparent;
   text-align: left;
@@ -339,9 +344,9 @@
   max-width: 100%;
   overflow: visible;
   font-size: var(--type-xl);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.12;
-  letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: var(--tracking-title);
   text-overflow: clip;
   white-space: normal;
 }
@@ -462,7 +467,7 @@
 
 .friends-feed-view {
   display: grid;
-  gap: var(--section-gap);
+  gap: var(--card-list-gap);
   margin-top: 0;
 }
 
@@ -484,6 +489,10 @@
   display: grid;
   width: 100%;
   min-width: 0;
+}
+
+.friends-circle-strip {
+  gap: var(--card-list-gap);
 }
 
 .friends-feed-avatar-stack {

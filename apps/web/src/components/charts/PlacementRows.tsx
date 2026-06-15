@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import {
@@ -437,7 +436,6 @@ export function PlacementTableRow({
 
 export function PlanetPlacementRow({
   ariaLabel,
-  chevron = false,
   degree,
   description,
   dignity,
@@ -448,12 +446,12 @@ export function PlanetPlacementRow({
   pointName,
   rangeLabel,
   retrograde = false,
+  retrogradeDurationLabel,
   statuses = [],
   title,
   variant
 }: {
   ariaLabel?: string;
-  chevron?: boolean;
   degree: string;
   description?: string | null;
   dignity?: PlacementDignity | null;
@@ -464,6 +462,7 @@ export function PlanetPlacementRow({
   pointName?: string;
   rangeLabel?: string | null;
   retrograde?: boolean;
+  retrogradeDurationLabel?: string | null;
   statuses?: PlacementRowStatus[];
   title: string;
   variant: "sky" | "natal" | "friend" | "synastry" | "composite";
@@ -487,7 +486,9 @@ export function PlanetPlacementRow({
     );
   }
 
-  const hasTiming = Boolean(durationLabel || rangeLabel);
+  const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
+  const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
+  const rowStatuses = statuses.filter((status) => status.tone !== "retrograde");
   const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
   const rowClassName = [
     "planet-placement-row",
@@ -502,19 +503,27 @@ export function PlanetPlacementRow({
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
           <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
+          {titleStatuses.map((status) => (
+            <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
+              {status.label}
+            </span>
+          ))}
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
             {durationLabel ? <span className="planet-placement-row__duration">{durationLabel}</span> : null}
-            {durationLabel && rangeLabel ? <span aria-hidden="true">·</span> : null}
+            {retrogradeDurationLabel ? (
+              <span className="spl-status-item spl-status-retrograde">{retrogradeDurationLabel}</span>
+            ) : null}
+            {(durationLabel || retrogradeDurationLabel) && rangeLabel ? <span aria-hidden="true">·</span> : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>
         ) : (
           <span className="planet-placement-row__meta placement-row__house">{houseLabel}</span>
         )}
-        {statuses.length > 0 ? (
+        {rowStatuses.length > 0 ? (
           <span className="planet-placement-row__status" aria-label={`${title} status`}>
-            {statuses.map((status) => (
+            {rowStatuses.map((status) => (
               <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
                 {status.label.toUpperCase()}
               </span>
@@ -522,7 +531,6 @@ export function PlanetPlacementRow({
           </span>
         ) : null}
       </span>
-      {chevron ? <ChevronRight className="planet-placement-row__chevron" aria-hidden="true" /> : null}
     </>
   );
 

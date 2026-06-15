@@ -53,7 +53,24 @@ import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContex
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
-import { SkyTodayView } from "./features/sky/SkyToday";
+import {
+  SkyAspectGroup,
+  SkyAspectsSection,
+  SkyPlacementList,
+  SkyPlacementListItem,
+  SkyTodayView
+} from "./features/sky/SkyToday";
+import {
+  aspectTone,
+  detailGlyphForPlacement,
+  formatPlacementPosition,
+  formatPlanetDegree,
+  natalPlacementTitle,
+  placementStatuses,
+  skyNodeDisplayPositions,
+  solarPhaseStatusFor,
+  wholeDegreeOrb
+} from "./features/sky/skyHelpers";
 import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
 import {
   getAuthAccount,
@@ -1277,40 +1294,6 @@ function positionFromLongitude({
   };
 }
 
-function skyNodeDisplayPositions(positions: PlanetPosition[]) {
-  const trueNode = positions.find((position) => position.planet === "True Node" || position.planet === "North Node");
-
-  if (!trueNode) {
-    return positions;
-  }
-
-  const northNode: PlanetPosition = {
-    ...trueNode,
-    planet: "North Node",
-    glyph: "☊"
-  };
-  const southNodeBase = positionFromLongitude({
-    planet: "South Node",
-    glyph: "☋",
-    longitude: zodiacLongitude(trueNode) + 180,
-    theme: "release"
-  });
-  const southNode: PlanetPosition = {
-    ...southNodeBase,
-    house: trueNode.house,
-    motion: trueNode.motion,
-    transitStart: trueNode.transitStart,
-    transitEnd: trueNode.transitEnd,
-    transitRemainingLabel: trueNode.transitRemainingLabel
-  };
-
-  return [
-    ...positions.filter((position) => !["True Node", "North Node", "South Node"].includes(position.planet)),
-    northNode,
-    southNode
-  ];
-}
-
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
 }
@@ -2339,54 +2322,95 @@ function skyAspectEstimatedDurationDays(aspect: SkySnapshot["aspects"][number]) 
   return (skyAspectWindowOrb(fastestPlanet) * 2) / speed;
 }
 
-function timingCategoryForWindow(start: Date, end: Date, referenceDate: Date) {
-  if (sameLocalDate(start, end)) {
-    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
+type AspectTimingDisplay = {
+  durationLabel: string;
+  rangeLabel: string;
+  label: string;
+};
+
+function aspectDurationLabelForWindow(start: Date, end: Date) {
+  const durationMs = Math.max(0, end.getTime() - start.getTime());
+  const durationDays = durationMs / 86_400_000;
+
+  if (durationMs < 86_400_000) {
+    const minutes = Math.max(1, Math.ceil(durationMs / 60_000));
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours < 1) {
+      return `${minutes}MIN`;
+    }
+
+    return remainingMinutes > 0 ? `${hours}H ${remainingMinutes}MIN` : `${hours}H`;
   }
 
-  const durationDays = Math.max(0, (end.getTime() - start.getTime()) / 86_400_000);
-
-  if (durationDays <= 10) {
-    return "Active this week";
+  if (durationDays < 30) {
+    return `${Math.max(1, Math.round(durationDays))}D`;
   }
 
-  if (durationDays <= 75) {
-    return "Longer influence";
+  const months = Math.max(1, Math.round(durationDays / 30.44));
+
+  if (months < 12) {
+    return `${months}M`;
   }
 
-  return "Ongoing";
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  return remainingMonths > 0 ? `${years}Y ${remainingMonths}M` : `${years}Y`;
 }
 
-function timingLabelForWindow(start: Date, end: Date, referenceDate: Date) {
-  if (sameLocalDate(start, end)) {
-    return formatEditorialDateRange(start, end, referenceDate);
-  }
+function formatAspectRangeDateWithTime(date: Date, includeDate = true) {
+  const dateLabel = includeDate ? formatEditorialDate(date, date.getUTCFullYear() !== new Date().getUTCFullYear()) : "";
+  const timeLabel = formatEditorialTime(date);
 
-  const category = timingCategoryForWindow(start, end, referenceDate);
-  const range = formatEditorialDateRange(start, end, referenceDate);
-
-  return `${category} · ${range}`;
+  return dateLabel ? `${dateLabel}, ${timeLabel}` : timeLabel;
 }
 
-function skyAspectTimingLabel(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+function aspectRangeLabelForWindow(start: Date, end: Date) {
+  const durationMs = Math.max(0, end.getTime() - start.getTime());
+  const durationDays = durationMs / 86_400_000;
+
+  if (durationMs < 86_400_000) {
+    if (sameLocalDate(start, end)) {
+      return `${formatAspectRangeDateWithTime(start)} – ${formatAspectRangeDateWithTime(end, false)}`;
+    }
+
+    return `${formatAspectRangeDateWithTime(start)} – ${formatAspectRangeDateWithTime(end)}`;
+  }
+
+  if (durationDays < 365) {
+    if (sameLocalDate(start, end)) {
+      return formatEditorialDate(start);
+    }
+
+    return formatEditorialDateRange(start, end);
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+
+  return `${formatter.format(start)} – ${formatter.format(end)}`;
+}
+
+function aspectTimingDisplayForWindow(start: Date, end: Date): AspectTimingDisplay {
+  const durationLabel = aspectDurationLabelForWindow(start, end);
+  const rangeLabel = aspectRangeLabelForWindow(start, end);
+
+  return {
+    durationLabel,
+    rangeLabel,
+    label: `${durationLabel} · ${rangeLabel}`
+  };
+}
+
+function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
-  const referenceDate = new Date(generatedAt);
 
-  return timingLabelForWindow(window.start, window.end, referenceDate);
-}
-
-function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  const primaryAspect = activeAspects[0];
-
-  if (primaryAspect) {
-    return `${pointGlyph(primaryAspect.from)} ${aspectGlyph(primaryAspect.type)} ${pointGlyph(primaryAspect.to)}`;
-  }
-
-  if (position.motion === "retrograde") {
-    return `${position.glyph} ℞`;
-  }
-
-  return `${position.glyph} ${position.signGlyph}`;
+  return aspectTimingDisplayForWindow(window.start, window.end);
 }
 
 function detailSectionTitle(index: number) {
@@ -2788,11 +2812,10 @@ function transitItemActiveWindow(transit: TransitItem, generatedAt: string) {
   };
 }
 
-function transitItemTimingLabel(transit: TransitItem, generatedAt: string) {
+function transitItemTimingDisplay(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
-  const referenceDate = new Date(generatedAt);
 
-  return timingLabelForWindow(window.start, window.end, referenceDate);
+  return aspectTimingDisplayForWindow(window.start, window.end);
 }
 
 function completedAgeOnDate(birthDate: string, currentDateValue: string) {
@@ -5596,6 +5619,7 @@ export function App() {
                       aspects={sky.aspects}
                       ascendant={sky.ascendant}
                       ascendantLongitude={sky.ascendantLongitude}
+                      midheavenLongitude={sky.midheavenLongitude}
                       houseSignLabelStyle={activeHouseSignLabelStyle}
                       variant="zodiac"
                     />
@@ -5910,66 +5934,8 @@ function CitySuggestions({
   );
 }
 
-function wholeDegreeOrb(orb: number) {
-  return `${Math.round(orb)}°`;
-}
-
-type SolarPhaseStatus = {
-  label: string;
-  tone: "muted" | "alert";
-};
-
-function solarPhaseStatusFor(position: PlanetPosition, positions: PlanetPosition[]): SolarPhaseStatus | null {
-  if (position.planet === "Sun") {
-    return null;
-  }
-
-  const sun = positions.find((candidate) => candidate.planet === "Sun");
-
-  if (!sun) {
-    return null;
-  }
-
-  const separation = angularDistance(zodiacLongitude(position), zodiacLongitude(sun));
-  const roundedSeparation = Math.round(separation);
-
-  if (separation <= 0.3) {
-    return { label: "CAZIMI", tone: "alert" };
-  }
-
-  if (separation <= 8) {
-    return { label: `COMBUST · ${roundedSeparation}°`, tone: "alert" };
-  }
-
-  if (separation <= 17) {
-    return { label: `NEARING THE BEAMS · ${roundedSeparation}°`, tone: "muted" };
-  }
-
-  return null;
-}
-
-function placementStatuses(position: PlanetPosition) {
-  const statuses: Array<{ label: string; tone: "muted" | "alert" | "retrograde" }> = [];
-
-  if (position.motion === "retrograde") {
-    statuses.push({ label: "Retrograde", tone: "retrograde" });
-  }
-
-  if (position.degree >= 29) {
-    statuses.push({ label: "Last degree", tone: "alert" });
-  } else if (position.degree < 1) {
-    statuses.push({ label: "Fresh ingress", tone: "muted" });
-  }
-
-  return statuses;
-}
-
 function skyDisplayPlanetName(planet: string) {
   return planet === "True Node" ? "North Node" : planet;
-}
-
-function formatPlacementPosition(position: PlanetPosition) {
-  return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatPlanetDegree(position)}`;
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {
@@ -6019,10 +5985,6 @@ const natalSignatureDescriptions: Record<string, string> = {
   Neptune: "Where you dream and idealize",
   Pluto: "Where you transform and reclaim power"
 };
-
-function natalPlacementTitle(position: PlanetPosition) {
-  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
-}
 
 function natalPlacementSignTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
@@ -6151,17 +6113,6 @@ function elementalBalanceSummary(balance: ReturnType<typeof natalElementBalance>
   };
 }
 
-function formatPlanetDegree(position: PlanetPosition) {
-  const degree = Math.floor(position.degree);
-  const minutes = Math.round((position.degree - degree) * 60);
-
-  if (minutes === 60) {
-    return `${degree + 1}°00'`;
-  }
-
-  return `${degree}°${String(minutes).padStart(2, "0")}'`;
-}
-
 function relationshipPossessiveName(name: string, isSelf = false) {
   if (isSelf) {
     return "Your";
@@ -6276,7 +6227,7 @@ function formatRetrogradeDuration(retrogradeStartDate?: string, retrogradeEndDat
 
   const duration = formatDurationCompact(retrogradeStartDate, retrogradeEndDate);
 
-  return duration ? `${duration} RETROGRADE` : null;
+  return duration ? `${duration} Rx` : null;
 }
 
 const personalRetrogradePlanets = new Set(["Mercury", "Venus", "Mars"]);
@@ -6364,21 +6315,25 @@ function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
 
 function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
   const currentDay = dateOnly(generatedAt);
+  const lookupPlanet = position.planet === "North Node" || position.planet === "South Node"
+    ? "True Node"
+    : position.planet;
 
   return retrogradeWindows.find((window) => {
-    if (window.planet !== position.planet) {
+    if (window.planet !== lookupPlanet) {
       return false;
     }
 
     return currentDay >= dateOnly(window.retrogradeStart) && currentDay <= dateOnly(window.retrogradeEnd);
-  }) ?? retrogradeWindows.find((window) => window.planet === position.planet);
+  }) ?? retrogradeWindows.find((window) => window.planet === lookupPlanet);
 }
 
 function activeRetrogradeWindowForPlanet(planet: string, generatedAt: string) {
   const currentDay = dateOnly(generatedAt);
+  const lookupPlanet = planet === "North Node" || planet === "South Node" ? "True Node" : planet;
 
   return retrogradeWindows.find((window) => (
-    window.planet === planet
+    window.planet === lookupPlanet
     && currentDay >= dateOnly(window.retrogradeStart)
     && currentDay <= dateOnly(window.retrogradeEnd)
   ));
@@ -6615,15 +6570,14 @@ function RetrogradeCallout({
                 {skyDisplayPlanetName(position.planet)} <span className="sky-pl-rx">Rx</span> in {position.sign}
               </span>
               <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
+              {row.count ? <span className="spl-status-item spl-status-retrograde">{row.count}</span> : null}
             </span>
           </span>
           <span className="sky-pl-range">
-            {row.count ? <span className="sky-pl-duration sky-pl-duration--retrograde">{row.count}</span> : null}
             <span>{row.range}</span>
           </span>
           {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
         </span>
-        <ChevronRight className="sky-pl-chevron" aria-hidden="true" />
       </button>
     );
   }
@@ -6909,25 +6863,6 @@ function TodayView({
     />
   );
 }
-function aspectTone(type: string) {
-  if (["trine", "sextile"].includes(type)) {
-    return "Flow";
-  }
-
-  if (["square", "opposition"].includes(type)) {
-    return "Friction";
-  }
-
-  return "Contact";
-}
-
-function aspectsForPlacement(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
-  return aspects
-    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
-    .sort((a, b) => a.orb - b.orb)
-    .slice(0, 2);
-}
-
 function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
   return "";
 }
@@ -6959,19 +6894,18 @@ function ActiveAspects({
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const aspectGroups = groupSkyAspectsByLifeArea(aspects, positions, lifeAreaFocus);
+  const aspectGroups = useMemo(
+    () => groupSkyAspectsByLifeArea(aspects, positions, lifeAreaFocus),
+    [aspects, positions, lifeAreaFocus]
+  );
 
   return (
-    <section className="aspect-section chart-section" aria-label="Aspects">
-      <span className="eyebrow section-label aspect-section-label">Aspects</span>
-      <div className="aspect-row-groups">
-        {aspectGroups.map((group) => (
-          <div className="aspect-row-group" key={group.key}>
-            <div className="aspects-card aspect-row-card">
-              <div className="aspect-row-list">
+    <SkyAspectsSection>
+      {aspectGroups.map((group) => (
+        <SkyAspectGroup id={group.key} key={group.key}>
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
-            const timingLabel = skyAspectTimingLabel(aspect, generatedAt);
+            const timing = skyAspectTimingDisplay(aspect, generatedAt);
             const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
             const content = fallbackFromHook(
               "sky.aspect-detail",
@@ -7007,7 +6941,11 @@ function ActiveAspects({
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
-                      <span className="aspect-row-timing">{timingLabel}</span>
+                      <span className="aspect-row-timing" aria-label={timing.label}>
+                        <span className="planet-placement-row__duration">{timing.durationLabel}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{timing.rangeLabel}</span>
+                      </span>
                       {rowSummary ? <p>{rowSummary}</p> : null}
                     </div>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
@@ -7017,12 +6955,9 @@ function ActiveAspects({
                   </button>
                 );
               })}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+        </SkyAspectGroup>
+      ))}
+    </SkyAspectsSection>
   );
 }
 
@@ -7041,16 +6976,40 @@ function PlacementTable({
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const displayPositions = skyNodeDisplayPositions(positions);
-  const orderedPositions = rankSkyPositionsByLifeAreaFocus(skyPlacementPlanetOrder
-    .map((planet) => displayPositions.find((position) => position.planet === planet))
-    .filter((position): position is PlanetPosition => Boolean(position)), lifeAreaFocus);
+  const displayPositions = useMemo(() => skyNodeDisplayPositions(positions), [positions]);
+  const orderedPositions = useMemo(
+    () => rankSkyPositionsByLifeAreaFocus(
+      skyPlacementPlanetOrder
+        .map((planet) => displayPositions.find((position) => position.planet === planet))
+        .filter((position): position is PlanetPosition => Boolean(position)),
+      lifeAreaFocus
+    ),
+    [displayPositions, lifeAreaFocus]
+  );
+  const aspectsByPlacement = useMemo(() => {
+    const nextAspects = new Map<string, SkySnapshot["aspects"]>();
+
+    aspects.forEach((aspect) => {
+      const fromAspects = nextAspects.get(aspect.from) ?? [];
+      fromAspects.push(aspect);
+      nextAspects.set(aspect.from, fromAspects);
+
+      const toAspects = nextAspects.get(aspect.to) ?? [];
+      toAspects.push(aspect);
+      nextAspects.set(aspect.to, toAspects);
+    });
+
+    nextAspects.forEach((placementAspects, planet) => {
+      nextAspects.set(planet, placementAspects.slice().sort((a, b) => a.orb - b.orb).slice(0, 2));
+    });
+
+    return nextAspects;
+  }, [aspects]);
 
   return (
-    <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
-      <div className="placement-table">
+    <SkyPlacementList>
         {orderedPositions.map((position) => {
-          const activeAspects = aspectsForPlacement(position, aspects);
+          const activeAspects = aspectsByPlacement.get(position.planet) ?? [];
           const title = placementDetailTitle(position, activeAspects);
           const dignity = placementDignity(position);
           const solarPhase = solarPhaseStatusFor(position, positions);
@@ -7061,11 +7020,7 @@ function PlacementTable({
             retrogradeWindow?.retrogradeStart,
             retrogradeWindow?.retrogradeEnd
           );
-          const statuses = placementStatuses(position).map((status) => (
-            status.tone === "retrograde" && retrogradeDurationLabel
-              ? { ...status, label: retrogradeDurationLabel }
-              : status
-          ));
+          const statuses = placementStatuses(position);
           const durationLabel = compactTransitDurationLabel(position, generatedAt);
           const transitRangeLabel = placementTransitRangeLabel(position, generatedAt);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
@@ -7099,10 +7054,9 @@ function PlacementTable({
           });
 
           return (
-            <div className="sky-pl-item" role="listitem" key={position.planet}>
+            <SkyPlacementListItem id={position.planet} key={position.planet}>
               <PlanetPlacementRow
                 ariaLabel={`Read more about ${title}`}
-                chevron
                 degree={formatPlanetDegree(position)}
                 dignity={dignity}
                 durationLabel={durationLabel}
@@ -7111,15 +7065,15 @@ function PlacementTable({
                 pointName={position.planet}
                 rangeLabel={transitRangeLabel}
                 retrograde={position.motion === "retrograde"}
+                retrogradeDurationLabel={retrogradeDurationLabel}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
                 title={natalPlacementTitle(position)}
                 variant="sky"
               />
-            </div>
+            </SkyPlacementListItem>
           );
         })}
-      </div>
-    </div>
+    </SkyPlacementList>
   );
 }
 
@@ -8385,7 +8339,7 @@ function ProfileView({
     const generated = liveGeneratedContent(generatedContent, contentKey);
     const rowSummary = liveGeneratedSummary(generated, content.summary);
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
-    const timingLabel = transitItemTimingLabel(transit, transitForm.chartDate);
+    const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
 
     return (
       <button
@@ -8401,12 +8355,14 @@ function ProfileView({
           <span className="updates-aspect-row__title">
             {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
           </span>
-          <span className="updates-aspect-row__meta-line">
-            {timingLabel}
+          <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
+            <span className="planet-placement-row__duration">{timing.durationLabel}</span>
+            <span aria-hidden="true">·</span>
+            <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
         </span>
-        <span className="updates-aspect-row__meta" aria-label={`${timingLabel}, ${transit.orb} orb`}>
+        <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
           <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
         </span>
@@ -9042,6 +8998,7 @@ function ManualChartsPanel({
               interAspects={selectedSynastryAspectLines}
               ascendant={selectedChart.natalChart.ascendant}
               ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+              midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
               houseSignLabelStyle={houseSignLabelStyle}
             />
           </RelationshipChartFullscreen>
@@ -9112,6 +9069,7 @@ function ManualChartsPanel({
                         interAspects={selectedSynastryAspectLines}
                         ascendant={selectedChart.natalChart.ascendant}
                         ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
                         houseSignLabelStyle={houseSignLabelStyle}
                       />
                     </div>

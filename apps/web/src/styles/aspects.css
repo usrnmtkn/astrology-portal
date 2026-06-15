@@ -7,12 +7,23 @@
   width: 100%;
   min-width: 0;
   gap: var(--aspect-row-gap, 16px);
-  padding: var(--aspect-row-padding, var(--row-padding-y) var(--row-padding-x));
-  border: 0;
-  border-bottom: 1px solid var(--line-2);
+  padding: var(--aspect-row-padding, var(--card-row-padding, 16px 20px));
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   color: var(--ink);
   text-align: left;
+}
+
+.aspect-row-list {
+  display: grid;
+  gap: var(--card-list-gap);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .chart-row:not(.manual-chart-row),
@@ -34,7 +45,7 @@
 .aspect-row:last-child,
 .aspect-row-button:last-child,
 .aspect-row-static:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .aspect-row-glyphs {
@@ -92,8 +103,8 @@
   overflow-wrap: normal;
   word-break: normal;
   font-size: var(--aspect-row-title-size, var(--text-row-title-size));
-  font-weight: var(--aspect-row-title-weight, var(--weight-semibold));
-  line-height: var(--aspect-row-title-line, 1.18);
+  font-weight: var(--aspect-row-title-weight, var(--weight-medium));
+  line-height: var(--aspect-row-title-line, 1.16);
   letter-spacing: var(--aspect-row-title-tracking, var(--tracking-title));
 }
 
@@ -111,14 +122,17 @@
   color: var(--aspect-row-subtitle-color, var(--muted));
   font-family: var(--font-body);
   font-size: var(--aspect-row-subtitle-size, var(--text-meta-size));
-  font-weight: var(--aspect-row-subtitle-weight, var(--weight-semibold));
+  font-weight: var(--aspect-row-subtitle-weight, var(--weight-medium));
   letter-spacing: var(--aspect-row-subtitle-tracking, var(--tracking-label));
   line-height: 1.2;
   text-transform: uppercase;
 }
 
 .aspect-row-timing {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 8px;
   max-width: 100%;
   margin: 0;
   color: var(--ink-3);
@@ -160,16 +174,16 @@
 
 .aspect-row-groups {
   display: grid;
-  gap: var(--sp-4);
+  gap: var(--card-list-gap);
 }
 
 .aspect-row-group {
   display: grid;
-  gap: var(--sp-2);
+  gap: var(--card-list-gap);
 }
 
 .aspect-row-group + .aspect-row-group {
-  margin-top: var(--sp-1);
+  margin-top: 0;
 }
 
 .aspect-row-group-label {
@@ -181,7 +195,7 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-label-size);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1.1;
   text-transform: uppercase;
@@ -213,10 +227,13 @@
   --updates-aspect-row-px: var(--row-px);
   --updates-aspect-copy-gap: 7px;
 
-  overflow: hidden;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
+  display: grid;
+  gap: var(--card-list-gap);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .updates-aspect-row {
@@ -227,16 +244,17 @@
   min-width: 0;
   gap: var(--updates-aspect-row-gap);
   padding: var(--updates-aspect-row-py) var(--updates-aspect-row-px);
-  border: 0;
-  border-bottom: 1px solid var(--line-2);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
 }
 
 .updates-aspect-row:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .updates-aspect-row--background {
@@ -279,14 +297,17 @@
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: 1.22;
+  line-height: 1.16;
   overflow-wrap: anywhere;
 }
 
 .updates-aspect-row__meta-line {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 8px;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);

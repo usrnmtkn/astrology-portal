@@ -90,6 +90,7 @@ html[data-scrolled] .topbar {
   flex: 0 0 auto;
   border: 0;
   background: transparent;
+  font-family: var(--font-brand);
   font-size: var(--text-wordmark);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-title);

@@ -1,21 +1,21 @@
 .placement-table-wrap,
-.list,
-.stacked-list,
-.you-list-card,
+.planet-placement-list,
+.placement-table-card,
 .aspects-card {
   position: relative;
   overflow: visible;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--table-shadow);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .placement-table {
   display: grid;
+  gap: var(--card-list-gap);
   min-width: 0;
-  border-radius: inherit;
-  background: inherit;
+  border-radius: 0;
+  background: transparent;
 }
 
 .sky-pl {
@@ -25,15 +25,16 @@
   width: 100%;
   min-width: 0;
   gap: 16px;
-  padding: var(--row-padding-y) var(--row-padding-x);
-  border: 0;
-  border-bottom: 1px solid var(--line-2);
+  padding: var(--card-row-padding, 16px 20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   text-align: left;
 }
 
 .sky-pl-item:last-child .sky-pl {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .sky-pl-glyph {
@@ -113,9 +114,9 @@
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--type-xl);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.29;
-  letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: var(--tracking-title);
 }
 
 .sky-pl-range {
@@ -133,8 +134,7 @@
 }
 
 .sky-pl-degree,
-.sky-pl-status,
-.sky-pl-chevron {
+.sky-pl-status {
   color: var(--muted);
 }
 
@@ -150,7 +150,7 @@
   gap: 8px 16px;
   margin-top: 8px;
   font-size: var(--type-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: 1.25;
 }
@@ -172,20 +172,23 @@
   line-height: 1;
 }
 
-.planet-placement-list {
-  position: relative;
-  overflow: visible;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
+.planet-placement-list,
+.placement-table-card {
+  display: grid;
+  gap: var(--card-list-gap);
 }
 
-.placement-table-card {
-  position: relative;
+.planet-placement-list {
   overflow: visible;
-  border: 1px solid var(--table-border);
-  border-radius: var(--table-radius);
-  background: var(--table-bg);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.planet-placement-list > :where(.placement-table-row, .planet-placement-row) {
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 :where(
@@ -197,7 +200,7 @@
   .stacked-list,
   .aspects-card
 ) {
-  --list-inner-radius: calc(var(--card-radius) - 1px);
+  --list-inner-radius: var(--card-radius);
 }
 
 :where(.placement-table-wrap, .placement-table-card, .planet-placement-list, .you-list-card, .list, .stacked-list, .aspects-card) > :where(.placement-table, .aspect-row-list) {
@@ -245,10 +248,11 @@
   align-items: center;
   width: 100%;
   min-width: 0;
-  padding: 22px 24px;
-  border: 0;
-  border-bottom: 1px solid var(--table-row-border);
+  padding: var(--card-row-padding, 16px 20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--table-row-bg);
+  box-shadow: var(--card-shadow);
   color: var(--ink);
   text-align: left;
 }
@@ -259,7 +263,7 @@ button.placement-table-row {
 
 .placement-table-row:last-child,
 .friend-placement-row:last-child .placement-table-row {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .placement-table-row__glyph {
@@ -275,13 +279,13 @@ button.placement-table-row {
 }
 
 .placement-table-row.is-retrograde .placement-table-row__glyph {
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: var(--retrograde-bg);
-  color: var(--retrograde-accent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--retrograde-accent) 24%, transparent);
+  width: 48px;
+  min-width: 48px;
+  height: auto;
+  border-radius: 0;
+  background: transparent;
+  color: var(--wheel-glyph);
+  box-shadow: none;
 }
 
 .placement-table-row__body {
@@ -302,9 +306,9 @@ button.placement-table-row {
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-table-title-size);
-  font-weight: var(--weight-semibold);
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: var(--tracking-title);
 }
 
 .placement-table-row__rx {
@@ -349,10 +353,11 @@ button.placement-table-row {
   width: 100%;
   min-width: 0;
   gap: 16px;
-  padding: var(--row-padding-y) var(--row-padding-x);
-  border: 0;
-  border-bottom: 1px solid var(--line-2);
+  padding: var(--card-row-padding, 16px 20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   color: var(--ink);
   text-align: left;
 }
@@ -365,7 +370,7 @@ button.planet-placement-row {
 .sky-pl-item:last-child .planet-placement-row,
 .friend-placement-row:last-child .planet-placement-row,
 .synastry-placement-table .planet-placement-row:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .planet-placement-row__glyph {
@@ -385,14 +390,14 @@ button.planet-placement-row {
 }
 
 .planet-placement-row.is-retrograde .planet-placement-row__glyph {
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  margin-top: 0;
-  border-radius: 999px;
-  background: var(--retrograde-bg);
-  color: var(--retrograde-accent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--retrograde-accent) 24%, transparent);
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
 }
 
 .planet-placement-row__body {
@@ -418,21 +423,20 @@ button.planet-placement-row {
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--type-xl);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.29;
-  letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: var(--tracking-title);
 }
 
 .planet-placement-row__degree,
-.planet-placement-row__meta,
-.planet-placement-row__chevron {
+.planet-placement-row__meta {
   color: var(--muted);
 }
 
 .planet-placement-row__degree {
   font-family: var(--font-body);
   font-size: var(--text-placement-degree);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -457,7 +461,7 @@ button.planet-placement-row {
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-placement-degree);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -509,11 +513,6 @@ button.planet-placement-row {
   line-height: 1.25;
 }
 
-.planet-placement-row__chevron {
-  width: 24px;
-  height: 24px;
-}
-
 .planet-placement-row--natal,
 .planet-placement-row--friend,
 .planet-placement-row--synastry,
@@ -526,9 +525,9 @@ button.planet-placement-row {
 .planet-placement-row--synastry .planet-placement-row__title,
 .planet-placement-row--composite .planet-placement-row__title {
   font-size: var(--friend-row-title-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   line-height: var(--friend-card-title-line);
-  letter-spacing: -0.015em;
+  letter-spacing: var(--tracking-title);
 }
 
 .planet-placement-row--friend,
@@ -632,13 +631,15 @@ button.planet-placement-row {
 }
 
 .spl-status-retrograde {
-  min-height: 1.65em;
-  padding: 0 0.72em;
+  min-height: 1.35em;
+  padding: 0.08em 0.64em;
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
+  font-size: var(--type-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.1;
 }
 
 .spl-status-retrograde::before {
