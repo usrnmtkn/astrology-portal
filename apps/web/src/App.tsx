@@ -2287,6 +2287,28 @@ function skyAspectEstimatedDurationDays(aspect: SkySnapshot["aspects"][number]) 
   return (skyAspectWindowOrb(fastestPlanet) * 2) / speed;
 }
 
+function skyAspectDurationCategory(aspect: SkySnapshot["aspects"][number]) {
+  const durationDays = skyAspectEstimatedDurationDays(aspect);
+
+  if (durationDays <= 2) {
+    return "Quick contact";
+  }
+
+  if (durationDays <= 10) {
+    return "Few-day transit";
+  }
+
+  if (durationDays <= 45) {
+    return "Longer transit";
+  }
+
+  return "Background transit";
+}
+
+function skyAspectTimingLabel(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  return `${skyAspectDurationCategory(aspect)} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`;
+}
+
 function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
   const primaryAspect = activeAspects[0];
 
@@ -3131,7 +3153,7 @@ function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: P
   const orderedAspects = rankSkyAspectsByTransitDuration(aspects);
 
   if (focusAreas.length === 0) {
-    return [{ key: "all", label: null, aspects: orderedAspects }];
+    return [{ key: "all", label: "Current sky contacts", aspects: orderedAspects }];
   }
 
   const groups = new Map<string, { key: string; label: string; aspects: SkySnapshot["aspects"] }>();
@@ -6809,7 +6831,6 @@ function ActiveAspects({
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const aspectGroups = groupSkyAspectsByLifeArea(aspects, positions, lifeAreaFocus);
-  const showGroupLabels = lifeAreaFocus.length > 0;
 
   return (
     <section className="aspect-section chart-section" aria-label="Aspects">
@@ -6818,14 +6839,15 @@ function ActiveAspects({
         <div className="aspect-row-list">
           {aspectGroups.map((group) => (
             <div className="aspect-row-group" key={group.key}>
-              {showGroupLabels && group.label ? (
+              {group.label ? (
                 <div className="aspect-row-group-label">
                   <span>{group.label}</span>
-                  <em>Shortest first</em>
+                  <em>{group.key === "all" ? "Shortest first" : "Life area · shortest first"}</em>
                 </div>
               ) : null}
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
+            const timingLabel = skyAspectTimingLabel(aspect, generatedAt);
             const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
             const content = fallbackFromHook(
               "sky.aspect-detail",
@@ -6862,6 +6884,7 @@ function ActiveAspects({
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
                       <p>{rowSummary}</p>
+                      <span className="aspect-row-timing">{timingLabel}</span>
                     </div>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
