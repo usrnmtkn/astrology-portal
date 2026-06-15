@@ -45,7 +45,7 @@ html[data-scrolled] .topbar {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: 6px;
   min-height: var(--top-control-height);
   max-width: calc(100vw - 210px);
   overflow-x: auto;
@@ -56,7 +56,7 @@ html[data-scrolled] .topbar {
   box-shadow: var(--nav-rest-shadow);
   backdrop-filter: blur(0) saturate(1);
   -webkit-backdrop-filter: blur(0) saturate(1);
-  padding: var(--nav-padding) var(--sp-2) var(--nav-padding) var(--nav-padding);
+  padding: var(--nav-padding) 10px var(--nav-padding) var(--nav-padding);
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
@@ -99,18 +99,19 @@ html[data-scrolled] .topbar {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: var(--sp-half);
+  gap: 2px;
 }
 
 .site-nav button {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: 7px;
   border: 0;
   border-radius: var(--button-radius);
   background: transparent;
   color: var(--ink-2);
-  padding: 13px var(--sp-2);
+  min-height: 44px;
+  padding: 12px 15px;
   font-size: var(--nav-link-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-nav);
@@ -147,6 +148,9 @@ html[data-scrolled] .nav-pill {
 .site-nav svg {
   width: var(--top-nav-icon-size);
   height: var(--top-nav-icon-size);
+  flex: 0 0 auto;
+  stroke-width: 2;
+  transform: translateY(-0.5px);
 }
 
 .topbar-actions {
@@ -204,6 +208,10 @@ html[data-scrolled] .floating-back-button {
 .hamburger-icon {
   width: var(--top-action-icon-size);
   height: var(--top-action-icon-size);
+}
+
+.theme-toggle svg {
+  stroke-width: 2;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .nav-pill {

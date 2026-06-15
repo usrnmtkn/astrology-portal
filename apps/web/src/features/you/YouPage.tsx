@@ -205,7 +205,7 @@ function YouUpdatesTab({
 }) {
   return (
     <div className="subpane updates-section" id="sub-transits">
-      <span className="eyebrow section-label">Today’s updates to your chart</span>
+      <span className="eyebrow section-label">Aspects</span>
       {!hasSavedCurrentCity && (
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
@@ -215,7 +215,7 @@ function YouUpdatesTab({
         </section>
       )}
       {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
-        <div className="updates-aspect-list" aria-label="Today’s updates to your chart">
+        <div className="updates-aspect-list" aria-label="Aspects">
           {aspectRows}
         </div>
       )}

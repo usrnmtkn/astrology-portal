@@ -191,18 +191,24 @@
   }
 
   .updates-aspect-row {
-    grid-template-columns: 48px minmax(0, 1fr);
+    --updates-aspect-glyph-width: 72px;
+    --updates-aspect-row-gap: 12px;
+    --updates-aspect-row-py: 20px;
+
+    grid-template-columns: var(--updates-aspect-glyph-width) minmax(0, 1fr);
   }
 
   .updates-aspect-row__meta {
     grid-column: 2;
+    align-items: center;
     display: inline-grid;
     grid-auto-flow: column;
+    gap: 6px;
     justify-content: start;
     justify-items: start;
     width: auto;
     min-width: 0;
-    margin-top: var(--sp-1);
+    margin-top: 0;
   }
 }
 
@@ -239,7 +245,7 @@
     --top-icon-button-size: 52px;
     --top-brand-size: 44px;
     --top-nav-icon-size: 19px;
-    --top-action-icon-size: 21px;
+    --top-action-icon-size: 20px;
     --page-gutter: var(--mobile-page-gutter);
     --page-top: calc(var(--top-control-height) + 76px);
     --row-padding-y: var(--sp-2);

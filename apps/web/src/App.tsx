@@ -1993,10 +1993,10 @@ function chartFlowStepsLeft(profile: UserProfile) {
 function SmileNavIcon({ size = 18 }: { size?: number }) {
   return (
     <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
-      <path d="M8.5 14q3.5 3 7 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
-      <path d="M9.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
-      <path d="M14.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+      <path d="M8.5 14q3.5 3 7 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+      <path d="M9.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+      <path d="M14.5 10h.01" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
     </svg>
   );
 }
@@ -2090,10 +2090,61 @@ function daysFrom(dateValue: string, days: number) {
   return date;
 }
 
-function formatTransitRange(start: Date, end: Date) {
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+function dateFromOffsetDays(dateValue: string, days: number) {
+  const date = new Date(dateValue);
 
-  return `${formatter.format(start)} - ${formatter.format(end)}`;
+  if (Number.isNaN(date.getTime())) {
+    return new Date();
+  }
+
+  return new Date(date.getTime() + days * 86_400_000);
+}
+
+function sameLocalDate(first: Date, second: Date) {
+  return first.getUTCFullYear() === second.getUTCFullYear()
+    && first.getUTCMonth() === second.getUTCMonth()
+    && first.getUTCDate() === second.getUTCDate();
+}
+
+function formatEditorialDate(date: Date, includeYear = false) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+    ...(includeYear ? { year: "numeric" } : {})
+  }).format(date);
+}
+
+function formatEditorialTime(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: "UTC"
+  }).format(date).replace(":00", "");
+}
+
+function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Date()) {
+  if (sameLocalDate(start, end)) {
+    const dateLabel = sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
+    return `${dateLabel} · ${formatEditorialTime(start)} – ${formatEditorialTime(end)}`;
+  }
+
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const sameMonth = sameYear && start.getMonth() === end.getMonth();
+
+  if (sameMonth) {
+    return `${formatEditorialDate(start)} – ${formatEditorialDate(end)}`;
+  }
+
+  if (sameYear) {
+    return `${formatEditorialDate(start)} – ${formatEditorialDate(end)}`;
+  }
+
+  return `${formatEditorialDate(start, true)} – ${formatEditorialDate(end, true)}`;
+}
+
+function formatTransitRange(start: Date, end: Date) {
+  return formatEditorialDateRange(start, end);
 }
 
 function dateFromDurationInput(value: string | Date) {
@@ -2250,17 +2301,23 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
   return formatRemainingClockCompact(generatedAt, position.transitEnd);
 }
 
-function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const fastestPlanet = fastestSkyAspectPlanet(aspect);
   const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
   const aspectWindowOrb = skyAspectWindowOrb(fastestPlanet);
   const remainingOrb = Math.max(0.2, aspectWindowOrb - aspect.orb);
   const currentOffsetDays = remainingOrb / speed;
 
-  return formatTransitRange(
-    daysFrom(generatedAt, -currentOffsetDays),
-    daysFrom(generatedAt, currentOffsetDays)
-  );
+  return {
+    start: dateFromOffsetDays(generatedAt, -currentOffsetDays),
+    end: dateFromOffsetDays(generatedAt, currentOffsetDays)
+  };
+}
+
+function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+
+  return formatTransitRange(window.start, window.end);
 }
 
 function fastestSkyAspectPlanet(aspect: SkySnapshot["aspects"][number]) {
@@ -2287,26 +2344,40 @@ function skyAspectEstimatedDurationDays(aspect: SkySnapshot["aspects"][number]) 
   return (skyAspectWindowOrb(fastestPlanet) * 2) / speed;
 }
 
-function skyAspectDurationCategory(aspect: SkySnapshot["aspects"][number]) {
-  const durationDays = skyAspectEstimatedDurationDays(aspect);
-
-  if (durationDays <= 2) {
-    return "Quick contact";
+function timingCategoryForWindow(start: Date, end: Date, referenceDate: Date) {
+  if (sameLocalDate(start, end)) {
+    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
   }
+
+  const durationDays = Math.max(0, (end.getTime() - start.getTime()) / 86_400_000);
 
   if (durationDays <= 10) {
-    return "Few-day transit";
+    return "Active this week";
   }
 
-  if (durationDays <= 45) {
-    return "Longer transit";
+  if (durationDays <= 75) {
+    return "Longer influence";
   }
 
-  return "Background transit";
+  return "Ongoing";
+}
+
+function timingLabelForWindow(start: Date, end: Date, referenceDate: Date) {
+  if (sameLocalDate(start, end)) {
+    return formatEditorialDateRange(start, end, referenceDate);
+  }
+
+  const category = timingCategoryForWindow(start, end, referenceDate);
+  const range = formatEditorialDateRange(start, end, referenceDate);
+
+  return `${category} · ${range}`;
 }
 
 function skyAspectTimingLabel(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
-  return `${skyAspectDurationCategory(aspect)} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`;
+  const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+  const referenceDate = new Date(generatedAt);
+
+  return timingLabelForWindow(window.start, window.end, referenceDate);
 }
 
 function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
@@ -2707,6 +2778,26 @@ function transitOrbValue(transit: TransitItem) {
   const minutes = Number.parseFloat(minutePart.replace("'", ""));
 
   return (Number.isFinite(degrees) ? degrees : 0) + (Number.isFinite(minutes) ? minutes / 60 : 0);
+}
+
+function transitItemActiveWindow(transit: TransitItem, generatedAt: string) {
+  const definition = transitAspectDefinitions.find((aspect) => aspect.type === transit.aspect);
+  const speed = averageDailyMotion[transit.transitPlanet] ?? 1;
+  const aspectWindowOrb = definition?.orb ?? (transit.term === "long" ? 1.5 : 3);
+  const remainingOrb = Math.max(0.2, aspectWindowOrb - transitOrbValue(transit));
+  const currentOffsetDays = remainingOrb / speed;
+
+  return {
+    start: dateFromOffsetDays(generatedAt, -currentOffsetDays),
+    end: dateFromOffsetDays(generatedAt, currentOffsetDays)
+  };
+}
+
+function transitItemTimingLabel(transit: TransitItem, generatedAt: string) {
+  const window = transitItemActiveWindow(transit, generatedAt);
+  const referenceDate = new Date(generatedAt);
+
+  return timingLabelForWindow(window.start, window.end, referenceDate);
 }
 
 function completedAgeOnDate(birthDate: string, currentDateValue: string) {
@@ -3126,10 +3217,6 @@ function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
   });
 }
 
-function lifeAreaFocusLabel(area: LifeAreaFocus) {
-  return lifeAreaFocusOptions.find((option) => option.value === area)?.label ?? area;
-}
-
 function skyAspectLifeAreaScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], area: LifeAreaFocus) {
   const astrology = lifeAreaFocusAstrology[area];
   const firstPosition = positions.find((position) => position.planet === aspect.from);
@@ -3153,7 +3240,7 @@ function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: P
   const orderedAspects = rankSkyAspectsByTransitDuration(aspects);
 
   if (focusAreas.length === 0) {
-    return [{ key: "all", label: "Current sky contacts", aspects: orderedAspects }];
+    return [{ key: "all", label: "", aspects: orderedAspects }];
   }
 
   const groups = new Map<string, { key: string; label: string; aspects: SkySnapshot["aspects"] }>();
@@ -3169,7 +3256,7 @@ function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: P
 
     const group = groups.get(primaryArea) ?? {
       key: primaryArea,
-      label: lifeAreaFocusLabel(primaryArea),
+      label: "",
       aspects: []
     };
     group.aspects.push(aspect);
@@ -3181,7 +3268,7 @@ function groupSkyAspectsByLifeArea(aspects: SkySnapshot["aspects"], positions: P
       const group = groups.get(area);
       return group ? [group] : [];
     }),
-    ...(unmatched.length > 0 ? [{ key: "other", label: "Other sky contacts", aspects: unmatched }] : [])
+    ...(unmatched.length > 0 ? [{ key: "other", label: "", aspects: unmatched }] : [])
   ];
 }
 
@@ -4034,7 +4121,7 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
 
 function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
   const rows = charts
-    .filter((chart) => chart.natalChart)
+    .filter((chart) => chart.chartType !== "event" && chart.natalChart)
     .map((chart) => ({
       chart,
       transits: rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas).slice(0, 5),
@@ -4103,8 +4190,9 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 }
 
 function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap, focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
-  const calculatedCharts = charts.filter((chart) => chart.natalChart);
-  const circleCards = circleActivationCards(currentSky, charts, focusAreas, sunriseOrb);
+  const personCharts = charts.filter((chart) => chart.chartType !== "event");
+  const calculatedCharts = personCharts.filter((chart) => chart.natalChart);
+  const circleCards = circleActivationCards(currentSky, personCharts, focusAreas, sunriseOrb);
 
   if (circleCards.length > 0) {
     return circleCards.map((card) => ({
@@ -6838,11 +6926,6 @@ function ActiveAspects({
       <div className="aspect-row-groups">
         {aspectGroups.map((group) => (
           <div className="aspect-row-group" key={group.key}>
-            {group.label ? (
-              <div className="aspect-row-group-label">
-                <span>{group.label}</span>
-              </div>
-            ) : null}
             <div className="aspects-card aspect-row-card">
               <div className="aspect-row-list">
               {group.aspects.map((aspect) => {
@@ -6883,8 +6966,8 @@ function ActiveAspects({
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
-                      <p>{rowSummary}</p>
                       <span className="aspect-row-timing">{timingLabel}</span>
+                      {rowSummary ? <p>{rowSummary}</p> : null}
                     </div>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
@@ -8109,6 +8192,7 @@ function AccountView({
 
 function ProfileView({
   profile,
+  transitForm,
   transitItems,
   natalSky,
   transitsDrawn,
@@ -8237,7 +8321,7 @@ function ProfileView({
         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
         <span className="aspect-row-copy">
           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-          <p>{rowSummary}</p>
+          {rowSummary ? <p>{rowSummary}</p> : null}
         </span>
         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
           <span className="aspect-row-dot" aria-hidden="true" />
@@ -8260,7 +8344,7 @@ function ProfileView({
     const generated = liveGeneratedContent(generatedContent, contentKey);
     const rowSummary = liveGeneratedSummary(generated, content.summary);
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
-    const metaLabel = isBackgroundUpdate ? "background" : transit.significance || "active";
+    const timingLabel = transitItemTimingLabel(transit, transitForm.chartDate);
 
     return (
       <button
@@ -8277,11 +8361,11 @@ function ProfileView({
             {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
           </span>
           <span className="updates-aspect-row__meta-line">
-            {metaLabel} · {transit.orb}
+            {timingLabel}
           </span>
-          <span className="updates-aspect-row__description">{rowSummary}</span>
+          {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
         </span>
-        <span className="updates-aspect-row__meta" aria-label={`${metaLabel}, ${transit.orb} orb`}>
+        <span className="updates-aspect-row__meta" aria-label={`${timingLabel}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
           <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
         </span>
@@ -8513,10 +8597,14 @@ function ManualChartsPanel({
   );
   const isLoadingCharts = status === "loading";
   const circlePreviewCharts = useMemo(
-    () => (charts.length > 1 ? charts.slice(0, 2) : charts.slice(0, 1)).map((chart) => ({
-      id: chart.id,
-      initials: profileInitials(chart.displayName, chart.displayName)
-    })),
+    () => {
+      const personCharts = charts.filter((chart) => chart.chartType !== "event");
+
+      return (personCharts.length > 1 ? personCharts.slice(0, 2) : personCharts.slice(0, 1)).map((chart) => ({
+        id: chart.id,
+        initials: profileInitials(chart.displayName, chart.displayName)
+      }));
+    },
     [charts]
   );
   const circleFallbackInitials = profileInitials(profile.name, profile.email);
@@ -9116,7 +9204,7 @@ function ManualChartsPanel({
                             <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                             <span className="aspect-row-copy">
                               <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                              <p>{rowSummary}</p>
+                              {rowSummary ? <p>{rowSummary}</p> : null}
                             </span>
                             <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                               <span className="aspect-row-dot" aria-hidden="true" />

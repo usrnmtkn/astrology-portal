@@ -251,8 +251,8 @@
   --nav-scrolled-bg: #ffffff;
   --nav-border: rgba(28, 32, 52, 0.09);
   --nav-border-hover: color-mix(in srgb, var(--ink) 10%, transparent);
-  --nav-link-hover-bg: #e6e8ef;
-  --nav-link-active-bg: #ebedf3;
+  --nav-link-hover-bg: #eceef4;
+  --nav-link-active-bg: #f1f0f7;
   --nav-rest-shadow: var(--elev-pill);
   --nav-scrolled-shadow: var(--elev-pill);
   --nav-blur: 22px;
@@ -366,9 +366,9 @@
   --top-control-top: 24px;
   --top-control-height: 56px;
   --top-icon-button-size: 56px;
-  --top-brand-size: 48px;
-  --top-nav-icon-size: 20px;
-  --top-action-icon-size: 22px;
+  --top-brand-size: 46px;
+  --top-nav-icon-size: 19px;
+  --top-action-icon-size: 20px;
   --top-control-gap: var(--sp-2);
   --radius-card: var(--card-radius);
   --chart-layout-max: 1440px;
@@ -520,7 +520,7 @@
   --nav-border: rgba(255, 255, 255, 0.08);
   --nav-border-hover: rgba(255, 255, 255, 0.14);
   --nav-link-hover-bg: rgba(255, 255, 255, 0.07);
-  --nav-link-active-bg: var(--surface-2);
+  --nav-link-active-bg: #30333d;
   --nav-rest-shadow: 0 1px 2px rgba(4, 6, 12, 0.18);
   --nav-scrolled-shadow: 0 10px 34px -14px rgba(4, 6, 12, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
   --nav-blur: 22px;

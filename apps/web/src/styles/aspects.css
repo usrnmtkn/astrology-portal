@@ -81,7 +81,7 @@
 .aspect-row-copy {
   display: grid;
   min-width: 0;
-  gap: 6px;
+  gap: var(--aspect-row-copy-gap, 7px);
 }
 
 .aspect-row-copy strong,
@@ -99,7 +99,7 @@
 
 .aspect-row-copy span,
 .aspect-row-copy p {
-  margin-top: var(--aspect-row-copy-margin, 2px);
+  margin: 0;
   color: var(--aspect-row-copy-color, var(--ink-2));
   font-size: var(--aspect-row-copy-size, var(--text-row-body-size));
   font-weight: var(--weight-regular);
@@ -118,21 +118,15 @@
 }
 
 .aspect-row-timing {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
+  display: block;
   max-width: 100%;
-  margin-top: 2px;
-  padding: 4px 9px;
-  border-radius: var(--radius-pill);
-  background: var(--chip-bg);
+  margin: 0;
   color: var(--ink-3);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: 1.15;
-  text-transform: uppercase;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.3;
 }
 
 .synastry-contact-description {
@@ -203,13 +197,22 @@
 
 .updates-section {
   margin-top: var(--sp-4);
+  display: grid;
+  gap: var(--sp-3);
 }
 
 .updates-section .section-label {
-  margin-bottom: var(--sp-2);
+  margin-bottom: 0;
 }
 
 .updates-aspect-list {
+  --updates-aspect-glyph-width: var(--aspect-row-glyph-width, 82px);
+  --updates-aspect-meta-width: var(--aspect-row-meta-width, 30px);
+  --updates-aspect-row-gap: var(--aspect-row-gap, 16px);
+  --updates-aspect-row-py: clamp(20px, 2.4vw, 28px);
+  --updates-aspect-row-px: var(--row-px);
+  --updates-aspect-copy-gap: 7px;
+
   overflow: hidden;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
@@ -218,12 +221,12 @@
 
 .updates-aspect-row {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 30px;
+  grid-template-columns: var(--updates-aspect-glyph-width) minmax(0, 1fr) var(--updates-aspect-meta-width);
   align-items: start;
   width: 100%;
   min-width: 0;
-  gap: 16px;
-  padding: var(--sp-3) var(--row-px);
+  gap: var(--updates-aspect-row-gap);
+  padding: var(--updates-aspect-row-py) var(--updates-aspect-row-px);
   border: 0;
   border-bottom: 1px solid var(--line-2);
   background: var(--card-bg);
@@ -241,7 +244,9 @@
 }
 
 .updates-aspect-row__content {
-  display: block;
+  display: grid;
+  align-content: start;
+  gap: var(--updates-aspect-copy-gap);
   min-width: 0;
 }
 
@@ -251,8 +256,8 @@
   align-items: center;
   justify-content: center;
   align-self: start;
-  width: var(--aspect-row-glyph-width, 82px);
-  min-width: var(--aspect-row-glyph-width, 82px);
+  width: var(--updates-aspect-glyph-width);
+  min-width: var(--updates-aspect-glyph-width);
   height: 24px;
   margin-top: 2px;
   gap: 6px;
@@ -269,30 +274,28 @@
 }
 
 .updates-aspect-row__title {
-  display: flex;
-  align-items: center;
+  display: block;
   min-height: 22px;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-title);
-  line-height: 1.18;
+  line-height: 1.22;
+  overflow-wrap: anywhere;
 }
 
 .updates-aspect-row__meta-line {
   display: block;
-  margin-top: 6px;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .updates-aspect-row__description {
   display: block;
-  margin-top: var(--sp-1);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-description);
@@ -305,8 +308,8 @@
   display: grid;
   align-content: start;
   justify-items: center;
-  width: var(--aspect-row-meta-width, 30px);
-  min-width: var(--aspect-row-meta-width, 30px);
+  width: var(--updates-aspect-meta-width);
+  min-width: var(--updates-aspect-meta-width);
   gap: 6px;
   padding-top: 2px;
   color: var(--muted);
