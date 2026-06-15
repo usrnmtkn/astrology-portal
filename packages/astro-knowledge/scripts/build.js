@@ -108,6 +108,195 @@ function withBundleMetadata(packageJson, generatedAt, collections) {
   };
 }
 
+function pick(entry, keys) {
+  return Object.fromEntries(keys
+    .filter((key) => entry[key] !== undefined)
+    .map((key) => [key, entry[key]]));
+}
+
+function pruneModifiersForWeb(modifiers) {
+  return modifiers
+    .map((modifier) => {
+      const retrogrades = modifier.classes?.retrogrades;
+
+      if (!retrogrades) {
+        return null;
+      }
+
+      return {
+        id: modifier.id,
+        classes: {
+          retrogrades: Object.fromEntries(Object.entries(retrogrades).map(([key, retrograde]) => [
+            key,
+            pick(retrograde, ["id", "planet", "plainTranslation", "status"])
+          ]))
+        },
+        status: modifier.status
+      };
+    })
+    .filter(Boolean);
+}
+
+function webSkyKnowledge(packageJson, generatedAt, collections) {
+  return withBundleMetadata(packageJson, generatedAt, {
+    primitives: collections.primitives,
+    transits: collections.transits.map((entry) => pick(entry, [
+      "id",
+      "transiting",
+      "aspect",
+      "other",
+      "business",
+      "shadow",
+      "status"
+    ])),
+    placements: collections.placements.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "planet",
+      "point",
+      "key",
+      "sign",
+      "house",
+      "tldr",
+      "gift",
+      "challenge",
+      "note",
+      "status"
+    ])),
+    pointPlacements: collections.pointPlacements.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "planet",
+      "point",
+      "key",
+      "sign",
+      "house",
+      "tldr",
+      "gift",
+      "challenge",
+      "note",
+      "status"
+    ])),
+    modifiers: pruneModifiersForWeb(collections.modifiers),
+    voiceContent: collections.voiceContent
+  });
+}
+
+function webNatalKnowledge(packageJson, generatedAt, collections) {
+  return withBundleMetadata(packageJson, generatedAt, {
+    primitives: collections.primitives,
+    insightCards: collections.insightCards.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "summary",
+      "body",
+      "gift",
+      "shadow",
+      "integration",
+      "lifeAreas",
+      "intensity",
+      "sourceFactors",
+      "status"
+    ])),
+    transitNatal: collections.transitNatal.map((entry) => pick(entry, [
+      "id",
+      "transiting",
+      "natal",
+      "aspect",
+      "plainTranslation",
+      "policy",
+      "status"
+    ])),
+    placements: collections.placements.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "planet",
+      "point",
+      "key",
+      "sign",
+      "house",
+      "tldr",
+      "body",
+      "gift",
+      "challenge",
+      "note",
+      "status"
+    ])),
+    pointPlacements: collections.pointPlacements.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "planet",
+      "point",
+      "key",
+      "sign",
+      "house",
+      "tldr",
+      "body",
+      "gift",
+      "challenge",
+      "note",
+      "status"
+    ])),
+    angles: collections.angles.map((entry) => pick(entry, [
+      "id",
+      "kind",
+      "point",
+      "sign",
+      "tldr",
+      "body",
+      "approach",
+      "shadow",
+      "note",
+      "status"
+    ])),
+    modifiers: pruneModifiersForWeb(collections.modifiers),
+    voiceContent: collections.voiceContent
+  });
+}
+
+function webRelationshipKnowledge(packageJson, generatedAt, collections) {
+  return withBundleMetadata(packageJson, generatedAt, {
+    primitives: collections.primitives,
+    synastryAspects: collections.synastryAspects.map((entry) => pick(entry, [
+      "id",
+      "planetA",
+      "planetB",
+      "aspect",
+      "plainTranslation",
+      "summaryShort",
+      "summaryDeep",
+      "tension",
+      "advice",
+      "policy",
+      "status"
+    ])),
+    synastryHouseOverlays: collections.synastryHouseOverlays.map((entry) => pick(entry, [
+      "id",
+      "planet",
+      "house",
+      "plainTranslation",
+      "summaryShort",
+      "summaryDeep",
+      "tension",
+      "advice",
+      "policy",
+      "status"
+    ])),
+    composite: collections.composite.map((entry) => pick(entry, [
+      "id",
+      "placementType",
+      "planet",
+      "aspect",
+      "sign",
+      "house",
+      "plainTranslation",
+      "policy",
+      "status"
+    ])),
+    voiceContent: collections.voiceContent
+  });
+}
+
 function build() {
   const errors = validateAll();
   if (errors.length > 0) {
@@ -303,6 +492,24 @@ function build() {
     voiceContent
   });
 
+  const webRuntimeCollections = {
+    primitives,
+    transits,
+    transitNatal,
+    placements,
+    pointPlacements,
+    angles,
+    modifiers,
+    insightCards,
+    synastryAspects,
+    synastryHouseOverlays,
+    composite,
+    voiceContent
+  };
+  const skyWebKnowledge = webSkyKnowledge(packageJson, generatedAt, webRuntimeCollections);
+  const natalWebKnowledge = webNatalKnowledge(packageJson, generatedAt, webRuntimeCollections);
+  const relationshipWebKnowledge = webRelationshipKnowledge(packageJson, generatedAt, webRuntimeCollections);
+
   const index = {
     version: packageJson.version,
     generatedAt: knowledge.generatedAt,
@@ -344,6 +551,9 @@ function build() {
   writeJson(path.join(distRoot, "sky.json"), skyKnowledge);
   writeJson(path.join(distRoot, "natal.json"), natalKnowledge);
   writeJson(path.join(distRoot, "relationships.json"), relationshipKnowledge);
+  writeJson(path.join(distRoot, "sky-web.json"), skyWebKnowledge);
+  writeJson(path.join(distRoot, "natal-web.json"), natalWebKnowledge);
+  writeJson(path.join(distRoot, "relationships-web.json"), relationshipWebKnowledge);
   writeJson(path.join(distRoot, "synastry.json"), synastryKnowledge);
   writeJson(path.join(distRoot, "composite.json"), compositeKnowledge);
   writeJson(path.join(distRoot, "web.json"), webKnowledge);

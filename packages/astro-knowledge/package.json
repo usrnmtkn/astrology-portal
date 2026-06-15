@@ -11,8 +11,11 @@
   "exports": {
     ".": "./dist/knowledge.json",
     "./sky": "./dist/sky.json",
+    "./sky-web": "./dist/sky-web.json",
     "./natal": "./dist/natal.json",
+    "./natal-web": "./dist/natal-web.json",
     "./relationships": "./dist/relationships.json",
+    "./relationships-web": "./dist/relationships-web.json",
     "./synastry": "./dist/synastry.json",
     "./composite": "./dist/composite.json",
     "./web": "./dist/web.json",

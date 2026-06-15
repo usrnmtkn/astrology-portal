@@ -9,6 +9,15 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
+            if (id.includes("sky-web.json")) {
+              return "astro-knowledge-sky";
+            }
+            if (id.includes("natal-web.json")) {
+              return "astro-knowledge-natal";
+            }
+            if (id.includes("relationships-web.json")) {
+              return "astro-knowledge-relationships";
+            }
             if (id.includes("sky.json")) {
               return "astro-knowledge-sky";
             }
