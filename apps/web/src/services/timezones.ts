@@ -153,6 +153,15 @@ export function withTimeZone<T extends LocationInput>(location: T): T {
   };
 }
 
+type ZonedDateTimeDebugInfo = {
+  parsedLocalDateTime: string;
+  resolvedTimeZone: string;
+  utcOffsetMinutes: number;
+  finalUtc: string;
+};
+
+const zonedDateTimeDebugInfo = new WeakMap<Date, ZonedDateTimeDebugInfo>();
+
 function timeZoneOffsetMs(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -177,19 +186,65 @@ function timeZoneOffsetMs(date: Date, timeZone: string) {
   return asUtc - date.getTime();
 }
 
-export function zonedDateTimeToUtc(dateValue: string, timeValue: string, timeZone = browserTimeZone()) {
-  const [, year = "", month = "", day = ""] = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-  const [, hour = "12", minute = "00", meridiem = "PM"] = timeValue.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i) ?? [];
-  let hour24 = Number(hour) % 12;
+function parseTimeValue(timeValue: string) {
+  const displayMatch = timeValue.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
 
-  if (meridiem.toUpperCase() === "PM") {
-    hour24 += 12;
+  if (displayMatch) {
+    const [, hour = "12", minute = "00", meridiem = "PM"] = displayMatch;
+    const minuteValue = Number(minute);
+    let hour24 = Number(hour) % 12;
+
+    if (meridiem.toUpperCase() === "PM") {
+      hour24 += 12;
+    }
+
+    if (minuteValue >= 0 && minuteValue <= 59) {
+      return { hour24, minute: minuteValue };
+    }
   }
 
-  const utcGuess = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), hour24, Number(minute), 0));
+  const twentyFourHourMatch = timeValue.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (twentyFourHourMatch) {
+    const [, hour = "0", minute = "00"] = twentyFourHourMatch;
+    const hour24 = Number(hour);
+    const minuteValue = Number(minute);
+
+    if (hour24 >= 0 && hour24 <= 23 && minuteValue >= 0 && minuteValue <= 59) {
+      return { hour24, minute: minuteValue };
+    }
+  }
+
+  return null;
+}
+
+export function zonedDateTimeToUtc(dateValue: string, timeValue: string, timeZone = browserTimeZone()) {
+  const [, year = "", month = "", day = ""] = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+  const parsedTime = parseTimeValue(timeValue);
+
+  if (!year || !parsedTime) {
+    throw new Error(`Invalid local date/time for timezone conversion: ${dateValue} ${timeValue}`);
+  }
+
+  const { hour24, minute } = parsedTime;
+
+  const utcGuess = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), hour24, minute, 0));
   const firstOffset = timeZoneOffsetMs(utcGuess, timeZone);
   const firstUtc = new Date(utcGuess.getTime() - firstOffset);
   const secondOffset = timeZoneOffsetMs(firstUtc, timeZone);
+  const finalUtc = new Date(utcGuess.getTime() - secondOffset);
+  const debugInfo = {
+    parsedLocalDateTime: `${dateValue} ${String(hour24).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`,
+    resolvedTimeZone: timeZone,
+    utcOffsetMinutes: secondOffset / 60_000,
+    finalUtc: finalUtc.toISOString()
+  };
 
-  return new Date(utcGuess.getTime() - secondOffset);
+  zonedDateTimeDebugInfo.set(finalUtc, debugInfo);
+
+  return finalUtc;
+}
+
+export function debugInfoForZonedDateTime(date: Date) {
+  return zonedDateTimeDebugInfo.get(date);
 }

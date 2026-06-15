@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot } from "../types.js";
+import { debugInfoForZonedDateTime } from "./timezones";
 
 const signs = [
   ["Aries", "♈"],
@@ -566,6 +567,18 @@ export async function getAstrodienstSky(
     date.getUTCDate(),
     utcHour(date)
   );
+  const timeConversionDebug = debugInfoForZonedDateTime(date);
+
+  if (timeConversionDebug) {
+    console.debug("[natal-time-to-julian-day]", {
+      parsedLocalDateTime: timeConversionDebug.parsedLocalDateTime,
+      resolvedTimeZone: timeConversionDebug.resolvedTimeZone,
+      utcOffsetMinutes: timeConversionDebug.utcOffsetMinutes,
+      finalUtc: timeConversionDebug.finalUtc,
+      julianDay: jd
+    });
+  }
+
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
   const houses = swe.houses(jd, location.latitude, location.longitude, "P") as unknown as {
     ascmc: Float64Array;
