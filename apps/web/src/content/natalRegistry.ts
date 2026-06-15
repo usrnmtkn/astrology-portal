@@ -1,4 +1,4 @@
-import natalKnowledge from "@tldr/astro-knowledge/natal";
+import natalKnowledge from "@tldr/astro-knowledge/natal-web";
 import { createDomainRegistry } from "./domainRegistry";
 
 export const {

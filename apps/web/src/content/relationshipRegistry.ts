@@ -1,4 +1,4 @@
-import relationshipKnowledge from "@tldr/astro-knowledge/relationships";
+import relationshipKnowledge from "@tldr/astro-knowledge/relationships-web";
 import { createDomainRegistry } from "./domainRegistry";
 
 export const {

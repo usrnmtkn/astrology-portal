@@ -8,12 +8,27 @@ declare module "@tldr/astro-knowledge/sky" {
   export default knowledge;
 }
 
+declare module "@tldr/astro-knowledge/sky-web" {
+  const knowledge: unknown;
+  export default knowledge;
+}
+
 declare module "@tldr/astro-knowledge/natal" {
   const knowledge: unknown;
   export default knowledge;
 }
 
+declare module "@tldr/astro-knowledge/natal-web" {
+  const knowledge: unknown;
+  export default knowledge;
+}
+
 declare module "@tldr/astro-knowledge/relationships" {
+  const knowledge: unknown;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/relationships-web" {
   const knowledge: unknown;
   export default knowledge;
 }
