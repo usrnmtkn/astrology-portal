@@ -145,7 +145,7 @@
 .hero-city-picker label > span {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -195,14 +195,14 @@
 .city-suggestions span {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: var(--weight-semibold);
   text-transform: uppercase;
 }
 
 .city-picker-note {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: var(--weight-medium);
 }
 
 .city-picker-actions {
@@ -254,7 +254,7 @@
 
 .date-picker-header strong {
   text-align: center;
-  font-weight: 900;
+  font-weight: var(--weight-medium);
   line-height: 1;
 }
 
@@ -293,7 +293,7 @@
 .date-picker-weekdays span {
   color: var(--muted);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
   text-align: center;
   text-transform: uppercase;
 }
@@ -307,7 +307,7 @@
   border-radius: 10px;
   background: transparent;
   color: var(--ink);
-  font-weight: 800;
+  font-weight: var(--weight-medium);
 }
 
 .date-picker-grid button:hover {
@@ -372,7 +372,7 @@
   margin: 0;
   color: var(--muted);
   font-size: var(--type-xs);
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1.2;
   text-transform: uppercase;
@@ -456,7 +456,7 @@
   background: var(--card-bg);
   color: var(--ink);
   padding: 14px 18px;
-  font-weight: 800;
+  font-weight: var(--weight-medium);
 }
 
 .google-auth-button {
@@ -469,7 +469,7 @@
   color: var(--app-text);
   font-family: var(--font-ui);
   font-size: 1rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-medium);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -497,7 +497,7 @@
   color: var(--app-text);
   font-family: var(--font-ui);
   font-size: clamp(1.4rem, 2vw, 1.9rem);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-medium);
   line-height: 1.1;
   letter-spacing: var(--tracking-tight);
 }
@@ -513,7 +513,7 @@
 
 .signup-story h2 {
   font-size: clamp(2.75rem, 5vw, 5rem);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-medium);
   line-height: 1;
   letter-spacing: var(--tracking-tight);
 }
@@ -1333,6 +1333,20 @@
   .settings-row
 ):hover {
   background: var(--surface-2);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .placement-table-wrap,
+  .placement-table-card,
+  .planet-placement-list,
+  .manual-chart-cards,
+  .aspect-row-list,
+  .aspects-card,
+  .updates-aspect-list
+) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(

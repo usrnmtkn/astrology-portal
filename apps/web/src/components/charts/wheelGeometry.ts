@@ -52,9 +52,9 @@ function clusterRadialOffset(index: number, size: number) {
   return index % 2 === 0 ? -4 : 4;
 }
 
-export function longitudeToChartAngle(longitudeDeg: number, ascendantDeg?: number, houseRotated = false) {
-  if (houseRotated && typeof ascendantDeg === "number") {
-    return 180 - normalizedAngle(longitudeDeg - ascendantDeg);
+export function longitudeToChartAngle(longitudeDeg: number, ascendantDeg?: number, ascendantAnchored = false) {
+  if (ascendantAnchored && typeof ascendantDeg === "number") {
+    return 180 + normalizedAngle(longitudeDeg - ascendantDeg);
   }
 
   return 225 + longitudeDeg;
@@ -250,11 +250,13 @@ export function chartSignLabelGeometry({
 
 export function chartAngularLabelGeometry({
   ascendantLongitude,
+  midheavenLongitude,
   angleForLongitude,
   center,
   radius
 }: {
   ascendantLongitude?: number;
+  midheavenLongitude?: number;
   angleForLongitude: (longitude: number) => number;
   center: number;
   radius: number;
@@ -263,10 +265,16 @@ export function chartAngularLabelGeometry({
     return [];
   }
 
-  return ([
+  const angles: Array<readonly [string, number]> = [
     ["ASC", ascendantLongitude],
     ["DSC", ascendantLongitude + 180]
-  ] as const).map(([label, longitude]) => {
+  ];
+
+  if (typeof midheavenLongitude === "number") {
+    angles.push(["MC", midheavenLongitude], ["IC", midheavenLongitude + 180]);
+  }
+
+  return angles.map(([label, longitude]) => {
     const angle = angleForLongitude(longitude);
     const point = polarToCartesian(center, center, radius, angle);
 

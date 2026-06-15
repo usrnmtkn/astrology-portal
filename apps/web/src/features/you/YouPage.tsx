@@ -167,7 +167,7 @@ function YouNatalTab({
       )}
 
       <span className="eyebrow section-label">Big Three</span>
-      <div className="list you-list-card" aria-label="Big three">
+      <div className="list you-list-card planet-placement-list" aria-label="Big three">
         {bigThreeRows}
       </div>
 

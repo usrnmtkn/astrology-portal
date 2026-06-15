@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { memo, useId, useRef, useState } from "react";
+import { memo, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FloatingTooltipPortal } from "../ui/FloatingTooltip";
 import {
@@ -120,23 +120,6 @@ function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
   );
 }
 
-function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
-  const activeAspects = aspects
-    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
-    .map((aspect) => {
-      const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
-      return `${aspect.type} ${otherPlanet} (${aspect.orb.toFixed(1)}° orb)`;
-    });
-
-  const visibleAspects = activeAspects.slice(0, 4);
-
-  if (activeAspects.length > visibleAspects.length) {
-    visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
-  }
-
-  return visibleAspects;
-}
-
 type SkyWheelProps = {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
@@ -153,11 +136,13 @@ export const SkyWheel = memo(function SkyWheel({
   aspects,
   ascendant,
   ascendantLongitude,
+  midheavenLongitude,
   showHouses = false,
   houseSignLabelStyle = "text",
   variant = "zodiac"
 }: SkyWheelProps) {
-  const isNatalWheel = showHouses && typeof ascendantLongitude === "number";
+  const isAscendantAnchored = typeof ascendantLongitude === "number";
+  const isNatalWheel = showHouses && isAscendantAnchored;
   const hasAscendantAxis = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
   const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
@@ -176,17 +161,18 @@ export const SkyWheel = memo(function SkyWheel({
   }
 
   function angleForLongitude(longitude: number) {
-    return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
+    return longitudeToChartAngle(longitude, ascendantLongitude, isAscendantAnchored);
   }
 
   function planetAngle(position: PlanetPosition) {
     return angleForLongitude(zodiacLongitude(position));
   }
 
-  const aspectPairs = aspects
+  const positionsByPlanet = useMemo(() => new Map(positions.map((position) => [position.planet, position])), [positions]);
+  const aspectPairs = useMemo(() => aspects
     .map((aspect) => {
-      const from = positions.find((position) => position.planet === aspect.from);
-      const to = positions.find((position) => position.planet === aspect.to);
+      const from = positionsByPlanet.get(aspect.from);
+      const to = positionsByPlanet.get(aspect.to);
 
       if (!from || !to) {
         return null;
@@ -212,57 +198,84 @@ export const SkyWheel = memo(function SkyWheel({
         className: string;
         lineStyle: CSSProperties;
       } => Boolean(aspect)
+    ), [aspects, positionsByPlanet]);
+  const tooltipDetailsByPlanet = useMemo(() => {
+    const aspectLinesByPlanet = new Map<string, string[]>();
+
+    aspects.forEach((aspect) => {
+      const fromLines = aspectLinesByPlanet.get(aspect.from) ?? [];
+      fromLines.push(`${aspect.type} ${aspect.to} (${aspect.orb.toFixed(1)}° orb)`);
+      aspectLinesByPlanet.set(aspect.from, fromLines);
+
+      const toLines = aspectLinesByPlanet.get(aspect.to) ?? [];
+      toLines.push(`${aspect.type} ${aspect.from} (${aspect.orb.toFixed(1)}° orb)`);
+      aspectLinesByPlanet.set(aspect.to, toLines);
+    });
+
+    return new Map(
+      positions.map((position) => {
+        const activeAspects = aspectLinesByPlanet.get(position.planet) ?? [];
+        const visibleAspects = activeAspects.slice(0, 4);
+
+        if (activeAspects.length > visibleAspects.length) {
+          visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
+        }
+
+        const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
+
+        return [
+          position.planet,
+          {
+            aspectLine: visibleAspects.join(" · "),
+            lines: [placementLine, ...visibleAspects],
+            placementLine
+          }
+        ];
+      })
     );
+  }, [aspects, positions]);
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
-  const houseLabels = chartHouseLabelGeometry({
+  const houseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
     angleForLongitude,
     center,
     radius: radius.house,
     signs
-  });
-  const angularLabels = chartAngularLabelGeometry({
+  }), [ascendant, ascendantLongitude, isAscendantAnchored]);
+  const angularLabels = useMemo(() => chartAngularLabelGeometry({
     ascendantLongitude,
+    midheavenLongitude,
     angleForLongitude,
     center,
     radius: radius.outer + angleLabelOuterPadding
-  });
+  }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored]);
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
-  const signLabels = chartSignLabelGeometry({
+  const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
     radius: signLabelRadius,
     signs
-  });
+  }), [ascendantLongitude, isAscendantAnchored, signLabelRadius]);
   const activeTooltipPosition = activeTooltipPlanet
-    ? positions.find((position) => position.planet === activeTooltipPlanet)
+    ? positionsByPlanet.get(activeTooltipPlanet) ?? null
     : null;
-  const planetLayouts = wheelMarkerLayouts(
+  const planetLayouts = useMemo(() => wheelMarkerLayouts(
     positions,
     (position) => position.planet,
-    planetAngle,
+    (position) => angleForLongitude(zodiacLongitude(position)),
     {
       baseRadius: radius.planet,
       center,
       clusterThreshold: 6,
       maxClusterSpan: 24
     }
-  );
-
-  function tooltipDetails(position: PlanetPosition) {
-    const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
-    const aspectLines = aspectTooltipLines(position, aspects);
-    const lines = [placementLine, ...aspectLines];
-    const aspectLine = aspectLines.join(" · ");
-
-    return { aspectLine, lines, placementLine };
-  }
+  ), [positions, ascendantLongitude, isAscendantAnchored]);
 
   return (
     <>
@@ -311,7 +324,7 @@ export const SkyWheel = memo(function SkyWheel({
           })}
         </g>
         {hasAscendantAxis && (
-          <g className="natal-angle-lines" aria-label="Ascendant axis">
+          <g className="natal-angle-lines" aria-label="Chart angle axes">
             {(() => {
               if (typeof ascendantLongitude !== "number") {
                 return null;
@@ -321,8 +334,23 @@ export const SkyWheel = memo(function SkyWheel({
               const dscAngle = angleForLongitude(ascendantLongitude + 180);
               const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
               const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
+              const midheavenAxis = typeof midheavenLongitude === "number"
+                ? (() => {
+                    const mcAngle = angleForLongitude(midheavenLongitude);
+                    const icAngle = angleForLongitude(midheavenLongitude + 180);
+                    const mc = point(mcAngle, radius.outer + angleAxisOuterPadding);
+                    const ic = point(icAngle, radius.outer + angleAxisOuterPadding);
 
-              return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
+                    return <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={ic.x} y2={ic.y} />;
+                  })()
+                : null;
+
+              return (
+                <>
+                  <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />
+                  {midheavenAxis}
+                </>
+              );
             })()}
           </g>
         )}
@@ -367,7 +395,7 @@ export const SkyWheel = memo(function SkyWheel({
             const tickOuter = point(tickAngle, radius.signInner - 5);
             const tickInner = point(tickAngle, radius.signInner - 17);
             const degreeOffset = inwardMarkerOffset(center, marker, 24);
-            const { lines: tooltipLines } = tooltipDetails(position);
+            const tooltipLines = tooltipDetailsByPlanet.get(position.planet)?.lines ?? [];
 
             return (
               <g
@@ -428,7 +456,10 @@ export const SkyWheel = memo(function SkyWheel({
         content={
           activeTooltipPosition
             ? (() => {
-                const { aspectLine, placementLine } = tooltipDetails(activeTooltipPosition);
+                const { aspectLine, placementLine } = tooltipDetailsByPlanet.get(activeTooltipPosition.planet) ?? {
+                  aspectLine: "",
+                  placementLine: `${activeTooltipPosition.planet} in ${activeTooltipPosition.sign} ${formatPlanetDegree(activeTooltipPosition)}`
+                };
 
                 return (
                   <>
@@ -451,6 +482,7 @@ type SynastryWheelProps = {
   interAspects: InterChartAspectLine[];
   ascendant?: string;
   ascendantLongitude?: number;
+  midheavenLongitude?: number;
   houseSignLabelStyle?: HouseSignLabelStyle;
 };
 
@@ -460,6 +492,7 @@ export const SynastryWheel = memo(function SynastryWheel({
   interAspects,
   ascendant,
   ascendantLongitude,
+  midheavenLongitude,
   houseSignLabelStyle = "text"
 }: SynastryWheelProps) {
   const center = 300;
@@ -508,44 +541,45 @@ export const SynastryWheel = memo(function SynastryWheel({
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
-  const houseLabels = chartHouseLabelGeometry({
+  const houseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
     angleForLongitude,
     center,
     radius: radius.house,
     signs
-  });
-  const angularLabels = chartAngularLabelGeometry({
+  }), [ascendant, ascendantLongitude, isNatalWheel]);
+  const angularLabels = useMemo(() => chartAngularLabelGeometry({
     ascendantLongitude,
+    midheavenLongitude,
     angleForLongitude,
     center,
     radius: radius.outer + angleLabelOuterPadding
-  });
-  const signLabels = chartSignLabelGeometry({
+  }), [ascendantLongitude, midheavenLongitude, isNatalWheel]);
+  const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
     radius: signLabelRadius,
     signs
-  });
-  const interAspectPairs = interAspects.map((aspect) => ({
+  }), [ascendantLongitude, isNatalWheel, signLabelRadius]);
+  const interAspectPairs = useMemo(() => interAspects.map((aspect) => ({
     ...aspect,
     className: aspectLineClass(aspect.type),
     lineStyle: aspectLineStyle(aspect.type, aspect.orb)
-  }));
+  })), [interAspects]);
   const interAspectRadius = radius.aspect + 12;
-  const outerPlanetLayouts = wheelMarkerLayouts(
+  const outerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
     outerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     { baseRadius: radius.outerPlanet, center, clusterThreshold: 6, maxClusterSpan: 22 }
-  );
-  const innerPlanetLayouts = wheelMarkerLayouts(
+  ), [outerPositions, ascendantLongitude, isNatalWheel]);
+  const innerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
     innerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     { baseRadius: radius.innerPlanet, center, clusterThreshold: 6, maxClusterSpan: 22 }
-  );
+  ), [innerPositions, ascendantLongitude, isNatalWheel]);
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
@@ -653,12 +687,25 @@ export const SynastryWheel = memo(function SynastryWheel({
         </g>
       )}
       {isNatalWheel && (
-        <g className="natal-angle-lines" aria-label="Ascendant axis">
+        <g className="natal-angle-lines" aria-label="Chart angle axes">
           {(() => {
             const asc = point(angleForLongitude(ascendantLongitude), radius.outer + angleAxisOuterPadding);
             const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.outer + angleAxisOuterPadding);
+            const midheavenAxis = typeof midheavenLongitude === "number"
+              ? (() => {
+                  const mc = point(angleForLongitude(midheavenLongitude), radius.outer + angleAxisOuterPadding);
+                  const ic = point(angleForLongitude(midheavenLongitude + 180), radius.outer + angleAxisOuterPadding);
 
-            return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
+                  return <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={ic.x} y2={ic.y} />;
+                })()
+              : null;
+
+            return (
+              <>
+                <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />
+                {midheavenAxis}
+              </>
+            );
           })()}
         </g>
       )}

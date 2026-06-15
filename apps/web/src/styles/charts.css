@@ -75,7 +75,8 @@
   opacity: 0.86;
 }
 
-.ascendant-axis {
+.ascendant-axis,
+.midheaven-axis {
   stroke: var(--chart-glyph);
   stroke-dasharray: 6 8;
 }
@@ -211,7 +212,9 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .ascendant-axis,
-:is(.theme-dark, [data-theme="dark"]) .natal-angle-lines .ascendant-axis {
+:is(.theme-dark, [data-theme="dark"]) .midheaven-axis,
+:is(.theme-dark, [data-theme="dark"]) .natal-angle-lines .ascendant-axis,
+:is(.theme-dark, [data-theme="dark"]) .natal-angle-lines .midheaven-axis {
   stroke: var(--chart-glyph);
   opacity: 0.82;
 }
