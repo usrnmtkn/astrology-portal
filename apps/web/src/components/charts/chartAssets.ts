@@ -27,6 +27,8 @@ export function pointGlyph(point: string) {
     Neptune: "♆",
     Pluto: "♇",
     "True Node": "☊",
+    "North Node": "☊",
+    "South Node": "☋",
     Ascendant: "↑",
     Midheaven: "MC"
   };

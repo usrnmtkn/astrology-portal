@@ -693,3 +693,200 @@
   justify-content: space-between;
   gap: 16px;
 }
+
+.sky-lunar-brief {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.sky-lunar-pills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.sky-lunar-pill {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
+  background: var(--app-card);
+}
+
+.sky-lunar-pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--app-border);
+  border-radius: 50%;
+  background: var(--app-card);
+  font-size: 25px;
+}
+
+.sky-lunar-pill-copy {
+  display: grid;
+  min-width: 0;
+}
+
+.sky-lunar-pill-copy em {
+  color: var(--app-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.sky-lunar-pill-copy h3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+  min-width: 0;
+  margin-top: 4px;
+  color: var(--app-text);
+  font-size: 1.05rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.15;
+}
+
+.sky-lunar-pill-copy h3 span,
+.sky-lunar-pill-copy h3 small {
+  min-width: 0;
+}
+
+.sky-lunar-pill-copy h3 small {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+}
+
+.sky-lunar-pill-sub {
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 0.82rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.moon-phase-art {
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.next-lun {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 54px;
+  margin-top: 8px;
+  padding: 8px 16px 8px 8px;
+  gap: var(--sp-1);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.nl-badge {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.nl-badge .g {
+  color: var(--wheel-glyph);
+  font-family: var(--font-glyph);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.nl-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.nl-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
+}
+
+.nl-top h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-top h4 > span:not(.nl-prefix) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nl-prefix {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.nl-until {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nl-sub {
+  display: block;
+  max-width: 100%;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

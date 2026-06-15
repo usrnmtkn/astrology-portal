@@ -3,6 +3,14 @@ type PolarPoint = {
   y: number;
 };
 
+type WheelMarkerLayout = {
+  angle: number;
+  clusterIndex: number;
+  clusterSize: number;
+  visualAngle: number;
+  marker: PolarPoint;
+};
+
 export const chartHouseLabelRadiusFactor = 0.38;
 export const wheelViewBox = "-20 -20 640 640";
 export const angleAxisOuterPadding = 20;
@@ -10,6 +18,38 @@ export const angleLabelOuterPadding = 20;
 
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
+}
+
+function angularDistance(first: number, second: number) {
+  const difference = Math.abs(normalizedAngle(first - second));
+  return difference > 180 ? 360 - difference : difference;
+}
+
+function clusterTangentOffsets(size: number) {
+  const presetOffsets: Record<number, number[]> = {
+    1: [0],
+    2: [-8, 8],
+    3: [-12, 0, 12],
+    4: [-16, -5, 5, 16],
+    5: [-20, -10, 0, 10, 20]
+  };
+
+  if (presetOffsets[size]) {
+    return presetOffsets[size];
+  }
+
+  const spacing = 10;
+  const centerOffset = (size - 1) / 2;
+
+  return Array.from({ length: size }, (_, index) => Math.max(-24, Math.min(24, (index - centerOffset) * spacing)));
+}
+
+function clusterRadialOffset(index: number, size: number) {
+  if (size < 4) {
+    return 0;
+  }
+
+  return index % 2 === 0 ? -4 : 4;
 }
 
 export function longitudeToChartAngle(longitudeDeg: number, ascendantDeg?: number, houseRotated = false) {
@@ -38,6 +78,95 @@ export function inwardMarkerOffset(center: number, marker: PolarPoint, distance:
     x: (dx / length) * distance,
     y: (dy / length) * distance
   };
+}
+
+export function wheelMarkerLayouts<T>(
+  items: T[],
+  keyForItem: (item: T) => string,
+  angleForItem: (item: T) => number,
+  {
+    baseRadius,
+    center,
+    clusterThreshold = 6,
+    maxClusterSpan = 24
+  }: {
+    baseRadius: number;
+    center: number;
+    clusterThreshold?: number;
+    maxClusterSpan?: number;
+  }
+) {
+  const entries = items
+    .map((item) => ({
+      item,
+      key: keyForItem(item),
+      angle: normalizedAngle(angleForItem(item))
+    }))
+    .sort((first, second) => first.angle - second.angle);
+  const groups: typeof entries[] = [];
+
+  entries.forEach((entry) => {
+    const currentGroup = groups[groups.length - 1];
+    const previous = currentGroup?.[currentGroup.length - 1];
+    const firstInGroup = currentGroup?.[0];
+
+    if (
+      previous &&
+      firstInGroup &&
+      angularDistance(entry.angle, previous.angle) <= clusterThreshold &&
+      angularDistance(entry.angle, firstInGroup.angle) <= maxClusterSpan
+    ) {
+      currentGroup.push(entry);
+      return;
+    }
+
+    groups.push([entry]);
+  });
+
+  if (groups.length > 1) {
+    const firstGroup = groups[0];
+    const lastGroup = groups[groups.length - 1];
+    const first = firstGroup[0];
+    const last = lastGroup[lastGroup.length - 1];
+
+    if (
+      first &&
+      last &&
+      angularDistance(first.angle, last.angle) <= clusterThreshold &&
+      angularDistance(firstGroup[firstGroup.length - 1].angle, lastGroup[0].angle) <= maxClusterSpan
+    ) {
+      groups[0] = [...lastGroup, ...firstGroup];
+      groups.pop();
+    }
+  }
+
+  const layouts = new Map<string, WheelMarkerLayout>();
+  groups.forEach((group) => {
+    const tangentOffsets = clusterTangentOffsets(group.length);
+
+    group.forEach((entry, index) => {
+      const visualAngle = entry.angle;
+      const radialOffset = clusterRadialOffset(index, group.length);
+      const markerRadius = baseRadius + radialOffset;
+      const markerBase = polarToCartesian(center, center, markerRadius, visualAngle);
+      const tangentRad = ((visualAngle + 90) * Math.PI) / 180;
+      const tangentOffset = tangentOffsets[index] ?? 0;
+      const marker = {
+        x: markerBase.x + Math.cos(tangentRad) * tangentOffset,
+        y: markerBase.y + Math.sin(tangentRad) * tangentOffset
+      };
+
+      layouts.set(entry.key, {
+        angle: entry.angle,
+        clusterIndex: index,
+        clusterSize: group.length,
+        visualAngle,
+        marker
+      });
+    });
+  });
+
+  return layouts;
 }
 
 export function chartHouseLabelGeometry({
