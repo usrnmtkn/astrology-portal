@@ -3,7 +3,8 @@
 .stacked-list,
 .you-list-card,
 .aspects-card {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -12,6 +13,9 @@
 
 .placement-table {
   display: grid;
+  min-width: 0;
+  border-radius: inherit;
+  background: inherit;
 }
 
 .sky-pl {
@@ -169,14 +173,16 @@
 }
 
 .planet-placement-list {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
 }
 
 .placement-table-card {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   border: 1px solid var(--table-border);
   border-radius: var(--table-radius);
   background: var(--table-bg);
@@ -199,6 +205,11 @@
   --list-inner-radius: calc(var(--card-radius) - 1px);
 }
 
+:where(.placement-table-wrap, .placement-table-card, .planet-placement-list, .you-list-card, .list, .stacked-list, .aspects-card) > :where(.placement-table, .aspect-row-list) {
+  border-radius: var(--list-inner-radius);
+  background: inherit;
+}
+
 .stacked-row {
   display: grid;
   width: 100%;
@@ -214,6 +225,7 @@
 :where(.stacked-list, .planet-placement-list, .you-list-card, .list, .aspects-card) > :where(.stacked-row, .placement-table-row, .planet-placement-row, .aspect-row, .aspect-row-button, .aspect-row-static):first-child {
   border-top-left-radius: var(--list-inner-radius);
   border-top-right-radius: var(--list-inner-radius);
+  background-clip: padding-box;
 }
 
 :where(.placement-table-wrap, .placement-table-card) > .placement-table > :where(.sky-pl, .placement-table-row, .planet-placement-row):last-child,
@@ -223,6 +235,7 @@
 :where(.stacked-list, .planet-placement-list, .you-list-card, .list, .aspects-card) > :where(.stacked-row, .placement-table-row, .planet-placement-row, .aspect-row, .aspect-row-button, .aspect-row-static):last-child {
   border-bottom-right-radius: var(--list-inner-radius);
   border-bottom-left-radius: var(--list-inner-radius);
+  background-clip: padding-box;
 }
 
 :where(.stacked-list) > :where(.stacked-row):last-child {
