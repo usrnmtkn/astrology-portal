@@ -10,7 +10,6 @@ import {
   LogOut,
   MapPin,
   Moon,
-  MoreVertical,
   Pencil,
   Plus,
   Settings,
@@ -20,14 +19,13 @@ import {
   User,
   X,
 } from "lucide-react";
-import { isValidElement, lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
-import type { CSSProperties, FormEvent, ReactNode, Ref } from "react";
+import { isValidElement, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
 import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
-import { SegmentedControl } from "./components/SegmentedControl";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import {
   AspectGlyphs,
@@ -48,29 +46,15 @@ import {
   pointGlyph,
   pointIconFiles,
   pointRetrogradeIconFiles,
-  wheelAngleIconFiles,
-  wheelPlanetIconFiles,
-  wheelPlanetRetrogradeIconFiles,
   zodiacAssetHref,
-  zodiacSignIconFiles
 } from "./components/charts/chartAssets";
-import { aspectLineClass, aspectLineStyle } from "./components/charts/chartAspectLines";
-import {
-  angleAxisOuterPadding,
-  angleLabelOuterPadding,
-  chartAngularLabelGeometry,
-  chartHouseLabelGeometry,
-  chartHouseLabelRadiusFactor,
-  chartSignLabelGeometry,
-  inwardMarkerOffset,
-  longitudeToChartAngle,
-  polarToCartesian,
-  wheelViewBox
-} from "./components/charts/wheelGeometry";
+import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
 import type { ContentBundle } from "./content/types";
+import { FriendCircleFeed } from "./features/friends/FriendCircleFeed";
 import { FriendChartModal } from "./features/friends/FriendChartModal";
 import { FriendChartsList } from "./features/friends/FriendChartsList";
+import { FriendDetail } from "./features/friends/FriendDetail";
 import { RelationshipChartFullscreen, type RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { SkyTodayView } from "./features/sky/SkyToday";
@@ -225,7 +209,6 @@ type TransitItem = {
 type FriendProfileTab = "natal" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
 type FriendsTab = Exclude<FriendsMainView, "profile">;
-type WheelVariant = "zodiac" | "natal" | "synastry" | "composite";
 
 type FriendTimingContext = {
   age: number | null;
@@ -253,14 +236,6 @@ type SynastryContact = {
   tone: string;
   summary: string;
   contentKeys: string[];
-};
-
-type InterChartAspectLine = {
-  id: string;
-  fromLongitude: number;
-  toLongitude: number;
-  type: string;
-  orb: number;
 };
 
 type HouseOverlay = {
@@ -1307,8 +1282,47 @@ function positionFromLongitude({
   };
 }
 
+function skyNodeDisplayPositions(positions: PlanetPosition[]) {
+  const trueNode = positions.find((position) => position.planet === "True Node" || position.planet === "North Node");
+
+  if (!trueNode) {
+    return positions;
+  }
+
+  const northNode: PlanetPosition = {
+    ...trueNode,
+    planet: "North Node",
+    glyph: "☊"
+  };
+  const southNodeBase = positionFromLongitude({
+    planet: "South Node",
+    glyph: "☋",
+    longitude: zodiacLongitude(trueNode) + 180,
+    theme: "release"
+  });
+  const southNode: PlanetPosition = {
+    ...southNodeBase,
+    house: trueNode.house,
+    motion: trueNode.motion,
+    transitStart: trueNode.transitStart,
+    transitEnd: trueNode.transitEnd,
+    transitRemainingLabel: trueNode.transitRemainingLabel
+  };
+
+  return [
+    ...positions.filter((position) => !["True Node", "North Node", "South Node"].includes(position.planet)),
+    northNode,
+    southNode
+  ];
+}
+
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
+}
+
+function angularDistance(first: number, second: number) {
+  const difference = Math.abs(normalizedAngle(first - second));
+  return difference > 180 ? 360 - difference : difference;
 }
 
 function zodiacSignForLongitude(longitude: number) {
@@ -2593,135 +2607,6 @@ const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "P
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
 
-function angularDistance(first: number, second: number) {
-  const difference = Math.abs(normalizedAngle(first - second));
-  return difference > 180 ? 360 - difference : difference;
-}
-
-type WheelMarkerLayout = {
-  angle: number;
-  clusterIndex: number;
-  clusterSize: number;
-  visualAngle: number;
-  marker: { x: number; y: number };
-};
-
-function clusterTangentOffsets(size: number) {
-  const presetOffsets: Record<number, number[]> = {
-    1: [0],
-    2: [-8, 8],
-    3: [-12, 0, 12],
-    4: [-16, -5, 5, 16],
-    5: [-20, -10, 0, 10, 20]
-  };
-
-  if (presetOffsets[size]) {
-    return presetOffsets[size];
-  }
-
-  const spacing = 10;
-  const centerOffset = (size - 1) / 2;
-
-  return Array.from({ length: size }, (_, index) => Math.max(-24, Math.min(24, (index - centerOffset) * spacing)));
-}
-
-function clusterRadialOffset(index: number, size: number) {
-  if (size < 4) {
-    return 0;
-  }
-
-  return index % 2 === 0 ? -4 : 4;
-}
-
-function wheelMarkerLayouts<T>(
-  items: T[],
-  keyForItem: (item: T) => string,
-  angleForItem: (item: T) => number,
-  {
-    baseRadius,
-    center,
-    clusterThreshold = 6,
-    maxClusterSpan = 24
-  }: {
-    baseRadius: number;
-    center: number;
-    clusterThreshold?: number;
-    maxClusterSpan?: number;
-  }
-) {
-  const entries = items
-    .map((item) => ({
-      item,
-      key: keyForItem(item),
-      angle: normalizedAngle(angleForItem(item))
-    }))
-    .sort((first, second) => first.angle - second.angle);
-  const groups: typeof entries[] = [];
-
-  entries.forEach((entry) => {
-    const currentGroup = groups[groups.length - 1];
-    const previous = currentGroup?.[currentGroup.length - 1];
-    const firstInGroup = currentGroup?.[0];
-
-    if (
-      previous &&
-      firstInGroup &&
-      angularDistance(entry.angle, previous.angle) <= clusterThreshold &&
-      angularDistance(entry.angle, firstInGroup.angle) <= maxClusterSpan
-    ) {
-      currentGroup.push(entry);
-      return;
-    }
-
-    groups.push([entry]);
-  });
-
-  if (groups.length > 1) {
-    const firstGroup = groups[0];
-    const lastGroup = groups[groups.length - 1];
-    const first = firstGroup[0];
-    const last = lastGroup[lastGroup.length - 1];
-
-    if (
-      first &&
-      last &&
-      angularDistance(first.angle, last.angle) <= clusterThreshold &&
-      angularDistance(firstGroup[firstGroup.length - 1].angle, lastGroup[0].angle) <= maxClusterSpan
-    ) {
-      groups[0] = [...lastGroup, ...firstGroup];
-      groups.pop();
-    }
-  }
-
-  const layouts = new Map<string, WheelMarkerLayout>();
-  groups.forEach((group) => {
-    const tangentOffsets = clusterTangentOffsets(group.length);
-
-    group.forEach((entry, index) => {
-      const visualAngle = entry.angle;
-      const radialOffset = clusterRadialOffset(index, group.length);
-      const markerRadius = baseRadius + radialOffset;
-      const markerBase = polarToCartesian(center, center, markerRadius, visualAngle);
-      const tangentRad = ((visualAngle + 90) * Math.PI) / 180;
-      const tangentOffset = tangentOffsets[index] ?? 0;
-      const marker = {
-        x: markerBase.x + Math.cos(tangentRad) * tangentOffset,
-        y: markerBase.y + Math.sin(tangentRad) * tangentOffset
-      };
-
-      layouts.set(entry.key, {
-        angle: entry.angle,
-        clusterIndex: index,
-        clusterSize: group.length,
-        visualAngle,
-        marker
-      });
-    });
-  });
-
-  return layouts;
-}
-
 function formatOrb(orb: number) {
   const degrees = Math.floor(orb);
   const minutes = Math.round((orb - degrees) * 60);
@@ -3181,6 +3066,8 @@ function skyPositionLifeAreaFocusScore(position: PlanetPosition, focusAreas: Lif
   }, 0);
 }
 
+const skyPlacementPlanetOrder = [...placementPlanetOrder, "North Node", "South Node"];
+
 function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
   if (focusAreas.length === 0) {
     return positions;
@@ -3194,7 +3081,7 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
       return secondScore - firstScore;
     }
 
-    return placementPlanetOrder.indexOf(first.planet) - placementPlanetOrder.indexOf(second.planet);
+    return skyPlacementPlanetOrder.indexOf(first.planet) - skyPlacementPlanetOrder.indexOf(second.planet);
   });
 }
 
@@ -5926,12 +5813,16 @@ function placementStatuses(position: PlanetPosition) {
   return statuses;
 }
 
+function skyDisplayPlanetName(planet: string) {
+  return planet === "True Node" ? "North Node" : planet;
+}
+
 function formatPlacementPosition(position: PlanetPosition) {
   return `${position.sign}${position.motion === "retrograde" ? " ℞" : ""} ${formatPlanetDegree(position)}`;
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {
-  return `${position.planet} Retrograde`;
+  return `${skyDisplayPlanetName(position.planet)} Retrograde`;
 }
 
 function retrogradeKnowledgeCopy(
@@ -6120,761 +6011,12 @@ function formatPlanetDegree(position: PlanetPosition) {
   return `${degree}°${String(minutes).padStart(2, "0")}'`;
 }
 
-function formatWheelDegree(position: PlanetPosition) {
-  return `${Math.floor(position.degree)}°`;
-}
-
-function wheelPlanetIconFile(position: PlanetPosition) {
-  if (position.motion === "retrograde") {
-    return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
-  }
-
-  return wheelPlanetIconFiles[position.planet];
-}
-
-function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
-  const iconHref = zodiacAssetHref(wheelPlanetIconFile(position));
-  const iconSize = position.planet === "Sun" ? 26 : 24;
-
-  if (iconHref) {
-    return (
-      <image
-        href={iconHref}
-        x={-iconSize / 2}
-        y={-iconSize / 2 - 4}
-        width={iconSize}
-        height={iconSize}
-        className="planet-glyph planet-glyph-image wheel-placement__glyph"
-        aria-hidden="true"
-        preserveAspectRatio="xMidYMid meet"
-      />
-    );
-  }
-
-  if (position.planet === "Sun") {
-    return (
-      <g className="planet-glyph planet-glyph-sun-symbol wheel-placement__glyph" transform="translate(0 -4) scale(0.64)" aria-hidden="true">
-        <path transform="translate(-25 -25)" d="m7,25a18,18 0 1,1 0,.1zm3,0a15,15 0 1,0 0-.1zm11,0a4,4 0 1,0 0-.1z" />
-      </g>
-    );
-  }
-
-  return (
-    <text x={0} y={-4} className="planet-glyph wheel-placement__glyph">
-      {position.glyph}
-    </text>
-  );
-}
-
 function relationshipPossessiveName(name: string, isSelf = false) {
   if (isSelf) {
     return "Your";
   }
 
   return name.endsWith("s") ? `${name}'` : `${name}'s`;
-}
-
-function aspectTooltipLines(position: PlanetPosition, aspects: SkySnapshot["aspects"]) {
-  const activeAspects = aspects
-    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
-    .map((aspect) => {
-      const otherPlanet = aspect.from === position.planet ? aspect.to : aspect.from;
-      return `${aspect.type} ${otherPlanet} (${aspect.orb.toFixed(1)}° orb)`;
-    });
-
-  const visibleAspects = activeAspects.slice(0, 4);
-
-  if (activeAspects.length > visibleAspects.length) {
-    visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
-  }
-
-  return visibleAspects;
-}
-
-function SkyWheel({
-  positions,
-  aspects,
-  ascendant,
-  ascendantLongitude,
-  midheavenLongitude,
-  showHouses = false,
-  houseSignLabelStyle = "text",
-  variant = "zodiac"
-}: {
-  positions: PlanetPosition[];
-  aspects: SkySnapshot["aspects"];
-  ascendant?: string;
-  ascendantLongitude?: number;
-  midheavenLongitude?: number;
-  showHouses?: boolean;
-  houseSignLabelStyle?: HouseSignLabelStyle;
-  variant?: Exclude<WheelVariant, "synastry">;
-}) {
-  const signs = [
-    "Aries",
-    "Taurus",
-    "Gemini",
-    "Cancer",
-    "Leo",
-    "Virgo",
-    "Libra",
-    "Scorpio",
-    "Sagittarius",
-    "Capricorn",
-    "Aquarius",
-    "Pisces"
-  ];
-  const isNatalWheel = showHouses && typeof ascendantLongitude === "number";
-  const hasAscendantAxis = typeof ascendantLongitude === "number";
-  const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
-  const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
-  const center = 300;
-  const radius = {
-    outer: 284,
-    signInner: 240,
-    planet: 200,
-    aspect: 132,
-    house: 240 * chartHouseLabelRadiusFactor,
-    inner: 44
-  };
-
-  function point(angle: number, distance: number) {
-    return polarToCartesian(center, center, distance, angle);
-  }
-
-  function angleForLongitude(longitude: number) {
-    return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
-  }
-
-  function planetAngle(position: PlanetPosition) {
-    return angleForLongitude(zodiacLongitude(position));
-  }
-
-  const aspectPairs = aspects
-    .map((aspect) => {
-      const from = positions.find((position) => position.planet === aspect.from);
-      const to = positions.find((position) => position.planet === aspect.to);
-
-      if (!from || !to) {
-        return null;
-      }
-
-      return {
-        ...aspect,
-        from,
-        to,
-        className: aspectLineClass(aspect.type),
-        lineStyle: aspectLineStyle(aspect.type, aspect.orb)
-      };
-    })
-    .filter(
-      (
-        aspect
-      ): aspect is {
-        from: PlanetPosition;
-        to: PlanetPosition;
-        type: string;
-        orb: number;
-        meaning: string;
-        className: string;
-        lineStyle: CSSProperties;
-      } => Boolean(aspect)
-    );
-  const signLabelRadius = (radius.outer + radius.signInner) / 2;
-  const signDividerInnerRadius = radius.signInner - 2;
-  const signDividerOuterRadius = radius.outer;
-  const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
-  const signLabelPathPrefix = `${wheelClipId}-sign-label`;
-  const tooltipMaxWidth = 520;
-  const shouldRenderHouseLabels = true;
-  const houseLabels = chartHouseLabelGeometry({
-    ascendant,
-    ascendantLongitude,
-    angleForLongitude,
-    center,
-    radius: radius.house,
-    signs
-  });
-  const angularLabels = chartAngularLabelGeometry({
-    ascendantLongitude,
-    angleForLongitude,
-    center,
-    radius: radius.outer + angleLabelOuterPadding
-  });
-  const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
-  const signLabels = chartSignLabelGeometry({
-    angleForLongitude,
-    center,
-    radius: signLabelRadius,
-    signs
-  });
-  const activeTooltipPosition = activeTooltipPlanet
-    ? positions.find((position) => position.planet === activeTooltipPlanet)
-    : null;
-  const planetLayouts = wheelMarkerLayouts(
-    positions,
-    (position) => position.planet,
-    planetAngle,
-    {
-      baseRadius: radius.planet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 24
-    }
-  );
-
-  function tooltipDetails(position: PlanetPosition) {
-    const marker = planetLayouts.get(position.planet)?.marker ?? point(planetAngle(position), radius.planet);
-    const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
-    const aspectLines = aspectTooltipLines(position, aspects);
-    const lines = [placementLine, ...aspectLines];
-    const aspectLine = aspectLines.join(" · ");
-    const longestLine = [placementLine, aspectLine].reduce((longest, line) => Math.max(longest, line.length), 0);
-    const width = Math.min(tooltipMaxWidth, Math.max(190, longestLine * 7 + 28));
-    const charactersPerLine = Math.max(18, Math.floor((width - 28) / 7));
-    const aspectLineCount = aspectLine ? Math.ceil(aspectLine.length / charactersPerLine) : 0;
-    const height = Math.min(580, aspectLine ? 58 + aspectLineCount * 18 : 48);
-    const preferredX = marker.x > center ? marker.x - width - 18 : marker.x + 18;
-    const x = Math.min(Math.max(preferredX, 10), 600 - width - 10);
-    const y = Math.min(Math.max(marker.y - height / 2, 10), 600 - height - 10);
-
-    return { aspectLine, height, lines, placementLine, width, x, y };
-  }
-
-  return (
-    <svg className={`sky-wheel sky-wheel-${variant}`} viewBox={wheelViewBox} role="img" aria-label="Planet positions">
-      <defs>
-        <clipPath id={wheelClipId}>
-          <circle cx={center} cy={center} r={radius.outer} />
-        </clipPath>
-        {signLabels.map(({ sign, path }) => (
-          <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
-        ))}
-      </defs>
-      <circle
-        className="sign-band"
-        cx={center}
-        cy={center}
-        r={(radius.outer + radius.signInner) / 2}
-      />
-
-      <g className="wheel-rings">
-        <circle cx={center} cy={center} r={radius.outer} />
-        <circle cx={center} cy={center} r={radius.signInner} />
-        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-        <circle cx={center} cy={center} r={radius.inner} />
-      </g>
-
-      <g className="wheel-sectors">
-        {signs.map((sign, index) => {
-          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
-          const outer = point(a, radius.signInner);
-          const inner = point(a, radius.inner);
-          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-
-      <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
-        {signs.map((sign, index) => {
-          const a = angleForLongitude(index * 30);
-          const outer = point(a, signDividerOuterRadius);
-          const inner = point(a, signDividerInnerRadius);
-          return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-
-      <g className="aspect-lines">
-        {aspectPairs.map(({ from, to, type, className, lineStyle }) => {
-          const a = point(planetAngle(from), radius.aspect);
-          const b = point(planetAngle(to), radius.aspect);
-
-          return (
-            <g key={`${from.planet}-${to.planet}`} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
-              <line
-                x1={a.x}
-                y1={a.y}
-                x2={b.x}
-                y2={b.y}
-              />
-            </g>
-          );
-        })}
-      </g>
-
-      {hasAscendantAxis && (
-        <g className="natal-angle-lines" aria-label="Ascendant axis">
-          {(() => {
-            if (typeof ascendantLongitude !== "number") {
-              return null;
-            }
-
-            const ascAngle = angleForLongitude(ascendantLongitude);
-            const dscAngle = angleForLongitude(ascendantLongitude + 180);
-            const asc = point(ascAngle, radius.outer + angleAxisOuterPadding);
-            const dsc = point(dscAngle, radius.outer + angleAxisOuterPadding);
-
-            return (
-              <line
-                className="ascendant-axis"
-                x1={asc.x}
-                y1={asc.y}
-                x2={dsc.x}
-                y2={dsc.y}
-              />
-            );
-          })()}
-        </g>
-      )}
-
-      {shouldRenderHouseLabels && (
-        <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
-          {houseLabels.map(({ house, x, y, ariaLabel }) => (
-            <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
-              {house}
-            </text>
-          ))}
-        </g>
-      )}
-
-      {hasAscendantAxis && (
-        <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => {
-            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-            const iconSize = 30;
-
-            return iconHref ? (
-              <image
-                key={label}
-                href={iconHref}
-                x={x - iconSize / 2}
-                y={y - iconSize / 2}
-                width={iconSize}
-                height={iconSize}
-                className="zodiac-wheel__angle-icon"
-                aria-label={label}
-                preserveAspectRatio="xMidYMid meet"
-              />
-            ) : (
-              <text key={label} x={x} y={y}>
-                {label}
-              </text>
-            );
-          })}
-        </g>
-      )}
-
-      <g className="planet-labels">
-        {positions.map((position) => {
-          const layout = planetLayouts.get(position.planet);
-          const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
-          const tickAngle = planetAngle(position);
-          const tickOuter = point(tickAngle, radius.signInner - 5);
-          const tickInner = point(tickAngle, radius.signInner - 17);
-          const degreeOffset = inwardMarkerOffset(center, marker, 24);
-          const { lines: tooltipLines } = tooltipDetails(position);
-
-          return (
-            <g
-              key={position.planet}
-              className="planet-marker"
-              tabIndex={0}
-              role="img"
-              aria-label={tooltipLines.join(". ")}
-              onBlur={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
-              onFocus={() => setActiveTooltipPlanet(position.planet)}
-              onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
-              onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
-            >
-              <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
-              <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-                <circle cx={0} cy={0} r="14" className="planet-hit-area" />
-                <WheelPlanetGlyph position={position} />
-                <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
-                  {formatWheelDegree(position)}
-                </text>
-              </g>
-            </g>
-          );
-        })}
-      </g>
-
-      {activeTooltipPosition && (
-        <g className="planet-tooltips" aria-hidden="true">
-          {(() => {
-            const { aspectLine, height, placementLine, width, x, y } = tooltipDetails(activeTooltipPosition);
-
-            return (
-              <g className="planet-tooltip planet-tooltip-active" transform={`translate(${x} ${y})`}>
-                <foreignObject width={width} height={height}>
-                  <div className="planet-tooltip-box">
-                    <strong>{placementLine}</strong>
-                    {aspectLine ? <span>{aspectLine}</span> : null}
-                  </div>
-                </foreignObject>
-              </g>
-            );
-          })()}
-        </g>
-      )}
-
-      <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y }) => {
-          const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-          const iconSize = sign === "Sagittarius" ? 25 : 23;
-          const className = isLong ? "sign-label-long" : undefined;
-
-          return (
-            <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
-              {houseSignLabelStyle === "glyph" && iconHref ? (
-                <image
-                  href={iconHref}
-                  x={x - iconSize / 2}
-                  y={y - iconSize / 2}
-                  width={iconSize}
-                  height={iconSize}
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              ) : (
-                <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
-                  <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
-                    {sign}
-                  </textPath>
-                </text>
-              )}
-            </g>
-          );
-        })}
-      </g>
-    </svg>
-  );
-}
-
-function SynastryWheel({
-  outerPositions,
-  innerPositions,
-  interAspects,
-  ascendant,
-  ascendantLongitude,
-  houseSignLabelStyle = "text"
-}: {
-  outerPositions: PlanetPosition[];
-  innerPositions: PlanetPosition[];
-  interAspects: InterChartAspectLine[];
-  ascendant?: string;
-  ascendantLongitude?: number;
-  houseSignLabelStyle?: HouseSignLabelStyle;
-}) {
-  const signs = [
-    "Aries",
-    "Taurus",
-    "Gemini",
-    "Cancer",
-    "Leo",
-    "Virgo",
-    "Libra",
-    "Scorpio",
-    "Sagittarius",
-    "Capricorn",
-    "Aquarius",
-    "Pisces"
-  ];
-  const center = 300;
-  const radius = {
-    outer: 284,
-    signInner: 240,
-    outerPlanet: 212,
-    outerDegree: 192,
-    outerTickInner: 218,
-    outerTickOuter: 236,
-    innerRingOuter: 178,
-    innerRingInner: 116,
-    innerPlanet: 150,
-    innerDegree: 130,
-    innerTickInner: 160,
-    innerTickOuter: 174,
-    aspect: 92,
-    house: 240 * chartHouseLabelRadiusFactor,
-    inner: 44
-  };
-  const isNatalWheel = typeof ascendantLongitude === "number";
-  const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
-  const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
-
-  function point(angle: number, distance: number) {
-    return polarToCartesian(center, center, distance, angle);
-  }
-
-  function annularSectorPath(startAngle: number, endAngle: number, outerRadius: number, innerRadius: number) {
-    const delta = ((endAngle - startAngle + 540) % 360) - 180;
-    const resolvedEndAngle = startAngle + delta;
-    const largeArc = Math.abs(delta) > 180 ? 1 : 0;
-    const sweep = delta >= 0 ? 1 : 0;
-    const outerStart = point(startAngle, outerRadius);
-    const outerEnd = point(resolvedEndAngle, outerRadius);
-    const innerEnd = point(resolvedEndAngle, innerRadius);
-    const innerStart = point(startAngle, innerRadius);
-
-    return [
-      `M ${outerStart.x.toFixed(2)} ${outerStart.y.toFixed(2)}`,
-      `A ${outerRadius} ${outerRadius} 0 ${largeArc} ${sweep} ${outerEnd.x.toFixed(2)} ${outerEnd.y.toFixed(2)}`,
-      `L ${innerEnd.x.toFixed(2)} ${innerEnd.y.toFixed(2)}`,
-      `A ${innerRadius} ${innerRadius} 0 ${largeArc} ${sweep ? 0 : 1} ${innerStart.x.toFixed(2)} ${innerStart.y.toFixed(2)}`,
-      "Z"
-    ].join(" ");
-  }
-
-  function angleForLongitude(longitude: number) {
-    return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
-  }
-
-  const signLabelRadius = (radius.outer + radius.signInner) / 2;
-  const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
-  const signLabelPathPrefix = `${wheelClipId}-sign-label`;
-  const houseLabels = chartHouseLabelGeometry({
-    ascendant,
-    ascendantLongitude,
-    angleForLongitude,
-    center,
-    radius: radius.house,
-    signs
-  });
-  const angularLabels = chartAngularLabelGeometry({
-    ascendantLongitude,
-    angleForLongitude,
-    center,
-    radius: radius.outer + angleLabelOuterPadding
-  });
-  const signLabels = chartSignLabelGeometry({
-    angleForLongitude,
-    center,
-    radius: signLabelRadius,
-    signs
-  });
-  const interAspectPairs = interAspects.map((aspect) => ({
-    ...aspect,
-    className: aspectLineClass(aspect.type),
-    lineStyle: aspectLineStyle(aspect.type, aspect.orb)
-  }));
-  const interAspectRadius = radius.aspect + 12;
-  const outerPlanetLayouts = wheelMarkerLayouts(
-    outerPositions,
-    (position) => position.planet,
-    (position) => angleForLongitude(zodiacLongitude(position)),
-    {
-      baseRadius: radius.outerPlanet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 22
-    }
-  );
-  const innerPlanetLayouts = wheelMarkerLayouts(
-    innerPositions,
-    (position) => position.planet,
-    (position) => angleForLongitude(zodiacLongitude(position)),
-    {
-      baseRadius: radius.innerPlanet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 22
-    }
-  );
-
-  function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
-    const angle = angleForLongitude(zodiacLongitude(position));
-    const layout = ring === "outer"
-      ? outerPlanetLayouts.get(position.planet)
-      : innerPlanetLayouts.get(position.planet);
-    const marker = layout?.marker ?? point(angle, ring === "outer" ? radius.outerPlanet : radius.innerPlanet);
-    const tickOuterRadius = ring === "outer" ? radius.signInner - 5 : radius.innerRingOuter - 5;
-    const tickInnerRadius = ring === "outer" ? radius.signInner - 17 : radius.innerRingOuter - 17;
-    const tickOuter = point(angle, tickOuterRadius);
-    const tickInner = point(angle, tickInnerRadius);
-    const degreeOffset = inwardMarkerOffset(center, marker, 23);
-
-    return (
-      <g
-        key={`${ring}-${position.planet}`}
-        className={`planet-marker ${ring === "inner" ? "planet-marker-inner" : "planet-marker-outer"}`}
-        role="img"
-        aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
-      >
-        <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
-        <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-          <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
-          <WheelPlanetGlyph position={position} />
-          <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
-            {formatWheelDegree(position)}
-          </text>
-        </g>
-      </g>
-    );
-  }
-
-  return (
-    <svg className="sky-wheel synastry-wheel sky-wheel-synastry" viewBox={wheelViewBox} role="img" aria-label="Synastry chart with two rings">
-      <defs>
-        <clipPath id={wheelClipId}>
-          <circle cx={center} cy={center} r={radius.outer} />
-        </clipPath>
-        {signLabels.map(({ sign, path }) => (
-          <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
-        ))}
-      </defs>
-      <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
-      <g className="wheel-rings">
-        <circle cx={center} cy={center} r={radius.outer} />
-        <circle cx={center} cy={center} r={radius.signInner} />
-        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-        <circle cx={center} cy={center} r={radius.inner} />
-      </g>
-      <g className="wheel-sectors">
-        {signs.map((sign, index) => {
-          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
-          const outer = point(a, radius.signInner);
-          const inner = point(a, radius.inner);
-          return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-      <g className="synastry-ring-zebra synastry-ring-zebra-outer" aria-hidden="true">
-        {signs.map((sign, index) => {
-          const start = angleForLongitude(index * 30);
-          const end = angleForLongitude(index * 30 + 30);
-
-          return (
-            <path
-              key={`outer-zebra-${sign}`}
-              className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
-              d={annularSectorPath(start, end, radius.signInner - 3, radius.innerRingOuter + 3)}
-            />
-          );
-        })}
-      </g>
-      <g className="synastry-ring-zebra synastry-ring-zebra-inner" aria-hidden="true">
-        {signs.map((sign, index) => {
-          const start = angleForLongitude(index * 30);
-          const end = angleForLongitude(index * 30 + 30);
-
-          return (
-            <path
-              key={`inner-zebra-${sign}`}
-              className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
-              d={annularSectorPath(start, end, radius.innerRingOuter - 3, radius.innerRingInner + 3)}
-            />
-          );
-        })}
-      </g>
-      <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
-        {signs.map((sign, index) => {
-          const a = angleForLongitude(index * 30);
-          const outer = point(a, radius.outer);
-          const inner = point(a, radius.signInner - 2);
-          return <line key={sign} className="zodiac-wheel__divider" x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-      <g className="synastry-chart-rings" aria-hidden="true">
-        <circle cx={center} cy={center} r={radius.innerRingOuter} />
-        <circle cx={center} cy={center} r={radius.innerRingInner} />
-        {signs.map((sign, index) => {
-          const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
-          const outer = point(a, radius.innerRingOuter);
-          const inner = point(a, radius.innerRingInner);
-
-          return <line key={`inner-ring-${sign}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
-        })}
-      </g>
-      {interAspectPairs.length > 0 && (
-        <g className="aspect-lines interchart-aspect-lines" aria-label="Inter-chart aspects">
-          {interAspectPairs.map(({ id, fromLongitude, toLongitude, type, className, lineStyle }) => {
-            const a = point(angleForLongitude(fromLongitude), interAspectRadius);
-            const b = point(angleForLongitude(toLongitude), interAspectRadius);
-
-            return (
-              <g key={id} className={`${className} ${normalizeAspectType(type)}`} style={lineStyle}>
-                <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-              </g>
-            );
-          })}
-        </g>
-      )}
-      {isNatalWheel && (
-        <g className="natal-angle-lines" aria-label="Ascendant axis">
-          {(() => {
-            const asc = point(angleForLongitude(ascendantLongitude), radius.outer + angleAxisOuterPadding);
-            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.outer + angleAxisOuterPadding);
-
-            return <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />;
-          })()}
-        </g>
-      )}
-      <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "Natural house labels"}>
-        {houseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
-            {house}
-          </text>
-        ))}
-      </g>
-      {isNatalWheel && (
-        <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => {
-            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-            const iconSize = 30;
-
-            return iconHref ? (
-              <image
-                key={label}
-                href={iconHref}
-                x={x - iconSize / 2}
-                y={y - iconSize / 2}
-                width={iconSize}
-                height={iconSize}
-                className="zodiac-wheel__angle-icon"
-                aria-label={label}
-                preserveAspectRatio="xMidYMid meet"
-              />
-            ) : (
-              <text key={label} x={x} y={y}>
-                {label}
-              </text>
-            );
-          })}
-        </g>
-      )}
-      <g className="planet-labels synastry-outer-planet-labels" aria-label="Outer chart planets">
-        {outerPositions.map((position) => renderPlanet(position, "outer"))}
-      </g>
-      <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
-        {innerPositions.map((position) => renderPlanet(position, "inner"))}
-      </g>
-      <g className="sign-labels">
-        {signLabels.map(({ sign, isLong, x, y }) => {
-          const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-          const iconSize = sign === "Sagittarius" ? 25 : 23;
-          const className = isLong ? "sign-label-long" : undefined;
-
-          return (
-            <g key={sign} className={houseSignLabelStyle === "glyph" ? "zodiac-wheel__sign-icon" : className} aria-label={sign}>
-              {houseSignLabelStyle === "glyph" && iconHref ? (
-                <image
-                  href={iconHref}
-                  x={x - iconSize / 2}
-                  y={y - iconSize / 2}
-                  width={iconSize}
-                  height={iconSize}
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              ) : (
-                <text className="zodiac-wheel__sign-label" stroke="none" paintOrder="normal" filter="none">
-                  <textPath href={`#${signLabelPathPrefix}-${sign}`} startOffset="50%">
-                    {sign}
-                  </textPath>
-                </text>
-              )}
-            </g>
-          );
-        })}
-      </g>
-    </svg>
-  );
 }
 
 function MoonPhaseArt({ phase }: { phase: string }) {
@@ -7054,7 +6196,7 @@ function retrogradeSummaryCaption(personal: PlanetPosition[], outer: PlanetPosit
 }
 
 function retrogradePlacementTitle(position: PlanetPosition) {
-  return `${position.planet} Rx in ${position.sign}`;
+  return `${skyDisplayPlanetName(position.planet)} Rx in ${position.sign}`;
 }
 
 function retrogradeRangeText(window?: RetrogradeWindow) {
@@ -7319,7 +6461,7 @@ function RetrogradeCallout({
           <span className="sky-pl-main">
             <span className="sky-pl-title">
               <span className="ro-sky-pl__name">
-                {position.planet} <span className="sky-pl-rx">Rx</span> in {position.sign}
+                {skyDisplayPlanetName(position.planet)} <span className="sky-pl-rx">Rx</span> in {position.sign}
               </span>
               <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
             </span>
@@ -7751,8 +6893,9 @@ function PlacementTable({
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const orderedPositions = rankSkyPositionsByLifeAreaFocus(placementPlanetOrder
-    .map((planet) => positions.find((position) => position.planet === planet))
+  const displayPositions = skyNodeDisplayPositions(positions);
+  const orderedPositions = rankSkyPositionsByLifeAreaFocus(skyPlacementPlanetOrder
+    .map((planet) => displayPositions.find((position) => position.planet === planet))
     .filter((position): position is PlanetPosition => Boolean(position)), lifeAreaFocus);
 
   return (
@@ -9345,6 +8488,14 @@ function ManualChartsPanel({
     [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
   );
   const isLoadingCharts = status === "loading";
+  const circlePreviewCharts = useMemo(
+    () => (charts.length > 1 ? charts.slice(0, 2) : charts.slice(0, 1)).map((chart) => ({
+      id: chart.id,
+      initials: profileInitials(chart.displayName, chart.displayName)
+    })),
+    [charts]
+  );
+  const circleFallbackInitials = profileInitials(profile.name, profile.email);
   const friendChartListItems = useMemo(
     () => charts.map((chart) => {
       const bigThree = manualChartBigThree(chart);
@@ -9656,70 +8807,12 @@ function ManualChartsPanel({
     >
 
       {resolvedFriendsMainView === "circle" && (
-        <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
-          <div className="friends-circle-strip" aria-label={isLoadingCharts ? "Loading circle feed" : "Circle feed"}>
-            {isLoadingCharts ? (
-              [0, 1, 2].map((index) => (
-                <article className="friends-feed-card friends-feed-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
-                  <span className="friends-feed-avatar-stack">
-                    <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-                    <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-                  </span>
-                  <span className="friends-feed-card-body">
-                    <span className="friends-card-skeleton friends-card-skeleton-label" />
-                    <i className="friends-card-skeleton friends-card-skeleton-title" />
-                    <i className="friends-card-skeleton friends-card-skeleton-line" />
-                    <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
-                  </span>
-                  <span className="friends-card-skeleton friends-card-skeleton-chevron" />
-                </article>
-              ))
-            ) : (
-              circleCards.map((card, index) => {
-                const feedCharts = charts.length > 1
-                  ? charts.slice(0, 2)
-                  : charts.slice(0, 1);
-                const feedMeta = index === 0
-                  ? "Today"
-                  : index === 1
-                    ? "This week"
-                    : card.label === "Friend update"
-                      ? "Friend update · 2 days ago"
-                      : `${index + 2} days ago`;
-
-                return (
-                  <article className="friends-feed-card" key={card.title}>
-                    <span className="friends-feed-avatar-stack" aria-hidden="true">
-                      {feedCharts.map((chart) => (
-                        <span className="friends-feed-avatar" key={chart.id}>
-                          {profileInitials(chart.displayName, chart.displayName)}
-                        </span>
-                      ))}
-                      {feedCharts.length === 0 && (
-                        <span className="friends-feed-avatar">
-                          {profileInitials(profile.name, profile.email)}
-                        </span>
-                      )}
-                    </span>
-                    <span className="friends-feed-card-body">
-                      <span className="friends-feed-meta">{feedMeta}</span>
-                      <h3>{card.title}</h3>
-                      <p>{card.body}</p>
-                      {index === 0 && (
-                        <span className="friends-feed-symbols" aria-label="Aspect symbols">
-                          <span>☽</span>
-                          <span>∗</span>
-                          <span>☿</span>
-                        </span>
-                      )}
-                    </span>
-                    <ChevronRight className="friends-feed-chevron" size={24} aria-hidden="true" />
-                  </article>
-                );
-              })
-            )}
-          </div>
-        </section>
+        <FriendCircleFeed
+          cards={circleCards}
+          fallbackInitials={circleFallbackInitials}
+          isLoading={isLoadingCharts}
+          previewCharts={circlePreviewCharts}
+        />
       )}
 
       {resolvedFriendsMainView === "charts" && (
@@ -9827,38 +8920,102 @@ function ManualChartsPanel({
         ) : null
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
-        <section className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`} aria-label={`${selectedChart.displayName} chart profile`}>
-          <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
-            <div className="friend-hero-card friend-profile-card">
-              <span className="manual-chart-avatar friend-profile-avatar" aria-hidden="true">
-                {profileInitials(selectedChart.displayName, selectedChart.displayName)}
-              </span>
-              <div className="friend-hero-copy">
-                <h2>{selectedChart.displayName}</h2>
-                <span className="manual-chart-signatures">
-                  <span>☉ {selectedFriendBigThree?.sun ?? "Pending"}</span>
-                  <span>☽ {selectedFriendBigThree?.moon ?? "Pending"}</span>
-                  <span>↑ {selectedFriendBigThree?.rising ?? "Rising pending"}</span>
-                </span>
-              </div>
-              <button className="friend-kebab" type="button" aria-label={`Edit ${selectedChart.displayName}`} onClick={() => editChart(selectedChart)}>
-                <MoreVertical size={24} aria-hidden="true" />
-              </button>
+        <FriendDetail
+          activeTab={friendProfileTab}
+          ariaLabel={`${selectedChart.displayName} chart profile`}
+          chartRail={(
+            <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
+              {friendProfileTab === "natal" && selectedChart.natalChart && (
+                <div className="friend-synastry-wheel-shell">
+                  <div className="chart-shell">
+                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
+                      <SkyWheel
+                        positions={selectedChart.natalChart.positions}
+                        aspects={selectedChart.natalChart.aspects}
+                        ascendant={selectedChart.natalChart.ascendant}
+                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                        showHouses
+                        houseSignLabelStyle={houseSignLabelStyle}
+                        variant="natal"
+                      />
+                    </div>
+                  </div>
+                  <div className="friend-chart-legend" aria-label="Natal chart label">
+                    <span>{selectedChart.displayName}</span>
+                  </div>
+                </div>
+              )}
+              {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
+                <div className="friend-synastry-wheel-shell">
+                  <div className="chart-shell">
+                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
+                      <SynastryWheel
+                        outerPositions={selectedChart.natalChart.positions}
+                        innerPositions={relationshipComparisonSky?.positions ?? []}
+                        interAspects={selectedSynastryAspectLines}
+                        ascendant={selectedChart.natalChart.ascendant}
+                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                        houseSignLabelStyle={houseSignLabelStyle}
+                      />
+                    </div>
+                  </div>
+                  <RelationshipComparePicker
+                    variant="synastry"
+                    outerName={selectedChart.displayName}
+                    outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+                    options={relationshipComparisonOptions}
+                    selectedId={selectedRelationshipComparison?.id ?? "self"}
+                    open={relationshipComparisonPickerOpen}
+                    onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                    onSelect={(id) => {
+                      setRelationshipComparisonChartId(id);
+                      setRelationshipComparisonPickerOpen(false);
+                    }}
+                  />
+                </div>
+              )}
+              {friendProfileTab === "composite" && selectedCompositeSky && (
+                <div className="friend-synastry-wheel-shell">
+                  <div className="chart-shell">
+                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
+                      <SkyWheel
+                        positions={selectedCompositeSky.positions}
+                        aspects={selectedCompositeSky.aspects}
+                        ascendant={selectedCompositeSky.ascendant}
+                        ascendantLongitude={selectedCompositeSky.ascendantLongitude}
+                        midheavenLongitude={selectedCompositeSky.midheavenLongitude}
+                        showHouses
+                        houseSignLabelStyle={houseSignLabelStyle}
+                        variant="composite"
+                      />
+                    </div>
+                  </div>
+                  <RelationshipComparePicker
+                    variant="composite"
+                    options={relationshipComparisonOptions}
+                    selectedId={selectedRelationshipComparison?.id ?? "self"}
+                    open={relationshipComparisonPickerOpen}
+                    onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                    onSelect={(id) => {
+                      setRelationshipComparisonChartId(id);
+                      setRelationshipComparisonPickerOpen(false);
+                    }}
+                  />
+                </div>
+              )}
             </div>
-
-            <SegmentedControl<FriendProfileTab>
-              value={friendProfileTab}
-              options={selectedChartIsEvent
-                ? [{ value: "natal", label: "Chart" }]
-                : [
-                    { value: "natal", label: "Natal" },
-                    { value: "synastry", label: "Synastry" },
-                    { value: "composite", label: "Composite" }
-                  ]}
-              onChange={setFriendProfileTab}
-              ariaLabel={selectedChartIsEvent ? "Event chart sections" : "Chart profile sections"}
-              className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
-            />
+          )}
+          className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`}
+          initials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+          isEventChart={selectedChartIsEvent}
+          moon={selectedFriendBigThree?.moon ?? "Pending"}
+          name={selectedChart.displayName}
+          onEdit={() => editChart(selectedChart)}
+          onTabChange={(tab) => setFriendProfileTab(tab)}
+          rising={selectedFriendBigThree?.rising ?? "Rising pending"}
+          sun={selectedFriendBigThree?.sun ?? "Pending"}
+        >
 
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
@@ -10072,90 +9229,7 @@ function ManualChartsPanel({
               </div>
             </div>
           )}
-          </div>
-
-          <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
-            {friendProfileTab === "natal" && selectedChart.natalChart && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="chart-shell">
-                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                    <SkyWheel
-                      positions={selectedChart.natalChart.positions}
-                      aspects={selectedChart.natalChart.aspects}
-                      ascendant={selectedChart.natalChart.ascendant}
-                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                      midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                      showHouses
-                      houseSignLabelStyle={houseSignLabelStyle}
-                      variant="natal"
-                    />
-                  </div>
-                </div>
-                <div className="friend-chart-legend" aria-label="Natal chart label">
-                  <span>{selectedChart.displayName}</span>
-                </div>
-              </div>
-            )}
-            {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="chart-shell">
-                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                    <SynastryWheel
-                      outerPositions={selectedChart.natalChart.positions}
-                      innerPositions={relationshipComparisonSky?.positions ?? []}
-                      interAspects={selectedSynastryAspectLines}
-                      ascendant={selectedChart.natalChart.ascendant}
-                      ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                      houseSignLabelStyle={houseSignLabelStyle}
-                    />
-                  </div>
-                </div>
-                <RelationshipComparePicker
-                  variant="synastry"
-                  outerName={selectedChart.displayName}
-                  outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-                  options={relationshipComparisonOptions}
-                  selectedId={selectedRelationshipComparison?.id ?? "self"}
-                  open={relationshipComparisonPickerOpen}
-                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                  onSelect={(id) => {
-                    setRelationshipComparisonChartId(id);
-                    setRelationshipComparisonPickerOpen(false);
-                  }}
-                />
-              </div>
-            )}
-            {friendProfileTab === "composite" && selectedCompositeSky && (
-              <div className="friend-synastry-wheel-shell">
-                <div className="chart-shell">
-                  <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
-                    <SkyWheel
-                      positions={selectedCompositeSky.positions}
-                      aspects={selectedCompositeSky.aspects}
-                      ascendant={selectedCompositeSky.ascendant}
-                      ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-                      midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-                      showHouses
-                      houseSignLabelStyle={houseSignLabelStyle}
-                      variant="composite"
-                    />
-                  </div>
-                </div>
-                <RelationshipComparePicker
-                  variant="composite"
-                  options={relationshipComparisonOptions}
-                  selectedId={selectedRelationshipComparison?.id ?? "self"}
-                  open={relationshipComparisonPickerOpen}
-                  onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                  onSelect={(id) => {
-                    setRelationshipComparisonChartId(id);
-                    setRelationshipComparisonPickerOpen(false);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        </section>
+        </FriendDetail>
       )}
     </FriendsPageShell>
   );
