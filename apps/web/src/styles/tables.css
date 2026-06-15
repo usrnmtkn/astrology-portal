@@ -188,11 +188,6 @@
   background: var(--table-bg);
 }
 
-:where(.placement-table-wrap, .placement-table-card, .planet-placement-list, .you-list-card, .list):has(.spl-dig[data-tooltip]) {
-  position: relative;
-  overflow: visible;
-}
-
 :where(
   .placement-table-wrap,
   .placement-table-card,
@@ -360,11 +355,6 @@ button.placement-table-row {
   background: var(--card-bg);
   color: var(--ink);
   text-align: left;
-}
-
-:where(.placement-table-row, .planet-placement-row):has(.spl-dig[data-tooltip]:hover),
-:where(.placement-table-row, .planet-placement-row):has(.spl-dig[data-tooltip]:focus-visible) {
-  z-index: var(--z-tooltip, 80);
 }
 
 button.planet-placement-row {
@@ -583,47 +573,33 @@ button.planet-placement-row {
   cursor: help;
 }
 
-.spl-dig[data-tooltip]::after {
-  position: absolute;
+.spl-dig:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.floating-tooltip {
+  position: fixed;
   z-index: var(--z-tooltip, 80);
-  top: calc(100% + 10px);
-  left: 50%;
   box-sizing: border-box;
-  width: max-content;
-  max-width: min(340px, calc(100vw - 32px));
+  max-width: min(340px, calc(100vw - 24px));
   padding: 12px 14px;
   border: 1px solid var(--tooltip-border);
   border-radius: 12px;
   background: var(--tooltip-bg);
   color: var(--tooltip-fg);
   box-shadow: var(--tooltip-shadow);
-  content: attr(data-tooltip);
   font-family: var(--font-ui);
   font-size: 12px;
   font-weight: var(--font-weight-medium);
   letter-spacing: 0;
   line-height: 1.25;
-  opacity: 0;
   overflow-wrap: break-word;
   pointer-events: none;
   text-align: left;
   text-transform: none;
-  transform: translate(-50%, -4px);
-  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
-  visibility: hidden;
+  transform: translateX(-50%);
   white-space: normal;
-}
-
-.spl-dig[data-tooltip]:hover::after,
-.spl-dig[data-tooltip]:focus-visible::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
-  visibility: visible;
-}
-
-.spl-dig:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .spl-dig--good {
