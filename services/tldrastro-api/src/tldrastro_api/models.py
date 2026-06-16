@@ -246,3 +246,33 @@ class ProfectionsResponse(BaseModel):
     monthly: ProfectionPeriod
     activatedNatalPlanets: List[str] = Field(default_factory=list)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class PersonalTimingRequest(BaseModel):
+    natalSubject: ChartSubject
+    targetDatetime: DateTimeInput
+    targetLocation: LocationInput
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+    maxTransits: int = Field(12, ge=1, le=50)
+
+
+class TimingBoostedTransit(BaseModel):
+    hit: TransitHit
+    baseScore: int
+    boostedScore: int
+    boostReasons: List[str] = Field(default_factory=list)
+
+
+class PersonalTimingResponse(BaseModel):
+    metadata: ChartMetadata
+    natal: NatalChartResponse
+    currentSky: SkyCurrentResponse
+    profections: ProfectionsResponse
+    topTransits: List[TransitHit] = Field(default_factory=list)
+    timingBoostedTransits: List[TimingBoostedTransit] = Field(default_factory=list)
+    activatedHouse: int
+    activatedSign: str
+    activatedRuler: str
+    activatedNatalPlanets: List[str] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
