@@ -47,5 +47,5 @@ engine behind it.
 - `GET /health`
 - `GET /reference/config`
 - `GET /houses/systems`
+- `POST /utils/timezone`
 - `POST /chart/natal`
-

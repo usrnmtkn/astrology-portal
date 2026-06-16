@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from tldrastro_api.config import get_settings
-from tldrastro_api.routers import charts, health, reference
+from tldrastro_api.routers import charts, health, reference, utils
 
 
 def create_app() -> FastAPI:
@@ -21,9 +21,9 @@ def create_app() -> FastAPI:
     )
     app.include_router(health.router)
     app.include_router(reference.router)
+    app.include_router(utils.router)
     app.include_router(charts.router)
     return app
 
 
 app = create_app()
-
