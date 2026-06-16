@@ -134,7 +134,7 @@ export function polarToCartesian(centerX: number, centerY: number, radius: numbe
 
   return {
     x: centerX + Math.cos(rad) * radius,
-    y: centerY + Math.sin(rad) * radius
+    y: centerY - Math.sin(rad) * radius
   };
 }
 
@@ -222,7 +222,7 @@ export function wheelMarkerLayouts<T>(
       const tangentOffset = tangentOffsets[index] ?? 0;
       const marker = {
         x: markerBase.x + Math.cos(tangentRad) * tangentOffset,
-        y: markerBase.y + Math.sin(tangentRad) * tangentOffset
+        y: markerBase.y - Math.sin(tangentRad) * tangentOffset
       };
 
       layouts.set(entry.key, {
@@ -311,7 +311,7 @@ export function chartSignLabelGeometry({
       y: label.y,
       path: [
         `M ${start.x.toFixed(2)} ${start.y.toFixed(2)}`,
-        `A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 0 ${useClockwisePath ? 1 : 0} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`
+        `A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 0 ${useClockwisePath ? 0 : 1} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`
       ].join(" ")
     };
   });
