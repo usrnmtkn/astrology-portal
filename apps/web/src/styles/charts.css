@@ -390,10 +390,14 @@
 }
 
 .chart-fullscreen-controls,
-.chart-fullscreen-legend,
-.chart-fullscreen-footer .friend-compare-control {
+.chart-fullscreen-legend {
   width: min(100%, var(--chart-fullscreen-rail-width));
   max-width: var(--chart-fullscreen-rail-width);
+}
+
+.chart-fullscreen-footer .friend-compare-control {
+  width: min(100%, var(--relationship-picker-width, 360px));
+  max-width: var(--relationship-picker-width, 360px);
 }
 
 .chart-fullscreen-footer .friend-chart-legend {
