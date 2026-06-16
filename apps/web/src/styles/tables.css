@@ -330,6 +330,11 @@ button.placement-table-row {
 }
 
 .placement-table-row__meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
   justify-self: end;
   text-align: right;
   white-space: nowrap;

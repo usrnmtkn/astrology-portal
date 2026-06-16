@@ -545,7 +545,7 @@
     min-width: 42px;
   }
 
-  .friends-page-heading h2 {
+  .friends-page-heading h1 {
     font-size: var(--text-page-title-size);
   }
 

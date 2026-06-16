@@ -2356,11 +2356,7 @@ function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = n
     return "This week";
   }
 
-  if (durationDays <= 75) {
-    return "Longer influence";
-  }
-
-  return "Ongoing";
+  return formatDurationCompact(start, end) ?? "Ongoing";
 }
 
 function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date()) {
@@ -5994,7 +5990,7 @@ const natalSignatureDescriptions: Record<string, string> = {
 };
 
 function natalPlacementSignTitle(position: PlanetPosition) {
-  return `${position.planet} in ${position.sign}`;
+  return placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
 }
 
 function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
@@ -7821,7 +7817,7 @@ function SettingsView({
   return (
     <section className="settings-page page-shell--narrow" aria-label="Settings">
       <div className="settings-header">
-        <h2>settings.</h2>
+        <h1>settings.</h1>
       </div>
 
       <div className="settings-panel">
@@ -7956,7 +7952,7 @@ function GuestSettingsView({
   return (
     <section className="settings-page page-shell--narrow guest-settings-page" aria-label="Settings">
       <div className="settings-header">
-        <h2>settings.</h2>
+        <h1>settings.</h1>
       </div>
 
       <div className="settings-panel">
@@ -8091,7 +8087,7 @@ function AccountView({
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
-        <h2>account.</h2>
+        <h1>account.</h1>
       </div>
 
       <section className="settings-card settings-account-card" aria-label="Account details">
@@ -8254,6 +8250,7 @@ function ProfileView({
       glyph="☉"
       house={natalSun?.house ?? null}
       pointName="Sun"
+      retrograde={natalSun?.motion === "retrograde"}
       title={natalSun ? natalPlacementSignTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
       variant="natal"
       key="sun"
@@ -8265,6 +8262,7 @@ function ProfileView({
       glyph="☽"
       house={natalMoon?.house ?? null}
       pointName="Moon"
+      retrograde={natalMoon?.motion === "retrograde"}
       title={natalMoon ? natalPlacementSignTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
       variant="natal"
       key="moon"
@@ -8526,6 +8524,7 @@ function ManualChartsPanel({
   const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
   const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
+  const selectedFriendMoon = selectedChart?.natalChart?.positions.find((position) => position.planet === "Moon");
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
     : selectedFriendSun
@@ -9052,9 +9051,6 @@ function ManualChartsPanel({
                       />
                     </div>
                   </div>
-                  <div className="friend-chart-legend" aria-label="Natal chart label">
-                    <span>{selectedChart.displayName}</span>
-                  </div>
                 </div>
               )}
               {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
@@ -9149,15 +9145,34 @@ function ManualChartsPanel({
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {[
-                    { glyph: "☉", pointName: "Sun", title: `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`, body: `${selectedChart.displayName}'s core self and vitality` },
-                    { glyph: "☽", pointName: "Moon", title: `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`, body: `${selectedChart.displayName}'s inner world and what they need to feel safe` },
-                    { glyph: "↑", pointName: "Ascendant", title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`, body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `How ${selectedChart.displayName} meets the world and comes across` }
-                  ].map(({ glyph, pointName, title, body }) => (
+                    {
+                      glyph: "☉",
+                      pointName: "Sun",
+                      retrograde: selectedFriendSun?.motion === "retrograde",
+                      title: selectedFriendSun ? natalPlacementSignTitle(selectedFriendSun) : `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`,
+                      body: `${selectedChart.displayName}'s core self and vitality`
+                    },
+                    {
+                      glyph: "☽",
+                      pointName: "Moon",
+                      retrograde: selectedFriendMoon?.motion === "retrograde",
+                      title: selectedFriendMoon ? natalPlacementSignTitle(selectedFriendMoon) : `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`,
+                      body: `${selectedChart.displayName}'s inner world and what they need to feel safe`
+                    },
+                    {
+                      glyph: "↑",
+                      pointName: "Ascendant",
+                      retrograde: false,
+                      title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`,
+                      body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `How ${selectedChart.displayName} meets the world and comes across`
+                    }
+                  ].map(({ glyph, pointName, retrograde, title, body }) => (
                     <PlacementTableRow
                       description={body}
                       glyph={glyph}
                       key={title}
                       pointName={pointName}
+                      retrograde={retrograde}
                       title={title}
                       variant="friend"
                     />
@@ -9223,6 +9238,17 @@ function ManualChartsPanel({
           {friendProfileTab === "synastry" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
               <div className="friend-profile-copy-column">
+                <article className="relationship-explainer-card relationship-explainer-card--synastry" aria-label="What synastry shows">
+                  <span className="relationship-explainer-card__glyph" aria-hidden="true">
+                    <img src={zodiacAssetHref("tool-synastry.svg") ?? ""} alt="" />
+                  </span>
+                  <span className="relationship-explainer-card__copy">
+                    <span className="relationship-explainer-card__kicker">What synastry shows</span>
+                    <p>
+                      Where {possessiveLabel(selectedChart.displayName)} planets meet {relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.
+                    </p>
+                  </span>
+                </article>
                 <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
                   outerSky={selectedChart.natalChart}
@@ -9292,6 +9318,17 @@ function ManualChartsPanel({
           {friendProfileTab === "composite" && (
             <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
               <div className="friend-profile-copy-column">
+                <article className="relationship-explainer-card relationship-explainer-card--composite" aria-label="What a composite chart is">
+                  <span className="relationship-explainer-card__glyph" aria-hidden="true">
+                    <img src={zodiacAssetHref("tool-composite.svg") ?? ""} alt="" />
+                  </span>
+                  <span className="relationship-explainer-card__copy">
+                    <span className="relationship-explainer-card__kicker">What a composite chart is</span>
+                    <p>
+                      A composite chart is the relationship&apos;s own chart, built from the midpoints between two people&apos;s planets. It&apos;s read like a natal chart, but the placements describe the relationship instead of either person.
+                    </p>
+                  </span>
+                </article>
                 {selectedCompositeSky && (
                   <section className="composite-placements-section">
                     <span className="eyebrow section-label friend-section-label">Composite placements</span>

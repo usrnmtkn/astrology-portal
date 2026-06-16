@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
 
 :root {
   /*
@@ -53,10 +53,13 @@
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
   --color-synastry-accent: #c8915f;
 
-  --font-sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Roboto Mono", "Space Mono", monospace;
-  --font-symbol: "Noto Sans Symbols", "Geist Mono", ui-monospace, monospace;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
+  --symbols: "Noto Sans Symbols", "Segoe UI Symbol", serif;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-serif: var(--serif);
+  --font-mono: var(--mono);
+  --font-symbol: var(--symbols);
 
   --size-half: 4px;
   --size-1: 8px;
@@ -161,10 +164,10 @@
   --text-placement-meta: 14px;
   --article-title-size: var(--article-h2-size);
   --article-h2-size: clamp(21px, 2.4vw, 25px);
-  --article-body-size: 16px;
+  --article-body-size: 15px;
   --article-meta-size: 14.5px;
   --article-label-size: 13px;
-  --text-body: 16px;
+  --text-body: 15px;
   --text-row-value: 15px;
   --text-description: 14px;
   --text-eyebrow: 12px;
@@ -183,14 +186,14 @@
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
-  --weight-bold: 700;
-  --tracking-display: 0;
-  --tracking-title: 0;
+  --weight-bold: 600;
+  --tracking-display: -0.022em;
+  --tracking-title: -0.018em;
   --tracking-nav: -0.005em;
   --tracking-label: 0.1em;
   --tracking-tiny: 0.13em;
   --leading-tight: 1.02;
-  --leading-body: 1.45;
+  --leading-body: 1.6;
 
   --sp-half: var(--size-half);
   --sp-1: var(--size-1);
@@ -326,7 +329,6 @@
   --air: #7fb8da;
   --water: #6476bd;
   --lavender: #f7e8fb;
-  --mono: var(--font-mono);
   --font-display-old: var(--font-display);
   --font-weight-regular: var(--weight-regular);
   --font-weight-medium: var(--weight-medium);

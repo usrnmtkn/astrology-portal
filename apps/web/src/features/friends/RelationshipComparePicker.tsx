@@ -59,19 +59,21 @@ export function RelationshipComparePicker({
         aria-expanded={open}
         onClick={onToggle}
       >
-        <span className="friend-compare-customise">With</span>
-        <span className="friend-compare-avatar" aria-hidden="true">{selectedOption.initials}</span>
-        <strong>{selectedOption.displayName}</strong>
-        <ChevronDown size={18} aria-hidden="true" />
+        <span className="friend-compare-pill-inner">
+          <span className="friend-compare-customise">With</span>
+          <span className="friend-compare-avatar" aria-hidden="true">{selectedOption.initials}</span>
+          <strong>{selectedOption.displayName}</strong>
+          <ChevronDown size={18} aria-hidden="true" />
+        </span>
       </button>
       {open && (
         <ModalPortal
           className="friend-compare-modal-root"
-          panelClassName="friend-compare-popover friend-compare-modal"
           closeOnBackdrop
-          titleId={`friend-compare-title-${variant}`}
-          width="420px"
           onClose={onToggle}
+          panelClassName="friend-compare-popover"
+          titleId={`friend-compare-title-${variant}`}
+          width="min(420px, calc(100vw - 48px))"
         >
           <button className="friend-compare-close modal-close" type="button" aria-label="Close compare picker" onClick={onToggle}>
             <X size={16} aria-hidden="true" />

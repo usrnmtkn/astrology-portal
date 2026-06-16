@@ -55,21 +55,19 @@ export function FriendDetail({
           </button>
         </div>
 
-        <SegmentedControl<FriendDetailTab>
-          value={activeTab}
-          options={
-            isEventChart
-              ? [{ value: "natal", label: "Chart" }]
-              : [
-                  { value: "natal", label: "Natal" },
-                  { value: "synastry", label: "Synastry" },
-                  { value: "composite", label: "Composite" }
-                ]
-          }
-          onChange={onTabChange}
-          ariaLabel={isEventChart ? "Event chart sections" : "Chart profile sections"}
-          className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
-        />
+        {!isEventChart ? (
+          <SegmentedControl<FriendDetailTab>
+            value={activeTab}
+            options={[
+              { value: "natal", label: "Natal" },
+              { value: "synastry", label: "Synastry" },
+              { value: "composite", label: "Composite" }
+            ]}
+            onChange={onTabChange}
+            ariaLabel="Chart profile sections"
+            className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
+          />
+        ) : null}
 
         {children}
       </div>
