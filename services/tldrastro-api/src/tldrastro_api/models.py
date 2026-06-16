@@ -142,3 +142,45 @@ class NatalChartResponse(BaseModel):
     sect: Optional[str] = None
     dignitySummary: Dict[str, Any] = Field(default_factory=dict)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class SkyCurrentRequest(BaseModel):
+    datetime: DateTimeInput
+    location: LocationInput
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+
+
+class MoonStatus(BaseModel):
+    kind: Literal["sign", "void"]
+    label: str
+    sign: str
+    nextSign: Optional[str] = None
+    until: Optional[str] = None
+    remainingLabel: Optional[str] = None
+
+
+class MoonEvent(BaseModel):
+    name: Literal["Full Moon", "New Moon"]
+    sign: str
+    occursAt: str
+    days: float
+
+
+class SkyCurrentResponse(BaseModel):
+    metadata: ChartMetadata
+    location: LocationInput
+    generatedAt: str
+    positions: List[Position] = Field(default_factory=list)
+    aspects: List[Aspect] = Field(default_factory=list)
+    angles: Dict[str, Position] = Field(default_factory=dict)
+    houseCusps: List[float] = Field(default_factory=list)
+    ascendant: str
+    ascendantLongitude: Optional[float] = None
+    midheaven: str
+    midheavenLongitude: Optional[float] = None
+    moonPhase: str
+    moonIllumination: float
+    moonStatus: Optional[MoonStatus] = None
+    moonEvent: Optional[MoonEvent] = None
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)

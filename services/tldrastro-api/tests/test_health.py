@@ -17,5 +17,6 @@ def test_reference_config():
     response = client.get("/reference/config")
 
     assert response.status_code == 200
-    assert "whole_sign" in [system["id"] for system in response.json()["houseSystems"]]
-
+    body = response.json()
+    assert "whole_sign" in [system["id"] for system in body["houseSystems"]]
+    assert body["features"]["currentSky"] is True

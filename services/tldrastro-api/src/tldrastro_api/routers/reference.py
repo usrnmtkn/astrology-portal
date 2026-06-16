@@ -39,7 +39,7 @@ def reference_config():
         "timingSystems": ["profections", "zodiacal_releasing", "firdaria"],
         "features": {
             "natal": True,
-            "currentSky": False,
+            "currentSky": True,
             "transits": False,
             "synastry": False,
             "composite": False,
@@ -52,4 +52,3 @@ def reference_config():
 @router.get("/houses/systems")
 def house_systems():
     return {"houseSystems": HOUSE_SYSTEMS}
-
