@@ -1,0 +1,79 @@
+{
+  "request": {
+    "natalSubject": {
+      "name": "Maya",
+      "datetime": {
+        "date": "1994-04-12",
+        "time": "08:35",
+        "timeKnown": true,
+        "timeZone": "America/New_York"
+      },
+      "location": {
+        "label": "New York, NY",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timeZone": "America/New_York"
+      },
+      "settings": {
+        "houseSystem": "whole_sign",
+        "zodiac": "tropical",
+        "aspectProfile": "standard"
+      }
+    },
+    "transitDatetime": {
+      "date": "2026-06-16",
+      "time": "12:00",
+      "timeKnown": true,
+      "timeZone": "America/New_York"
+    },
+    "transitLocation": {
+      "label": "New York, NY",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "timeZone": "America/New_York"
+    },
+    "settings": {
+      "houseSystem": "whole_sign",
+      "zodiac": "tropical",
+      "aspectProfile": "standard"
+    },
+    "includeContentFacts": true
+  },
+  "expected": {
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical",
+    "topHits": [
+      {
+        "id": "neptune-conjunction-mercury",
+        "transitPlanet": "Neptune",
+        "aspect": "conjunction",
+        "natalPoint": "Mercury",
+        "orb": 0.5078,
+        "phase": "applying",
+        "transitHouse": 8,
+        "natalHouse": 11
+      },
+      {
+        "id": "pluto-sextile-mercury",
+        "transitPlanet": "Pluto",
+        "aspect": "sextile",
+        "natalPoint": "Mercury",
+        "orb": 0.3365,
+        "phase": "applying",
+        "transitHouse": 6,
+        "natalHouse": 11
+      },
+      {
+        "id": "jupiter-trine-pluto",
+        "transitPlanet": "Jupiter",
+        "aspect": "trine",
+        "natalPoint": "Pluto",
+        "orb": 0.4393,
+        "phase": "applying",
+        "transitHouse": 11,
+        "natalHouse": 6
+      }
+    ]
+  }
+}
+
