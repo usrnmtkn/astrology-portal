@@ -1,0 +1,40 @@
+.placement-glyph-svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  filter: var(--filter-glyph-current);
+  object-fit: contain;
+}
+
+.sky-pl-glyph .placement-glyph-svg,
+.planet-placement-row__glyph .placement-glyph-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.placement-table-row__glyph .placement-glyph-svg {
+  width: 23px;
+  height: 23px;
+}
+
+.ro-screen .sky-pl-glyph .placement-glyph-svg,
+.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
+.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ro-cluster-badge .placement-glyph-svg,
+.ro-more-badge .placement-glyph-svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ro-screen .sky-pl-glyph .placement-glyph-svg,
+.ro-cluster-badge .placement-glyph-svg,
+.ro-more-badge .placement-glyph-svg,
+.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
+.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg,
+.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg {
+  filter: var(--filter-retrograde-glyph);
+}
