@@ -42,7 +42,7 @@ def reference_config():
             "currentSky": True,
             "transits": True,
             "synastry": True,
-            "composite": False,
+            "composite": True,
             "timeLords": True,
             "contentFacts": False,
         },

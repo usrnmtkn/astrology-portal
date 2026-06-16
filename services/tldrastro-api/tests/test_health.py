@@ -22,4 +22,5 @@ def test_reference_config():
     assert body["features"]["currentSky"] is True
     assert body["features"]["transits"] is True
     assert body["features"]["synastry"] is True
+    assert body["features"]["composite"] is True
     assert body["features"]["timeLords"] is True

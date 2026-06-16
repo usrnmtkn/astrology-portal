@@ -51,6 +51,8 @@ engine behind it.
 - `POST /chart/natal`
 - `POST /chart/transits`
 - `POST /relationship/synastry`
+- `POST /relationship/composite`
+- `POST /relationship/compare`
 - `POST /sky/current`
 - `POST /timing/profections`
 - `POST /timing/personal`
