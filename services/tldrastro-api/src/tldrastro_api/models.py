@@ -319,3 +319,44 @@ class SynastryResponse(BaseModel):
     contacts: List[SynastryContact] = Field(default_factory=list)
     houseOverlays: List[HouseOverlay] = Field(default_factory=list)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class CompositeRequest(BaseModel):
+    personA: ChartSubject
+    personB: ChartSubject
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+
+
+class CompositeResponse(BaseModel):
+    metadata: ChartMetadata
+    personA: NatalChartResponse
+    personB: NatalChartResponse
+    positions: List[Position] = Field(default_factory=list)
+    aspects: List[Aspect] = Field(default_factory=list)
+    houseCusps: List[float] = Field(default_factory=list)
+    angles: Dict[str, Position] = Field(default_factory=dict)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class RelationshipTheme(BaseModel):
+    id: str
+    label: str
+    score: int = Field(..., ge=0)
+    source: Literal["synastry", "composite", "overlay"]
+    knowledgeIds: List[str] = Field(default_factory=list)
+
+
+class RelationshipCompareRequest(BaseModel):
+    personA: ChartSubject
+    personB: ChartSubject
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+
+
+class RelationshipCompareResponse(BaseModel):
+    metadata: ChartMetadata
+    synastry: SynastryResponse
+    composite: CompositeResponse
+    relationshipThemes: List[RelationshipTheme] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
