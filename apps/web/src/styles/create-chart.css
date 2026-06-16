@@ -1,0 +1,167 @@
+.create-chart-flow,
+.create-chart-detail {
+  display: grid;
+  gap: 24px;
+}
+
+.create-chart-steps {
+  display: grid;
+  gap: 0;
+}
+
+.create-chart-step-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.create-chart-step-row + .create-chart-step-row {
+  margin-top: 12px;
+}
+
+.create-chart-rail {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  min-height: 68px;
+}
+
+.create-chart-rail::before {
+  content: "";
+  position: absolute;
+  top: 32px;
+  bottom: -18px;
+  width: 2px;
+  background: var(--line);
+}
+
+.create-chart-step-row:last-child .create-chart-rail::before {
+  display: none;
+}
+
+.create-chart-rail span {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  margin-top: 22px;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.create-chart-step-row.complete .create-chart-rail span,
+.create-chart-step-row.active .create-chart-rail span {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.create-chart-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: 16px;
+  text-align: left;
+}
+
+.create-chart-step:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.create-chart-step-icon,
+.create-chart-fab-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 900;
+}
+
+.create-chart-step-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.create-chart-step-copy span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.create-chart-step-copy strong {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.create-chart-fields {
+  gap: 18px;
+}
+
+.create-chart-save {
+  justify-self: start;
+}
+
+.create-chart-fab {
+  display: inline-grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  padding: 10px 22px 10px 10px;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+
+.create-chart-fab-copy {
+  display: grid;
+  line-height: 1.05;
+}
+
+.field-line,
+.city-search-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.field-line label,
+.city-search-field label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  color: var(--muted);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.field-line input,
+.city-search-field input {
+  width: 100%;
+  min-height: 60px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: 18px;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
