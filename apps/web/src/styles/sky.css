@@ -192,9 +192,11 @@
 
 .share-btn:hover,
 .share-btn:focus-visible {
+  --share-button-hover-lift: -1px;
+
   background: var(--pill-bg);
   color: var(--pill-fg);
-  transform: translateY(-1px);
+  transform: translateY(var(--share-button-hover-lift));
 }
 
 .article-rule {

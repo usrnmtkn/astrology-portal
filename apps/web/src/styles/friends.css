@@ -230,14 +230,9 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 68px;
-  min-width: 0;
   min-height: 108px;
   gap: 0;
   padding: 0;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
   overflow: visible;
 }
 
@@ -1073,6 +1068,8 @@
 }
 
 .friend-compare-popover {
+  --friend-compare-popover-center-offset: -50%;
+
   position: absolute;
   top: calc(100% + 12px);
   bottom: auto;
@@ -1080,7 +1077,7 @@
   right: auto;
   z-index: var(--z-popover);
   width: min(460px, calc(100vw - 40px));
-  transform: translateX(-50%);
+  transform: translateX(var(--friend-compare-popover-center-offset));
   border: 1px solid var(--overlay-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
@@ -1290,16 +1287,16 @@
 }
 
 .synastry-placement-row {
+  --row-bg: var(--card-bg);
+
   display: grid;
   grid-template-columns: minmax(42px, 62px) minmax(0, 1fr) max-content;
   align-items: center;
-  min-width: 0;
   gap: 10px;
   padding: 12px 14px;
   border: 1px solid var(--card-border);
   border-bottom: 0;
   border-radius: 0;
-  background: var(--table-row-bg);
   box-shadow: none;
   overflow: visible;
 }
@@ -1945,12 +1942,14 @@
 }
 
 .add-chart-form .checkbox-row input:checked::before {
+  --add-chart-checkmark-offset-y: -1px;
+
   content: "";
   width: 8px;
   height: 5px;
   border-bottom: 2px solid var(--surface);
   border-left: 2px solid var(--surface);
-  transform: rotate(-45deg) translateY(-1px);
+  transform: rotate(-45deg) translateY(var(--add-chart-checkmark-offset-y));
 }
 
 .add-chart-form .checkbox-row span {

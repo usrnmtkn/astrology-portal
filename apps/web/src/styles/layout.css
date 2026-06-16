@@ -134,10 +134,12 @@
 }
 
 .floating-back-button:hover {
+  --floating-back-button-hover-lift: -1px;
+
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
   color: var(--ink);
-  transform: translateY(-1px);
+  transform: translateY(var(--floating-back-button-hover-lift));
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(

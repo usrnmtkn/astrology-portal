@@ -1,13 +1,14 @@
 .aspect-row,
 .aspect-row-button,
 .aspect-row-static {
+  --row-bg: var(--card-bg);
+
   display: grid;
   grid-template-columns: var(--aspect-row-template, 82px minmax(0, 1fr) 30px);
   align-items: start;
   width: 100%;
   gap: var(--aspect-row-gap, 16px);
   padding: var(--aspect-row-padding, var(--card-row-padding, 16px 20px));
-  background: var(--card-bg);
 }
 
 .aspect-row-list {
@@ -18,21 +19,6 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-}
-
-.chart-row:not(.manual-chart-row),
-.manual-chart-row,
-.synastry-placement-row,
-.friend-placement-row,
-.aspect-row,
-.aspect-row-button,
-.aspect-row-static,
-.settings-row,
-.settings-profile-row,
-.settings-signout-row,
-.account-editable-row,
-.updates-aspect-row {
-  background: var(--card-bg);
 }
 
 .aspect-row:last-child,
@@ -79,7 +65,7 @@
 }
 
 .inline-glyph-icon--fallback {
-  transform: translateY(-0.01em);
+  transform: translateY(var(--inline-glyph-fallback-offset-y, -0.01em));
 }
 
 .aspect-row-copy {

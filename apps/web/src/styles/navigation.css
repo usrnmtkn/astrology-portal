@@ -147,11 +147,13 @@ html[data-scrolled] .nav-pill {
 }
 
 .site-nav svg {
+  --nav-icon-optical-offset-y: -0.5px;
+
   width: var(--top-nav-icon-size);
   height: var(--top-nav-icon-size);
   flex: 0 0 auto;
   stroke-width: 2;
-  transform: translateY(-0.5px);
+  transform: translateY(var(--nav-icon-optical-offset-y));
 }
 
 .topbar-actions {
@@ -198,10 +200,12 @@ html[data-scrolled] .floating-back-button {
 
 .theme-toggle:hover,
 .menu-toggle:hover {
+  --floating-button-hover-lift: -1px;
+
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
   color: var(--ink);
-  transform: translateY(-1px);
+  transform: translateY(var(--floating-button-hover-lift));
 }
 
 .theme-toggle svg,
@@ -302,11 +306,11 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
 }
 
 .hamburger-line-top {
-  transform: translateY(-5px);
+  transform: translateY(calc(var(--hamburger-line-offset, 5px) * -1));
 }
 
 .hamburger-line-bottom {
-  transform: translateY(5px);
+  transform: translateY(var(--hamburger-line-offset, 5px));
 }
 
 .site-menu {
