@@ -135,13 +135,14 @@
   --shadow: var(--elev-card);
   --bg-grad: none;
   --orb-grad:
-    radial-gradient(70% 26% at 50% -8%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%),
-    radial-gradient(42% 30% at 6% 0%, rgba(235, 80, 168, 0.55) 0%, transparent 66%),
-    radial-gradient(40% 30% at 30% -2%, rgba(250, 110, 150, 0.42) 0%, transparent 66%),
-    radial-gradient(42% 30% at 54% -3%, rgba(255, 120, 78, 0.5) 0%, transparent 66%),
-    radial-gradient(42% 30% at 76% -1%, rgba(255, 156, 82, 0.52) 0%, transparent 66%),
-    radial-gradient(46% 34% at 99% 4%, rgba(255, 212, 120, 0.62) 0%, transparent 66%),
-    radial-gradient(150% 56% at 50% -26%, rgba(255, 180, 138, 0.22) 0%, transparent 60%);
+    radial-gradient(
+      86% 82% at 50% -2%,
+      rgba(255, 138, 68, 0.88) 0%,
+      rgba(240, 92, 116, 0.62) 22%,
+      rgba(176, 96, 200, 0.38) 46%,
+      rgba(110, 130, 220, 0.18) 66%,
+      transparent 80%
+    );
 
   --font-display: var(--font-serif);
   --font-body: var(--font-mono);
@@ -420,8 +421,8 @@
 
 .theme-dark,
 [data-theme="dark"] {
-  --color-bg-warm: #16181f;
-  --color-paper: #16181f;
+  --color-bg-warm: #000000;
+  --color-paper: #000000;
   --color-surface: #1f222b;
   --color-surface-2: #2a2e39;
   --color-surface-3: #333844;
@@ -445,7 +446,15 @@
   --color-wheel-glyph: #d2d5df;
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
-  --orb-grad: none;
+  --orb-grad:
+    radial-gradient(
+      86% 82% at 50% -2%,
+      rgba(255, 138, 68, 0.66) 0%,
+      rgba(240, 92, 116, 0.5) 22%,
+      rgba(176, 96, 200, 0.3) 46%,
+      rgba(110, 130, 220, 0.12) 66%,
+      transparent 80%
+    );
   --color-status-alert: #d6a24b;
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);
@@ -466,7 +475,7 @@
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
   --surface-3: var(--color-surface-3);
-  --article-bg: #1a1c24;
+  --article-bg: #000000;
   --nav-bg: var(--color-nav-bg);
   --ink: var(--color-ink);
   --ink-2: var(--color-ink-2);
