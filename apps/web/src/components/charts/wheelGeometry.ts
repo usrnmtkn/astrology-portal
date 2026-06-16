@@ -11,6 +11,13 @@ type WheelMarkerLayout = {
   marker: PolarPoint;
 };
 
+type ChartAngleProjectionOptions = {
+  midheavenDeg?: number;
+  natalOrientation?: boolean;
+};
+
+type AngleSegment = readonly [number, number, number, number];
+
 export const chartHouseLabelRadiusFactor = 0.38;
 export const wheelViewBox = "-20 -20 640 640";
 export const angleAxisOuterPadding = 20;
@@ -18,6 +25,59 @@ export const angleLabelOuterPadding = 20;
 
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
+}
+
+function positiveAngleDistance(from: number, to: number) {
+  return normalizedAngle(to - from);
+}
+
+function unwrapFrom(start: number, longitude: number) {
+  return start + positiveAngleDistance(start, longitude);
+}
+
+function interpolateAngle(value: number, start: number, end: number, startAngle: number, endAngle: number) {
+  if (Math.abs(end - start) < 0.001) {
+    return startAngle;
+  }
+
+  const progress = (value - start) / (end - start);
+  return startAngle + (endAngle - startAngle) * progress;
+}
+
+export function longitudeToNatalChartAngle(longitudeDeg: number, ascendantDeg: number, midheavenDeg: number) {
+  const ascendant = normalizedAngle(ascendantDeg);
+  const midheaven = normalizedAngle(midheavenDeg);
+  const midheavenFromAscendant = positiveAngleDistance(ascendant, midheaven);
+
+  if (midheavenFromAscendant < 0.001 || Math.abs(midheavenFromAscendant - 180) < 0.001) {
+    return 180 + normalizedAngle(longitudeDeg - ascendant);
+  }
+
+  const value = unwrapFrom(ascendant, longitudeDeg);
+  let segments: AngleSegment[];
+
+  if (midheavenFromAscendant < 180) {
+    segments = [
+      [ascendant, ascendant + midheavenFromAscendant, 180, 270],
+      [ascendant + midheavenFromAscendant, ascendant + 180, 270, 360],
+      [ascendant + 180, ascendant + midheavenFromAscendant + 180, 360, 450],
+      [ascendant + midheavenFromAscendant + 180, ascendant + 360, 450, 540]
+    ];
+  } else {
+    const icFromAscendant = normalizedAngle(midheavenFromAscendant + 180);
+
+    segments = [
+      [ascendant, ascendant + icFromAscendant, 180, 90],
+      [ascendant + icFromAscendant, ascendant + 180, 90, 0],
+      [ascendant + 180, ascendant + midheavenFromAscendant, 0, -90],
+      [ascendant + midheavenFromAscendant, ascendant + 360, -90, -180]
+    ];
+  }
+
+  const segment = segments.find(([start, end]) => value >= start && value <= end) ?? segments[segments.length - 1];
+  const [start, end, startAngle, endAngle] = segment;
+
+  return normalizedAngle(interpolateAngle(value, start, end, startAngle, endAngle));
 }
 
 function angularDistance(first: number, second: number) {
@@ -52,8 +112,17 @@ function clusterRadialOffset(index: number, size: number) {
   return index % 2 === 0 ? -4 : 4;
 }
 
-export function longitudeToChartAngle(longitudeDeg: number, ascendantDeg?: number, ascendantAnchored = false) {
+export function longitudeToChartAngle(
+  longitudeDeg: number,
+  ascendantDeg?: number,
+  ascendantAnchored = false,
+  options: ChartAngleProjectionOptions = {}
+) {
   if (ascendantAnchored && typeof ascendantDeg === "number") {
+    if (options.natalOrientation && typeof options.midheavenDeg === "number") {
+      return longitudeToNatalChartAngle(longitudeDeg, ascendantDeg, options.midheavenDeg);
+    }
+
     return 180 + normalizedAngle(longitudeDeg - ascendantDeg);
   }
 

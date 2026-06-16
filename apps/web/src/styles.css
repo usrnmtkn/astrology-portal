@@ -83,10 +83,10 @@
 .sky-intro__lead {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(42px, 7vw, 72px);
-  font-weight: var(--weight-semibold);
+  font-size: var(--sky-title-size);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-display);
-  line-height: 0.95;
+  line-height: var(--leading-tight);
   color: var(--ink);
 }
 
@@ -116,7 +116,7 @@
   background: var(--button-surface, var(--surface));
   padding: 14px var(--button-padding-x);
   font-size: var(--text-body);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
 }
 
 .city-picker {
@@ -192,6 +192,10 @@
   text-overflow: ellipsis;
 }
 
+.city-suggestions strong {
+  font-weight: var(--weight-regular);
+}
+
 .city-suggestions span {
   color: var(--muted);
   font-size: 12px;
@@ -218,7 +222,7 @@
   border-radius: 999px;
   min-height: 42px;
   padding: 0 18px;
-  font-weight: 900;
+  font-weight: var(--weight-medium);
 }
 
 .city-picker-actions button:first-child {
@@ -272,7 +276,7 @@
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--ink);
-  font-weight: 900;
+  font-weight: var(--weight-medium);
 }
 
 .date-picker-nav,

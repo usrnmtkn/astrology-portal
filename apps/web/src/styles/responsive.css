@@ -489,7 +489,7 @@
   }
 
   .friends-page:not(.friend-detail-page) {
-    gap: var(--section-gap);
+    gap: var(--stack-gap);
     padding: var(--mobile-page-padding);
   }
 
@@ -546,7 +546,7 @@
   }
 
   .friends-page-heading h2 {
-    font-size: clamp(3.2rem, 19vw, 5rem);
+    font-size: var(--text-page-title-size);
   }
 
   .friend-detail-page {
@@ -653,10 +653,14 @@
   }
 }
 @media (max-width: 640px) {
-  .article-page,
-  .sky-detail-page {
+  .article-page {
     width: 100%;
     padding: var(--mobile-page-padding);
+  }
+
+  .sky-detail-page {
+    width: 100%;
+    padding: calc(var(--mobile-page-gutter) + 80px) var(--mobile-page-gutter) var(--mobile-page-gutter);
   }
 
   .article-shell,
@@ -667,7 +671,7 @@
 
   .article-title,
   .sky-detail-id h1 {
-    font-size: clamp(38px, 12vw, 54px);
+    font-size: clamp(32px, 10vw, 42px);
   }
 
   .article-share {

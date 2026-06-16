@@ -515,7 +515,6 @@ export function PlanetPlacementRow({
             {retrogradeDurationLabel ? (
               <span className="spl-status-item spl-status-retrograde">{retrogradeDurationLabel}</span>
             ) : null}
-            {(durationLabel || retrogradeDurationLabel) && rangeLabel ? <span aria-hidden="true">·</span> : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>
         ) : (

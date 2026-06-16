@@ -636,8 +636,10 @@ button.planet-placement-row {
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
+  font-family: var(--font-body);
   font-size: var(--type-xs);
   font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
   letter-spacing: var(--tracking-label);
   line-height: 1.1;
 }

@@ -32,6 +32,7 @@
   --color-wheel-line: rgba(28, 32, 52, 0.16);
   --color-wheel-soft: rgba(28, 32, 52, 0.07);
   --color-wheel-label: rgba(28, 32, 52, 0.45);
+  --color-wheel-degree-label: rgba(28, 32, 52, 0.68);
   --color-wheel-glyph: #2a2e3a;
   --color-wheel-band: #ffffff;
   --color-wheel-band-line: rgba(28, 32, 52, 0.12);
@@ -96,13 +97,14 @@
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
+  --chart-degree-label: var(--color-wheel-degree-label);
   --chart-glyph: var(--wheel-glyph);
   --chart-glyph-filter: var(--filter-glyph-current);
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
   --chart-sign-label-size: 13px;
   --chart-planet-glyph-size: 24px;
-  --chart-degree-size: 10px;
+  --chart-degree-size: 12px;
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
   --retrograde-bg: var(--color-retrograde-bg);
@@ -145,7 +147,8 @@
   --font-brand: var(--font-sans);
 
   --text-display: clamp(34px, 8vw, 42px);
-  --text-title: clamp(27px, 6vw, 34px);
+  --text-title: clamp(34px, 8vw, 42px);
+  --sky-title-size: clamp(27px, 6vw, 34px);
   --text-card-title: 21px;
   --text-wordmark: 19px;
   --text-nav: 16.5px;
@@ -157,10 +160,10 @@
   --text-placement-degree: 14px;
   --text-placement-meta: 14px;
   --article-title-size: var(--article-h2-size);
-  --article-h2-size: clamp(22px, 3vw, 27px);
-  --article-body-size: 17px;
-  --article-meta-size: 16px;
-  --article-label-size: 14.5px;
+  --article-h2-size: clamp(21px, 2.4vw, 25px);
+  --article-body-size: 16px;
+  --article-meta-size: 14.5px;
+  --article-label-size: 13px;
   --text-body: 16px;
   --text-row-value: 15px;
   --text-description: 14px;
@@ -305,6 +308,7 @@
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
+  --chart-degree-label: var(--color-wheel-degree-label);
   --chart-glyph: var(--wheel-glyph);
   --z-nav: 100;
   --z-topbar: 1000;
@@ -435,6 +439,7 @@
   --color-wheel-line: rgba(255, 255, 255, 0.22);
   --color-wheel-soft: rgba(255, 255, 255, 0.13);
   --color-wheel-label: rgba(255, 255, 255, 0.5);
+  --color-wheel-degree-label: rgba(255, 255, 255, 0.74);
   --color-wheel-glyph: #d2d5df;
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
@@ -486,6 +491,7 @@
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
+  --chart-degree-label: var(--color-wheel-degree-label);
   --chart-glyph: var(--wheel-glyph);
   --chart-glyph-filter: var(--filter-glyph-current);
   --status-alert: var(--color-status-alert);
