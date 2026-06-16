@@ -415,7 +415,12 @@ export function PlacementTableRow({
         </span>
         {description ? <span className="placement-table-row__description">{description}</span> : null}
       </span>
-      {meta ? <span className="placement-table-row__meta placement-row__house placement-row__degree">{meta}</span> : null}
+      {meta || retrograde ? (
+        <span className="placement-table-row__meta placement-row__house placement-row__degree">
+          {meta ? <span>{meta}</span> : null}
+          {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
+        </span>
+      ) : null}
     </>
   );
 
@@ -591,7 +596,7 @@ export function FriendPlacementTable({
                 house={row.house}
                 pointName={row.label}
                 retrograde={row.retrograde}
-                title={placementTitleFromParts(row.label, row.sign)}
+                title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
                 variant={generatedContext === "composite" ? "composite" : "friend"}
               />
             </div>

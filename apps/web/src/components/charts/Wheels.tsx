@@ -78,6 +78,14 @@ function formatWheelDegree(position: PlanetPosition) {
   return `${Math.floor(position.degree)}°`;
 }
 
+function formatPlanetPlacementTitle(position: PlanetPosition) {
+  return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
+}
+
+function formatPlanetPlacementLine(position: PlanetPosition) {
+  return `${formatPlanetPlacementTitle(position)} ${formatPlanetDegree(position)}`;
+}
+
 function wheelPlanetIconFile(position: PlanetPosition) {
   if (position.motion === "retrograde") {
     return wheelPlanetRetrogradeIconFiles[position.planet] ?? wheelPlanetIconFiles[position.planet];
@@ -221,7 +229,7 @@ export const SkyWheel = memo(function SkyWheel({
           visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
         }
 
-        const placementLine = `${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`;
+        const placementLine = formatPlanetPlacementLine(position);
 
         return [
           position.planet,
@@ -458,7 +466,7 @@ export const SkyWheel = memo(function SkyWheel({
             ? (() => {
                 const { aspectLine, placementLine } = tooltipDetailsByPlanet.get(activeTooltipPosition.planet) ?? {
                   aspectLine: "",
-                  placementLine: `${activeTooltipPosition.planet} in ${activeTooltipPosition.sign} ${formatPlanetDegree(activeTooltipPosition)}`
+                  placementLine: formatPlanetPlacementLine(activeTooltipPosition)
                 };
 
                 return (
@@ -596,7 +604,7 @@ export const SynastryWheel = memo(function SynastryWheel({
         key={`${ring}-${position.planet}`}
         className={`planet-marker ${ring === "inner" ? "planet-marker-inner" : "planet-marker-outer"}`}
         role="img"
-        aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${position.planet} in ${position.sign} ${formatPlanetDegree(position)}`}
+        aria-label={`${ring === "outer" ? "Outer" : "Inner"} chart ${formatPlanetPlacementLine(position)}`}
       >
         <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
         <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>

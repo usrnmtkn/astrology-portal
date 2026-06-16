@@ -12,6 +12,8 @@ type ModalPortalProps = {
   width?: string;
 };
 
+let openModalCount = 0;
+
 export function ModalPortal({
   children,
   className = "",
@@ -31,6 +33,7 @@ export function ModalPortal({
 
   useEffect(() => {
     restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    openModalCount += 1;
     document.body.classList.add("modal-open");
 
     const focusTimer = window.setTimeout(() => {
@@ -77,7 +80,10 @@ export function ModalPortal({
     return () => {
       window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.classList.remove("modal-open");
+      openModalCount = Math.max(0, openModalCount - 1);
+      if (openModalCount === 0) {
+        document.body.classList.remove("modal-open");
+      }
       restoreFocusRef.current?.focus();
     };
   }, []);

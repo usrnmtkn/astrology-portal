@@ -38,7 +38,7 @@ export function FriendsPageShell({
       ) : (
         <>
           <div className="friends-page-heading">
-            <h2>friends.</h2>
+            <h1>friends.</h1>
           </div>
           <SegmentedControl<FriendsTopLevelView>
             value={activeView === "profile" ? "charts" : activeView}

@@ -41,7 +41,7 @@ function YouEmptyState({
 }) {
   return (
     <section className="you-empty-state" aria-label="Create your chart">
-      <h2>Create your chart.</h2>
+      <h1>Create your chart.</h1>
       <p>
         Add your birth details to see your natal placements and what today's sky may be bringing up.
       </p>
@@ -90,7 +90,7 @@ function YouProfileSummary({
         size="large"
       />
       <div className="you-profile-copy">
-        <h2>{profileName}</h2>
+        <h1>{profileName}</h1>
         {signaturesReady ? (
           <div className="you-signature-row" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>

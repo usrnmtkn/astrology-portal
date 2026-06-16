@@ -18,12 +18,12 @@
   margin-inline: auto;
 }
 
-.friends-page-heading h2 {
+.friends-page-heading h1 {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-page-title-size);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-tight);
+  font-weight: var(--weight-regular);
+  line-height: 1.04;
   letter-spacing: var(--tracking-display);
 }
 
@@ -124,7 +124,7 @@
   box-shadow: var(--card-shadow);
 }
 
-.you-empty-state h2 {
+.you-empty-state h1 {
   margin: 0;
   font-size: clamp(2.15rem, 5vw, 4rem);
   line-height: 0.98;
@@ -221,9 +221,9 @@
   max-width: 100%;
   overflow: visible;
   border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .manual-chart-row {
@@ -650,7 +650,7 @@
 
 .friend-chart-page--synastry,
 .friend-chart-page--composite {
-  --friend-wheel-stack-gap: 10px;
+  --friend-wheel-stack-gap: 18px;
 }
 
 .friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
@@ -717,7 +717,7 @@
 }
 
 .friend-hero-copy h2,
-.you-profile-copy h2 {
+.you-profile-copy h1 {
   overflow-wrap: anywhere;
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
@@ -789,6 +789,67 @@
 .friend-chart-page .friend-profile-copy-column > .friend-section-label:first-child,
 .friend-chart-page .friend-profile-copy-column > .section-label:first-child {
   margin-top: 0;
+}
+
+.relationship-explainer-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  width: 100%;
+  min-width: 0;
+  padding: 24px 28px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.relationship-explainer-card__glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-glyph);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.relationship-explainer-card__glyph img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.relationship-explainer-card__copy {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.relationship-explainer-card__kicker {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.relationship-explainer-card p {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  text-wrap: pretty;
 }
 
 .composite-placements-section {
@@ -966,19 +1027,28 @@
 }
 
 .friend-compare-pill {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   width: 100%;
   min-width: 0;
   min-height: 44px;
-  gap: 10px;
   padding: 6px 12px;
   border: 1px solid var(--control-border);
   border-radius: 999px;
   background: var(--control-bg);
   font-weight: var(--weight-semibold);
   overflow: hidden;
+}
+
+.friend-compare-pill-inner {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+  gap: 10px;
 }
 
 .friend-compare-pill svg {
@@ -1017,14 +1087,26 @@
   padding: 18px;
 }
 
+.friend-compare-modal-root {
+  z-index: calc(var(--z-modal) + 2);
+}
+
+.friend-compare-modal-root .modal-overlay {
+  background: rgba(229, 232, 238, 0.56);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friend-compare-modal-root .modal-overlay {
+  background: rgba(12, 13, 18, 0.62);
+}
+
 .modal-panel.friend-compare-popover {
   position: relative;
-  top: auto;
-  bottom: auto;
-  left: auto;
-  right: auto;
-  width: min(var(--modal-width, 420px), 100%);
+  inset: auto;
+  width: min(var(--modal-width), 100%);
   max-width: 100%;
+  max-height: min(620px, calc(100svh - 48px));
   transform: none;
   padding: 22px;
 }
@@ -1036,7 +1118,7 @@
   height: 34px;
 }
 
-.friend-compare-modal .section-label {
+.friend-compare-popover .section-label {
   padding-right: 42px;
 }
 
@@ -1066,7 +1148,7 @@
   border-bottom: 0;
 }
 
-.friend-compare-modal .friend-compare-list {
+.friend-compare-popover .friend-compare-list {
   margin-top: 14px;
 }
 
@@ -1165,15 +1247,16 @@
   position: relative;
   overflow: visible;
   grid-template-columns: 1fr;
+  gap: 0;
   margin-top: 12px;
-  border: 1px solid var(--table-border);
-  border-radius: var(--table-radius);
-  background: var(--table-bg);
+  border: 0;
+  border-radius: var(--card-radius);
+  background: transparent;
+  box-shadow: none;
 }
 
 .synastry-placement-column-inner .synastry-placement-table {
-  border-color: color-mix(in srgb, var(--synastry-accent) 22%, transparent);
-  background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
+  background: transparent;
 }
 
 .synastry-placement-row {
@@ -1183,14 +1266,16 @@
   min-width: 0;
   gap: 10px;
   padding: 12px 14px;
-  border: 0;
-  border-bottom: 1px solid var(--table-row-border);
+  border: 1px solid var(--card-border);
+  border-bottom: 0;
+  border-radius: 0;
   background: var(--table-row-bg);
+  box-shadow: none;
   overflow: visible;
 }
 
 .synastry-placement-column-inner .synastry-placement-row {
-  border-bottom-color: color-mix(in srgb, var(--synastry-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--synastry-accent) 18%, var(--card-border));
   background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
 }
 
@@ -1202,7 +1287,7 @@
 }
 
 .synastry-placement-row:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .synastry-placement-lead {
@@ -1297,7 +1382,8 @@
 .synastry-placement-chip small,
 .synastry-placement-empty {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 4px 8px;
   color: var(--muted);
   font-family: var(--font-body);
@@ -1316,9 +1402,10 @@
   position: relative;
   overflow: visible;
   min-width: 0;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .friend-placement-column-title {
@@ -1339,10 +1426,11 @@
 .friend-placement-table {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   width: 100%;
   max-width: none;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--card-radius);
   background: transparent;
   box-shadow: none;
   overflow: visible;
@@ -1438,34 +1526,40 @@
 }
 
 .friend-placement-row .planet-placement-row {
-  border-bottom: 1px solid var(--card-border);
+  border: 1px solid var(--card-border);
+  border-bottom: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .friend-placement-row .placement-table-row {
-  border-bottom: 1px solid var(--card-border);
+  border: 1px solid var(--card-border);
+  border-bottom: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .friend-placement-row:last-child .planet-placement-row {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .friend-placement-row:last-child .placement-table-row {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: calc(var(--card-radius) - 1px);
-  border-top-right-radius: calc(var(--card-radius) - 1px);
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
 }
 
 .friend-placement-column-title + .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
 }
 
 .friend-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-bottom-right-radius: calc(var(--card-radius) - 1px);
-  border-bottom-left-radius: calc(var(--card-radius) - 1px);
+  border-bottom-right-radius: var(--card-radius);
+  border-bottom-left-radius: var(--card-radius);
 }
 
 .friend-chart-page .friend-placement-row-compact .planet-placement-row {
@@ -1481,25 +1575,28 @@
 }
 
 .synastry-placement-table .planet-placement-row {
-  border-bottom: 1px solid var(--friend-placement-row-border, var(--card-border));
+  border: 1px solid var(--friend-placement-row-border, var(--card-border));
+  border-bottom: 0;
+  border-radius: 0;
   background: var(--friend-placement-row-bg, var(--card-bg));
+  box-shadow: none;
 }
 
 .synastry-placement-table .planet-placement-row:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid var(--friend-placement-row-border, var(--card-border));
 }
 
 .synastry-placement-table > .synastry-placement-row:first-child,
 .synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: calc(var(--card-radius) - 1px);
-  border-top-right-radius: calc(var(--card-radius) - 1px);
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
   background-clip: padding-box;
 }
 
 .synastry-placement-table > .synastry-placement-row:last-child,
 .synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-bottom-right-radius: calc(var(--card-radius) - 1px);
-  border-bottom-left-radius: calc(var(--card-radius) - 1px);
+  border-bottom-right-radius: var(--card-radius);
+  border-bottom-left-radius: var(--card-radius);
   background-clip: padding-box;
 }
 
@@ -1533,8 +1630,9 @@
   .friend-chart-page .friend-placement-column,
   .friend-chart-page .friend-placement-table
 ) {
-  border-color: var(--card-border);
-  background: var(--card-bg);
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row {
@@ -1888,6 +1986,7 @@
 .app-shell.mode-friends {
   --friends-page-rail: min(1640px, calc(100vw - 96px));
   --friend-detail-copy-width: minmax(480px, 532px);
+  --friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
 }
 
 .app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
@@ -1907,7 +2006,7 @@
 
 .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
   gap: 24px;
-  margin-top: clamp(24px, 3vw, 42px);
+  margin-top: var(--friend-detail-top-clearance);
   max-width: var(--friends-page-rail);
 }
 
@@ -1928,11 +2027,12 @@
 }
 
 .app-shell.mode-friends .manual-chart-cards {
-  border-radius: 28px;
-  overflow: hidden;
+  border-radius: 0 !important;
+  overflow: visible;
 }
 
 .app-shell.mode-friends .manual-chart-row {
+  border-radius: var(--card-radius);
   min-height: 140px;
   padding: 20px 40px;
 }
@@ -1952,6 +2052,18 @@
 .app-shell.mode-friends .friend-view-tabs {
   max-width: none;
   width: 100%;
+}
+
+.app-shell.mode-friends .friend-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 0;
+  padding: var(--segmented-padding);
+}
+
+.app-shell.mode-friends .friend-view-tabs .segmented-control__item {
+  width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 1040px) {
@@ -1975,7 +2087,7 @@
     justify-self: center;
     max-width: min(560px, 42vw);
     position: sticky;
-    top: 108px;
+    top: var(--friend-detail-top-clearance);
   }
 
   .app-shell.mode-friends .friend-detail-chart-rail .friend-synastry-wheel-shell,
@@ -1997,7 +2109,7 @@
   }
 
   .app-shell.mode-friends .friend-view-tabs {
-    min-height: 58px;
+    min-height: 0;
   }
 }
 

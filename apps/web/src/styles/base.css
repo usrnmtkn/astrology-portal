@@ -24,7 +24,9 @@ body {
   background-repeat: no-repeat;
   color: var(--ink);
   font-family: var(--font-body);
+  font-size: var(--text-body);
   font-variant-numeric: tabular-nums;
+  line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
   letter-spacing: var(--tracking-normal);
 }
@@ -74,10 +76,26 @@ h6,
 .modal h2,
 .detail-modal h2,
 .today-hero h1,
-.you-profile-copy h2,
+.you-profile-copy h1,
 .friend-hero-card h2,
 .brand-word {
   font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+}
+
+.screen-title,
+.page-title,
+.modal h2,
+.detail-modal h2,
+.today-hero h1 {
+  font-weight: var(--weight-regular);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
+}
+
+.brand-word {
+  font-family: var(--font-brand);
 }
 
 .astro-glyph,
@@ -103,27 +121,26 @@ svg {
 .type-label {
   font-family: var(--font-display);
   color: var(--ink);
-  letter-spacing: 0;
 }
 
 .type-hero,
 .type-display {
   font-size: var(--text-display);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-tight);
+  font-weight: var(--weight-regular);
+  line-height: 1.04;
   letter-spacing: var(--tracking-display);
 }
 
 .type-page-title {
   font-size: var(--text-title);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-tight);
+  font-weight: var(--weight-regular);
+  line-height: 1.04;
   letter-spacing: var(--tracking-display);
 }
 
 .type-card-title {
   font-size: var(--text-card-title);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-title);
 }
@@ -132,7 +149,7 @@ svg {
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   line-height: 1.12;
   letter-spacing: var(--tracking-title);
 }
@@ -155,7 +172,7 @@ svg {
 }
 
 .type-body-mono {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
 }
 
 .type-body-strong {
