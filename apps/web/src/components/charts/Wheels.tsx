@@ -53,6 +53,14 @@ const signs = [
   "Pisces"
 ];
 
+const planetIconSize = 28;
+const sunIconSize = 30;
+const planetDegreeOffset = 28;
+const planetHitAreaRadius = 16;
+const angleIconSize = 34;
+const signIconSize = 27;
+const longSignIconSize = 29;
+
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
     return 0;
@@ -96,7 +104,7 @@ function wheelPlanetIconFile(position: PlanetPosition) {
 
 function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
   const iconHref = zodiacAssetHref(wheelPlanetIconFile(position));
-  const iconSize = position.planet === "Sun" ? 26 : 24;
+  const iconSize = position.planet === "Sun" ? sunIconSize : planetIconSize;
 
   if (iconHref) {
     return (
@@ -373,7 +381,7 @@ export const SkyWheel = memo(function SkyWheel({
           <g className="angular-labels" aria-label="Chart angles">
             {angularLabels.map(({ label, x, y }) => {
               const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-              const iconSize = 30;
+              const iconSize = angleIconSize;
 
               return iconHref ? (
                 <image
@@ -402,7 +410,7 @@ export const SkyWheel = memo(function SkyWheel({
             const tickAngle = planetAngle(position);
             const tickOuter = point(tickAngle, radius.signInner - 5);
             const tickInner = point(tickAngle, radius.signInner - 17);
-            const degreeOffset = inwardMarkerOffset(center, marker, 24);
+            const degreeOffset = inwardMarkerOffset(center, marker, planetDegreeOffset);
             const tooltipLines = tooltipDetailsByPlanet.get(position.planet)?.lines ?? [];
 
             return (
@@ -426,7 +434,7 @@ export const SkyWheel = memo(function SkyWheel({
               >
                 <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
                 <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-                  <circle cx={0} cy={0} r="14" className="planet-hit-area" />
+                  <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
                   <WheelPlanetGlyph position={position} />
                   <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
                     {formatWheelDegree(position)}
@@ -439,7 +447,7 @@ export const SkyWheel = memo(function SkyWheel({
         <g className="sign-labels">
           {signLabels.map(({ sign, isLong, x, y }) => {
             const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-            const iconSize = sign === "Sagittarius" ? 25 : 23;
+            const iconSize = sign === "Sagittarius" ? longSignIconSize : signIconSize;
             const className = isLong ? "sign-label-long" : undefined;
 
             return (
@@ -597,7 +605,7 @@ export const SynastryWheel = memo(function SynastryWheel({
     const tickInnerRadius = ring === "outer" ? radius.signInner - 17 : radius.innerRingOuter - 17;
     const tickOuter = point(angle, tickOuterRadius);
     const tickInner = point(angle, tickInnerRadius);
-    const degreeOffset = inwardMarkerOffset(center, marker, 23);
+    const degreeOffset = inwardMarkerOffset(center, marker, planetDegreeOffset);
 
     return (
       <g
@@ -608,7 +616,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       >
         <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
         <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
-          <circle cx={0} cy={0} r={ring === "outer" ? "14" : "13"} className="planet-hit-area" />
+          <circle cx={0} cy={0} r={ring === "outer" ? planetHitAreaRadius : planetHitAreaRadius - 1} className="planet-hit-area" />
           <WheelPlanetGlyph position={position} />
           <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
@@ -728,7 +736,7 @@ export const SynastryWheel = memo(function SynastryWheel({
         <g className="angular-labels" aria-label="Chart angles">
           {angularLabels.map(({ label, x, y }) => {
             const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-            const iconSize = 30;
+            const iconSize = angleIconSize;
 
             return iconHref ? (
               <image
@@ -759,7 +767,7 @@ export const SynastryWheel = memo(function SynastryWheel({
       <g className="sign-labels">
         {signLabels.map(({ sign, isLong, x, y }) => {
           const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-          const iconSize = sign === "Sagittarius" ? 25 : 23;
+          const iconSize = sign === "Sagittarius" ? longSignIconSize : signIconSize;
           const className = isLong ? "sign-label-long" : undefined;
 
           return (

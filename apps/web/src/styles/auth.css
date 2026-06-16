@@ -114,7 +114,9 @@
 
 .auth-card__subtitle,
 .signup-heading h3 {
-  margin: -12px 0 24px;
+  --auth-subtitle-heading-overlap: -12px;
+
+  margin: var(--auth-subtitle-heading-overlap) 0 24px;
   color: var(--app-muted);
   font-size: 1rem;
   font-weight: var(--font-weight-regular);
@@ -141,7 +143,7 @@
   display: grid;
   gap: 8px;
   color: var(--muted);
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -168,7 +170,7 @@
   color: var(--app-muted);
   font-family: var(--font-ui);
   font-size: 0.75rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   line-height: 1;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -241,7 +243,7 @@
   background-size: 7px 7px, 7px 7px;
   background-repeat: no-repeat;
   padding-right: 48px;
-  font-weight: 800;
+  font-weight: var(--weight-semibold);
 }
 
 .signup-city-search {
@@ -256,7 +258,7 @@
 
 .signup-city-search label > span {
   color: var(--muted);
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -344,7 +346,7 @@
 .signup-time-control .time-separator {
   color: var(--muted);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
 }
 
 .signup-meridiem {
@@ -374,14 +376,14 @@
   border-radius: 14px;
   background: transparent;
   color: var(--muted);
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
 }
 
 .auth-ampm-toggle button {
   border: 0;
   background: transparent;
   color: var(--app-muted);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .signup-meridiem button.active {
@@ -408,7 +410,7 @@
   gap: 10px;
   width: fit-content;
   color: var(--ink);
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -420,7 +422,7 @@
   margin-top: 16px;
   color: var(--app-text);
   font-size: 0.95rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .auth-checkbox-row input {
@@ -461,7 +463,7 @@
   justify-content: center;
   gap: 8px;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
 }
 
 .signin-note button {
@@ -470,7 +472,7 @@
   background: var(--surface-2);
   color: var(--ink);
   padding: 8px 12px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
 }
 
 .signin-note button:hover {
@@ -558,7 +560,7 @@
   margin: 24px 0 20px;
   color: var(--app-muted);
   font-size: 0.85rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .email-divider::before,
@@ -580,6 +582,6 @@
   color: var(--app-bg);
   font-family: var(--font-ui);
   font-size: 1rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   cursor: pointer;
 }

@@ -19,7 +19,7 @@ type ChartAngleProjectionOptions = {
 type AngleSegment = readonly [number, number, number, number];
 
 export const chartHouseLabelRadiusFactor = 0.38;
-export const wheelViewBox = "-20 -20 640 640";
+export const wheelViewBox = "-24 -24 648 648";
 export const angleAxisOuterPadding = 20;
 export const angleLabelOuterPadding = 20;
 

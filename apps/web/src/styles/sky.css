@@ -383,7 +383,7 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--article-label-size);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -489,11 +489,13 @@
 
 .ro-cluster-badge,
 .ro-more-badge {
+  --retrograde-cluster-overlap: -10px;
+
   display: grid;
   place-items: center;
   width: 32px;
   height: 32px;
-  margin-left: -10px;
+  margin-left: var(--retrograde-cluster-overlap);
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
@@ -660,9 +662,11 @@
 }
 
 .retro-badge .rx {
+  --retrograde-badge-rx-offset: -4px;
+
   position: absolute;
   top: 0;
-  right: -4px;
+  right: var(--retrograde-badge-rx-offset);
   display: grid;
   place-items: center;
   width: 26px;
@@ -672,7 +676,7 @@
   color: var(--pill-fg);
   padding: 0;
   font-size: 14px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
@@ -928,21 +932,23 @@
 
 .moon-phase-art--waxing-gibbous::after,
 .moon-phase-art--waning-gibbous::after {
+  --moon-phase-mask-bleed: -1px;
+
   content: "";
   position: absolute;
-  top: -1px;
-  bottom: -1px;
+  top: var(--moon-phase-mask-bleed);
+  bottom: var(--moon-phase-mask-bleed);
   width: 44%;
   border-radius: inherit;
   background: var(--moon-phase-shadow, #d8d7cf);
 }
 
 .moon-phase-art--waxing-gibbous::after {
-  left: -1px;
+  left: var(--moon-phase-mask-bleed);
 }
 
 .moon-phase-art--waning-gibbous::after {
-  right: -1px;
+  right: var(--moon-phase-mask-bleed);
 }
 
 .next-lun {

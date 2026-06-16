@@ -30,6 +30,7 @@
   --color-accent: #4e5360;
   --color-accent-bg: rgba(28, 32, 52, 0.06);
   --color-wheel-line: rgba(28, 32, 52, 0.16);
+  --color-wheel-tick: rgba(28, 32, 52, 0.42);
   --color-wheel-soft: rgba(28, 32, 52, 0.07);
   --color-wheel-label: rgba(28, 32, 52, 0.45);
   --color-wheel-degree-label: rgba(28, 32, 52, 0.68);
@@ -91,6 +92,7 @@
   --accent-bg: var(--color-accent-bg);
   --article-link: #2a55c8;
   --wheel-line: var(--color-wheel-line);
+  --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
   --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);
@@ -105,8 +107,8 @@
   --chart-glyph-filter: var(--filter-glyph-current);
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
-  --chart-sign-label-size: 13px;
-  --chart-planet-glyph-size: 24px;
+  --chart-sign-label-size: 14px;
+  --chart-planet-glyph-size: 28px;
   --chart-degree-size: 12px;
   --status-alert: var(--color-status-alert);
   --retrograde-accent: var(--color-retrograde-accent);
@@ -296,7 +298,8 @@
   --id-name-size: 22px;
   --id-signature-size: 13.5px;
   --id-signature-glyph-size: 14px;
-  --id-tabs-margin: -14px 0 0;
+  --id-tabs-overlap-y: 14px;
+  --id-tabs-margin: calc(var(--id-tabs-overlap-y) * -1) 0 0;
   --input-height: var(--sp-7);
   --input-radius: var(--radius-sm);
   --input-bg: var(--surface-2);
@@ -308,7 +311,7 @@
   --modal-radius: var(--radius);
   --modal-padding: var(--sp-4);
   --modal-width: 560px;
-  --chart-size: clamp(520px, 38vw, 620px);
+  --chart-size: clamp(560px, 42vw, 700px);
   --chart-line: var(--wheel-line);
   --chart-soft: var(--wheel-soft);
   --chart-label: var(--wheel-label);
@@ -362,14 +365,14 @@
   --mobile-card-padding: 20px;
   --mobile-row-padding: 18px 16px;
   --mobile-row-gap: var(--sp-1);
-  --mobile-chart-max: 420px;
+  --mobile-chart-max: 520px;
   --mobile-control-inset: 20px;
   --mobile-edge-inset: 14px;
   --tablet-nav-reserved-width: 112px;
   --mobile-nav-reserved-width: 88px;
   --mobile-menu-width: 260px;
   --mobile-settings-control-reserved-width: 84px;
-  --tablet-chart-max: 620px;
+  --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;
   --tablet-friend-page-max: 760px;
   --friends-content-width: 1040px;
@@ -381,10 +384,10 @@
   --top-action-icon-size: 20px;
   --top-control-gap: var(--sp-2);
   --radius-card: var(--card-radius);
-  --chart-layout-max: 1440px;
-  --chart-column-width: minmax(520px, 640px);
-  --content-column-width: minmax(560px, 680px);
-  --chart-layout-gap: clamp(48px, 5vw, 88px);
+  --chart-layout-max: 1520px;
+  --chart-column-width: minmax(560px, 720px);
+  --content-column-width: minmax(520px, 680px);
+  --chart-layout-gap: clamp(48px, 4.5vw, 80px);
   --shared-chart-size: var(--chart-size);
   --nav-safe-offset: calc(var(--nav-height) + 72px);
   --chart-wheel-top-offset: calc(var(--nav-height) + clamp(88px, 11vh, 148px));
@@ -440,6 +443,7 @@
   --color-accent: #c9ccd6;
   --color-accent-bg: rgba(255, 255, 255, 0.07);
   --color-wheel-line: rgba(255, 255, 255, 0.22);
+  --color-wheel-tick: rgba(255, 255, 255, 0.48);
   --color-wheel-soft: rgba(255, 255, 255, 0.13);
   --color-wheel-label: rgba(255, 255, 255, 0.5);
   --color-wheel-degree-label: rgba(255, 255, 255, 0.74);
@@ -491,6 +495,7 @@
   --accent-bg: var(--color-accent-bg);
   --article-link: #8fb0ff;
   --wheel-line: var(--color-wheel-line);
+  --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
   --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);

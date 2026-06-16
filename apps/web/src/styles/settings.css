@@ -99,7 +99,7 @@ button.settings-signout-row {
 .settings-row label,
 .settings-profile-row strong,
 .account-editable-row label {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -109,7 +109,7 @@ button.settings-signout-row {
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: var(--text-body-sm, 14px);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1.2;
   text-transform: uppercase;
@@ -155,7 +155,7 @@ button.settings-signout-row {
   display: block;
   color: var(--ink);
   font-size: var(--type-md);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   line-height: 1.2;
 }
 
@@ -187,7 +187,7 @@ button.settings-signout-row {
   color: var(--muted);
   min-width: 104px;
   padding: 12px 24px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
 }
 
 .settings-theme-control button.active {

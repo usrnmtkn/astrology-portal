@@ -114,7 +114,7 @@
 .angular-labels text {
   fill: var(--chart-label);
   font-size: var(--text-description);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
   dominant-baseline: middle;
   pointer-events: none;
   text-anchor: middle;
@@ -171,7 +171,7 @@
   fill: var(--chart-degree-label, var(--chart-label));
   font-family: var(--font-body);
   font-size: var(--chart-degree-size, 10px);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
   dominant-baseline: central;
   letter-spacing: 0;
   text-anchor: middle;
@@ -179,11 +179,11 @@
 
 .planet-tick,
 .wheel-placement__tick {
-  stroke: var(--wheel-line);
+  stroke: var(--wheel-tick, var(--wheel-line));
   stroke-linecap: round;
-  stroke-width: 1.35;
+  stroke-width: 1.55;
   vector-effect: non-scaling-stroke;
-  opacity: 0.72;
+  opacity: 0.9;
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(.planet-tick, .wheel-placement__tick) {
@@ -249,7 +249,7 @@
 
 .floating-tooltip--planet strong {
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .floating-tooltip--planet span {
@@ -345,7 +345,7 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 13px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
@@ -397,5 +397,7 @@
 }
 
 .chart-fullscreen-footer .friend-chart-legend {
-  margin-top: -2px;
+  --chart-fullscreen-legend-optical-offset: -2px;
+
+  margin-top: var(--chart-fullscreen-legend-optical-offset);
 }

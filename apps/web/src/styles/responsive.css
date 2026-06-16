@@ -172,7 +172,29 @@
 /* Responsive: compact sky/update rows */
 @media (max-width: 760px) {
   .sky-lunar-pills {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sky-lunar-pill {
+    min-height: 74px;
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .sky-lunar-pill-icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .sky-lunar-pill-copy h3 {
+    gap: 4px;
+    font-size: 0.88rem;
+  }
+
+  .sky-lunar-pill-copy h3 small,
+  .sky-lunar-pill-sub {
+    font-size: 0.68rem;
   }
 
   .updates-aspect-row {
@@ -343,6 +365,11 @@
     overflow-x: hidden;
   }
 
+  .chart-layout,
+  .sky-layout {
+    gap: 24px;
+  }
+
   .chart-shell,
   .chart-frame,
   .wheel,
@@ -386,7 +413,6 @@
     gap: var(--sp-half) var(--sp-1);
   }
 
-  .sky-lunar-pills,
   .auth-shell,
   .signup-grid,
   .manual-chart-grid,
