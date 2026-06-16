@@ -402,14 +402,6 @@
   margin-inline: auto;
 }
 
-.auth-shell--split {
-  display: grid;
-  grid-template-columns: minmax(420px, 520px) minmax(420px, 560px);
-  align-items: center;
-  width: min(1180px, 100%);
-  gap: clamp(48px, 7vw, 96px);
-}
-
 .signup-split {
   width: 100%;
 }
@@ -421,8 +413,7 @@
 
 .signup-story,
 .signup-form,
-.auth-card,
-.auth-message-card {
+.auth-card {
   border: 1px solid var(--card-border);
   border-radius: 32px;
   background: var(--card-bg);
@@ -585,7 +576,6 @@
 }
 
 .auth-input,
-.auth-select,
 .auth-page .signup-field input,
 .auth-page .signup-field select,
 .auth-page .signup-city-search label > input,
@@ -617,7 +607,6 @@
 }
 
 .auth-input:focus,
-.auth-select:focus,
 .auth-page .signup-field input:focus,
 .auth-page .signup-field select:focus,
 .auth-page .city-search-control input:focus {
@@ -1214,8 +1203,7 @@
   gap: var(--section-gap);
 }
 
-.chart-row:not(.manual-chart-row),
-.chart-row-static {
+.chart-row:not(.manual-chart-row) {
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) auto;
   gap: 16px;
@@ -1225,8 +1213,7 @@
   background: var(--card-bg);
 }
 
-.chart-row:not(.manual-chart-row):last-child,
-.chart-row-static:last-child {
+.chart-row:not(.manual-chart-row):last-child {
   border-bottom: 0;
 }
 
@@ -1243,13 +1230,11 @@
   .sky-lunar-pill,
   .settings-card,
   .settings-account-card,
-  .friend-placement-column,
   .synastry-placement-row,
   .friend-hero-card,
   .you-profile-card,
   .you-signatures-card,
   .friend-signature-card,
-  .manual-chart-cards,
   .friends-feed-card,
   .placement-table-card,
   .placement-table-wrap,
@@ -1277,12 +1262,10 @@
   .aspects-card,
   .friend-hero-card,
   .friend-signature-card,
-  .friend-placement-column,
   .synastry-placement-column,
   .synastry-placement-row,
   .synastry-placement-table,
   .composite-section-card,
-  .manual-chart-cards,
   .manual-chart-row,
   .friends-feed-card,
   .placement-table-card,
@@ -1299,7 +1282,6 @@
 
 :is(.theme-dark, [data-theme="dark"]) :where(
   .chart-row:not(.manual-chart-row),
-  .chart-row-static,
   .sky-pl-row,
   .placement-row,
   .placement-table-row,
@@ -1358,7 +1340,6 @@
   select,
   textarea,
   .auth-input,
-  .auth-select,
   .city-search-control,
   .city-search-control input
 ) {

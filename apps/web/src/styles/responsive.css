@@ -17,10 +17,6 @@
     gap: 36px;
   }
 
-  .chart-page-shell {
-    width: min(760px, calc(100vw - var(--page-gutter) * 2));
-  }
-
   .chart-layout {
     grid-template-columns: 1fr;
     width: min(760px, calc(100vw - var(--page-gutter) * 2));
@@ -28,7 +24,6 @@
   }
 
   .chart-layout__visual,
-  .chart-page-visual,
   .sky-chart-column,
   .friend-detail-chart-rail {
     position: relative;
@@ -37,7 +32,6 @@
   }
 
   .chart-layout__content,
-  .chart-page-content,
   .sky-content-column {
     order: 2;
   }
@@ -135,15 +129,6 @@
     padding-top: 96px;
   }
 
-  .auth-shell--split {
-    grid-template-columns: 1fr;
-    width: min(560px, 100%);
-    gap: 24px;
-  }
-
-  .auth-message-card {
-    order: -1;
-  }
 }
 
 @media (max-height: 900px) and (min-width: 721px) {
@@ -345,8 +330,6 @@
   .portal-grid.page-shell,
   .chart-layout,
   .sky-layout,
-  .chart-page-layout,
-  .chart-page-shell,
   .relationship-detail-layout,
   .friend-chart-page,
   .friend-focus-panel,
