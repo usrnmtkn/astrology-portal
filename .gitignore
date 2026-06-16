@@ -6,3 +6,5 @@ dist/
 npm-debug.log*
 .vercel
 ephemeris/
+test-results/
+playwright-report/

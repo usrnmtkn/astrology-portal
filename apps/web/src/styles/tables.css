@@ -23,14 +23,9 @@
   grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: start;
   width: 100%;
-  min-width: 0;
   gap: 16px;
   padding: var(--card-row-padding, 16px 20px);
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
   background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-  text-align: left;
 }
 
 .sky-pl-item:last-child .sky-pl {
@@ -140,7 +135,7 @@
 
 .sky-pl-rx {
   color: var(--retrograde-accent);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .sky-pl-status {
@@ -234,14 +229,8 @@
   gap: var(--sp-2);
   align-items: center;
   width: 100%;
-  min-width: 0;
   padding: var(--card-row-padding, 16px 20px);
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
   background: var(--table-row-bg);
-  box-shadow: var(--card-shadow);
-  color: var(--ink);
-  text-align: left;
 }
 
 button.placement-table-row {
@@ -299,12 +288,14 @@ button.placement-table-row {
 }
 
 .placement-table-row__rx {
+  --rx-label-tighten-offset: -2px;
+
   color: var(--muted);
   font-family: var(--font-body);
   font-size: 0.78em;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   line-height: 1;
-  margin-left: -2px;
+  margin-left: var(--rx-label-tighten-offset);
   vertical-align: 0.04em;
 }
 
@@ -343,15 +334,9 @@ button.placement-table-row {
   grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: start;
   width: 100%;
-  min-width: 0;
   gap: 16px;
   padding: var(--card-row-padding, 16px 20px);
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
   background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-  color: var(--ink);
-  text-align: left;
 }
 
 button.planet-placement-row {
@@ -473,7 +458,7 @@ button.planet-placement-row {
 
 .planet-placement-row__rx {
   color: var(--retrograde-accent);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .planet-placement-row__duration {
@@ -556,7 +541,7 @@ button.planet-placement-row {
   background: var(--surface-2);
   color: var(--muted);
   font-size: 0.78rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1;
   text-transform: uppercase;

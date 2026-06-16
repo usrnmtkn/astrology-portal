@@ -15,5 +15,5 @@
   background: var(--surface-2);
   color: var(--ink);
   padding: 16px 26px;
-  font-weight: 900;
+  font-weight: var(--weight-semibold);
 }

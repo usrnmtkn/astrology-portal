@@ -12,6 +12,7 @@
     "build": "npm run build -w @tldr/astro-knowledge && npm run build -w @tldr/web",
     "preview": "npm run preview -w @tldr/web",
     "typecheck": "npm run typecheck -w @tldr/web",
+    "visual:smoke": "playwright test -c playwright.config.ts",
     "build:knowledge": "npm run build -w @tldr/astro-knowledge",
     "build:web": "npm run build -w @tldr/web"
   },
@@ -20,6 +21,7 @@
     "@rollup/rollup-linux-x64-gnu": "^4.60.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.1"
   }
 }
