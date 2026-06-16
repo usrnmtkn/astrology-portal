@@ -38,6 +38,28 @@ class LocationInput(BaseModel):
     timeZone: Optional[str] = Field(None, examples=["America/New_York"])
 
 
+class TimezoneRequest(BaseModel):
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
+    date: str = Field(..., examples=["1994-04-12"])
+    time: Optional[str] = Field(None, examples=["08:35"])
+    timeZone: Optional[str] = Field(
+        None,
+        description="Optional IANA timezone override when the caller already knows it.",
+        examples=["America/New_York"],
+    )
+
+
+class TimezoneResponse(BaseModel):
+    timeZone: str
+    utcOffsetMinutes: int
+    isDst: bool
+    localDateTime: str
+    utcDateTime: str
+    source: str
+    warnings: List[str] = Field(default_factory=list)
+
+
 class ChartSettings(BaseModel):
     houseSystem: HouseSystem = HouseSystem.whole_sign
     zodiac: Zodiac = Zodiac.tropical
@@ -120,4 +142,3 @@ class NatalChartResponse(BaseModel):
     sect: Optional[str] = None
     dignitySummary: Dict[str, Any] = Field(default_factory=dict)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
-

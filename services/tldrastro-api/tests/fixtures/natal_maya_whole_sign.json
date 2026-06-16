@@ -1,0 +1,48 @@
+{
+  "request": {
+    "subject": {
+      "name": "Maya",
+      "datetime": {
+        "date": "1994-04-12",
+        "time": "08:35",
+        "timeKnown": true,
+        "timeZone": "America/New_York"
+      },
+      "location": {
+        "label": "New York, NY",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timeZone": "America/New_York"
+      },
+      "settings": {
+        "houseSystem": "whole_sign",
+        "zodiac": "tropical",
+        "aspectProfile": "standard"
+      }
+    },
+    "includeContentFacts": true
+  },
+  "expected": {
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical",
+    "positions": {
+      "Sun": { "longitude": 22.374299, "sign": "Aries", "house": 11, "motion": "direct" },
+      "Moon": { "longitude": 38.740565, "sign": "Taurus", "house": 12, "motion": "direct" },
+      "Mercury": { "longitude": 4.808084, "sign": "Aries", "house": 11, "motion": "direct" },
+      "Venus": { "longitude": 43.190084, "sign": "Taurus", "house": 12, "motion": "direct" },
+      "Mars": { "longitude": 358.267592, "sign": "Pisces", "house": 10, "motion": "direct" },
+      "Jupiter": { "longitude": 221.97747, "sign": "Scorpio", "house": 6, "motion": "retrograde" },
+      "Saturn": { "longitude": 338.52055, "sign": "Pisces", "house": 10, "motion": "direct" },
+      "True Node": { "longitude": 233.960624, "sign": "Scorpio", "house": 6, "motion": "retrograde" }
+    },
+    "angles": {
+      "Ascendant": { "longitude": 66.827408, "sign": "Gemini" },
+      "Midheaven": { "longitude": 312.764193, "sign": "Aquarius" }
+    },
+    "aspects": [
+      { "from": "Moon", "to": "Saturn", "type": "sextile", "orb": 0.22 },
+      { "from": "Venus", "to": "Jupiter", "type": "opposition", "orb": 1.2126 }
+    ]
+  }
+}
+
