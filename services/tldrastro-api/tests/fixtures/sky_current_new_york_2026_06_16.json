@@ -1,0 +1,56 @@
+{
+  "request": {
+    "datetime": {
+      "date": "2026-06-16",
+      "time": "12:00",
+      "timeKnown": true,
+      "timeZone": "America/New_York"
+    },
+    "location": {
+      "label": "New York, NY",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "timeZone": "America/New_York"
+    },
+    "settings": {
+      "houseSystem": "whole_sign",
+      "zodiac": "tropical",
+      "aspectProfile": "standard"
+    },
+    "includeContentFacts": true
+  },
+  "expected": {
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical",
+    "generatedAt": "2026-06-16T16:00:00+00:00",
+    "ascendant": { "sign": "Virgo", "longitude": 164.883529 },
+    "midheaven": { "sign": "Gemini", "longitude": 72.403683 },
+    "moonPhase": "Waxing Crescent",
+    "moonIllumination": 0.0365,
+    "moonStatus": {
+      "kind": "sign",
+      "sign": "Cancer",
+      "nextSign": "Leo",
+      "until": "2026-06-17T12:05:07+00:00"
+    },
+    "moonEvent": {
+      "name": "Full Moon",
+      "sign": "Capricorn"
+    },
+    "positions": {
+      "Sun": { "longitude": 85.527357, "sign": "Gemini", "house": 10, "motion": "direct" },
+      "Moon": { "longitude": 107.548086, "sign": "Cancer", "house": 11, "motion": "direct" },
+      "Mercury": { "longitude": 110.00997, "sign": "Cancer", "house": 11, "motion": "direct" },
+      "Venus": { "longitude": 123.741151, "sign": "Leo", "house": 12, "motion": "direct" },
+      "Mars": { "longitude": 51.257366, "sign": "Taurus", "house": 9, "motion": "direct" },
+      "Jupiter": { "longitude": 117.155454, "sign": "Cancer", "house": 11, "motion": "direct" },
+      "Saturn": { "longitude": 13.415014, "sign": "Aries", "house": 8, "motion": "direct" },
+      "True Node": { "longitude": 332.061109, "sign": "Pisces", "house": 7, "motion": "retrograde" }
+    },
+    "aspects": [
+      { "from": "Venus", "to": "Neptune", "type": "trine", "orb": 0.5592 },
+      { "from": "Mercury", "to": "Mars", "type": "sextile", "orb": 1.2474 }
+    ]
+  }
+}
+
