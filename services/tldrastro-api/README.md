@@ -50,6 +50,7 @@ engine behind it.
 - `POST /utils/timezone`
 - `POST /chart/natal`
 - `POST /chart/transits`
+- `POST /relationship/synastry`
 - `POST /sky/current`
 - `POST /timing/profections`
 - `POST /timing/personal`
