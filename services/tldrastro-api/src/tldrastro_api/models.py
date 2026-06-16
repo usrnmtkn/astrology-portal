@@ -276,3 +276,46 @@ class PersonalTimingResponse(BaseModel):
     activatedRuler: str
     activatedNatalPlanets: List[str] = Field(default_factory=list)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class SynastryRequest(BaseModel):
+    personA: ChartSubject
+    personB: ChartSubject
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+
+
+class SynastryContact(BaseModel):
+    id: str
+    fromPerson: Literal["A", "B"]
+    fromPoint: str
+    fromSign: str
+    fromHouse: Optional[int] = None
+    toPerson: Literal["A", "B"]
+    toPoint: str
+    toSign: str
+    toHouse: Optional[int] = None
+    aspect: str
+    orb: float
+    strength: int = Field(..., ge=0, le=100)
+    score: int = Field(..., ge=0)
+    knowledgeIds: List[str] = Field(default_factory=list)
+
+
+class HouseOverlay(BaseModel):
+    id: str
+    planetOwner: Literal["A", "B"]
+    houseOwner: Literal["A", "B"]
+    point: str
+    sign: str
+    house: int
+    knowledgeIds: List[str] = Field(default_factory=list)
+
+
+class SynastryResponse(BaseModel):
+    metadata: ChartMetadata
+    personA: NatalChartResponse
+    personB: NatalChartResponse
+    contacts: List[SynastryContact] = Field(default_factory=list)
+    houseOverlays: List[HouseOverlay] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)

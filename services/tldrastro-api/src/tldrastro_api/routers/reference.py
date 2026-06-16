@@ -41,7 +41,7 @@ def reference_config():
             "natal": True,
             "currentSky": True,
             "transits": True,
-            "synastry": False,
+            "synastry": True,
             "composite": False,
             "timeLords": True,
             "contentFacts": False,
