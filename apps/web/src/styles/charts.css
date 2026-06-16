@@ -168,7 +168,7 @@
 }
 
 .planet-degree {
-  fill: var(--chart-label);
+  fill: var(--chart-degree-label, var(--chart-label));
   font-family: var(--font-body);
   font-size: var(--chart-degree-size, 10px);
   font-weight: var(--weight-bold);

@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   justify-items: center;
-  gap: var(--page-stack-gap);
+  gap: var(--stack-gap);
   width: var(--page-content-width);
   margin: 0 auto;
   padding: var(--page-top) 0 var(--page-bottom);
@@ -21,15 +21,15 @@
 .friends-page-heading h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(4rem, 6vw, 6.75rem);
-  font-weight: 900;
-  line-height: 0.92;
-  letter-spacing: 0;
+  font-size: var(--text-page-title-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
 }
 
 .friends-top-tabs {
   justify-self: center;
-  margin: var(--sp-2) 0 var(--sp-3);
+  margin: 0;
 }
 
 .manual-chart-workspace-list-only {

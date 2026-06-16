@@ -1242,6 +1242,17 @@ function formatSkyDate(value: string) {
   });
 }
 
+function formatSkyHeroTitle(value: string, today = new Date()) {
+  const selectedDay = localDayStart(dateFromInput(value));
+  const todayDay = localDayStart(today);
+  const dayDelta = Math.round((selectedDay.getTime() - todayDay.getTime()) / 86_400_000);
+
+  if (dayDelta === -1) return "Yesterday, simple.";
+  if (dayDelta === 0) return "Today, simple.";
+  if (dayDelta === 1) return "Tomorrow, simple.";
+  return "The sky, simple.";
+}
+
 function formatPlacementDegree(position?: PlanetPosition) {
   if (!position) {
     return "";
@@ -2104,21 +2115,22 @@ function formatEditorialTime(date: Date) {
 function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Date()) {
   if (sameLocalDate(start, end)) {
     const dateLabel = sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
-    return `${dateLabel} · ${formatEditorialTime(start)} – ${formatEditorialTime(end)}`;
+    return `${dateLabel} · ${formatEditorialTime(start)} - ${formatEditorialTime(end)}`;
   }
 
-  const sameYear = start.getFullYear() === end.getFullYear();
-  const sameMonth = sameYear && start.getMonth() === end.getMonth();
+  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
+  const showYear = !sameYear || start.getUTCFullYear() !== referenceDate.getUTCFullYear();
 
   if (sameMonth) {
-    return `${formatEditorialDate(start)} – ${formatEditorialDate(end)}`;
+    return `${formatEditorialDate(start, showYear)} - ${end.getUTCDate()}${showYear ? `, ${end.getUTCFullYear()}` : ""}`;
   }
 
   if (sameYear) {
-    return `${formatEditorialDate(start)} – ${formatEditorialDate(end)}`;
+    return `${formatEditorialDate(start, showYear)} - ${formatEditorialDate(end, showYear)}`;
   }
 
-  return `${formatEditorialDate(start, true)} – ${formatEditorialDate(end, true)}`;
+  return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
 }
 
 function formatTransitRange(start: Date, end: Date) {
@@ -2328,63 +2340,43 @@ type AspectTimingDisplay = {
   label: string;
 };
 
-function aspectDurationLabelForWindow(start: Date, end: Date) {
+function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = new Date()) {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
 
-  if (durationMs < 86_400_000) {
-    const minutes = Math.max(1, Math.ceil(durationMs / 60_000));
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-
-    if (hours < 1) {
-      return `${minutes}MIN`;
-    }
-
-    return remainingMinutes > 0 ? `${hours}H ${remainingMinutes}MIN` : `${hours}H`;
+  if (sameLocalDate(start, end)) {
+    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
   }
 
-  if (durationDays < 30) {
-    return `${Math.max(1, Math.round(durationDays))}D`;
+  if (durationDays <= 3) {
+    return "Active for a few days";
   }
 
-  const months = Math.max(1, Math.round(durationDays / 30.44));
-
-  if (months < 12) {
-    return `${months}M`;
+  if (durationDays <= 10) {
+    return "This week";
   }
 
-  const years = Math.floor(months / 12);
-  const remainingMonths = months % 12;
+  if (durationDays <= 75) {
+    return "Longer influence";
+  }
 
-  return remainingMonths > 0 ? `${years}Y ${remainingMonths}M` : `${years}Y`;
+  return "Ongoing";
 }
 
-function formatAspectRangeDateWithTime(date: Date, includeDate = true) {
-  const dateLabel = includeDate ? formatEditorialDate(date, date.getUTCFullYear() !== new Date().getUTCFullYear()) : "";
-  const timeLabel = formatEditorialTime(date);
-
-  return dateLabel ? `${dateLabel}, ${timeLabel}` : timeLabel;
-}
-
-function aspectRangeLabelForWindow(start: Date, end: Date) {
+function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date()) {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
 
-  if (durationMs < 86_400_000) {
-    if (sameLocalDate(start, end)) {
-      return `${formatAspectRangeDateWithTime(start)} – ${formatAspectRangeDateWithTime(end, false)}`;
-    }
-
-    return `${formatAspectRangeDateWithTime(start)} – ${formatAspectRangeDateWithTime(end)}`;
+  if (sameLocalDate(start, end)) {
+    return `${formatEditorialTime(start)} - ${formatEditorialTime(end)}`;
   }
 
-  if (durationDays < 365) {
+  if (durationMs < 86_400_000 || durationDays < 365) {
     if (sameLocalDate(start, end)) {
       return formatEditorialDate(start);
     }
 
-    return formatEditorialDateRange(start, end);
+    return formatEditorialDateRange(start, end, referenceDate);
   }
 
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -2393,12 +2385,12 @@ function aspectRangeLabelForWindow(start: Date, end: Date) {
     timeZone: "UTC"
   });
 
-  return `${formatter.format(start)} – ${formatter.format(end)}`;
+  return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
 
-function aspectTimingDisplayForWindow(start: Date, end: Date): AspectTimingDisplay {
-  const durationLabel = aspectDurationLabelForWindow(start, end);
-  const rangeLabel = aspectRangeLabelForWindow(start, end);
+function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = new Date()): AspectTimingDisplay {
+  const durationLabel = aspectTimingCategoryForWindow(start, end, referenceDate);
+  const rangeLabel = aspectRangeLabelForWindow(start, end, referenceDate);
 
   return {
     durationLabel,
@@ -2410,7 +2402,7 @@ function aspectTimingDisplayForWindow(start: Date, end: Date): AspectTimingDispl
 function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
 
-  return aspectTimingDisplayForWindow(window.start, window.end);
+  return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt));
 }
 
 function detailSectionTitle(index: number) {
@@ -2455,9 +2447,15 @@ function SkyDetailArticle({
   );
   const drilldown = detail.astrologyDrilldown;
   const [lede, ...sectionParagraphs] = paragraphs;
-  const articleSub = statement || (typeof lede === "string" ? lede : "");
+  const articleSub = (statement || (typeof lede === "string" ? lede : "")).trim();
+  const fallbackParagraphs = articleSub && typeof lede === "string" && articleSub === lede.trim()
+    ? sectionParagraphs
+    : paragraphs;
+  const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
   const visibleMetaRows = metaRows.filter((row) => row.label.toLowerCase() !== "signature");
+  const articleKicker = detail.kicker.trim();
+  const shareText = articleSub || detail.title;
 
   function copyArticleLink() {
     void navigator.clipboard?.writeText(window.location.href);
@@ -2467,7 +2465,7 @@ function SkyDetailArticle({
     if (navigator.share) {
       void navigator.share({
         title: shareTitle,
-        text: articleSub,
+        text: shareText,
         url: window.location.href
       });
       return;
@@ -2487,86 +2485,96 @@ function SkyDetailArticle({
         <span>Back</span>
       </button>
       <article className="article-shell sky-detail-article">
-        <header className="article-id sky-detail-id">
-          <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-          <p className="article-sub">
-            <span className={`article-sub__glyph${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}&#xFE0E;</span>
-            {articleSub}
-          </p>
-          <div className="article-byline">
-            <span className="by-author">By tldr astro</span>
-          </div>
-          <div className="article-share" aria-label="Share this article">
-            <span className="share-lab">Share:</span>
-            <div className="share-btns">
-              <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
-                <Link size={18} aria-hidden="true" />
-              </button>
-              <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
-                <ArrowUpRight size={18} aria-hidden="true" />
-              </button>
+        <div className="article-card sky-detail-card">
+          <header className="article-id sky-detail-id">
+            <div className="article-kicker-row">
+              <span className={`article-glyph-tag${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}&#xFE0E;</span>
+              {articleKicker ? <span className="article-kicker">{articleKicker}</span> : null}
             </div>
-          </div>
-          <hr className="article-rule" />
-          <div className="article-meta sky-detail-meta">
-            {visibleMetaRows.map((row) => (
-              <p className="m-row" key={`${row.label}-${row.value}`}>
-                <b>{row.label}:</b> {row.value}
-              </p>
-            ))}
-          </div>
-        </header>
-
-        <div className="article-body-card sky-detail-body">
-          <div className="article-body-inner">
-          {generatedSections.length > 0 ? (
-            generatedSections.map((section, index) => (
-              <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
-                <h2>{section.heading}</h2>
-                <p>{section.body}</p>
-              </section>
-            ))
-          ) : (
-            <>
-              <section className="article-section sky-detail-section">
-                <span className="article-section__eyebrow sky-detail-section-num">01 · What it means</span>
-                <h2>What it means</h2>
-                <p className="sky-detail-lede">{lede}</p>
-              </section>
-              {sectionParagraphs.map((paragraph, index) => (
-                <section className="article-section sky-detail-section" key={index}>
-                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + 2).padStart(2, "0")} · {detailSectionTitle(index)}</span>
-                  <h2>{detailSectionTitle(index)}</h2>
-                  <p>{paragraph}</p>
-                </section>
-              ))}
-            </>
-          )}
-          {drilldown ? (
-            <details className="sky-detail-drilldown">
-              <summary>{drilldown.title || "Why this?"}</summary>
-              <div className="sky-detail-drilldown-body">
-                {drilldown.summary ? <p>{drilldown.summary}</p> : null}
-                {drilldown.factors.length > 0 ? (
-                  <dl>
-                    {drilldown.factors.map((factor) => (
-                      <div key={`${factor.label}-${factor.technicalFact}`}>
-                        <dt>{factor.label}</dt>
-                        <dd>
-                          <strong>{factor.technicalFact}</strong>
-                          <span>{factor.plainMeaning}</span>
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : null}
-                {drilldown.whyThisScene ? <p>{drilldown.whyThisScene}</p> : null}
-                {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
+            <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
+            {articleSub ? <p className="article-sub">{articleSub}</p> : null}
+            <div className="article-header-actions">
+              <div className="article-byline">
+                <span className="by-author">By tldr astro</span>
               </div>
-            </details>
-          ) : null}
-          <div className="sky-detail-end" aria-hidden="true">✦</div>
+              <div className="article-share" aria-label="Share this article">
+                <span className="share-lab">Share:</span>
+                <div className="share-btns">
+                  <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
+                    <Link size={18} aria-hidden="true" />
+                  </button>
+                  <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
+                    <ArrowUpRight size={18} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            {visibleMetaRows.length > 0 ? (
+              <div className="article-meta sky-detail-meta">
+                {visibleMetaRows.map((row) => (
+                  <p className="m-row" key={`${row.label}-${row.value}`}>
+                    <b>{row.label}:</b> {row.value}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+          </header>
+
+          <hr className="article-rule" />
+
+          <div className="article-body-card sky-detail-body">
+            <div className="article-body-inner">
+              {generatedSections.length > 0 ? (
+                generatedSections.map((section, index) => (
+                  <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
+                    <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
+                    <h2>{section.heading}</h2>
+                    <p>{section.body}</p>
+                  </section>
+                ))
+              ) : (
+                <>
+                  {bodyLede ? (
+                    <section className="article-section sky-detail-section">
+                      <span className="article-section__eyebrow sky-detail-section-num">01 · What it means</span>
+                      <h2>What it means</h2>
+                      <p className="sky-detail-lede">{bodyLede}</p>
+                    </section>
+                  ) : null}
+                  {bodySectionParagraphs.map((paragraph, index) => (
+                    <section className="article-section sky-detail-section" key={index}>
+                      <span className="article-section__eyebrow sky-detail-section-num">{String(index + 2).padStart(2, "0")} · {detailSectionTitle(index)}</span>
+                      <h2>{detailSectionTitle(index)}</h2>
+                      <p>{paragraph}</p>
+                    </section>
+                  ))}
+                </>
+              )}
+              {drilldown ? (
+                <details className="sky-detail-drilldown">
+                  <summary>{drilldown.title || "Why this?"}</summary>
+                  <div className="sky-detail-drilldown-body">
+                    {drilldown.summary ? <p>{drilldown.summary}</p> : null}
+                    {drilldown.factors.length > 0 ? (
+                      <dl>
+                        {drilldown.factors.map((factor) => (
+                          <div key={`${factor.label}-${factor.technicalFact}`}>
+                            <dt>{factor.label}</dt>
+                            <dd>
+                              <strong>{factor.technicalFact}</strong>
+                              <span>{factor.plainMeaning}</span>
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : null}
+                    {drilldown.whyThisScene ? <p>{drilldown.whyThisScene}</p> : null}
+                    {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
+                  </div>
+                </details>
+              ) : null}
+              <div className="sky-detail-end" aria-hidden="true">✦</div>
+            </div>
           </div>
         </div>
       </article>
@@ -2815,7 +2823,7 @@ function transitItemActiveWindow(transit: TransitItem, generatedAt: string) {
 function transitItemTimingDisplay(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
 
-  return aspectTimingDisplayForWindow(window.start, window.end);
+  return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt));
 }
 
 function completedAgeOnDate(birthDate: string, currentDateValue: string) {
@@ -5520,7 +5528,7 @@ export function App() {
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <div className="sky-intro">
-                  <h1 className="sky-intro__lead">Today, simple.</h1>
+                    <h1 className="sky-intro__lead">{formatSkyHeroTitle(skyDate)}</h1>
                   <p className="sky-intro__copy">
                     What is up there today, and what it actually means down here.
                   </p>
@@ -5546,8 +5554,7 @@ export function App() {
                     onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
                   >
                     <MapPin size={18} aria-hidden="true" />
-                    <span>{sky.location.label}</span>
-                    <Pencil size={16} aria-hidden="true" />
+                    <span>{compactCityLabel(sky.location.label)}</span>
                   </button>
                 </div>
                 {datePickerOpen && (
@@ -6122,18 +6129,9 @@ function relationshipPossessiveName(name: string, isSelf = false) {
 }
 
 function MoonPhaseArt({ phase }: { phase: string }) {
-  const phaseEmojis: Record<string, string> = {
-    "New Moon": "🌑",
-    "Waxing Crescent": "🌒",
-    "First Quarter": "🌓",
-    "Waxing Gibbous": "🌔",
-    "Full Moon": "🌕",
-    "Waning Gibbous": "🌖",
-    "Last Quarter": "🌗",
-    "Waning Crescent": "🌘"
-  };
+  const phaseClass = phase.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-  return <span className="moon-phase-art" aria-hidden="true">{phaseEmojis[phase] ?? "🌙"}</span>;
+  return <span className={`moon-phase-art moon-phase-art--${phaseClass || "default"}`} aria-hidden="true" />;
 }
 
 type RetrogradeWindow = {
@@ -7776,7 +7774,7 @@ function SettingsView({
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
   const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
-  const currentCityDisplay = profile.currentLocation || defaultLocation.label;
+  const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
   const chartSettings = normalizeChartSettings(profile.settings);
 
   function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
@@ -7968,7 +7966,7 @@ function GuestSettingsView({
             <div className="settings-list">
               <div className="settings-row">
                 <span className="settings-row__label">Current location</span>
-                <span className="settings-row__value">{location.label}</span>
+                <span className="settings-row__value">{compactCityLabel(location.label)}</span>
               </div>
             </div>
           </div>
