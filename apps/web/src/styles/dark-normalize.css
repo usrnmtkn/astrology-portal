@@ -1,80 +1,3 @@
-:is(.theme-dark, [data-theme="dark"]) :where(
-  .segmented-control,
-  .section-segmented,
-  .today-pill,
-  .friend-compare-pill,
-  .sky-lunar-pill,
-  .settings-card,
-  .settings-account-card,
-  .synastry-placement-row,
-  .friend-hero-card,
-  .you-profile-card,
-  .you-signatures-card,
-  .friend-signature-card,
-  .friends-feed-card,
-  .placement-table-card,
-  .placement-table-wrap,
-  .planet-placement-list,
-  .list,
-  .you-list-card,
-  .aspects-card
-) {
-  background: var(--card-bg);
-  border-color: var(--card-border);
-  color: var(--ink);
-  box-shadow: var(--card-shadow);
-}
-
-:is(.theme-dark, [data-theme="dark"]) :where(
-  .sky-card,
-  .sky-chicklet,
-  .sky-lunar-summary,
-  .sky-pl-card,
-  .sky-pl-detail-card,
-  .retrograde-detail-card,
-  .you-profile-card,
-  .you-signatures-card,
-  .you-list-card,
-  .aspects-card,
-  .friend-hero-card,
-  .friend-signature-card,
-  .synastry-placement-column,
-  .synastry-placement-row,
-  .synastry-placement-table,
-  .composite-section-card,
-  .manual-chart-row,
-  .friends-feed-card,
-  .placement-table-card,
-  .planet-placement-list,
-  .settings-card,
-  .settings-account-card,
-  .modal-panel
-) {
-  border-color: var(--card-border);
-  background: var(--card-bg);
-  color: var(--ink);
-  box-shadow: var(--card-shadow);
-}
-
-:is(.theme-dark, [data-theme="dark"]) :where(
-  .chart-row:not(.manual-chart-row),
-  .sky-pl-row,
-  .placement-row,
-  .placement-table-row,
-  .planet-placement-row,
-  .aspect-row,
-  .synastry-placement-row,
-  .settings-row,
-  .settings-profile-row,
-  .settings-signout-row,
-  .account-editable-row,
-  .focus-row
-) {
-  border-bottom-color: var(--table-row-border);
-  background: var(--table-row-bg);
-  color: var(--ink);
-}
-
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-table {
   border-color: color-mix(in srgb, var(--synastry-accent) 24%, transparent);
   background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
@@ -95,20 +18,6 @@
   .settings-row
 ):hover {
   background: var(--surface-2);
-}
-
-:is(.theme-dark, [data-theme="dark"]) :where(
-  .placement-table-wrap,
-  .placement-table-card,
-  .planet-placement-list,
-  .manual-chart-cards,
-  .aspect-row-list,
-  .aspects-card,
-  .updates-aspect-list
-) {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(

@@ -1,0 +1,107 @@
+.sky-pl {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: start;
+  width: 100%;
+  gap: 16px;
+  padding: var(--card-row-padding, 16px 20px);
+  background: var(--card-bg);
+}
+
+.sky-pl-item:last-child .sky-pl {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.sky-pl-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: 48px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 2px;
+  font-family: var(--font-glyph);
+  font-size: 24px;
+  line-height: 1;
+  text-align: center;
+}
+
+.sky-pl-body,
+.sky-pl-main {
+  min-width: 0;
+}
+
+.sky-pl-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+}
+
+.sky-pl-title {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  overflow-wrap: normal;
+  word-break: normal;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--type-xl);
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: var(--tracking-title);
+}
+
+.sky-pl-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6em;
+  margin-top: 5px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+
+.sky-pl-degree,
+.sky-pl-status {
+  color: var(--muted);
+}
+
+.sky-pl-rx {
+  color: var(--retrograde-accent);
+  font-weight: var(--weight-semibold);
+}
+
+.sky-pl-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 8px;
+  font-size: var(--type-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.25;
+}
+
+.sky-pl-duration {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  line-height: 1;
+}

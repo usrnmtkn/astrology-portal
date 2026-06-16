@@ -1,0 +1,74 @@
+.placement-table-wrap,
+.planet-placement-list,
+.placement-table-card,
+.aspects-card {
+  position: relative;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.placement-table {
+  display: grid;
+  gap: var(--card-list-gap);
+  min-width: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.planet-placement-list,
+.placement-table-card {
+  display: grid;
+  gap: var(--card-list-gap);
+}
+
+.planet-placement-list {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.planet-placement-list > :where(.placement-table-row, .planet-placement-row) {
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .placement-table-wrap,
+  .placement-table-card,
+  .planet-placement-list,
+  .you-list-card,
+  .list,
+  .aspects-card
+) {
+  --list-inner-radius: var(--card-radius);
+}
+
+:where(.placement-table-wrap, .placement-table-card, .planet-placement-list, .you-list-card, .list, .aspects-card) > :where(.placement-table, .aspect-row-list) {
+  border-radius: var(--list-inner-radius);
+  background: inherit;
+}
+
+:where(.placement-table-wrap, .placement-table-card) > .placement-table > :where(.sky-pl, .placement-table-row, .planet-placement-row):first-child,
+:where(.placement-table-wrap, .placement-table-card) > .placement-table > :first-child :where(.sky-pl, .placement-table-row, .planet-placement-row),
+:where(.aspects-card) > .aspect-row-list > :where(.aspect-row, .aspect-row-button, .aspect-row-static):first-child,
+:where(.aspects-card) > .aspect-row-list > :first-child :where(.aspect-row, .aspect-row-button, .aspect-row-static):first-of-type,
+:where(.planet-placement-list, .you-list-card, .list, .aspects-card) > :where(.placement-table-row, .planet-placement-row, .aspect-row, .aspect-row-button, .aspect-row-static):first-child {
+  border-top-left-radius: var(--list-inner-radius);
+  border-top-right-radius: var(--list-inner-radius);
+  background-clip: padding-box;
+}
+
+:where(.placement-table-wrap, .placement-table-card) > .placement-table > :where(.sky-pl, .placement-table-row, .planet-placement-row):last-child,
+:where(.placement-table-wrap, .placement-table-card) > .placement-table > :last-child :where(.sky-pl, .placement-table-row, .planet-placement-row),
+:where(.aspects-card) > .aspect-row-list > :where(.aspect-row, .aspect-row-button, .aspect-row-static):last-child,
+:where(.aspects-card) > .aspect-row-list > :last-child :where(.aspect-row, .aspect-row-button, .aspect-row-static):last-of-type,
+:where(.planet-placement-list, .you-list-card, .list, .aspects-card) > :where(.placement-table-row, .planet-placement-row, .aspect-row, .aspect-row-button, .aspect-row-static):last-child {
+  border-bottom-right-radius: var(--list-inner-radius);
+  border-bottom-left-radius: var(--list-inner-radius);
+  background-clip: padding-box;
+}
