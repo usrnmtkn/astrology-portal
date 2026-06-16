@@ -218,3 +218,31 @@ class TransitChartResponse(BaseModel):
     transitChart: SkyCurrentResponse
     hits: List[TransitHit] = Field(default_factory=list)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class ProfectionsRequest(BaseModel):
+    natalSubject: ChartSubject
+    targetDate: str = Field(..., examples=["2026-06-16"])
+    respectHouseSystem: bool = False
+    includeContentFacts: bool = True
+
+
+class ProfectionPeriod(BaseModel):
+    level: Literal["annual", "monthly"]
+    age: int
+    house: int
+    sign: str
+    ruler: str
+    startsAt: str
+    endsAt: str
+    activatedNatalPlanets: List[str] = Field(default_factory=list)
+
+
+class ProfectionsResponse(BaseModel):
+    metadata: ChartMetadata
+    natal: NatalChartResponse
+    age: int
+    annual: ProfectionPeriod
+    monthly: ProfectionPeriod
+    activatedNatalPlanets: List[str] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
