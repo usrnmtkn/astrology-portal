@@ -49,4 +49,5 @@ engine behind it.
 - `GET /houses/systems`
 - `POST /utils/timezone`
 - `POST /chart/natal`
+- `POST /chart/transits`
 - `POST /sky/current`

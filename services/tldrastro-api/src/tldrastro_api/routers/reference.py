@@ -40,7 +40,7 @@ def reference_config():
         "features": {
             "natal": True,
             "currentSky": True,
-            "transits": False,
+            "transits": True,
             "synastry": False,
             "composite": False,
             "timeLords": False,

@@ -184,3 +184,37 @@ class SkyCurrentResponse(BaseModel):
     moonStatus: Optional[MoonStatus] = None
     moonEvent: Optional[MoonEvent] = None
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
+class TransitChartRequest(BaseModel):
+    natalSubject: ChartSubject
+    transitDatetime: DateTimeInput
+    transitLocation: LocationInput
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = True
+
+
+class TransitHit(BaseModel):
+    id: str
+    transitPlanet: str
+    transitSign: str
+    transitHouse: Optional[int] = None
+    natalPoint: str
+    natalSign: str
+    natalHouse: Optional[int] = None
+    aspect: str
+    orb: float
+    applying: Optional[bool] = None
+    phase: Optional[Literal["applying", "separating"]] = None
+    strength: int = Field(..., ge=0, le=100)
+    score: int = Field(..., ge=0)
+    exactAt: Optional[str] = None
+    knowledgeIds: List[str] = Field(default_factory=list)
+
+
+class TransitChartResponse(BaseModel):
+    metadata: ChartMetadata
+    natal: NatalChartResponse
+    transitChart: SkyCurrentResponse
+    hits: List[TransitHit] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
