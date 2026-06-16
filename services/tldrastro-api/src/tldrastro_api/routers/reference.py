@@ -43,7 +43,7 @@ def reference_config():
             "transits": True,
             "synastry": False,
             "composite": False,
-            "timeLords": False,
+            "timeLords": True,
             "contentFacts": False,
         },
     }

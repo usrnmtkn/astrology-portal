@@ -1,0 +1,47 @@
+{
+  "request": {
+    "natalSubject": {
+      "name": "Maya",
+      "datetime": {
+        "date": "1994-04-12",
+        "time": "08:35",
+        "timeKnown": true,
+        "timeZone": "America/New_York"
+      },
+      "location": {
+        "label": "New York, NY",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timeZone": "America/New_York"
+      },
+      "settings": {
+        "houseSystem": "whole_sign",
+        "zodiac": "tropical",
+        "aspectProfile": "standard"
+      }
+    },
+    "targetDate": "2026-06-16",
+    "respectHouseSystem": false,
+    "includeContentFacts": true
+  },
+  "expected": {
+    "age": 32,
+    "annual": {
+      "house": 9,
+      "sign": "Aquarius",
+      "ruler": "Saturn",
+      "startsAt": "2026-04-12",
+      "endsAt": "2027-04-12",
+      "activatedNatalPlanets": []
+    },
+    "monthly": {
+      "house": 11,
+      "sign": "Aries",
+      "ruler": "Mars",
+      "startsAt": "2026-06-12",
+      "endsAt": "2026-07-12",
+      "activatedNatalPlanets": ["Sun", "Mercury"]
+    }
+  }
+}
+

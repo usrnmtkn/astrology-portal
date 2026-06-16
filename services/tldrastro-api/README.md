@@ -51,3 +51,4 @@ engine behind it.
 - `POST /chart/natal`
 - `POST /chart/transits`
 - `POST /sky/current`
+- `POST /timing/profections`

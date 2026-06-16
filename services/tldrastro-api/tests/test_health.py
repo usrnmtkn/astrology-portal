@@ -21,3 +21,4 @@ def test_reference_config():
     assert "whole_sign" in [system["id"] for system in body["houseSystems"]]
     assert body["features"]["currentSky"] is True
     assert body["features"]["transits"] is True
+    assert body["features"]["timeLords"] is True
