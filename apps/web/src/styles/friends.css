@@ -221,9 +221,9 @@
   max-width: 100%;
   overflow: visible;
   border: 0;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .manual-chart-row {
@@ -1402,10 +1402,10 @@
   position: relative;
   overflow: visible;
   min-width: 0;
-  border: 0 !important;
+  border: 0;
   border-radius: 0;
-  background: transparent !important;
-  box-shadow: none !important;
+  background: transparent;
+  box-shadow: none;
 }
 
 .friend-placement-column-title {
@@ -1630,9 +1630,9 @@
   .friend-chart-page .friend-placement-column,
   .friend-chart-page .friend-placement-table
 ) {
-  border-color: transparent !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row {
@@ -2027,7 +2027,7 @@
 }
 
 .app-shell.mode-friends .manual-chart-cards {
-  border-radius: 0 !important;
+  border-radius: 0;
   overflow: visible;
 }
 

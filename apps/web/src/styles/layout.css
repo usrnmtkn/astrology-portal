@@ -31,16 +31,8 @@
   --deferred-placeholder-height: 220px;
 }
 
-.chart-page-shell {
-  width: var(--chart-content-width);
-  margin-inline: auto;
-  padding-top: var(--chart-page-top);
-  padding-bottom: var(--page-bottom);
-}
-
 .chart-layout,
-.sky-layout,
-.chart-page-layout {
+.sky-layout {
   display: grid;
   grid-template-columns: var(--chart-column-width) var(--content-column-width);
   gap: var(--chart-layout-gap);
@@ -50,7 +42,6 @@
 }
 
 .chart-layout__visual,
-.chart-page-visual,
 .sky-chart-column {
   position: sticky;
   top: var(--chart-sticky-top);
@@ -68,7 +59,6 @@
 }
 
 .chart-layout__content,
-.chart-page-content,
 .sky-content-column {
   display: flex;
   flex-direction: column;
@@ -79,7 +69,6 @@
 
 @supports (content-visibility: auto) {
   .chart-layout__content > .chart-section,
-  .chart-page-content > .chart-section,
   .sky-content-column > .chart-section {
     content-visibility: auto;
     contain-intrinsic-size: auto 520px;
@@ -96,8 +85,7 @@
 .aspect-row,
 .aspect-row-button,
 .aspect-row-static,
-.chart-row,
-.chart-row-static {
+.chart-row {
   scroll-margin-top: var(--nav-safe-offset);
 }
 
@@ -154,7 +142,6 @@
 
 :is(.theme-dark, [data-theme="dark"]) :where(
   .auth-card,
-  .auth-message-card,
   .auth-close-button,
   .google-auth-button
 ) {
@@ -164,7 +151,6 @@
 
 :is(.theme-dark, [data-theme="dark"]) :where(
   .auth-input,
-  .auth-select,
   .auth-page .signup-field input,
   .auth-page .signup-field select,
   .auth-page .signup-city-search .city-search-control,
