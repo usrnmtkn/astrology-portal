@@ -22,6 +22,7 @@ flowchart LR
 
 - `apps/web`: the TLDR Astro web app.
 - `packages/astro-knowledge`: the source of truth for astrology content, schema, voice files, generators, and timing helpers.
+- `services/tldrastro-api`: FastAPI calculation service for charts, timing, relationship facts, and content-ready astrology facts.
 
 The web app imports `@tldr/astro-knowledge`. Do not vendor a copied knowledge JSON file into the app. When the knowledge package changes, run the root build so `packages/astro-knowledge/dist/knowledge.json` is regenerated before the web app builds.
 
