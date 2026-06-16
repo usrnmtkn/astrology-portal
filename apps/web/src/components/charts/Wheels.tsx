@@ -519,7 +519,7 @@ export const SynastryWheel = memo(function SynastryWheel({
     const delta = ((endAngle - startAngle + 540) % 360) - 180;
     const resolvedEndAngle = startAngle + delta;
     const largeArc = Math.abs(delta) > 180 ? 1 : 0;
-    const sweep = delta >= 0 ? 1 : 0;
+    const sweep = delta >= 0 ? 0 : 1;
     const outerStart = point(startAngle, outerRadius);
     const outerEnd = point(resolvedEndAngle, outerRadius);
     const innerEnd = point(resolvedEndAngle, innerRadius);
