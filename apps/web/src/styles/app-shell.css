@@ -133,13 +133,14 @@
 }
 
 .chart-row:not(.manual-chart-row) {
+  --row-bg: var(--card-bg);
+
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: var(--row-padding-y) var(--row-padding-x);
   border-bottom: 1px solid var(--card-border);
-  background: var(--card-bg);
 }
 
 .chart-row:not(.manual-chart-row):last-child {

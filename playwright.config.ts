@@ -11,6 +11,12 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure"
   },
+  webServer: {
+    command: "npm run preview",
+    reuseExistingServer: true,
+    timeout: 30_000,
+    url: process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173"
+  },
   projects: [
     {
       name: "chromium-desktop",

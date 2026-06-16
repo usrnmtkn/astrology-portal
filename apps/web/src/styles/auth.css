@@ -273,13 +273,15 @@
 }
 
 .signup-city-search .city-search-control svg {
+  --city-search-icon-center-offset-y: -50%;
+
   position: absolute;
   top: 50%;
   left: 18px;
   width: 20px;
   height: 20px;
   color: var(--muted);
-  transform: translateY(-50%);
+  transform: translateY(var(--city-search-icon-center-offset-y));
   pointer-events: none;
 }
 
@@ -449,12 +451,14 @@
 }
 
 .unknown-time input:checked::before {
+  --unknown-time-checkmark-offset-y: -1px;
+
   content: "";
   width: 10px;
   height: 6px;
   border-bottom: 2px solid var(--surface);
   border-left: 2px solid var(--surface);
-  transform: rotate(-45deg) translateY(-1px);
+  transform: rotate(-45deg) translateY(var(--unknown-time-checkmark-offset-y));
 }
 
 .signin-note {
@@ -488,6 +492,8 @@
 }
 
 .password-control button {
+  --password-button-center-offset-y: -50%;
+
   position: absolute;
   top: 50%;
   right: 10px;
@@ -499,7 +505,7 @@
   border-radius: 50%;
   background: transparent;
   color: var(--muted);
-  transform: translateY(-50%);
+  transform: translateY(var(--password-button-center-offset-y));
 }
 
 .password-control button:hover {
