@@ -1,0 +1,72 @@
+{
+  "request": {
+    "natalSubject": {
+      "name": "Maya",
+      "datetime": {
+        "date": "1994-04-12",
+        "time": "08:35",
+        "timeKnown": true,
+        "timeZone": "America/New_York"
+      },
+      "location": {
+        "label": "New York, NY",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timeZone": "America/New_York"
+      },
+      "settings": {
+        "houseSystem": "whole_sign",
+        "zodiac": "tropical",
+        "aspectProfile": "standard"
+      }
+    },
+    "targetDatetime": {
+      "date": "2026-06-16",
+      "time": "12:00",
+      "timeKnown": true,
+      "timeZone": "America/New_York"
+    },
+    "targetLocation": {
+      "label": "New York, NY",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "timeZone": "America/New_York"
+    },
+    "settings": {
+      "houseSystem": "whole_sign",
+      "zodiac": "tropical",
+      "aspectProfile": "standard"
+    },
+    "includeContentFacts": true,
+    "maxTransits": 12
+  },
+  "expected": {
+    "activatedHouse": 9,
+    "activatedSign": "Aquarius",
+    "activatedRuler": "Saturn",
+    "topTransit": {
+      "id": "neptune-conjunction-mercury",
+      "score": 136
+    },
+    "topBoostedTransit": {
+      "id": "neptune-conjunction-mercury",
+      "baseScore": 136,
+      "boostedScore": 152,
+      "boostReasons": [
+        "natal Mercury is activated by monthly profection",
+        "natal Mercury is in monthly profected sign Aries"
+      ]
+    },
+    "contentFacts": [
+      {
+        "eventType": "time-lord-period",
+        "headline": "Aquarius annual profection, ruled by Saturn"
+      },
+      {
+        "eventType": "timing-boosted-transit",
+        "headline": "Neptune conjunction Mercury"
+      }
+    ]
+  }
+}
+
