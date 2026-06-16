@@ -73,12 +73,14 @@ export function RelationshipComparePicker({
           onClose={onToggle}
           panelClassName="friend-compare-popover"
           titleId={`friend-compare-title-${variant}`}
-          width="min(420px, calc(100vw - 48px))"
+          width="min(460px, calc(100vw - 40px))"
         >
-          <button className="friend-compare-close modal-close" type="button" aria-label="Close compare picker" onClick={onToggle}>
-            <X size={16} aria-hidden="true" />
-          </button>
-          <span className="eyebrow section-label">Compare with</span>
+          <div className="friend-compare-modal-header">
+            <span className="eyebrow section-label">Compare with</span>
+            <button className="friend-compare-close modal-close" type="button" aria-label="Close compare picker" onClick={onToggle}>
+              <X size={18} aria-hidden="true" />
+            </button>
+          </div>
           <h3 className="sr-only" id={`friend-compare-title-${variant}`}>Compare with saved chart</h3>
           <div className="friend-compare-list">
             {options.map((option) => (
