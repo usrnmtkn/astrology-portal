@@ -505,7 +505,16 @@
 
   margin-left: var(--friends-feed-avatar-overlap);
   background: #e9eefb;
-  color: var(--ink);
+  color: #171a22;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friends-feed-avatar {
+  border-color: var(--card-bg);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friends-feed-avatar + .friends-feed-avatar {
+  background: #e9eefb;
+  color: #171a22;
 }
 
 .friends-feed-card-body {
