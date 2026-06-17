@@ -113,6 +113,10 @@
   gap: 18px;
 }
 
+.chart-modal .create-chart-fields .signup-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .create-chart-save {
   justify-self: start;
 }

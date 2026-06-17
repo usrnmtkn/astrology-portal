@@ -438,10 +438,8 @@
 }
 
 .sky-full-chart-header {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 16px;
   min-height: calc(env(safe-area-inset-top, 0px) + 78px);
   border-bottom: 1px solid var(--line);
   padding: calc(env(safe-area-inset-top, 0px) + 14px) max(20px, env(safe-area-inset-left, 0px)) 14px;

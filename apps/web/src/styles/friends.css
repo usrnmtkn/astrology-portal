@@ -660,18 +660,19 @@
 
 .friend-hero-card,
 .you-profile-card {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   width: 100%;
   min-width: 0;
   gap: 16px;
-  padding: var(--id-card-padding-y) var(--id-card-padding-x);
+  padding: var(--id-card-padding-y) max(var(--id-card-padding-x), 76px) var(--id-card-padding-y) var(--id-card-padding-x);
   border: 1px solid var(--card-border);
   border-radius: var(--id-card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .friend-profile-card {
@@ -699,6 +700,28 @@
   color: var(--app-muted);
   font-size: var(--id-signature-size);
   line-height: 1.2;
+}
+
+.friend-profile-card .friend-kebab,
+.you-profile-actions {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 3;
+}
+
+.you-profile-actions {
+  display: grid;
+  place-items: center;
+}
+
+.you-profile-menu-trigger {
+  color: var(--muted);
+}
+
+.you-profile-overflow-menu {
+  top: 54px;
+  right: 0;
 }
 
 .friend-profile-avatar {
@@ -1713,6 +1736,7 @@
 .add-chart-birth-grid {
   gap: 12px;
   align-items: start;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .birth-time-field .checkbox-row {

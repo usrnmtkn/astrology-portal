@@ -437,12 +437,12 @@
   --color-pill-fg: #16181f;
   --color-accent: #c9ccd6;
   --color-accent-bg: rgba(255, 255, 255, 0.07);
-  --color-wheel-line: rgba(255, 255, 255, 0.22);
-  --color-wheel-tick: rgba(255, 255, 255, 0.48);
-  --color-wheel-soft: rgba(255, 255, 255, 0.13);
-  --color-wheel-label: rgba(255, 255, 255, 0.5);
-  --color-wheel-degree-label: rgba(255, 255, 255, 0.74);
-  --color-wheel-glyph: #d2d5df;
+  --color-wheel-line: rgba(255, 255, 255, 0.3);
+  --color-wheel-tick: rgba(255, 255, 255, 0.68);
+  --color-wheel-soft: rgba(255, 255, 255, 0.2);
+  --color-wheel-label: rgba(255, 255, 255, 0.68);
+  --color-wheel-degree-label: rgba(255, 255, 255, 0.84);
+  --color-wheel-glyph: #f2f2f1;
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
   --orb-grad:

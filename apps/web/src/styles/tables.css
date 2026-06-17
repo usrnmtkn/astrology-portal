@@ -103,13 +103,22 @@ button.placement-table-row {
   font-variant-numeric: tabular-nums;
 }
 
-.placement-table-row .spl-dig {
-  flex: 0 1 auto;
-}
-
 .placement-table-row__meta > span {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.placement-table-row__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  min-width: 0;
+}
+
+.placement-table-row__status .spl-dig,
+.planet-placement-row__status .spl-dig {
+  flex: 0 1 auto;
 }
 
 .planet-placement-row {
