@@ -157,6 +157,7 @@ html[data-scrolled] .nav-pill {
 }
 
 .topbar-actions {
+  position: relative;
   grid-column: 3;
   justify-self: end;
   pointer-events: auto;

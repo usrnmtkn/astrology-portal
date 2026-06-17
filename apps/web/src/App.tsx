@@ -5674,17 +5674,6 @@ export function App() {
           </div>
 
         <div className="topbar-actions">
-          <button
-            type="button"
-            className="theme-toggle"
-            key={theme}
-            aria-pressed={theme === "dark"}
-            aria-label="Toggle theme"
-            title="Toggle theme"
-            onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
-          >
-            {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
-          </button>
           {isTodayMode && (
             <button
               className="sky-header-date-button"
@@ -5692,6 +5681,7 @@ export function App() {
               ref={mobileDatePickerTriggerRef}
               aria-expanded={mobileSkyControlsOpen}
               aria-controls="mobile-sky-controls"
+              aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(sky.location.label)}`}
               onClick={() => {
                 setCityPickerOpen(false);
                 setDatePickerOpen(false);
@@ -5699,7 +5689,7 @@ export function App() {
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
               }}
             >
-              <span>{formatSkyHeaderDateLabel(skyDate)}</span>
+              <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
@@ -5729,6 +5719,7 @@ export function App() {
                 <button
                   type="button"
                   className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
+                  ref={datePickerTriggerRef}
                   onClick={openMobileDatePicker}
                 >
                   Date
@@ -5738,6 +5729,7 @@ export function App() {
               <button
                 type="button"
                 className="mobile-sky-controls__location"
+                ref={cityPickerTriggerRef}
                 onClick={openMobileCityPicker}
               >
                 <MapPin size={18} aria-hidden="true" />
@@ -5745,6 +5737,17 @@ export function App() {
               </button>
             </div>
           )}
+          <button
+            type="button"
+            className="theme-toggle"
+            key={theme}
+            aria-pressed={theme === "dark"}
+            aria-label="Toggle theme"
+            title="Toggle theme"
+            onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
+          >
+            {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
+          </button>
           <button
             type="button"
             className="menu-toggle"
@@ -5864,30 +5867,6 @@ export function App() {
                   <p className="sky-intro__copy">
                     What is up there today, and what it actually means down here.
                   </p>
-                </div>
-                <div className="today-controls">
-                  <button
-                    className="today-pill"
-                    type="button"
-                    ref={datePickerTriggerRef}
-                    aria-expanded={datePickerOpen}
-                    aria-controls="sky-date-picker"
-                    onClick={() => setDatePickerOpen((isOpen) => !isOpen)}
-                  >
-                    <CalendarDays size={18} aria-hidden="true" />
-                    <span>{formatSkyDate(skyDate)}</span>
-                  </button>
-                  <button
-                    className="today-pill"
-                    type="button"
-                    ref={cityPickerTriggerRef}
-                    aria-expanded={cityPickerOpen}
-                    aria-controls="city-picker"
-                    onClick={() => setCityPickerOpen((isOpen) => !isOpen)}
-                  >
-                    <MapPin size={18} aria-hidden="true" />
-                    <span>{compactCityLabel(sky.location.label)}</span>
-                  </button>
                 </div>
                 {datePickerOpen && (
                   <SkyDatePicker
