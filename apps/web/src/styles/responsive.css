@@ -25,6 +25,7 @@
   .mode-guest,
   .mode-member {
     --mobile-page-gutter: clamp(26px, 7.5vw, 32px);
+    --sky-mobile-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
     --sky-mobile-hero-title: clamp(30px, 8vw, 34px);
     --sky-mobile-feature-title: 16px;
     --sky-mobile-card-title: 17px;
@@ -452,11 +453,21 @@
 
   .sky-header-date-button {
     gap: 8px;
+    max-width: min(42vw, 210px);
     padding: 0 18px;
     font-family: var(--font-ui);
-    font-size: var(--text-nav);
-    font-weight: var(--weight-semibold);
+    font-size: var(--nav-link-size);
+    font-weight: var(--weight-medium);
     line-height: 1;
+  }
+
+  .sky-header-date-button__date,
+  .sky-header-date-button__location {
+    flex: 0 1 auto;
+  }
+
+  .sky-header-date-button__location {
+    max-width: 88px;
   }
 
   .sky-header-date-button[aria-expanded="true"] .sky-header-date-button__chevron {
@@ -605,6 +616,25 @@
     padding-inline: var(--mobile-page-gutter);
   }
 
+  .mode-guest .today-hero,
+  .mode-member .today-hero,
+  .mode-guest .detail-panel,
+  .mode-member .detail-panel,
+  .mode-guest .sky-lunar-brief,
+  .mode-member .sky-lunar-brief,
+  .mode-guest .retrograde-section,
+  .mode-member .retrograde-section,
+  .mode-guest .placement-section,
+  .mode-member .placement-section,
+  .mode-guest .aspect-section,
+  .mode-member .aspect-section {
+    box-sizing: border-box;
+    width: var(--sky-mobile-rail);
+    max-width: var(--sky-mobile-rail);
+    min-width: 0;
+    margin-inline: auto;
+  }
+
   .mode-guest .sky-panel,
   .mode-member .sky-panel {
     display: none;
@@ -614,7 +644,7 @@
   .mode-member .today-hero {
     order: 1;
     gap: 18px;
-    overflow: visible;
+    overflow: clip;
   }
 
   .mode-guest .detail-panel,
@@ -1298,5 +1328,16 @@
     height: 40px;
     padding: 0 var(--sp-2);
     font-size: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .mode-guest .sky-header-date-button,
+  .mode-member .sky-header-date-button {
+    max-width: 116px;
+  }
+
+  .sky-header-date-button__location {
+    display: none;
   }
 }
