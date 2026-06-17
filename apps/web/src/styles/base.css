@@ -35,6 +35,10 @@ html.orb-off body {
   background-image: var(--bg-grad);
 }
 
+.sunrise-orb {
+  display: none;
+}
+
 :where(button, a, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;

@@ -25,7 +25,7 @@
   --color-line-2: rgba(28, 32, 52, 0.055);
   --color-line-strong: rgba(28, 32, 52, 0.22);
   --color-nav-bg: #ffffff;
-  --color-pill-bg: var(--color-ink);
+  --color-pill-bg: #1a1a1a;
   --color-pill-fg: #f1f2f6;
   --color-accent: #4e5360;
   --color-accent-bg: rgba(28, 32, 52, 0.06);
@@ -137,14 +137,9 @@
   --shadow: var(--elev-card);
   --bg-grad: none;
   --orb-grad:
-    radial-gradient(
-      86% 82% at 50% -2%,
-      rgba(255, 138, 68, 0.88) 0%,
-      rgba(240, 92, 116, 0.62) 22%,
-      rgba(176, 96, 200, 0.38) 46%,
-      rgba(110, 130, 220, 0.18) 66%,
-      transparent 80%
-    );
+    radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.78), transparent 56%),
+    radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.42), transparent 55%),
+    radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.4), transparent 60%);
 
   --font-display: var(--font-serif);
   --font-body: var(--font-mono);
@@ -451,14 +446,9 @@
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
   --orb-grad:
-    radial-gradient(
-      86% 82% at 50% -2%,
-      rgba(255, 138, 68, 0.66) 0%,
-      rgba(240, 92, 116, 0.5) 22%,
-      rgba(176, 96, 200, 0.3) 46%,
-      rgba(110, 130, 220, 0.12) 66%,
-      transparent 80%
-    );
+    radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.34), transparent 56%),
+    radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.2), transparent 55%),
+    radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.18), transparent 60%);
   --color-status-alert: #d6a24b;
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);

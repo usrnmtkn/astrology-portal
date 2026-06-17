@@ -620,17 +620,18 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    gap: 13px;
     width: 100%;
-    min-height: 58px;
     border: 0;
     border-radius: 16px;
-    background: #191a1d;
-    color: #f4f4f2;
-    box-shadow: 0 18px 30px -18px rgba(28, 32, 52, 0.32);
+    background: var(--pill-bg);
+    color: var(--pill-fg);
+    box-shadow:
+      0 8px 18px -12px rgba(20, 20, 20, 0.4),
+      0 2px 6px -4px rgba(20, 20, 20, 0.3);
     cursor: pointer;
     margin-top: -22px;
-    padding: 7px 9px 7px 10px;
+    padding: 11px 13px;
     text-align: left;
     transform: translateY(-22px);
   }
@@ -650,18 +651,27 @@
   .mobile-full-chart-card__arrow {
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.12);
-    color: #f4f4f2;
+    color: #ffffff;
+  }
+
+  .mobile-full-chart-card__icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mobile-full-chart-card__arrow {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
   }
 
   .mobile-full-chart-card__wheel {
     position: relative;
     display: block;
-    width: 22px;
-    height: 22px;
+    width: 27px;
+    height: 27px;
     border: 1px solid rgba(244, 244, 242, 0.52);
     border-radius: 50%;
     background:
@@ -684,17 +694,24 @@
   }
 
   .mobile-full-chart-card__copy strong {
-    font-family: var(--font-ui);
+    color: #ffffff;
+    font-family: var(--font-sans);
     font-size: var(--sky-mobile-feature-title);
     font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
     line-height: 1;
   }
 
   .mobile-full-chart-card__copy span {
-    color: rgba(244, 244, 242, 0.68);
+    color: rgba(242, 242, 241, 0.6);
     font-family: var(--font-body);
-    font-size: var(--sky-mobile-body);
+    font-size: 13px;
     line-height: 1.15;
+  }
+
+  .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
+  .mode-member :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
+    box-shadow: 0 10px 30px -20px rgba(60, 40, 70, 0.45);
   }
 
   .mode-guest .sky-lunar-brief,

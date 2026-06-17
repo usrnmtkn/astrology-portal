@@ -6,6 +6,13 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 
 type YouTab = "transits" | "chart";
 
+export type PersonalTimingSummary = {
+  headline: string;
+  summary: string;
+  keyFactors: string[];
+  status: "idle" | "loading" | "ready" | "error";
+};
+
 export type YouPageProps = {
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
@@ -20,6 +27,7 @@ export type YouPageProps = {
   natalChartPending: boolean;
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
+  personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
   profileAvatarUrl?: string;
   profileEmail: string;
@@ -196,15 +204,31 @@ function YouUpdatesTab({
   aspectRows,
   hasSavedCurrentCity,
   onCreateChart,
+  personalTimingSummary,
   transitsDrawn
 }: {
   aspectRows: ReactNode[];
   hasSavedCurrentCity: boolean;
   onCreateChart: () => void;
+  personalTimingSummary?: PersonalTimingSummary | null;
   transitsDrawn: boolean;
 }) {
   return (
     <div className="subpane updates-section" id="sub-transits">
+      {hasSavedCurrentCity && personalTimingSummary && (
+        <section className="personal-timing-summary" aria-label="Personal timing summary">
+          <span className="eyebrow section-label">Timing</span>
+          <h3>{personalTimingSummary.headline}</h3>
+          <p>{personalTimingSummary.summary}</p>
+          {personalTimingSummary.keyFactors.length > 0 && (
+            <ul>
+              {personalTimingSummary.keyFactors.slice(0, 4).map((factor) => (
+                <li key={factor}>{factor}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
       <span className="eyebrow section-label">Aspects</span>
       {!hasSavedCurrentCity && (
         <section className="you-empty-card" aria-label="Current city needed">
@@ -245,6 +269,7 @@ export function YouPage({
   natalChart,
   natalChartPending,
   onCreateChart,
+  personalTimingSummary,
   planetRows,
   profileAvatarUrl,
   profileEmail,
@@ -308,6 +333,7 @@ export function YouPage({
               aspectRows={aspectRows}
               hasSavedCurrentCity={hasSavedCurrentCity}
               onCreateChart={onCreateChart}
+              personalTimingSummary={personalTimingSummary}
               transitsDrawn={transitsDrawn}
             />
           )}
