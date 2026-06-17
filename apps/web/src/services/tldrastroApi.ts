@@ -93,6 +93,8 @@ type RelationshipRequest = {
 const configuredBaseUrl = import.meta.env.VITE_TLDRASTRO_API_URL as string | undefined;
 const tldrAstroApiBaseUrl = configuredBaseUrl?.replace(/\/$/, "") ?? "";
 
+export const isTldrAstroApiConfigured = Boolean(tldrAstroApiBaseUrl);
+
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
   if (!tldrAstroApiBaseUrl) {
     throw new Error("VITE_TLDRASTRO_API_URL is required to call the TLDR Astro API.");

@@ -105,6 +105,7 @@ import type { ManualChart, ManualChartInput, ManualChartType } from "./services/
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
+import { getPersonalTiming, isTldrAstroApiConfigured, type PersonalTimingResponse } from "./services/tldrastroApi";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
@@ -219,6 +220,8 @@ type TransitItem = {
   timingBonuses?: string[];
   isSlowGeneralWeather?: boolean;
 };
+
+type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 
 type FriendProfileTab = "natal" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
@@ -1102,6 +1105,16 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
     aspects: settings?.aspects === "Tight" ? "Tight" : "Standard",
     houseSignLabelStyle: normalizeHouseSignLabelStyle(settings?.houseSignLabelStyle),
     lifeAreaFocus: Array.from(new Set(lifeAreaFocus))
+  };
+}
+
+function apiSettingsFromChartSettings(settings?: Partial<ChartSettings> | null) {
+  const normalized = normalizeChartSettings(settings);
+
+  return {
+    houseSystem: "whole_sign" as const,
+    zodiac: "tropical" as const,
+    aspectProfile: normalized.aspects === "Tight" ? "tight" as const : "standard" as const
   };
 }
 
@@ -4400,6 +4413,8 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
+  const [personalTiming, setPersonalTiming] = useState<PersonalTimingResponse | null>(null);
+  const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
@@ -5040,6 +5055,92 @@ export function App() {
     userProfile?.charts[0]?.birthLocation?.timeZone,
     sky.generatedAt,
     activeSunriseOrbDegrees
+  ]);
+
+  useEffect(() => {
+    if (!userProfile || !isTldrAstroApiConfigured) {
+      setPersonalTiming(null);
+      setPersonalTimingStatus("idle");
+      return;
+    }
+
+    const primaryChart = userProfile.charts[0];
+    const birthDate = validChartBirthDate(primaryChart);
+    const birthCity = validChartBirthCity(primaryChart);
+    const birthTime = validChartBirthTime(primaryChart);
+    const birthLocation = primaryChart?.birthLocation
+      ? withTimeZone(primaryChart.birthLocation)
+      : birthCity
+        ? locationFromLabel(birthCity)
+        : null;
+    const currentLocation = userProfile.currentLocationData
+      ? withTimeZone(userProfile.currentLocationData)
+      : userProfile.currentLocation
+        ? locationFromLabel(userProfile.currentLocation)
+        : null;
+
+    if (!birthDate || !birthTime || birthTime === "Time unknown" || !birthLocation || !currentLocation) {
+      setPersonalTiming(null);
+      setPersonalTimingStatus("idle");
+      return;
+    }
+
+    let cancelled = false;
+    setPersonalTimingStatus("loading");
+
+    getPersonalTiming({
+      natalSubject: {
+        name: userProfile.name,
+        datetime: {
+          date: birthDate,
+          time: displayTimeToTwentyFourHour(birthTime),
+          timeKnown: true,
+          timeZone: birthLocation.timeZone
+        },
+        location: birthLocation,
+        settings: apiSettingsFromChartSettings(userProfile.settings)
+      },
+      targetDatetime: {
+        date: skyDate,
+        time: "12:00",
+        timeKnown: true,
+        timeZone: currentLocation.timeZone
+      },
+      targetLocation: currentLocation,
+      settings: apiSettingsFromChartSettings(userProfile.settings),
+      includeContentFacts: true,
+      maxTransits: 8
+    })
+      .then((response) => {
+        if (!cancelled) {
+          setPersonalTiming(response);
+          setPersonalTimingStatus("ready");
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.warn("TLDR Astro personal timing API failed; using local transit rows.", error);
+          setPersonalTiming(null);
+          setPersonalTimingStatus("error");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    userProfile?.id,
+    userProfile?.name,
+    userProfile?.settings,
+    userProfile?.charts[0]?.birthDate,
+    userProfile?.charts[0]?.birthTime,
+    userProfile?.charts[0]?.birthCity,
+    userProfile?.charts[0]?.birthLocation?.label,
+    userProfile?.charts[0]?.birthLocation?.timeZone,
+    userProfile?.currentLocation,
+    userProfile?.currentLocationData?.label,
+    userProfile?.currentLocationData?.timeZone,
+    skyDate
   ]);
 
   useEffect(() => {
@@ -5853,6 +5954,8 @@ export function App() {
                     transitForm={transitForm}
                     transitItems={activeTransits}
                     natalSky={profileNatalSky}
+                    personalTiming={personalTiming}
+                    personalTimingStatus={personalTimingStatus}
                     transitsDrawn={transitsDrawn}
                     selectedTransit={selectedTransit}
                     selectedTransitId={selectedTransitId}
@@ -8407,6 +8510,8 @@ function ProfileView({
   transitForm,
   transitItems,
   natalSky,
+  personalTiming,
+  personalTimingStatus,
   transitsDrawn,
   setSelectedTransitId,
   onCreateChart,
@@ -8417,6 +8522,8 @@ function ProfileView({
   transitForm: TransitForm;
   transitItems: TransitItem[];
   natalSky: SkySnapshot | null;
+  personalTiming: PersonalTimingResponse | null;
+  personalTimingStatus: PersonalTimingStatus;
   transitsDrawn: boolean;
   selectedTransit: TransitItem;
   selectedTransitId: string;
@@ -8588,6 +8695,21 @@ function ProfileView({
       </button>
     );
   });
+  const personalTimingSummary = personalTiming
+    ? {
+        headline: personalTiming.app.headline,
+        summary: personalTiming.app.summary,
+        keyFactors: personalTiming.app.keyFactors,
+        status: personalTimingStatus
+      }
+    : personalTimingStatus === "loading"
+      ? {
+          headline: "Calculating personal timing",
+          summary: "Checking today's sky against your chart and annual profection.",
+          keyFactors: [],
+          status: personalTimingStatus
+        }
+      : null;
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
       <div className="chart-frame">
@@ -8621,6 +8743,7 @@ function ProfileView({
         natalChart={natalChart}
         natalChartPending={!natalSky}
         onCreateChart={onCreateChart}
+        personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
         profileAvatarUrl={profile.avatarUrl}
         profileEmail={profile.email}
