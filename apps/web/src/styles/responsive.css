@@ -213,12 +213,12 @@
 
   .sky-lunar-pill-copy h3 {
     gap: 4px;
-    font-size: 0.88rem;
+    font-size: var(--text-body);
   }
 
   .sky-lunar-pill-copy h3 small,
   .sky-lunar-pill-sub {
-    font-size: 0.68rem;
+    font-size: var(--text-description);
   }
 
   .updates-aspect-row {
@@ -752,7 +752,7 @@
 
   .mobile-full-chart-card__copy strong {
     color: #ffffff;
-    font-family: var(--font-sans);
+    font-family: var(--font-ui);
     font-size: var(--sky-mobile-feature-title);
     font-weight: var(--weight-semibold);
     letter-spacing: -0.01em;

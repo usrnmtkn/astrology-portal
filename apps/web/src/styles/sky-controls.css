@@ -24,9 +24,9 @@
   max-width: 620px;
   color: var(--ink-2);
   font-family: var(--font-body);
-  font-size: clamp(16px, 1.5vw, 20px);
+  font-size: var(--text-section-heading-size);
   font-weight: var(--weight-regular);
-  line-height: 1.4;
+  line-height: 1.45;
   text-wrap: pretty;
 }
 

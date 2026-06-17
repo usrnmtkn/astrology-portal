@@ -122,6 +122,20 @@
   line-height: 1.3;
 }
 
+.aspect-row-timing .planet-placement-row__duration,
+.updates-aspect-row__meta-line .planet-placement-row__duration {
+  min-height: 1.6em;
+  padding: 0 0.78em;
+  border-radius: var(--radius-pill);
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .synastry-contact-description {
   white-space: pre-line;
 }
