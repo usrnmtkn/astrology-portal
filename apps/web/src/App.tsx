@@ -5674,17 +5674,6 @@ export function App() {
           </div>
 
         <div className="topbar-actions">
-          <button
-            type="button"
-            className="theme-toggle"
-            key={theme}
-            aria-pressed={theme === "dark"}
-            aria-label="Toggle theme"
-            title="Toggle theme"
-            onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
-          >
-            {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
-          </button>
           {isTodayMode && (
             <button
               className="sky-header-date-button"
@@ -5701,7 +5690,6 @@ export function App() {
               }}
             >
               <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
-              <span className="sky-header-date-button__location">{compactCityLabel(sky.location.label)}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
@@ -5749,6 +5737,17 @@ export function App() {
               </button>
             </div>
           )}
+          <button
+            type="button"
+            className="theme-toggle"
+            key={theme}
+            aria-pressed={theme === "dark"}
+            aria-label="Toggle theme"
+            title="Toggle theme"
+            onClick={() => setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))}
+          >
+            {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
+          </button>
           <button
             type="button"
             className="menu-toggle"
