@@ -90,10 +90,11 @@ html[data-scrolled] .topbar {
   flex: 0 0 auto;
   border: 0;
   background: transparent;
-  font-family: var(--font-brand);
-  font-size: var(--text-wordmark);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 18px;
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-title);
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -356,7 +357,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
 }
 
 .site-menu button:focus {
-  background: var(--surface-2);
+  outline: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
 }
 
 .site-menu button:focus-visible {

@@ -1,7 +1,9 @@
 import {
   ArrowDownRight,
+  ArrowRight,
   ArrowUpRight,
   CalendarDays,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -1242,6 +1244,14 @@ function formatSkyDate(value: string) {
   });
 }
 
+function formatSkyFullChartDate(value: string) {
+  return dateFromInput(value).toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  });
+}
+
 function formatSkyHeroTitle(value: string, today = new Date()) {
   const selectedDay = localDayStart(dateFromInput(value));
   const todayDay = localDayStart(today);
@@ -1251,6 +1261,20 @@ function formatSkyHeroTitle(value: string, today = new Date()) {
   if (dayDelta === 0) return "Today, simple.";
   if (dayDelta === 1) return "Tomorrow, simple.";
   return "The sky, simple.";
+}
+
+function formatSkyHeaderDateLabel(value: string, today = new Date()) {
+  const selectedDay = localDayStart(dateFromInput(value));
+  const todayDay = localDayStart(today);
+  const dayDelta = Math.round((selectedDay.getTime() - todayDay.getTime()) / 86_400_000);
+
+  if (dayDelta === 0) return "Today";
+  if (dayDelta === 1) return "Tomorrow";
+
+  return dateFromInput(value).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric"
+  });
 }
 
 function formatPlacementDegree(position?: PlanetPosition) {
@@ -1266,7 +1290,11 @@ function formatBriefPlacementDegree(position?: PlanetPosition) {
     return "";
   }
 
-  return formatPlanetDegree(position);
+  return `${Math.round(position.degree)}°`;
+}
+
+function compactSkyChicletSign(label: string) {
+  return label === "Sagittarius" ? "Sag." : label;
 }
 
 function zodiacLongitude(position?: PlanetPosition) {
@@ -2450,7 +2478,6 @@ function SkyDetailArticle({
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
   const visibleMetaRows = metaRows.filter((row) => row.label.toLowerCase() !== "signature");
-  const articleKicker = detail.kicker.trim();
   const shareText = articleSub || detail.title;
 
   function copyArticleLink() {
@@ -2485,7 +2512,6 @@ function SkyDetailArticle({
           <header className="article-id sky-detail-id">
             <div className="article-kicker-row">
               <span className={`article-glyph-tag${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}&#xFE0E;</span>
-              {articleKicker ? <span className="article-kicker">{articleKicker}</span> : null}
             </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
             {articleSub ? <p className="article-sub">{articleSub}</p> : null}
@@ -4348,12 +4374,16 @@ export function App() {
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [mobileSkyControlsOpen, setMobileSkyControlsOpen] = useState(false);
+  const [skyFullChartOpen, setSkyFullChartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [friendsLandingKey, setFriendsLandingKey] = useState(0);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const mobileSkyControlsRef = useRef<HTMLDivElement | null>(null);
   const datePickerRef = useRef<HTMLElement | null>(null);
   const datePickerTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const mobileDatePickerTriggerRef = useRef<HTMLButtonElement | null>(null);
   const cityPickerRef = useRef<HTMLFormElement | null>(null);
   const cityPickerInputRef = useRef<HTMLInputElement | null>(null);
   const cityPickerTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -4551,7 +4581,7 @@ export function App() {
     function closeDatePicker(restoreFocus = true) {
       setDatePickerOpen(false);
       if (restoreFocus) {
-        datePickerTriggerRef.current?.focus();
+        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
       }
     }
 
@@ -4561,7 +4591,8 @@ export function App() {
       if (
         !target ||
         datePickerRef.current?.contains(target) ||
-        datePickerTriggerRef.current?.contains(target)
+        datePickerTriggerRef.current?.contains(target) ||
+        mobileDatePickerTriggerRef.current?.contains(target)
       ) {
         return;
       }
@@ -4584,6 +4615,48 @@ export function App() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [datePickerOpen]);
+
+  useEffect(() => {
+    if (!mobileSkyControlsOpen) {
+      return;
+    }
+
+    function closeMobileSkyControls(restoreFocus = true) {
+      setMobileSkyControlsOpen(false);
+      if (restoreFocus) {
+        mobileDatePickerTriggerRef.current?.focus();
+      }
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node | null;
+
+      if (
+        !target ||
+        mobileSkyControlsRef.current?.contains(target) ||
+        mobileDatePickerTriggerRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeMobileSkyControls(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMobileSkyControls();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileSkyControlsOpen]);
 
   useEffect(() => {
     if (!cityPickerOpen) {
@@ -4634,8 +4707,9 @@ export function App() {
       return;
     }
 
+    const activeMenuItem = menuRef.current?.querySelector<HTMLButtonElement>("[role='menuitem'].active");
     const firstMenuItem = menuRef.current?.querySelector<HTMLButtonElement>("[role='menuitem']");
-    firstMenuItem?.focus();
+    (activeMenuItem ?? firstMenuItem)?.focus();
 
     function closeMenu(restoreFocus = true) {
       setMenuOpen(false);
@@ -5352,6 +5426,29 @@ export function App() {
 
   const isTodayMode = mode === "guest" || mode === "member";
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
+  const todaySkyDate = dateInputValue();
+  const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
+  const skyFullChartTitleId = "sky-full-chart-title";
+  const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(sky.location.label)}`;
+
+  function selectSkyDateFromMobileControls(nextDate: string) {
+    setSkyDate(nextDate);
+    setDatePickerOpen(false);
+    setCityPickerOpen(false);
+    setMobileSkyControlsOpen(false);
+  }
+
+  function openMobileDatePicker() {
+    setMobileSkyControlsOpen(false);
+    setCityPickerOpen(false);
+    setDatePickerOpen(true);
+  }
+
+  function openMobileCityPicker() {
+    setMobileSkyControlsOpen(false);
+    setDatePickerOpen(false);
+    setCityPickerOpen(true);
+  }
 
   return (
     <main className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
@@ -5415,6 +5512,66 @@ export function App() {
           >
             {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
           </button>
+          {isTodayMode && (
+            <button
+              className="sky-header-date-button"
+              type="button"
+              ref={mobileDatePickerTriggerRef}
+              aria-expanded={mobileSkyControlsOpen}
+              aria-controls="mobile-sky-controls"
+              onClick={() => {
+                setCityPickerOpen(false);
+                setDatePickerOpen(false);
+                setMenuOpen(false);
+                setMobileSkyControlsOpen((isOpen) => !isOpen);
+              }}
+            >
+              <span>{formatSkyHeaderDateLabel(skyDate)}</span>
+              <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
+            </button>
+          )}
+          {isTodayMode && mobileSkyControlsOpen && (
+            <div
+              className="mobile-sky-controls"
+              id="mobile-sky-controls"
+              ref={mobileSkyControlsRef}
+              role="dialog"
+              aria-label="Sky controls"
+            >
+              <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
+                <button
+                  type="button"
+                  className={skyDate === todaySkyDate ? "active" : ""}
+                  onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  className={skyDate === tomorrowSkyDate ? "active" : ""}
+                  onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
+                >
+                  Tomorrow
+                </button>
+                <button
+                  type="button"
+                  className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
+                  onClick={openMobileDatePicker}
+                >
+                  Date
+                </button>
+              </div>
+              <span className="mobile-sky-controls__label">Location</span>
+              <button
+                type="button"
+                className="mobile-sky-controls__location"
+                onClick={openMobileCityPicker}
+              >
+                <MapPin size={18} aria-hidden="true" />
+                <span>{compactCityLabel(sky.location.label)}</span>
+              </button>
+            </div>
+          )}
           <button
             type="button"
             className="menu-toggle"
@@ -5423,7 +5580,10 @@ export function App() {
             aria-haspopup="menu"
             aria-controls="site-overflow-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((isOpen) => !isOpen)}
+            onClick={() => {
+              setMobileSkyControlsOpen(false);
+              setMenuOpen((isOpen) => !isOpen);
+            }}
           >
             <span className="hamburger-icon" aria-hidden="true">
               <span className="hamburger-line hamburger-line-top" />
@@ -5461,17 +5621,17 @@ export function App() {
                     <SmileNavIcon />
                     <span>You</span>
                   </button>
-                  <button className="site-menu-friends" type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}>
+                  <button className={`site-menu-friends ${mode === "friends" ? "active" : ""}`} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}>
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
+                  <button className={mode === "account" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
                     <User size={20} aria-hidden="true" />
                     <span>Account</span>
                   </button>
                 </>
               )}
-              <button type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("settings"); setMenuOpen(false); }}>
+              <button className={mode === "settings" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
@@ -5524,7 +5684,10 @@ export function App() {
             {isTodayMode && (
               <section className="today-hero" aria-label="Today controls">
                 <div className="sky-intro">
-                    <h1 className="sky-intro__lead">{formatSkyHeroTitle(skyDate)}</h1>
+                  <h1 className="sky-intro__lead">
+                    <span className="sky-intro__lead-desktop">{formatSkyHeroTitle(skyDate)}</span>
+                    <span className="sky-intro__lead-mobile">the sky.</span>
+                  </h1>
                   <p className="sky-intro__copy">
                     What is up there today, and what it actually means down here.
                   </p>
@@ -5559,12 +5722,12 @@ export function App() {
                     pickerRef={datePickerRef}
                     onClose={() => {
                       setDatePickerOpen(false);
-                      datePickerTriggerRef.current?.focus();
+                      (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
                     }}
                     onSelect={(nextDate) => {
                       setSkyDate(nextDate);
                       setDatePickerOpen(false);
-                      datePickerTriggerRef.current?.focus();
+                      (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
                     }}
                   />
                 )}
@@ -5609,6 +5772,28 @@ export function App() {
                     </div>
                   </form>
                 )}
+                <button
+                  className="mobile-full-chart-card"
+                  type="button"
+                  aria-label="Open full current sky chart"
+                  onClick={() => {
+                    setDatePickerOpen(false);
+                    setCityPickerOpen(false);
+                    setMobileSkyControlsOpen(false);
+                    setSkyFullChartOpen(true);
+                  }}
+                >
+                  <span className="mobile-full-chart-card__icon" aria-hidden="true">
+                    <span className="mobile-full-chart-card__wheel" />
+                  </span>
+                  <span className="mobile-full-chart-card__copy">
+                    <strong>Full chart</strong>
+                    <span>The wheel &amp; aspects</span>
+                  </span>
+                  <span className="mobile-full-chart-card__arrow" aria-hidden="true">
+                    <ArrowRight size={22} />
+                  </span>
+                </button>
                 <SkyCards sky={sky} />
               </section>
             )}
@@ -5755,6 +5940,43 @@ export function App() {
                 <em>{chartFlowStepsLeft(userProfile)} steps left</em>
               </span>
             </button>
+          )}
+
+          {skyFullChartOpen && (
+            <ModalPortal
+              className="sky-full-chart-modal-root"
+              panelClassName="sky-full-chart-panel"
+              titleId={skyFullChartTitleId}
+              width="100vw"
+              onClose={() => setSkyFullChartOpen(false)}
+            >
+              <div className="sky-full-chart-view">
+                <header className="sky-full-chart-header">
+                  <button className="sky-full-chart-back" type="button" onClick={() => setSkyFullChartOpen(false)}>
+                    <ChevronLeft size={24} aria-hidden="true" />
+                    <span>Back</span>
+                  </button>
+                  <p className="sky-full-chart-meta">{skyFullChartMeta}</p>
+                </header>
+
+                <div className="sky-full-chart-body">
+                  <h2 className="sr-only" id={skyFullChartTitleId}>Full sky chart</h2>
+                  <div className="sky-full-chart-shell">
+                    <div className="wheel natal-wheel chart-frame" aria-label={`Full sky chart for ${skyFullChartMeta}`}>
+                      <SkyWheel
+                        positions={sky.positions}
+                        aspects={sky.aspects}
+                        ascendant={sky.ascendant}
+                        ascendantLongitude={sky.ascendantLongitude}
+                        midheavenLongitude={sky.midheavenLongitude}
+                        houseSignLabelStyle={activeHouseSignLabelStyle}
+                        variant="zodiac"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ModalPortal>
           )}
 
           {chartModalOpen && (
@@ -6390,7 +6612,8 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sunDegree = formatBriefPlacementDegree(sun);
   const moonDegree = formatBriefPlacementDegree(moon);
-  const moonSignLabel = sky.moonStatus?.label ?? moon?.sign ?? "Current";
+  const sunSignLabel = compactSkyChicletSign(sun?.sign ?? "Current");
+  const moonSignLabel = compactSkyChicletSign(sky.moonStatus?.label ?? moon?.sign ?? "Current");
   const shouldShowMoonDegree = sky.moonStatus?.kind !== "void";
 
   return (
@@ -6401,7 +6624,7 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
           <span className="sky-lunar-pill-copy">
             <em>Sun</em>
             <h3>
-              <span>{sun?.sign ?? "Current"}</span>
+              <span>{sunSignLabel}</span>
               {sunDegree && <small>{sunDegree}</small>}
             </h3>
           </span>

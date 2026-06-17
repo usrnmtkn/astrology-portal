@@ -1,7 +1,7 @@
 .placement-table-row {
   position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: var(--sp-2);
   align-items: center;
   width: 100%;
@@ -51,9 +51,12 @@ button.placement-table-row {
   flex-wrap: wrap;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .placement-table-row__title {
+  flex: 1 1 14rem;
+  min-width: min(100%, 12rem);
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--text-table-title-size);
@@ -85,12 +88,13 @@ button.placement-table-row {
 .placement-table-row__meta {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 6px;
-  justify-self: end;
-  text-align: right;
-  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
+  text-align: left;
+  white-space: normal;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-table-meta-size);
@@ -101,6 +105,11 @@ button.placement-table-row {
 
 .placement-table-row .spl-dig {
   flex: 0 1 auto;
+}
+
+.placement-table-row__meta > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .planet-placement-row {
