@@ -71,6 +71,15 @@ Health checks:
 - `/health` returns service status and ephemeris diagnostics.
 - `/ready` returns `200` only when the ephemeris library/data path can initialize.
 
+### Google Cloud Run
+
+For production traffic, Cloud Run is the recommended first deployment target.
+Use [CLOUD_RUN.md](./CLOUD_RUN.md) for the full setup.
+
+The included `cloudbuild.yaml` builds the API image, pushes it to Artifact
+Registry, deploys Cloud Run, mounts a read-only Cloud Storage bucket at
+`/opt/swisseph`, and configures `/ready` as the startup probe.
+
 ### Render
 
 `render.yaml` is included as a starter blueprint for a Docker web service when
