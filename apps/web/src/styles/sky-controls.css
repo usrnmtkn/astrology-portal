@@ -50,8 +50,8 @@
   box-shadow: var(--nav-rest-shadow);
   padding: 0 18px;
   font-family: var(--font-ui);
-  font-size: var(--text-nav);
-  font-weight: var(--weight-semibold);
+  font-size: var(--nav-link-size);
+  font-weight: var(--weight-medium);
   line-height: 1;
   white-space: nowrap;
   backdrop-filter: blur(0) saturate(1);
@@ -115,7 +115,7 @@ html[data-scrolled] .sky-header-date-button {
 .mobile-sky-controls {
   position: absolute;
   top: calc(100% + 12px);
-  right: 0;
+  right: calc((var(--top-icon-button-size) * 2) + (var(--top-control-gap) * 2));
   z-index: var(--z-picker);
   display: grid;
   gap: 18px;
