@@ -452,11 +452,21 @@
 
   .sky-header-date-button {
     gap: 8px;
+    max-width: min(42vw, 210px);
     padding: 0 18px;
     font-family: var(--font-ui);
     font-size: var(--text-nav);
     font-weight: var(--weight-semibold);
     line-height: 1;
+  }
+
+  .sky-header-date-button__date,
+  .sky-header-date-button__location {
+    flex: 0 1 auto;
+  }
+
+  .sky-header-date-button__location {
+    max-width: 88px;
   }
 
   .sky-header-date-button[aria-expanded="true"] .sky-header-date-button__chevron {
@@ -1298,5 +1308,16 @@
     height: 40px;
     padding: 0 var(--sp-2);
     font-size: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .mode-guest .sky-header-date-button,
+  .mode-member .sky-header-date-button {
+    max-width: 116px;
+  }
+
+  .sky-header-date-button__location {
+    display: none;
   }
 }
