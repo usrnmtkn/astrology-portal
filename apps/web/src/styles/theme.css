@@ -173,6 +173,7 @@
   --text-glyph: 22px;
   --text-page-title-size: var(--text-title);
   --text-section-label-size: var(--text-eyebrow);
+  --text-section-heading-size: 18px;
   --text-card-title-size: var(--text-card-title);
   --text-row-title-size: var(--text-card-title);
   --text-row-body-size: var(--text-description);

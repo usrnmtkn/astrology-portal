@@ -305,7 +305,7 @@
   margin: 0 0 var(--sp-2);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: var(--text-section-heading-size);
   font-weight: var(--weight-medium);
   line-height: 1.25;
 }
@@ -352,7 +352,7 @@
   }
 
   .article-sub {
-    font-size: 16px;
+    font-size: var(--article-body-size);
     line-height: 1.45;
   }
 
@@ -360,7 +360,7 @@
   .article-share,
   .article-meta,
   .sky-detail-meta {
-    font-size: 15px;
+    font-size: var(--article-meta-size);
   }
 
   .article-header-actions {
@@ -575,7 +575,7 @@
 .ro-more-text {
   color: var(--ink);
   font-size: 14px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--weight-semibold);
   line-height: 1.35;
   text-wrap: pretty;
 }
@@ -799,7 +799,7 @@
 .retro-chapter {
   color: var(--muted);
   font-size: var(--type-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   line-height: 1.35;
 }
 
@@ -809,7 +809,7 @@
   max-width: 760px;
   font-family: var(--font-body);
   font-size: var(--type-md);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--weight-regular);
   line-height: 1.5;
 }
 
@@ -906,7 +906,7 @@
 .sky-lunar-pill-copy h3 small {
   color: var(--app-muted);
   font-size: 0.62rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
 }
 
@@ -914,7 +914,7 @@
   margin-top: 0;
   color: var(--app-muted);
   font-size: 0.68rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1;
 }
@@ -1064,7 +1064,7 @@
   font-family: var(--font-body);
   font-size: 10.5px;
   font-variant-numeric: tabular-nums;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.04em;
   line-height: 1;
   text-transform: uppercase;

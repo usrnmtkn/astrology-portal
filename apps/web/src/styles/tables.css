@@ -266,7 +266,7 @@ button.planet-placement-row {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 11px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.005em;
   line-height: 1;
@@ -279,7 +279,7 @@ button.planet-placement-row {
   gap: 8px 16px;
   color: var(--muted);
   font-size: var(--type-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: 1.25;
 }
@@ -363,7 +363,7 @@ button.planet-placement-row {
   box-shadow: var(--tooltip-shadow);
   font-family: var(--font-ui);
   font-size: 12px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1.25;
   overflow-wrap: break-word;
@@ -411,7 +411,7 @@ button.planet-placement-row {
   color: var(--retrograde-accent);
   font-family: var(--font-body);
   font-size: var(--type-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--tracking-label);
   line-height: 1.1;
@@ -436,6 +436,6 @@ button.planet-placement-row {
 .placement-prose {
   color: var(--text-muted);
   font-size: var(--type-md);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--weight-regular);
   line-height: 1.55;
 }
