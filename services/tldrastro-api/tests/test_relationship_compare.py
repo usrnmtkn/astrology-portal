@@ -23,6 +23,18 @@ def test_relationship_compare_fixture_maya_river():
     assert body["synastry"]["personB"]["subjectName"] == "River"
     assert len(body["relationshipThemes"]) == expected["themeCount"]
     assert len(body["contentFacts"]) == expected["contentFactCount"]
+    assert body["app"]["headline"] == expected["topThemes"][0]["label"]
+    assert body["app"]["confidence"] >= 80
+    assert body["app"]["relationshipTags"][:3] == [
+        "relationship-compare",
+        "synastry",
+        "composite",
+    ]
+    assert body["app"]["keyFactors"][:3] == [
+        theme["label"] for theme in expected["topThemes"][:3]
+    ]
+    assert body["synastry"]["app"]["relationshipTags"][0] == "synastry"
+    assert body["composite"]["app"]["relationshipTags"][0] == "composite"
 
     for index, expected_theme in enumerate(expected["topThemes"]):
         actual = body["relationshipThemes"][index]
@@ -36,4 +48,3 @@ def test_relationship_compare_fixture_maya_river():
         assert actual["eventType"] == expected_fact["eventType"]
         assert actual["headline"] == expected_fact["headline"]
         assert actual["priority"] == expected_fact["priority"]
-

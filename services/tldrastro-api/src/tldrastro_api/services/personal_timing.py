@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from tldrastro_api.models import (
+    AppResponseContract,
     ChartMetadata,
     ContentFactPacket,
     PersonalTimingRequest,
@@ -120,6 +121,65 @@ def _content_facts(request: PersonalTimingRequest, profections, boosted) -> List
     return facts
 
 
+def _fact_id(fact: ContentFactPacket) -> str:
+    if fact.knowledgeIds:
+        return fact.knowledgeIds[0]
+    return f"{fact.surface}:{fact.eventType}:{fact.headline}".lower().replace(" ", "-")
+
+
+def _app_contract(profections, boosted, facts: List[ContentFactPacket]) -> AppResponseContract:
+    top_boost = boosted[0] if boosted else None
+    headline = f"{profections.annual.sign} {profections.annual.house}H year"
+    summary = (
+        f"Annual profection activates the {profections.annual.house} house, "
+        f"{profections.annual.sign}, and {profections.annual.ruler}."
+    )
+    key_factors = [
+        f"Annual house: {profections.annual.house}",
+        f"Annual sign: {profections.annual.sign}",
+        f"Lord of the Year: {profections.annual.ruler}",
+    ]
+    if profections.annual.activatedNatalPlanets:
+        key_factors.append(
+            "Activated natal planets: "
+            + ", ".join(profections.annual.activatedNatalPlanets)
+        )
+    if top_boost:
+        key_factors.append(
+            f"Top boosted transit: {top_boost.hit.transitPlanet} "
+            f"{top_boost.hit.aspect} {top_boost.hit.natalPoint}"
+        )
+        summary += (
+            f" The strongest timing signal is {top_boost.hit.transitPlanet} "
+            f"{top_boost.hit.aspect} {top_boost.hit.natalPoint}."
+        )
+    timing_tags = [
+        "personal-timing",
+        "annual-profection",
+        f"house-{profections.annual.house}",
+        profections.annual.sign.lower(),
+        profections.annual.ruler.lower().replace(" ", "-"),
+    ]
+    if top_boost:
+        timing_tags.extend(
+            [
+                "boosted-transit",
+                top_boost.hit.transitPlanet.lower().replace(" ", "-"),
+                top_boost.hit.aspect,
+            ]
+        )
+    confidence = min(95, 70 + len(facts) * 5 + min(10, len(boosted)))
+    return AppResponseContract(
+        headline=headline,
+        summary=summary,
+        keyFactors=key_factors,
+        timingTags=list(dict.fromkeys(timing_tags)),
+        relationshipTags=[],
+        confidence=confidence,
+        contentFactIds=[_fact_id(fact) for fact in facts],
+    )
+
+
 def calculate_personal_timing(request: PersonalTimingRequest) -> PersonalTimingResponse:
     profections = calculate_profections(
         ProfectionsRequest(
@@ -153,6 +213,7 @@ def calculate_personal_timing(request: PersonalTimingRequest) -> PersonalTimingR
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
         ),
+        app=_app_contract(profections, boosted, content_facts),
         natal=transits.natal,
         currentSky=transits.transitChart,
         profections=profections,
@@ -164,4 +225,3 @@ def calculate_personal_timing(request: PersonalTimingRequest) -> PersonalTimingR
         activatedNatalPlanets=profections.annual.activatedNatalPlanets,
         contentFacts=content_facts,
     )
-

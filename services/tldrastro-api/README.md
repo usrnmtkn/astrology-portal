@@ -37,10 +37,9 @@ files if the runtime cannot locate them automatically:
 TLDR_ASTRO_EPHEMERIS_PATH=/path/to/ephemeris uvicorn tldrastro_api.main:app --reload --port 8000
 ```
 
-The app currently returns a validated `501 Not Implemented` response for
-`POST /chart/natal`. That is intentional for this scaffold: the contract is in
-place, and the next step is implementing the Swiss Ephemeris-backed calculation
-engine behind it.
+The service uses Swiss Ephemeris for natal, sky, transit, timing, synastry, and
+composite calculations. Keep licensed ephemeris data outside git and point the
+runtime at it with `TLDR_ASTRO_EPHEMERIS_PATH`.
 
 ## First Endpoints
 
@@ -56,3 +55,51 @@ engine behind it.
 - `POST /sky/current`
 - `POST /timing/profections`
 - `POST /timing/personal`
+
+## App-Facing Contracts
+
+Timing and relationship responses include an `app` object for the TLDR Astro
+frontend and content pipeline:
+
+```json
+{
+  "headline": "Cancer 4H year",
+  "summary": "Annual profection activates the 4 house, Cancer, and Moon.",
+  "keyFactors": ["Annual house: 4", "Annual sign: Cancer"],
+  "timingTags": ["personal-timing", "annual-profection", "house-4"],
+  "relationshipTags": [],
+  "confidence": 86,
+  "contentFactIds": ["timing-profection-house-4"]
+}
+```
+
+Use `app` for cards, previews, notifications, and prose prompts. Use the raw
+calculation fields for charts, tables, and detailed drill-downs.
+
+## Frontend Integration
+
+Run the API and Vite app side by side:
+
+```bash
+# terminal 1
+cd services/tldrastro-api
+source .venv/bin/activate
+uvicorn tldrastro_api.main:app --reload --port 8000
+
+# terminal 2
+cd apps/web
+npm run dev
+```
+
+Add the API URL to `apps/web/.env.local`:
+
+```bash
+VITE_TLDRASTRO_API_URL=http://127.0.0.1:8000
+```
+
+The web app client lives at `apps/web/src/services/tldrastroApi.ts` and exposes:
+
+- `getPersonalTiming`
+- `compareRelationship`
+- `getSynastry`
+- `getComposite`

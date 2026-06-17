@@ -119,6 +119,16 @@ class ContentFactPacket(BaseModel):
     knowledgeIds: List[str] = Field(default_factory=list)
 
 
+class AppResponseContract(BaseModel):
+    headline: str
+    summary: str
+    keyFactors: List[str] = Field(default_factory=list)
+    timingTags: List[str] = Field(default_factory=list)
+    relationshipTags: List[str] = Field(default_factory=list)
+    confidence: int = Field(..., ge=0, le=100)
+    contentFactIds: List[str] = Field(default_factory=list)
+
+
 class NatalChartRequest(BaseModel):
     subject: ChartSubject
     includeContentFacts: bool = True
@@ -266,6 +276,7 @@ class TimingBoostedTransit(BaseModel):
 
 class PersonalTimingResponse(BaseModel):
     metadata: ChartMetadata
+    app: AppResponseContract
     natal: NatalChartResponse
     currentSky: SkyCurrentResponse
     profections: ProfectionsResponse
@@ -314,6 +325,7 @@ class HouseOverlay(BaseModel):
 
 class SynastryResponse(BaseModel):
     metadata: ChartMetadata
+    app: AppResponseContract
     personA: NatalChartResponse
     personB: NatalChartResponse
     contacts: List[SynastryContact] = Field(default_factory=list)
@@ -330,6 +342,7 @@ class CompositeRequest(BaseModel):
 
 class CompositeResponse(BaseModel):
     metadata: ChartMetadata
+    app: AppResponseContract
     personA: NatalChartResponse
     personB: NatalChartResponse
     positions: List[Position] = Field(default_factory=list)
@@ -356,6 +369,7 @@ class RelationshipCompareRequest(BaseModel):
 
 class RelationshipCompareResponse(BaseModel):
     metadata: ChartMetadata
+    app: AppResponseContract
     synastry: SynastryResponse
     composite: CompositeResponse
     relationshipThemes: List[RelationshipTheme] = Field(default_factory=list)

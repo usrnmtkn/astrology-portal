@@ -2,8 +2,10 @@ from datetime import datetime, timezone
 from typing import List
 
 from tldrastro_api.models import (
+    AppResponseContract,
     ChartMetadata,
     CompositeRequest,
+    ContentFactPacket,
     RelationshipCompareRequest,
     RelationshipCompareResponse,
     RelationshipTheme,
@@ -46,6 +48,37 @@ def _relationship_themes(synastry, composite) -> List[RelationshipTheme]:
     return sorted(themes, key=lambda theme: (-theme.score, theme.id))[:8]
 
 
+def _fact_id(fact: ContentFactPacket) -> str:
+    if fact.knowledgeIds:
+        return fact.knowledgeIds[0]
+    return f"{fact.surface}:{fact.eventType}:{fact.headline}".lower().replace(" ", "-")
+
+
+def _app_contract(themes: List[RelationshipTheme], facts: List[ContentFactPacket]) -> AppResponseContract:
+    top_theme = themes[0] if themes else None
+    headline = top_theme.label if top_theme else "Relationship comparison"
+    summary = (
+        f"The strongest relationship theme is {top_theme.label}. "
+        f"The response includes synastry contacts, composite aspects, and {len(facts)} content facts."
+        if top_theme
+        else "The response includes synastry contacts, composite aspects, and content-ready facts."
+    )
+    key_factors = [theme.label for theme in themes[:5]]
+    relationship_tags = ["relationship-compare", "synastry", "composite"]
+    if top_theme:
+        relationship_tags.append(top_theme.source)
+    confidence = min(96, 72 + min(16, len(themes) * 2) + min(8, len(facts)))
+    return AppResponseContract(
+        headline=headline,
+        summary=summary,
+        keyFactors=key_factors,
+        timingTags=[],
+        relationshipTags=list(dict.fromkeys(relationship_tags)),
+        confidence=confidence,
+        contentFactIds=[_fact_id(fact) for fact in facts],
+    )
+
+
 def calculate_relationship_compare(request: RelationshipCompareRequest) -> RelationshipCompareResponse:
     synastry = calculate_synastry(
         SynastryRequest(
@@ -68,6 +101,7 @@ def calculate_relationship_compare(request: RelationshipCompareRequest) -> Relat
         *synastry.metadata.inputWarnings,
         *composite.metadata.inputWarnings,
     ]
+    themes = _relationship_themes(synastry, composite)
     return RelationshipCompareResponse(
         metadata=ChartMetadata(
             houseSystem=request.settings.houseSystem,
@@ -75,9 +109,9 @@ def calculate_relationship_compare(request: RelationshipCompareRequest) -> Relat
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
         ),
+        app=_app_contract(themes, facts),
         synastry=synastry,
         composite=composite,
-        relationshipThemes=_relationship_themes(synastry, composite),
+        relationshipThemes=themes,
         contentFacts=facts,
     )
-
