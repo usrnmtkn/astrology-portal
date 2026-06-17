@@ -160,7 +160,6 @@ svg {
 
 .type-body,
 .type-body-muted,
-.type-body-mono,
 .type-body-strong {
   color: var(--ink-2);
   font-size: var(--text-body);
@@ -173,10 +172,6 @@ svg {
 .type-body-muted,
 .type-meta {
   color: var(--muted);
-}
-
-.type-body-mono {
-  font-family: var(--font-mono);
 }
 
 .type-body-strong {

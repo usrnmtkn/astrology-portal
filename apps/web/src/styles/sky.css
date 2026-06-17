@@ -637,8 +637,8 @@
 }
 
 .ro-screen .sky-pl-duration {
-  background: var(--surface-2);
-  color: var(--ink);
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
 }
 
 .ro-screen .sky-pl-duration--retrograde {
@@ -876,7 +876,7 @@
 
 .sky-lunar-pill-copy em {
   color: var(--app-muted);
-  font-size: 0.62rem;
+  font-size: var(--text-eyebrow);
   font-style: normal;
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
@@ -892,9 +892,10 @@
   min-width: 0;
   margin-top: 1px;
   color: var(--app-text);
-  font-size: 0.88rem;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: 0;
   line-height: 1.15;
 }
 
@@ -905,7 +906,7 @@
 
 .sky-lunar-pill-copy h3 small {
   color: var(--app-muted);
-  font-size: 0.62rem;
+  font-size: var(--text-description);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
 }
@@ -913,7 +914,7 @@
 .sky-lunar-pill-sub {
   margin-top: 0;
   color: var(--app-muted);
-  font-size: 0.68rem;
+  font-size: var(--text-description);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1;
@@ -1032,10 +1033,10 @@
   margin: 0;
   overflow: hidden;
   color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 13.5px;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-medium);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1051,18 +1052,18 @@
   flex: 0 0 auto;
   color: var(--muted);
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
 }
 
 .nl-until {
   flex: 0 0 auto;
   padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--ink-2);
+  border-radius: var(--duration-badge-radius);
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
   font-family: var(--font-body);
-  font-size: 10.5px;
+  font-size: var(--text-eyebrow);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
   letter-spacing: 0.04em;
@@ -1078,7 +1079,7 @@
   overflow: hidden;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--text-description);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
   text-overflow: ellipsis;

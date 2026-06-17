@@ -182,6 +182,9 @@
   --text-table-title-size: var(--text-card-title);
   --text-table-body-size: var(--text-description);
   --text-table-meta-size: var(--text-placement-meta);
+  --duration-badge-bg: var(--surface-2);
+  --duration-badge-fg: var(--ink);
+  --duration-badge-radius: var(--radius-pill);
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
@@ -329,11 +332,6 @@
   --air: #7fb8da;
   --water: #6476bd;
   --lavender: #f7e8fb;
-  --font-display-old: var(--font-display);
-  --font-weight-regular: var(--weight-regular);
-  --font-weight-medium: var(--weight-medium);
-  --font-weight-semibold: var(--weight-semibold);
-  --font-weight-bold: var(--weight-bold);
   --tracking-tight: var(--tracking-display);
   --tracking-normal: 0;
   --type-xs: var(--text-eyebrow);
