@@ -105,7 +105,15 @@ import type { ManualChart, ManualChartInput, ManualChartType } from "./services/
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
-import { getPersonalTiming, isTldrAstroApiConfigured, type PersonalTimingResponse } from "./services/tldrastroApi";
+import {
+  compareRelationship,
+  getPersonalTiming,
+  isTldrAstroApiConfigured,
+  type RelationshipCompareResponse,
+  type TldrAstroChartSettings,
+  type TldrAstroSubject,
+  type PersonalTimingResponse
+} from "./services/tldrastroApi";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
@@ -222,6 +230,7 @@ type TransitItem = {
 };
 
 type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
+type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
 type FriendProfileTab = "natal" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
@@ -1108,13 +1117,70 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
   };
 }
 
-function apiSettingsFromChartSettings(settings?: Partial<ChartSettings> | null) {
+function apiSettingsFromChartSettings(settings?: Partial<ChartSettings> | null): TldrAstroChartSettings {
   const normalized = normalizeChartSettings(settings);
 
   return {
     houseSystem: "whole_sign" as const,
     zodiac: "tropical" as const,
     aspectProfile: normalized.aspects === "Tight" ? "tight" as const : "standard" as const
+  };
+}
+
+function apiSubjectFromUserChart(
+  profile: UserProfile,
+  chart: UserChart | undefined,
+  settings?: Partial<ChartSettings> | null
+): TldrAstroSubject | null {
+  const birthDate = validChartBirthDate(chart);
+  const birthCity = validChartBirthCity(chart);
+  const birthTime = validChartBirthTime(chart);
+  const birthLocation = chart?.birthLocation
+    ? withTimeZone(chart.birthLocation)
+    : birthCity
+      ? locationFromLabel(birthCity)
+      : null;
+
+  if (!birthDate || !birthTime || !birthLocation) {
+    return null;
+  }
+
+  const timeKnown = birthTime !== "Time unknown";
+
+  return {
+    name: profile.name,
+    datetime: {
+      date: birthDate,
+      time: timeKnown ? displayTimeToTwentyFourHour(birthTime) : "12:00",
+      timeKnown,
+      timeZone: birthLocation.timeZone
+    },
+    location: birthLocation,
+    settings: apiSettingsFromChartSettings(settings)
+  };
+}
+
+function apiSubjectFromManualChart(
+  chart: ManualChart | null | undefined,
+  settings?: Partial<ChartSettings> | null
+): TldrAstroSubject | null {
+  if (!chart || !chart.birthDate || !chart.birthLocation) {
+    return null;
+  }
+
+  const birthLocation = withTimeZone(chart.birthLocation);
+  const timeKnown = !chart.birthTimeUnknown && Boolean(chart.birthTime);
+
+  return {
+    name: chart.displayName,
+    datetime: {
+      date: chart.birthDate,
+      time: timeKnown ? displayTimeToTwentyFourHour(chart.birthTime) : "12:00",
+      timeKnown,
+      timeZone: birthLocation.timeZone
+    },
+    location: birthLocation,
+    settings: apiSettingsFromChartSettings(settings)
   };
 }
 
@@ -5065,21 +5131,14 @@ export function App() {
     }
 
     const primaryChart = userProfile.charts[0];
-    const birthDate = validChartBirthDate(primaryChart);
-    const birthCity = validChartBirthCity(primaryChart);
-    const birthTime = validChartBirthTime(primaryChart);
-    const birthLocation = primaryChart?.birthLocation
-      ? withTimeZone(primaryChart.birthLocation)
-      : birthCity
-        ? locationFromLabel(birthCity)
-        : null;
+    const natalSubject = apiSubjectFromUserChart(userProfile, primaryChart, userProfile.settings);
     const currentLocation = userProfile.currentLocationData
       ? withTimeZone(userProfile.currentLocationData)
       : userProfile.currentLocation
         ? locationFromLabel(userProfile.currentLocation)
         : null;
 
-    if (!birthDate || !birthTime || birthTime === "Time unknown" || !birthLocation || !currentLocation) {
+    if (!natalSubject || !natalSubject.datetime.timeKnown || !currentLocation) {
       setPersonalTiming(null);
       setPersonalTimingStatus("idle");
       return;
@@ -5089,17 +5148,7 @@ export function App() {
     setPersonalTimingStatus("loading");
 
     getPersonalTiming({
-      natalSubject: {
-        name: userProfile.name,
-        datetime: {
-          date: birthDate,
-          time: displayTimeToTwentyFourHour(birthTime),
-          timeKnown: true,
-          timeZone: birthLocation.timeZone
-        },
-        location: birthLocation,
-        settings: apiSettingsFromChartSettings(userProfile.settings)
-      },
+      natalSubject,
       targetDatetime: {
         date: skyDate,
         time: "12:00",
@@ -8758,6 +8807,40 @@ function ProfileView({
   );
 }
 
+function RelationshipApiSummary({
+  mode,
+  response,
+  status
+}: {
+  mode: "synastry" | "composite";
+  response: RelationshipCompareResponse | null;
+  status: RelationshipCompareStatus;
+}) {
+  if (!response && status !== "loading") {
+    return null;
+  }
+
+  const headline = response?.app.headline ?? "Calculating relationship pattern";
+  const summary = response?.app.summary
+    ?? "Checking synastry contacts, composite aspects, and relationship themes.";
+  const keyFactors = response?.app.keyFactors ?? [];
+
+  return (
+    <section className="relationship-api-summary" aria-label={`${mode} relationship summary`}>
+      <span className="eyebrow section-label">{mode === "synastry" ? "Relationship themes" : "Composite themes"}</span>
+      <h3>{headline}</h3>
+      <p>{summary}</p>
+      {keyFactors.length > 0 && (
+        <ul>
+          {keyFactors.slice(0, 4).map((factor) => (
+            <li key={factor}>{factor}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 function ManualChartsPanel({
   profile,
   currentSky,
@@ -8792,6 +8875,8 @@ function ManualChartsPanel({
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
+  const [relationshipCompare, setRelationshipCompare] = useState<RelationshipCompareResponse | null>(null);
+  const [relationshipCompareStatus, setRelationshipCompareStatus] = useState<RelationshipCompareStatus>("idle");
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
@@ -8880,6 +8965,9 @@ function ManualChartsPanel({
     : selectedFriendSun
       ? `${natalPlacementTitle(selectedFriendSun)} sets the main signature, while the elements stay more evenly distributed.`
     : "Add complete birth details to read the chart's elemental balance, angles, and strongest signatures.";
+  const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
+    ? null
+    : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
 
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
@@ -8932,6 +9020,75 @@ function ManualChartsPanel({
       setFriendProfileTab("natal");
     }
   }, [friendProfileTab, selectedChartIsEvent]);
+
+  useEffect(() => {
+    if (!isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
+      setRelationshipCompare(null);
+      setRelationshipCompareStatus("idle");
+      return;
+    }
+
+    const personA = apiSubjectFromManualChart(selectedChart, profile.settings);
+    const personB = relationshipComparisonChartId === "self"
+      ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
+      : apiSubjectFromManualChart(relationshipComparisonManualChart, profile.settings);
+
+    if (!personA || !personB) {
+      setRelationshipCompare(null);
+      setRelationshipCompareStatus("idle");
+      return;
+    }
+
+    let cancelled = false;
+    setRelationshipCompareStatus("loading");
+
+    compareRelationship({
+      personA,
+      personB,
+      settings: apiSettingsFromChartSettings(profile.settings),
+      includeContentFacts: true
+    })
+      .then((response) => {
+        if (!cancelled) {
+          setRelationshipCompare(response);
+          setRelationshipCompareStatus("ready");
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.warn("TLDR Astro relationship compare API failed; using local relationship rows.", error);
+          setRelationshipCompare(null);
+          setRelationshipCompareStatus("error");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    selectedChart?.id,
+    selectedChart?.birthDate,
+    selectedChart?.birthTime,
+    selectedChart?.birthTimeUnknown,
+    selectedChart?.birthLocation?.label,
+    selectedChart?.birthLocation?.timeZone,
+    selectedChartIsEvent,
+    relationshipComparisonChartId,
+    relationshipComparisonManualChart?.id,
+    relationshipComparisonManualChart?.birthDate,
+    relationshipComparisonManualChart?.birthTime,
+    relationshipComparisonManualChart?.birthTimeUnknown,
+    relationshipComparisonManualChart?.birthLocation?.label,
+    relationshipComparisonManualChart?.birthLocation?.timeZone,
+    profile.id,
+    profile.name,
+    profile.settings,
+    profile.charts[0]?.birthDate,
+    profile.charts[0]?.birthTime,
+    profile.charts[0]?.birthCity,
+    profile.charts[0]?.birthLocation?.label,
+    profile.charts[0]?.birthLocation?.timeZone
+  ]);
   const circleCards = useMemo(
     () => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees),
     [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
@@ -9594,6 +9751,11 @@ function ManualChartsPanel({
                     </p>
                   </span>
                 </article>
+                <RelationshipApiSummary
+                  mode="synastry"
+                  response={relationshipCompare}
+                  status={relationshipCompareStatus}
+                />
                 <SynastryPlacementsComparison
                   outerName={selectedChart.displayName}
                   outerSky={selectedChart.natalChart}
@@ -9674,6 +9836,11 @@ function ManualChartsPanel({
                     </p>
                   </span>
                 </article>
+                <RelationshipApiSummary
+                  mode="composite"
+                  response={relationshipCompare}
+                  status={relationshipCompareStatus}
+                />
                 {selectedCompositeSky && (
                   <section className="composite-placements-section">
                     <span className="eyebrow section-label friend-section-label">Composite placements</span>

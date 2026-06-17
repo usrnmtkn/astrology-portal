@@ -1,4 +1,4 @@
-type DateTimeInput = {
+export type DateTimeInput = {
   date: string;
   time?: string | null;
   timeKnown?: boolean;
@@ -6,14 +6,14 @@ type DateTimeInput = {
   utc?: string | null;
 };
 
-type LocationInput = {
+export type TldrAstroLocationInput = {
   label: string;
   latitude: number;
   longitude: number;
   timeZone?: string | null;
 };
 
-type ChartSettings = {
+export type TldrAstroChartSettings = {
   houseSystem?: "whole_sign" | "placidus" | "koch" | "equal" | "porphyry" | "regiomontanus";
   zodiac?: "tropical" | "sidereal";
   ayanamsa?: string | null;
@@ -24,8 +24,8 @@ type ChartSettings = {
 export type TldrAstroSubject = {
   name?: string | null;
   datetime: DateTimeInput;
-  location: LocationInput;
-  settings?: ChartSettings;
+  location: TldrAstroLocationInput;
+  settings?: TldrAstroChartSettings;
 };
 
 export type TldrAstroAppContract = {
@@ -77,16 +77,16 @@ export type RelationshipCompareResponse = ApiEnvelope & {
 type PersonalTimingRequest = {
   natalSubject: TldrAstroSubject;
   targetDatetime: DateTimeInput;
-  targetLocation: LocationInput;
-  settings?: ChartSettings;
+  targetLocation: TldrAstroLocationInput;
+  settings?: TldrAstroChartSettings;
   includeContentFacts?: boolean;
   maxTransits?: number;
 };
 
-type RelationshipRequest = {
+export type RelationshipRequest = {
   personA: TldrAstroSubject;
   personB: TldrAstroSubject;
-  settings?: ChartSettings;
+  settings?: TldrAstroChartSettings;
   includeContentFacts?: boolean;
 };
 
