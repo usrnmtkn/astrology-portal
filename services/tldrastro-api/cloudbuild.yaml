@@ -1,0 +1,54 @@
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: tldrastro
+  _SERVICE: tldrastro-api
+  _ALLOWED_ORIGINS: https://tldrastro.vercel.app
+  _EPHEMERIS_BUCKET: tldrastro-swisseph
+  _EPHEMERIS_PATH: /opt/swisseph
+  _MIN_INSTANCES: "1"
+  _MAX_INSTANCES: "20"
+  _CONCURRENCY: "20"
+  _CPU: "1"
+  _MEMORY: 1Gi
+
+steps:
+  - id: build-api-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - services/tldrastro-api/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+      - services/tldrastro-api
+
+  - id: push-api-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+
+  - id: deploy-cloud-run
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --execution-environment=gen2
+      - --port=8000
+      - --cpu=${_CPU}
+      - --memory=${_MEMORY}
+      - --concurrency=${_CONCURRENCY}
+      - --min-instances=${_MIN_INSTANCES}
+      - --max-instances=${_MAX_INSTANCES}
+      - --set-env-vars=^::^TLDR_ASTRO_ALLOWED_ORIGINS=${_ALLOWED_ORIGINS}::TLDR_ASTRO_EPHEMERIS_PATH=${_EPHEMERIS_PATH}
+      - --add-volume=mount-path=${_EPHEMERIS_PATH},type=cloud-storage,bucket=${_EPHEMERIS_BUCKET},readonly=true
+      - --startup-probe=httpGet.path=/ready,httpGet.port=8000,initialDelaySeconds=0,failureThreshold=3,timeoutSeconds=10,periodSeconds=10
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
