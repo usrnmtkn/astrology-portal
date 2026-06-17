@@ -105,6 +105,22 @@ curl -fsSL "$API_URL/ready"
 
 ## Connect Vercel
 
+Cloud Run must allow unauthenticated invocations so the browser can call the API
+directly:
+
+```bash
+gcloud run services add-iam-policy-binding "$SERVICE" \
+  --region "$REGION" \
+  --member=allUsers \
+  --role=roles/run.invoker
+```
+
+If the project is inside a Google Cloud organization with Domain Restricted
+Sharing enabled, create a project-level override for
+`iam.allowedPolicyMemberDomains` before granting `allUsers`. The production
+`tldrastro-prod` project uses `allowAll: true` for that constraint so public
+Cloud Run invocation works.
+
 In the Vercel project for `apps/web`, set:
 
 ```bash
