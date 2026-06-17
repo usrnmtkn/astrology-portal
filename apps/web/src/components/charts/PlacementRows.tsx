@@ -400,6 +400,7 @@ export function PlacementTableRow({
   variant?: "natal" | "friend" | "composite";
 }) {
   const meta = placementTableMeta(house, degree);
+  const hasStatusLine = Boolean(dignity || retrograde);
   const className = [
     "placement-table-row",
     `placement-table-row--${variant}`,
@@ -411,14 +412,18 @@ export function PlacementTableRow({
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
-          <DignityBadge dignity={dignity ?? null} />
-          {meta || retrograde ? (
-            <span className="placement-table-row__meta placement-row__house placement-row__degree">
-              {meta ? <span>{meta}</span> : null}
-              {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
-            </span>
-          ) : null}
         </span>
+        {meta ? (
+          <span className="placement-table-row__meta placement-row__house placement-row__degree">
+            <span>{meta}</span>
+          </span>
+        ) : null}
+        {hasStatusLine ? (
+          <span className="placement-table-row__status" aria-label={`${title} status`}>
+            <DignityBadge dignity={dignity ?? null} />
+            {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
+          </span>
+        ) : null}
         {description ? <span className="placement-table-row__description">{description}</span> : null}
       </span>
     </>
@@ -492,6 +497,7 @@ export function PlanetPlacementRow({
   }
 
   const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
+  const hasDignity = Boolean(dignity);
   const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
   const rowStatuses = statuses.filter((status) => status.tone !== "retrograde");
   const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
@@ -506,8 +512,7 @@ export function PlanetPlacementRow({
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
-          <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
-          <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
+          {!hasDignity ? <span className="planet-placement-row__degree placement-row__degree">{degree}</span> : null}
           {titleStatuses.map((status) => (
             <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
               {status.label}
@@ -523,10 +528,14 @@ export function PlanetPlacementRow({
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>
         ) : (
-          <span className="planet-placement-row__meta placement-row__house">{houseLabel}</span>
+          <span className="planet-placement-row__meta placement-row__house">
+            <span>{houseLabel}</span>
+            {hasDignity ? <span>{degree}</span> : null}
+          </span>
         )}
-        {rowStatuses.length > 0 ? (
+        {hasDignity || rowStatuses.length > 0 ? (
           <span className="planet-placement-row__status" aria-label={`${title} status`}>
+            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
             {rowStatuses.map((status) => (
               <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
                 {status.label.toUpperCase()}

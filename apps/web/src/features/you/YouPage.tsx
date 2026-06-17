@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 
@@ -75,6 +74,7 @@ function YouProfileSummary({
   displayMoon,
   displayRising,
   displaySun,
+  onEditProfile,
   profileAvatarUrl,
   profileEmail,
   profileName,
@@ -83,11 +83,45 @@ function YouProfileSummary({
   displayMoon: string;
   displayRising: string;
   displaySun: string;
+  onEditProfile: () => void;
   profileAvatarUrl?: string;
   profileEmail: string;
   profileName: string;
   signaturesReady: boolean;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (target instanceof Node && menuRef.current?.contains(target)) {
+        return;
+      }
+
+      setMenuOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
+
   return (
     <div className="you-profile-card" aria-label="Profile summary">
       <ProfileAvatar
@@ -108,6 +142,32 @@ function YouProfileSummary({
         ) : (
           <p className="you-profile-status">Calculating chart signatures...</p>
         )}
+      </div>
+      <div className="you-profile-actions" ref={menuRef}>
+        <button
+          className="manual-chart-menu-trigger you-profile-menu-trigger"
+          type="button"
+          aria-label="Profile options"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          <MoreVertical size={22} aria-hidden="true" />
+        </button>
+        {menuOpen ? (
+          <span className="manual-chart-overflow-menu you-profile-overflow-menu" role="menu" aria-label="Profile options">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                onEditProfile();
+              }}
+            >
+              <Pencil size={17} aria-hidden="true" />
+              <span>Edit details</span>
+            </button>
+          </span>
+        ) : null}
       </div>
     </div>
   );
@@ -297,6 +357,7 @@ export function YouPage({
             displayMoon={displayMoon}
             displayRising={displayRising}
             displaySun={displaySun}
+            onEditProfile={onCreateChart}
             profileAvatarUrl={profileAvatarUrl}
             profileEmail={profileEmail}
             profileName={profileName}

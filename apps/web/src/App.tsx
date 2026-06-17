@@ -5892,7 +5892,7 @@ export function App() {
                     <span>The wheel &amp; aspects</span>
                   </span>
                   <span className="mobile-full-chart-card__arrow" aria-hidden="true">
-                    <ArrowRight size={22} />
+                    <ArrowRight size={18} />
                   </span>
                 </button>
                 <SkyCards sky={sky} />
@@ -6059,7 +6059,6 @@ export function App() {
                     <ChevronLeft size={24} aria-hidden="true" />
                     <span>Back</span>
                   </button>
-                  <p className="sky-full-chart-meta">{skyFullChartMeta}</p>
                 </header>
 
                 <div className="sky-full-chart-body">
