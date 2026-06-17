@@ -30,6 +30,13 @@
   text-wrap: pretty;
 }
 
+.sky-intro__lead-mobile,
+.sky-header-date-button,
+.mobile-sky-controls,
+.mobile-full-chart-card {
+  display: none;
+}
+
 .today-controls {
   display: flex;
   flex-wrap: wrap;

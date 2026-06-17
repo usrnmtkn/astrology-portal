@@ -1957,10 +1957,16 @@
 
 @media (max-width: 939px) {
   .app-shell.mode-friends {
-    --friends-page-rail: min(100%, calc(100vw - 32px));
+    --friends-page-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
   }
 
-  .app-shell.mode-friends .friends-page,
+  .app-shell.mode-friends .friends-page {
+    gap: var(--stack-gap);
+    margin-top: 0;
+    max-width: var(--friends-page-rail);
+    padding: var(--page-top) 0 var(--page-bottom);
+  }
+
   .app-shell.mode-friends .friends-page:has(.friend-profile-view),
   .app-shell.mode-friends .friend-profile-panel {
     margin-top: 18px;

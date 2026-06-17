@@ -318,28 +318,64 @@
 
 @media (max-width: 700px) {
   .sky-detail-page {
-    padding: calc(var(--mobile-page-gutter) + 80px) var(--mobile-page-gutter) var(--mobile-page-gutter);
+    padding: calc(var(--top-control-top) + var(--top-control-height) + var(--top-control-height) + 32px) var(--mobile-page-gutter)
+      var(--mobile-page-gutter);
   }
 
   .article-card,
   .sky-detail-card {
-    padding: 28px 20px 32px;
+    padding: 36px 20px 32px;
     border-radius: 22px;
   }
 
   .article-kicker-row {
-    margin-bottom: 24px;
+    align-items: center;
+    margin-bottom: 22px;
   }
 
   .article-glyph-tag {
-    width: 44px;
+    display: inline-flex;
+    width: auto;
+    min-width: 44px;
     height: 44px;
-    font-size: 22px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 21px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .article-title,
+  .sky-detail-id h1 {
+    font-size: clamp(34px, 8.8vw, 40px);
+    line-height: 1.03;
+  }
+
+  .article-sub {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .article-byline,
+  .article-share,
+  .article-meta,
+  .sky-detail-meta {
+    font-size: 15px;
   }
 
   .article-header-actions {
     align-items: flex-start;
     flex-direction: column;
+    gap: 18px;
+  }
+
+  .article-share {
+    gap: 9px;
+  }
+
+  .share-btn {
+    width: 42px;
+    height: 42px;
   }
 
   .article-rule {
@@ -807,9 +843,9 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   min-width: 0;
-  min-height: 64px;
-  gap: 10px;
-  padding: 10px 14px;
+  min-height: 52px;
+  gap: 8px;
+  padding: 6px 10px;
   border: 1px solid var(--app-border);
   border-radius: 22px;
   background: var(--app-card);
@@ -820,9 +856,9 @@
   display: grid;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   border: 1px solid var(--app-border);
   border-radius: 50%;
   background: var(--app-card);
@@ -835,11 +871,12 @@
 .sky-lunar-pill-copy {
   display: grid;
   min-width: 0;
+  gap: 1px;
 }
 
 .sky-lunar-pill-copy em {
   color: var(--app-muted);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-style: normal;
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
@@ -850,12 +887,12 @@
 .sky-lunar-pill-copy h3 {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
   align-items: baseline;
   min-width: 0;
-  margin-top: 2px;
+  margin-top: 1px;
   color: var(--app-text);
-  font-size: 0.96rem;
+  font-size: 0.88rem;
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-tight);
   line-height: 1.15;
@@ -868,18 +905,18 @@
 
 .sky-lunar-pill-copy h3 small {
   color: var(--app-muted);
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: var(--font-weight-medium);
   letter-spacing: 0;
 }
 
 .sky-lunar-pill-sub {
-  margin-top: 1px;
+  margin-top: 0;
   color: var(--app-muted);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: var(--font-weight-medium);
   letter-spacing: 0;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .moon-phase-art {
@@ -957,9 +994,9 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  min-height: 50px;
+  min-height: 46px;
   margin-top: 8px;
-  padding: 8px 12px 8px 8px;
+  padding: 6px 10px 6px 6px;
   gap: 10px;
   border: 1px solid var(--card-border);
   border-radius: 22px;

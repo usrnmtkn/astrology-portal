@@ -412,15 +412,15 @@ export function PlacementTableRow({
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
           <DignityBadge dignity={dignity ?? null} />
+          {meta || retrograde ? (
+            <span className="placement-table-row__meta placement-row__house placement-row__degree">
+              {meta ? <span>{meta}</span> : null}
+              {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
+            </span>
+          ) : null}
         </span>
         {description ? <span className="placement-table-row__description">{description}</span> : null}
       </span>
-      {meta || retrograde ? (
-        <span className="placement-table-row__meta placement-row__house placement-row__degree">
-          {meta ? <span>{meta}</span> : null}
-          {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
-        </span>
-      ) : null}
     </>
   );
 
