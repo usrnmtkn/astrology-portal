@@ -13,6 +13,14 @@ def test_health():
     assert response.json()["ok"] is True
 
 
+def test_ready():
+    response = client.get("/ready")
+
+    assert response.status_code == 200
+    assert response.json()["ok"] is True
+    assert response.json()["ephemeris"]["available"] is True
+
+
 def test_reference_config():
     response = client.get("/reference/config")
 

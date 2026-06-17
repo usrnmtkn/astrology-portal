@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: tldrastro-api
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /ready
+    autoDeploy: true
+    envVars:
+      - key: TLDR_ASTRO_ALLOWED_ORIGINS
+        sync: false
+      - key: TLDR_ASTRO_EPHEMERIS_PATH
+        sync: false

@@ -24,6 +24,7 @@ Then open:
 
 - API: `http://localhost:8000`
 - Health: `http://localhost:8000/health`
+- Readiness: `http://localhost:8000/ready`
 - OpenAPI docs: `http://localhost:8000/docs`
 
 ## Swiss Ephemeris
@@ -40,6 +41,59 @@ TLDR_ASTRO_EPHEMERIS_PATH=/path/to/ephemeris uvicorn tldrastro_api.main:app --re
 The service uses Swiss Ephemeris for natal, sky, transit, timing, synastry, and
 composite calculations. Keep licensed ephemeris data outside git and point the
 runtime at it with `TLDR_ASTRO_EPHEMERIS_PATH`.
+
+## Production Deployment
+
+The service is deployable as a standalone Docker web service. Build from this
+directory:
+
+```bash
+cd services/tldrastro-api
+docker build -t tldrastro-api .
+docker run --rm -p 8000:8000 \
+  -e TLDR_ASTRO_ALLOWED_ORIGINS=https://tldrastro.vercel.app \
+  -e TLDR_ASTRO_EPHEMERIS_PATH=/opt/swisseph \
+  -v /secure/path/to/swisseph:/opt/swisseph:ro \
+  tldrastro-api
+```
+
+Required production configuration:
+
+- `TLDR_ASTRO_ALLOWED_ORIGINS`: comma-separated web origins that may call the API.
+- `TLDR_ASTRO_EPHEMERIS_PATH`: mounted directory containing licensed Swiss Ephemeris files.
+- `PORT`: optional; hosting providers usually set this automatically.
+
+Keep Swiss Ephemeris data files out of git. Mount them as a private disk, secret
+file volume, or host directory depending on the provider.
+
+Health checks:
+
+- `/health` returns service status and ephemeris diagnostics.
+- `/ready` returns `200` only when the ephemeris library/data path can initialize.
+
+### Render
+
+`render.yaml` is included as a starter blueprint for a Docker web service when
+`services/tldrastro-api` is used as the service root. Configure these values in
+Render rather than committing secrets or local paths:
+
+```bash
+TLDR_ASTRO_ALLOWED_ORIGINS=https://tldrastro.vercel.app,https://www.tldrastro.com
+TLDR_ASTRO_EPHEMERIS_PATH=/opt/swisseph
+```
+
+Mount licensed Swiss Ephemeris files at the same path used by
+`TLDR_ASTRO_EPHEMERIS_PATH`. Use `/ready` as the health check path.
+
+### Web App Production URL
+
+After the API is deployed, configure the web app build environment:
+
+```bash
+VITE_TLDRASTRO_API_URL=https://your-api-host.example.com
+```
+
+Then rebuild/redeploy the web app so the browser bundle points at the live API.
 
 ## First Endpoints
 
