@@ -44,6 +44,22 @@
   box-shadow: var(--overlay-shadow);
 }
 
+@supports (content-visibility: auto) {
+  :where(
+    .friends-feed-card,
+    .manual-chart-row,
+    .retro-list .retro,
+    .planet-placement-row,
+    .placement-table-row,
+    .aspect-row,
+    .aspect-row-button,
+    .aspect-row-static
+  ) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 136px;
+  }
+}
+
 .chart-shell {
   display: block;
   width: var(--shared-chart-size);

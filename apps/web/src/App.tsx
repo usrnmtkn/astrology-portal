@@ -4860,6 +4860,9 @@ export function App() {
   }, [menuOpen]);
 
   useEffect(() => {
+    let animationFrame = 0;
+    let scrolled = false;
+
     function updateScrolled() {
       const scrollTop = Math.max(
         window.scrollY,
@@ -4867,16 +4870,36 @@ export function App() {
         document.body.scrollTop,
         document.scrollingElement?.scrollTop ?? 0
       );
-      document.documentElement.toggleAttribute("data-scrolled", scrollTop > 8);
+      const nextScrolled = scrollTop > 8;
+
+      if (nextScrolled === scrolled) {
+        return;
+      }
+
+      scrolled = nextScrolled;
+      document.documentElement.toggleAttribute("data-scrolled", scrolled);
+    }
+
+    function scheduleUpdateScrolled() {
+      if (animationFrame) {
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = 0;
+        updateScrolled();
+      });
     }
 
     updateScrolled();
-    window.addEventListener("scroll", updateScrolled, { passive: true });
-    document.addEventListener("scroll", updateScrolled, { passive: true, capture: true });
+    window.addEventListener("scroll", scheduleUpdateScrolled, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", updateScrolled);
-      document.removeEventListener("scroll", updateScrolled, { capture: true });
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+
+      window.removeEventListener("scroll", scheduleUpdateScrolled);
       document.documentElement.removeAttribute("data-scrolled");
     };
   }, []);

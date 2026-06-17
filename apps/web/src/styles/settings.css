@@ -119,7 +119,7 @@ button.settings-signout-row {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-row-value);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--weight-regular);
   letter-spacing: 0;
   line-height: 1.35;
   text-align: right;
@@ -128,14 +128,14 @@ button.settings-signout-row {
 }
 
 .settings-row__value--provider {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--weight-medium);
 }
 
 .settings-row__action {
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: var(--text-row-value);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--weight-semibold);
   letter-spacing: 0;
   line-height: 1.2;
   text-transform: none;
@@ -163,7 +163,7 @@ button.settings-signout-row {
   display: block;
   color: var(--text-muted);
   font-size: var(--type-sm);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--weight-regular);
   line-height: 1.4;
   letter-spacing: var(--tracking-normal);
   text-transform: none;

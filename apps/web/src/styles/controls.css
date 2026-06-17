@@ -47,7 +47,7 @@
   background: transparent;
   color: var(--segmented-inactive-fg);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
   line-height: 1;
   letter-spacing: 0;

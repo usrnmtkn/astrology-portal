@@ -61,8 +61,7 @@ html[data-scrolled] .topbar {
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
     box-shadow 320ms cubic-bezier(.4, 0, .2, 1),
-    color 320ms cubic-bezier(.4, 0, .2, 1),
-    backdrop-filter 320ms cubic-bezier(.4, 0, .2, 1);
+    color 320ms cubic-bezier(.4, 0, .2, 1);
 }
 
 .nav-pill::-webkit-scrollbar {
@@ -92,7 +91,7 @@ html[data-scrolled] .topbar {
   background: transparent;
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: var(--text-wordmark);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
   white-space: nowrap;
@@ -185,7 +184,6 @@ html[data-scrolled] .nav-pill {
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
     box-shadow 320ms cubic-bezier(.4, 0, .2, 1),
     color 320ms cubic-bezier(.4, 0, .2, 1),
-    backdrop-filter 320ms cubic-bezier(.4, 0, .2, 1),
     transform 160ms ease;
 }
 
