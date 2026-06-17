@@ -2,7 +2,9 @@ from datetime import datetime, timezone
 from typing import List, Literal
 
 from tldrastro_api.models import (
+    AppResponseContract,
     ChartMetadata,
+    ContentFactPacket,
     HouseOverlay,
     NatalChartRequest,
     Position,
@@ -12,6 +14,7 @@ from tldrastro_api.models import (
 )
 from tldrastro_api.services.chart import ASPECT_DEFINITIONS, angular_separation, aspect_orbs, house_for_longitude
 from tldrastro_api.services.natal import calculate_natal_chart
+from tldrastro_api.services.relationship_facts import house_overlay_fact, synastry_contact_fact
 
 POINT_WEIGHTS = {
     "Sun": 14,
@@ -166,6 +169,62 @@ def _overlays(
     return overlays
 
 
+def _fact_id(fact: ContentFactPacket) -> str:
+    if fact.knowledgeIds:
+        return fact.knowledgeIds[0]
+    return f"{fact.surface}:{fact.eventType}:{fact.headline}".lower().replace(" ", "-")
+
+
+def _content_facts(contacts: List[SynastryContact], overlays: List[HouseOverlay], settings) -> List[ContentFactPacket]:
+    facts: List[ContentFactPacket] = []
+    facts.extend(synastry_contact_fact(contact, settings) for contact in contacts[:6])
+    facts.extend(house_overlay_fact(overlay, settings) for overlay in overlays[:4])
+    return facts[:10]
+
+
+def _app_contract(contacts: List[SynastryContact], overlays: List[HouseOverlay], facts: List[ContentFactPacket]) -> AppResponseContract:
+    top_contact = contacts[0] if contacts else None
+    headline = (
+        f"{top_contact.fromPoint} {top_contact.aspect} {top_contact.toPoint}"
+        if top_contact
+        else "Synastry contact map"
+    )
+    summary = (
+        f"The strongest contact is {top_contact.fromPoint} {top_contact.aspect} "
+        f"{top_contact.toPoint}, with {len(contacts)} scored contacts and "
+        f"{len(overlays)} house overlays."
+        if top_contact
+        else f"This comparison has {len(contacts)} scored contacts and {len(overlays)} house overlays."
+    )
+    key_factors = [
+        f"{contact.fromPoint} {contact.aspect} {contact.toPoint}"
+        for contact in contacts[:3]
+    ]
+    key_factors.extend(
+        f"{overlay.point} in {overlay.houseOwner}'s {overlay.house} house"
+        for overlay in overlays[:2]
+    )
+    relationship_tags = ["synastry", "relationship-compare"]
+    if top_contact:
+        relationship_tags.extend(
+            [
+                top_contact.fromPoint.lower().replace(" ", "-"),
+                top_contact.toPoint.lower().replace(" ", "-"),
+                top_contact.aspect,
+            ]
+        )
+    confidence = min(95, 65 + min(20, len(contacts)) + min(10, len(overlays)))
+    return AppResponseContract(
+        headline=headline,
+        summary=summary,
+        keyFactors=key_factors,
+        timingTags=[],
+        relationshipTags=list(dict.fromkeys(relationship_tags)),
+        confidence=confidence,
+        contentFactIds=[_fact_id(fact) for fact in facts],
+    )
+
+
 def calculate_synastry(request: SynastryRequest) -> SynastryResponse:
     person_a = calculate_natal_chart(
         NatalChartRequest(subject=request.personA, includeContentFacts=request.includeContentFacts)
@@ -186,6 +245,7 @@ def calculate_synastry(request: SynastryRequest) -> SynastryResponse:
         *person_a.metadata.inputWarnings,
         *person_b.metadata.inputWarnings,
     ]
+    content_facts = _content_facts(contacts, overlays, request.settings) if request.includeContentFacts else []
 
     return SynastryResponse(
         metadata=ChartMetadata(
@@ -194,9 +254,10 @@ def calculate_synastry(request: SynastryRequest) -> SynastryResponse:
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
         ),
+        app=_app_contract(contacts, overlays, content_facts),
         personA=person_a,
         personB=person_b,
         contacts=contacts,
         houseOverlays=overlays,
-        contentFacts=[],
+        contentFacts=content_facts,
     )

@@ -25,6 +25,7 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 # Or use VITE_SUPABASE_ANON_KEY=... if your Supabase project shows an anon public key.
 VITE_AUTH_REDIRECT_URL=http://127.0.0.1:5173
+VITE_TLDRASTRO_API_URL=http://127.0.0.1:8000
 ```
 
 For production, add the same Supabase variables in Vercel. In Supabase, enable the Google provider under Authentication, then add `https://astrology-portal.vercel.app` as an allowed redirect URL.
@@ -32,11 +33,15 @@ For production, add the same Supabase variables in Vercel. In Supabase, enable t
 ## Integration points
 
 - Ephemeris provider: `src/services/ephemeris.ts`
+- Calculation API client: `src/services/tldrastroApi.ts`
 - Horoscope generation and writing style: `src/services/horoscopes.ts`
 - Account/auth behavior: `src/services/auth.ts`
 - Knowledge and voice content: `src/content/registry.ts`
 
-The first build uses deterministic sample data so the product can be designed and tested before the licensed ephemeris and final writing style are added.
+The browser ephemeris still supports current-sky UI. The FastAPI calculation
+service owns serious natal, timing, synastry, composite, and relationship compare
+responses. Start it from `services/tldrastro-api` and set
+`VITE_TLDRASTRO_API_URL` before calling the client helpers.
 
 ## Knowledge Base Integration
 

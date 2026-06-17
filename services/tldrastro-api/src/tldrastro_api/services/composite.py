@@ -2,9 +2,11 @@ from datetime import datetime, timezone
 from typing import Dict, List, Tuple
 
 from tldrastro_api.models import (
+    AppResponseContract,
     ChartMetadata,
     CompositeRequest,
     CompositeResponse,
+    ContentFactPacket,
     NatalChartRequest,
     Position,
 )
@@ -134,6 +136,7 @@ def calculate_composite(request: CompositeRequest) -> CompositeResponse:
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),
         ),
+        app=_app_contract(aspects, content_facts),
         personA=person_a,
         personB=person_b,
         positions=positions,
@@ -143,3 +146,46 @@ def calculate_composite(request: CompositeRequest) -> CompositeResponse:
         contentFacts=content_facts,
     )
 
+
+def _fact_id(fact: ContentFactPacket) -> str:
+    if fact.knowledgeIds:
+        return fact.knowledgeIds[0]
+    return f"{fact.surface}:{fact.eventType}:{fact.headline}".lower().replace(" ", "-")
+
+
+def _app_contract(aspects, facts: List[ContentFactPacket]) -> AppResponseContract:
+    top_aspect = aspects[0] if aspects else None
+    headline = (
+        f"Composite {top_aspect.from_} {top_aspect.type} {top_aspect.to}"
+        if top_aspect
+        else "Composite relationship chart"
+    )
+    summary = (
+        f"The composite chart is led by {top_aspect.from_} {top_aspect.type} "
+        f"{top_aspect.to}, with {len(aspects)} scored composite aspects."
+        if top_aspect
+        else "The composite chart is ready for midpoint-based relationship interpretation."
+    )
+    key_factors = [
+        f"Composite {aspect.from_} {aspect.type} {aspect.to}"
+        for aspect in aspects[:4]
+    ]
+    relationship_tags = ["composite", "relationship-chart"]
+    if top_aspect:
+        relationship_tags.extend(
+            [
+                top_aspect.from_.lower().replace(" ", "-"),
+                top_aspect.to.lower().replace(" ", "-"),
+                top_aspect.type,
+            ]
+        )
+    confidence = min(95, 70 + min(20, len(aspects)) + len(facts))
+    return AppResponseContract(
+        headline=headline,
+        summary=summary,
+        keyFactors=key_factors,
+        timingTags=[],
+        relationshipTags=list(dict.fromkeys(relationship_tags)),
+        confidence=confidence,
+        contentFactIds=[_fact_id(fact) for fact in facts],
+    )

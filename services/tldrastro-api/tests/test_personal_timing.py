@@ -22,6 +22,18 @@ def test_personal_timing_fixture_maya_2026_06_16():
     assert body["activatedHouse"] == expected["activatedHouse"]
     assert body["activatedSign"] == expected["activatedSign"]
     assert body["activatedRuler"] == expected["activatedRuler"]
+    assert body["app"]["headline"] == "Aquarius 9H year"
+    assert body["app"]["confidence"] >= 80
+    assert body["app"]["timingTags"][:3] == [
+        "personal-timing",
+        "annual-profection",
+        "house-9",
+    ]
+    assert body["app"]["keyFactors"][:3] == [
+        "Annual house: 9",
+        "Annual sign: Aquarius",
+        "Lord of the Year: Saturn",
+    ]
     assert body["natal"]["subjectName"] == "Maya"
     assert body["currentSky"]["generatedAt"] == "2026-06-16T16:00:00+00:00"
     assert body["profections"]["annual"]["sign"] == expected["activatedSign"]
@@ -44,4 +56,3 @@ def test_personal_timing_fixture_maya_2026_06_16():
         }
         for fact in body["contentFacts"]
     ] == expected["contentFacts"]
-
