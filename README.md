@@ -36,3 +36,45 @@ npm run build:knowledge
 ```
 
 Vercel builds from the monorepo root with `npm run build` and serves `apps/web/dist`.
+
+## Platform Access Notes
+
+These notes are intentionally limited to accounts, projects, and public deployment details. Do not store private keys, API keys, service account JSON, Supabase service role keys, OpenAI keys, or Swiss Ephemeris license files in this repo.
+
+### Google Cloud
+
+- Account / organization: `goldeneclipse.com`
+- Cloud admin account used during setup: `hello@goldeneclipse.com`
+- Google Cloud organization: `goldeneclipse.com`
+- Organization ID: `64115316714`
+- Directory customer ID: `C02k29xpb`
+- Production API project: `tldrastro-prod`
+- Production API service: `tldrastro-api`
+- Region: `us-central1`
+- Public Cloud Run API URL: `https://tldrastro-api-27165565299.us-central1.run.app`
+- Swiss Ephemeris bucket: `gs://tldrastro-prod-swisseph`
+- Artifact Registry repository: `tldrastro`
+
+The API originally deployed successfully in project `tldrastro`, but organization policy blocked public Cloud Run access. The active production API is now in `tldrastro-prod`. Public Cloud Run access required a project-level organization policy override for `iam.allowedPolicyMemberDomains` on project number `27165565299`, setting `allowAll: true`.
+
+Useful checks:
+
+```bash
+gcloud config set project tldrastro-prod
+curl -fsSL https://tldrastro-api-27165565299.us-central1.run.app/health
+curl -fsSL https://tldrastro-api-27165565299.us-central1.run.app/ready
+```
+
+### Vercel
+
+- Production web app domain: `https://tldrastro.vercel.app`
+- Vercel builds from the monorepo root.
+- Build command: `npm run build`
+- Output directory: `apps/web/dist`
+- Production environment variable required for the browser app:
+
+```bash
+VITE_TLDRASTRO_API_URL=https://tldrastro-api-27165565299.us-central1.run.app
+```
+
+This variable is safe to be non-sensitive because `VITE_` variables are bundled into browser JavaScript. After changing it, redeploy the Production deployment without relying on stale build cache.
