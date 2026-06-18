@@ -585,12 +585,13 @@
   --friend-composite-row-template: 56px minmax(0, 1fr) auto;
   --friend-composite-row-gap: 20px;
   --friend-composite-row-padding: 24px 30px;
-  --friend-placement-column-title-padding: 20px 28px;
-  --friend-placement-symbol-size: 1.35rem;
-  --friend-placement-label-size: clamp(1.25rem, 1.5vw, 1.55rem);
-  --friend-placement-meta-size: 1rem;
-  --friend-placement-summary-size: 0.95rem;
-  --friend-placement-compact-padding: 18px 24px;
+  --friend-placement-column-title-padding: 0 0 12px;
+  --friend-placement-symbol-size: var(--text-glyph);
+  --friend-placement-label-size: var(--friend-row-title-size);
+  --friend-placement-meta-size: var(--text-placement-meta);
+  --friend-placement-summary-size: var(--text-description);
+  --friend-placement-compact-padding: 18px 20px;
+  --friend-placement-row-gap: 12px;
   --friend-placement-row-bg: var(--card-bg);
   --friend-placement-row-border: var(--card-border);
   display: grid;
@@ -850,7 +851,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--ink);
@@ -875,6 +876,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .relationship-explainer-card__glyph img {
+  filter: var(--filter-relationship-tool-glyph);
   opacity: 1;
 }
 
@@ -1277,6 +1279,11 @@
   filter: var(--filter-synastry-inner-glyph);
 }
 
+:is(.theme-dark, [data-theme="dark"]) .synastry-rx-glyph-svg,
+:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-rx-glyph-svg {
+  opacity: 1;
+}
+
 .synastry-placement-sign,
 .synastry-placement-copy {
   min-width: 0;
@@ -1354,10 +1361,9 @@
 .friend-placement-column-title {
   margin: 0;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--card-border);
-  border-top-left-radius: calc(var(--card-radius) - 1px);
-  border-top-right-radius: calc(var(--card-radius) - 1px);
-  background: var(--card-bg);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--muted);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
@@ -1369,11 +1375,11 @@
 .friend-placement-table {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0;
+  gap: var(--friend-placement-row-gap);
   width: 100%;
   max-width: none;
   border: 0;
-  border-radius: var(--card-radius);
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
   overflow: visible;
@@ -1470,16 +1476,14 @@
 
 .friend-placement-row .planet-placement-row {
   border: 1px solid var(--card-border);
-  border-bottom: 0;
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .friend-placement-row .placement-table-row {
   border: 1px solid var(--card-border);
-  border-bottom: 0;
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .friend-placement-row:last-child .planet-placement-row {
@@ -1491,18 +1495,15 @@
 }
 
 .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: var(--card-radius);
-  border-top-right-radius: var(--card-radius);
+  border-radius: var(--card-radius);
 }
 
 .friend-placement-column-title + .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: var(--card-radius);
-  border-top-right-radius: var(--card-radius);
+  border-radius: var(--card-radius);
 }
 
 .friend-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-bottom-right-radius: var(--card-radius);
-  border-bottom-left-radius: var(--card-radius);
+  border-radius: var(--card-radius);
 }
 
 .friend-chart-page .friend-placement-row-compact .planet-placement-row {
@@ -1514,15 +1515,21 @@
 }
 
 .synastry-placement-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--friend-placement-row-gap);
   overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .synastry-placement-table .planet-placement-row {
   border: 1px solid var(--friend-placement-row-border, var(--card-border));
-  border-bottom: 0;
-  border-radius: 0;
+  border-radius: var(--card-radius);
   background: var(--friend-placement-row-bg, var(--card-bg));
-  box-shadow: none;
+  box-shadow: var(--card-shadow);
 }
 
 .synastry-placement-table .planet-placement-row:last-child {
@@ -1531,22 +1538,23 @@
 
 .synastry-placement-table > .synastry-placement-row:first-child,
 .synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-top-left-radius: var(--card-radius);
-  border-top-right-radius: var(--card-radius);
+  border-radius: var(--card-radius);
   background-clip: padding-box;
 }
 
 .synastry-placement-table > .synastry-placement-row:last-child,
 .synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-bottom-right-radius: var(--card-radius);
-  border-bottom-left-radius: var(--card-radius);
+  border-radius: var(--card-radius);
   background-clip: padding-box;
 }
 
 .friend-placement-row .planet-placement-row,
 .friend-placement-row .placement-table-row {
   border-color: var(--friend-placement-row-border, var(--card-border));
+  border-bottom: 1px solid var(--friend-placement-row-border, var(--card-border));
+  border-radius: var(--card-radius);
   background: var(--friend-placement-row-bg, var(--card-bg));
+  box-shadow: var(--card-shadow);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
@@ -1931,6 +1939,7 @@
    to the desktop relationship layouts without touching chart geometry. */
 .app-shell.mode-friends {
   --friends-page-rail: min(1640px, calc(100vw - 96px));
+  --friends-tab-content-width: min(var(--friends-content-width), var(--friends-page-rail));
   --friend-detail-copy-width: minmax(480px, 532px);
   --friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
 }
@@ -1950,6 +1959,14 @@
   width: 100%;
 }
 
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-page-heading,
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-feed-view {
+  justify-self: center;
+  width: var(--friends-tab-content-width);
+  max-width: 100%;
+}
+
 .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
   gap: 24px;
   margin-top: var(--friend-detail-top-clearance);
@@ -1966,9 +1983,9 @@
 .app-shell.mode-friends .friends-charts-view,
 .app-shell.mode-friends .manual-chart-list {
   justify-self: stretch;
-  margin-left: 0;
-  margin-right: 0;
-  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
   width: 100%;
 }
 
@@ -2058,6 +2075,7 @@
 @media (max-width: 939px) {
   .app-shell.mode-friends {
     --friends-page-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
+    --friends-tab-content-width: var(--friends-page-rail);
   }
 
   .app-shell.mode-friends .friends-page {
