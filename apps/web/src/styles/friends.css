@@ -62,7 +62,7 @@
   background: var(--card-bg);
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: var(--text-meta-size);
   line-height: 1;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -105,7 +105,7 @@
   min-height: 46px;
   margin-left: auto;
   padding: 0 22px;
-  font-size: 0.92rem;
+  font-size: var(--text-button-size);
   line-height: 1;
   white-space: nowrap;
   letter-spacing: 0;
@@ -184,7 +184,7 @@
 .you-empty-card > span,
 .friends-logic-card > span {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -193,7 +193,7 @@
 .you-empty-card h3,
 .friends-logic-card h3 {
   margin: 0;
-  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-size: var(--text-card-title);
   line-height: 1.12;
 }
 
@@ -296,13 +296,13 @@
 .profile-avatar-regular {
   width: 48px;
   height: 48px;
-  font-size: 0.9rem;
+  font-size: var(--text-meta-size);
 }
 
 .profile-avatar-large {
   width: var(--id-avatar-size);
   height: var(--id-avatar-size);
-  font-size: 21px;
+  font-size: var(--id-name-size);
 }
 
 .profile-avatar img {
@@ -321,7 +321,7 @@
     var(--ink);
   box-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
   color: var(--surface);
-  font-size: 21px;
+  font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
 }
@@ -329,7 +329,7 @@
 .manual-chart-avatar {
   width: 68px;
   height: 68px;
-  font-size: 1.08rem;
+  font-size: var(--text-button-size);
 }
 
 .crb {
@@ -411,7 +411,7 @@
   background: transparent;
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: 0.88rem;
+  font-size: var(--text-meta-size);
   font-weight: var(--weight-semibold);
   line-height: 1;
   white-space: nowrap;
@@ -821,7 +821,7 @@
 .friend-chart-page .synastry-placements-comparison > .friend-section-label {
   margin: var(--friend-section-label-margin);
   color: var(--app-muted);
-  font-size: 0.78rem;
+  font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.16em;
 }
@@ -855,7 +855,7 @@
   background: var(--surface-2);
   color: var(--ink);
   font-family: var(--font-glyph);
-  font-size: 22px;
+  font-size: var(--text-glyph);
   line-height: 1;
 }
 
@@ -979,14 +979,14 @@
 }
 
 .friend-chart-page .friend-signature-card .you-signatures-main h3 {
-  font-size: clamp(1.6rem, 2vw, 2.15rem);
+  font-size: var(--text-card-title);
   line-height: 1.1;
 }
 
 .friend-chart-page .friend-signature-card .you-signatures-main p {
   margin-top: 0;
   color: var(--app-muted);
-  font-size: 1rem;
+  font-size: var(--text-description);
   font-weight: var(--weight-regular);
   line-height: 1.45;
 }
@@ -1056,7 +1056,7 @@
   max-width: 560px;
   margin: 0 auto;
   color: var(--ink);
-  font-size: clamp(0.74rem, 0.78vw, 0.9rem);
+  font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.06em;
   line-height: 1.2;
@@ -1150,7 +1150,7 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -1159,7 +1159,7 @@
 .synastry-placement-panel-title {
   color: var(--muted);
   font-weight: var(--weight-semibold);
-  font-size: 0.85rem;
+  font-size: var(--text-section-label-size);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -1167,7 +1167,7 @@
 .synastry-placement-panel-ring {
   color: var(--muted);
   font-weight: var(--weight-semibold);
-  font-size: 11px;
+  font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   white-space: nowrap;
@@ -1239,7 +1239,7 @@
   height: 32px;
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 19px;
+  font-size: var(--text-glyph);
   line-height: 1;
 }
 
@@ -1255,7 +1255,7 @@
 .synastry-placement-rx-mark {
   color: var(--retrograde-accent);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.02em;
   line-height: 1;
@@ -1818,8 +1818,8 @@
   width: 100%;
   color: var(--ink-2);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1.2;
   text-transform: none;
@@ -1859,8 +1859,8 @@
 
 .add-chart-form .checkbox-row span {
   color: var(--ink-2);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1.2;
   text-transform: none;

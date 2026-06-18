@@ -27,13 +27,13 @@
     --mobile-page-gutter: clamp(26px, 7.5vw, 32px);
     --sky-mobile-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
     --sky-mobile-hero-title: clamp(30px, 8vw, 34px);
-    --sky-mobile-feature-title: 16px;
-    --sky-mobile-card-title: 17px;
-    --sky-mobile-row-title: 21px;
-    --sky-mobile-body: 14px;
-    --sky-mobile-meta: 14px;
-    --sky-mobile-label: 12px;
-    --sky-mobile-badge: 11px;
+    --sky-mobile-feature-title: var(--text-card-title);
+    --sky-mobile-card-title: var(--text-card-title);
+    --sky-mobile-row-title: var(--text-row-title-size);
+    --sky-mobile-body: var(--text-description);
+    --sky-mobile-meta: var(--text-meta-size);
+    --sky-mobile-label: var(--text-section-label-size);
+    --sky-mobile-badge: var(--text-eyebrow);
   }
 
   .portal-grid:not(.chart-layout),
@@ -214,17 +214,16 @@
 
   .sky-lunar-pill-copy h3 {
     gap: 5px;
-    font-size: 15px;
+    font-size: var(--text-compact-title);
     line-height: 1.1;
   }
 
-  .sky-lunar-pill-copy h3 small,
-  .sky-lunar-pill-sub {
-    font-size: 12px;
+  .sky-lunar-pill-copy h3 small {
+    font-size: var(--text-compact-meta);
   }
 
   .sky-lunar-pill-sub {
-    font-size: 10.5px;
+    font-size: var(--text-compact-caption);
   }
 
   .updates-aspect-row {
@@ -536,7 +535,7 @@
   }
 
   .date-picker-header strong {
-    font-size: 17px;
+    font-size: var(--text-card-title);
   }
 
   .date-picker-header-actions {
@@ -555,14 +554,14 @@
   }
 
   .date-picker-weekdays span {
-    font-size: 11px;
+    font-size: var(--text-eyebrow);
   }
 
   .date-picker-grid button {
     min-height: 38px;
     aspect-ratio: auto;
     border-radius: 13px;
-    font-size: 16px;
+    font-size: var(--text-body);
     line-height: 1;
   }
 
@@ -576,14 +575,14 @@
   .date-picker-cancel {
     min-height: 44px;
     padding: 0 18px;
-    font-size: 16px;
+    font-size: var(--text-button-size);
   }
 
   .mobile-sky-controls__label {
     margin-bottom: -12px;
     color: var(--muted);
     font-family: var(--font-ui);
-    font-size: 13px;
+    font-size: var(--text-section-label-size);
     font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-label);
     line-height: 1.2;
@@ -613,7 +612,7 @@
     min-width: 0;
     overflow: hidden;
     font-family: var(--font-ui);
-    font-size: 17px;
+    font-size: var(--text-body);
     font-weight: var(--weight-medium);
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -852,7 +851,7 @@
   .mobile-full-chart-card__copy span {
     color: rgba(242, 242, 241, 0.6);
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: var(--text-meta-size);
     line-height: 1.1;
   }
 

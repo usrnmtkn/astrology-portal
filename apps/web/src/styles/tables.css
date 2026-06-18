@@ -25,7 +25,7 @@ button.placement-table-row {
   min-width: 48px;
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 22px;
+  font-size: var(--text-glyph);
   line-height: 1;
 }
 
@@ -155,7 +155,7 @@ button.planet-placement-row {
   margin-top: 2px;
   color: var(--ink);
   font-family: var(--font-glyph);
-  font-size: 24px;
+  font-size: var(--text-glyph);
   line-height: 1;
   text-align: center;
 }
@@ -261,14 +261,14 @@ button.planet-placement-row {
   justify-content: center;
   min-height: 20px;
   padding: 2px 7px;
-  border-radius: 5px;
+  border-radius: var(--duration-badge-radius);
   background: var(--duration-badge-bg);
   color: var(--duration-badge-fg);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--tracking-label);
   line-height: 1;
 }
 
@@ -308,7 +308,7 @@ button.planet-placement-row {
 
 .planet-placement-row--friend .planet-placement-row__glyph,
 .planet-placement-row--composite .planet-placement-row__glyph {
-  font-size: 19px;
+  font-size: var(--text-glyph);
 }
 
 .planet-placement-row--friend .planet-placement-row__degree,
@@ -334,7 +334,7 @@ button.planet-placement-row {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1;
@@ -362,7 +362,7 @@ button.planet-placement-row {
   color: var(--tooltip-fg);
   box-shadow: var(--tooltip-shadow);
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: var(--text-eyebrow);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
   line-height: 1.25;
