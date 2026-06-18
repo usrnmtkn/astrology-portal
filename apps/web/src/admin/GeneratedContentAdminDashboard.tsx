@@ -1015,6 +1015,10 @@ export function GeneratedContentAdminDashboard() {
   });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [reviewEditTitle, setReviewEditTitle] = useState("");
+  const [reviewEditSummary, setReviewEditSummary] = useState("");
+  const [reviewEditBody, setReviewEditBody] = useState("");
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
   const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
@@ -1072,6 +1076,8 @@ export function GeneratedContentAdminDashboard() {
       });
   }, [personQuery, reviewRecords, reviewSurface]);
   const selectedReviewRecord = allReviewRecords.find((record) => record.id === selectedReviewId) ?? allReviewRecords[0] ?? null;
+  const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
+  const canEditSelectedReviewRecord = Boolean(selectedReviewRecord && selectedReviewRecord.source !== "private");
 
   async function checkTldrAstroApiStatus() {
     if (!isTldrAstroApiConfigured) {
@@ -1364,6 +1370,94 @@ export function GeneratedContentAdminDashboard() {
     setSelectedId(row.id);
     setDraft(adminDraftFromRow(row));
     void loadRowDetails(row.id);
+  }
+
+  function beginReviewEdit(record: AdminReviewRecord) {
+    setEditingReviewId(record.id);
+    setReviewEditTitle(record.title);
+    setReviewEditSummary(record.summary);
+    setReviewEditBody(record.body);
+  }
+
+  function cancelReviewEdit() {
+    setEditingReviewId(null);
+    setReviewEditTitle("");
+    setReviewEditSummary("");
+    setReviewEditBody("");
+  }
+
+  async function saveReviewEdit(record: AdminReviewRecord) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    if (record.source === "private") {
+      setMessage("Personal content rows are read-only in this dashboard for now.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const existingRow = record.rawGlobalRow;
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: existingRow ? "PATCH" : "POST",
+          body: JSON.stringify({
+            id: existingRow?.id,
+            contentKey: record.contentKey,
+            surface: record.surface,
+            mode: record.mode,
+            status: "DRAFT",
+            eventType: record.eventType || "manual-review",
+            targetDate: record.targetDate || null,
+            headline: reviewEditTitle,
+            summary: reviewEditSummary,
+            body: reviewEditBody,
+            sections: record.sections,
+            facts: record.facts ?? {},
+            sourceSnapshot: {
+              ...(record.sourceSnapshot ?? {}),
+              adminReviewSource: record.source,
+              savedFromReviewRecordId: record.id
+            },
+            knowledgeIds: [],
+            reviewerNotes: record.reviewerNotes ?? ""
+          })
+        }
+      );
+      const row = payload.rows?.[0] ?? null;
+
+      if (row) {
+        setSelectedId(row.id);
+        setDraft(adminDraftFromRow(row));
+      }
+
+      setReviewRecords((currentRecords) => currentRecords.map((currentRecord) => (
+        currentRecord.id === record.id
+          ? {
+              ...currentRecord,
+              source: "global",
+              status: "DRAFT",
+              title: reviewEditTitle,
+              summary: reviewEditSummary,
+              body: reviewEditBody,
+              rawGlobalRow: row ?? currentRecord.rawGlobalRow
+            }
+          : currentRecord
+      )));
+      setEditingReviewId(null);
+      setMessage(row ? "Saved edits as a draft." : "Saved edits.");
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save edits."));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function updateDraft<K extends keyof AdminGeneratedContentDraft>(key: K, value: AdminGeneratedContentDraft[K]) {
@@ -2362,6 +2456,7 @@ export function GeneratedContentAdminDashboard() {
                       className={`admin-row-card ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
                       onClick={() => {
                         setSelectedReviewId(record.id);
+                        cancelReviewEdit();
                         if (record.rawGlobalRow) {
                           setSelectedId(record.rawGlobalRow.id);
                           setDraft(adminDraftFromRow(record.rawGlobalRow));
@@ -2395,10 +2490,23 @@ export function GeneratedContentAdminDashboard() {
                           <Eye size={16} aria-hidden="true" />
                           Flag
                         </button>
-                        <button type="button" disabled>
-                          <Pencil size={16} aria-hidden="true" />
-                          Edit
-                        </button>
+                        {isEditingReviewRecord ? (
+                          <>
+                            <button type="button" onClick={cancelReviewEdit} disabled={isLoading}>
+                              <X size={16} aria-hidden="true" />
+                              Cancel
+                            </button>
+                            <button className="admin-primary-button" type="button" onClick={() => void saveReviewEdit(selectedReviewRecord)} disabled={isLoading}>
+                              <Save size={16} aria-hidden="true" />
+                              Save Draft
+                            </button>
+                          </>
+                        ) : (
+                          <button type="button" onClick={() => beginReviewEdit(selectedReviewRecord)} disabled={!canEditSelectedReviewRecord || isLoading}>
+                            <Pencil size={16} aria-hidden="true" />
+                            Edit
+                          </button>
+                        )}
                         <button type="button" disabled>
                           <Check size={16} aria-hidden="true" />
                           Approve
@@ -2453,15 +2561,37 @@ export function GeneratedContentAdminDashboard() {
 
                       <section className="admin-review-copy-card">
                         <p className="admin-eyebrow">Reader-facing text</p>
-                        <h3>{selectedReviewRecord.title}</h3>
-                        <p className="admin-review-summary">{compactAdminText(selectedReviewRecord.summary)}</p>
-                        {selectedReviewRecord.body ? <p>{selectedReviewRecord.body}</p> : null}
-                        {selectedReviewRecord.sections.map((section) => (
-                          <article key={section.heading}>
-                            <h4>{section.heading}</h4>
-                            <p>{section.body}</p>
-                          </article>
-                        ))}
+                        {isEditingReviewRecord ? (
+                          <div className="admin-review-edit-form">
+                            <label>
+                              <span>Title</span>
+                              <input value={reviewEditTitle} onChange={(event) => setReviewEditTitle(event.target.value)} />
+                            </label>
+                            <label>
+                              <span>Short text</span>
+                              <textarea rows={4} value={reviewEditSummary} onChange={(event) => setReviewEditSummary(event.target.value)} />
+                            </label>
+                            <label>
+                              <span>Full body</span>
+                              <textarea rows={12} value={reviewEditBody} onChange={(event) => setReviewEditBody(event.target.value)} />
+                            </label>
+                            <p className="admin-template-note">
+                              Saving creates or updates a draft row for this content key. Approval/publishing stays separate.
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <h3>{selectedReviewRecord.title}</h3>
+                            <p className="admin-review-summary">{compactAdminText(selectedReviewRecord.summary)}</p>
+                            {selectedReviewRecord.body ? <p>{selectedReviewRecord.body}</p> : null}
+                            {selectedReviewRecord.sections.map((section) => (
+                              <article key={section.heading}>
+                                <h4>{section.heading}</h4>
+                                <p>{section.body}</p>
+                              </article>
+                            ))}
+                          </>
+                        )}
                       </section>
                     </div>
 
