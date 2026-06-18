@@ -834,7 +834,7 @@
 .sky-lunar-pills {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -843,11 +843,11 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   min-width: 0;
-  min-height: 52px;
-  gap: 8px;
-  padding: 6px 10px;
+  min-height: 68px;
+  gap: 13px;
+  padding: 10px 16px;
   border: 1px solid var(--app-border);
-  border-radius: 22px;
+  border-radius: 18px;
   background: var(--app-card);
 }
 
@@ -856,13 +856,13 @@
   display: grid;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   border: 1px solid var(--app-border);
   border-radius: 50%;
-  background: var(--app-card);
-  color: var(--app-text);
+  background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
+  color: var(--wheel-glyph);
   font-family: var(--font-glyph);
   font-size: 18px;
   line-height: 1;
@@ -871,32 +871,33 @@
 .sky-lunar-pill-copy {
   display: grid;
   min-width: 0;
-  gap: 1px;
+  gap: 3px;
 }
 
 .sky-lunar-pill-copy em {
   color: var(--app-muted);
-  font-size: var(--text-eyebrow);
+  font-family: var(--font-ui);
+  font-size: 10px;
   font-style: normal;
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: 1.15;
+  letter-spacing: 0.08em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
 .sky-lunar-pill-copy h3 {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
   align-items: baseline;
   min-width: 0;
-  margin-top: 1px;
+  margin: 1px 0 0;
   color: var(--app-text);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
-  line-height: 1.15;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
 }
 
 .sky-lunar-pill-copy h3 span,
@@ -906,16 +907,19 @@
 
 .sky-lunar-pill-copy h3 small {
   color: var(--app-muted);
-  font-size: var(--text-description);
-  font-weight: var(--weight-medium);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-regular);
   letter-spacing: 0;
 }
 
 .sky-lunar-pill-sub {
   margin-top: 0;
-  color: var(--app-muted);
-  font-size: var(--text-description);
-  font-weight: var(--weight-medium);
+  color: var(--ink-2);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: var(--weight-regular);
   letter-spacing: 0;
   line-height: 1;
 }
@@ -923,8 +927,8 @@
 .moon-phase-art {
   position: relative;
   display: block;
-  width: 21px;
-  height: 21px;
+  width: 27px;
+  height: 27px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--app-text) 12%, transparent);
   border-radius: 50%;
@@ -992,15 +996,16 @@
 }
 
 .next-lun {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   box-sizing: border-box;
-  min-height: 46px;
-  margin-top: 8px;
-  padding: 6px 10px 6px 6px;
-  gap: 10px;
+  min-height: 58px;
+  margin-top: 12px;
+  padding: 7px 16px 7px 8px;
+  gap: 13px;
   border: 1px solid var(--card-border);
-  border-radius: 22px;
+  border-radius: 18px;
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -1018,11 +1023,11 @@
 }
 
 .nl-top {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  justify-content: space-between;
   min-width: 0;
-  gap: 12px;
+  gap: 14px;
 }
 
 .nl-top h4 {
@@ -1033,11 +1038,11 @@
   margin: 0;
   overflow: hidden;
   color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1051,22 +1056,24 @@
 .nl-prefix {
   flex: 0 0 auto;
   color: var(--muted);
-  font-family: var(--font-body);
-  font-weight: var(--weight-medium);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: var(--weight-regular);
   letter-spacing: 0;
 }
 
 .nl-until {
-  flex: 0 0 auto;
+  align-self: center;
+  justify-self: end;
   padding: 3px 8px;
   border-radius: var(--duration-badge-radius);
   background: var(--duration-badge-bg);
   color: var(--duration-badge-fg);
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
+  font-family: var(--font-ui);
+  font-size: 10px;
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1078,8 +1085,8 @@
   margin-top: 2px;
   overflow: hidden;
   color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--text-description);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
   text-overflow: ellipsis;

@@ -105,10 +105,47 @@
 
 :is(.theme-dark, [data-theme="dark"]) .planet-glyph {
   fill: var(--chart-glyph);
+  opacity: 0.98;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .planet-degree {
-  fill: var(--chart-label);
+  fill: var(--chart-degree-label);
+  opacity: 0.96;
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .planet-glyph-sun-symbol,
+  .planet-glyph-sun-symbol path
+) {
+  fill: var(--chart-glyph);
+  opacity: 0.98;
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .planet-glyph-image,
+  .zodiac-wheel__angle-icon,
+  .zodiac-wheel__sign-icon image
+) {
+  filter: var(--chart-glyph-filter);
+  opacity: 0.98;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .sky-full-chart-view :where(
+  .planet-glyph,
+  .planet-degree,
+  .planet-glyph-sun-symbol,
+  .planet-glyph-sun-symbol path
+) {
+  opacity: 1;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .sky-full-chart-view :where(
+  .planet-glyph-image,
+  .zodiac-wheel__angle-icon,
+  .zodiac-wheel__sign-icon image
+) {
+  filter: var(--chart-glyph-filter);
+  opacity: 1;
 }
 
 .angular-labels text {
@@ -187,8 +224,8 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(.planet-tick, .wheel-placement__tick) {
-  stroke: var(--wheel-label);
-  opacity: 0.92;
+  stroke: var(--wheel-tick);
+  opacity: 0.96;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .wheel-rings circle {

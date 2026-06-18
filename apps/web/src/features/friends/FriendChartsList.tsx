@@ -69,7 +69,10 @@ export function FriendChartsList({
         {charts.length > 0 && (
           <div className="list you-list-card manual-chart-cards" aria-label="Manual chart list">
             {charts.map(({ chart, initials, sun, moon, rising, needsBirthTime, active }) => (
-              <div className="manual-chart-row chart-row" key={chart.id}>
+              <div
+                className={`manual-chart-row chart-row${openChartMenuId === chart.id ? " manual-chart-row--menu-open" : ""}`}
+                key={chart.id}
+              >
                 <button
                   type="button"
                   className={`manual-chart-select ${active ? "active" : ""}`}
