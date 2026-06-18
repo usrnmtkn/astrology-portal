@@ -101,7 +101,7 @@ type AdminGeneratedContentDraft = {
 
 type AdminReviewRecord = {
   id: string;
-  source: "global" | "private";
+  source: "global" | "private" | "calculated" | "saved";
   surface: GeneratedContentSurface;
   status: string;
   mode: GeneratedContentMode;
@@ -124,6 +124,20 @@ type AdminReviewRecord = {
   updatedAt: string;
   rawGlobalRow?: AdminGeneratedContentRow;
   rawPrivateRow?: AdminUserGeneratedContentRow;
+};
+
+type AdminReviewCounts = Record<GeneratedContentStatus, number> & {
+  total: number;
+};
+
+type AdminReviewRecordsPayload = {
+  ok: boolean;
+  surface: AdminReviewSurface;
+  startDate: string;
+  endDate: string;
+  prompt: string | null;
+  rows: AdminReviewRecord[];
+  counts: AdminReviewCounts;
 };
 
 type AdminContentFactsPayload = {
@@ -971,6 +985,15 @@ export function GeneratedContentAdminDashboard() {
   const [personQuery, setPersonQuery] = useState("");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
+  const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
+  const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
+    total: 0,
+    DRAFT: 0,
+    REVIEWED: 0,
+    LIVE: 0,
+    ARCHIVED: 0,
+    ERROR: 0
+  });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
@@ -999,20 +1022,13 @@ export function GeneratedContentAdminDashboard() {
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const allReviewRecords = useMemo(() => {
-    const globalRecords = rows.map(globalReviewRecord);
-    const privateRecords = privateRows.map(privateReviewRecord);
-    const mergedRecords = [...globalRecords, ...privateRecords];
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
-    return mergedRecords
+    return reviewRecords
       .filter((record) => {
-        const recordSurface = reviewSurfaceForGeneratedSurface(record.surface);
-        const matchesSurface = reviewSurface === "relationshipLayer"
-          ? recordSurface === "relationshipLayer"
-          : recordSurface === reviewSurface;
-
-        if (!matchesSurface) return false;
-        if (reviewSurface === "upcomingAspects" && !isUpcomingAspectRecord(record)) return false;
+        if (reviewSurface === "upcomingAspects") {
+          return true;
+        }
 
         if (!normalizedPersonQuery) return true;
 
@@ -1034,7 +1050,7 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [personQuery, privateRows, reviewSurface, rows]);
+  }, [personQuery, reviewRecords, reviewSurface]);
   const selectedReviewRecord = allReviewRecords.find((record) => record.id === selectedReviewId) ?? allReviewRecords[0] ?? null;
 
   async function checkTldrAstroApiStatus() {
@@ -1191,8 +1207,7 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     if (canUseApi) {
-      void loadRows();
-      void loadPrivateRows();
+      void loadReviewWorkspace();
     }
   }, [secret]);
 
@@ -1208,14 +1223,51 @@ export function GeneratedContentAdminDashboard() {
 
   async function loadReviewWorkspace(nextReviewSurface = reviewSurface) {
     const nextSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
+    const params = new URLSearchParams({
+      surface: nextReviewSurface,
+      status,
+      startDate: dateStart,
+      endDate: dateEnd
+    });
+
+    if (personQuery.trim()) {
+      params.set("person", personQuery.trim());
+    }
 
     setReviewSurface(nextReviewSurface);
     setSurface(nextSurface);
     setSelectedId(null);
     setSelectedReviewId(null);
     setDraft(createAdminDraft(nextSurface));
-    await loadRows(status, nextSurface);
-    await loadPrivateRows(nextReviewSurface);
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<AdminReviewRecordsPayload>(
+        `/api/admin/review-records?${params}`,
+        secret
+      );
+
+      setReviewRecords(payload.rows ?? []);
+      setReviewCounts(payload.counts);
+      setMessage(payload.prompt ?? `Loaded ${(payload.rows ?? []).length} ${reviewSurfaceLabels[nextReviewSurface].label.toLowerCase()} review rows.`);
+    } catch (error) {
+      setReviewRecords([]);
+      setReviewCounts({
+        total: 0,
+        DRAFT: 0,
+        REVIEWED: 0,
+        LIVE: 0,
+        ARCHIVED: 0,
+        ERROR: 0
+      });
+      setMessage(error instanceof Error ? error.message : "Could not load review records.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -2208,27 +2260,27 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-metrics" aria-label="Content status summary">
               <article>
                 <span>Review rows</span>
-                <strong>{allReviewRecords.length}</strong>
+                <strong>{reviewCounts.total}</strong>
                 <small>{adminDateLabel(dateStart)} - {adminDateLabel(dateEnd)}</small>
               </article>
               <article>
                 <span>Drafts</span>
-                <strong>{statusMetrics.DRAFT}</strong>
+                <strong>{reviewCounts.DRAFT}</strong>
                 <small>Needs editorial review</small>
               </article>
               <article>
                 <span>Reviewed</span>
-                <strong>{statusMetrics.REVIEWED}</strong>
+                <strong>{reviewCounts.REVIEWED}</strong>
                 <small>Ready to publish</small>
               </article>
               <article>
                 <span>Live</span>
-                <strong>{statusMetrics.LIVE}</strong>
+                <strong>{reviewCounts.LIVE}</strong>
                 <small>Visible in app</small>
               </article>
               <article>
                 <span>Errors</span>
-                <strong>{statusMetrics.ERROR}</strong>
+                <strong>{reviewCounts.ERROR}</strong>
                 <small>Needs attention</small>
               </article>
             </section>
@@ -2275,7 +2327,7 @@ export function GeneratedContentAdminDashboard() {
                   <>
                     <div className="admin-editor-toolbar">
                       <div>
-                        <p className="admin-eyebrow">{selectedReviewRecord.source === "private" ? "User-scoped record" : "Shared content record"}</p>
+                        <p className="admin-eyebrow">{selectedReviewRecord.source === "calculated" ? "Calculated review record" : selectedReviewRecord.source === "private" ? "User-scoped record" : "Saved content record"}</p>
                         <h2>{selectedReviewRecord.title}</h2>
                         <small>{selectedReviewRecord.subtitle}</small>
                       </div>
