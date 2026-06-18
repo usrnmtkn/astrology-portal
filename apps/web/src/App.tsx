@@ -5419,7 +5419,7 @@ export function App() {
           surface: "you",
           mode: "feed",
           eventType: "you-daily-horoscope",
-          headline: `Your update for ${skyDate}`,
+          headline: "TLDR",
           targetDate: skyDate,
           facts: personalTimingGenerationFacts(timing, profile, skyDate),
           knowledgeIds: personalTimingKnowledgeIds(timing),

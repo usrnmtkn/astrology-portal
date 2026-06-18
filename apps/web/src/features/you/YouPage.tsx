@@ -298,8 +298,7 @@ function YouUpdatesTab({
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className="daily-horoscope-summary" aria-label="Daily horoscope summary">
-          <span className="eyebrow section-label">Today</span>
-          <h3>{dailyUpdateSummary.headline}</h3>
+          <span className="eyebrow section-label">TLDR</span>
           <p>{dailyUpdateSummary.summary}</p>
         </section>
       )}
