@@ -7,6 +7,7 @@ import {
 
 type UserContentSubjectType =
   | "you_update"
+  | "you_transit"
   | "natal_summary"
   | "natal_placement"
   | "natal_aspect"
