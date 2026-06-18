@@ -279,14 +279,14 @@
   padding: clamp(16px, 2.4vw, 22px);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--card-bg) 88%, var(--ink) 12%);
+  background: #f1f2f4;
 }
 
 .sky-detail-intro-section p {
   max-width: none;
   color: var(--muted);
-  font-size: clamp(14px, 1.25vw, 16px);
-  line-height: 1.58;
+  font-size: var(--article-meta-size);
+  line-height: 1.5;
 }
 
 .article-section h2,
