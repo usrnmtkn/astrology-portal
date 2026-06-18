@@ -236,6 +236,10 @@
   overflow: visible;
 }
 
+.manual-chart-row--menu-open {
+  z-index: calc(var(--z-popover) + 1);
+}
+
 .manual-chart-row:first-child {
   border-top-left-radius: var(--card-radius);
   border-top-right-radius: var(--card-radius);
@@ -436,7 +440,7 @@
   position: absolute;
   top: 54px;
   right: 16px;
-  z-index: var(--z-picker);
+  z-index: calc(var(--z-popover) + 2);
   display: grid;
   width: max-content;
   min-width: 180px;

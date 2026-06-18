@@ -94,3 +94,43 @@
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+
+/* Final shared card surface pass. Keep repeated content cards visually consistent
+   even when older page-specific table/list styles are loaded earlier. */
+:where(
+  .sky-lunar-pill,
+  .next-lun,
+  .retro,
+  .sky-pl,
+  .placement-table-row,
+  .planet-placement-row,
+  .aspect-row,
+  .aspect-row-button,
+  .aspect-row-static,
+  .updates-aspect-row,
+  .manual-chart-row,
+  .chart-row:not(.manual-chart-row),
+  .synastry-placement-row,
+  .friend-profile-card,
+  .you-profile-card,
+  .you-empty-card,
+  .friends-feed-card,
+  .settings-card,
+  .account-card
+) {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+:where(
+  .friend-placement-row .planet-placement-row,
+  .friend-placement-row .placement-table-row,
+  .synastry-placement-table .planet-placement-row
+) {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
