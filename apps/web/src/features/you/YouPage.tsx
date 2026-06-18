@@ -45,6 +45,7 @@ export type YouPageProps = {
   displaySun: string;
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
+  emptyHouseRows: ReactNode[];
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
   natalChart: ReactNode;
@@ -225,6 +226,7 @@ function YouNatalTab({
   bigThreeRows,
   elementalSummaryLabel,
   elementalSummarySentence,
+  emptyHouseRows,
   natalAspectRows,
   planetRows,
   showNatalSignatures,
@@ -234,6 +236,7 @@ function YouNatalTab({
   bigThreeRows: ReactNode[];
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
+  emptyHouseRows: ReactNode[];
   natalAspectRows: ReactNode[];
   planetRows: ReactNode[];
   showNatalSignatures: boolean;
@@ -271,6 +274,15 @@ function YouNatalTab({
           <span className="eyebrow section-label">Planets</span>
           <div className="list you-list-card planet-placement-list" aria-label="Planets">
             {planetRows}
+          </div>
+        </>
+      )}
+
+      {emptyHouseRows.length > 0 && (
+        <>
+          <span className="eyebrow section-label">Empty houses</span>
+          <div className="list you-list-card planet-placement-list" aria-label="Empty houses">
+            {emptyHouseRows}
           </div>
         </>
       )}
@@ -479,6 +491,7 @@ export function YouPage({
   displaySun,
   elementalSummaryLabel,
   elementalSummarySentence,
+  emptyHouseRows,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
   natalAspectRows,
@@ -543,6 +556,7 @@ export function YouPage({
               bigThreeRows={bigThreeRows}
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
+              emptyHouseRows={emptyHouseRows}
               natalAspectRows={natalAspectRows}
               planetRows={planetRows}
               showNatalSignatures={showNatalSignatures}

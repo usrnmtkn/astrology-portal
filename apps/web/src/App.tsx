@@ -3344,12 +3344,7 @@ function chartRulerForAscendant(ascendant: string) {
   return traditionalSignRulers[ascendant] ?? "";
 }
 
-function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySnapshot | null): PlacementHouseInsight | null {
-  if (!position.house || position.planet === "Ascendant") {
-    return null;
-  }
-
-  const house = position.house;
+function natalHouseInsightForHouse(house: number, natalSky: SkySnapshot | null): PlacementHouseInsight {
   const houseLabel = `${ordinalHouse(house)} House`;
   const naturalSign = naturalHouseSigns[house] ?? "";
   const naturalLensLabel = naturalSign ? `${naturalSign} lens` : `${houseLabel} lens`;
@@ -3397,6 +3392,35 @@ function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySna
     naturalLensBody,
     rulerBody
   };
+}
+
+function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySnapshot | null): PlacementHouseInsight | null {
+  if (!position.house || position.planet === "Ascendant") {
+    return null;
+  }
+
+  return natalHouseInsightForHouse(position.house, natalSky);
+}
+
+const emptyHouseDescriptions: Record<number, string> = {
+  1: "No natal planets here can make identity feel less crowded. The Ascendant and its ruler still describe how this house speaks.",
+  2: "Money, resources, and self-worth may not demand constant attention, but the ruler of this house still shows how stability gets built.",
+  3: "Communication and daily movement may feel natural or less loaded. Look to the house ruler for the deeper pattern behind your voice.",
+  4: "Home and family may not be the loudest chart theme, but roots still matter. The ruler shows how emotional foundation gets handled.",
+  5: "Creativity, romance, pleasure, and children can flow without needing to carry the whole chart. The ruler shows where joy gets routed.",
+  6: "Routines, work, health, and maintenance may run with less inner friction. The ruler shows how daily life asks to be managed.",
+  7: "Relationships are still important, even when this house is empty. The ruler shows what partnership, attraction, and agreement answer to.",
+  8: "Intimacy, trust, debt, and shared power may not be constant pressure points. The ruler shows where deeper exchanges get processed.",
+  9: "Belief, study, travel, and perspective may feel easier to explore without needing to prove one fixed philosophy.",
+  10: "Career and public life may be flexible rather than overdefined. The ruler shows how visibility and responsibility develop over time.",
+  11: "Friends, groups, and future hopes may feel accessible without becoming the chart's main demand. The ruler shows where belonging leads.",
+  12: "Rest, privacy, dreams, and hidden pressure may move more quietly. The ruler shows how retreat and inner processing work in the chart."
+};
+
+function emptyHouseTitle(house: number, natalSky: SkySnapshot | null) {
+  const houseSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
+
+  return houseSign ? `Empty ${ordinalHouse(house)} House in ${houseSign}` : `Empty ${ordinalHouse(house)} House`;
 }
 
 function timingContextForChart({
@@ -9420,6 +9444,13 @@ function ProfileView({
     .map((planet) => natalPositions.find((position) => position.planet === planet))
     .filter((position): position is PlanetPosition => Boolean(position));
   const routeableNatalPositions = [natalSun, natalMoon, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
+  const occupiedNatalHouses = new Set(
+    routeableNatalPositions
+      .map((position) => position.house)
+      .filter((house): house is number => typeof house === "number")
+  );
+  const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
+    .filter((house) => !occupiedNatalHouses.has(house));
   const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
@@ -9627,6 +9658,21 @@ function ProfileView({
       variant="natal"
     />
   ));
+  const emptyHouseRows = natalSky ? emptyNatalHouses.map((house) => {
+    const houseSign = natalSky.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
+
+    return (
+      <PlacementTableRow
+        description={emptyHouseDescriptions[house] ?? naturalHouseLensBodies[house] ?? null}
+        glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
+        house={house}
+        houseInsight={natalHouseInsightForHouse(house, natalSky)}
+        key={`empty-house-${house}`}
+        title={emptyHouseTitle(house, natalSky)}
+        variant="natal"
+      />
+    );
+  }) : [];
   const natalAspectItems = natalAspectRows.map((aspect) => {
     const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
     const content = fallbackFromHook(
@@ -9790,6 +9836,7 @@ function ProfileView({
         displaySun={displaySun}
         elementalSummaryLabel={elementalSummary.label}
         elementalSummarySentence={elementalSummary.sentence}
+        emptyHouseRows={emptyHouseRows}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
         natalAspectRows={natalAspectItems}
