@@ -774,6 +774,24 @@ body,
   margin: 0;
 }
 
+.admin-review-edit-form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-review-edit-form label {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-review-edit-form span {
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .admin-review-summary {
   color: var(--admin-ink) !important;
   font-size: 18px;
