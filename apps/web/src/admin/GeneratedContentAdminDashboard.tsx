@@ -260,7 +260,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "privateRows") return "Personal Content";
   if (activePage === "templates") return "Templates & Voice";
   if (activePage === "hooks") return "Content Hooks";
-  return "Generated Content";
+  return "Content Review";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
@@ -288,7 +288,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Read-only visibility into natal and person-specific AI interpretations, including the provider and model used for each generated row.";
   }
 
-  return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as internal content tests for templates, voice, and knowledge hooks.";
+  return "Audit astrology content by date range before it ships. Review upcoming aspects, transits to natal charts, natal placements, synastry, and composite content from one queue.";
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -1041,7 +1041,6 @@ export function GeneratedContentAdminDashboard() {
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
-  const hasValidatedAccess = accessStatus === "valid";
   const allReviewRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
@@ -1903,18 +1902,6 @@ export function GeneratedContentAdminDashboard() {
                 <RefreshCw size={16} aria-hidden="true" />
                 Reload Review Rows
               </button>
-              {hasValidatedAccess && (
-                <>
-                  <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
-                    <Plus size={16} aria-hidden="true" />
-                    Draft One Reading
-                  </button>
-                  <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading}>
-                    <Sparkles size={16} aria-hidden="true" />
-                    {createQueueButtonLabel(surface)}
-                  </button>
-                </>
-              )}
             </div>
           )}
           {activePage === "privateRows" && (
