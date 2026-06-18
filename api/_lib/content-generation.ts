@@ -10,6 +10,7 @@ export type GenerateContentInput = {
   surface: Surface;
   mode: ContentMode;
   eventType: string;
+  provider?: "openai" | "claude" | "anthropic";
   headline?: string;
   targetDate?: string;
   facts: Record<string, unknown>;
@@ -2033,7 +2034,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
 }
 
 export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
-  const provider = process.env.CONTENT_GENERATION_PROVIDER?.toLowerCase() ?? "openai";
+  const provider = input.provider?.toLowerCase() ?? process.env.CONTENT_GENERATION_PROVIDER?.toLowerCase() ?? "openai";
 
   if (provider === "claude" || provider === "anthropic") {
     return generateWithClaude(input);
@@ -2043,7 +2044,7 @@ export async function generateContent(input: GenerateContentInput): Promise<Stor
     return generateWithOpenAI(input);
   }
 
-  throw new Error(`Unsupported CONTENT_GENERATION_PROVIDER '${provider}'. Use 'openai' or 'claude'.`);
+  throw new Error(`Unsupported content generation provider '${provider}'. Use 'openai' or 'claude'.`);
 }
 
 export async function saveGeneratedInterpretation(input: GenerateContentInput, generated: StoredGeneratedContent) {
