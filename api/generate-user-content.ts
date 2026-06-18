@@ -195,6 +195,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saved
     });
   } catch (error) {
+    console.error("generate-user-content failed", error);
     sendJson(res, 500, {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown personalized generation error."
