@@ -16,6 +16,7 @@ export type PersonalTimingSummary = {
 export type YouTransitArticle = {
   id: string;
   title: string;
+  glyph?: string;
   subtitle: string;
   summary: string;
   sections: Array<{
@@ -295,12 +296,15 @@ function YouUpdatesTab({
   personalTimingSummary?: PersonalTimingSummary | null;
   transitsDrawn: boolean;
 }) {
+  const dailyHeadline = dailyUpdateSummary?.headline.trim();
+  const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
+
   return (
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           <span className="eyebrow section-label">TLDR</span>
-          <h3>{dailyUpdateSummary.headline}</h3>
+          {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
           <p>{dailyUpdateSummary.summary}</p>
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
           {dailyUpdateSummary.status === "loading" ? (
@@ -351,6 +355,18 @@ function YouUpdatesTab({
   );
 }
 
+function isPlaceholderArticleText(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  return !normalized || normalized === "tldr" || normalized === "tl;dr";
+}
+
+function cleanArticleText(value?: string | null) {
+  const text = (value ?? "").replace(/^TLDR:\s*/i, "").replace(/\s+/g, " ").trim();
+
+  return isPlaceholderArticleText(text) ? "" : text;
+}
+
 function YouTransitArticlePage({
   article,
   onClose
@@ -358,6 +374,19 @@ function YouTransitArticlePage({
   article: YouTransitArticle;
   onClose: () => void;
 }) {
+  const subtitle = cleanArticleText(article.subtitle);
+  const summary = cleanArticleText(article.summary);
+  const sections = article.sections
+    .map((section) => ({
+      heading: cleanArticleText(section.heading),
+      tldr: cleanArticleText(section.tldr),
+      body: cleanArticleText(section.body)
+    }))
+    .filter((section) => section.heading || section.tldr || section.body);
+  const metaRows = article.meta.filter((row) => cleanArticleText(row.value));
+  const hasReadableBody = Boolean(summary || sections.length);
+  const sectionNumberOffset = summary ? 2 : 1;
+
   return (
     <section
       className="article-page sky-detail-page you-transit-article-page"
@@ -372,13 +401,12 @@ function YouTransitArticlePage({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <div className="article-kicker-row">
-              <span className="article-glyph-tag" aria-hidden="true">☉</span>
+              <span className="article-glyph-tag" aria-hidden="true">{article.glyph ?? "☉"}</span>
             </div>
             <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
-            <p className="article-sub">{article.subtitle}</p>
+            {subtitle ? <p className="article-sub">{subtitle}</p> : null}
             <div className="article-meta sky-detail-meta">
-              <p className="m-row"><b>Article ID:</b> {article.id}</p>
-              {article.meta.map((row) => (
+              {metaRows.map((row) => (
                 <p className="m-row" key={`${row.label}-${row.value}`}>
                   <b>{row.label}:</b> {row.value}
                 </p>
@@ -390,19 +418,33 @@ function YouTransitArticlePage({
 
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
-              <section className="article-section sky-detail-section">
-                <span className="article-section__eyebrow sky-detail-section-num">00 · TLDR</span>
-                <h2>TLDR</h2>
-                <p>{article.summary}</p>
-              </section>
-              {article.sections.map((section, index) => (
-                <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
-                  <h2>{section.heading}</h2>
-                  <p><strong>TLDR:</strong> {section.tldr}</p>
-                  <p>{section.body}</p>
+              {summary ? (
+                <section className="article-section sky-detail-section">
+                  <span className="article-section__eyebrow sky-detail-section-num">01 · Overview</span>
+                  <h2>Overview</h2>
+                  <p>{summary}</p>
                 </section>
-              ))}
+              ) : null}
+              {sections.map((section, index) => {
+                const heading = section.heading || `Part ${index + 1}`;
+                const showTldr = section.tldr && section.tldr !== section.body;
+
+                return (
+                <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
+                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + sectionNumberOffset).padStart(2, "0")} · {heading}</span>
+                  <h2>{heading}</h2>
+                  {showTldr ? <p>{section.tldr}</p> : null}
+                  {section.body ? <p>{section.body}</p> : null}
+                </section>
+                );
+              })}
+              {!hasReadableBody ? (
+                <section className="article-section sky-detail-section">
+                  <span className="article-section__eyebrow sky-detail-section-num">01 · Interpretation pending</span>
+                  <h2>Interpretation pending</h2>
+                  <p>We have the timing for this transit, but the full written interpretation is not ready yet.</p>
+                </section>
+              ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
           </div>
