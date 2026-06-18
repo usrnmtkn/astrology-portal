@@ -609,8 +609,12 @@ function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback:
   return generated?.headline?.trim() || fallback;
 }
 
-function personalTimingGeneratedContentKey(targetDate: string) {
-  return `you-update-summary-${targetDate}`;
+function personalDailyGeneratedContentKey(targetDate: string) {
+  return `you-daily-horoscope-${targetDate}`;
+}
+
+function personalTransitGeneratedContentKey(transit: Pick<TransitItem, "transitPlanet" | "aspect" | "natalPoint">, targetDate: string) {
+  return `you-transit-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}-${targetDate}`;
 }
 
 function compactTransitFact(transit: Record<string, unknown>) {
@@ -631,6 +635,26 @@ function compactTransitFact(transit: Record<string, unknown>) {
     score: transit.score,
     significance: transit.significance,
     knowledgeIds: transit.knowledgeIds
+  };
+}
+
+function compactTransitItemFact(transit: TransitItem, targetDate: string) {
+  return {
+    id: transit.id,
+    targetDate,
+    transitPlanet: transit.transitPlanet,
+    transitSign: transit.transitSign,
+    aspect: transit.aspect,
+    natalPoint: transit.natalPoint,
+    natalSign: transit.natalSign,
+    natalHouse: transit.natalHouse,
+    orb: transit.orb,
+    orbDegrees: transitOrbValue(transit),
+    direction: transit.direction,
+    term: transit.term,
+    significance: transit.significance,
+    timingBonuses: transit.timingBonuses ?? [],
+    note: transit.note
   };
 }
 
@@ -4568,6 +4592,7 @@ export function App() {
   const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
   const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
+  const [personalTransitGeneratedContent, setPersonalTransitGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
@@ -5314,7 +5339,7 @@ export function App() {
     let cancelled = false;
     const subjectType: UserGeneratedSubjectType = "you_update";
     const subjectId = primaryChart.id;
-    const contentKey = personalTimingGeneratedContentKey(skyDate);
+    const contentKey = personalDailyGeneratedContentKey(skyDate);
     const timing = personalTiming;
     const profile = userProfile;
 
@@ -5344,8 +5369,8 @@ export function App() {
           contentKey,
           surface: "you",
           mode: "feed",
-          eventType: "you-update-summary",
-          headline: timing.app.headline,
+          eventType: "you-daily-horoscope",
+          headline: `Your update for ${skyDate}`,
           targetDate: skyDate,
           facts: personalTimingGenerationFacts(timing, profile, skyDate),
           knowledgeIds: personalTimingKnowledgeIds(timing),
@@ -5355,11 +5380,12 @@ export function App() {
             chartId: subjectId
           },
           voiceNotes: [
-            "Write this as the user's personal daily Updates summary.",
-            "Start with the lived situation, not the technical timing method.",
+            "Write this as the user's personal daily horoscope for the Updates page.",
+            "Summarize the most important information from all of today's aspects, transits, and timing signals.",
+            "Start with what today feels like and what deserves attention now.",
+            "Do not make this an annual profection explanation. The annual timing card appears separately below.",
             "Do not use the words profection, time lord, generated, source-backed, backend, or knowledge base.",
-            "Keep it warm, specific, and practical. Use the timing facts only as the astrological basis.",
-            "Mention the strongest transit only if it helps the user understand what to do today."
+            "Keep it warm, specific, practical, and around 70 to 110 words."
           ].join("\n")
         });
 
@@ -5391,6 +5417,140 @@ export function App() {
     userProfile?.sun,
     userProfile?.moon,
     userProfile?.rising,
+    userProfile?.charts[0]?.id
+  ]);
+
+  useEffect(() => {
+    const primaryChart = userProfile?.charts[0];
+
+    if (!userProfile || !remoteAccountId || !primaryChart || !transitsDrawn) {
+      setPersonalTransitGeneratedContent(new Map());
+      return;
+    }
+
+    const profile = userProfile;
+    const subjectId = primaryChart.id;
+    const transits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
+
+    if (transits.length === 0) {
+      setPersonalTransitGeneratedContent(new Map());
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadOrGenerateTransitContent() {
+      const nextContent = new Map<string, LiveGeneratedContent>();
+
+      try {
+        for (const transit of transits) {
+          const contentKey = personalTransitGeneratedContentKey(transit, skyDate);
+          const existing = await loadUserGeneratedInterpretation({
+            subjectType: "you_transit",
+            subjectId,
+            contentKey,
+            targetDate: skyDate
+          });
+
+          if (cancelled) {
+            return;
+          }
+
+          if (existing) {
+            nextContent.set(contentKey, existing);
+          }
+        }
+
+        if (!cancelled) {
+          setPersonalTransitGeneratedContent(new Map(nextContent));
+        }
+
+        for (const transit of transits) {
+          const contentKey = personalTransitGeneratedContentKey(transit, skyDate);
+
+          if (nextContent.has(contentKey)) {
+            continue;
+          }
+
+          const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+          const generated = await generateUserContent({
+            subjectType: "you_transit",
+            subjectId,
+            contentKey,
+            surface: "you",
+            mode: "in_depth",
+            eventType: "you-transit-to-natal",
+            headline: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+            targetDate: skyDate,
+            facts: {
+              type: "you_transit_to_natal_description",
+              targetDate: skyDate,
+              person: {
+                name: profile.name,
+                bigThree: {
+                  sun: profile.sun,
+                  moon: profile.moon,
+                  rising: profile.rising
+                }
+              },
+              transit: compactTransitItemFact(transit, skyDate),
+              timing: {
+                durationLabel: timing.durationLabel,
+                rangeLabel: timing.rangeLabel,
+                label: timing.label
+              }
+            },
+            knowledgeIds: [transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint)],
+            sourceSnapshot: {
+              source: "tldrastro-local-transits",
+              targetDate: skyDate,
+              chartId: subjectId,
+              transitId: transit.id
+            },
+            voiceNotes: [
+              "Write this as a personalized explanation for one transit-to-natal aspect card.",
+              `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
+              "The summary should be one sentence for the collapsed card.",
+              "The body should be 2 short paragraphs for the expanded card.",
+              "Keep it concrete, emotionally intelligent, and practical. Avoid generic fortune-telling.",
+              "Do not mention databases, generated content, source-backed content, or knowledge base."
+            ].join("\n")
+          });
+
+          if (cancelled) {
+            return;
+          }
+
+          if (generated) {
+            nextContent.set(contentKey, generated);
+            setPersonalTransitGeneratedContent(new Map(nextContent));
+          }
+        }
+
+      } catch (error) {
+        if (!cancelled) {
+          console.warn("Personalized transit generation failed; using transit fallbacks.", error);
+        }
+      }
+    }
+
+    void loadOrGenerateTransitContent();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    profileTransits,
+    remoteAccountId,
+    skyDate,
+    transitForm.chartDate,
+    transitsDrawn,
+    userProfile?.id,
+    userProfile?.name,
+    userProfile?.sun,
+    userProfile?.moon,
+    userProfile?.rising,
+    userProfile?.settings,
     userProfile?.charts[0]?.id
   ]);
 
@@ -6188,6 +6348,7 @@ export function App() {
                     personalTimingGenerated={personalTimingGenerated}
                     personalTimingGeneratedStatus={personalTimingGeneratedStatus}
                     personalTimingStatus={personalTimingStatus}
+                    personalTransitGeneratedContent={personalTransitGeneratedContent}
                     transitsDrawn={transitsDrawn}
                     selectedTransit={selectedTransit}
                     selectedTransitId={selectedTransitId}
@@ -8745,7 +8906,9 @@ function ProfileView({
   personalTimingGenerated,
   personalTimingGeneratedStatus,
   personalTimingStatus,
+  personalTransitGeneratedContent,
   transitsDrawn,
+  selectedTransitId,
   setSelectedTransitId,
   onCreateChart,
   generatedContent
@@ -8759,6 +8922,7 @@ function ProfileView({
   personalTimingGenerated: LiveGeneratedContent | null;
   personalTimingGeneratedStatus: PersonalTimingStatus;
   personalTimingStatus: PersonalTimingStatus;
+  personalTransitGeneratedContent: GeneratedContentMap;
   transitsDrawn: boolean;
   selectedTransit: TransitItem;
   selectedTransitId: string;
@@ -8888,6 +9052,7 @@ function ProfileView({
   });
   const updateAspectRows = aspectRows.map((transit) => {
     const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
+    const personalizedContentKey = personalTransitGeneratedContentKey(transit, transitForm.chartDate);
     const content = fallbackFromHook(
       "you.transit-to-natal",
       {
@@ -8897,17 +9062,21 @@ function ProfileView({
       },
       approvedVoiceOrKnowledgeFallback(contentKey)
     );
-    const generated = liveGeneratedContent(generatedContent, contentKey);
+    const personalizedGenerated = liveGeneratedContent(personalTransitGeneratedContent, personalizedContentKey);
+    const generated = personalizedGenerated ?? liveGeneratedContent(generatedContent, contentKey);
     const rowSummary = liveGeneratedSummary(generated, content.summary);
+    const bodyParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
+    const isSelected = selectedTransitId === transit.id;
 
     return (
       <button
         type="button"
-        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
+        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}${isSelected ? " updates-aspect-row--selected" : ""}`}
         key={transit.id}
         onClick={() => setSelectedTransitId(transit.id)}
+        aria-expanded={isSelected}
       >
         <span className="updates-aspect-row__glyphs">
           <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
@@ -8922,6 +9091,13 @@ function ProfileView({
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+          {isSelected && bodyParagraphs.length > 0 ? (
+            <span className="updates-aspect-row__detail">
+              {bodyParagraphs.slice(0, 3).map((paragraph) => (
+                <span key={paragraph}>{paragraph}</span>
+              ))}
+            </span>
+          ) : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -8930,12 +9106,27 @@ function ProfileView({
       </button>
     );
   });
+  const dailyUpdateSummary = personalTiming
+    ? {
+        headline: liveGeneratedHeadline(personalTimingGenerated, "Today's main signal"),
+        summary: liveGeneratedSummary(personalTimingGenerated, "Reading today's transits against your chart."),
+        keyFactors: [],
+        status: personalTimingGeneratedStatus === "loading" ? personalTimingGeneratedStatus : personalTimingStatus
+      }
+    : personalTimingStatus === "loading"
+      ? {
+          headline: "Reading today's sky",
+          summary: "Checking today's transits against your chart.",
+          keyFactors: [],
+          status: personalTimingStatus
+        }
+      : null;
   const personalTimingSummary = personalTiming
     ? {
-        headline: liveGeneratedHeadline(personalTimingGenerated, personalTiming.app.headline),
-        summary: liveGeneratedSummary(personalTimingGenerated, personalTiming.app.summary),
+        headline: personalTiming.app.headline,
+        summary: personalTiming.app.summary,
         keyFactors: personalTiming.app.keyFactors,
-        status: personalTimingGeneratedStatus === "loading" ? personalTimingGeneratedStatus : personalTimingStatus
+        status: personalTimingStatus
       }
     : personalTimingStatus === "loading"
       ? {
@@ -8967,6 +9158,7 @@ function ProfileView({
       <YouPage
         aspectRows={updateAspectRows}
         bigThreeRows={bigThreeRows}
+        dailyUpdateSummary={dailyUpdateSummary}
         displayMoon={displayMoon}
         displayRising={displayRising}
         displaySun={displaySun}

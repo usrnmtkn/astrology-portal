@@ -3,6 +3,7 @@ import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedCont
 
 export type UserGeneratedSubjectType =
   | "you_update"
+  | "you_transit"
   | "natal_summary"
   | "natal_placement"
   | "natal_aspect"

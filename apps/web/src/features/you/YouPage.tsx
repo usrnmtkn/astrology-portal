@@ -15,6 +15,7 @@ export type PersonalTimingSummary = {
 export type YouPageProps = {
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
+  dailyUpdateSummary?: PersonalTimingSummary | null;
   displayMoon: string;
   displayRising: string;
   displaySun: string;
@@ -262,12 +263,14 @@ function YouNatalTab({
 
 function YouUpdatesTab({
   aspectRows,
+  dailyUpdateSummary,
   hasSavedCurrentCity,
   onCreateChart,
   personalTimingSummary,
   transitsDrawn
 }: {
   aspectRows: ReactNode[];
+  dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
@@ -275,6 +278,13 @@ function YouUpdatesTab({
 }) {
   return (
     <div className="subpane updates-section" id="sub-transits">
+      {hasSavedCurrentCity && dailyUpdateSummary && (
+        <section className="daily-horoscope-summary" aria-label="Daily horoscope summary">
+          <span className="eyebrow section-label">Today</span>
+          <h3>{dailyUpdateSummary.headline}</h3>
+          <p>{dailyUpdateSummary.summary}</p>
+        </section>
+      )}
       {hasSavedCurrentCity && personalTimingSummary && (
         <section className="personal-timing-summary" aria-label="Personal timing summary">
           <span className="eyebrow section-label">Timing</span>
@@ -318,6 +328,7 @@ function YouUpdatesTab({
 export function YouPage({
   aspectRows,
   bigThreeRows,
+  dailyUpdateSummary,
   displayMoon,
   displayRising,
   displaySun,
@@ -392,6 +403,7 @@ export function YouPage({
           {profileTab === "transits" && (
             <YouUpdatesTab
               aspectRows={aspectRows}
+              dailyUpdateSummary={dailyUpdateSummary}
               hasSavedCurrentCity={hasSavedCurrentCity}
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
