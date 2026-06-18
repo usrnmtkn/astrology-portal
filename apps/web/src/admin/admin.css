@@ -153,6 +153,22 @@ body,
   gap: 10px;
 }
 
+.admin-access-note {
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.admin-access-note.status-valid {
+  color: #8fd8bd;
+}
+
+.admin-access-note.status-invalid {
+  color: #ffaaa0;
+}
+
 .admin-main {
   display: grid;
   gap: 20px;
