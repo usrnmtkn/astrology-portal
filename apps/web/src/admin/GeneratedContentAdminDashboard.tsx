@@ -1747,9 +1747,15 @@ export function GeneratedContentAdminDashboard() {
             knowledgeIds: [],
             provider: reviewGenerationProvider,
             voiceNotes: [
-              "Write in the TLDR daily voice: plain, compressed, direct, human, and specific.",
-              "Do not mention schemas, source records, APIs, dashboards, or generation process.",
-              "Give the reader-facing copy only."
+              "Write a daily astrology transit interpretation in the TLDR Astro voice.",
+              "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
+              "Start with the aspect and date or timing. Explain the core dynamic in plain language and why it is useful while active.",
+              "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
+              "Give 2-3 concrete life examples: a bill, boundary, conversation, deadline, commitment, choice, pattern, responsibility, relationship, work, money, emotions, or timing.",
+              "Give practical guidance tied directly to the planets and aspect. Avoid slogans, productivity coaching, guru language, and therapist register.",
+              "Use soft certainty: may, can, often, more likely, easier, harder.",
+              "Avoid: not through X but through Y, this is not dramatic astrology, the invitation is, lean into, step into, honor, release, unlock, universe, cosmic, manifesting.",
+              "Do not mention schemas, source records, APIs, dashboards, generation process, natal houses, or private personalization."
             ].join(" ")
           })
         }
