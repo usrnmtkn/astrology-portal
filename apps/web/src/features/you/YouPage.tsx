@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { MoreVertical, Pencil, Sparkles } from "lucide-react";
+import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 
@@ -10,6 +10,22 @@ export type PersonalTimingSummary = {
   summary: string;
   keyFactors: string[];
   status: "idle" | "loading" | "ready" | "error";
+};
+
+export type YouTransitArticle = {
+  id: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  sections: Array<{
+    heading: string;
+    tldr: string;
+    body: string;
+  }>;
+  meta: Array<{
+    label: string;
+    value: string;
+  }>;
 };
 
 export type YouPageProps = {
@@ -27,6 +43,7 @@ export type YouPageProps = {
   natalChartPending: boolean;
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
+  onCloseTransitArticle?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
   profileAvatarUrl?: string;
@@ -37,6 +54,7 @@ export type YouPageProps = {
   signatureBody: string;
   signatureTitle: string;
   signaturesReady: boolean;
+  transitArticle?: YouTransitArticle | null;
   transitsDrawn: boolean;
 };
 
@@ -325,6 +343,67 @@ function YouUpdatesTab({
   );
 }
 
+function YouTransitArticlePage({
+  article,
+  onClose
+}: {
+  article: YouTransitArticle;
+  onClose: () => void;
+}) {
+  return (
+    <section
+      className="article-page sky-detail-page you-transit-article-page"
+      aria-label={`${article.title} article`}
+      aria-labelledby="you-transit-article-title"
+    >
+      <button className="sky-detail-back floating-back-button" type="button" aria-label="Back to updates" onClick={onClose}>
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Back</span>
+      </button>
+      <article className="article-shell sky-detail-article you-transit-article">
+        <div className="article-card sky-detail-card">
+          <header className="article-id sky-detail-id">
+            <div className="article-kicker-row">
+              <span className="article-glyph-tag" aria-hidden="true">☉</span>
+            </div>
+            <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
+            <p className="article-sub">{article.subtitle}</p>
+            <div className="article-meta sky-detail-meta">
+              <p className="m-row"><b>Article ID:</b> {article.id}</p>
+              {article.meta.map((row) => (
+                <p className="m-row" key={`${row.label}-${row.value}`}>
+                  <b>{row.label}:</b> {row.value}
+                </p>
+              ))}
+            </div>
+          </header>
+
+          <hr className="article-rule" />
+
+          <div className="article-body-card sky-detail-body">
+            <div className="article-body-inner">
+              <section className="article-section sky-detail-section">
+                <span className="article-section__eyebrow sky-detail-section-num">00 · TLDR</span>
+                <h2>TLDR</h2>
+                <p>{article.summary}</p>
+              </section>
+              {article.sections.map((section, index) => (
+                <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
+                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
+                  <h2>{section.heading}</h2>
+                  <p><strong>TLDR:</strong> {section.tldr}</p>
+                  <p>{section.body}</p>
+                </section>
+              ))}
+              <div className="sky-detail-end" aria-hidden="true">✦</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  );
+}
+
 export function YouPage({
   aspectRows,
   bigThreeRows,
@@ -340,6 +419,7 @@ export function YouPage({
   natalChart,
   natalChartPending,
   onCreateChart,
+  onCloseTransitArticle,
   personalTimingSummary,
   planetRows,
   profileAvatarUrl,
@@ -350,12 +430,17 @@ export function YouPage({
   signatureBody,
   signatureTitle,
   signaturesReady,
+  transitArticle,
   transitsDrawn
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
 
   if (!hasSavedBirthDetails) {
     return <YouEmptyState onCreateChart={onCreateChart} setupStepsLeft={setupStepsLeft} />;
+  }
+
+  if (transitArticle && onCloseTransitArticle) {
+    return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
   }
 
   return (

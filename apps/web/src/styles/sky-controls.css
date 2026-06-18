@@ -190,7 +190,7 @@ html[data-scrolled] .sky-header-date-button {
   min-width: 0;
   overflow: hidden;
   font-family: var(--font-ui);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: var(--weight-medium);
   text-overflow: ellipsis;
   white-space: nowrap;

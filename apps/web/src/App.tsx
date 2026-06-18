@@ -312,6 +312,22 @@ type SkyDetail = {
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 
+type YouTransitArticle = {
+  id: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  sections: Array<{
+    heading: string;
+    tldr: string;
+    body: string;
+  }>;
+  meta: Array<{
+    label: string;
+    value: string;
+  }>;
+};
+
 type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
   typeof import("./content/skyRegistry"),
@@ -610,11 +626,11 @@ function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback:
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
-  return `you-daily-horoscope-${targetDate}`;
+  return `you-daily-horoscope-v2-${targetDate}`;
 }
 
 function personalTransitGeneratedContentKey(transit: Pick<TransitItem, "transitPlanet" | "aspect" | "natalPoint">, targetDate: string) {
-  return `you-transit-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}-${targetDate}`;
+  return `you-transit-v2-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}-${targetDate}`;
 }
 
 function compactTransitFact(transit: Record<string, unknown>) {
@@ -727,6 +743,39 @@ function fallbackPreviewText(fallback: ContentFallback) {
     || fallback.detailParagraphs.find((paragraph) => paragraph.trim())?.trim()
     || fallback.body?.split(/\n{2,}/).find((paragraph) => paragraph.trim())?.trim()
     || null;
+}
+
+function stripTldrPrefix(value: string) {
+  return value.replace(/^TLDR:\s*/i, "").trim();
+}
+
+function articleSectionFromText(heading: string, text: string) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  const body = stripTldrPrefix(normalized);
+  const sentenceEnd = body.search(/[.!?](\s|$)/);
+  const tldr = sentenceEnd > 30 ? body.slice(0, sentenceEnd + 1).trim() : body;
+
+  return {
+    heading,
+    tldr,
+    body
+  };
+}
+
+function generatedArticleSections(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
+  const generatedSections = generatedContentSections(generated);
+
+  if (generatedSections.length > 0) {
+    return generatedSections.slice(0, 4).map((section) => articleSectionFromText(section.heading, section.body));
+  }
+
+  const paragraphs = generatedContentParagraphs(generated).length > 0
+    ? generatedContentParagraphs(generated)
+    : fallbackParagraphs;
+
+  return paragraphs.slice(0, 4).map((paragraph, index) => (
+    articleSectionFromText(detailSectionTitle(index), paragraph)
+  ));
 }
 
 function importContentRegistry(domain: ContentDomain): Promise<LazyContentRegistry> {
@@ -5382,7 +5431,10 @@ export function App() {
           voiceNotes: [
             "Write this as the user's personal daily horoscope for the Updates page.",
             "Summarize the most important information from all of today's aspects, transits, and timing signals.",
-            "Start with what today feels like and what deserves attention now.",
+            "Start the summary with 'TLDR:' followed by the plainest useful takeaway.",
+            "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
+            "Name the concrete pressure, choice, behavior, or relationship pattern the user may notice today.",
+            "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, or trust the process.",
             "Do not make this an annual profection explanation. The annual timing card appears separately below.",
             "Do not use the words profection, time lord, generated, source-backed, backend, or knowledge base.",
             "Keep it warm, specific, practical, and around 70 to 110 words."
@@ -5510,9 +5562,12 @@ export function App() {
             voiceNotes: [
               "Write this as a personalized explanation for one transit-to-natal aspect card.",
               `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
-              "The summary should be one sentence for the collapsed card.",
-              "The body should be 2 short paragraphs for the expanded card.",
-              "Keep it concrete, emotionally intelligent, and practical. Avoid generic fortune-telling.",
+              "Start the summary with 'TLDR:' and make it one concrete sentence for the collapsed card.",
+              "Return 2 to 3 sections. Each section body must start with 'TLDR:' and then explain the point in grounded, specific language.",
+              "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
+              "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
+              "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, or trust the process.",
+              "Keep it practical. Avoid generic fortune-telling.",
               "Do not mention databases, generated content, source-backed content, or knowledge base."
             ].join("\n")
           });
@@ -7161,7 +7216,7 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
     <div
       className="next-lun"
       role="group"
-      aria-label={`Next lunation: ${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
+      aria-label={`${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
     >
       <span className="nl-badge" aria-hidden="true">
         <span className="g">{glyph}</span>
@@ -7170,7 +7225,6 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
       <div className="nl-main">
         <div className="nl-top">
           <h4>
-            <span className="nl-prefix">Next:</span>
             <span>{title}</span>
           </h4>
           <span className="nl-until">{countdownLabel}</span>
@@ -8930,6 +8984,7 @@ function ProfileView({
   onCreateChart: () => void;
   generatedContent: GeneratedContentMap;
 }) {
+  const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
   const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed"
@@ -9065,25 +9120,40 @@ function ProfileView({
     const personalizedGenerated = liveGeneratedContent(personalTransitGeneratedContent, personalizedContentKey);
     const generated = personalizedGenerated ?? liveGeneratedContent(generatedContent, contentKey);
     const rowSummary = liveGeneratedSummary(generated, content.summary);
-    const bodyParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
-    const isSelected = selectedTransitId === transit.id;
+    const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
+    const articleSections = generatedArticleSections(generated, content.detailParagraphs);
+    const openArticle = () => {
+      setSelectedTransitId(transit.id);
+      setTransitArticle({
+        id: personalizedContentKey,
+        title,
+        subtitle: stripTldrPrefix(rowSummary),
+        summary: stripTldrPrefix(rowSummary),
+        sections: articleSections,
+        meta: [
+          { label: "Timing", value: timing.rangeLabel },
+          { label: "Duration", value: timing.durationLabel },
+          { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) },
+          { label: "Natal point", value: transit.natalPoint }
+        ]
+      });
+    };
 
     return (
       <button
         type="button"
-        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}${isSelected ? " updates-aspect-row--selected" : ""}`}
+        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
         key={transit.id}
-        onClick={() => setSelectedTransitId(transit.id)}
-        aria-expanded={isSelected}
+        onClick={openArticle}
       >
         <span className="updates-aspect-row__glyphs">
           <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
         </span>
         <span className="updates-aspect-row__content">
           <span className="updates-aspect-row__title">
-            {transit.transitPlanet} {transit.aspect} your {transit.natalPoint}
+            {title}
           </span>
           <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
             <span className="planet-placement-row__duration">{timing.durationLabel}</span>
@@ -9091,13 +9161,6 @@ function ProfileView({
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
-          {isSelected && bodyParagraphs.length > 0 ? (
-            <span className="updates-aspect-row__detail">
-              {bodyParagraphs.slice(0, 3).map((paragraph) => (
-                <span key={paragraph}>{paragraph}</span>
-              ))}
-            </span>
-          ) : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -9170,6 +9233,7 @@ function ProfileView({
         natalChart={natalChart}
         natalChartPending={!natalSky}
         onCreateChart={onCreateChart}
+        onCloseTransitArticle={() => setTransitArticle(null)}
         personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
         profileAvatarUrl={profile.avatarUrl}
@@ -9180,6 +9244,7 @@ function ProfileView({
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
+        transitArticle={transitArticle}
         transitsDrawn={transitsDrawn}
       />
     </Suspense>

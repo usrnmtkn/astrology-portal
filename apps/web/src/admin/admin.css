@@ -208,6 +208,114 @@ body,
   padding: 14px 16px;
 }
 
+.admin-api-status-card {
+  align-items: center;
+  background: var(--admin-panel);
+  border: 1px solid var(--admin-line);
+  border-radius: 12px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(260px, 1fr) minmax(360px, 1.35fr) auto;
+  padding: 16px;
+}
+
+.admin-api-status-card.status-online {
+  border-color: rgba(43, 140, 120, 0.52);
+}
+
+.admin-api-status-card.status-offline,
+.admin-api-status-card.status-notConfigured {
+  border-color: rgba(215, 106, 91, 0.56);
+}
+
+.admin-api-status-card.status-checking {
+  border-color: rgba(124, 134, 255, 0.48);
+}
+
+.admin-api-status-main {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.admin-api-status-icon {
+  align-items: center;
+  background: rgba(124, 134, 255, 0.16);
+  border: 1px solid rgba(124, 134, 255, 0.32);
+  border-radius: 999px;
+  color: var(--admin-ink);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.admin-api-status-card.status-online .admin-api-status-icon {
+  background: rgba(43, 140, 120, 0.18);
+  border-color: rgba(43, 140, 120, 0.42);
+}
+
+.admin-api-status-card.status-offline .admin-api-status-icon,
+.admin-api-status-card.status-notConfigured .admin-api-status-icon {
+  background: rgba(215, 106, 91, 0.16);
+  border-color: rgba(215, 106, 91, 0.42);
+}
+
+.admin-api-status-main h2 {
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 3px 0 5px;
+}
+
+.admin-api-status-main p:not(.admin-eyebrow) {
+  color: var(--admin-muted);
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-api-status-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-api-status-grid article {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  display: grid;
+  gap: 5px;
+  min-height: 72px;
+  padding: 10px 12px;
+}
+
+.admin-api-status-grid span {
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-api-status-grid strong {
+  color: var(--admin-ink);
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.admin-api-status-error {
+  color: #f1aa9f;
+  font-size: 13px;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .admin-template-panel {
   background: var(--admin-panel);
   border: 1px solid var(--admin-line);
@@ -1102,6 +1210,7 @@ body,
   }
 
   .admin-nav,
+  .admin-api-status-card,
   .admin-metrics,
   .admin-private-meta,
   .admin-release-note,
@@ -1128,6 +1237,7 @@ body,
   }
 
   .admin-controls,
+  .admin-api-status-grid,
   .admin-form-grid {
     grid-template-columns: 1fr;
   }
