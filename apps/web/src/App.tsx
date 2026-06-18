@@ -6397,6 +6397,7 @@ export function App() {
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
               }}
             >
+              <CalendarDays className="sky-header-date-button__calendar" aria-hidden="true" />
               <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
@@ -7075,63 +7076,20 @@ const natalSignatureDescriptions: Record<string, string> = {
   Pluto: "Where you transform and reclaim power"
 };
 
-const natalPlacementFunctions: Record<string, string> = {
-  Sun: "identity, vitality, and the part of you that is learning to become more fully expressed",
-  Moon: "emotional needs, instinctive reactions, and the way you look for safety",
-  Mercury: "thinking, communication, learning, and how you make sense of what is happening",
-  Venus: "desire, connection, values, pleasure, and what feels worth choosing",
-  Mars: "drive, action, anger, courage, and how you go after what you want",
-  Jupiter: "growth, faith, opportunity, wisdom, and the places where life asks you to reach for more",
-  Saturn: "structure, responsibility, limits, time, and the work of building something real",
-  Uranus: "change, disruption, freedom, originality, and the part of you that resists stale patterns",
-  Neptune: "imagination, sensitivity, longing, inspiration, and the places where boundaries can blur",
-  Pluto: "power, pressure, transformation, control, and what you are learning to face honestly"
-};
-
-const natalPlacementGrowthNouns: Record<string, string> = {
-  Sun: "identity",
-  Moon: "emotional life",
-  Mercury: "mind",
-  Venus: "sense of connection",
-  Mars: "drive",
-  Jupiter: "faith in life",
-  Saturn: "inner authority",
-  Uranus: "freedom",
-  Neptune: "imagination",
-  Pluto: "power"
-};
-
-const signPlacementQualities: Record<string, string> = {
-  Aries: "direct, initiating, and willing to move before everything is settled",
-  Taurus: "steady, embodied, and concerned with what can be trusted over time",
-  Gemini: "curious, verbal, and responsive to information as it changes",
-  Cancer: "protective, intuitive, and shaped by memory, belonging, and care",
-  Leo: "expressive, visible, and drawn toward warmth, creativity, and recognition",
-  Virgo: "practical, observant, and focused on making life more workable",
-  Libra: "relational, balanced, and aware of proportion, fairness, and response",
-  Scorpio: "private, intense, and interested in what sits under the surface",
-  Sagittarius: "expansive, searching, and pulled toward meaning, distance, and truth",
-  Capricorn: "disciplined, careful, and shaped by responsibility, time, and consequence",
-  Aquarius: "unconventional, future-minded, and interested in systems, patterns, and the collective",
-  Pisces: "sensitive, imaginative, and open to what cannot be fully explained"
-};
-
-const signPlacementActions: Record<string, string> = {
-  Aries: "acting directly, testing your courage, and learning by beginning",
-  Taurus: "moving slowly enough to know what is real, valuable, and worth keeping",
-  Gemini: "asking questions, making connections, and letting new information change the picture",
-  Cancer: "protecting what matters, listening to your instincts, and building emotional safety",
-  Leo: "creating, expressing yourself, and letting the heart become visible",
-  Virgo: "refining the details, improving the pattern, and making the abstract usable",
-  Libra: "weighing choices through relationship, contrast, beauty, and fairness",
-  Scorpio: "telling the truth about intensity, trust, fear, and the need for deeper honesty",
-  Sagittarius: "testing belief against experience and letting life widen your perspective",
-  Capricorn: "taking responsibility, building structure, and learning what can hold weight",
-  Aquarius: "questioning inherited rules, studying systems, and staying open to unconventional possibilities",
-  Pisces: "following subtle perception, creativity, compassion, and the wisdom of porous edges"
-};
-
 const rulerPlanetProcesses: Record<string, string> = {
+  Sun: "The Sun shows where confidence grows through visibility, choice, and the courage to act from the center of yourself.",
+  Moon: "The Moon shows where wisdom develops through emotional honesty, memory, care, and the need to feel safe enough to respond.",
+  Mercury: "Mercury shows where understanding is built through conversation, observation, writing, learning, and repeated mental adjustment.",
+  Venus: "Venus shows where life teaches through desire, attraction, value, pleasure, and the choices that make connection feel real.",
+  Mars: "Mars shows where growth happens through action, friction, courage, and the willingness to move before everything feels settled.",
+  Jupiter: "Jupiter shows where meaning expands through study, risk, faith, teaching, and the larger story you build from experience.",
+  Saturn: "Saturn shows where wisdom is earned through experience, commitment, responsibility, and time.",
+  Uranus: "Uranus shows where clarity arrives through disruption, freedom, and the courage to break a pattern that has expired.",
+  Neptune: "Neptune shows where sensitivity, imagination, longing, and the work of clarifying what is real shape the path.",
+  Pluto: "Pluto shows where pressure, honesty, endings, and power slowly transform what can no longer stay hidden."
+};
+
+const rulerPlanetProcessShort: Record<string, string> = {
   Sun: "visibility, confidence, and the courage to choose from the center of yourself",
   Moon: "emotional repetition, care, memory, and the need to feel safe enough to respond",
   Mercury: "conversation, observation, learning, writing, and repeated mental adjustment",
@@ -7148,6 +7106,208 @@ function readableHouseTopic(house: number) {
   return houseLifeAreas[house] ?? "this part of life";
 }
 
+function indefiniteArticleFor(text: string) {
+  return /^[aeiou]/i.test(text.trim()) ? "an" : "a";
+}
+
+function sentenceCase(text: string) {
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+}
+
+const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; lived: string }> = {
+  1: {
+    intro: "The 1st house is where life asks you to become recognizable to yourself. It speaks to your body, instincts, appearance, and the first impression you make before you explain anything.",
+    focus: "your sense of self",
+    lived: "how you move, respond, and take up space"
+  },
+  2: {
+    intro: "The 2nd house is where life asks you to understand what is worth keeping. It speaks to money, resources, appetite, self-worth, and the stability you build through repeated choices.",
+    focus: "your relationship with worth and security",
+    lived: "money, resources, values, and what helps you feel grounded"
+  },
+  3: {
+    intro: "The 3rd house is where life asks you to notice, name, and connect what is happening around you. It speaks to communication, learning, siblings, local movement, and the habits of daily perception.",
+    focus: "your everyday mind",
+    lived: "conversation, learning, writing, and the way you move through your immediate world"
+  },
+  4: {
+    intro: "The 4th house is where life asks you to build an inner foundation. It speaks to home, family memory, ancestry, emotional security, and the private roots that shape everything else.",
+    focus: "your inner foundation",
+    lived: "home, family, privacy, and the emotional structures that hold you"
+  },
+  5: {
+    intro: "The 5th house is where life asks you to let the heart become visible. It speaks to creativity, romance, pleasure, play, children, and the desire to make something because it feels alive.",
+    focus: "your creative life",
+    lived: "pleasure, love, creative risk, and the courage to be seen"
+  },
+  6: {
+    intro: "The 6th house is where life asks you to care for what must be maintained. It speaks to routines, work, health, service, and the small daily habits that decide how sustainable life feels.",
+    focus: "your daily life",
+    lived: "work, health, maintenance, and the rhythms that keep everything running"
+  },
+  7: {
+    intro: "The 7th house is where life asks you to meet yourself through other people. It speaks to partnership, agreements, attraction, conflict, and the mirrors that show you what cannot be worked out alone.",
+    focus: "your one-to-one relationships",
+    lived: "partnership, collaboration, conflict, and the agreements you choose"
+  },
+  8: {
+    intro: "The 8th house is where life asks you to face what is shared, hidden, or hard to control. It speaks to intimacy, trust, debt, inheritance, secrecy, and the emotional truth underneath exchange.",
+    focus: "your relationship with trust and shared power",
+    lived: "intimacy, money entanglements, fear, honesty, and the need for deeper trust"
+  },
+  9: {
+    intro: "The 9th house is where life asks you to look beyond the immediate and familiar. It speaks to the search for meaning through learning, travel, philosophy, spirituality, teaching, and the stories you tell yourself about why you're here.",
+    focus: "your search for meaning",
+    lived: "belief, study, travel, teaching, and the wider perspective you build from experience"
+  },
+  10: {
+    intro: "The 10th house is where life asks you to become visible through what you build. It speaks to career, reputation, authority, responsibility, and the public shape your life begins to take over time.",
+    focus: "your public path",
+    lived: "career, reputation, responsibility, and the work of becoming known"
+  },
+  11: {
+    intro: "The 11th house is where life asks you to imagine the future you want to belong to. It speaks to friendship, networks, community, audience, collaboration, and the hopes that pull you beyond private concerns.",
+    focus: "your place in the wider circle",
+    lived: "friendship, community, collaboration, and long-range hopes"
+  },
+  12: {
+    intro: "The 12th house is where life asks you to listen to what is quiet, hidden, or unfinished. It speaks to solitude, dreams, retreat, grief, imagination, and the material that works beneath ordinary awareness.",
+    focus: "your private inner life",
+    lived: "rest, retreat, hidden pressure, imagination, and what needs space before it can be named"
+  }
+};
+
+const natalPlanetFallbackFrames: Record<string, { house: string; growth: string; integration: string }> = {
+  Sun: {
+    house: "that search becomes personal. Your identity grows by engaging it directly, and you discover who you are by letting life widen your sense of purpose",
+    growth: "your sense of purpose",
+    integration: "what you believe has to become something you can live from, not just something you understand in theory"
+  },
+  Moon: {
+    house: "your emotional life is pulled into this territory. You look for safety here, and your instincts often respond before you have language for what is happening",
+    growth: "your emotional steadiness",
+    integration: "your feelings become more trustworthy when they have a real place to land"
+  },
+  Mercury: {
+    house: "your mind keeps returning to these questions. You learn by observing the pattern, naming what you notice, and letting conversation sharpen your understanding",
+    growth: "your voice and thinking",
+    integration: "what you notice becomes useful when you give it language and let it change how you move"
+  },
+  Venus: {
+    house: "desire, value, and connection are shaped here. You learn what feels worth choosing by noticing what brings ease, beauty, pleasure, or honest attraction into this part of life",
+    growth: "your sense of value",
+    integration: "what you want becomes clearer when it is tested against what actually feels sustaining"
+  },
+  Mars: {
+    house: "your drive has to find an outlet here. You learn through action, effort, conflict, and the courage to move toward what you want without waiting for every condition to be perfect",
+    growth: "your courage",
+    integration: "your energy becomes more effective when it has a clear direction and a real problem to meet"
+  },
+  Jupiter: {
+    house: "growth comes through this territory. You tend to find opportunity when you take the larger view, trust your experience, and let this part of life teach you something bigger",
+    growth: "your faith in life",
+    integration: "your confidence grows when experience gives your optimism something real to stand on"
+  },
+  Saturn: {
+    house: "this becomes a place of responsibility and slow-earned confidence. You may meet pressure here first, but over time you learn what can hold weight",
+    growth: "your inner authority",
+    integration: "the lesson becomes useful when responsibility turns into self-respect instead of fear"
+  },
+  Uranus: {
+    house: "change does not stay theoretical here. You are learning where freedom matters, where old patterns stop working, and where your life needs more room to breathe",
+    growth: "your freedom",
+    integration: "the breakthrough matters most when it gives you a more honest way to live"
+  },
+  Neptune: {
+    house: "longing, imagination, and sensitivity gather here. You may idealize this part of life, but you also receive subtle information through it",
+    growth: "your imagination",
+    integration: "the dream becomes stronger when it is held with enough clarity to survive real life"
+  },
+  Pluto: {
+    house: "this territory carries pressure and depth. You are learning where control, fear, honesty, and transformation have to be faced rather than managed from a distance",
+    growth: "your power",
+    integration: "what changes you here can eventually become a source of strength, but only after it is met honestly"
+  }
+};
+
+const natalSignFallbackFrames: Record<string, { quality: string; motion: string; aliveness: string }> = {
+  Aries: {
+    quality: "direct and initiating",
+    motion: "You are not here to wait until every variable is settled. You learn by beginning, testing your courage, and letting action reveal what thought alone cannot.",
+    aliveness: "The more permission you give yourself to move honestly, the more alive this placement becomes."
+  },
+  Taurus: {
+    quality: "steady and embodied",
+    motion: "You are not here to rush past what your body knows. You learn by moving slowly enough to recognize what is real, valuable, and worth protecting over time.",
+    aliveness: "The more you trust what proves itself, the more grounded this placement becomes."
+  },
+  Gemini: {
+    quality: "curious and responsive",
+    motion: "You are not here to settle for one fixed answer too quickly. You learn by asking better questions, making connections, and letting new information change the picture.",
+    aliveness: "The more room you give your mind to stay mobile, the more alive this placement becomes."
+  },
+  Cancer: {
+    quality: "protective and intuitive",
+    motion: "You are not here to ignore memory, belonging, or care. You learn by listening to your instincts and noticing what helps you feel safe enough to stay present.",
+    aliveness: "The more honestly you tend to your emotional roots, the stronger this placement becomes."
+  },
+  Leo: {
+    quality: "expressive and visible",
+    motion: "You are not here to hide the warmth of your own heart. You learn by creating, responding generously, and letting what matters to you become recognizable.",
+    aliveness: "The more courage you give yourself to be seen, the more alive this placement becomes."
+  },
+  Virgo: {
+    quality: "practical and observant",
+    motion: "You are not here to leave everything vague. You learn by refining the pattern, improving what is workable, and turning insight into something useful.",
+    aliveness: "The more you let care become craft, the stronger this placement becomes."
+  },
+  Libra: {
+    quality: "relational and balancing",
+    motion: "You are not here to understand life in isolation. You learn through contrast, response, beauty, fairness, and the choices that make exchange feel more honest.",
+    aliveness: "The more consciously you choose your agreements, the more alive this placement becomes."
+  },
+  Scorpio: {
+    quality: "private and intense",
+    motion: "You are not here to stay on the surface. You learn by telling the truth about trust, fear, desire, and the deeper motives that shape what people do.",
+    aliveness: "The more willing you are to be honest about intensity, the stronger this placement becomes."
+  },
+  Sagittarius: {
+    quality: "expansive and searching",
+    motion: "You are not here to accept a small explanation for your life. You learn by testing belief against experience and letting distance, study, and risk widen your perspective.",
+    aliveness: "The more freedom you give yourself to explore, the more alive this placement becomes."
+  },
+  Capricorn: {
+    quality: "disciplined and consequential",
+    motion: "You are not here to treat this casually. You learn through responsibility, patience, structure, and the slow proof that comes from building something real.",
+    aliveness: "The more you respect time and effort, the stronger this placement becomes."
+  },
+  Aquarius: {
+    quality: "unconventional and future-minded",
+    motion: "You are not here to inherit the usual answer without questioning it. You learn by studying systems, noticing patterns, and staying open to possibilities that challenge the status quo.",
+    aliveness: "The more freedom you give yourself to think beyond the accepted path, the more alive this placement becomes."
+  },
+  Pisces: {
+    quality: "sensitive and imaginative",
+    motion: "You are not here to limit reality to what can be explained cleanly. You learn through subtle perception, creativity, compassion, and the wisdom of porous edges.",
+    aliveness: "The more clearly you hold your sensitivity, the stronger this placement becomes."
+  }
+};
+
+const natalRulerHouseLinks: Record<number, string> = {
+  1: "identity, body, and the way you meet life directly",
+  2: "money, self-worth, and the resources that help you feel secure",
+  3: "language, learning, siblings, and your immediate environment",
+  4: "home, family, emotional security, and the private structures that support your life",
+  5: "creativity, romance, children, pleasure, and the courage to be seen",
+  6: "work, health, daily routines, and the habits that keep life functioning",
+  7: "partnership, agreement, attraction, and the people who meet you face to face",
+  8: "trust, shared resources, intimacy, and the deeper material people often avoid",
+  9: "belief, study, travel, wisdom, and the search for a wider truth",
+  10: "career, reputation, authority, and the public shape of your life",
+  11: "friends, networks, community, and the future you want to help build",
+  12: "solitude, hidden pressure, dreams, retreat, and what works beneath the surface"
+};
+
 function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
@@ -7155,29 +7315,27 @@ function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySn
 
   const house = position.house;
   const houseLabel = `${ordinalHouse(house)} house`;
-  const houseTopic = readableHouseTopic(house);
-  const planetFunction = natalPlacementFunctions[position.planet] ?? natalPlacementDescription(position.planet).toLowerCase();
-  const growthNoun = natalPlacementGrowthNouns[position.planet] ?? "relationship to this part of life";
-  const signQuality = signPlacementQualities[position.sign] ?? "specific";
-  const signAction = signPlacementActions[position.sign] ?? "learning how this part of you wants to move";
+  const houseFrame = natalHouseFallbackFrames[house];
+  const planetFrame = natalPlanetFallbackFrames[position.planet] ?? natalPlanetFallbackFrames.Sun;
+  const signFrame = natalSignFallbackFrames[position.sign] ?? natalSignFallbackFrames.Aries;
   const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : position.sign;
   const houseRuler = traditionalSignRulers[cuspSign] ?? "";
   const rulerPosition = houseRuler
     ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
     : null;
   const rulerHouse = rulerPosition?.house ?? null;
-  const rulerHouseTopic = rulerHouse ? readableHouseTopic(rulerHouse) : "another part of the chart";
-  const rulerProcess = houseRuler ? rulerPlanetProcesses[houseRuler] ?? "experience, repetition, and time" : "experience, repetition, and time";
-  const houseBody = naturalHouseLensBodies[house] ?? `The ${houseLabel} describes ${houseTopic}.`;
+  const rulerHouseLink = rulerHouse ? natalRulerHouseLinks[rulerHouse] : "another part of the chart";
+  const rulerProcess = houseRuler ? rulerPlanetProcessShort[houseRuler] ?? "experience, repetition, and time" : "experience, repetition, and time";
+  const rulerPlanetProcess = houseRuler ? rulerPlanetProcesses[houseRuler] ?? `${houseRuler} shows where experience becomes clearer over time.` : "The house ruler shows where experience becomes clearer over time.";
 
-  const houseParagraph = `${houseBody} With your ${position.planet} in this house, this area of life becomes one of the main places where you work with ${planetFunction}. Your ${growthNoun} grows through ${houseTopic}, and you often learn about this placement by paying attention to what this house keeps asking you to handle.`;
-  const signParagraph = `In ${position.sign}, this part of you is ${signQuality}. You tend to move through ${houseTopic} by ${signAction}. The sign matters because it shows the style of the placement, not just a personality trait. It describes how this part of you tries to solve problems, find meaning, and stay true to itself.`;
+  const houseParagraph = `${houseFrame.intro} With your ${position.planet} in this house, ${planetFrame.house}.`;
+  const signParagraph = `In ${position.sign}, ${houseFrame.focus} has ${indefiniteArticleFor(signFrame.quality)} ${signFrame.quality} quality. ${signFrame.motion} ${signFrame.aliveness}`;
   const rulerParagraph = houseRuler && rulerPosition && rulerHouse
-    ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this area of life. In your chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, linking ${houseTopic} to ${rulerHouseTopic}. What happens in this house has to become real through the concerns of that ruler placement.`
+    ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this part of the chart. ${rulerPlanetProcess} In your chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, linking ${houseFrame.focus} to ${rulerHouseLink}. What you develop here has to feel real in both places.`
     : houseRuler
-      ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this area of life. The placement of ${houseRuler} shows where this house topic gets worked out and what kind of experience helps it become clearer over time.`
+      ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this part of the chart. ${rulerPlanetProcess} Its placement shows where the story becomes more specific and what kind of experience helps it mature.`
       : `The ruler of this house shows where this topic gets worked out elsewhere in the chart. When that ruler is clear, it gives this placement a more specific path for development.`;
-  const integrationParagraph = `This placement often means learning how to turn ${position.sign} ${position.planet} themes into something livable inside ${houseTopic}. The parts that last are the ones that help you become more steady, honest, and present with this area of life. Because ${houseRuler || "the house ruler"} carries the thread, that process tends to unfold through ${rulerProcess}. Over time, your experience here can become a more reliable source of direction.`;
+  const integrationParagraph = `Over time, ${planetFrame.growth} becomes stronger when it can move through ${houseFrame.lived} without losing its ${position.sign} style. Because ${houseRuler || "the house ruler"} carries the thread, the process tends to unfold through ${rulerProcess}. ${sentenceCase(planetFrame.integration)}.`;
   const body = [houseParagraph, signParagraph, rulerParagraph, integrationParagraph].join("\n\n");
 
   return {
