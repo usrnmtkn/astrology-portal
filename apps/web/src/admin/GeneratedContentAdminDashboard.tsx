@@ -256,7 +256,7 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
-  if (activePage === "privateRows") return "Private Generated Content";
+  if (activePage === "privateRows") return "Personal Content";
   if (activePage === "templates") return "Templates & Voice";
   if (activePage === "hooks") return "Content Hooks";
   return "Generated Content";
@@ -264,7 +264,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
-  if (activePage === "privateRows") return "Admin / Content generation / Private rows";
+  if (activePage === "privateRows") return "Admin / Content generation / Personal content";
   if (activePage === "templates") return "Admin / Content generation / Templates & voice";
   if (activePage === "hooks") return "Admin / Content generation / Content hooks";
   return "Admin / Content generation / Review queue";
@@ -284,7 +284,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "privateRows") {
-    return "Read-only visibility into user-scoped AI interpretations, including the provider and model used for each generated row.";
+    return "Read-only visibility into natal and person-specific AI interpretations, including the provider and model used for each generated row.";
   }
 
   return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as internal content tests for templates, voice, and knowledge hooks.";
@@ -1197,9 +1197,9 @@ export function GeneratedContentAdminDashboard() {
       );
 
       setPrivateRows(payload.rows ?? []);
-      setMessage(`Loaded ${(payload.rows ?? []).length} private generated rows for the selected review window.`);
+      setMessage(`Loaded ${(payload.rows ?? []).length} personal content rows for the selected review window.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load private generated rows.");
+      setMessage(error instanceof Error ? error.message : "Could not load personal content rows.");
     } finally {
       setIsLoading(false);
     }
@@ -1743,7 +1743,7 @@ export function GeneratedContentAdminDashboard() {
             aria-current={activePage === "privateRows" ? "page" : undefined}
           >
             <Database size={18} aria-hidden="true" />
-            Private Rows
+            Personal Content
           </button>
           <button
             className={activePage === "hooks" ? "active" : ""}
@@ -1851,7 +1851,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-header-actions">
               <button type="button" onClick={() => void loadPrivateRows()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
-                Reload Private Rows
+                Reload Personal Content
               </button>
             </div>
           )}
@@ -1966,21 +1966,21 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </section>
         ) : activePage === "privateRows" ? (
-          <section className="admin-template-panel admin-private-page" aria-label="Private generated content rows">
+          <section className="admin-template-panel admin-private-page" aria-label="Personal generated content rows">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">User-scoped generated content</p>
+                <p className="admin-eyebrow">Natal and person-specific content</p>
                 <h2>Provider + Model Audit</h2>
-                <p>These rows are private to individual authenticated users. Use this read-only view to confirm whether Claude or OpenAI wrote a saved interpretation.</p>
+                <p>These rows can be tied to individual people, natal charts, or relationship subjects. Use this read-only view to confirm whether Claude or OpenAI wrote a saved interpretation.</p>
               </div>
-              <div className="admin-release-summary" aria-label="Private generated row count">
+              <div className="admin-release-summary" aria-label="Personal generated row count">
                 <article>
                   <span>Rows</span>
                   <strong>{privateRows.length}</strong>
                 </article>
                 <article>
                   <span>Scope</span>
-                  <strong>Private</strong>
+                  <strong>Personal</strong>
                 </article>
               </div>
             </div>
@@ -2025,7 +2025,7 @@ export function GeneratedContentAdminDashboard() {
                 </article>
               ))}
               {privateRows.length === 0 && (
-                <p className="admin-empty">No private generated rows have been saved yet.</p>
+                <p className="admin-empty">No personal content rows have been saved yet.</p>
               )}
             </div>
           </section>
