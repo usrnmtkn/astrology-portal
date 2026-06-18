@@ -440,7 +440,7 @@
   position: absolute;
   top: 54px;
   right: 16px;
-  z-index: calc(var(--z-popover) + 2);
+  z-index: var(--z-modal);
   display: grid;
   width: max-content;
   min-width: 180px;
@@ -450,6 +450,13 @@
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
+}
+
+.manual-chart-overflow-menu--portal {
+  position: fixed;
+  top: auto;
+  right: auto;
+  z-index: var(--z-modal);
 }
 
 .manual-chart-overflow-menu button {
