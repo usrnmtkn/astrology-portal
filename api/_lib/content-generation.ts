@@ -258,7 +258,20 @@ const bannedUserFacingPhrases = [
   "review status",
   "this placement asks",
   "this aspect teaches",
-  "the lesson is"
+  "the lesson is",
+  "the invitation is",
+  "lean into",
+  "step into",
+  "hold space",
+  "the universe",
+  "universe is asking",
+  "cosmic",
+  "cosmos",
+  "manifesting",
+  "divine",
+  "tapestry",
+  "oneness",
+  "unlock"
 ];
 
 const requiredHeadingsByMode: Record<ContentMode, string[]> = {
@@ -266,6 +279,7 @@ const requiredHeadingsByMode: Record<ContentMode, string[]> = {
   in_depth: ["TLDR", "What You May Notice", "What To Do", "Timing", "Reflection"],
   article: ["What You May Notice", "What To Do", "Timing", "Closing"]
 };
+const dailySkyAspectHeadings = ["TLDR", "Planetary Meaning", "How It May Show Up", "How To Work With It", "Timing"];
 
 const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
 export const editorialBannedPhrases = [
@@ -594,6 +608,47 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   const exactHeadline = lockedHeadline
     ? `Use this exact headline: ${JSON.stringify(lockedHeadline)}.`
     : "Use a factual astrology headline, not a poetic title.";
+
+  if (isDailySkyFeedAspect(input)) {
+    return [
+      "OUTPUT SHAPE FOR DAILY SKY-FEED ASPECT",
+      exactHeadline,
+      "Write a daily astrology transit interpretation in the TLDR Astro voice.",
+      "This is a current transit happening in the sky for everyone. There is no birth chart and no house placement.",
+      "Do not invent personalization, natal placements, houses, or private reader circumstances.",
+      "Return JSON only and fill every schema field.",
+      "",
+      "The reader-facing write-up must follow this structure:",
+      "1. TLDR: Start with the aspect and date or timing. Explain the core dynamic in plain language. Make the transit feel useful and specific. End with a clear reason to use the energy while it is active.",
+      "2. Planetary Meaning: Explain what each planet represents in everyday terms. Keep this concise and grounded. Describe what happens when the two planets work together or create tension through the aspect.",
+      "3. How It May Show Up: Give 2-3 concrete life examples. They should feel recognizable, not like a checklist. Use conversations, decisions, responsibilities, energy, emotions, relationships, work, money, boundaries, or timing.",
+      "4. How To Work With It: Give practical guidance tied directly to the planets and aspect. The advice should feel like insight, not productivity coaching.",
+      "5. Timing: End with one short sentence about when the transit is exact and when the window fades.",
+      "",
+      "JSON field mapping:",
+      "headline: factual aspect title only.",
+      "tldr: the TLDR section as 3-4 natural sentences.",
+      "summary: 1-2 concise sentences that summarize the useful core dynamic without sounding mechanical.",
+      "body: the polished write-up in clear paragraphs, not bullets. Keep the five-part order. Do not use markdown bullets.",
+      "action: one specific, grounded move tied to the aspect.",
+      "timing: one clean timing sentence.",
+      `sections: include exactly these section headings in order: ${dailySkyAspectHeadings.join(", ")}.`,
+      "astrologyDrilldown: keep the astrology explanation short, plain, and tied only to the provided facts.",
+      "",
+      "Voice rules:",
+      "Direct, grounded, emotionally intelligent, and plain. Translate astrology into lived experience without sounding mystical, generic, therapeutic, or overly poetic.",
+      "Use natural sentences with variation in length.",
+      "Use soft certainty: may, can, often, more likely, easier, harder.",
+      "Make advice specific enough to be useful, but open enough that the reader can find themselves in it.",
+      "Concrete examples should feel lived-in: a bill, a boundary, a conversation, a deadline, a commitment, a choice, a pattern, a responsibility, a relationship.",
+      "Do not use windup framing, slogans, or filler lines.",
+      "Avoid 'not through X, but through Y' and similar antithesis-punch constructions.",
+      "Avoid: This is not dramatic astrology, the invitation is, lean into, step into, honor, release, unlock, universe, cosmic, manifesting.",
+      "Do not sound like a therapist, guru, or productivity coach.",
+      "Say the Moon and the Sun for transiting sky planets. Never say your Moon or your Sun on this surface.",
+      "No em dashes."
+    ].join("\n");
+  }
 
   return [
     "OUTPUT SHAPE",
@@ -961,8 +1016,25 @@ function hasEnoughSectionContent(sections: Array<{ heading?: string; body?: stri
   return sections.filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 40).length >= 2;
 }
 
-function requiredSectionHeadingsForMode(mode: ContentMode) {
-  return requiredHeadingsByMode[mode] ?? [];
+function isDailySkyFeedAspect(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
+  const factType = stringValue(input.facts?.type);
+  const aspect = stringValue(input.facts?.aspect);
+
+  return input.surface === "sky"
+    && input.mode === "feed"
+    && (
+      input.eventType === "current-aspect"
+      || factType === "upcoming_aspect"
+      || Boolean(aspect)
+    );
+}
+
+function requiredSectionHeadingsForInput(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
+  if (isDailySkyFeedAspect(input)) {
+    return dailySkyAspectHeadings;
+  }
+
+  return requiredHeadingsByMode[input.mode] ?? [];
 }
 
 function sectionHeadingSetMatch(sectionHeadings: string[], required: string[]) {
@@ -1518,7 +1590,7 @@ async function loadApprovedExamples(input: GenerateContentInput) {
   return examples;
 }
 
-function validateGeneratedContentQuality(content: GeneratedContent, mode: ContentMode) {
+function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
   const userFacingText = [
     content.headline,
     content.tldr,
@@ -1530,7 +1602,7 @@ function validateGeneratedContentQuality(content: GeneratedContent, mode: Conten
   ].filter(Boolean).join("\n");
   const normalized = normalizeText(userFacingText);
   const sectionHeadings = (content.sections ?? []).map((section) => stringValue(section.heading));
-  const requiredHeadings = requiredSectionHeadingsForMode(mode);
+  const requiredHeadings = requiredSectionHeadingsForInput(input);
   const matchedRequired = sectionHeadingSetMatch(sectionHeadings, requiredHeadings);
 
   if (userFacingText.includes("—")) {
@@ -1831,7 +1903,7 @@ function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateC
     sections: parsed.sections ?? []
   };
 
-  validateGeneratedContentQuality(content, input.mode);
+  validateGeneratedContentQuality(content, input);
   validateAstrologyDrilldownQuality(content);
 
   const editorialResult = evaluateEditorialCoherence(content, {
