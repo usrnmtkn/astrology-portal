@@ -69,7 +69,7 @@
   border-radius: 18px;
   background: var(--surface-2);
   color: var(--ink);
-  padding: 16px;
+  padding: var(--card-row-padding-compact);
   text-align: left;
 }
 
@@ -98,14 +98,14 @@
 
 .create-chart-step-copy span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .create-chart-step-copy strong {
-  font-size: 20px;
+  font-size: var(--type-small-display-size);
   line-height: 1.1;
 }
 
@@ -132,7 +132,7 @@
   color: var(--surface);
   padding: 10px 22px 10px 10px;
   text-align: left;
-  box-shadow: var(--shadow);
+  box-shadow: var(--control-shadow);
 }
 
 .create-chart-fab-copy {
@@ -166,7 +166,7 @@
   border-radius: 18px;
   background: var(--surface-2);
   color: var(--ink);
-  padding: 18px;
+  padding: var(--form-field-padding);
   font: inherit;
   letter-spacing: 0;
   text-transform: none;

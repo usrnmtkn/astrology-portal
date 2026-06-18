@@ -211,7 +211,7 @@ button.settings-signout-row {
   height: 28px;
   border-radius: 50%;
   background: var(--surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--control-thumb-shadow);
 }
 
 .settings-switch.is-on {

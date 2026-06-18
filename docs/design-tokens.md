@@ -16,7 +16,26 @@ Body text, UI controls, labels, chips, metadata, and data values use Geist Mono.
 
 Shared card titles use `18px`. Navigation links use `16px`. Tiny uppercase labels use `11px`.
 
-Repeated content cards use `--card-bg`, `--card-border`, `--card-radius`, and `--card-shadow`. Table-like card rows reuse `--table-shadow`, which aliases `--card-shadow` unless a view intentionally overrides the whole table surface. Overlay, nav, modal, and tooltip shadows stay on their own tokens.
+Repeated content cards use `--card-bg`, `--card-border`, `--card-radius`, and `--card-shadow`. Table-like card rows reuse `--table-shadow`, which aliases `--card-shadow` unless a view intentionally overrides the whole table surface. Feature cards use `--feature-card-shadow`; overlays and dialogs use `--overlay-shadow` / `--modal-shadow`; nav and pill controls use `--nav-rest-shadow` / `--control-shadow`; tooltip shadows stay on `--tooltip-shadow`.
+
+Avoid adding one-off `box-shadow` values in feature CSS. Add or reuse a semantic shadow token in `theme.css` first.
+
+## Spacing And Cards
+
+Use the shared spacing primitives before local values:
+
+| Token / Use | Value |
+| --- | ---: |
+| Inline glyph/data gap | `--inline-gap` / `6px` |
+| Card list gap | `--card-list-gap` / `8px` |
+| Card row gap | `--card-row-gap` / `12px` |
+| Standard row padding | `--card-row-padding` / `16px 20px` |
+| Compact row padding | `--card-row-padding-compact` / `12px 16px` |
+| Form field padding | `--form-field-padding` / `18px` |
+| Modal panel padding | `--modal-panel-padding` / `28px` |
+| Mobile overlay padding | `--mobile-overlay-padding` / `18px 18px 22px` |
+| Snapshot card padding | `--snapshot-card-padding` / `10px 16px` |
+| Snapshot icon size | `--snapshot-icon-size` / `44px` |
 
 ## Type Scale
 

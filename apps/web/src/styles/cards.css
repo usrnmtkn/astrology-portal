@@ -6,11 +6,19 @@
   .you-empty-card,
   .friends-logic-card,
   .friends-feed-card,
+  .relationship-explainer-card,
+  .relationship-api-summary,
   .you-signatures-card,
   .friend-signature-card,
   .synastry-placement-table,
   .placement-table-card,
-  .friend-compare-list
+  .friend-compare-list,
+  .manual-chart-row,
+  .daily-horoscope-summary,
+  .personal-timing-summary,
+  .sky-lunar-pill,
+  .next-lun,
+  .retro-list .retro
 ) {
   border-color: var(--card-border);
   border-radius: var(--card-radius);
@@ -26,7 +34,9 @@
   .friend-compare-list,
   .you-list-card,
   .aspects-card,
-  .friends-feed-card
+  .friends-feed-card,
+  .daily-horoscope-summary,
+  .personal-timing-summary
 ) {
   box-shadow: var(--table-shadow);
 }

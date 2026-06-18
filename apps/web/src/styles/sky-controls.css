@@ -160,7 +160,7 @@ html[data-scrolled] .sky-header-date-button {
   margin-bottom: -8px;
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   line-height: 1.2;
@@ -190,7 +190,7 @@ html[data-scrolled] .sky-header-date-button {
   min-width: 0;
   overflow: hidden;
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: var(--type-title-size);
   font-weight: var(--weight-medium);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -241,7 +241,7 @@ html[data-scrolled] .sky-header-date-button {
 
 .hero-city-picker label > span {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -295,14 +295,14 @@ html[data-scrolled] .sky-header-date-button {
 
 .city-suggestions span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
 }
 
 .city-picker-note {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-medium);
 }
 
@@ -395,7 +395,7 @@ html[data-scrolled] .sky-header-date-button {
 
 .date-picker-weekdays span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-label-size);
   font-weight: var(--weight-semibold);
   text-align: center;
   text-transform: uppercase;

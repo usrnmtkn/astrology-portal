@@ -341,7 +341,7 @@
   html[data-scrolled] .topbar {
     border-bottom: 1px solid var(--line);
     background: color-mix(in srgb, var(--surface) 88%, transparent);
-    box-shadow: 0 12px 30px rgba(4, 6, 12, 0.14);
+    box-shadow: var(--nav-scrolled-shadow);
     backdrop-filter: blur(18px) saturate(1.08);
     -webkit-backdrop-filter: blur(18px) saturate(1.08);
   }
@@ -358,7 +358,7 @@
   html[data-scrolled] .mode-member .topbar {
     border-bottom: 1px solid var(--line);
     background: color-mix(in srgb, var(--bg) 86%, transparent);
-    box-shadow: 0 12px 30px rgba(28, 32, 52, 0.06);
+    box-shadow: var(--nav-scrolled-shadow);
     backdrop-filter: blur(18px) saturate(1.08);
     -webkit-backdrop-filter: blur(18px) saturate(1.08);
   }
@@ -375,7 +375,7 @@
     left: var(--mobile-page-gutter);
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
     padding: 0 20px;
-    font-size: 15px;
+    font-size: var(--type-body-size);
   }
 
   .app-shell {
@@ -490,8 +490,8 @@
     border: 1px solid var(--line);
     border-radius: 18px;
     background: var(--surface);
-    box-shadow: 0 22px 56px rgba(28, 32, 52, 0.14);
-    padding: 18px 18px 22px;
+    box-shadow: var(--overlay-shadow);
+    padding: var(--mobile-overlay-padding);
   }
 
   .mobile-sky-controls__tabs {
@@ -746,9 +746,7 @@
     border-radius: 16px;
     background: var(--pill-bg);
     color: var(--pill-fg);
-    box-shadow:
-      0 8px 18px -12px rgba(20, 20, 20, 0.4),
-      0 2px 6px -4px rgba(20, 20, 20, 0.3);
+    box-shadow: var(--feature-card-shadow);
     cursor: pointer;
     margin-top: -22px;
     padding: 10px 13px;
@@ -986,8 +984,8 @@
     grid-template-areas:
       "glyph sign degree"
       "glyph house house";
-    gap: 6px 12px;
-    padding: 16px 18px;
+    gap: var(--inline-gap) var(--card-row-gap);
+    padding: var(--card-row-padding-compact);
   }
 
   .synastry-placement-lead {
@@ -1360,7 +1358,7 @@
   .segmented-control .segmented-control__item {
     height: 40px;
     padding: 0 var(--sp-2);
-    font-size: 14px;
+    font-size: var(--type-description-size);
   }
 }
 

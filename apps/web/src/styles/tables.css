@@ -70,7 +70,7 @@ button.placement-table-row {
 
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 0.78em;
+  font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
   line-height: 1;
   margin-left: var(--rx-label-tighten-offset);
@@ -83,6 +83,76 @@ button.placement-table-row {
   font-size: var(--text-table-body-size);
   font-weight: var(--weight-regular);
   line-height: 1.35;
+}
+
+.placement-house-insight {
+  width: 100%;
+  margin-top: 4px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-table-body-size);
+  line-height: 1.45;
+}
+
+.placement-house-insight > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: var(--type-caption-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+
+.placement-house-insight > summary::-webkit-details-marker {
+  display: none;
+}
+
+.placement-house-insight > summary::after {
+  content: "+";
+  color: var(--muted);
+  font-size: var(--type-caption-size);
+  line-height: 1;
+}
+
+.placement-house-insight[open] > summary::after {
+  content: "-";
+}
+
+.placement-house-insight > summary span:first-child {
+  color: var(--ink);
+}
+
+.placement-house-insight__panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-left: 1px solid var(--line);
+}
+
+.placement-house-insight__section {
+  display: grid;
+  gap: 4px;
+}
+
+.placement-house-insight__label {
+  color: var(--muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1.15;
+  text-transform: uppercase;
 }
 
 .placement-table-row__meta {
@@ -309,6 +379,18 @@ button.planet-placement-row {
 .planet-placement-row--friend .planet-placement-row__glyph,
 .planet-placement-row--composite .planet-placement-row__glyph {
   font-size: var(--text-glyph);
+}
+
+.planet-placement-row--synastry .planet-placement-row__glyph {
+  color: var(--wheel-glyph);
+}
+
+.planet-placement-row--composite .planet-placement-row__glyph {
+  color: var(--synastry-inner-glyph);
+}
+
+.planet-placement-row--composite .planet-placement-row__glyph .placement-glyph-svg {
+  filter: var(--filter-synastry-inner-glyph);
 }
 
 .planet-placement-row--friend .planet-placement-row__degree,

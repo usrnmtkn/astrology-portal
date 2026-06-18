@@ -35,6 +35,13 @@ export type PlacementRowStatus = {
   tone: "muted" | "alert" | "retrograde";
 };
 
+export type PlacementHouseInsight = {
+  houseLabel: string;
+  naturalLensLabel: string;
+  lensBody: string;
+  rulerBody?: string;
+};
+
 export const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 
@@ -380,6 +387,7 @@ export function PlacementTableRow({
   dignity,
   glyph,
   house,
+  houseInsight,
   onClick,
   pointName,
   retrograde = false,
@@ -393,6 +401,7 @@ export function PlacementTableRow({
   dignity?: PlacementDignity | null;
   glyph: string;
   house?: number | null;
+  houseInsight?: PlacementHouseInsight | null;
   onClick?: () => void;
   pointName?: string;
   retrograde?: boolean;
@@ -425,6 +434,26 @@ export function PlacementTableRow({
           </span>
         ) : null}
         {description ? <span className="placement-table-row__description">{description}</span> : null}
+        {houseInsight ? (
+          <details className="placement-house-insight">
+            <summary>
+              <span>House lens</span>
+              <span>{houseInsight.houseLabel}</span>
+            </summary>
+            <span className="placement-house-insight__panel">
+              <span className="placement-house-insight__section">
+                <span className="placement-house-insight__label">{houseInsight.naturalLensLabel}</span>
+                <span>{houseInsight.lensBody}</span>
+              </span>
+              {houseInsight.rulerBody ? (
+                <span className="placement-house-insight__section">
+                  <span className="placement-house-insight__label">Ruler thread</span>
+                  <span>{houseInsight.rulerBody}</span>
+                </span>
+              ) : null}
+            </span>
+          </details>
+        ) : null}
       </span>
     </>
   );
@@ -452,6 +481,7 @@ export function PlanetPlacementRow({
   durationLabel,
   glyph,
   house,
+  houseInsight,
   onClick,
   pointName,
   rangeLabel,
@@ -468,6 +498,7 @@ export function PlanetPlacementRow({
   durationLabel?: string | null;
   glyph: string;
   house?: number | null;
+  houseInsight?: PlacementHouseInsight | null;
   onClick?: () => void;
   pointName?: string;
   rangeLabel?: string | null;
@@ -487,6 +518,7 @@ export function PlanetPlacementRow({
         dignity={dignity}
         glyph={glyph}
         house={house}
+        houseInsight={houseInsight}
         onClick={onClick}
         pointName={pointName}
         retrograde={retrograde}

@@ -41,6 +41,7 @@
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
   --filter-glyph-current: none;
+  --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: none;
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(58%) sepia(88%) saturate(1263%) hue-rotate(342deg) brightness(99%) contrast(91%);
@@ -161,7 +162,7 @@
   --article-title-size: var(--article-h2-size);
   --article-h2-size: clamp(20px, 2.4vw, 24px);
   --article-body-size: 15px;
-  --article-meta-size: 14px;
+  --article-meta-size: 13px;
   --article-label-size: 13px;
   --text-body: 15px;
   --text-row-value: 15px;
@@ -177,7 +178,7 @@
   --text-card-title-size: var(--text-card-title);
   --text-row-title-size: var(--text-card-title);
   --text-row-body-size: var(--text-description);
-  --text-meta-size: var(--text-description);
+  --text-meta-size: 13px;
   --text-button-size: var(--text-row-value);
   --text-table-title-size: var(--text-card-title);
   --text-table-body-size: var(--text-description);
@@ -201,6 +202,22 @@
   --leading-tight: 1.02;
   --leading-body: 1.6;
 
+  /*
+   * Type scale: 11, 12, 13, 14, 15, 16, 18, 20, 24,
+   * plus display clamp() values. Newsreader is for titles;
+   * Geist Mono is for body, UI, data, labels, and the wordmark.
+   */
+  --type-label-size: var(--text-eyebrow);
+  --type-caption-size: var(--text-compact-meta);
+  --type-meta-size: var(--text-meta-size);
+  --type-description-size: var(--text-description);
+  --type-body-size: var(--text-body);
+  --type-ui-size: var(--text-button-size);
+  --type-nav-size: var(--text-nav);
+  --type-title-size: var(--text-card-title);
+  --type-small-display-size: 20px;
+  --type-large-title-size: 24px;
+
   --sp-half: var(--size-half);
   --sp-1: var(--size-1);
   --sp-2: var(--size-2);
@@ -215,7 +232,20 @@
   --sec-gap: var(--sp-4);
   --section-gap: var(--sp-3);
   --stack-gap: var(--sp-4);
+  --inline-gap: 6px;
   --card-list-gap: 8px;
+  --card-stack-gap: 8px;
+  --card-row-gap: var(--sp-2);
+  --card-row-padding: 16px 20px;
+  --card-row-padding-compact: 12px 16px;
+  --card-row-padding-comfortable: 18px 22px;
+  --form-field-padding: 18px;
+  --modal-panel-padding: 28px;
+  --mobile-overlay-padding: 18px 18px 22px;
+  --snapshot-card-gap: 12px;
+  --snapshot-card-padding: 10px 16px;
+  --snapshot-card-radius: 18px;
+  --snapshot-icon-size: 44px;
   --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
   --layout-gap: clamp(var(--sp-5), 6vw, 112px);
   --gut: clamp(16px, 5vw, 24px);
@@ -230,6 +260,13 @@
   --card-radius: 10px;
   --card-radius-sm: 10px;
   --card-shadow: var(--shadow);
+  --card-shadow-flat: none;
+  --card-shadow-raised: var(--card-shadow);
+  --card-ring-shadow: 0 0 0 2px var(--card-bg);
+  --avatar-ring-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
+  --feature-card-shadow: var(--elev-hero);
+  --control-shadow: var(--elev-pill);
+  --control-thumb-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   --card-padding: var(--sp-3);
   --card-padding-sm: var(--sp-2);
   --card-padding-lg: var(--sp-4);
@@ -246,6 +283,7 @@
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
   --overlay-shadow: 0 24px 70px rgba(28, 32, 52, 0.12), 0 4px 16px rgba(28, 32, 52, 0.06);
+  --modal-shadow: var(--overlay-shadow);
   --tooltip-bg: #1a1a1a;
   --tooltip-fg: #f2f2f1;
   --tooltip-muted: rgba(242, 242, 241, 0.78);
@@ -456,6 +494,7 @@
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);
   --filter-glyph-current: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
+  --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(70%) sepia(82%) saturate(873%) hue-rotate(340deg) brightness(101%) contrast(98%);
@@ -517,8 +556,13 @@
   --card-bg: var(--surface);
   --card-border: var(--line);
   --card-shadow: var(--shadow);
+  --card-shadow-flat: none;
+  --card-shadow-raised: var(--card-shadow);
+  --feature-card-shadow: var(--card-shadow);
+  --control-shadow: var(--nav-rest-shadow);
   --table-shadow: var(--card-shadow);
   --overlay-shadow: 0 30px 90px rgba(4, 6, 12, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  --modal-shadow: var(--overlay-shadow);
   --segmented-bg: var(--surface);
   --segmented-border: var(--line);
   --segmented-active-bg: var(--pill-bg);
