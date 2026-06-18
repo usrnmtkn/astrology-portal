@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
-import type { SkySnapshot } from "../../apps/web/src/types.js";
+import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
 
 type ContentMode = "feed" | "in_depth" | "article";
@@ -130,14 +129,6 @@ function dailySkyHeadline(sun?: SkySnapshot["positions"][number], moon?: SkySnap
     sun ? `${sun.sign} Season` : "",
     moon ? `${moon.sign} Moon` : ""
   ].filter(Boolean).join(", ") || "Current Sky";
-}
-
-async function currentSkyFacts(date: Date) {
-  try {
-    return await getAstrodienstSky(undefined, date);
-  } catch {
-    return getCurrentSky(undefined, date);
-  }
 }
 
 function queueRow(input: {

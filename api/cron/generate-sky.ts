@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
-import type { SkySnapshot } from "../../apps/web/src/types.js";
+import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import {
   generateContent,
   loadSkySourceSnapshot,
@@ -26,14 +25,6 @@ function isAuthorized(req: IncomingMessage) {
   }
 
   return req.headers.authorization === `Bearer ${cronSecret}`;
-}
-
-async function currentSkyFacts(date: Date) {
-  try {
-    return await getAstrodienstSky(undefined, date);
-  } catch {
-    return getCurrentSky(undefined, date);
-  }
 }
 
 function collectiveSkyPosition(position: SkySnapshot["positions"][number] | undefined) {
