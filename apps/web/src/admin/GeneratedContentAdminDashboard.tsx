@@ -131,7 +131,7 @@ const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, strin
 };
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
-const personalizedSampleReviewerNote = "SAMPLE ONLY. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
+const personalizedSampleReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 
 function isPersonalizedSurface(surface: GeneratedContentSurfaceFilter) {
   return surface !== "all" && personalizedContentSurfaces.has(surface);
@@ -162,7 +162,7 @@ function createQueueButtonLabel(surface: GeneratedContentSurfaceFilter) {
     return "Create Sky Queue";
   }
 
-  return `Create ${generatedContentSurfaceLabels[surface]} Test Samples`;
+  return `Create ${generatedContentSurfaceLabels[surface]} Content Tests`;
 }
 
 const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
@@ -226,7 +226,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Read-only visibility into user-scoped AI interpretations, including the provider and model used for each generated row.";
   }
 
-  return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as sample tests for templates, voice, and knowledge hooks.";
+  return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as internal content tests for templates, voice, and knowledge hooks.";
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -1304,7 +1304,7 @@ export function GeneratedContentAdminDashboard() {
       }
       setMessage(nextSurface === "sky" || nextSurface === "all"
         ? `Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for AI copy.`
-        : `Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} sample rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
+        : `Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} content test rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not create the review queue.");
@@ -1989,7 +1989,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">{selectedRow ? "Editing existing row" : "Creating new row"}</p>
                 <h2>{draft.headline || draft.contentKey}</h2>
-                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}{personalizedContentSurfaces.has(draft.surface) ? " / sample only" : ""}</small>
+                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}{personalizedContentSurfaces.has(draft.surface) ? " / content test" : ""}</small>
               </div>
               <div className="admin-toolbar-actions">
                 <button type="button" onClick={() => setIsPreviewOpen(true)}>
