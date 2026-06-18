@@ -301,6 +301,8 @@ type SkyDetail = {
   kicker: string;
   title: string;
   meta: string;
+  subtitle?: string;
+  compactHeader?: boolean;
   retrograde?: boolean;
   body: ReactNode[];
   sections?: Array<{
@@ -2825,7 +2827,9 @@ function SkyDetailArticle({
   const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
-  const visibleMetaRows = metaRows.filter((row) => row.label.toLowerCase() !== "signature");
+  const visibleMetaRows = detail.compactHeader
+    ? []
+    : metaRows.filter((row) => row.label.toLowerCase() !== "signature");
   const shareText = articleSub || detail.title;
 
   function copyArticleLink() {
@@ -2859,6 +2863,7 @@ function SkyDetailArticle({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
+            {detail.subtitle ? <p className="article-sub">{detail.subtitle}</p> : null}
             <div className="article-header-actions">
               <div className="article-byline">
                 <span className="by-author">By tldr astro</span>
@@ -2891,12 +2896,22 @@ function SkyDetailArticle({
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {generatedSections.length > 0 ? (
-                generatedSections.map((section, index) => (
-                  <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                    <h2>{section.heading}</h2>
-                    <p>{section.body}</p>
-                  </section>
-                ))
+                generatedSections.map((section, index) => {
+                  const bodyParagraphs = typeof section.body === "string"
+                    ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+                    : [];
+
+                  return (
+                    <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
+                      <h2>{section.heading}</h2>
+                      {bodyParagraphs.length > 0
+                        ? bodyParagraphs.map((paragraph, paragraphIndex) => (
+                          <p key={`${section.heading}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                        ))
+                        : <p>{section.body}</p>}
+                    </section>
+                  );
+                })
               ) : (
                 <>
                   {bodyLede ? (
@@ -7060,6 +7075,118 @@ const natalSignatureDescriptions: Record<string, string> = {
   Pluto: "Where you transform and reclaim power"
 };
 
+const natalPlacementFunctions: Record<string, string> = {
+  Sun: "identity, vitality, and the part of you that is learning to become more fully expressed",
+  Moon: "emotional needs, instinctive reactions, and the way you look for safety",
+  Mercury: "thinking, communication, learning, and how you make sense of what is happening",
+  Venus: "desire, connection, values, pleasure, and what feels worth choosing",
+  Mars: "drive, action, anger, courage, and how you go after what you want",
+  Jupiter: "growth, faith, opportunity, wisdom, and the places where life asks you to reach for more",
+  Saturn: "structure, responsibility, limits, time, and the work of building something real",
+  Uranus: "change, disruption, freedom, originality, and the part of you that resists stale patterns",
+  Neptune: "imagination, sensitivity, longing, inspiration, and the places where boundaries can blur",
+  Pluto: "power, pressure, transformation, control, and what you are learning to face honestly"
+};
+
+const natalPlacementGrowthNouns: Record<string, string> = {
+  Sun: "identity",
+  Moon: "emotional life",
+  Mercury: "mind",
+  Venus: "sense of connection",
+  Mars: "drive",
+  Jupiter: "faith in life",
+  Saturn: "inner authority",
+  Uranus: "freedom",
+  Neptune: "imagination",
+  Pluto: "power"
+};
+
+const signPlacementQualities: Record<string, string> = {
+  Aries: "direct, initiating, and willing to move before everything is settled",
+  Taurus: "steady, embodied, and concerned with what can be trusted over time",
+  Gemini: "curious, verbal, and responsive to information as it changes",
+  Cancer: "protective, intuitive, and shaped by memory, belonging, and care",
+  Leo: "expressive, visible, and drawn toward warmth, creativity, and recognition",
+  Virgo: "practical, observant, and focused on making life more workable",
+  Libra: "relational, balanced, and aware of proportion, fairness, and response",
+  Scorpio: "private, intense, and interested in what sits under the surface",
+  Sagittarius: "expansive, searching, and pulled toward meaning, distance, and truth",
+  Capricorn: "disciplined, careful, and shaped by responsibility, time, and consequence",
+  Aquarius: "unconventional, future-minded, and interested in systems, patterns, and the collective",
+  Pisces: "sensitive, imaginative, and open to what cannot be fully explained"
+};
+
+const signPlacementActions: Record<string, string> = {
+  Aries: "acting directly, testing your courage, and learning by beginning",
+  Taurus: "moving slowly enough to know what is real, valuable, and worth keeping",
+  Gemini: "asking questions, making connections, and letting new information change the picture",
+  Cancer: "protecting what matters, listening to your instincts, and building emotional safety",
+  Leo: "creating, expressing yourself, and letting the heart become visible",
+  Virgo: "refining the details, improving the pattern, and making the abstract usable",
+  Libra: "weighing choices through relationship, contrast, beauty, and fairness",
+  Scorpio: "telling the truth about intensity, trust, fear, and the need for deeper honesty",
+  Sagittarius: "testing belief against experience and letting life widen your perspective",
+  Capricorn: "taking responsibility, building structure, and learning what can hold weight",
+  Aquarius: "questioning inherited rules, studying systems, and staying open to unconventional possibilities",
+  Pisces: "following subtle perception, creativity, compassion, and the wisdom of porous edges"
+};
+
+const rulerPlanetProcesses: Record<string, string> = {
+  Sun: "visibility, confidence, and the courage to choose from the center of yourself",
+  Moon: "emotional repetition, care, memory, and the need to feel safe enough to respond",
+  Mercury: "conversation, observation, learning, writing, and repeated mental adjustment",
+  Venus: "desire, attraction, value, pleasure, and the choices that make life feel connected",
+  Mars: "action, friction, effort, courage, and the willingness to move",
+  Jupiter: "growth, study, risk, faith, teaching, and the bigger meaning you build from experience",
+  Saturn: "time, responsibility, repetition, discipline, and the evidence of lived experience",
+  Uranus: "change, disruption, freedom, and the courage to break a pattern that has expired",
+  Neptune: "imagination, sensitivity, surrender, and the work of clarifying what is real",
+  Pluto: "pressure, honesty, endings, power, and the slow transformation of what cannot stay hidden"
+};
+
+function readableHouseTopic(house: number) {
+  return houseLifeAreas[house] ?? "this part of life";
+}
+
+function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"][number] | null {
+  if (!position.house) {
+    return null;
+  }
+
+  const house = position.house;
+  const houseLabel = `${ordinalHouse(house)} house`;
+  const houseTopic = readableHouseTopic(house);
+  const planetFunction = natalPlacementFunctions[position.planet] ?? natalPlacementDescription(position.planet).toLowerCase();
+  const growthNoun = natalPlacementGrowthNouns[position.planet] ?? "relationship to this part of life";
+  const signQuality = signPlacementQualities[position.sign] ?? "specific";
+  const signAction = signPlacementActions[position.sign] ?? "learning how this part of you wants to move";
+  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : position.sign;
+  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
+  const rulerPosition = houseRuler
+    ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
+    : null;
+  const rulerHouse = rulerPosition?.house ?? null;
+  const rulerHouseTopic = rulerHouse ? readableHouseTopic(rulerHouse) : "another part of the chart";
+  const rulerProcess = houseRuler ? rulerPlanetProcesses[houseRuler] ?? "experience, repetition, and time" : "experience, repetition, and time";
+  const houseBody = naturalHouseLensBodies[house] ?? `The ${houseLabel} describes ${houseTopic}.`;
+
+  const houseParagraph = `${houseBody} With your ${position.planet} in this house, this area of life becomes one of the main places where you work with ${planetFunction}. Your ${growthNoun} grows through ${houseTopic}, and you often learn about this placement by paying attention to what this house keeps asking you to handle.`;
+  const signParagraph = `In ${position.sign}, this part of you is ${signQuality}. You tend to move through ${houseTopic} by ${signAction}. The sign matters because it shows the style of the placement, not just a personality trait. It describes how this part of you tries to solve problems, find meaning, and stay true to itself.`;
+  const rulerParagraph = houseRuler && rulerPosition && rulerHouse
+    ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this area of life. In your chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, linking ${houseTopic} to ${rulerHouseTopic}. What happens in this house has to become real through the concerns of that ruler placement.`
+    : houseRuler
+      ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this area of life. The placement of ${houseRuler} shows where this house topic gets worked out and what kind of experience helps it become clearer over time.`
+      : `The ruler of this house shows where this topic gets worked out elsewhere in the chart. When that ruler is clear, it gives this placement a more specific path for development.`;
+  const integrationParagraph = `This placement often means learning how to turn ${position.sign} ${position.planet} themes into something livable inside ${houseTopic}. The parts that last are the ones that help you become more steady, honest, and present with this area of life. Because ${houseRuler || "the house ruler"} carries the thread, that process tends to unfold through ${rulerProcess}. Over time, your experience here can become a more reliable source of direction.`;
+  const body = [houseParagraph, signParagraph, rulerParagraph, integrationParagraph].join("\n\n");
+
+  return {
+    heading: `${placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde")}, ${houseLabel}`,
+    tldr: houseParagraph,
+    body
+  };
+}
+
 function natalPlacementSignTitle(position: PlanetPosition) {
   return placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
 }
@@ -7127,56 +7254,21 @@ function natalPlacementDetailSubtitle(position: PlanetPosition) {
   return parts.join(" · ");
 }
 
-function placementArticleSectionsFromInsight(insight: PlacementHouseInsight | null, hasLiveWriteup: boolean) {
-  const sections: YouTransitArticle["sections"] = [];
-
-  if (!hasLiveWriteup) {
-    sections.push({
-      heading: "Write-up pending",
-      tldr: "The authored interpretation for this placement is still in review.",
-      body: "The lens material is available now. The full write-up will appear here after it has been reviewed and published."
-    });
-  }
-
-  if (!insight) {
-    return sections;
-  }
-
-  sections.push({
-    heading: "House Lens",
-    tldr: insight.houseBody || insight.lensBody,
-    body: insight.houseBody || insight.lensBody
-  });
-
-  if (insight.naturalLensBody || insight.lensBody) {
-    sections.push({
-      heading: insight.naturalLensLabel,
-      tldr: insight.naturalLensBody || insight.lensBody,
-      body: insight.naturalLensBody || insight.lensBody
-    });
-  }
-
-  if (insight.rulerBody) {
-    sections.push({
-      heading: "Ruler Thread",
-      tldr: insight.rulerBody,
-      body: insight.rulerBody
-    });
-  }
-
-  return sections;
-}
-
 function natalPlacementDetailArticle(
   position: PlanetPosition,
   natalSky: SkySnapshot | null,
   liveWriteup: LiveGeneratedContent | null,
   generatedContent: GeneratedContentMap = new Map()
 ): YouTransitArticle {
-  const insight = natalHouseInsightForPosition(position, natalSky);
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
-  const summary = liveBody || "";
+  const fallbackSection = natalPlacementFallbackSection(position, natalSky);
+  const summary = liveBody || fallbackSection?.body || "";
+  const sections = liveBody
+    ? []
+    : fallbackSection
+      ? [fallbackSection]
+      : [];
   const relatedAspectRows = relatedAspectRowsForPlacement({
     aspects: natalSky?.aspects ?? [],
     generatedContent,
@@ -7192,7 +7284,7 @@ function natalPlacementDetailArticle(
     compactHeader: true,
     summary,
     summaryHeading: "Interpretation",
-    sections: placementArticleSectionsFromInsight(insight, Boolean(summary)),
+    sections,
     relatedAspects: relatedAspectRows.length > 0
       ? {
           heading: `Natal aspects to ${position.planet}`,
