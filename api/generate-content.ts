@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
+  ContentGenerationQualityError,
   generateContent,
   saveGeneratedInterpretation,
   type GenerateContentInput
@@ -54,9 +55,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saved
     });
   } catch (error) {
-    sendJson(res, 500, {
+    const isQualityError = error instanceof ContentGenerationQualityError;
+    const message = error instanceof Error ? error.message : "Unknown generation error.";
+
+    sendJson(res, isQualityError ? 422 : 500, {
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown generation error."
+      error: isQualityError
+        ? `Quality gate rejected this draft after retries. Click Generate again or narrow the row facts, voice notes, or headline. Last guidance: ${message}`
+        : message,
+      errorType: isQualityError ? "quality_gate" : "generation_error"
     });
   }
 }

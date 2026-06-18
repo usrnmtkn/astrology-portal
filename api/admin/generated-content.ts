@@ -7,7 +7,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
-const sampleOnlyReviewerNote = "SAMPLE ONLY. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
+const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
@@ -236,7 +236,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.status) {
     if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
-      throw new Error("Sample-only personalized rows cannot be published globally. Generate real user or bond scoped content instead.");
+      throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
 
     patch.status = body.status;

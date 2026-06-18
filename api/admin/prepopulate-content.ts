@@ -171,7 +171,7 @@ function queueRow(input: {
     body: "",
     sections: [],
     reviewer_notes: input.reviewerNotes ?? (sampleSurfaces.has(surface)
-      ? "SAMPLE ONLY. This row is for testing the template, voice, and knowledge hooks. Do not publish as global app content because real You, Synastry, Composite, and Relationship content must be generated from the user's chart or relationship facts."
+      ? "INTERNAL CONTENT TEST. This row is for testing the template, voice, and knowledge hooks. Do not publish as global app content because real You, Synastry, Composite, and Relationship content must be generated from the user's chart or relationship facts."
       : "")
   };
 }
@@ -183,7 +183,7 @@ function templateSourceSnapshot(surface: GeneratedContentSurface, targetDate: st
     targetDate,
     sampleOnly: sampleSurfaces.has(surface),
     note: sampleSurfaces.has(surface)
-      ? "Sample row for testing personalized content generation. Real rows must be created from user-specific chart, transit, synastry, or composite facts."
+      ? "Content test row for personalized content generation. Real rows must be created from user-specific chart, transit, synastry, or composite facts."
       : "Seeded from app content hooks."
   };
 }

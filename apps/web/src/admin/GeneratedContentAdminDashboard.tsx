@@ -154,7 +154,7 @@ function surfaceScopeLabel(surface: GeneratedContentSurfaceFilter) {
     return "All rows";
   }
 
-  return "Sample/test rows only";
+  return "Internal content tests only";
 }
 
 function createQueueButtonLabel(surface: GeneratedContentSurfaceFilter) {
@@ -675,7 +675,7 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
       surface: resolvedSurface,
       note: resolvedSurface === "sky"
         ? "Load current astrology facts before generating."
-        : "Sample/test row only. Real content for this surface must be generated from user-specific chart, transit, synastry, or composite facts."
+        : "Internal content test row only. Real content for this surface must be generated from user-specific chart, transit, synastry, or composite facts."
     }, null, 2),
     sourceSnapshotJson: "{}",
     knowledgeIds: defaultDraft.knowledgeIds,
@@ -1315,7 +1315,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function saveDraft(nextStatus = draft.status) {
     if (nextStatus === "LIVE" && personalizedContentSurfaces.has(draft.surface)) {
-      setMessage("Sample-only personalized rows cannot be published globally. Generate real user or bond scoped content instead.");
+      setMessage("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
       return;
     }
 
@@ -2012,7 +2012,7 @@ export function GeneratedContentAdminDashboard() {
                   <Check size={16} aria-hidden="true" />
                   Reviewed
                 </button>
-                <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id || personalizedContentSurfaces.has(draft.surface)} title={personalizedContentSurfaces.has(draft.surface) ? "Personalized sample rows are not publishable as global content." : undefined}>
+                <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id || personalizedContentSurfaces.has(draft.surface)} title={personalizedContentSurfaces.has(draft.surface) ? "Personalized content test rows are not publishable as global content." : undefined}>
                   <Check size={16} aria-hidden="true" />
                   Publish
                 </button>

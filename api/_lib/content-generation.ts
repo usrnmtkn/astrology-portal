@@ -40,6 +40,13 @@ export type StoredGeneratedContent = GeneratedContent & {
   model: string;
 };
 
+export class ContentGenerationQualityError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ContentGenerationQualityError";
+  }
+}
+
 export type GenerationContext = Pick<GenerateContentInput, "surface" | "mode" | "eventType" | "contentKey"> & {
   facts?: Record<string, unknown>;
 };
@@ -1926,7 +1933,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     }
   }
 
-  throw lastError ?? new Error("Generated content failed quality gates.");
+  throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
 }
 
 function claudeToolInput(payload: {
@@ -2022,7 +2029,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     }
   }
 
-  throw lastError ?? new Error("Generated content failed quality gates.");
+  throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
 }
 
 export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
