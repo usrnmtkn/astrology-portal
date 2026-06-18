@@ -34,6 +34,7 @@ export type GenerateUserContentRequest = {
   surface: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
   mode: GeneratedContentMode;
   eventType: string;
+  status?: "DRAFT" | "LIVE";
   headline?: string;
   targetDate?: string;
   facts: Record<string, unknown>;

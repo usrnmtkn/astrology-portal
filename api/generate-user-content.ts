@@ -20,6 +20,7 @@ type UserContentSubjectType =
 type UserContentRequest = GenerateContentInput & {
   subjectType: UserContentSubjectType;
   subjectId: string;
+  status?: "DRAFT" | "LIVE";
 };
 
 type SupabaseUserPayload = {
@@ -117,11 +118,51 @@ function generatedSections(generated: StoredGeneratedContent) {
   };
 }
 
+type ExistingUserGeneratedRow = {
+  id: string;
+  status: string;
+  content_key: string;
+};
+
+async function existingUserGeneratedInterpretation(userId: string, input: UserContentRequest) {
+  const params = new URLSearchParams({
+    user_id: `eq.${userId}`,
+    subject_type: `eq.${input.subjectType}`,
+    subject_id: `eq.${input.subjectId}`,
+    content_key: `eq.${input.contentKey}`,
+    mode: `eq.${input.mode}`,
+    select: "id,status,content_key",
+    order: "updated_at.desc",
+    limit: "1"
+  });
+
+  if (input.targetDate) {
+    params.set("target_date", `eq.${input.targetDate}`);
+  } else {
+    params.set("target_date", "is.null");
+  }
+
+  const response = await fetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params.toString()}`, {
+    headers: {
+      apikey: serviceRoleKey(),
+      authorization: `Bearer ${serviceRoleKey()}`
+    }
+  });
+  const payload = await response.json().catch(() => null) as ExistingUserGeneratedRow[] | null;
+
+  if (!response.ok) {
+    throw new Error(`Supabase lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return payload?.[0] ?? null;
+}
+
 async function saveUserGeneratedInterpretation(
   userId: string,
   input: UserContentRequest,
   generated: StoredGeneratedContent
 ) {
+  const status = input.status === "DRAFT" ? "DRAFT" : "LIVE";
   const response = await fetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?on_conflict=user_id,subject_type,subject_id,content_key,target_date,mode`, {
     method: "POST",
     headers: {
@@ -137,7 +178,7 @@ async function saveUserGeneratedInterpretation(
       content_key: input.contentKey,
       surface: input.surface,
       mode: input.mode,
-      status: "LIVE",
+      status,
       event_type: input.eventType,
       target_date: input.targetDate,
       facts: input.facts,
@@ -186,6 +227,20 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
+    const requestedStatus = input.status === "DRAFT" ? "DRAFT" : "LIVE";
+    const existing = await existingUserGeneratedInterpretation(userId, input);
+
+    if (requestedStatus === "DRAFT" && existing && (existing.status === "REVIEWED" || existing.status === "LIVE")) {
+      sendJson(res, 200, {
+        ok: true,
+        contentKey: input.contentKey,
+        skipped: true,
+        status: existing.status,
+        reason: "A reviewed or live write-up already exists."
+      });
+      return;
+    }
+
     const generated = await generateContent(generationInput(input));
     const saved = await saveUserGeneratedInterpretation(userId, input, generated);
 

@@ -69,7 +69,7 @@ type AdminUserGeneratedContentRow = {
   content_key: string;
   surface: GeneratedContentSurface;
   mode: GeneratedContentMode;
-  status: "DRAFT" | "LIVE" | "ARCHIVED" | "ERROR";
+  status: GeneratedContentStatus;
   event_type: string | null;
   target_date: string | null;
   provider: string | null;

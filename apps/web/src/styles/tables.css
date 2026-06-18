@@ -12,6 +12,15 @@ button.placement-table-row {
   cursor: pointer;
 }
 
+.placement-table-row[role="link"] {
+  cursor: pointer;
+}
+
+.placement-table-row[role="link"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
 .placement-table-row:last-child,
 .friend-placement-row:last-child .placement-table-row {
   border-bottom: 1px solid var(--card-border);

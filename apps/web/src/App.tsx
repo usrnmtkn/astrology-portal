@@ -319,6 +319,7 @@ type YouTransitArticle = {
   glyph?: string;
   subtitle: string;
   summary: string;
+  summaryHeading?: string;
   sections: Array<{
     heading: string;
     tldr: string;
@@ -877,6 +878,20 @@ const houseLifeAreas: Record<number, string> = {
   11: "friends, networks, hopes, and belonging",
   12: "rest, privacy, retreat, and hidden pressure"
 };
+const rulerHouseRouteKeywords: Record<number, string> = {
+  1: "identity, body, and personal direction",
+  2: "money, resources, and self-worth",
+  3: "communication, siblings, and daily movement",
+  4: "home, roots, and private foundations",
+  5: "creativity, pleasure, romance, and play",
+  6: "routines, work, health, and maintenance",
+  7: "partnership, agreements, attraction, and conflict",
+  8: "intimacy, taboo, trust, and shared power",
+  9: "belief, distance, study, and the bigger picture",
+  10: "career, visibility, authority, and reputation",
+  11: "friends, networks, audience, and future plans",
+  12: "solitude, dreams, hidden pressure, and retreat"
+};
 const naturalHouseSigns: Record<number, string> = {
   1: "Aries",
   2: "Taurus",
@@ -892,30 +907,32 @@ const naturalHouseSigns: Record<number, string> = {
   12: "Pisces"
 };
 const naturalHouseLensBodies: Record<number, string> = {
-  1: "The 1st house makes this placement visible through identity, instinct, body language, and the way life is met head-on.",
-  2: "The 2nd house makes this placement practical. It moves through money, resources, self-worth, appetite, and what feels stable enough to keep.",
-  3: "The 3rd house makes this placement immediate and verbal. It moves through conversation, learning, siblings, local movement, and daily perception.",
-  4: "The 4th house makes this placement private and rooted. It moves through home, family memory, emotional foundation, and what feels safe underneath everything else.",
-  5: "The 5th house makes this placement expressive. It moves through pleasure, romance, creativity, children, play, and the desire to be seen.",
-  6: "The 6th house makes this placement functional. It moves through routines, work, health, service, maintenance, and the small habits that shape daily life.",
-  7: "The 7th house makes this placement relational. It moves through partners, mirrors, agreements, attraction, conflict, and the people met face to face.",
-  8: "The 8th house gives this placement a Scorpio-like intensity. It moves through intimacy, taboo, trust, shared power, secrecy, risk, and the desire to know what is underneath.",
-  9: "The 9th house makes this placement seek meaning. It moves through belief, study, travel, teaching, publishing, and the bigger frame that explains experience.",
-  10: "The 10th house makes this placement public and directional. It moves through career, reputation, authority, visibility, and the work of becoming known.",
-  11: "The 11th house makes this placement collective. It moves through friends, networks, audience, collaboration, hopes, and the future a person wants to belong to.",
-  12: "The 12th house makes this placement porous and private. It moves through solitude, dreams, retreat, hidden pressure, grief, imagination, and what works behind the scenes."
+  1: "The 1st house is identity, instinct, body, appearance, and the way life is met head-on.",
+  2: "The 2nd house is money, resources, appetite, self-worth, and what feels stable enough to keep.",
+  3: "The 3rd house is conversation, learning, siblings, local movement, and daily perception.",
+  4: "The 4th house is home, family memory, emotional foundation, and what feels safe underneath everything else.",
+  5: "The 5th house is pleasure, romance, creativity, children, play, and the desire to be seen.",
+  6: "The 6th house is daily life. Routines, work, health, service, maintenance, and the small habits that keep everything running.",
+  7: "The 7th house is partners, mirrors, agreements, attraction, conflict, and the people met face to face.",
+  8: "The 8th house is intimacy, taboo, trust, shared power, secrecy, risk, and the desire to understand what people usually hide.",
+  9: "The 9th house is meaning. Belief, study, travel, teaching, publishing, and the wider frame used to explain life.",
+  10: "The 10th house is career, reputation, authority, visibility, and the work of becoming known.",
+  11: "The 11th house is friends, networks, audience, collaboration, hopes, and the future a person wants to belong to.",
+  12: "The 12th house is solitude, dreams, retreat, hidden pressure, grief, imagination, and what works behind the scenes."
 };
-const planetHouseThreadVerbs: Record<string, string> = {
-  Sun: "identity and vitality",
-  Moon: "emotional needs and memory",
-  Mercury: "thinking and communication",
-  Venus: "desire, attraction, and values",
-  Mars: "drive, conflict, and action",
-  Jupiter: "growth, faith, and appetite",
-  Saturn: "responsibility, limits, and commitment",
-  Uranus: "change, disruption, and individuation",
-  Neptune: "dreams, longing, and imagination",
-  Pluto: "power, fear, and transformation"
+const naturalSignLensBodies: Record<string, string> = {
+  Aries: "The Aries lens adds heat, directness, urgency, and the need to act before everything is fully settled.",
+  Taurus: "The Taurus lens adds embodiment, loyalty, appetite, and the need to make things real enough to trust.",
+  Gemini: "The Gemini lens adds curiosity, language, movement, and the need to keep asking better questions.",
+  Cancer: "The Cancer lens adds memory, protection, belonging, and the need to know what feels safe.",
+  Leo: "The Leo lens adds visibility, pride, play, and the need to make the heart recognizable.",
+  Virgo: "The Virgo lens adds craft, pattern, repair, and the need to make life workable through small exacting choices.",
+  Libra: "The Libra lens adds relationship, proportion, aesthetics, and the need to understand life through contrast and exchange.",
+  Scorpio: "The Scorpio lens adds depth, secrecy, taboo, trust, and the instinct to find the truth under the surface.",
+  Sagittarius: "The Sagittarius lens adds belief, distance, teaching, travel, and the need to turn experience into meaning.",
+  Capricorn: "The Capricorn lens adds structure, responsibility, ambition, and the need to build something that can hold weight.",
+  Aquarius: "The Aquarius lens adds distance, systems, friendship, future-thinking, and the need to understand the pattern from above.",
+  Pisces: "The Pisces lens adds permeability, imagination, longing, and the need to feel what cannot be fully explained."
 };
 const lifeAreaFocusOptions: Array<{
   value: LifeAreaFocus;
@@ -1001,6 +1018,10 @@ function portalModeFromHashPath(path: string): PortalMode | null {
     case "settings":
       return "settings";
     default:
+      if (path.startsWith("you/placement/")) {
+        return "profile";
+      }
+
       return null;
   }
 }
@@ -1083,6 +1104,34 @@ function updatePortalModeUrl(nextMode: PortalMode, mode: "push" | "replace" = "p
     url.searchParams.delete("tab");
     url.hash = portalHashForMode(nextMode);
 
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep navigation usable if history is unavailable.
+  }
+}
+
+function placementRouteIdFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const { path } = friendsHashParts(url.hash);
+    const match = path.match(/^you\/placement\/([^/?#]+)$/);
+
+    return match?.[1] ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function updatePlacementRouteUrl(placementId: string, mode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      url.pathname = "/";
+    }
+
+    url.searchParams.delete("tab");
+    url.hash = `you/placement/${encodeURIComponent(placementId)}`;
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
   } catch {
     // URL state is an enhancement; keep navigation usable if history is unavailable.
@@ -3226,13 +3275,17 @@ function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySna
   const houseLabel = `${ordinalHouse(house)} House`;
   const naturalSign = naturalHouseSigns[house] ?? "";
   const naturalLensLabel = naturalSign ? `${naturalSign} lens` : `${houseLabel} lens`;
-  const lensBody = naturalHouseLensBodies[house] ?? `This house brings ${houseLifeAreas[house] ?? "a specific life area"} into the placement.`;
+  const houseBody = naturalHouseLensBodies[house] ?? `The ${houseLabel.toLowerCase()} is ${houseLifeAreas[house] ?? "a specific life area"}.`;
+  const naturalLensBody = naturalSign ? naturalSignLensBodies[naturalSign] : "";
+  const lensBody = naturalLensBody || houseBody;
 
   if (!natalSky?.ascendant) {
     return {
       houseLabel,
       naturalLensLabel,
+      houseBody,
       lensBody,
+      naturalLensBody,
       rulerBody: "Add a birth time to clarify the sign on this house and the ruler that carries this thread through the chart."
     };
   }
@@ -3242,24 +3295,28 @@ function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySna
   const rulerPosition = houseRuler
     ? natalSky.positions.find((candidate) => candidate.planet === houseRuler)
     : null;
-  const planetTopic = planetHouseThreadVerbs[position.planet] ?? position.planet.toLowerCase();
-
+  const rulerHouseKeywords = rulerPosition?.house
+    ? rulerHouseRouteKeywords[rulerPosition.house] ?? houseLifeAreas[rulerPosition.house]
+    : null;
   if (!houseSign || !houseRuler) {
     return {
       houseLabel,
       naturalLensLabel,
+      houseBody,
       lensBody
     };
   }
 
   const rulerBody = rulerPosition
-    ? `Your ${houseLabel.toLowerCase()} begins in ${houseSign}, so ${houseRuler} carries the thread. ${houseRuler} in ${rulerPosition.sign}${rulerPosition.house ? ` in the ${ordinalHouse(rulerPosition.house)} house` : ""} shows where this ${planetTopic} terrain gets processed.`
-    : `Your ${houseLabel.toLowerCase()} begins in ${houseSign}, so ${houseRuler} carries the thread. Its placement shows where this ${planetTopic} terrain gets processed.`;
+    ? `Your ${houseLabel.toLowerCase()} starts in ${houseSign}, so ${houseRuler} runs it. ${houseRuler} sits${rulerPosition.house ? ` in your ${ordinalHouse(rulerPosition.house)} house` : ""} in ${rulerPosition.sign}${rulerHouseKeywords ? `, which routes this placement through ${rulerHouseKeywords}.` : ", which routes this placement through the ruler's own placement."}`
+    : `Your ${houseLabel.toLowerCase()} starts in ${houseSign}, so ${houseRuler} runs it. The ruler's placement shows how this placement routes through the chart.`;
 
   return {
     houseLabel,
     naturalLensLabel,
+    houseBody,
     lensBody,
+    naturalLensBody,
     rulerBody
   };
 }
@@ -6934,6 +6991,107 @@ function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedConte
   return liveGeneratedSummary(generated, content.summary);
 }
 
+function natalPlacementRouteId(position: PlanetPosition) {
+  return [
+    normalizeContentIdPart(position.planet),
+    normalizeContentIdPart(position.sign),
+    position.house ? `${position.house}h` : "house-pending"
+  ].join("-");
+}
+
+function natalPlacementWriteupContentKey(position: PlanetPosition) {
+  return `you-natal-placement-v1-${natalPlacementRouteId(position)}`;
+}
+
+function natalPlacementWriteupSubjectId(chartId: string | undefined) {
+  return chartId || "local-chart";
+}
+
+function natalPlacementDetailTitle(position: PlanetPosition) {
+  return natalPlacementSignTitle(position);
+}
+
+function natalPlacementDetailSubtitle(position: PlanetPosition) {
+  const parts = [
+    position.house ? `${ordinalHouse(position.house)} House` : "House pending",
+    formatPlanetDegree(position)
+  ];
+  const dignity = placementDignity(position);
+
+  if (dignity) {
+    parts.push(dignity.label);
+  }
+
+  return parts.join(" · ");
+}
+
+function placementArticleSectionsFromInsight(insight: PlacementHouseInsight | null, hasLiveWriteup: boolean) {
+  const sections: YouTransitArticle["sections"] = [];
+
+  if (!hasLiveWriteup) {
+    sections.push({
+      heading: "Write-up pending",
+      tldr: "The authored interpretation for this placement is still in review.",
+      body: "The lens material is available now. The full write-up will appear here after it has been reviewed and published."
+    });
+  }
+
+  if (!insight) {
+    return sections;
+  }
+
+  sections.push({
+    heading: "House Lens",
+    tldr: insight.houseBody || insight.lensBody,
+    body: insight.houseBody || insight.lensBody
+  });
+
+  if (insight.naturalLensBody || insight.lensBody) {
+    sections.push({
+      heading: insight.naturalLensLabel,
+      tldr: insight.naturalLensBody || insight.lensBody,
+      body: insight.naturalLensBody || insight.lensBody
+    });
+  }
+
+  if (insight.rulerBody) {
+    sections.push({
+      heading: "Ruler Thread",
+      tldr: insight.rulerBody,
+      body: insight.rulerBody
+    });
+  }
+
+  return sections;
+}
+
+function natalPlacementDetailArticle(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  liveWriteup: LiveGeneratedContent | null
+): YouTransitArticle {
+  const insight = natalHouseInsightForPosition(position, natalSky);
+  const bodyParagraphs = generatedContentParagraphs(liveWriteup);
+  const liveBody = bodyParagraphs.join("\n\n").trim();
+  const summary = liveBody || "";
+
+  return {
+    id: natalPlacementRouteId(position),
+    title: natalPlacementDetailTitle(position),
+    glyph: position.glyph || pointGlyph(position.planet),
+    subtitle: natalPlacementDetailSubtitle(position),
+    summary,
+    summaryHeading: "Interpretation",
+    sections: placementArticleSectionsFromInsight(insight, Boolean(summary)),
+    meta: [
+      { label: "Placement", value: natalPlacementDetailTitle(position) },
+      { label: "House", value: position.house ? `${ordinalHouse(position.house)} House` : "" },
+      { label: "Degree", value: formatPlanetDegree(position) },
+      { label: "Status", value: placementDignity(position)?.label ?? "" }
+    ]
+  };
+}
+
 function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: GeneratedContentMap) {
   const content = approvedVoiceOrKnowledgeFallback(placementContentId("Ascendant", risingSign));
   const generated = generatedContent ? liveGeneratedContent(generatedContent, placementContentId("Ascendant", risingSign)) : null;
@@ -9125,6 +9283,9 @@ function ProfileView({
   generatedContent: GeneratedContentMap;
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
+  const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
+  const [placementWriteups, setPlacementWriteups] = useState<GeneratedContentMap>(() => new Map());
+  const [seededPlacementDrafts, setSeededPlacementDrafts] = useState<Set<string>>(() => new Set());
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
   const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed"
@@ -9153,6 +9314,7 @@ function ProfileView({
   const planetRows = natalListOrder
     .map((planet) => natalPositions.find((position) => position.planet === planet))
     .filter((position): position is PlanetPosition => Boolean(position));
+  const routeableNatalPositions = [natalSun, natalMoon, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
   const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
@@ -9166,6 +9328,146 @@ function ProfileView({
     ? "Pluto sits angular in your 7th house, so partnership is where your deepest growth and power dynamics often play out. Nothing about love stays surface-level."
     : `${natalSun ? natalPlacementTitle(natalSun) : `Sun in ${safeSun}`} sets the center of gravity, while ${safeMoon} and ${safeRising} shape how the chart meets the world.`;
   const showNatalSignatures = false;
+  const placementPositionByRouteId = (placementId: string | null) => (
+    placementId ? routeableNatalPositions.find((position) => natalPlacementRouteId(position) === placementId) ?? null : null
+  );
+  const loadOrSeedPlacementWriteup = async (position: PlanetPosition) => {
+    const contentKey = natalPlacementWriteupContentKey(position);
+    const subjectId = natalPlacementWriteupSubjectId(primaryChart?.id);
+
+    try {
+      const existing = await loadUserGeneratedInterpretation({
+        subjectType: "natal_placement",
+        subjectId,
+        contentKey
+      });
+
+      if (existing) {
+        setPlacementWriteups((current) => {
+          if (current.get(contentKey)?.id === existing.id) {
+            return current;
+          }
+
+          const next = new Map(current);
+          next.set(contentKey, existing);
+          return next;
+        });
+        return existing;
+      }
+
+      if (seededPlacementDrafts.has(contentKey)) {
+        return null;
+      }
+
+      const insight = natalHouseInsightForPosition(position, natalSky);
+      setSeededPlacementDrafts((current) => {
+        const next = new Set(current);
+        next.add(contentKey);
+        return next;
+      });
+
+      await generateUserContent({
+        subjectType: "natal_placement",
+        subjectId,
+        contentKey,
+        surface: "you",
+        mode: "in_depth",
+        eventType: "you-natal-placement",
+        status: "DRAFT",
+        headline: natalPlacementDetailTitle(position),
+        facts: {
+          type: "you_natal_placement_writeup",
+          person: {
+            name: profile.name,
+            bigThree: {
+              sun: profile.sun,
+              moon: profile.moon,
+              rising: profile.rising
+            }
+          },
+          placement: {
+            planet: position.planet,
+            sign: position.sign,
+            house: position.house,
+            degree: formatPlanetDegree(position),
+            dignity: placementDignity(position)?.label ?? null,
+            retrograde: position.motion === "retrograde"
+          },
+          lenses: insight
+            ? {
+                house: insight.houseBody,
+                naturalSign: insight.naturalLensLabel,
+                naturalSignBody: insight.naturalLensBody || insight.lensBody,
+                rulerThread: insight.rulerBody
+              }
+            : null
+        },
+        knowledgeIds: [placementContentId(position.planet, position.sign)],
+        sourceSnapshot: {
+          source: "tldrastro-you-placement-detail",
+          chartId: primaryChart?.id ?? null,
+          placementId: natalPlacementRouteId(position)
+        },
+        voiceNotes: [
+          "Seed a draft for the user's natal placement detail page.",
+          "Write the main interpretation only. Do not copy or restate the lens sections as separate headings.",
+          "Lead with what this placement means in plain direct prose before mechanics.",
+          "Use the provided house lens and ruler thread as context, but author the write-up as a coherent interpretation.",
+          "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, terrain gets processed, or makes this placement.",
+          "Do not mention drafts, review status, generated content, databases, backend, or knowledge base.",
+          "Keep it specific, human, and around 170 to 260 words."
+        ].join("\n")
+      });
+    } catch (error) {
+      console.warn("Natal placement write-up draft seeding failed.", error);
+    }
+
+    return null;
+  };
+  const openPlacementArticle = (position: PlanetPosition, historyMode: "push" | "replace" = "push") => {
+    const placementId = natalPlacementRouteId(position);
+    const contentKey = natalPlacementWriteupContentKey(position);
+    const liveWriteup = placementWriteups.get(contentKey) ?? null;
+
+    setActivePlacementRouteId(placementId);
+    setTransitArticle(natalPlacementDetailArticle(position, natalSky, liveWriteup));
+    updatePlacementRouteUrl(placementId, historyMode);
+    void loadOrSeedPlacementWriteup(position).then((loadedWriteup) => {
+      const nextWriteup = loadedWriteup ?? placementWriteups.get(contentKey) ?? null;
+
+      if (nextWriteup && placementRouteIdFromUrl() === placementId) {
+        setTransitArticle(natalPlacementDetailArticle(position, natalSky, nextWriteup));
+      }
+    });
+  };
+  useEffect(() => {
+    function syncPlacementRoute() {
+      const routeId = placementRouteIdFromUrl();
+      const routePosition = placementPositionByRouteId(routeId);
+
+      if (routePosition) {
+        const contentKey = natalPlacementWriteupContentKey(routePosition);
+        setActivePlacementRouteId(routeId);
+        setTransitArticle(natalPlacementDetailArticle(routePosition, natalSky, placementWriteups.get(contentKey) ?? null));
+        void loadOrSeedPlacementWriteup(routePosition);
+        return;
+      }
+
+      if (activePlacementRouteId) {
+        setActivePlacementRouteId(null);
+        setTransitArticle(null);
+      }
+    }
+
+    syncPlacementRoute();
+    window.addEventListener("popstate", syncPlacementRoute);
+    window.addEventListener("hashchange", syncPlacementRoute);
+
+    return () => {
+      window.removeEventListener("popstate", syncPlacementRoute);
+      window.removeEventListener("hashchange", syncPlacementRoute);
+    };
+  }, [activePlacementRouteId, natalSky, placementWriteups, routeableNatalPositions.map(natalPlacementRouteId).join("|")]);
   const bigThreeRows = [
     <PlacementTableRow
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
@@ -9174,6 +9476,7 @@ function ProfileView({
       glyph="☉"
       house={natalSun?.house ?? null}
       houseInsight={natalSun ? natalHouseInsightForPosition(natalSun, natalSky) : null}
+      onClick={natalSun ? () => openPlacementArticle(natalSun) : undefined}
       pointName="Sun"
       retrograde={natalSun?.motion === "retrograde"}
       title={natalSun ? natalPlacementSignTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
@@ -9187,6 +9490,7 @@ function ProfileView({
       glyph="☽"
       house={natalMoon?.house ?? null}
       houseInsight={natalMoon ? natalHouseInsightForPosition(natalMoon, natalSky) : null}
+      onClick={natalMoon ? () => openPlacementArticle(natalMoon) : undefined}
       pointName="Moon"
       retrograde={natalMoon?.motion === "retrograde"}
       title={natalMoon ? natalPlacementSignTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
@@ -9211,6 +9515,7 @@ function ProfileView({
       house={position.house}
       houseInsight={natalHouseInsightForPosition(position, natalSky)}
       key={position.planet}
+      onClick={() => openPlacementArticle(position)}
       pointName={position.planet}
       retrograde={position.motion === "retrograde"}
       title={natalPlacementSignTitle(position)}
@@ -9275,6 +9580,7 @@ function ProfileView({
     const articleSections = generatedArticleSections(generated, content.detailParagraphs);
     const openArticle = () => {
       setSelectedTransitId(transit.id);
+      setActivePlacementRouteId(null);
       setTransitArticle({
         id: personalizedContentKey,
         title,
@@ -9386,7 +9692,11 @@ function ProfileView({
         natalChart={natalChart}
         natalChartPending={!natalSky}
         onCreateChart={onCreateChart}
-        onCloseTransitArticle={() => setTransitArticle(null)}
+        onCloseTransitArticle={() => {
+          setActivePlacementRouteId(null);
+          setTransitArticle(null);
+          updatePortalModeUrl("profile", "push");
+        }}
         personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
         profileAvatarUrl={profile.avatarUrl}
