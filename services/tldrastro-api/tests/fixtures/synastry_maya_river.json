@@ -48,7 +48,7 @@
     "includeContentFacts": true
   },
   "expected": {
-    "contactCount": 120,
+    "contactCount": 122,
     "overlayCount": 14,
     "topContacts": [
       {
@@ -100,4 +100,3 @@
     ]
   }
 }
-

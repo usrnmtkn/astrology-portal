@@ -31,7 +31,7 @@ TRANSIT_PLANET_WEIGHTS = {
     "Uranus": 19,
     "Neptune": 18,
     "Pluto": 20,
-    "True Node": 12,
+    "North Node": 12,
     "Chiron": 10,
     "Lilith": 5,
 }

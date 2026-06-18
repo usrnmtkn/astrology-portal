@@ -75,7 +75,7 @@ def _natal_planets_in_sign(natal_chart, sign: str) -> List[str]:
     return [
         position.point
         for position in natal_chart.positions
-        if position.sign == sign and position.point not in {"True Node", "Lilith"}
+        if position.sign == sign and position.point not in {"North Node", "True Node", "Lilith"}
     ]
 
 
@@ -159,4 +159,3 @@ def calculate_profections(request: ProfectionsRequest) -> ProfectionsResponse:
         activatedNatalPlanets=annual.activatedNatalPlanets,
         contentFacts=[],
     )
-

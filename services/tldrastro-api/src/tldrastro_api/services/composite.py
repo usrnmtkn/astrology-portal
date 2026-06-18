@@ -30,7 +30,7 @@ COMPOSITE_POINTS = {
     "Uranus",
     "Neptune",
     "Pluto",
-    "True Node",
+    "North Node",
     "Lilith",
 }
 

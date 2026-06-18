@@ -26,7 +26,7 @@ POINT_WEIGHTS = {
     "Mercury": 9,
     "Jupiter": 8,
     "Saturn": 9,
-    "True Node": 8,
+    "North Node": 8,
 }
 
 ASPECT_WEIGHTS = {
