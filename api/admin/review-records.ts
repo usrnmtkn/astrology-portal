@@ -113,7 +113,9 @@ type ReviewRecord = {
 
 type CalculatedAspect = {
   from: string;
+  fromSign?: string;
   to: string;
+  toSign?: string;
   type: string;
   orb: number;
   meaning: string;
@@ -281,7 +283,9 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
 
       return {
         from: from.planet,
+        fromSign: from.sign,
         to: to.planet,
+        toSign: to.sign,
         type: aspect.type,
         orb: Number(aspect.orbValue.toFixed(2)),
         meaning: `${from.planet} ${aspect.type} ${to.planet} is active in the selected sky window.`
@@ -484,7 +488,9 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
         facts: {
           type: "upcoming_aspect",
           from: entry.aspect.from,
+          fromSign: entry.aspect.fromSign,
           to: entry.aspect.to,
+          toSign: entry.aspect.toSign,
           aspect: entry.aspect.type,
           exactDate: entry.targetDate,
           direction,
