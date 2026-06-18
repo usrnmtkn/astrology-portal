@@ -1221,11 +1221,11 @@ export function GeneratedContentAdminDashboard() {
     }
   }, [activePage, secret]);
 
-  async function loadReviewWorkspace(nextReviewSurface = reviewSurface) {
+  async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status) {
     const nextSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
     const params = new URLSearchParams({
       surface: nextReviewSurface,
-      status,
+      status: nextStatus,
       startDate: dateStart,
       endDate: dateEnd
     });
@@ -1388,12 +1388,14 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
+    const nextReviewSurface = reviewSurfaceForGeneratedSurface(nextSurface === "all" ? "sky" : nextSurface);
+
     setActivePage("review");
     setStatus(nextStatus);
     setSurface(nextSurface);
     setSelectedId(null);
     setDraft(createAdminDraft(nextSurface));
-    void loadRows(nextStatus, nextSurface);
+    void loadReviewWorkspace(nextReviewSurface, nextStatus);
   }
 
   async function loadFactsForDraft(baseDraft = draft, options: { manageLoading?: boolean } = {}) {
@@ -1831,7 +1833,7 @@ export function GeneratedContentAdminDashboard() {
           </div>
           {activePage === "review" && (
             <div className="admin-header-actions">
-              <button type="button" onClick={() => void loadRows()} disabled={isLoading || !canUseApi}>
+              <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
                 Refresh
               </button>
