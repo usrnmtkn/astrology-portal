@@ -19,6 +19,7 @@ export type YouTransitArticle = {
   glyph?: string;
   subtitle: string;
   summary: string;
+  summaryHeading?: string;
   sections: Array<{
     heading: string;
     tldr: string;
@@ -386,6 +387,7 @@ function YouTransitArticlePage({
   const metaRows = article.meta.filter((row) => cleanArticleText(row.value));
   const hasReadableBody = Boolean(summary || sections.length);
   const sectionNumberOffset = summary ? 2 : 1;
+  const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
 
   return (
     <section
@@ -420,8 +422,8 @@ function YouTransitArticlePage({
             <div className="article-body-inner">
               {summary ? (
                 <section className="article-section sky-detail-section">
-                  <span className="article-section__eyebrow sky-detail-section-num">01 · Overview</span>
-                  <h2>Overview</h2>
+                  <span className="article-section__eyebrow sky-detail-section-num">01 · {summaryHeading}</span>
+                  <h2>{summaryHeading}</h2>
                   <p>{summary}</p>
                 </section>
               ) : null}

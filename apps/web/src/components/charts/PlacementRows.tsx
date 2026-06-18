@@ -38,7 +38,9 @@ export type PlacementRowStatus = {
 export type PlacementHouseInsight = {
   houseLabel: string;
   naturalLensLabel: string;
+  houseBody?: string;
   lensBody: string;
+  naturalLensBody?: string;
   rulerBody?: string;
 };
 
@@ -435,7 +437,7 @@ export function PlacementTableRow({
         ) : null}
         {description ? <span className="placement-table-row__description">{description}</span> : null}
         {houseInsight ? (
-          <details className="placement-house-insight">
+          <details className="placement-house-insight" onClick={(event) => event.stopPropagation()}>
             <summary>
               <span>House lens</span>
               <span>{houseInsight.houseLabel}</span>
@@ -458,7 +460,27 @@ export function PlacementTableRow({
     </>
   );
 
-  if (asButton || onClick) {
+  if (onClick) {
+    return (
+      <div
+        className={className}
+        role="link"
+        tabIndex={0}
+        aria-label={ariaLabel ?? title}
+        onClick={onClick}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onClick();
+          }
+        }}
+      >
+        {content}
+      </div>
+    );
+  }
+
+  if (asButton) {
     return (
       <button className={className} type="button" aria-label={ariaLabel ?? title} onClick={onClick}>
         {content}

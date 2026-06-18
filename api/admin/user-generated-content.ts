@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 
 type UserGeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
-type UserGeneratedContentStatus = "DRAFT" | "LIVE" | "ARCHIVED" | "ERROR";
+type UserGeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 
 function requireEnv(name: string) {
   const value = process.env[name];
