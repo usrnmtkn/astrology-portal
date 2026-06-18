@@ -1,5 +1,5 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
@@ -11,6 +11,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -98,6 +99,33 @@ type AdminGeneratedContentDraft = {
   reviewerNotes: string;
 };
 
+type AdminReviewRecord = {
+  id: string;
+  source: "global" | "private";
+  surface: GeneratedContentSurface;
+  status: string;
+  mode: GeneratedContentMode;
+  title: string;
+  subtitle: string;
+  targetDate: string | null;
+  contentKey: string;
+  eventType: string | null;
+  summary: string;
+  body: string;
+  sections: Array<{ heading: string; body: string }>;
+  facts: Record<string, unknown> | null;
+  sourceSnapshot: Record<string, unknown> | null;
+  reviewerNotes: string | null;
+  userId?: string;
+  subjectId?: string;
+  subjectType?: string;
+  provider?: string | null;
+  model?: string | null;
+  updatedAt: string;
+  rawGlobalRow?: AdminGeneratedContentRow;
+  rawPrivateRow?: AdminUserGeneratedContentRow;
+};
+
 type AdminContentFactsPayload = {
   ok: boolean;
   contentKey: string;
@@ -128,6 +156,25 @@ const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, strin
   synastry: "Synastry",
   composite: "Composite",
   relationship: "Relationship"
+};
+
+const reviewSurfaceLabels: Record<AdminReviewSurface, { label: string; description: string }> = {
+  upcomingAspects: {
+    label: "Upcoming Aspects",
+    description: "Current-sky aspects in the selected window, ordered by exact or target date."
+  },
+  transitNatal: {
+    label: "Transits to Natal",
+    description: "Personal timing rows where a transit is interpreted against a natal placement."
+  },
+  natalChart: {
+    label: "Natal Chart",
+    description: "Natal placements and natal aspects with the reader-facing interpretation attached."
+  },
+  relationshipLayer: {
+    label: "Relationship Layer",
+    description: "Synastry, composite, and relationship rows for reviewing two-chart copy."
+  }
 };
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
@@ -611,6 +658,13 @@ function dateInputValue(date: Date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
+function addDays(date: Date, days: number) {
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + days);
+
+  return nextDate;
+}
+
 function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date = dateInputValue()): AdminGeneratedContentDraft {
   const resolvedSurface: GeneratedContentSurface = surface === "all" ? "sky" : surface;
   const defaults: Record<GeneratedContentSurface, Pick<AdminGeneratedContentDraft, "contentKey" | "eventType" | "headline" | "mode" | "knowledgeIds">> = {
@@ -721,6 +775,130 @@ function adminDateLabel(value: string | null) {
   }).format(date);
 }
 
+function compactAdminText(value: string | null | undefined, fallback = "No reader-facing copy saved yet.") {
+  const normalized = (value ?? "").replace(/\s+/g, " ").trim();
+
+  return normalized || fallback;
+}
+
+function normalizeAdminSections(value: AdminGeneratedContentRow["sections"] | undefined): Array<{ heading: string; body: string }> {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((section, index) => {
+      if (!section || typeof section !== "object") {
+        return null;
+      }
+
+      const entry = section as Record<string, unknown>;
+      const heading = typeof entry.heading === "string" && entry.heading.trim() ? entry.heading.trim() : `Section ${index + 1}`;
+      const body = typeof entry.body === "string" ? entry.body.trim() : "";
+
+      return body ? { heading, body } : null;
+    })
+    .filter((section): section is { heading: string; body: string } => Boolean(section));
+}
+
+function shallowFactRows(value: Record<string, unknown> | null | undefined) {
+  if (!value) {
+    return [];
+  }
+
+  return Object.entries(value)
+    .filter(([, factValue]) => typeof factValue !== "object" || factValue === null)
+    .slice(0, 10)
+    .map(([key, factValue]) => ({
+      label: key.replaceAll("_", " "),
+      value: factValue === null || factValue === undefined ? "none" : String(factValue)
+    }));
+}
+
+function reviewSurfaceForGeneratedSurface(surface: GeneratedContentSurface): AdminReviewSurface {
+  if (surface === "sky") {
+    return "upcomingAspects";
+  }
+
+  if (surface === "you") {
+    return "transitNatal";
+  }
+
+  if (surface === "natal") {
+    return "natalChart";
+  }
+
+  return "relationshipLayer";
+}
+
+function generatedSurfaceForReviewSurface(surface: AdminReviewSurface): GeneratedContentSurfaceFilter {
+  if (surface === "upcomingAspects") return "sky";
+  if (surface === "transitNatal") return "you";
+  if (surface === "natalChart") return "natal";
+
+  return "all";
+}
+
+function isUpcomingAspectRecord(record: AdminReviewRecord) {
+  const searchable = `${record.contentKey} ${record.eventType ?? ""}`.toLowerCase();
+
+  return record.surface === "sky" && (searchable.includes("aspect") || searchable.includes("transit"));
+}
+
+function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
+  const sections = normalizeAdminSections(row.sections);
+
+  return {
+    id: `global:${row.id}`,
+    source: "global",
+    surface: row.surface,
+    status: row.status,
+    mode: row.mode,
+    title: row.headline || row.content_key,
+    subtitle: `${generatedContentSurfaceLabels[row.surface]} / ${row.mode} / ${adminDateLabel(row.target_date)}`,
+    targetDate: row.target_date,
+    contentKey: row.content_key,
+    eventType: row.event_type,
+    summary: row.summary ?? "",
+    body: row.body ?? "",
+    sections,
+    facts: row.facts,
+    sourceSnapshot: row.source_snapshot,
+    reviewerNotes: row.reviewer_notes,
+    model: row.model,
+    updatedAt: row.updated_at,
+    rawGlobalRow: row
+  };
+}
+
+function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewRecord {
+  return {
+    id: `private:${row.id}`,
+    source: "private",
+    surface: row.surface,
+    status: row.status,
+    mode: row.mode,
+    title: row.headline || row.content_key,
+    subtitle: `${row.subject_type} / ${row.subject_id} / ${adminDateLabel(row.target_date)}`,
+    targetDate: row.target_date,
+    contentKey: row.content_key,
+    eventType: row.event_type,
+    summary: row.summary ?? "",
+    body: row.body ?? row.error ?? "",
+    sections: [],
+    facts: null,
+    sourceSnapshot: null,
+    reviewerNotes: null,
+    userId: row.user_id,
+    subjectId: row.subject_id,
+    subjectType: row.subject_type,
+    provider: row.provider,
+    model: row.model,
+    updatedAt: row.updated_at,
+    rawPrivateRow: row
+  };
+}
+
 function adminApiCheckedAtLabel(value: string | null) {
   if (!value) {
     return "Not checked yet";
@@ -787,9 +965,14 @@ export function GeneratedContentAdminDashboard() {
   const [secretDraft, setSecretDraft] = useState(secret);
   const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
+  const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
+  const [dateStart, setDateStart] = useState(() => dateInputValue());
+  const [dateEnd, setDateEnd] = useState(() => dateInputValue(addDays(new Date(), 30)));
+  const [personQuery, setPersonQuery] = useState("");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
   const [isLoading, setIsLoading] = useState(false);
@@ -815,6 +998,44 @@ export function GeneratedContentAdminDashboard() {
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
+  const allReviewRecords = useMemo(() => {
+    const globalRecords = rows.map(globalReviewRecord);
+    const privateRecords = privateRows.map(privateReviewRecord);
+    const mergedRecords = [...globalRecords, ...privateRecords];
+    const normalizedPersonQuery = personQuery.trim().toLowerCase();
+
+    return mergedRecords
+      .filter((record) => {
+        const recordSurface = reviewSurfaceForGeneratedSurface(record.surface);
+        const matchesSurface = reviewSurface === "relationshipLayer"
+          ? recordSurface === "relationshipLayer"
+          : recordSurface === reviewSurface;
+
+        if (!matchesSurface) return false;
+        if (reviewSurface === "upcomingAspects" && !isUpcomingAspectRecord(record)) return false;
+
+        if (!normalizedPersonQuery) return true;
+
+        return [
+          record.userId,
+          record.subjectId,
+          record.subjectType,
+          record.contentKey,
+          record.title
+        ].some((value) => value?.toLowerCase().includes(normalizedPersonQuery));
+      })
+      .sort((first, second) => {
+        const firstDate = first.targetDate ?? "";
+        const secondDate = second.targetDate ?? "";
+
+        if (firstDate !== secondDate) {
+          return firstDate.localeCompare(secondDate);
+        }
+
+        return first.title.localeCompare(second.title);
+      });
+  }, [personQuery, privateRows, reviewSurface, rows]);
+  const selectedReviewRecord = allReviewRecords.find((record) => record.id === selectedReviewId) ?? allReviewRecords[0] ?? null;
 
   async function checkTldrAstroApiStatus() {
     if (!isTldrAstroApiConfigured) {
@@ -887,11 +1108,19 @@ export function GeneratedContentAdminDashboard() {
       await loadStatusMetrics(nextSurface);
       const params = new URLSearchParams({
         status: nextStatus,
-        limit: "75"
+        limit: "100"
       });
 
       if (nextSurface !== "all") {
         params.set("surface", nextSurface);
+      }
+
+      if (dateStart) {
+        params.set("startDate", dateStart);
+      }
+
+      if (dateEnd) {
+        params.set("endDate", dateEnd);
       }
 
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
@@ -901,6 +1130,7 @@ export function GeneratedContentAdminDashboard() {
 
       setRows(payload.rows ?? []);
       setMessage(`Loaded ${(payload.rows ?? []).length} ${nextStatus.toLowerCase()} rows. Status totals are current.`);
+      setSelectedReviewId(null);
 
       if (!payload.rows?.some((row) => row.id === selectedId)) {
         const firstRow = payload.rows?.[0] ?? null;
@@ -919,7 +1149,7 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function loadPrivateRows() {
+  async function loadPrivateRows(nextReviewSurface = reviewSurface) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
@@ -927,13 +1157,31 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
+      const privateSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
+      const params = new URLSearchParams({
+        status: "all",
+        limit: "100"
+      });
+
+      if (privateSurface !== "all") {
+        params.set("surface", privateSurface);
+      }
+
+      if (dateStart) {
+        params.set("startDate", dateStart);
+      }
+
+      if (dateEnd) {
+        params.set("endDate", dateEnd);
+      }
+
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
-        "/api/admin/user-generated-content?status=all&surface=all&limit=75",
+        `/api/admin/user-generated-content?${params}`,
         secret
       );
 
       setPrivateRows(payload.rows ?? []);
-      setMessage(`Loaded ${(payload.rows ?? []).length} private generated rows. Provider and model are shown on each row.`);
+      setMessage(`Loaded ${(payload.rows ?? []).length} private generated rows for the selected review window.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not load private generated rows.");
     } finally {
@@ -944,6 +1192,7 @@ export function GeneratedContentAdminDashboard() {
   useEffect(() => {
     if (canUseApi) {
       void loadRows();
+      void loadPrivateRows();
     }
   }, [secret]);
 
@@ -956,6 +1205,18 @@ export function GeneratedContentAdminDashboard() {
       void loadPrivateRows();
     }
   }, [activePage, secret]);
+
+  async function loadReviewWorkspace(nextReviewSurface = reviewSurface) {
+    const nextSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
+
+    setReviewSurface(nextReviewSurface);
+    setSurface(nextSurface);
+    setSelectedId(null);
+    setSelectedReviewId(null);
+    setDraft(createAdminDraft(nextSurface));
+    await loadRows(status, nextSurface);
+    await loadPrivateRows(nextReviewSurface);
+  }
 
   useEffect(() => {
     if (!isPreviewOpen) {
@@ -1891,11 +2152,64 @@ export function GeneratedContentAdminDashboard() {
           </section>
         ) : (
           <>
+            <section className="admin-review-filters" aria-label="Content review filters">
+              <div>
+                <p className="admin-eyebrow">Review window</p>
+                <h2>{reviewSurfaceLabels[reviewSurface].label}</h2>
+                <p>{reviewSurfaceLabels[reviewSurface].description}</p>
+              </div>
+              <div className="admin-review-filter-grid">
+                <label>
+                  <span>Start date</span>
+                  <input type="date" value={dateStart} onChange={(event) => setDateStart(event.target.value)} />
+                </label>
+                <label>
+                  <span>End date</span>
+                  <input type="date" value={dateEnd} onChange={(event) => setDateEnd(event.target.value)} />
+                </label>
+                <label>
+                  <span>Status</span>
+                  <select value={status} onChange={(event) => setStatus(event.target.value as GeneratedContentStatus | "all")}>
+                    <option value="DRAFT">Draft</option>
+                    <option value="REVIEWED">Reviewed</option>
+                    <option value="LIVE">Live</option>
+                    <option value="ARCHIVED">Archived</option>
+                    <option value="ERROR">Error</option>
+                    <option value="all">All</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Person or subject</span>
+                  <input value={personQuery} onChange={(event) => setPersonQuery(event.target.value)} placeholder="User, chart, content key" />
+                </label>
+                <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
+                  <RefreshCw size={16} aria-hidden="true" />
+                  Apply Filters
+                </button>
+              </div>
+            </section>
+
+            <section className="admin-review-tabs" role="tablist" aria-label="Review surfaces">
+              {(Object.keys(reviewSurfaceLabels) as AdminReviewSurface[]).map((surfaceKey) => (
+                <button
+                  type="button"
+                  key={surfaceKey}
+                  className={reviewSurface === surfaceKey ? "active" : ""}
+                  onClick={() => void loadReviewWorkspace(surfaceKey)}
+                  role="tab"
+                  aria-selected={reviewSurface === surfaceKey}
+                >
+                  <span>{reviewSurfaceLabels[surfaceKey].label}</span>
+                  <small>{surfaceKey === reviewSurface ? allReviewRecords.length : ""}</small>
+                </button>
+              ))}
+            </section>
+
             <section className="admin-metrics" aria-label="Content status summary">
               <article>
-                <span>Total rows</span>
-                <strong>{totalMetricRows}</strong>
-                <small>{surfaceScopeLabel(surface)}</small>
+                <span>Review rows</span>
+                <strong>{allReviewRecords.length}</strong>
+                <small>{adminDateLabel(dateStart)} - {adminDateLabel(dateEnd)}</small>
               </article>
               <article>
                 <span>Drafts</span>
@@ -1919,203 +2233,147 @@ export function GeneratedContentAdminDashboard() {
               </article>
             </section>
 
-            <section className="admin-workbench">
-          <aside className="admin-list-panel" aria-label="Generated content list">
-            <div className="admin-panel-header">
-              <div>
-                <p className="admin-eyebrow">Review queue</p>
-                <h2>Content Rows</h2>
-              </div>
-              <BarChart3 size={18} aria-hidden="true" />
-            </div>
-
-            <div className="admin-controls">
-              <label>
-                <span>Surface</span>
-                <select value={surface} onChange={(event) => {
-                  const nextSurface = event.target.value as GeneratedContentSurfaceFilter;
-                  setSurface(nextSurface);
-                  setSelectedId(null);
-                  setDraft(createAdminDraft(nextSurface));
-                  void loadRows(status, nextSurface);
-                }}>
-                  <option value="all">{surfaceOptionLabel("all")}</option>
-                  <option value="sky">{surfaceOptionLabel("sky")}</option>
-                  <option value="you">{surfaceOptionLabel("you")}</option>
-                  <option value="natal">{surfaceOptionLabel("natal")}</option>
-                  <option value="synastry">{surfaceOptionLabel("synastry")}</option>
-                  <option value="composite">{surfaceOptionLabel("composite")}</option>
-                  <option value="relationship">{surfaceOptionLabel("relationship")}</option>
-                </select>
-              </label>
-              <label>
-                <span>Status</span>
-                <select value={status} onChange={(event) => {
-                  const nextStatus = event.target.value as GeneratedContentStatus | "all";
-                  setStatus(nextStatus);
-                  void loadRows(nextStatus, surface);
-                }}>
-                  <option value="DRAFT">Draft</option>
-                  <option value="REVIEWED">Reviewed</option>
-                  <option value="LIVE">Live</option>
-                  <option value="ARCHIVED">Archived</option>
-                  <option value="ERROR">Error</option>
-                  <option value="all">All</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="admin-row-list">
-              {rows.map((row) => (
-                <button
-                  type="button"
-                  key={row.id}
-                  className={`admin-row-card ${row.id === selectedId ? "selected" : ""}`}
-                  onClick={() => selectRow(row)}
-                >
-                  <span className={`admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
-                  <strong>{row.headline || row.content_key}</strong>
-                  <small>{row.surface} / {row.mode} / {adminDateLabel(row.target_date)}</small>
-                </button>
-              ))}
-              {rows.length === 0 && (
-                <p className="admin-empty">No rows match this filter yet.</p>
-              )}
-            </div>
-          </aside>
-
-          <section className="admin-editor-panel" aria-label="Generated content editor">
-            <div className="admin-editor-toolbar">
-              <div>
-                <p className="admin-eyebrow">{selectedRow ? "Editing existing row" : "Creating new row"}</p>
-                <h2>{draft.headline || draft.contentKey}</h2>
-                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}{personalizedContentSurfaces.has(draft.surface) ? " / content test" : ""}</small>
-              </div>
-              <div className="admin-toolbar-actions">
-                <button type="button" onClick={() => setIsPreviewOpen(true)}>
-                  <Eye size={16} aria-hidden="true" />
-                  Preview
-                </button>
-                <button type="button" onClick={() => void loadFactsForDraft()} disabled={isLoading || !canUseApi}>
-                  <RefreshCw size={16} aria-hidden="true" />
-                  Load Facts
-                </button>
-                <button type="button" onClick={generateDraft} disabled={isLoading || !canUseApi}>
-                  <Sparkles size={16} aria-hidden="true" />
-                  Generate
-                </button>
-                <button type="button" onClick={() => void saveDraft()} disabled={isLoading || !canUseApi}>
-                  <Save size={16} aria-hidden="true" />
-                  Save
-                </button>
-                <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !draft.id}>
-                  <Check size={16} aria-hidden="true" />
-                  Reviewed
-                </button>
-                <button className="admin-live-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !draft.id || personalizedContentSurfaces.has(draft.surface)} title={personalizedContentSurfaces.has(draft.surface) ? "Personalized content test rows are not publishable as global content." : undefined}>
-                  <Check size={16} aria-hidden="true" />
-                  Publish
-                </button>
-                <button type="button" onClick={() => void saveDraft("ARCHIVED")} disabled={isLoading || !draft.id}>
-                  <Archive size={16} aria-hidden="true" />
-                  Archive
-                </button>
-                <button className="admin-danger-button" type="button" onClick={() => void deleteDraft()} disabled={isLoading || !draft.id}>
-                  <Trash2 size={16} aria-hidden="true" />
-                  Delete
-                </button>
-              </div>
-            </div>
-
-            <div className="admin-editor-grid">
-              <section className="admin-edit-card">
-                <div className="admin-form-grid">
-                  <label>
-                    <span>Content key</span>
-                    <input value={draft.contentKey} onChange={(event) => updateDraft("contentKey", event.target.value)} />
-                  </label>
-                  <label>
-                    <span>Surface</span>
-                    <select value={draft.surface} onChange={(event) => updateDraft("surface", event.target.value as GeneratedContentSurface)}>
-                      <option value="sky">{surfaceOptionLabel("sky")}</option>
-                      <option value="you">{surfaceOptionLabel("you")}</option>
-                      <option value="natal">{surfaceOptionLabel("natal")}</option>
-                      <option value="synastry">{surfaceOptionLabel("synastry")}</option>
-                      <option value="composite">{surfaceOptionLabel("composite")}</option>
-                      <option value="relationship">{surfaceOptionLabel("relationship")}</option>
-                    </select>
-                  </label>
-                  <label>
-                    <span>Mode</span>
-                    <select value={draft.mode} onChange={(event) => updateDraft("mode", event.target.value as GeneratedContentMode)}>
-                      <option value="feed">Feed</option>
-                      <option value="in_depth">In-depth</option>
-                      <option value="article">Article</option>
-                    </select>
-                  </label>
-                  <label>
-                    <span>Status</span>
-                    <select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as GeneratedContentStatus)}>
-                      <option value="DRAFT">Draft</option>
-                      <option value="REVIEWED">Reviewed</option>
-                      <option value="LIVE">Live</option>
-                      <option value="ARCHIVED">Archived</option>
-                      <option value="ERROR">Error</option>
-                    </select>
-                  </label>
-                  <label>
-                    <span>Event type</span>
-                    <input value={draft.eventType} onChange={(event) => updateDraft("eventType", event.target.value)} />
-                  </label>
-                  <label>
-                    <span>Target date</span>
-                    <input type="date" value={draft.targetDate} onChange={(event) => updateDraft("targetDate", event.target.value)} />
-                  </label>
+            <section className="admin-workbench admin-review-workspace">
+              <aside className="admin-list-panel" aria-label="Generated content records">
+                <div className="admin-panel-header">
+                  <div>
+                    <p className="admin-eyebrow">Record list</p>
+                    <h2>Audit Queue</h2>
+                  </div>
+                  <BarChart3 size={18} aria-hidden="true" />
                 </div>
 
-                <label className="admin-field-wide">
-                  <span>Headline</span>
-                  <input value={draft.headline} onChange={(event) => updateDraft("headline", event.target.value)} />
-                </label>
-                <label className="admin-field-wide">
-                  <span>Summary</span>
-                  <textarea value={draft.summary} onChange={(event) => updateDraft("summary", event.target.value)} rows={3} />
-                </label>
-                <label className="admin-field-wide">
-                  <span>Body</span>
-                  <textarea value={draft.body} onChange={(event) => updateDraft("body", event.target.value)} rows={12} />
-                </label>
-                <label className="admin-field-wide">
-                  <span>Reviewer notes / extra voice notes</span>
-                  <textarea value={draft.reviewerNotes} onChange={(event) => updateDraft("reviewerNotes", event.target.value)} rows={3} />
-                </label>
-              </section>
+                <div className="admin-row-list">
+                  {allReviewRecords.map((record) => (
+                    <button
+                      type="button"
+                      key={record.id}
+                      className={`admin-row-card ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
+                      onClick={() => {
+                        setSelectedReviewId(record.id);
+                        if (record.rawGlobalRow) {
+                          setSelectedId(record.rawGlobalRow.id);
+                          setDraft(adminDraftFromRow(record.rawGlobalRow));
+                          void loadRowDetails(record.rawGlobalRow.id);
+                        }
+                      }}
+                    >
+                      <span className={`admin-status status-${record.status.toLowerCase()}`}>{record.status}</span>
+                      <strong>{record.title}</strong>
+                      <small>{record.surface} / {record.mode} / {adminDateLabel(record.targetDate)}</small>
+                      <small>{record.source === "private" ? "User-scoped" : "Shared library"} · {record.eventType || "No event type"}</small>
+                    </button>
+                  ))}
+                  {allReviewRecords.length === 0 && (
+                    <p className="admin-empty">No content records match this review surface and date range yet.</p>
+                  )}
+                </div>
+              </aside>
 
-              <details
-                className="admin-advanced admin-generation-inputs"
-                open={areGenerationInputsOpen}
-                onToggle={(event) => setAreGenerationInputsOpen(event.currentTarget.open)}
-              >
-                <summary>Generation inputs</summary>
-                <label>
-                  <span>Knowledge IDs, comma separated</span>
-                  <input value={draft.knowledgeIds} onChange={(event) => updateDraft("knowledgeIds", event.target.value)} />
-                </label>
-                <label>
-                  <span>Facts JSON</span>
-                  <textarea value={draft.factsJson} onChange={(event) => updateDraft("factsJson", event.target.value)} rows={8} />
-                </label>
-                <label>
-                  <span>Source snapshot JSON</span>
-                  <textarea value={draft.sourceSnapshotJson} onChange={(event) => updateDraft("sourceSnapshotJson", event.target.value)} rows={8} />
-                </label>
-                <label>
-                  <span>Sections JSON</span>
-                  <textarea value={draft.sectionsJson} onChange={(event) => updateDraft("sectionsJson", event.target.value)} rows={6} />
-                </label>
-              </details>
-            </div>
-          </section>
+              <section className="admin-editor-panel admin-review-detail" aria-label="Generated content record detail">
+                {selectedReviewRecord ? (
+                  <>
+                    <div className="admin-editor-toolbar">
+                      <div>
+                        <p className="admin-eyebrow">{selectedReviewRecord.source === "private" ? "User-scoped record" : "Shared content record"}</p>
+                        <h2>{selectedReviewRecord.title}</h2>
+                        <small>{selectedReviewRecord.subtitle}</small>
+                      </div>
+                      <div className="admin-toolbar-actions">
+                        <button type="button" disabled>
+                          <Eye size={16} aria-hidden="true" />
+                          Flag
+                        </button>
+                        <button type="button" disabled>
+                          <Pencil size={16} aria-hidden="true" />
+                          Edit
+                        </button>
+                        <button type="button" disabled>
+                          <Check size={16} aria-hidden="true" />
+                          Approve
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="admin-review-detail-grid">
+                      <section className="admin-review-data-card">
+                        <p className="admin-eyebrow">Astrological data</p>
+                        <dl className="admin-review-fact-list">
+                          <div>
+                            <dt>Surface</dt>
+                            <dd>{generatedContentSurfaceLabels[selectedReviewRecord.surface]}</dd>
+                          </div>
+                          <div>
+                            <dt>Exact / target date</dt>
+                            <dd>{adminDateLabel(selectedReviewRecord.targetDate)}</dd>
+                          </div>
+                          <div>
+                            <dt>Status</dt>
+                            <dd>{selectedReviewRecord.status}</dd>
+                          </div>
+                          <div>
+                            <dt>Event type</dt>
+                            <dd>{selectedReviewRecord.eventType || "Not set"}</dd>
+                          </div>
+                          <div>
+                            <dt>Content key</dt>
+                            <dd>{selectedReviewRecord.contentKey}</dd>
+                          </div>
+                          {selectedReviewRecord.userId ? (
+                            <div>
+                              <dt>User</dt>
+                              <dd>{selectedReviewRecord.userId}</dd>
+                            </div>
+                          ) : null}
+                          {selectedReviewRecord.subjectId ? (
+                            <div>
+                              <dt>Subject</dt>
+                              <dd>{selectedReviewRecord.subjectType}: {selectedReviewRecord.subjectId}</dd>
+                            </div>
+                          ) : null}
+                          {shallowFactRows(selectedReviewRecord.facts).map((fact) => (
+                            <div key={fact.label}>
+                              <dt>{fact.label}</dt>
+                              <dd>{fact.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </section>
+
+                      <section className="admin-review-copy-card">
+                        <p className="admin-eyebrow">Reader-facing text</p>
+                        <h3>{selectedReviewRecord.title}</h3>
+                        <p className="admin-review-summary">{compactAdminText(selectedReviewRecord.summary)}</p>
+                        {selectedReviewRecord.body ? <p>{selectedReviewRecord.body}</p> : null}
+                        {selectedReviewRecord.sections.map((section) => (
+                          <article key={section.heading}>
+                            <h4>{section.heading}</h4>
+                            <p>{section.body}</p>
+                          </article>
+                        ))}
+                      </section>
+                    </div>
+
+                    <details className="admin-advanced admin-review-json">
+                      <summary>Full record metadata</summary>
+                      <pre>{JSON.stringify({
+                        facts: selectedReviewRecord.facts,
+                        sourceSnapshot: selectedReviewRecord.sourceSnapshot,
+                        reviewerNotes: selectedReviewRecord.reviewerNotes,
+                        provider: selectedReviewRecord.provider,
+                        model: selectedReviewRecord.model,
+                        updatedAt: selectedReviewRecord.updatedAt
+                      }, null, 2)}</pre>
+                    </details>
+                  </>
+                ) : (
+                  <div className="admin-review-empty-detail">
+                    <p className="admin-eyebrow">No record selected</p>
+                    <h2>Choose a content row.</h2>
+                    <p>Use the date range and review surface filters to load the person and time window you want to audit.</p>
+                  </div>
+                )}
+              </section>
             </section>
           </>
         )}

@@ -52,6 +52,8 @@ async function listUserGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/user-generated-content", "http://localhost");
   const status = requestUrl.searchParams.get("status") as UserGeneratedContentStatus | "all" | null;
   const surface = requestUrl.searchParams.get("surface") as UserGeneratedContentSurface | "all" | null;
+  const startDate = requestUrl.searchParams.get("startDate");
+  const endDate = requestUrl.searchParams.get("endDate");
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 100);
   const params = new URLSearchParams({
     select: [
@@ -74,7 +76,7 @@ async function listUserGeneratedContent(req: IncomingMessage) {
       "updated_at",
       "created_at"
     ].join(","),
-    order: "updated_at.desc",
+    order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: String(limit)
   });
 
@@ -84,6 +86,14 @@ async function listUserGeneratedContent(req: IncomingMessage) {
 
   if (surface && surface !== "all") {
     params.set("surface", `eq.${surface}`);
+  }
+
+  if (startDate) {
+    params.set("target_date", `gte.${startDate}`);
+  }
+
+  if (endDate) {
+    params.append("target_date", `lte.${endDate}`);
   }
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, {
