@@ -915,18 +915,194 @@ function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewReco
   };
 }
 
+const skyBodyClauses: Record<string, string> = {
+  Sun: "your identity and vitality",
+  Moon: "your feelings and safety",
+  Mercury: "your thinking and communication",
+  Venus: "what you want and how you connect",
+  Mars: "your drive and action",
+  Jupiter: "your growth and appetite for risk",
+  Saturn: "your need for structure and commitment",
+  Uranus: "your need for change and freedom",
+  Neptune: "your imagination and sensitivity",
+  Pluto: "control and what you can't release",
+  Chiron: "the tender place that wants healing",
+  "True Node": "your direction and what you're moving toward",
+  "North Node": "your direction and what you're moving toward"
+};
+
+const aspectVerbs: Record<string, string> = {
+  trine: "trines",
+  sextile: "sextiles",
+  square: "squares",
+  opposition: "opposes",
+  conjunction: "conjoins"
+};
+
+const bodyActionLines: Record<string, string> = {
+  Sun: "Good window to make the choice that actually reflects who you are.",
+  Moon: "Good window to name what you feel and choose what steadies you.",
+  Mercury: "Good day to make the call or send the thing you've been sitting on.",
+  Venus: "Good window to ask for what feels good, fair, and connective.",
+  Mars: "Good window to act on the decision instead of circling it.",
+  Jupiter: "Good window to take the growth step without making it bigger than it needs to be.",
+  Saturn: "Good window to commit to something or say the serious thing out loud.",
+  Uranus: "Good window to change the stale pattern without blowing everything up.",
+  Neptune: "Good window to listen to the feeling, then give it one clear shape.",
+  Pluto: "Good window to be honest about what you are gripping and loosen one finger.",
+  Chiron: "Good window to treat the sore spot with more skill than shame.",
+  "True Node": "Good window to choose the next right direction, even if it is small.",
+  "North Node": "Good window to choose the next right direction, even if it is small."
+};
+
+const bodyWatchLines: Record<string, string> = {
+  Sun: "Watch for making it about pride when it needs to be about truth.",
+  Moon: "Watch for reacting from fear before you know what you actually need.",
+  Mercury: "Watch for saying the fast thing before you have the clean thought.",
+  Venus: "Watch for smoothing things over instead of asking for what you want.",
+  Mars: "Watch for forcing movement just because sitting still feels uncomfortable.",
+  Jupiter: "Watch for overpromising because the bigger version feels more exciting.",
+  Saturn: "Watch for turning a real responsibility into a wall.",
+  Uranus: "Watch for needing freedom so badly that you skip the consequence.",
+  Neptune: "Watch for confusing a feeling with a fact.",
+  Pluto: "Watch for the urge to control what needs to be trusted or released.",
+  Chiron: "Watch for protecting the wound so tightly that nothing can heal.",
+  "True Node": "Watch for avoiding the direction that is already asking for you.",
+  "North Node": "Watch for avoiding the direction that is already asking for you."
+};
+
+function capitalizeSentence(value: string) {
+  return value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : value;
+}
+
+function factString(record: AdminReviewRecord, keys: string[]) {
+  for (const key of keys) {
+    const value = record.facts?.[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function skyBodyClause(body: string) {
+  return skyBodyClauses[body] ?? body.toLowerCase();
+}
+
+function skyBodyAction(body: string) {
+  return bodyActionLines[body] ?? "Good window to use the opening while it is available.";
+}
+
+function skyBodyWatch(body: string) {
+  return bodyWatchLines[body] ?? "Watch for turning a simple signal into a bigger story than it needs to be.";
+}
+
+function formatSkyBodyPosition(body: string, sign: string) {
+  const bodyName = body === "Sun" || body === "Moon" || body === "True Node" || body === "North Node" ? `the ${body}` : body;
+
+  return sign ? `${bodyName} in ${sign}` : bodyName;
+}
+
+function skyAspectDirectionLabel(direction: string) {
+  return direction.toLowerCase() === "separating" ? "separating" : "forming";
+}
+
+function skyAspectToneClause(body1: string, aspect: string, body2: string) {
+  const first = skyBodyClause(body1);
+  const second = skyBodyClause(body2);
+
+  if (aspect === "trine" || aspect === "sextile") {
+    return `${capitalizeSentence(first)} and ${second} are on the same side today`;
+  }
+
+  if (aspect === "opposition") {
+    return `${capitalizeSentence(first)} and ${second} are pulling against each other`;
+  }
+
+  if (aspect === "square") {
+    return `${capitalizeSentence(first)} and ${second} are pressing on each other`;
+  }
+
+  if (aspect === "conjunction") {
+    return `${capitalizeSentence(first)} and ${second} are moving through the same doorway today`;
+  }
+
+  return `${capitalizeSentence(first)} and ${second} are interacting today`;
+}
+
+function skyAspectActionLine(body1: string, aspect: string, body2: string) {
+  const pairKey = `${body1}|${aspect}|${body2}`;
+  const reversePairKey = `${body2}|${aspect}|${body1}`;
+  const specificLines: Record<string, string> = {
+    "Moon|trine|Saturn": "Good window to commit to something or say the serious thing out loud.",
+    "Saturn|trine|Moon": "Good window to commit to something or say the serious thing out loud.",
+    "Mercury|sextile|Mars": "Good day to make the call or send the thing you've been sitting on.",
+    "Mars|sextile|Mercury": "Good day to make the call or send the thing you've been sitting on.",
+    "Venus|opposition|Pluto": "Watch for the urge to control a connection instead of trusting it.",
+    "Pluto|opposition|Venus": "Watch for the urge to control a connection instead of trusting it."
+  };
+
+  if (specificLines[pairKey] || specificLines[reversePairKey]) {
+    return specificLines[pairKey] ?? specificLines[reversePairKey];
+  }
+
+  if (aspect === "trine" || aspect === "sextile") {
+    return skyBodyAction(body1);
+  }
+
+  if (aspect === "square" || aspect === "opposition") {
+    return skyBodyWatch(body2);
+  }
+
+  if (aspect === "conjunction") {
+    return `${skyBodyAction(body1)} Just do not let one feeling become the whole room.`;
+  }
+
+  return skyBodyAction(body1);
+}
+
+function skyAspectFallbackCopy(record: AdminReviewRecord) {
+  const body1 = factString(record, ["from", "body1", "planetA", "transitPlanet"]) || record.title.split(/\s+/)[0] || "This transit";
+  const body2 = factString(record, ["to", "body2", "planetB", "natalPoint"]) || record.title.split(/\s+/).at(-1) || "another point";
+  const aspect = factString(record, ["aspect", "type"]) || record.title.toLowerCase().match(/\b(trine|sextile|square|opposition|conjunction)\b/)?.[1] || "contacts";
+  const sign1 = factString(record, ["fromSign", "sign1", "transitSign"]);
+  const sign2 = factString(record, ["toSign", "sign2", "natalSign"]);
+  const direction = skyAspectDirectionLabel(factString(record, ["direction"]));
+  const date = adminDateLabel(factString(record, ["exactDate", "targetDate"]) || record.targetDate);
+  const toneClause = skyAspectToneClause(body1, aspect, body2);
+  const aspectVerb = aspectVerbs[aspect] ?? "contacts";
+  const mechanicalLine = `${capitalizeSentence(formatSkyBodyPosition(body1, sign1))} ${aspectVerb} ${formatSkyBodyPosition(body2, sign2)}, ${direction} through ${date}.`;
+  const actionLine = skyAspectActionLine(body1, aspect, body2);
+
+  return `${toneClause}. ${mechanicalLine} ${actionLine}`;
+}
+
+function shouldUseDeterministicPlaceholder(record: AdminReviewRecord) {
+  return record.source === "calculated" && !record.rawGlobalRow;
+}
+
 function fallbackReaderTextForReview(record: AdminReviewRecord) {
-  const title = record.title.trim() || record.contentKey;
-  const surface = generatedContentSurfaceLabels[record.surface].toLowerCase();
+  if (record.surface === "sky" && shouldUseDeterministicPlaceholder(record)) {
+    return skyAspectFallbackCopy(record);
+  }
 
   if (record.summary.trim()) {
     return record.summary.trim();
   }
 
+  const title = record.title.trim() || record.contentKey;
+  const surface = generatedContentSurfaceLabels[record.surface].toLowerCase();
+
   return `${title} is active in the selected ${surface} window.`;
 }
 
 function readerFacingTextForReview(record: AdminReviewRecord) {
+  if (shouldUseDeterministicPlaceholder(record)) {
+    return fallbackReaderTextForReview(record);
+  }
+
   return record.body.trim() || record.summary.trim() || fallbackReaderTextForReview(record);
 }
 
@@ -1531,8 +1707,14 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
+    const fallbackText = fallbackReaderTextForReview(record);
+    setEditingReviewId(record.id);
+    setReviewEditTitle(record.title);
+    setReviewEditSummary(fallbackText.split(/\n+/)[0]?.trim() ?? fallbackText);
+    setReviewEditBody(fallbackText);
     setIsGeneratingReviewDraft(true);
     setIsLoading(true);
+    setMessage("Generating a draft. The deterministic placeholder is loaded while the provider responds.");
     try {
       const payload = await adminJsonRequest<{
         ok: boolean;
@@ -1606,7 +1788,7 @@ export function GeneratedContentAdminDashboard() {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
-      setMessage(adminErrorMessage(error, "Could not generate a review draft."));
+      setMessage(`${adminErrorMessage(error, "Could not generate a review draft.")} The deterministic placeholder is loaded for editing.`);
     } finally {
       setIsGeneratingReviewDraft(false);
       setIsLoading(false);
