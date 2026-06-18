@@ -183,7 +183,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "templates") {
-    return "Define the voice layer OpenAI should use for each astrology content family before drafts are generated.";
+    return "Define the voice layer the generator should use for each astrology content family before drafts are generated.";
   }
 
   if (activePage === "hooks") {
@@ -1122,7 +1122,7 @@ export function GeneratedContentAdminDashboard() {
         }));
       }
 
-      setMessage("Generated a new OpenAI draft.");
+      setMessage("Generated a new draft.");
       await loadRows();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not generate content.");
@@ -1168,7 +1168,7 @@ export function GeneratedContentAdminDashboard() {
         setDraft(adminDraftFromRow(firstRow));
       }
       setMessage(nextSurface === "sky" || nextSurface === "all"
-        ? `Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for OpenAI copy.`
+        ? `Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for AI copy.`
         : `Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} sample rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
@@ -1535,7 +1535,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Generation controls</p>
                 <h2>{voiceTemplateLabels[activeTemplateSurface]}</h2>
-                <p>Set the reusable instructions OpenAI should follow when generating this type of astrology content. Save here first, then go back to Content Review and generate drafts.</p>
+                <p>Set the reusable instructions the generator should follow when creating this type of astrology content. Save here first, then go back to Content Review and generate drafts.</p>
               </div>
               <div className="admin-template-actions">
                 <button type="button" onClick={saveVoiceTemplates}>
@@ -1617,7 +1617,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
 
             <p className="admin-template-note">
-              These templates are saved in this browser for now. They shape the OpenAI draft before review, while the knowledge base and current astrology facts keep the interpretation grounded.
+              These templates are saved in this browser for now. They shape the AI draft before review, while the knowledge base and current astrology facts keep the interpretation grounded.
             </p>
           </section>
         ) : (

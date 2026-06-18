@@ -167,7 +167,76 @@ type FrameworkSnapshot = {
 const promptVersion = "tldr-astro-v4";
 const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
-const defaultModel = "gpt-4.1-mini";
+const defaultOpenAiModel = "gpt-4.1-mini";
+const defaultClaudeModel = "claude-sonnet-4-6";
+const generatedContentSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "sceneLock", "astrologyDrilldown"],
+  properties: {
+    headline: { type: "string" },
+    tldr: { type: "string" },
+    summary: { type: "string" },
+    body: { type: "string" },
+    action: { type: "string" },
+    timing: { type: "string" },
+    sections: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["heading", "body"],
+        properties: {
+          heading: { type: "string" },
+          body: { type: "string" }
+        }
+      }
+    },
+    sceneLock: {
+      type: "object",
+      additionalProperties: false,
+      required: ["sceneType", "sceneArena", "currentPressure", "personalSensitivity", "chosenScene", "excludedMeanings"],
+      properties: {
+        sceneType: {
+          type: "string",
+          enum: ["internal_state", "body_signal", "decision_point", "task_friction", "conversation", "relationship_interaction"]
+        },
+        sceneArena: { type: "string" },
+        currentPressure: { type: "string" },
+        personalSensitivity: { type: "string" },
+        chosenScene: { type: "string" },
+        excludedMeanings: {
+          type: "array",
+          items: { type: "string" }
+        }
+      }
+    },
+    astrologyDrilldown: {
+      type: "object",
+      additionalProperties: false,
+      required: ["title", "summary", "factors", "whyThisScene", "timingNote"],
+      properties: {
+        title: { type: "string" },
+        summary: { type: "string" },
+        factors: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["label", "technicalFact", "plainMeaning"],
+            properties: {
+              label: { type: "string" },
+              technicalFact: { type: "string" },
+              plainMeaning: { type: "string" }
+            }
+          }
+        },
+        whyThisScene: { type: "string" },
+        timingNote: { type: "string" }
+      }
+    }
+  }
+} as const;
 const bannedUserFacingPhrases = [
   "same sky, different room",
   "not a permanent trait",
@@ -1739,7 +1808,7 @@ function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateC
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
-    throw new Error("OpenAI response did not include headline, summary, and body.");
+    throw new Error("Model response did not include headline, summary, and body.");
   }
 
   const content = {
@@ -1794,7 +1863,7 @@ function responseOutputText(payload: {
 
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
   const apiKey = requireEnv("OPENAI_API_KEY");
-  const model = process.env.OPENAI_MODEL ?? defaultModel;
+  const model = process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const lockedHeadline = factualHeadlineFor(input);
   const approvedExamples = await loadApprovedExamples(input);
   let qualityFeedback = "";
@@ -1815,74 +1884,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
             type: "json_schema",
             name: "tldr_astro_generated_content",
             strict: true,
-            schema: {
-              type: "object",
-              additionalProperties: false,
-              required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "sceneLock", "astrologyDrilldown"],
-              properties: {
-                headline: { type: "string" },
-                tldr: { type: "string" },
-                summary: { type: "string" },
-                body: { type: "string" },
-                action: { type: "string" },
-                timing: { type: "string" },
-                sections: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    required: ["heading", "body"],
-                    properties: {
-                      heading: { type: "string" },
-                      body: { type: "string" }
-                    }
-                  }
-                },
-                sceneLock: {
-                  type: "object",
-                  additionalProperties: false,
-                  required: ["sceneType", "sceneArena", "currentPressure", "personalSensitivity", "chosenScene", "excludedMeanings"],
-                  properties: {
-                    sceneType: {
-                      type: "string",
-                      enum: ["internal_state", "body_signal", "decision_point", "task_friction", "conversation", "relationship_interaction"]
-                    },
-                    sceneArena: { type: "string" },
-                    currentPressure: { type: "string" },
-                    personalSensitivity: { type: "string" },
-                    chosenScene: { type: "string" },
-                    excludedMeanings: {
-                      type: "array",
-                      items: { type: "string" }
-                    }
-                  }
-                },
-                astrologyDrilldown: {
-                  type: "object",
-                  additionalProperties: false,
-                  required: ["title", "summary", "factors", "whyThisScene", "timingNote"],
-                  properties: {
-                    title: { type: "string" },
-                    summary: { type: "string" },
-                    factors: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        additionalProperties: false,
-                        required: ["label", "technicalFact", "plainMeaning"],
-                        properties: {
-                          label: { type: "string" },
-                          technicalFact: { type: "string" },
-                          plainMeaning: { type: "string" }
-                        }
-                      }
-                    },
-                    whyThisScene: { type: "string" },
-                    timingNote: { type: "string" }
-                  }
-                }
-              }
-            }
+            schema: generatedContentSchema
           }
         }
       })
@@ -1925,6 +1927,116 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   }
 
   throw lastError ?? new Error("Generated content failed quality gates.");
+}
+
+function claudeToolInput(payload: {
+  content?: Array<{
+    type?: string;
+    name?: string;
+    input?: unknown;
+  }>;
+}) {
+  return payload.content?.find((content) => (
+    content.type === "tool_use" &&
+    content.name === "tldr_astro_generated_content" &&
+    content.input
+  ))?.input;
+}
+
+export async function generateWithClaude(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  const apiKey = requireEnv("ANTHROPIC_API_KEY");
+  const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
+  const lockedHeadline = factualHeadlineFor(input);
+  const approvedExamples = await loadApprovedExamples(input);
+  let qualityFeedback = "";
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 5000,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: buildPrompt(input, approvedExamples, qualityFeedback)
+              }
+            ]
+          }
+        ],
+        tools: [
+          {
+            name: "tldr_astro_generated_content",
+            description: "Return the final TLDR Astro generated content draft.",
+            input_schema: generatedContentSchema
+          }
+        ],
+        tool_choice: {
+          type: "tool",
+          name: "tldr_astro_generated_content"
+        }
+      })
+    });
+
+    const payload = await response.json() as {
+      id?: string;
+      content?: Array<{
+        type?: string;
+        name?: string;
+        input?: unknown;
+      }>;
+      error?: { message?: string };
+    };
+
+    if (!response.ok) {
+      throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+    }
+
+    const toolInput = claudeToolInput(payload);
+
+    if (!toolInput) {
+      throw new Error("Claude response did not include generated content.");
+    }
+
+    try {
+      return {
+        ...parseResponseJson(JSON.stringify(toolInput), lockedHeadline || "", input),
+        responseId: payload.id,
+        model
+      };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
+      qualityFeedback = [
+        lastError.message,
+        "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
+      ].join("\n");
+    }
+  }
+
+  throw lastError ?? new Error("Generated content failed quality gates.");
+}
+
+export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  const provider = process.env.CONTENT_GENERATION_PROVIDER?.toLowerCase() ?? "openai";
+
+  if (provider === "claude" || provider === "anthropic") {
+    return generateWithClaude(input);
+  }
+
+  if (provider === "openai") {
+    return generateWithOpenAI(input);
+  }
+
+  throw new Error(`Unsupported CONTENT_GENERATION_PROVIDER '${provider}'. Use 'openai' or 'claude'.`);
 }
 
 export async function saveGeneratedInterpretation(input: GenerateContentInput, generated: StoredGeneratedContent) {

@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
-  generateWithOpenAI,
+  generateContent,
   saveGeneratedInterpretation,
   type GenerateContentInput
 } from "./_lib/content-generation.js";
@@ -44,7 +44,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const input = await readJsonBody(req);
-    const generated = await generateWithOpenAI(input);
+    const generated = await generateContent(input);
     const saved = await saveGeneratedInterpretation(input, generated);
 
     sendJson(res, 200, {
