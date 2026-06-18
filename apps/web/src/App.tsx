@@ -9228,7 +9228,7 @@ function ManualChartsPanel({
     function handlePointerDown(event: PointerEvent) {
       const target = event.target;
 
-      if (target instanceof Element && target.closest(".manual-chart-actions")) {
+      if (target instanceof Element && target.closest(".manual-chart-actions, .manual-chart-overflow-menu")) {
         return;
       }
 
