@@ -41,6 +41,7 @@ import {
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
+import type { PlacementHouseInsight } from "./components/charts/PlacementRows";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -875,6 +876,46 @@ const houseLifeAreas: Record<number, string> = {
   10: "career, visibility, reputation, and calling",
   11: "friends, networks, hopes, and belonging",
   12: "rest, privacy, retreat, and hidden pressure"
+};
+const naturalHouseSigns: Record<number, string> = {
+  1: "Aries",
+  2: "Taurus",
+  3: "Gemini",
+  4: "Cancer",
+  5: "Leo",
+  6: "Virgo",
+  7: "Libra",
+  8: "Scorpio",
+  9: "Sagittarius",
+  10: "Capricorn",
+  11: "Aquarius",
+  12: "Pisces"
+};
+const naturalHouseLensBodies: Record<number, string> = {
+  1: "The 1st house makes this placement visible through identity, instinct, body language, and the way life is met head-on.",
+  2: "The 2nd house makes this placement practical. It moves through money, resources, self-worth, appetite, and what feels stable enough to keep.",
+  3: "The 3rd house makes this placement immediate and verbal. It moves through conversation, learning, siblings, local movement, and daily perception.",
+  4: "The 4th house makes this placement private and rooted. It moves through home, family memory, emotional foundation, and what feels safe underneath everything else.",
+  5: "The 5th house makes this placement expressive. It moves through pleasure, romance, creativity, children, play, and the desire to be seen.",
+  6: "The 6th house makes this placement functional. It moves through routines, work, health, service, maintenance, and the small habits that shape daily life.",
+  7: "The 7th house makes this placement relational. It moves through partners, mirrors, agreements, attraction, conflict, and the people met face to face.",
+  8: "The 8th house gives this placement a Scorpio-like intensity. It moves through intimacy, taboo, trust, shared power, secrecy, risk, and the desire to know what is underneath.",
+  9: "The 9th house makes this placement seek meaning. It moves through belief, study, travel, teaching, publishing, and the bigger frame that explains experience.",
+  10: "The 10th house makes this placement public and directional. It moves through career, reputation, authority, visibility, and the work of becoming known.",
+  11: "The 11th house makes this placement collective. It moves through friends, networks, audience, collaboration, hopes, and the future a person wants to belong to.",
+  12: "The 12th house makes this placement porous and private. It moves through solitude, dreams, retreat, hidden pressure, grief, imagination, and what works behind the scenes."
+};
+const planetHouseThreadVerbs: Record<string, string> = {
+  Sun: "identity and vitality",
+  Moon: "emotional needs and memory",
+  Mercury: "thinking and communication",
+  Venus: "desire, attraction, and values",
+  Mars: "drive, conflict, and action",
+  Jupiter: "growth, faith, and appetite",
+  Saturn: "responsibility, limits, and commitment",
+  Uranus: "change, disruption, and individuation",
+  Neptune: "dreams, longing, and imagination",
+  Pluto: "power, fear, and transformation"
 };
 const lifeAreaFocusOptions: Array<{
   value: LifeAreaFocus;
@@ -3174,6 +3215,53 @@ function wholeSignHouseForSign(sign: string, ascendant: string) {
 
 function chartRulerForAscendant(ascendant: string) {
   return traditionalSignRulers[ascendant] ?? "";
+}
+
+function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySnapshot | null): PlacementHouseInsight | null {
+  if (!position.house || position.planet === "Ascendant") {
+    return null;
+  }
+
+  const house = position.house;
+  const houseLabel = `${ordinalHouse(house)} House`;
+  const naturalSign = naturalHouseSigns[house] ?? "";
+  const naturalLensLabel = naturalSign ? `${naturalSign} lens` : `${houseLabel} lens`;
+  const lensBody = naturalHouseLensBodies[house] ?? `This house brings ${houseLifeAreas[house] ?? "a specific life area"} into the placement.`;
+
+  if (!natalSky?.ascendant) {
+    return {
+      houseLabel,
+      naturalLensLabel,
+      lensBody,
+      rulerBody: "Add a birth time to clarify the sign on this house and the ruler that carries this thread through the chart."
+    };
+  }
+
+  const houseSign = signAtWholeSignHouse(natalSky.ascendant, house);
+  const houseRuler = traditionalSignRulers[houseSign] ?? "";
+  const rulerPosition = houseRuler
+    ? natalSky.positions.find((candidate) => candidate.planet === houseRuler)
+    : null;
+  const planetTopic = planetHouseThreadVerbs[position.planet] ?? position.planet.toLowerCase();
+
+  if (!houseSign || !houseRuler) {
+    return {
+      houseLabel,
+      naturalLensLabel,
+      lensBody
+    };
+  }
+
+  const rulerBody = rulerPosition
+    ? `Your ${houseLabel.toLowerCase()} begins in ${houseSign}, so ${houseRuler} carries the thread. ${houseRuler} in ${rulerPosition.sign}${rulerPosition.house ? ` in the ${ordinalHouse(rulerPosition.house)} house` : ""} shows where this ${planetTopic} terrain gets processed.`
+    : `Your ${houseLabel.toLowerCase()} begins in ${houseSign}, so ${houseRuler} carries the thread. Its placement shows where this ${planetTopic} terrain gets processed.`;
+
+  return {
+    houseLabel,
+    naturalLensLabel,
+    lensBody,
+    rulerBody
+  };
 }
 
 function timingContextForChart({
@@ -9085,6 +9173,7 @@ function ProfileView({
       dignity={natalSun ? placementDignity(natalSun) : null}
       glyph="☉"
       house={natalSun?.house ?? null}
+      houseInsight={natalSun ? natalHouseInsightForPosition(natalSun, natalSky) : null}
       pointName="Sun"
       retrograde={natalSun?.motion === "retrograde"}
       title={natalSun ? natalPlacementSignTitle(natalSun) : displaySun ? `Sun in ${displaySun}` : "Sun calculating"}
@@ -9097,6 +9186,7 @@ function ProfileView({
       dignity={natalMoon ? placementDignity(natalMoon) : null}
       glyph="☽"
       house={natalMoon?.house ?? null}
+      houseInsight={natalMoon ? natalHouseInsightForPosition(natalMoon, natalSky) : null}
       pointName="Moon"
       retrograde={natalMoon?.motion === "retrograde"}
       title={natalMoon ? natalPlacementSignTitle(natalMoon) : displayMoon ? `Moon in ${displayMoon}` : "Moon calculating"}
@@ -9119,6 +9209,7 @@ function ProfileView({
       dignity={placementDignity(position)}
       glyph={position.glyph}
       house={position.house}
+      houseInsight={natalHouseInsightForPosition(position, natalSky)}
       key={position.planet}
       pointName={position.planet}
       retrograde={position.motion === "retrograde"}

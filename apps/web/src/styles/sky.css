@@ -544,7 +544,7 @@
   font-family: var(--font-glyph);
   font-size: var(--text-body);
   line-height: 1;
-  box-shadow: 0 0 0 2px var(--card-bg);
+  box-shadow: var(--card-ring-shadow);
 }
 
 .ro-sum-cap {
@@ -827,7 +827,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--card-row-gap);
 }
 
 .sky-lunar-brief {
@@ -838,7 +838,7 @@
 .sky-lunar-pills {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--snapshot-card-gap);
   width: 100%;
 }
 
@@ -848,11 +848,12 @@
   align-items: center;
   min-width: 0;
   min-height: 68px;
-  gap: 13px;
-  padding: 10px 16px;
-  border: 1px solid var(--app-border);
-  border-radius: 18px;
-  background: var(--app-card);
+  gap: var(--card-row-gap);
+  padding: var(--snapshot-card-padding);
+  border: 1px solid var(--card-border);
+  border-radius: var(--snapshot-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .sky-lunar-pill-icon,
@@ -860,10 +861,10 @@
   display: grid;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  border: 1px solid var(--app-border);
+  width: var(--snapshot-icon-size);
+  height: var(--snapshot-icon-size);
+  flex: 0 0 var(--snapshot-icon-size);
+  border: 1px solid var(--card-border);
   border-radius: 50%;
   background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
   color: var(--wheel-glyph);
@@ -1005,11 +1006,11 @@
   align-items: center;
   box-sizing: border-box;
   min-height: 58px;
-  margin-top: 12px;
+  margin-top: var(--snapshot-card-gap);
   padding: 7px 16px 7px 8px;
-  gap: 13px;
+  gap: var(--card-row-gap);
   border: 1px solid var(--card-border);
-  border-radius: 18px;
+  border-radius: var(--snapshot-card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -1031,13 +1032,13 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   min-width: 0;
-  gap: 14px;
+  gap: var(--card-row-gap);
 }
 
 .nl-top h4 {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: var(--inline-gap);
   min-width: 0;
   margin: 0;
   overflow: hidden;

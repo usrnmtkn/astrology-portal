@@ -39,7 +39,7 @@
 
 .friend-compare-customise {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -48,7 +48,7 @@
 .friend-compare-avatar {
   width: 26px;
   height: 26px;
-  font-size: 11px;
+  font-size: var(--type-label-size);
 }
 
 .friend-compare-popover {
@@ -153,7 +153,7 @@
 .friend-compare-list .friend-compare-avatar {
   width: 38px;
   height: 38px;
-  font-size: 13px;
+  font-size: var(--type-meta-size);
 }
 
 .friend-compare-option-copy {
@@ -174,7 +174,7 @@
 
 .friend-compare-option-copy small {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   line-height: 1.3;
   white-space: normal;

@@ -126,7 +126,7 @@
 
 .you-empty-state h1 {
   margin: 0;
-  font-size: clamp(2.15rem, 5vw, 4rem);
+  font-size: var(--text-display);
   line-height: 0.98;
 }
 
@@ -134,7 +134,7 @@
   max-width: 720px;
   margin: 0;
   color: var(--muted);
-  font-size: clamp(1rem, 1.4vw, 1.3rem);
+  font-size: var(--text-description);
   line-height: 1.45;
 }
 
@@ -319,7 +319,7 @@
   background:
     radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.16), transparent 38%),
     var(--ink);
-  box-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
+  box-shadow: var(--avatar-ring-shadow);
   color: var(--surface);
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
@@ -863,7 +863,19 @@
   display: block;
   width: 24px;
   height: 24px;
+  filter: var(--filter-relationship-tool-glyph);
+  opacity: 0.96;
   object-fit: contain;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .relationship-explainer-card__glyph {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--wheel-glyph) 8%, var(--surface-2));
+  color: var(--wheel-glyph);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .relationship-explainer-card__glyph img {
+  opacity: 1;
 }
 
 .relationship-explainer-card__copy {
@@ -1214,7 +1226,7 @@
 .friend-chart-page .synastry-placement-house,
 .friend-chart-page .synastry-placement-meta {
   color: var(--app-muted);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
 }
 
 .synastry-placement-row:last-child {
@@ -1302,7 +1314,7 @@
 .synastry-placement-degree,
 .synastry-placement-house {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   line-height: 1.1;
   text-align: right;
@@ -1318,7 +1330,7 @@
   gap: 4px 8px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   line-height: 1.25;
   min-width: 0;
@@ -1380,7 +1392,7 @@
   grid-area: symbol;
   width: 42px;
   min-width: 42px;
-  font-size: 20px;
+  font-size: var(--type-small-display-size);
   text-align: center;
 }
 
@@ -1620,8 +1632,8 @@
   border-radius: 32px;
   background: var(--app-card);
   color: var(--app-text);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.18);
-  padding: 28px;
+  box-shadow: var(--modal-shadow);
+  padding: var(--modal-panel-padding);
 }
 
 .friend-chart-modal-root .modal-overlay {
@@ -1641,7 +1653,7 @@
   background: var(--overlay-bg);
   color: var(--ink);
   padding: clamp(24px, 4vw, 32px);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+  box-shadow: var(--modal-shadow);
   animation: modal-pop 160ms ease-out;
 }
 

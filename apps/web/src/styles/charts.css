@@ -285,13 +285,13 @@
 }
 
 .floating-tooltip--planet strong {
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
 }
 
 .floating-tooltip--planet span {
   color: var(--tooltip-muted);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: var(--weight-medium);
 }
 
@@ -352,7 +352,7 @@
   border-radius: 28px;
   background: var(--bg);
   color: var(--ink);
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.24);
+  box-shadow: var(--modal-shadow);
 }
 
 .chart-fullscreen-overlay {
@@ -381,7 +381,7 @@
   margin: 0;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.1em;
   line-height: 1.2;

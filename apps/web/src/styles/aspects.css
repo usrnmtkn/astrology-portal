@@ -7,13 +7,13 @@
   grid-template-columns: var(--aspect-row-template, 82px minmax(0, 1fr) 30px);
   align-items: start;
   width: 100%;
-  gap: var(--aspect-row-gap, 16px);
-  padding: var(--aspect-row-padding, var(--card-row-padding, 16px 20px));
+  gap: var(--aspect-row-gap, var(--card-row-gap));
+  padding: var(--aspect-row-padding, var(--card-row-padding));
 }
 
 .aspect-row-list {
   display: grid;
-  gap: var(--card-list-gap);
+  gap: var(--card-stack-gap);
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -36,7 +36,7 @@
   min-width: var(--aspect-row-glyph-width, 82px);
   height: 24px;
   margin-top: 2px;
-  gap: 6px;
+  gap: var(--inline-gap, 6px);
   font-family: var(--font-glyph);
   font-size: var(--aspect-row-glyph-size, 22px);
   line-height: 1;
@@ -71,7 +71,7 @@
 .aspect-row-copy {
   display: grid;
   min-width: 0;
-  gap: var(--aspect-row-copy-gap, 7px);
+  gap: var(--aspect-row-copy-gap, var(--inline-gap, 6px));
 }
 
 .aspect-row-copy strong,
@@ -111,7 +111,7 @@
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0 8px;
+  gap: 0 var(--card-list-gap);
   max-width: 100%;
   margin: 0;
   color: var(--ink-3);
@@ -146,7 +146,7 @@
   justify-items: center;
   width: var(--aspect-row-meta-width, 30px);
   min-width: var(--aspect-row-meta-width, 30px);
-  gap: 6px;
+  gap: var(--inline-gap, 6px);
   padding-top: 2px;
   color: var(--muted);
   font-family: var(--font-body);
@@ -167,12 +167,12 @@
 
 .aspect-row-groups {
   display: grid;
-  gap: var(--card-list-gap);
+  gap: var(--card-stack-gap);
 }
 
 .aspect-row-group {
   display: grid;
-  gap: var(--card-list-gap);
+  gap: var(--card-stack-gap);
 }
 
 .aspect-row-group + .aspect-row-group {
