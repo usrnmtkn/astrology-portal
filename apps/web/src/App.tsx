@@ -315,6 +315,7 @@ type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 type YouTransitArticle = {
   id: string;
   title: string;
+  glyph?: string;
   subtitle: string;
   summary: string;
   sections: Array<{
@@ -2623,7 +2624,11 @@ function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = n
     return "This week";
   }
 
-  return formatDurationCompact(start, end) ?? "Ongoing";
+  if (durationDays <= 75) {
+    return "Longer influence";
+  }
+
+  return "Ongoing";
 }
 
 function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date()) {
@@ -3005,6 +3010,43 @@ function transitNote(transitPlanet: string, aspect: string, natalPoint: string) 
   };
 
   return `${transitPlanet} ${tones[aspect] ?? "contacts"} your natal ${natalPoint}. Read this as timing: today's sky is activating that part of your chart.`;
+}
+
+function natalPointTheme(point: string) {
+  const themes: Record<string, string> = {
+    Sun: "identity and vitality",
+    Moon: "emotional needs and instinct",
+    Mercury: "thinking and communication",
+    Venus: "love, taste, and connection",
+    Mars: "drive, anger, and desire",
+    Jupiter: "growth, faith, and opportunity",
+    Saturn: "limits, discipline, and responsibility",
+    Uranus: "freedom, disruption, and change",
+    Neptune: "dreams, sensitivity, and imagination",
+    Pluto: "power, depth, and transformation",
+    Chiron: "tenderness, repair, and old wounds",
+    "North Node": "growth edge and future direction",
+    "True Node": "growth edge and future direction",
+    "South Node": "familiar patterns and release",
+    Ascendant: "presence, body, and first impressions",
+    Midheaven: "visibility, work, and direction"
+  };
+
+  return themes[point] ?? point.toLowerCase();
+}
+
+function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string) {
+  const firstTheme = natalPointTheme(firstPoint);
+  const secondTheme = natalPointTheme(secondPoint);
+  const aspectCopy: Record<string, string> = {
+    conjunction: "These parts of you operate in the same room, intensifying each other and making this pattern hard to ignore.",
+    sextile: "These parts of you can cooperate when you choose to use them together.",
+    square: "These parts of you create friction, which can become motivation once you stop treating one side as the problem.",
+    trine: "These parts of you tend to move together naturally, often becoming a quiet strength.",
+    opposition: "These parts of you pull awareness between two poles, asking for balance rather than a winner."
+  };
+
+  return `${firstPoint} ${aspect} ${secondPoint} links ${firstTheme} with ${secondTheme}. ${aspectCopy[aspect] ?? "This aspect shows how these two parts of your chart speak to each other."}`;
 }
 
 function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
@@ -9096,7 +9138,10 @@ function ProfileView({
       approvedVoiceOrKnowledgeFallback(contentKey)
     );
     const generated = liveGeneratedContent(generatedContent, contentKey);
-    const rowSummary = liveGeneratedSummary(generated, content.summary);
+    const rowSummary = liveGeneratedSummary(
+      generated,
+      content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+    );
 
     return (
       <div
@@ -9129,7 +9174,10 @@ function ProfileView({
     );
     const personalizedGenerated = liveGeneratedContent(personalTransitGeneratedContent, personalizedContentKey);
     const generated = personalizedGenerated ?? liveGeneratedContent(generatedContent, contentKey);
-    const rowSummary = liveGeneratedSummary(generated, content.summary);
+    const rowSummary = liveGeneratedSummary(
+      generated,
+      content.summary || transitNote(transit.transitPlanet, transit.aspect, transit.natalPoint)
+    );
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
@@ -9139,6 +9187,7 @@ function ProfileView({
       setTransitArticle({
         id: personalizedContentKey,
         title,
+        glyph: pointGlyph(transit.transitPlanet),
         subtitle: stripTldrPrefix(rowSummary),
         summary: stripTldrPrefix(rowSummary),
         sections: articleSections,
