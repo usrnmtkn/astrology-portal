@@ -11,6 +11,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "review" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
@@ -950,6 +951,24 @@ function hasUsableFacts(value: string) {
   }
 }
 
+class AdminRequestError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "AdminRequestError";
+    this.status = status;
+  }
+}
+
+function adminErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof AdminRequestError && error.status === 401) {
+    return "Your saved admin access secret did not match production. Paste the current CONTENT_GENERATION_SECRET, then click Save and Check Access.";
+  }
+
+  return error instanceof Error ? error.message : fallback;
+}
+
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
   const response = await fetch(path, {
     ...options,
@@ -962,7 +981,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   const payload = await response.json().catch(() => null) as T & { error?: string };
 
   if (!response.ok) {
-    throw new Error(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`);
+    throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status);
   }
 
   return payload;
@@ -998,6 +1017,7 @@ export function GeneratedContentAdminDashboard() {
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
+  const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
@@ -1021,6 +1041,7 @@ export function GeneratedContentAdminDashboard() {
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
+  const hasValidatedAccess = accessStatus === "valid";
   const allReviewRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
@@ -1159,7 +1180,10 @@ export function GeneratedContentAdminDashboard() {
         }
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load generated content.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load generated content."));
     } finally {
       setIsLoading(false);
     }
@@ -1199,13 +1223,17 @@ export function GeneratedContentAdminDashboard() {
       setPrivateRows(payload.rows ?? []);
       setMessage(`Loaded ${(payload.rows ?? []).length} personal content rows for the selected review window.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load personal content rows.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load personal content rows."));
     } finally {
       setIsLoading(false);
     }
   }
 
   useEffect(() => {
+    setAccessStatus(secret.trim() ? "checking" : "empty");
     if (canUseApi) {
       void loadReviewWorkspace();
     }
@@ -1245,6 +1273,7 @@ export function GeneratedContentAdminDashboard() {
     }
 
     setIsLoading(true);
+    setAccessStatus("checking");
     try {
       const payload = await adminJsonRequest<AdminReviewRecordsPayload>(
         `/api/admin/review-records?${params}`,
@@ -1253,6 +1282,7 @@ export function GeneratedContentAdminDashboard() {
 
       setReviewRecords(payload.rows ?? []);
       setReviewCounts(payload.counts);
+      setAccessStatus("valid");
       setMessage(payload.prompt ?? `Loaded ${(payload.rows ?? []).length} ${reviewSurfaceLabels[nextReviewSurface].label.toLowerCase()} review rows.`);
     } catch (error) {
       setReviewRecords([]);
@@ -1264,7 +1294,10 @@ export function GeneratedContentAdminDashboard() {
         ARCHIVED: 0,
         ERROR: 0
       });
-      setMessage(error instanceof Error ? error.message : "Could not load review records.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load review records."));
     } finally {
       setIsLoading(false);
     }
@@ -1290,6 +1323,8 @@ export function GeneratedContentAdminDashboard() {
     const nextSecret = secretDraft.trim();
 
     setSecret(nextSecret);
+    setAccessStatus(nextSecret ? "checking" : "empty");
+    setMessage(nextSecret ? "Checking admin access..." : "Enter the content generation secret to review drafts.");
     try {
       if (nextSecret) {
         window.localStorage.setItem(adminSecretStorageKey, nextSecret);
@@ -1298,6 +1333,10 @@ export function GeneratedContentAdminDashboard() {
       }
     } catch {
       return;
+    }
+
+    if (nextSecret && nextSecret === secret) {
+      void loadReviewWorkspace();
     }
   }
 
@@ -1318,7 +1357,7 @@ export function GeneratedContentAdminDashboard() {
         setRows((currentRows) => currentRows.map((currentRow) => currentRow.id === row.id ? { ...currentRow, ...row } : currentRow));
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load row details.");
+      setMessage(adminErrorMessage(error, "Could not load row details."));
     }
   }
 
@@ -1446,7 +1485,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Loaded the current Sky data for this draft.");
       return nextDraft;
     } catch (error) {
-      setMessage(error instanceof Error ? `Could not load Sky data: ${error.message}` : "Could not load Sky data.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load Sky data."));
       return baseDraft;
     } finally {
       if (shouldManageLoading) {
@@ -1512,7 +1554,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Draft created.");
       await loadRows();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not create draft.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not create draft."));
     } finally {
       setIsLoading(false);
     }
@@ -1575,7 +1620,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Generated a new draft.");
       await loadRows();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not generate content.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not generate content."));
     } finally {
       setIsLoading(false);
     }
@@ -1622,7 +1670,10 @@ export function GeneratedContentAdminDashboard() {
         : `Prepared ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} content test rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
-      setMessage(error instanceof Error ? `Could not prepare draft rows: ${error.message}` : "Could not prepare draft rows.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not prepare draft rows."));
     } finally {
       setIsLoading(false);
     }
@@ -1675,7 +1726,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage(nextStatus === "LIVE" ? "Published live." : nextStatus === "ARCHIVED" ? "Archived." : "Saved.");
       await loadRows();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save draft.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save draft."));
     } finally {
       setIsLoading(false);
     }
@@ -1698,7 +1752,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Deleted.");
       await loadRows();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not delete row.");
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not delete row."));
     } finally {
       setIsLoading(false);
     }
@@ -1812,8 +1869,17 @@ export function GeneratedContentAdminDashboard() {
             </label>
             <button type="submit">
               <Save size={15} aria-hidden="true" />
-              Save Secret
+              Save and Check Access
             </button>
+            {accessStatus !== "empty" && (
+              <p className={`admin-access-note status-${accessStatus}`}>
+                {accessStatus === "checking"
+                  ? "Checking access..."
+                  : accessStatus === "valid"
+                    ? "Access confirmed."
+                    : "Access needs the current production secret."}
+              </p>
+            )}
           </form>
         </section>
 
@@ -1837,14 +1903,18 @@ export function GeneratedContentAdminDashboard() {
                 <RefreshCw size={16} aria-hidden="true" />
                 Reload Review Rows
               </button>
-              <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
-                <Plus size={16} aria-hidden="true" />
-                Draft One Reading
-              </button>
-              <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
-                <Sparkles size={16} aria-hidden="true" />
-                {createQueueButtonLabel(surface)}
-              </button>
+              {hasValidatedAccess && (
+                <>
+                  <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
+                    <Plus size={16} aria-hidden="true" />
+                    Draft One Reading
+                  </button>
+                  <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading}>
+                    <Sparkles size={16} aria-hidden="true" />
+                    {createQueueButtonLabel(surface)}
+                  </button>
+                </>
+              )}
             </div>
           )}
           {activePage === "privateRows" && (
