@@ -5,6 +5,9 @@ Last updated: 2026-06-04
 ## Secrets And Environment
 
 - [ ] Rotate the OpenAI API key before production launch because the setup key was pasted into chat.
+- [ ] Add `ANTHROPIC_API_KEY` to Vercel as a server-only environment variable if Claude is used for generation.
+- [ ] Set `CONTENT_GENERATION_PROVIDER` to `claude` or `openai` in Vercel.
+- [ ] Add `ANTHROPIC_MODEL` to Vercel when using Claude. Default: `claude-sonnet-4-6`.
 - [ ] Rotate the Supabase service role key before production launch because the setup key was pasted into chat.
 - [ ] Replace local setup keys with the rotated launch keys in `.env.local`.
 - [ ] Add the rotated `OPENAI_API_KEY` to Vercel as a server-only environment variable.
@@ -24,9 +27,10 @@ Last updated: 2026-06-04
 - [ ] Confirm the browser cannot write directly to `generated_interpretations`.
 - [x] Confirm the service role key can upsert generated draft rows from the backend route.
 
-## OpenAI Content Generation
+## AI Content Generation
 
 - [x] Test OpenAI generation locally with a small manual payload.
+- [ ] Test Claude generation locally with a small manual payload.
 - [x] Test generation plus Supabase save after the Supabase table exists.
 - [x] Confirm generated content saves as `DRAFT`.
 - [x] Confirm the generated output includes `headline`, `summary`, `body`, and `sections`.

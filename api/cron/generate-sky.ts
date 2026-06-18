@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
 import type { SkySnapshot } from "../../apps/web/src/types.js";
 import {
-  generateWithOpenAI,
+  generateContent,
   loadSkySourceSnapshot,
   saveGeneratedInterpretation,
   type GenerateContentInput
@@ -81,7 +81,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       sourceSnapshot: loadSkySourceSnapshot(),
       voiceNotes: "Write for the Sky page. Make it actionable. Use the pattern: headline, what you may notice, why, what to do, timing."
     };
-    const generated = await generateWithOpenAI(input);
+    const generated = await generateContent(input);
     const saved = await saveGeneratedInterpretation(input, generated);
 
     sendJson(res, 200, {
