@@ -19,6 +19,8 @@ export type YouTransitArticle = {
   glyph?: string;
   subtitle: string;
   compactHeader?: boolean;
+  bodyBeforeSections?: boolean;
+  body?: ReactNode[];
   summary: string;
   summaryHeading?: string;
   sections: Array<{
@@ -408,8 +410,13 @@ function YouTransitArticlePage({
       body: cleanArticleText(section.body)
     }))
     .filter((section) => section.heading || section.tldr || section.body);
+  const introParagraphs = article.bodyBeforeSections
+    ? (article.body ?? [])
+      .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
+      .filter(Boolean)
+    : [];
   const metaRows = article.compactHeader ? [] : article.meta.filter((row) => cleanArticleText(row.value));
-  const hasReadableBody = Boolean(summary || sections.length);
+  const hasReadableBody = Boolean(summary || introParagraphs.length || sections.length);
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
 
   return (
@@ -441,21 +448,32 @@ function YouTransitArticlePage({
 
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
-              {summary ? (
+              {introParagraphs.length ? (
+                <section className="article-section sky-detail-section sky-detail-intro-section">
+                  {introParagraphs.map((paragraph, index) => (
+                    <p key={`intro-${index}`}>{paragraph}</p>
+                  ))}
+                </section>
+              ) : null}
+              {summary && !article.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
                   <h2>{summaryHeading}</h2>
                   <p>{summary}</p>
                 </section>
               ) : null}
               {sections.map((section, index) => {
-                const heading = section.heading || `Part ${index + 1}`;
                 const showTldr = section.tldr && section.tldr !== section.body;
+                const bodyParagraphs = section.body
+                  ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+                  : [];
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                  <h2>{heading}</h2>
+                  {section.heading ? <h2>{section.heading}</h2> : null}
                   {showTldr ? <p>{section.tldr}</p> : null}
-                  {section.body ? <p>{section.body}</p> : null}
+                  {bodyParagraphs.map((paragraph, paragraphIndex) => (
+                    <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                  ))}
                 </section>
                 );
               })}

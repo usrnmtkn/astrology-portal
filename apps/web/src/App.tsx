@@ -303,6 +303,7 @@ type SkyDetail = {
   meta: string;
   subtitle?: string;
   compactHeader?: boolean;
+  bodyBeforeSections?: boolean;
   retrograde?: boolean;
   body: ReactNode[];
   sections?: Array<{
@@ -325,6 +326,8 @@ type YouTransitArticle = {
   glyph?: string;
   subtitle: string;
   compactHeader?: boolean;
+  bodyBeforeSections?: boolean;
+  body?: ReactNode[];
   summary: string;
   summaryHeading?: string;
   sections: Array<{
@@ -2896,22 +2899,31 @@ function SkyDetailArticle({
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {generatedSections.length > 0 ? (
-                generatedSections.map((section, index) => {
-                  const bodyParagraphs = typeof section.body === "string"
-                    ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
-                    : [];
-
-                  return (
-                    <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                      <h2>{section.heading}</h2>
-                      {bodyParagraphs.length > 0
-                        ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                          <p key={`${section.heading}-${index}-${paragraphIndex}`}>{paragraph}</p>
-                        ))
-                        : <p>{section.body}</p>}
+                <>
+                  {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
+                    <section className="article-section sky-detail-section sky-detail-intro-section">
+                      {fallbackParagraphs.map((paragraph, paragraphIndex) => (
+                        <p key={`intro-${paragraphIndex}`}>{paragraph}</p>
+                      ))}
                     </section>
-                  );
-                })
+                  ) : null}
+                  {generatedSections.map((section, index) => {
+                    const bodyParagraphs = typeof section.body === "string"
+                      ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+                      : [];
+
+                    return (
+                      <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
+                        {section.heading ? <h2>{section.heading}</h2> : null}
+                        {bodyParagraphs.length > 0
+                          ? bodyParagraphs.map((paragraph, paragraphIndex) => (
+                            <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                          ))
+                          : <p>{section.body}</p>}
+                      </section>
+                    );
+                  })}
+                </>
               ) : (
                 <>
                   {bodyLede ? (
@@ -7339,7 +7351,7 @@ function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySn
   const body = [houseParagraph, signParagraph, rulerParagraph, integrationParagraph].join("\n\n");
 
   return {
-    heading: `${placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde")}, ${houseLabel}`,
+    heading: natalPlacementFullTitle(position),
     tldr: houseParagraph,
     body
   };
@@ -7351,6 +7363,12 @@ function natalPlacementSignTitle(position: PlanetPosition) {
 
 function placementTitleFromParts(planet: string, sign: string, retrograde = false) {
   return `${planet}${retrograde ? " Rx" : ""} in ${sign}`;
+}
+
+function natalPlacementFullTitle(position: PlanetPosition) {
+  const baseTitle = placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
+
+  return position.house ? `${baseTitle} in the ${ordinalHouse(position.house)} house` : baseTitle;
 }
 
 function natalPlacementMeta(position: PlanetPosition) {
@@ -7395,14 +7413,11 @@ function natalPlacementWriteupSubjectId(chartId: string | undefined) {
 }
 
 function natalPlacementDetailTitle(position: PlanetPosition) {
-  return natalPlacementSignTitle(position);
+  return natalPlacementFullTitle(position);
 }
 
 function natalPlacementDetailSubtitle(position: PlanetPosition) {
-  const parts = [
-    position.house ? `${ordinalHouse(position.house)} House` : "House pending",
-    formatPlanetDegree(position)
-  ];
+  const parts = [formatPlanetDegree(position)];
   const dignity = placementDignity(position);
 
   if (dignity) {
@@ -7410,6 +7425,12 @@ function natalPlacementDetailSubtitle(position: PlanetPosition) {
   }
 
   return parts.join(" · ");
+}
+
+const natalPlacementLensHint = "The planet shows the part of you being activated. The house shows where that energy becomes part of your lived experience. The sign on the house shows the pattern it moves through, and the ruler of that sign shows where the meaning keeps unfolding over time. This lens shows the architecture underneath the interpretation: what part of you is involved, where it becomes active, how it expresses itself, and where it keeps developing over time.";
+
+function isNatalPlacementLensWriteup(writeup: LiveGeneratedContent | null) {
+  return writeup?.provider === "deterministic" || writeup?.model === "placement-ruler-template-v1";
 }
 
 function natalPlacementDetailArticle(
@@ -7421,12 +7442,15 @@ function natalPlacementDetailArticle(
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
   const fallbackSection = natalPlacementFallbackSection(position, natalSky);
-  const summary = liveBody || fallbackSection?.body || "";
-  const sections = liveBody
-    ? []
-    : fallbackSection
-      ? [fallbackSection]
-      : [];
+  const authoredBodyParagraphs = liveBody && !isNatalPlacementLensWriteup(liveWriteup) ? bodyParagraphs : [];
+  const lensBody = isNatalPlacementLensWriteup(liveWriteup) && liveBody ? liveBody : fallbackSection?.body ?? "";
+  const sections = lensBody
+    ? [{
+      heading: "",
+      tldr: lensBody,
+      body: lensBody
+    }]
+    : [];
   const relatedAspectRows = relatedAspectRowsForPlacement({
     aspects: natalSky?.aspects ?? [],
     generatedContent,
@@ -7440,8 +7464,10 @@ function natalPlacementDetailArticle(
     glyph: position.glyph || pointGlyph(position.planet),
     subtitle: natalPlacementDetailSubtitle(position),
     compactHeader: true,
-    summary,
-    summaryHeading: "Interpretation",
+    bodyBeforeSections: true,
+    body: [natalPlacementLensHint, ...authoredBodyParagraphs],
+    summary: "",
+    summaryHeading: "",
     sections,
     relatedAspects: relatedAspectRows.length > 0
       ? {
