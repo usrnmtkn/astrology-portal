@@ -611,6 +611,10 @@ function liveGeneratedSummary(generated: LiveGeneratedContent | null, fallback: 
   return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallback || interpretationInReviewSummary;
 }
 
+function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
+  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+}
+
 function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
   const paragraphs = generatedContentParagraphs(generated);
 
@@ -626,11 +630,11 @@ function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback:
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
-  return `you-daily-horoscope-v2-${targetDate}`;
+  return `you-daily-horoscope-v3-${targetDate}`;
 }
 
 function personalTransitGeneratedContentKey(transit: Pick<TransitItem, "transitPlanet" | "aspect" | "natalPoint">, targetDate: string) {
-  return `you-transit-v2-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}-${targetDate}`;
+  return `you-transit-v3-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}-${targetDate}`;
 }
 
 function compactTransitFact(transit: Record<string, unknown>) {
@@ -5434,7 +5438,10 @@ export function App() {
             "Start the summary with 'TLDR:' followed by the plainest useful takeaway.",
             "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
             "Name the concrete pressure, choice, behavior, or relationship pattern the user may notice today.",
-            "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, or trust the process.",
+            "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
+            "Prefer: 'You may feel a quiet pressure today, even if you cannot explain exactly why. Notice where it shows up in your body before trying to solve it. Naming it honestly may be enough for now.'",
+            "Do not write like: 'There can be a low hum of pressure today that is hard to name out loud. It tends to live in the body before it becomes a thought.'",
+            "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
             "Do not make this an annual profection explanation. The annual timing card appears separately below.",
             "Do not use the words profection, time lord, generated, source-backed, backend, or knowledge base.",
             "Keep it warm, specific, practical, and around 70 to 110 words."
@@ -5566,7 +5573,10 @@ export function App() {
               "Return 2 to 3 sections. Each section body must start with 'TLDR:' and then explain the point in grounded, specific language.",
               "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
               "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
-              "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, or trust the process.",
+              "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
+              "Prefer: 'You may feel a quiet pressure today, even if you cannot explain exactly why. Notice where it shows up in your body before trying to solve it. Naming it honestly may be enough for now.'",
+              "Do not write like: 'There can be a low hum of pressure today that is hard to name out loud. It tends to live in the body before it becomes a thought.'",
+              "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
               "Keep it practical. Avoid generic fortune-telling.",
               "Do not mention databases, generated content, source-backed content, or knowledge base."
             ].join("\n")
@@ -9169,19 +9179,22 @@ function ProfileView({
       </button>
     );
   });
-  const dailyUpdateSummary = personalTiming
+  const generatedDailyHeadline = personalTimingGenerated?.headline?.trim();
+  const generatedDailySummary = liveGeneratedSummaryIfPresent(personalTimingGenerated);
+  const dailyUpdateSummary = generatedDailyHeadline && generatedDailySummary
     ? {
-        headline: liveGeneratedHeadline(personalTimingGenerated, "Today's main signal"),
-        summary: liveGeneratedSummary(personalTimingGenerated, "Reading today's transits against your chart."),
+        headline: generatedDailyHeadline,
+        summary: generatedDailySummary,
         keyFactors: [],
-        status: personalTimingGeneratedStatus === "loading" ? personalTimingGeneratedStatus : personalTimingStatus
+        status: "ready" as const
       }
-    : personalTimingStatus === "loading"
+    : personalTiming || personalTimingStatus === "loading" || personalTimingGeneratedStatus === "loading"
       ? {
-          headline: "Reading today's sky",
-          summary: "Checking today's transits against your chart.",
+          headline: "Reading the sky",
+          summary: "Checking today’s transits against your chart.",
+          secondary: "This usually takes a moment.",
           keyFactors: [],
-          status: personalTimingStatus
+          status: "loading" as const
         }
       : null;
   const personalTimingSummary = personalTiming
