@@ -27,7 +27,7 @@ const planets = [
   ["Uranus", "♅", "change"],
   ["Neptune", "♆", "imagination"],
   ["Pluto", "♇", "depth"],
-  ["True Node", "☊", "direction"]
+  ["North Node", "☊", "direction"]
 ] as const;
 
 type SwissEphConstructor = typeof import("swisseph-wasm").default;
@@ -598,7 +598,7 @@ export async function getAstrodienstSky(
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
     swe.SE_PLUTO,
-    swe.SE_TRUE_NODE
+    swe.SE_MEAN_NODE
   ];
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph, theme], index) => {
     const result = swe.calc_ut(jd, planetIds[index], flags);

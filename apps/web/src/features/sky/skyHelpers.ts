@@ -90,30 +90,30 @@ export type SolarPhaseStatus = {
 };
 
 export function skyNodeDisplayPositions(positions: PlanetPosition[]) {
-  const trueNode = positions.find((position) => position.planet === "True Node" || position.planet === "North Node");
+  const northNodeSource = positions.find((position) => position.planet === "North Node" || position.planet === "True Node");
 
-  if (!trueNode) {
+  if (!northNodeSource) {
     return positions;
   }
 
   const northNode: PlanetPosition = {
-    ...trueNode,
+    ...northNodeSource,
     planet: "North Node",
     glyph: "☊"
   };
   const southNodeBase = positionFromLongitude({
     planet: "South Node",
     glyph: "☋",
-    longitude: zodiacLongitude(trueNode) + 180,
+    longitude: zodiacLongitude(northNodeSource) + 180,
     theme: "release"
   });
   const southNode: PlanetPosition = {
     ...southNodeBase,
-    house: trueNode.house,
-    motion: trueNode.motion,
-    transitStart: trueNode.transitStart,
-    transitEnd: trueNode.transitEnd,
-    transitRemainingLabel: trueNode.transitRemainingLabel
+    house: northNodeSource.house,
+    motion: northNodeSource.motion,
+    transitStart: northNodeSource.transitStart,
+    transitEnd: northNodeSource.transitEnd,
+    transitRemainingLabel: northNodeSource.transitRemainingLabel
   };
 
   return [

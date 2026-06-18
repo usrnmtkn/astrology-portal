@@ -23,7 +23,7 @@ BODIES = [
     "Uranus",
     "Neptune",
     "Pluto",
-    "True Node",
+    "North Node",
     "Chiron",
     "Lilith",
 ]

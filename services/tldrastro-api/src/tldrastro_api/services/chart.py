@@ -33,7 +33,7 @@ BODIES: List[Tuple[str, str, str, int]] = [
     ("Uranus", "♅", "change", swe.URANUS),
     ("Neptune", "♆", "imagination", swe.NEPTUNE),
     ("Pluto", "♇", "depth", swe.PLUTO),
-    ("True Node", "☊", "direction", swe.TRUE_NODE),
+    ("North Node", "☊", "direction", swe.MEAN_NODE),
     ("Chiron", "⚷", "integration", swe.CHIRON),
     ("Lilith", "⚸", "shadow", swe.MEAN_APOG),
 ]
@@ -325,4 +325,3 @@ def calculate_aspects(positions: List[Position], settings: ChartSettings) -> Lis
                     )
                     break
     return sorted(aspects, key=lambda aspect: aspect.orb)
-

@@ -50,7 +50,7 @@ def test_natal_chart_returns_core_chart_shape():
     assert "Midheaven" in chart["angles"]
     assert "Sun" in positions
     assert "Moon" in positions
-    assert "True Node" in positions
+    assert "North Node" in positions
     assert positions["Sun"]["sign"] == "Aries"
     assert isinstance(chart["aspects"], list)
 

@@ -616,7 +616,7 @@ export function FriendPlacementTable({
   );
 }
 
-const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"];
+const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "True Node"];
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   if (!sky) {

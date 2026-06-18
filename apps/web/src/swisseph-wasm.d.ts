@@ -10,6 +10,7 @@ declare module "swisseph-wasm" {
     readonly SE_URANUS: number;
     readonly SE_NEPTUNE: number;
     readonly SE_PLUTO: number;
+    readonly SE_MEAN_NODE: number;
     readonly SE_TRUE_NODE: number;
     readonly SEFLG_SWIEPH: number;
     readonly SEFLG_SPEED: number;

@@ -49,7 +49,7 @@
   },
   "expected": {
     "positionCount": 12,
-    "aspectCount": 20,
+    "aspectCount": 19,
     "positions": {
       "Sun": { "longitude": 301.82793, "sign": "Aquarius", "house": 8 },
       "Moon": { "longitude": 116.376003, "sign": "Cancer", "house": 2 },
@@ -64,4 +64,3 @@
     "contentFactCount": 4
   }
 }
-

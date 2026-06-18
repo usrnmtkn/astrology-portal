@@ -764,7 +764,7 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   communication: { houses: [3, 9, 11], planets: ["Mercury", "Moon", "Jupiter", "Uranus"], aspects: ["conjunction", "square", "trine", "sextile"] },
   creativity: { houses: [5, 1, 9], planets: ["Sun", "Venus", "Mars", "Neptune"], aspects: ["conjunction", "trine", "sextile"] },
   "emotional-needs": { houses: [4, 8, 12, 1], planets: ["Moon", "Venus", "Saturn", "Neptune"], aspects: ["conjunction", "opposition", "square", "trine"] },
-  growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "True Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
+  growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "North Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
@@ -2172,6 +2172,7 @@ const averageDailyMotion: Record<string, number> = {
   Uranus: 0.012,
   Neptune: 0.006,
   Pluto: 0.004,
+  "North Node": 0.053,
   "True Node": 0.053
 };
 
@@ -2824,7 +2825,7 @@ const transitAspectDefinitions = [
   { type: "opposition", exact: 180, orb: 4 }
 ] as const;
 
-const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True Node"]);
+const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "True Node"]);
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
 
@@ -3054,7 +3055,7 @@ function timingTargetName(point: string) {
     return "mc";
   }
 
-  if (point === "True Node") {
+  if (point === "North Node" || point === "True Node") {
     return "north_node";
   }
 
@@ -3567,6 +3568,7 @@ function comparisonPointRole(point: string) {
     Uranus: "freedom, disruption, and the need for space",
     Neptune: "idealization, longing, imagination, and blurred boundaries",
     Pluto: "intensity, control, vulnerability, and deep change",
+    "North Node": "familiarity, direction, and timing",
     "True Node": "familiarity, direction, and timing"
   };
 
@@ -3639,6 +3641,7 @@ function synastryPointWeight(point: string) {
     Pluto: 11,
     Neptune: 9,
     Uranus: 9,
+    "North Node": 20,
     "True Node": 20
   };
 
@@ -3781,7 +3784,7 @@ function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
   }
 
   const points = sky.positions
-    .filter((position) => position.planet !== "True Node")
+    .filter((position) => position.planet !== "North Node" && position.planet !== "True Node")
     .map((position) => ({
       name: position.planet,
       glyph: position.glyph,
@@ -4126,7 +4129,7 @@ function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: Ma
   const positions = profileNatalSky.positions.flatMap((yourPosition) => {
     const friendPosition = friendPositions.get(yourPosition.planet);
 
-    if (!friendPosition || yourPosition.planet === "True Node") {
+    if (!friendPosition || yourPosition.planet === "North Node" || yourPosition.planet === "True Node") {
       return [];
     }
 
@@ -6530,13 +6533,13 @@ const retrogradeWindows: RetrogradeWindow[] = [
     postShadowEnd: "2027-02-07"
   },
   {
-    planet: "True Node",
+    planet: "North Node",
     retrogradeStart: "2026-05-11",
     retrogradeEnd: "2026-06-07",
     shadows: "not-applicable"
   },
   {
-    planet: "True Node",
+    planet: "North Node",
     retrogradeStart: "2026-06-08",
     retrogradeEnd: "2026-06-19",
     shadows: "not-applicable"
@@ -6684,8 +6687,8 @@ function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
 
 function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
   const currentDay = dateOnly(generatedAt);
-  const lookupPlanet = position.planet === "North Node" || position.planet === "South Node"
-    ? "True Node"
+  const lookupPlanet = position.planet === "South Node" || position.planet === "True Node"
+    ? "North Node"
     : position.planet;
 
   return retrogradeWindows.find((window) => {
@@ -6699,7 +6702,7 @@ function retrogradeWindowFor(position: PlanetPosition, generatedAt: string) {
 
 function activeRetrogradeWindowForPlanet(planet: string, generatedAt: string) {
   const currentDay = dateOnly(generatedAt);
-  const lookupPlanet = planet === "North Node" || planet === "South Node" ? "True Node" : planet;
+  const lookupPlanet = planet === "South Node" || planet === "True Node" ? "North Node" : planet;
 
   return retrogradeWindows.find((window) => (
     window.planet === lookupPlanet
