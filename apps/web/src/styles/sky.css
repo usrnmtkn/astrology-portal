@@ -77,7 +77,7 @@
   background: var(--accent-bg);
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 25px;
+  font-size: calc(var(--text-glyph) + 3px);
   line-height: 1;
 }
 
@@ -340,7 +340,7 @@
     height: 44px;
     padding: 0 14px;
     border-radius: 999px;
-    font-size: 21px;
+    font-size: var(--text-glyph);
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
@@ -439,7 +439,7 @@
 .sky-detail-end {
   justify-self: center;
   color: var(--muted);
-  font-size: 24px;
+  font-size: var(--text-glyph);
 }
 
 .retro-list,
@@ -538,7 +538,7 @@
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
   font-family: var(--font-glyph);
-  font-size: 16px;
+  font-size: var(--text-body);
   line-height: 1;
   box-shadow: 0 0 0 2px var(--card-bg);
 }
@@ -546,7 +546,7 @@
 .ro-sum-cap {
   margin: 0;
   color: var(--ink-2);
-  font-size: 14px;
+  font-size: var(--text-description);
   line-height: 1.5;
   text-wrap: pretty;
 }
@@ -574,7 +574,7 @@
 
 .ro-more-text {
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--text-description);
   font-weight: var(--weight-semibold);
   line-height: 1.35;
   text-wrap: pretty;
@@ -604,7 +604,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--ink);
-  font-size: 21px;
+  font-size: var(--text-glyph);
 }
 
 .ro-screen .sky-pl-main {
@@ -656,7 +656,7 @@
   display: block;
   margin: 7px 0 0;
   color: var(--ink-2);
-  font-size: 13.5px;
+  font-size: var(--text-description);
   line-height: 1.45;
   text-wrap: pretty;
 }
@@ -667,7 +667,7 @@
 }
 
 .ro-sky-pl--compact .sky-pl-title {
-  font-size: 17px;
+  font-size: var(--text-card-title);
 }
 
 .retro {
@@ -695,7 +695,7 @@
   border-radius: 50%;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
-  font-size: 34px;
+  font-size: calc(var(--text-glyph) + 8px);
   line-height: 1;
 }
 
@@ -713,7 +713,7 @@
   background: var(--retrograde-accent);
   color: var(--pill-fg);
   padding: 0;
-  font-size: 14px;
+  font-size: var(--text-compact-meta);
   font-weight: var(--weight-semibold);
   line-height: 1;
 }
@@ -735,7 +735,7 @@
   display: block;
   margin: 0;
   color: var(--ink);
-  font-size: clamp(22px, 2.1vw, 26px);
+  font-size: var(--text-row-title-size);
   font-weight: var(--weight-medium);
   letter-spacing: -0.02em;
   line-height: 1.06;
@@ -746,7 +746,7 @@
   margin-top: 3px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--type-md);
+  font-size: var(--text-placement-meta);
   font-style: normal;
   font-weight: var(--weight-medium);
   line-height: 1.1;
@@ -758,7 +758,7 @@
   margin-top: 2px;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--type-md);
+  font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.16em;
   line-height: 1;
@@ -798,7 +798,7 @@
 
 .retro-chapter {
   color: var(--muted);
-  font-size: var(--type-sm);
+  font-size: var(--text-description);
   font-weight: var(--weight-medium);
   line-height: 1.35;
 }
@@ -808,7 +808,7 @@
   color: var(--text-muted);
   max-width: 760px;
   font-family: var(--font-body);
-  font-size: var(--type-md);
+  font-size: var(--text-description);
   font-weight: var(--weight-regular);
   line-height: 1.5;
 }
@@ -864,7 +864,7 @@
   background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 18px;
+  font-size: var(--text-glyph);
   line-height: 1;
 }
 
@@ -877,7 +877,7 @@
 .sky-lunar-pill-copy em {
   color: var(--app-muted);
   font-family: var(--font-ui);
-  font-size: 10px;
+  font-size: var(--text-compact-label);
   font-style: normal;
   font-weight: var(--weight-semibold);
   letter-spacing: 0.08em;
@@ -894,7 +894,7 @@
   margin: 1px 0 0;
   color: var(--app-text);
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--text-compact-title);
   font-weight: var(--weight-medium);
   letter-spacing: -0.01em;
   line-height: 1.08;
@@ -908,7 +908,7 @@
 .sky-lunar-pill-copy h3 small {
   color: var(--app-muted);
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: var(--text-compact-meta);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-regular);
   letter-spacing: 0;
@@ -918,7 +918,7 @@
   margin-top: 0;
   color: var(--ink-2);
   font-family: var(--font-ui);
-  font-size: 10.5px;
+  font-size: var(--text-compact-caption);
   font-weight: var(--weight-regular);
   letter-spacing: 0;
   line-height: 1;
@@ -1013,7 +1013,7 @@
 .nl-badge .g {
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
-  font-size: 18px;
+  font-size: var(--text-glyph);
   line-height: 1;
 }
 
@@ -1039,7 +1039,7 @@
   overflow: hidden;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--text-compact-title);
   font-weight: var(--weight-medium);
   letter-spacing: -0.01em;
   line-height: 1.08;
@@ -1057,7 +1057,7 @@
   flex: 0 0 auto;
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: var(--text-compact-meta);
   font-weight: var(--weight-regular);
   letter-spacing: 0;
 }
@@ -1070,7 +1070,7 @@
   background: var(--duration-badge-bg);
   color: var(--duration-badge-fg);
   font-family: var(--font-ui);
-  font-size: 10px;
+  font-size: var(--text-compact-label);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
   letter-spacing: 0.08em;
@@ -1086,7 +1086,7 @@
   overflow: hidden;
   color: var(--muted);
   font-family: var(--font-ui);
-  font-size: 10.5px;
+  font-size: var(--text-compact-caption);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
   text-overflow: ellipsis;
