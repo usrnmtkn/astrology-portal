@@ -1076,7 +1076,7 @@ function skyAspectFallbackCopy(record: AdminReviewRecord) {
   const mechanicalLine = `${capitalizeSentence(formatSkyBodyPosition(body1, sign1))} ${aspectVerb} ${formatSkyBodyPosition(body2, sign2)}, ${direction} through ${date}.`;
   const actionLine = skyAspectActionLine(body1, aspect, body2);
 
-  return `${toneClause}. ${mechanicalLine} ${actionLine}`;
+  return `TLDR: ${toneClause}. ${mechanicalLine} ${actionLine}`;
 }
 
 function shouldUseDeterministicPlaceholder(record: AdminReviewRecord) {
@@ -1749,6 +1749,7 @@ export function GeneratedContentAdminDashboard() {
             voiceNotes: [
               "Write a daily astrology transit interpretation in the TLDR Astro voice.",
               "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
+              "The body text shown to the editor must start with 'TLDR:' and then use visible labels before each following paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
               "Start with the aspect and date or timing. Explain the core dynamic in plain language and why it is useful while active.",
               "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
               "Give 2-3 concrete life examples: a bill, boundary, conversation, deadline, commitment, choice, pattern, responsibility, relationship, work, money, emotions, or timing.",
