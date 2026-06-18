@@ -67,6 +67,14 @@ type ReviewRecord = {
   updatedAt: string;
 };
 
+type CalculatedAspect = {
+  from: string;
+  to: string;
+  type: string;
+  orb: number;
+  meaning: string;
+};
+
 const aspectDefinitions = [
   { type: "conjunction", exact: 0, orb: 6 },
   { type: "sextile", exact: 60, orb: 4 },
@@ -181,6 +189,26 @@ function aspectForPositions(first: PlanetPosition, second: PlanetPosition) {
     .sort((firstDefinition, secondDefinition) => firstDefinition.orbValue - secondDefinition.orbValue)[0] ?? null;
 }
 
+function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedAspect[] {
+  return positions.flatMap((from, fromIndex) => (
+    positions.slice(fromIndex + 1).map((to) => {
+      const aspect = aspectForPositions(from, to);
+
+      if (!aspect) {
+        return null;
+      }
+
+      return {
+        from: from.planet,
+        to: to.planet,
+        type: aspect.type,
+        orb: Number(aspect.orbValue.toFixed(2)),
+        meaning: `${from.planet} ${aspect.type} ${to.planet} is active in the selected sky window.`
+      };
+    })
+  )).filter((aspect): aspect is CalculatedAspect => Boolean(aspect));
+}
+
 async function skyForDate(date: Date) {
   try {
     return await getAstrodienstSky(undefined, date);
@@ -284,7 +312,7 @@ function skyAspectSummary(aspect: { from: string; type: string; to: string; mean
 
 async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<string, SavedContentRow>) {
   const byAspect = new Map<string, {
-    aspect: SkySnapshot["aspects"][number];
+    aspect: CalculatedAspect;
     targetDate: string;
     orb: number;
     previousOrb: number | null;
@@ -294,15 +322,15 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
   const skies = await Promise.all(dates.map((date) => skyForDate(date)));
 
   skies.forEach((sky, index) => {
-    sky.aspects.forEach((aspect) => {
+    calculatedAspectsForPositions(sky.positions).forEach((aspect) => {
       const key = [aspect.from, aspect.type, aspect.to].map(slug).join("-");
       const existing = byAspect.get(key);
 
       if (!existing || aspect.orb < existing.orb) {
         const previousSky = skies[index - 1];
         const nextSky = skies[index + 1];
-        const previousOrb = previousSky?.aspects.find((candidate) => candidate.from === aspect.from && candidate.to === aspect.to && candidate.type === aspect.type)?.orb ?? null;
-        const nextOrb = nextSky?.aspects.find((candidate) => candidate.from === aspect.from && candidate.to === aspect.to && candidate.type === aspect.type)?.orb ?? null;
+        const previousOrb = previousSky ? calculatedAspectsForPositions(previousSky.positions).find((candidate) => candidate.from === aspect.from && candidate.to === aspect.to && candidate.type === aspect.type)?.orb ?? null : null;
+        const nextOrb = nextSky ? calculatedAspectsForPositions(nextSky.positions).find((candidate) => candidate.from === aspect.from && candidate.to === aspect.to && candidate.type === aspect.type)?.orb ?? null : null;
 
         byAspect.set(key, {
           aspect,
@@ -590,7 +618,10 @@ function relationshipRecords(charts: ManualChartRow[], savedRows: Map<string, Sa
     const matchingPosition = secondNatal.positions.find((position) => position.planet === firstPosition.planet);
     if (!matchingPosition) return null;
 
-    const midpoint = (longitude(firstPosition) + longitude(matchingPosition)) / 2;
+    const firstLongitude = longitude(firstPosition);
+    const secondLongitude = longitude(matchingPosition);
+    const directDelta = ((secondLongitude - firstLongitude + 540) % 360) - 180;
+    const midpoint = (firstLongitude + directDelta / 2 + 360) % 360;
     const sign = zodiacSigns[Math.floor((midpoint % 360) / 30)] ?? firstPosition.sign;
     const contentKey = `composite-${slug(firstPosition.planet)}-in-${slug(sign)}`;
     const baseRecord: ReviewRecord = {
