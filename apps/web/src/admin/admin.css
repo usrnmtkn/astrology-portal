@@ -987,6 +987,96 @@ body,
   margin: 0;
 }
 
+.admin-private-row-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-private-row-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 12px;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.admin-private-row-card header {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.admin-private-row-card h3 {
+  font-size: 22px;
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin: 5px 0 0;
+}
+
+.admin-private-row-card p {
+  color: var(--admin-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 880px;
+}
+
+.admin-provider-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-provider-meta span {
+  background: rgba(124, 134, 255, 0.12);
+  border: 1px solid rgba(124, 134, 255, 0.32);
+  border-radius: 999px;
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+.admin-provider-meta strong {
+  color: var(--admin-ink);
+  font-weight: 900;
+}
+
+.admin-private-meta {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+}
+
+.admin-private-meta div {
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+}
+
+.admin-private-meta dt {
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-private-meta dd {
+  color: var(--admin-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 1500px) {
   .admin-workbench {
     grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
@@ -1013,6 +1103,7 @@ body,
 
   .admin-nav,
   .admin-metrics,
+  .admin-private-meta,
   .admin-release-note,
   .admin-release-summary,
   .admin-template-guidance,

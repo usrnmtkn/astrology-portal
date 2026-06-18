@@ -1,4 +1,4 @@
-import { Archive, BarChart3, BookOpenText, Check, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
+import { Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
@@ -9,7 +9,7 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "review" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "review" | "privateRows" | "templates" | "hooks" | "releaseNotes";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -46,6 +46,27 @@ type AdminGeneratedContentRow = {
   model: string | null;
   reviewed_at: string | null;
   published_at: string | null;
+  updated_at: string;
+  created_at: string;
+};
+
+type AdminUserGeneratedContentRow = {
+  id: string;
+  user_id: string;
+  subject_type: string;
+  subject_id: string;
+  content_key: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  status: "DRAFT" | "LIVE" | "ARCHIVED" | "ERROR";
+  event_type: string | null;
+  target_date: string | null;
+  provider: string | null;
+  model: string | null;
+  headline: string | null;
+  summary: string | null;
+  body: string | null;
+  error: string | null;
   updated_at: string;
   created_at: string;
 };
@@ -165,6 +186,7 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
+  if (activePage === "privateRows") return "Private Generated Content";
   if (activePage === "templates") return "Templates & Voice";
   if (activePage === "hooks") return "Content Hooks";
   return "Generated Content";
@@ -172,6 +194,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
+  if (activePage === "privateRows") return "Admin / Content generation / Private rows";
   if (activePage === "templates") return "Admin / Content generation / Templates & voice";
   if (activePage === "hooks") return "Admin / Content generation / Content hooks";
   return "Admin / Content generation / Review queue";
@@ -188,6 +211,10 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 
   if (activePage === "hooks") {
     return "Review the named hook points the app uses when a surface needs approved generated or voice-backed copy.";
+  }
+
+  if (activePage === "privateRows") {
+    return "Read-only visibility into user-scoped AI interpretations, including the provider and model used for each generated row.";
   }
 
   return "Generate and publish global Sky content. Use You, Natal, Synastry, Composite, and Relationship rows as sample tests for templates, voice, and knowledge hooks.";
@@ -733,6 +760,7 @@ export function GeneratedContentAdminDashboard() {
   const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
@@ -816,11 +844,39 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadPrivateRows() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
+        "/api/admin/user-generated-content?status=all&surface=all&limit=75",
+        secret
+      );
+
+      setPrivateRows(payload.rows ?? []);
+      setMessage(`Loaded ${(payload.rows ?? []).length} private generated rows. Provider and model are shown on each row.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load private generated rows.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (canUseApi) {
       void loadRows();
     }
   }, [secret]);
+
+  useEffect(() => {
+    if (activePage === "privateRows" && canUseApi) {
+      void loadPrivateRows();
+    }
+  }, [activePage, secret]);
 
   useEffect(() => {
     if (!isPreviewOpen) {
@@ -1286,6 +1342,16 @@ export function GeneratedContentAdminDashboard() {
             Templates & Voice
           </button>
           <button
+            className={activePage === "privateRows" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("privateRows")}
+            disabled={!canUseApi}
+            aria-current={activePage === "privateRows" ? "page" : undefined}
+          >
+            <Database size={18} aria-hidden="true" />
+            Private Rows
+          </button>
+          <button
             className={activePage === "hooks" ? "active" : ""}
             type="button"
             onClick={() => setActivePage("hooks")}
@@ -1387,6 +1453,14 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </div>
           )}
+          {activePage === "privateRows" && (
+            <div className="admin-header-actions">
+              <button type="button" onClick={() => void loadPrivateRows()} disabled={isLoading || !canUseApi}>
+                <RefreshCw size={16} aria-hidden="true" />
+                Refresh
+              </button>
+            </div>
+          )}
         </header>
 
         <section className="admin-message-card" aria-live="polite">
@@ -1443,6 +1517,70 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </article>
               ))}
+            </div>
+          </section>
+        ) : activePage === "privateRows" ? (
+          <section className="admin-template-panel admin-private-page" aria-label="Private generated content rows">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">User-scoped generated content</p>
+                <h2>Provider + Model Audit</h2>
+                <p>These rows are private to individual authenticated users. Use this read-only view to confirm whether Claude or OpenAI wrote a saved interpretation.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Private generated row count">
+                <article>
+                  <span>Rows</span>
+                  <strong>{privateRows.length}</strong>
+                </article>
+                <article>
+                  <span>Scope</span>
+                  <strong>Private</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-private-row-list">
+              {privateRows.map((row) => (
+                <article className="admin-private-row-card" key={row.id}>
+                  <header>
+                    <div>
+                      <p className="admin-eyebrow">{row.subject_type} / {row.surface} / {row.mode}</p>
+                      <h3>{row.headline || row.content_key}</h3>
+                    </div>
+                    <span className={`admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                  </header>
+                  <div className="admin-provider-meta" aria-label="AI provider and model">
+                    <span>Provider: <strong>{row.provider || "unknown"}</strong></span>
+                    <span>Model: <strong>{row.model || "unknown"}</strong></span>
+                  </div>
+                  <p>{row.summary || row.body || row.error || "No generated body saved yet."}</p>
+                  <dl className="admin-private-meta">
+                    <div>
+                      <dt>User</dt>
+                      <dd>{row.user_id}</dd>
+                    </div>
+                    <div>
+                      <dt>Subject</dt>
+                      <dd>{row.subject_id}</dd>
+                    </div>
+                    <div>
+                      <dt>Content key</dt>
+                      <dd>{row.content_key}</dd>
+                    </div>
+                    <div>
+                      <dt>Target date</dt>
+                      <dd>{adminDateLabel(row.target_date)}</dd>
+                    </div>
+                    <div>
+                      <dt>Updated</dt>
+                      <dd>{new Date(row.updated_at).toLocaleString()}</dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+              {privateRows.length === 0 && (
+                <p className="admin-empty">No private generated rows have been saved yet.</p>
+              )}
             </div>
           </section>
         ) : activePage === "hooks" ? (
