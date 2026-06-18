@@ -1,11 +1,55 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
-import { getAstrodienstSky, getCurrentSky } from "../../apps/web/src/services/ephemeris.js";
-import type { PlanetPosition, SkySnapshot } from "../../apps/web/src/types.js";
 
 type ReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+
+type PlanetPosition = {
+  planet: string;
+  glyph: string;
+  sign: string;
+  signGlyph: string;
+  degree: number;
+  house: number;
+  motion: "direct" | "retrograde";
+  theme: string;
+};
+
+type SkyAspect = {
+  from: string;
+  to: string;
+  type: string;
+  orb: number;
+  meaning?: string;
+};
+
+type SkySnapshot = {
+  generatedAt: string;
+  positions: PlanetPosition[];
+  aspects: SkyAspect[];
+};
+
+type CloudRunPosition = {
+  point?: string;
+  planet?: string;
+  glyph?: string;
+  longitude?: number;
+  sign?: string;
+  signGlyph?: string;
+  degree?: number;
+  minute?: number;
+  degreeDecimal?: number;
+  house?: number | null;
+  motion?: "direct" | "retrograde";
+  theme?: string | null;
+};
+
+type CloudRunSkyResponse = {
+  generatedAt: string;
+  positions?: CloudRunPosition[];
+  aspects?: SkyAspect[];
+};
 
 type SavedContentRow = {
   id: string;
@@ -99,6 +143,10 @@ function supabaseUrl() {
   return process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL");
 }
 
+function tldrAstroApiUrl() {
+  return (process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "");
+}
+
 function serviceRoleKey() {
   return requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
@@ -177,6 +225,39 @@ function longitude(position: Pick<PlanetPosition, "sign" | "degree">) {
   return (signIndex < 0 ? 0 : signIndex * 30) + position.degree;
 }
 
+function themeForPoint(point: string) {
+  const themes: Record<string, string> = {
+    Sun: "identity",
+    Moon: "mood",
+    Mercury: "language",
+    Venus: "desire",
+    Mars: "momentum",
+    Jupiter: "growth",
+    Saturn: "structure",
+    Uranus: "change",
+    Neptune: "imagination",
+    Pluto: "depth",
+    "North Node": "direction"
+  };
+
+  return themes[point] ?? point.toLowerCase();
+}
+
+function normalizeCloudRunPosition(position: CloudRunPosition): PlanetPosition {
+  const planet = position.planet || position.point || "Unknown";
+
+  return {
+    planet,
+    glyph: position.glyph ?? "",
+    sign: position.sign ?? "Aries",
+    signGlyph: position.signGlyph ?? "",
+    degree: Number(position.degreeDecimal ?? position.degree ?? 0),
+    house: position.house ?? 0,
+    motion: position.motion ?? "direct",
+    theme: position.theme ?? themeForPoint(planet)
+  };
+}
+
 function aspectForPositions(first: PlanetPosition, second: PlanetPosition) {
   const separation = angularDistance(longitude(first), longitude(second));
 
@@ -209,11 +290,49 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
   )).filter((aspect): aspect is CalculatedAspect => Boolean(aspect));
 }
 
-async function skyForDate(date: Date) {
-  try {
-    return await getAstrodienstSky(undefined, date);
-  } catch {
-    return getCurrentSky(undefined, date);
+async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
+  const response = await fetch(`${tldrAstroApiUrl()}${path}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`TLDR Astro API ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return payload as TResponse;
+}
+
+async function skyForDate(date: Date): Promise<SkySnapshot> {
+  const sky = await postTldrAstro<CloudRunSkyResponse>("/sky/current", {
+    datetime: {
+      date: dateOnly(date),
+      time: "12:00",
+      timeKnown: true,
+      timeZone: "America/New_York"
+    },
+    location: {
+      label: "New York, NY",
+      latitude: 40.7128,
+      longitude: -74.006,
+      timeZone: "America/New_York"
+    },
+    settings: {
+      houseSystem: "whole_sign",
+      zodiac: "tropical",
+      aspectProfile: "standard"
+    },
+    includeContentFacts: false
+  });
+
+  return {
+    generatedAt: sky.generatedAt,
+    positions: (sky.positions ?? []).map(normalizeCloudRunPosition),
+    aspects: sky.aspects ?? []
   }
 }
 
