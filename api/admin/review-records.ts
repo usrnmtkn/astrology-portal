@@ -113,9 +113,9 @@ type ReviewRecord = {
 
 type CalculatedAspect = {
   from: string;
-  fromSign?: string;
+  fromSign: string;
   to: string;
-  toSign?: string;
+  toSign: string;
   type: string;
   orb: number;
   meaning: string;
