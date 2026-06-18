@@ -114,6 +114,11 @@ import {
   type TldrAstroSubject,
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
+import {
+  generateUserContent,
+  loadUserGeneratedInterpretation,
+  type UserGeneratedSubjectType
+} from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
 type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
@@ -598,6 +603,83 @@ function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParag
     : fallbackParagraphs.length > 0
       ? fallbackParagraphs
       : interpretationInReviewParagraphs;
+}
+
+function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback: string) {
+  return generated?.headline?.trim() || fallback;
+}
+
+function personalTimingGeneratedContentKey(targetDate: string) {
+  return `you-update-summary-${targetDate}`;
+}
+
+function compactTransitFact(transit: Record<string, unknown>) {
+  return {
+    id: transit.id,
+    transitPlanet: transit.transitPlanet,
+    transitSign: transit.transitSign,
+    transitHouse: transit.transitHouse,
+    aspect: transit.aspect,
+    natalPoint: transit.natalPoint,
+    natalSign: transit.natalSign,
+    natalHouse: transit.natalHouse,
+    orb: transit.orb,
+    direction: transit.direction,
+    exactAt: transit.exactAt,
+    windowStart: transit.windowStart,
+    windowEnd: transit.windowEnd,
+    score: transit.score,
+    significance: transit.significance,
+    knowledgeIds: transit.knowledgeIds
+  };
+}
+
+function personalTimingKnowledgeIds(personalTiming: PersonalTimingResponse) {
+  return Array.from(new Set([
+    ...personalTiming.app.contentFactIds,
+    ...personalTiming.contentFacts.flatMap((fact) => fact.knowledgeIds),
+    ...personalTiming.topTransits.flatMap((transit) => (
+      Array.isArray(transit.knowledgeIds) ? transit.knowledgeIds.filter((item): item is string => typeof item === "string") : []
+    ))
+  ])).filter(Boolean);
+}
+
+function personalTimingGenerationFacts(personalTiming: PersonalTimingResponse, profile: UserProfile, targetDate: string) {
+  const topBoostedTransit = personalTiming.timingBoostedTransits[0];
+
+  return {
+    type: "you_update_summary",
+    targetDate,
+    person: {
+      name: profile.name,
+      bigThree: {
+        sun: profile.sun,
+        moon: profile.moon,
+        rising: profile.rising
+      }
+    },
+    timing: {
+      headline: personalTiming.app.headline,
+      summary: personalTiming.app.summary,
+      keyFactors: personalTiming.app.keyFactors,
+      timingTags: personalTiming.app.timingTags,
+      confidence: personalTiming.app.confidence,
+      activatedHouse: personalTiming.activatedHouse,
+      activatedSign: personalTiming.activatedSign,
+      activatedRuler: personalTiming.activatedRuler,
+      activatedNatalPlanets: personalTiming.activatedNatalPlanets
+    },
+    topBoostedTransit: topBoostedTransit
+      ? {
+          hit: compactTransitFact(topBoostedTransit.hit),
+          baseScore: topBoostedTransit.baseScore,
+          boostedScore: topBoostedTransit.boostedScore,
+          boostReasons: topBoostedTransit.boostReasons
+        }
+      : null,
+    topTransits: personalTiming.topTransits.slice(0, 5).map(compactTransitFact),
+    contentFacts: personalTiming.contentFacts
+  };
 }
 
 const synastryCardPreviewCharacterLimit = 220;
@@ -4484,6 +4566,8 @@ export function App() {
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [personalTiming, setPersonalTiming] = useState<PersonalTimingResponse | null>(null);
   const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
+  const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
+  const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
@@ -5216,6 +5300,98 @@ export function App() {
     userProfile?.currentLocationData?.label,
     userProfile?.currentLocationData?.timeZone,
     skyDate
+  ]);
+
+  useEffect(() => {
+    const primaryChart = userProfile?.charts[0];
+
+    if (!userProfile || !remoteAccountId || !primaryChart || !personalTiming || personalTimingStatus !== "ready") {
+      setPersonalTimingGenerated(null);
+      setPersonalTimingGeneratedStatus("idle");
+      return;
+    }
+
+    let cancelled = false;
+    const subjectType: UserGeneratedSubjectType = "you_update";
+    const subjectId = primaryChart.id;
+    const contentKey = personalTimingGeneratedContentKey(skyDate);
+    const timing = personalTiming;
+    const profile = userProfile;
+
+    async function loadOrGeneratePersonalTimingSummary() {
+      setPersonalTimingGeneratedStatus("loading");
+      try {
+        const existing = await loadUserGeneratedInterpretation({
+          subjectType,
+          subjectId,
+          contentKey,
+          targetDate: skyDate
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        if (existing) {
+          setPersonalTimingGenerated(existing);
+          setPersonalTimingGeneratedStatus("ready");
+          return;
+        }
+
+        const generated = await generateUserContent({
+          subjectType,
+          subjectId,
+          contentKey,
+          surface: "you",
+          mode: "feed",
+          eventType: "you-update-summary",
+          headline: timing.app.headline,
+          targetDate: skyDate,
+          facts: personalTimingGenerationFacts(timing, profile, skyDate),
+          knowledgeIds: personalTimingKnowledgeIds(timing),
+          sourceSnapshot: {
+            source: "tldrastro-personal-timing-api",
+            targetDate: skyDate,
+            chartId: subjectId
+          },
+          voiceNotes: [
+            "Write this as the user's personal daily Updates summary.",
+            "Start with the lived situation, not the technical timing method.",
+            "Do not use the words profection, time lord, generated, source-backed, backend, or knowledge base.",
+            "Keep it warm, specific, and practical. Use the timing facts only as the astrological basis.",
+            "Mention the strongest transit only if it helps the user understand what to do today."
+          ].join("\n")
+        });
+
+        if (!cancelled) {
+          setPersonalTimingGenerated(generated);
+          setPersonalTimingGeneratedStatus(generated ? "ready" : "error");
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.warn("Personalized You update generation failed; using timing fallback.", error);
+          setPersonalTimingGenerated(null);
+          setPersonalTimingGeneratedStatus("error");
+        }
+      }
+    }
+
+    void loadOrGeneratePersonalTimingSummary();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    personalTiming,
+    personalTimingStatus,
+    remoteAccountId,
+    skyDate,
+    userProfile?.id,
+    userProfile?.name,
+    userProfile?.sun,
+    userProfile?.moon,
+    userProfile?.rising,
+    userProfile?.charts[0]?.id
   ]);
 
   useEffect(() => {
@@ -6009,6 +6185,8 @@ export function App() {
                     transitItems={activeTransits}
                     natalSky={profileNatalSky}
                     personalTiming={personalTiming}
+                    personalTimingGenerated={personalTimingGenerated}
+                    personalTimingGeneratedStatus={personalTimingGeneratedStatus}
                     personalTimingStatus={personalTimingStatus}
                     transitsDrawn={transitsDrawn}
                     selectedTransit={selectedTransit}
@@ -8564,6 +8742,8 @@ function ProfileView({
   transitItems,
   natalSky,
   personalTiming,
+  personalTimingGenerated,
+  personalTimingGeneratedStatus,
   personalTimingStatus,
   transitsDrawn,
   setSelectedTransitId,
@@ -8576,6 +8756,8 @@ function ProfileView({
   transitItems: TransitItem[];
   natalSky: SkySnapshot | null;
   personalTiming: PersonalTimingResponse | null;
+  personalTimingGenerated: LiveGeneratedContent | null;
+  personalTimingGeneratedStatus: PersonalTimingStatus;
   personalTimingStatus: PersonalTimingStatus;
   transitsDrawn: boolean;
   selectedTransit: TransitItem;
@@ -8750,10 +8932,10 @@ function ProfileView({
   });
   const personalTimingSummary = personalTiming
     ? {
-        headline: personalTiming.app.headline,
-        summary: personalTiming.app.summary,
+        headline: liveGeneratedHeadline(personalTimingGenerated, personalTiming.app.headline),
+        summary: liveGeneratedSummary(personalTimingGenerated, personalTiming.app.summary),
         keyFactors: personalTiming.app.keyFactors,
-        status: personalTimingStatus
+        status: personalTimingGeneratedStatus === "loading" ? personalTimingGeneratedStatus : personalTimingStatus
       }
     : personalTimingStatus === "loading"
       ? {

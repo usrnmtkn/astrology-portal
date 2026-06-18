@@ -35,7 +35,7 @@ export type GeneratedAstrologyDraft = {
 
 type GeneratedContent = GeneratedAstrologyDraft;
 
-type StoredGeneratedContent = GeneratedContent & {
+export type StoredGeneratedContent = GeneratedContent & {
   responseId?: string;
   model: string;
 };
