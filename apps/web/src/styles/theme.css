@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
 
 :root {
   /*
@@ -57,7 +57,6 @@
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
   --symbols: "Noto Sans Symbols", "Segoe UI Symbol", serif;
-  --font-sans: "Geist", system-ui, sans-serif;
   --font-serif: var(--serif);
   --font-mono: var(--mono);
   --font-symbol: var(--symbols);
@@ -144,31 +143,31 @@
   --font-body: var(--font-mono);
   --font-ui: var(--font-mono);
   --font-glyph: var(--font-symbol);
-  --font-brand: var(--font-sans);
+  --font-brand: var(--font-mono);
 
   --text-display: clamp(34px, 8vw, 42px);
   --text-title: clamp(34px, 8vw, 42px);
   --sky-title-size: clamp(27px, 6vw, 34px);
-  --text-card-title: 19px;
-  --text-wordmark: 19px;
-  --text-nav: 16.5px;
+  --text-card-title: 18px;
+  --text-wordmark: 18px;
+  --text-nav: 16px;
   --friend-card-title-size: var(--text-card-title);
   --friend-card-title-line: 1.2;
   --friend-row-title-size: var(--text-card-title);
   --friend-row-description-size: var(--text-description);
   --friend-row-meta-size: 13px;
-  --text-placement-degree: 13.5px;
-  --text-placement-meta: 13.5px;
+  --text-placement-degree: 13px;
+  --text-placement-meta: 13px;
   --article-title-size: var(--article-h2-size);
-  --article-h2-size: clamp(21px, 2.4vw, 25px);
+  --article-h2-size: clamp(20px, 2.4vw, 24px);
   --article-body-size: 15px;
-  --article-meta-size: 14.5px;
+  --article-meta-size: 14px;
   --article-label-size: 13px;
   --text-body: 15px;
   --text-row-value: 15px;
   --text-description: 14px;
-  --text-eyebrow: 12px;
-  --text-tiny: 10.5px;
+  --text-eyebrow: 11px;
+  --text-tiny: 11px;
   --text-label: var(--text-eyebrow);
   --text-label-size: var(--text-eyebrow);
   --text-glyph: 22px;
@@ -185,8 +184,8 @@
   --text-table-meta-size: var(--text-placement-meta);
   --text-compact-title: 15px;
   --text-compact-meta: 12px;
-  --text-compact-label: 10px;
-  --text-compact-caption: 10.5px;
+  --text-compact-label: 11px;
+  --text-compact-caption: 11px;
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
   --duration-badge-radius: var(--radius-pill);

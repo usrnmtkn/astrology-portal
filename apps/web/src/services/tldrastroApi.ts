@@ -53,6 +53,18 @@ type ApiEnvelope = {
   contentFacts: TldrAstroContentFact[];
 };
 
+export type TldrAstroApiHealth = {
+  ok: boolean;
+  service: string;
+  checkedAt: string;
+  ephemeris?: {
+    available: boolean;
+    library?: string;
+    version?: number | string;
+    path?: string;
+  };
+};
+
 type TimingBoostedTransit = {
   hit: Record<string, unknown>;
   baseScore: number;
@@ -101,6 +113,7 @@ const configuredBaseUrl = import.meta.env.VITE_TLDRASTRO_API_URL as string | und
 const tldrAstroApiBaseUrl = configuredBaseUrl?.replace(/\/$/, "") ?? "";
 
 export const isTldrAstroApiConfigured = Boolean(tldrAstroApiBaseUrl);
+export const tldrAstroApiStatusUrl = tldrAstroApiBaseUrl;
 
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
   if (!tldrAstroApiBaseUrl) {
@@ -125,6 +138,23 @@ async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TR
 
 export function getPersonalTiming(request: PersonalTimingRequest) {
   return postTldrAstro<PersonalTimingResponse>("/timing/personal", request);
+}
+
+export async function getTldrAstroApiHealth() {
+  if (!tldrAstroApiBaseUrl) {
+    throw new Error("VITE_TLDRASTRO_API_URL is required to check the TLDR Astro API.");
+  }
+
+  const response = await fetch(`${tldrAstroApiBaseUrl}/health`, {
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`TLDR Astro API ${response.status}: ${message}`);
+  }
+
+  return response.json() as Promise<TldrAstroApiHealth>;
 }
 
 export function compareRelationship(request: RelationshipRequest) {

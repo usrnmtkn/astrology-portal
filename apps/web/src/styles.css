@@ -1,3 +1,14 @@
+/*
+Type system:
+Newsreader is for display and titles. Geist Mono is for body, UI, data,
+labels, and the TLDR Astro wordmark. Noto Sans Symbols is reserved for
+astrological glyphs.
+
+Type scale:
+Text sizes snap to 11 / 12 / 13 / 14 / 15 / 16 / 18 / 20 / 24px, plus
+intentional display clamp() values.
+*/
+
 @import url("./styles/theme.css");
 @import url("./styles/base.css");
 @import url("./styles/layout.css");

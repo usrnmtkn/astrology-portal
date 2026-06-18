@@ -81,8 +81,7 @@ h6,
 .detail-modal h2,
 .today-hero h1,
 .you-profile-copy h1,
-.friend-hero-card h2,
-.brand-word {
+.friend-hero-card h2 {
   font-family: var(--font-display);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
@@ -100,6 +99,8 @@ h6,
 
 .brand-word {
   font-family: var(--font-brand);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
 }
 
 .astro-glyph,

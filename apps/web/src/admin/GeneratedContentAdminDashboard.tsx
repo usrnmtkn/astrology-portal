@@ -1,8 +1,9 @@
-import { Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Sparkles, Trash2, X } from "lucide-react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
+import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -24,6 +25,14 @@ type VoiceTemplateConfig = {
   generationGuide: string;
   bannedWords: string;
   phraseBank: string;
+};
+
+type AdminApiStatusState = {
+  state: "idle" | "checking" | "online" | "offline" | "notConfigured";
+  checkedAt: string | null;
+  latencyMs: number | null;
+  health: TldrAstroApiHealth | null;
+  error: string | null;
 };
 
 type AdminGeneratedContentRow = {
@@ -133,7 +142,7 @@ function surfaceOptionLabel(surface: GeneratedContentSurfaceFilter) {
     return generatedContentSurfaceLabels[surface];
   }
 
-  return `${generatedContentSurfaceLabels[surface]} samples`;
+  return `${generatedContentSurfaceLabels[surface]} content`;
 }
 
 function surfaceScopeLabel(surface: GeneratedContentSurfaceFilter) {
@@ -712,6 +721,25 @@ function adminDateLabel(value: string | null) {
   }).format(date);
 }
 
+function adminApiCheckedAtLabel(value: string | null) {
+  if (!value) {
+    return "Not checked yet";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(date);
+}
+
 function parseAdminJson(value: string, label: string) {
   try {
     return value.trim() ? JSON.parse(value) : {};
@@ -778,8 +806,55 @@ export function GeneratedContentAdminDashboard() {
   const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
+  const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
+    state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
+    checkedAt: null,
+    latencyMs: null,
+    health: null,
+    error: isTldrAstroApiConfigured ? null : "VITE_TLDRASTRO_API_URL is not configured."
+  });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
+
+  async function checkTldrAstroApiStatus() {
+    if (!isTldrAstroApiConfigured) {
+      setApiStatus({
+        state: "notConfigured",
+        checkedAt: new Date().toISOString(),
+        latencyMs: null,
+        health: null,
+        error: "VITE_TLDRASTRO_API_URL is not configured."
+      });
+      return;
+    }
+
+    const startedAt = performance.now();
+    setApiStatus((current) => ({
+      ...current,
+      state: "checking",
+      error: null
+    }));
+
+    try {
+      const health = await getTldrAstroApiHealth();
+
+      setApiStatus({
+        state: health.ok ? "online" : "offline",
+        checkedAt: new Date().toISOString(),
+        latencyMs: Math.round(performance.now() - startedAt),
+        health,
+        error: health.ok ? null : "The API returned an unhealthy response."
+      });
+    } catch (error) {
+      setApiStatus({
+        state: "offline",
+        checkedAt: new Date().toISOString(),
+        latencyMs: Math.round(performance.now() - startedAt),
+        health: null,
+        error: error instanceof Error ? error.message : "Could not reach the TLDR Astro API."
+      });
+    }
+  }
 
   async function loadStatusMetrics(nextSurface = surface) {
     if (!canUseApi) {
@@ -871,6 +946,10 @@ export function GeneratedContentAdminDashboard() {
       void loadRows();
     }
   }, [secret]);
+
+  useEffect(() => {
+    void checkTldrAstroApiStatus();
+  }, []);
 
   useEffect(() => {
     if (activePage === "privateRows" && canUseApi) {
@@ -1466,6 +1545,58 @@ export function GeneratedContentAdminDashboard() {
         <section className="admin-message-card" aria-live="polite">
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
+        </section>
+
+        <section className={`admin-api-status-card status-${apiStatus.state}`} aria-label="TLDR Astro API status">
+          <div className="admin-api-status-main">
+            <span className="admin-api-status-icon">
+              <Server size={18} aria-hidden="true" />
+            </span>
+            <div>
+              <p className="admin-eyebrow">Calculation API</p>
+              <h2>
+                {apiStatus.state === "online"
+                  ? "Cloud Run is online"
+                  : apiStatus.state === "checking"
+                    ? "Checking Cloud Run"
+                    : apiStatus.state === "notConfigured"
+                      ? "API not configured"
+                      : "Cloud Run needs attention"}
+              </h2>
+              <p>{tldrAstroApiStatusUrl || "Missing VITE_TLDRASTRO_API_URL"}</p>
+            </div>
+          </div>
+          <div className="admin-api-status-grid">
+            <article>
+              <span>Status</span>
+              <strong>
+                {apiStatus.state === "checking"
+                  ? "Checking"
+                  : apiStatus.state === "notConfigured"
+                    ? "Missing env"
+                    : apiStatus.state === "online"
+                      ? "Online"
+                      : "Offline"}
+              </strong>
+            </article>
+            <article>
+              <span>Ephemeris</span>
+              <strong>{apiStatus.health?.ephemeris?.available ? "Available" : "Unknown"}</strong>
+            </article>
+            <article>
+              <span>Latency</span>
+              <strong>{apiStatus.latencyMs === null ? "..." : `${apiStatus.latencyMs}ms`}</strong>
+            </article>
+            <article>
+              <span>Checked</span>
+              <strong>{adminApiCheckedAtLabel(apiStatus.checkedAt)}</strong>
+            </article>
+          </div>
+          {apiStatus.error && <p className="admin-api-status-error">{apiStatus.error}</p>}
+          <button type="button" onClick={() => void checkTldrAstroApiStatus()} disabled={apiStatus.state === "checking"}>
+            <Activity size={16} aria-hidden="true" />
+            Refresh API Status
+          </button>
         </section>
 
         {activePage === "releaseNotes" ? (

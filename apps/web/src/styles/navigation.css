@@ -90,10 +90,10 @@ html[data-scrolled] .topbar {
   border: 0;
   background: transparent;
   color: var(--ink);
-  font-family: var(--font-ui);
+  font-family: var(--font-brand);
   font-size: var(--text-wordmark);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 

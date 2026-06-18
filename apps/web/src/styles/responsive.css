@@ -375,7 +375,7 @@
     left: var(--mobile-page-gutter);
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
     padding: 0 20px;
-    font-size: 0.95rem;
+    font-size: 15px;
   }
 
   .app-shell {
@@ -429,7 +429,7 @@
     display: inline-flex;
     color: var(--ink);
     font-size: var(--text-wordmark);
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
   }
 
   .theme-toggle {
@@ -857,13 +857,13 @@
 
   .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
   .mode-member :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
-    box-shadow: 0 10px 30px -20px rgba(60, 40, 70, 0.45);
+    box-shadow: var(--card-shadow);
   }
 
   :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
     border-color: var(--line);
     background: var(--surface);
-    box-shadow: 0 14px 34px -24px rgba(0, 0, 0, 0.72);
+    box-shadow: var(--card-shadow);
   }
 
   .mode-guest .sky-lunar-brief,
