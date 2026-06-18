@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
@@ -18,6 +18,7 @@ export type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  compactHeader?: boolean;
   summary: string;
   summaryHeading?: string;
   sections: Array<{
@@ -25,6 +26,10 @@ export type YouTransitArticle = {
     tldr: string;
     body: string;
   }>;
+  relatedAspects?: {
+    heading: string;
+    rows: ReactNode[];
+  };
   meta: Array<{
     label: string;
     value: string;
@@ -375,6 +380,10 @@ function YouTransitArticlePage({
   article: YouTransitArticle;
   onClose: () => void;
 }) {
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [article.id]);
+
   const subtitle = cleanArticleText(article.subtitle);
   const summary = cleanArticleText(article.summary);
   const sections = article.sections
@@ -384,7 +393,7 @@ function YouTransitArticlePage({
       body: cleanArticleText(section.body)
     }))
     .filter((section) => section.heading || section.tldr || section.body);
-  const metaRows = article.meta.filter((row) => cleanArticleText(row.value));
+  const metaRows = article.compactHeader ? [] : article.meta.filter((row) => cleanArticleText(row.value));
   const hasReadableBody = Boolean(summary || sections.length);
   const sectionNumberOffset = summary ? 2 : 1;
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
@@ -402,18 +411,17 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            <div className="article-kicker-row">
-              <span className="article-glyph-tag" aria-hidden="true">{article.glyph ?? "☉"}</span>
-            </div>
             <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
             {subtitle ? <p className="article-sub">{subtitle}</p> : null}
-            <div className="article-meta sky-detail-meta">
-              {metaRows.map((row) => (
-                <p className="m-row" key={`${row.label}-${row.value}`}>
-                  <b>{row.label}:</b> {row.value}
-                </p>
-              ))}
-            </div>
+            {metaRows.length ? (
+              <div className="article-meta sky-detail-meta">
+                {metaRows.map((row) => (
+                  <p className="m-row" key={`${row.label}-${row.value}`}>
+                    <b>{row.label}:</b> {row.value}
+                  </p>
+                ))}
+              </div>
+            ) : null}
           </header>
 
           <hr className="article-rule" />
@@ -445,6 +453,14 @@ function YouTransitArticlePage({
                   <span className="article-section__eyebrow sky-detail-section-num">01 · Interpretation pending</span>
                   <h2>Interpretation pending</h2>
                   <p>We have the timing for this transit, but the full written interpretation is not ready yet.</p>
+                </section>
+              ) : null}
+              {article.relatedAspects?.rows.length ? (
+                <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
+                  <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>
+                  <div className="article-related-aspects__list aspect-row-list">
+                    {article.relatedAspects.rows}
+                  </div>
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>

@@ -467,3 +467,18 @@
 .updates-aspect-row__orb {
   font-variant-numeric: tabular-nums;
 }
+
+.article-related-aspects .aspect-row.article-related-aspect-row {
+  --row-bg: transparent;
+  --aspect-row-padding: 0 0 24px;
+
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.article-related-aspects .aspect-row.article-related-aspect-row:last-child {
+  border-bottom: 0;
+}

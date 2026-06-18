@@ -1329,7 +1329,7 @@
 
   .sky-detail-page {
     width: 100%;
-    padding: calc(var(--top-control-top) + var(--top-control-height) + var(--top-control-height) + 32px) var(--mobile-page-gutter)
+    padding: calc(var(--top-control-top) + var(--top-control-height) + var(--top-control-height) + 54px) var(--mobile-page-gutter)
       var(--mobile-page-gutter);
   }
 
@@ -1341,14 +1341,14 @@
 
   .article-title,
   .sky-detail-id h1 {
-    font-size: clamp(34px, 8.8vw, 40px);
-    line-height: 1.03;
+    font-size: clamp(28px, 8vw, 36px);
+    line-height: 1.04;
   }
 
   .article-share {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    flex-direction: row;
+    gap: 9px;
   }
 
   .segmented-control {

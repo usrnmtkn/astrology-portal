@@ -21,7 +21,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { isValidElement, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { isValidElement, lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
@@ -307,6 +307,10 @@ type SkyDetail = {
     heading: string;
     body: ReactNode;
   }>;
+  relatedAspects?: {
+    heading: string;
+    rows: ReactNode[];
+  };
   astrologyDrilldown?: GeneratedContentDrilldown | null;
   content?: ContentBundle;
 };
@@ -318,6 +322,7 @@ type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  compactHeader?: boolean;
   summary: string;
   summaryHeading?: string;
   sections: Array<{
@@ -325,6 +330,10 @@ type YouTransitArticle = {
     tldr: string;
     body: string;
   }>;
+  relatedAspects?: {
+    heading: string;
+    rows: ReactNode[];
+  };
   meta: Array<{
     label: string;
     value: string;
@@ -2402,10 +2411,10 @@ function detailMetaRows(meta: string) {
         : lower.includes("chapter")
           ? "Chapter"
       : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
-        ? "Timing"
+        ? "Duration"
         : index === 0
           ? "Signature"
-          : "Timing";
+          : "Duration";
 
     return { label, value: part };
   });
@@ -2796,6 +2805,10 @@ function SkyDetailArticle({
   detail: SkyDetail;
   onClose: () => void;
 }) {
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [detail.title, detail.meta]);
+
   const metaRows = detailMetaRows(detail.meta);
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
   const articleBody = detail.body.filter((node) => !isRetrogradeTimelineNode(node));
@@ -2844,9 +2857,6 @@ function SkyDetailArticle({
       <article className="article-shell sky-detail-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            <div className="article-kicker-row">
-              <span className={`article-glyph-tag${detail.retrograde ? " is-retrograde" : ""}`} aria-hidden="true">{detail.glyph}&#xFE0E;</span>
-            </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
             {articleSub ? <p className="article-sub">{articleSub}</p> : null}
             <div className="article-header-actions">
@@ -2928,6 +2938,14 @@ function SkyDetailArticle({
                     {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
                   </div>
                 </details>
+              ) : null}
+              {detail.relatedAspects?.rows.length ? (
+                <section className="article-related-aspects" aria-label={detail.relatedAspects.heading}>
+                  <span className="eyebrow section-label article-related-aspects__label">{detail.relatedAspects.heading}</span>
+                  <div className="article-related-aspects__list aspect-row-list">
+                    {detail.relatedAspects.rows}
+                  </div>
+                </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
@@ -3137,6 +3155,69 @@ function aspectRelationshipDescription(firstPoint: string, aspect: string, secon
   };
 
   return `${firstPoint} ${aspect} ${secondPoint} links ${firstTheme} with ${secondTheme}. ${aspectCopy[aspect] ?? "This aspect shows how these two parts of your chart speak to each other."}`;
+}
+
+function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string) {
+  return aspect.from === point ? aspect.to : aspect.from;
+}
+
+function relatedAspectRowsForPlacement({
+  aspects,
+  generatedAt,
+  generatedContent,
+  mode,
+  pointName
+}: {
+  aspects: SkySnapshot["aspects"];
+  generatedAt?: string;
+  generatedContent: GeneratedContentMap;
+  mode: "sky" | "natal";
+  pointName: string;
+}) {
+  return aspects
+    .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
+    .slice()
+    .sort((first, second) => first.orb - second.orb)
+    .slice(0, mode === "sky" ? 2 : 4)
+    .map((aspect) => {
+      const otherPoint = aspectOtherPoint(aspect, pointName);
+      const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
+      const generated = mode === "sky" && generatedAt
+        ? liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt))
+        : liveGeneratedContent(generatedContent, aspectContentId(aspect.from, aspect.type, aspect.to));
+      const fallback = mode === "sky"
+        ? fallbackFromHook(
+            "sky.aspect-detail",
+            { planetA: aspect.from, aspect: aspect.type, planetB: aspect.to },
+            approvedVoiceOrKnowledgeFallback(currentSkyAspectContentId(aspect.from, aspect.type, aspect.to), "sky")
+          )
+        : fallbackFromHook(
+            "you.natal-aspect",
+            { planetA: aspect.from, aspect: aspect.type, planetB: aspect.to },
+            approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to))
+          );
+      const rowSummary = liveGeneratedSummary(
+        generated,
+        fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
+      );
+
+      return (
+        <div
+          className="article-related-aspect-row aspect-row aspect-row-static"
+          key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
+        >
+          <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
+          <span className="aspect-row-copy">
+            <h3>{title}</h3>
+            {rowSummary ? <p>{rowSummary}</p> : null}
+          </span>
+          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+            <span className="aspect-row-dot" aria-hidden="true" />
+            <span>{wholeDegreeOrb(aspect.orb)}</span>
+          </span>
+        </div>
+      );
+    });
 }
 
 function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
@@ -7068,21 +7149,35 @@ function placementArticleSectionsFromInsight(insight: PlacementHouseInsight | nu
 function natalPlacementDetailArticle(
   position: PlanetPosition,
   natalSky: SkySnapshot | null,
-  liveWriteup: LiveGeneratedContent | null
+  liveWriteup: LiveGeneratedContent | null,
+  generatedContent: GeneratedContentMap = new Map()
 ): YouTransitArticle {
   const insight = natalHouseInsightForPosition(position, natalSky);
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
   const summary = liveBody || "";
+  const relatedAspectRows = relatedAspectRowsForPlacement({
+    aspects: natalSky?.aspects ?? [],
+    generatedContent,
+    mode: "natal",
+    pointName: position.planet
+  });
 
   return {
     id: natalPlacementRouteId(position),
     title: natalPlacementDetailTitle(position),
     glyph: position.glyph || pointGlyph(position.planet),
     subtitle: natalPlacementDetailSubtitle(position),
+    compactHeader: true,
     summary,
     summaryHeading: "Interpretation",
     sections: placementArticleSectionsFromInsight(insight, Boolean(summary)),
+    relatedAspects: relatedAspectRows.length > 0
+      ? {
+          heading: `Natal aspects to ${position.planet}`,
+          rows: relatedAspectRows
+        }
+      : undefined,
     meta: [
       { label: "Placement", value: natalPlacementDetailTitle(position) },
       { label: "House", value: position.house ? `${ordinalHouse(position.house)} House` : "" },
@@ -7452,7 +7547,7 @@ function signChapterEndLabel(position: PlanetPosition) {
 }
 
 function compactRetrogradeTiming(position: PlanetPosition, window?: RetrogradeWindow) {
-  return window ? formatRetrogradeEndDate(window.retrogradeEnd) : "Dates calculating";
+  return window ? retrogradeDetailRange(window) : "Dates calculating";
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
@@ -8105,6 +8200,13 @@ function PlacementTable({
           const generated = liveGeneratedContentByKeys(generatedContent, skyPlacementGeneratedContentKeys(position, generatedAt));
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
+          const relatedAspectRows = relatedAspectRowsForPlacement({
+            aspects: activeAspects,
+            generatedAt,
+            generatedContent,
+            mode: "sky",
+            pointName: position.planet
+          });
           const openDetail = () => onOpenDetail({
             glyph: detailGlyphForPlacement(position, activeAspects),
             kicker: placementDetailKicker(position, activeAspects),
@@ -8113,6 +8215,12 @@ function PlacementTable({
             retrograde: position.motion === "retrograde",
             body,
             sections: generatedDetailSections(generated),
+            relatedAspects: relatedAspectRows.length > 0
+              ? {
+                  heading: `Aspects to ${position.planet} today`,
+                  rows: relatedAspectRows
+                }
+              : undefined,
             astrologyDrilldown: generatedAstrologyDrilldown(generated),
             content: content.bundle
           });
@@ -9430,13 +9538,13 @@ function ProfileView({
     const liveWriteup = placementWriteups.get(contentKey) ?? null;
 
     setActivePlacementRouteId(placementId);
-    setTransitArticle(natalPlacementDetailArticle(position, natalSky, liveWriteup));
+    setTransitArticle(natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent));
     updatePlacementRouteUrl(placementId, historyMode);
     void loadOrSeedPlacementWriteup(position).then((loadedWriteup) => {
       const nextWriteup = loadedWriteup ?? placementWriteups.get(contentKey) ?? null;
 
       if (nextWriteup && placementRouteIdFromUrl() === placementId) {
-        setTransitArticle(natalPlacementDetailArticle(position, natalSky, nextWriteup));
+        setTransitArticle(natalPlacementDetailArticle(position, natalSky, nextWriteup, generatedContent));
       }
     });
   };
@@ -9448,7 +9556,7 @@ function ProfileView({
       if (routePosition) {
         const contentKey = natalPlacementWriteupContentKey(routePosition);
         setActivePlacementRouteId(routeId);
-        setTransitArticle(natalPlacementDetailArticle(routePosition, natalSky, placementWriteups.get(contentKey) ?? null));
+        setTransitArticle(natalPlacementDetailArticle(routePosition, natalSky, placementWriteups.get(contentKey) ?? null, generatedContent));
         void loadOrSeedPlacementWriteup(routePosition);
         return;
       }
@@ -9467,7 +9575,7 @@ function ProfileView({
       window.removeEventListener("popstate", syncPlacementRoute);
       window.removeEventListener("hashchange", syncPlacementRoute);
     };
-  }, [activePlacementRouteId, natalSky, placementWriteups, routeableNatalPositions.map(natalPlacementRouteId).join("|")]);
+  }, [activePlacementRouteId, generatedContent, natalSky, placementWriteups, routeableNatalPositions.map(natalPlacementRouteId).join("|")]);
   const bigThreeRows = [
     <PlacementTableRow
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
@@ -9589,8 +9697,7 @@ function ProfileView({
         summary: stripTldrPrefix(rowSummary),
         sections: articleSections,
         meta: [
-          { label: "Timing", value: timing.rangeLabel },
-          { label: "Duration", value: timing.durationLabel },
+          { label: "Duration", value: timing.rangeLabel },
           { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) },
           { label: "Natal point", value: transit.natalPoint }
         ]
