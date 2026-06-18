@@ -53,13 +53,20 @@ type ApiEnvelope = {
   contentFacts: TldrAstroContentFact[];
 };
 
+type TimingBoostedTransit = {
+  hit: Record<string, unknown>;
+  baseScore: number;
+  boostedScore: number;
+  boostReasons: string[];
+};
+
 export type PersonalTimingResponse = ApiEnvelope & {
   activatedHouse: number;
   activatedSign: string;
   activatedRuler: string;
   activatedNatalPlanets: string[];
   topTransits: Array<Record<string, unknown>>;
-  timingBoostedTransits: Array<Record<string, unknown>>;
+  timingBoostedTransits: TimingBoostedTransit[];
 };
 
 export type RelationshipCompareResponse = ApiEnvelope & {
