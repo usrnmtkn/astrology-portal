@@ -7154,42 +7154,12 @@ const natalSignatureDescriptions: Record<string, string> = {
   Pluto: "Where you transform and reclaim power"
 };
 
-const rulerPlanetProcesses: Record<string, string> = {
-  Sun: "The Sun shows where confidence grows through visibility, choice, and the courage to act from the center of yourself.",
-  Moon: "The Moon shows where wisdom develops through emotional honesty, memory, care, and the need to feel safe enough to respond.",
-  Mercury: "Mercury shows where understanding is built through conversation, observation, writing, learning, and repeated mental adjustment.",
-  Venus: "Venus shows where life teaches through desire, attraction, value, pleasure, and the choices that make connection feel real.",
-  Mars: "Mars shows where growth happens through action, friction, courage, and the willingness to move before everything feels settled.",
-  Jupiter: "Jupiter shows where meaning expands through study, risk, faith, teaching, and the larger story you build from experience.",
-  Saturn: "Saturn shows where wisdom is earned through experience, commitment, responsibility, and time.",
-  Uranus: "Uranus shows where clarity arrives through disruption, freedom, and the courage to break a pattern that has expired.",
-  Neptune: "Neptune shows where sensitivity, imagination, longing, and the work of clarifying what is real shape the path.",
-  Pluto: "Pluto shows where pressure, honesty, endings, and power slowly transform what can no longer stay hidden."
-};
-
-const rulerPlanetProcessShort: Record<string, string> = {
-  Sun: "visibility, confidence, and the courage to choose from the center of yourself",
-  Moon: "emotional repetition, care, memory, and the need to feel safe enough to respond",
-  Mercury: "conversation, observation, learning, writing, and repeated mental adjustment",
-  Venus: "desire, attraction, value, pleasure, and the choices that make life feel connected",
-  Mars: "action, friction, effort, courage, and the willingness to move",
-  Jupiter: "growth, study, risk, faith, teaching, and the bigger meaning you build from experience",
-  Saturn: "time, responsibility, repetition, discipline, and the evidence of lived experience",
-  Uranus: "change, disruption, freedom, and the courage to break a pattern that has expired",
-  Neptune: "imagination, sensitivity, surrender, and the work of clarifying what is real",
-  Pluto: "pressure, honesty, endings, power, and the slow transformation of what cannot stay hidden"
-};
-
 function readableHouseTopic(house: number) {
   return houseLifeAreas[house] ?? "this part of life";
 }
 
 function indefiniteArticleFor(text: string) {
   return /^[aeiou]/i.test(text.trim()) ? "an" : "a";
-}
-
-function sentenceCase(text: string) {
-  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
 }
 
 const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; lived: string }> = {
@@ -7257,7 +7227,7 @@ const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; l
 
 const natalPlanetFallbackFrames: Record<string, { house: string; growth: string; integration: string }> = {
   Sun: {
-    house: "that search becomes personal. Your identity grows by engaging it directly, and you discover who you are by letting life widen your sense of purpose",
+    house: "your identity becomes involved here. You discover who you are by engaging this area directly and letting lived experience clarify your sense of purpose",
     growth: "your sense of purpose",
     integration: "what you believe has to become something you can live from, not just something you understand in theory"
   },
@@ -7386,6 +7356,136 @@ const natalRulerHouseLinks: Record<number, string> = {
   12: "solitude, hidden pressure, dreams, retreat, and what works beneath the surface"
 };
 
+const natalRulerProcessLines: Record<string, string> = {
+  Sun: "The Sun rules this house, so the lesson often comes through visibility, confidence, and choosing from the center of yourself.",
+  Moon: "The Moon rules this house, so the lesson often comes through emotional honesty, memory, care, and the need to feel safe enough to respond.",
+  Mercury: "Mercury rules this house, so the lesson often comes through noticing, naming, learning, and saying what needs to be said.",
+  Venus: "Venus rules this house, so the lesson often comes through desire, value, attraction, and the choices that make connection feel real.",
+  Mars: "Mars rules this house, so the lesson often comes through acting on what your instincts already know, especially when avoidance has started to cost you energy.",
+  Jupiter: "Jupiter rules this house, so the lesson often comes through study, risk, faith, and the wider meaning you build from experience.",
+  Saturn: "Saturn rules this house, so the lesson often comes through time, responsibility, commitment, and the evidence of lived experience.",
+  Uranus: "Uranus rules this house, so the lesson often comes through disruption, freedom, and breaking a pattern that no longer fits.",
+  Neptune: "Neptune rules this house, so the lesson often comes through sensitivity, imagination, longing, and the work of clarifying what is real.",
+  Pluto: "Pluto rules this house, so the lesson often comes through pressure, honesty, endings, and the power that returns when something hidden is finally faced."
+};
+
+const natalSignSynthesisPhrases: Record<string, string> = {
+  Aries: "directness and courage",
+  Taurus: "steadiness and trust",
+  Gemini: "curiosity and movement",
+  Cancer: "care and emotional honesty",
+  Leo: "warmth and visibility",
+  Virgo: "care, repair, and usefulness",
+  Libra: "fairness and conscious agreement",
+  Scorpio: "depth and honesty",
+  Sagittarius: "freedom and perspective",
+  Capricorn: "patience and responsibility",
+  Aquarius: "freedom and independent thought",
+  Pisces: "sensitivity and clear boundaries"
+};
+
+const natalPlanetLandingPhrases: Record<string, string> = {
+  Sun: "your purpose has a direction you can actually live from",
+  Moon: "your feelings have somewhere real to land",
+  Mercury: "your thoughts become easier to trust and use",
+  Venus: "your choices start reflecting what you truly value",
+  Mars: "your effort has somewhere real to go",
+  Jupiter: "your confidence has something real to stand on",
+  Saturn: "responsibility turns into self-respect",
+  Uranus: "freedom becomes something you can live with, not just reach for",
+  Neptune: "the dream becomes clear enough to survive real life",
+  Pluto: "what once felt consuming can become a source of strength"
+};
+
+const natalPlacementTemplateLeakPatterns = [
+  /\bthis part of the chart\b/i,
+  /\bwithout losing its\b/i,
+  /\bcarries the thread\b/i,
+  /\bboth places\b/i,
+  /\bthemes\b/i,
+  /\broutes? this placement\b/i,
+  /\bthe story becomes more specific\b/i
+];
+
+function possessiveArea(focus: string) {
+  return focus.replace(/^your\s+/i, "");
+}
+
+function natalRulerParagraph({
+  cuspSign,
+  houseFrame,
+  houseLabel,
+  houseRuler,
+  rulerHouse,
+  rulerPosition
+}: {
+  cuspSign: string;
+  houseFrame: { intro: string; focus: string; lived: string };
+  houseLabel: string;
+  houseRuler: string;
+  rulerHouse: number | null;
+  rulerPosition: PlanetPosition | null;
+}) {
+  const focus = possessiveArea(houseFrame.focus);
+
+  if (houseRuler && rulerPosition && rulerHouse) {
+    const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
+    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `${houseRuler} rules this house, so its placement shows where the lesson becomes concrete.`;
+
+    return `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} rules this area of life. ${rulerProcess} In your chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, connecting ${focus} with ${rulerHouseLink}. Your ${focus} cannot be separated from what develops there.`;
+  }
+
+  if (houseRuler) {
+    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `${houseRuler} rules this house, so its placement shows where the lesson becomes concrete.`;
+
+    return `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} rules this area of life. ${rulerProcess} Its placement shows where this house becomes more personal, practical, and specific over time.`;
+  }
+
+  return `The ruler of your ${houseLabel} shows where this area of life becomes more personal, practical, and specific over time.`;
+}
+
+function natalPlacementSynthesisParagraph(
+  position: PlanetPosition,
+  houseFrame: { intro: string; focus: string; lived: string },
+  planetFrame: { house: string; growth: string; integration: string }
+) {
+  const focus = possessiveArea(houseFrame.focus);
+  const signPhrase = natalSignSynthesisPhrases[position.sign] ?? "honesty and lived experience";
+  const landing = natalPlanetLandingPhrases[position.planet] ?? planetFrame.integration;
+
+  return `Over time, ${planetFrame.growth} becomes steadier when your ${focus} reflects what is actually true for you. You may need ${houseFrame.lived} that leave room for ${signPhrase} without letting the pattern take over your whole life. The more your choices here are built from honesty and lived experience, the more ${landing}.`;
+}
+
+function hasNatalPlacementTemplateLeak(paragraph: string) {
+  return natalPlacementTemplateLeakPatterns.some((pattern) => pattern.test(paragraph));
+}
+
+function cleanNatalPlacementLensParagraphs({
+  fallbackParagraphs,
+  rebuiltRulerParagraph,
+  rebuiltSynthesisParagraph
+}: {
+  fallbackParagraphs: string[];
+  rebuiltRulerParagraph: string;
+  rebuiltSynthesisParagraph: string;
+}) {
+  return fallbackParagraphs.map((paragraph, index) => {
+    if (index === 2 && hasNatalPlacementTemplateLeak(paragraph)) {
+      return rebuiltRulerParagraph;
+    }
+
+    if (index === 3 && hasNatalPlacementTemplateLeak(paragraph)) {
+      return rebuiltSynthesisParagraph;
+    }
+
+    return paragraph
+      .replace(/\s+/g, " ")
+      .replace(/\bthis part of the chart\b/gi, "this area of life")
+      .replace(/\bboth places\b/gi, "the two areas of life")
+      .trim();
+  });
+}
+
 function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
@@ -7402,19 +7502,24 @@ function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySn
     ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
     : null;
   const rulerHouse = rulerPosition?.house ?? null;
-  const rulerHouseLink = rulerHouse ? natalRulerHouseLinks[rulerHouse] : "another part of the chart";
-  const rulerProcess = houseRuler ? rulerPlanetProcessShort[houseRuler] ?? "experience, repetition, and time" : "experience, repetition, and time";
-  const rulerPlanetProcess = houseRuler ? rulerPlanetProcesses[houseRuler] ?? `${houseRuler} shows where experience becomes clearer over time.` : "The house ruler shows where experience becomes clearer over time.";
 
   const houseParagraph = `${houseFrame.intro} With your ${position.planet} in this house, ${planetFrame.house}.`;
   const signParagraph = `In ${position.sign}, ${houseFrame.focus} has ${indefiniteArticleFor(signFrame.quality)} ${signFrame.quality} quality. ${signFrame.motion} ${signFrame.aliveness}`;
-  const rulerParagraph = houseRuler && rulerPosition && rulerHouse
-    ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this part of the chart. ${rulerPlanetProcess} In your chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, linking ${houseFrame.focus} to ${rulerHouseLink}. What you develop here has to feel real in both places.`
-    : houseRuler
-      ? `Because ${cuspSign} sits on the cusp of your ${houseLabel}, ${houseRuler} becomes the ruler of this part of the chart. ${rulerPlanetProcess} Its placement shows where the story becomes more specific and what kind of experience helps it mature.`
-      : `The ruler of this house shows where this topic gets worked out elsewhere in the chart. When that ruler is clear, it gives this placement a more specific path for development.`;
-  const integrationParagraph = `Over time, ${planetFrame.growth} becomes stronger when it can move through ${houseFrame.lived} without losing its ${position.sign} style. Because ${houseRuler || "the house ruler"} carries the thread, the process tends to unfold through ${rulerProcess}. ${sentenceCase(planetFrame.integration)}.`;
-  const body = [houseParagraph, signParagraph, rulerParagraph, integrationParagraph].join("\n\n");
+  const rulerParagraph = natalRulerParagraph({
+    cuspSign,
+    houseFrame,
+    houseLabel,
+    houseRuler,
+    rulerHouse,
+    rulerPosition
+  });
+  const integrationParagraph = natalPlacementSynthesisParagraph(position, houseFrame, planetFrame);
+  const paragraphs = cleanNatalPlacementLensParagraphs({
+    fallbackParagraphs: [houseParagraph, signParagraph, rulerParagraph, integrationParagraph],
+    rebuiltRulerParagraph: rulerParagraph,
+    rebuiltSynthesisParagraph: integrationParagraph
+  });
+  const body = paragraphs.join("\n\n");
 
   return {
     heading: natalPlacementFullTitle(position),
@@ -7510,7 +7615,7 @@ function natalPlacementDetailArticle(
   const liveBody = bodyParagraphs.join("\n\n").trim();
   const fallbackSection = natalPlacementFallbackSection(position, natalSky);
   const authoredBodyParagraphs = liveBody && !isNatalPlacementLensWriteup(liveWriteup) ? bodyParagraphs : [];
-  const lensBody = isNatalPlacementLensWriteup(liveWriteup) && liveBody ? liveBody : fallbackSection?.body ?? "";
+  const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
       heading: "",
