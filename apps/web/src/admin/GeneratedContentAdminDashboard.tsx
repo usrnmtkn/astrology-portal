@@ -220,10 +220,10 @@ function surfaceScopeLabel(surface: GeneratedContentSurfaceFilter) {
 
 function createQueueButtonLabel(surface: GeneratedContentSurfaceFilter) {
   if (surface === "sky" || surface === "all") {
-    return "Create Sky Queue";
+    return "Prepare Sky Drafts";
   }
 
-  return `Create ${generatedContentSurfaceLabels[surface]} Content Tests`;
+  return `Prepare ${generatedContentSurfaceLabels[surface]} Test Drafts`;
 }
 
 const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
@@ -962,7 +962,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   const payload = await response.json().catch(() => null) as T & { error?: string };
 
   if (!response.ok) {
-    throw new Error(payload?.error ?? `Request failed with ${response.status}.`);
+    throw new Error(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`);
   }
 
   return payload;
@@ -1443,10 +1443,10 @@ export function GeneratedContentAdminDashboard() {
 
       setDraft(nextDraft);
       setAreGenerationInputsOpen(true);
-      setMessage("Loaded current Sky facts. You can generate now.");
+      setMessage("Loaded the current Sky data for this draft.");
       return nextDraft;
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load astrology facts.");
+      setMessage(error instanceof Error ? `Could not load Sky data: ${error.message}` : "Could not load Sky data.");
       return baseDraft;
     } finally {
       if (shouldManageLoading) {
@@ -1464,7 +1464,7 @@ export function GeneratedContentAdminDashboard() {
     setStatus(nextDraft.status);
     setActivePage("review");
     setAreGenerationInputsOpen(true);
-    setMessage(nextDraft.surface === "sky" ? "New Sky draft ready. Loading astrology facts..." : `New ${generatedContentSurfaceLabels[nextDraft.surface]} draft ready.`);
+    setMessage(nextDraft.surface === "sky" ? "New Sky draft ready. Loading current Sky data..." : `New ${generatedContentSurfaceLabels[nextDraft.surface]} draft ready.`);
 
     if (nextDraft.surface === "sky") {
       await loadFactsForDraft(nextDraft);
@@ -1618,11 +1618,11 @@ export function GeneratedContentAdminDashboard() {
         setDraft(adminDraftFromRow(firstRow));
       }
       setMessage(nextSurface === "sky" || nextSurface === "all"
-        ? `Created ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and click Generate when you are ready for AI copy.`
-        : `Created ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} content test rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
+        ? `Prepared ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and generate the reader-facing copy when you are ready.`
+        : `Prepared ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} content test rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not create the review queue.");
+      setMessage(error instanceof Error ? `Could not prepare draft rows: ${error.message}` : "Could not prepare draft rows.");
     } finally {
       setIsLoading(false);
     }
@@ -1835,11 +1835,11 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-header-actions">
               <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
-                Refresh
+                Reload Review Rows
               </button>
               <button className="admin-primary-button" type="button" onClick={() => void startNewContent()}>
                 <Plus size={16} aria-hidden="true" />
-                New Content
+                Draft One Reading
               </button>
               <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
                 <Sparkles size={16} aria-hidden="true" />
@@ -1851,7 +1851,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-header-actions">
               <button type="button" onClick={() => void loadPrivateRows()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
-                Refresh
+                Reload Private Rows
               </button>
             </div>
           )}
