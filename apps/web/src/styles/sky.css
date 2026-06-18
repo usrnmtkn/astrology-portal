@@ -374,7 +374,8 @@
 }
 
 .article-related-aspect-row .aspect-row-copy h3 {
-  font-size: var(--text-title);
+  font-size: var(--text-card-title);
+  line-height: 1.25;
 }
 
 .article-related-aspect-row .aspect-row-copy p {
