@@ -246,6 +246,52 @@
   line-height: var(--leading-body);
 }
 
+.daily-horoscope-summary__secondary {
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+}
+
+.summary-skeleton {
+  display: grid;
+  gap: 8px;
+  width: min(360px, 100%);
+  margin-top: 2px;
+}
+
+.summary-skeleton span {
+  display: block;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--card-border) 72%, transparent),
+    color-mix(in srgb, var(--card-border) 28%, transparent),
+    color-mix(in srgb, var(--card-border) 72%, transparent)
+  );
+  background-size: 180% 100%;
+  animation: summary-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.summary-skeleton span:last-child {
+  width: 72%;
+}
+
+@keyframes summary-skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summary-skeleton span {
+    animation: none;
+  }
+}
+
 .personal-timing-summary ul {
   display: flex;
   flex-wrap: wrap;

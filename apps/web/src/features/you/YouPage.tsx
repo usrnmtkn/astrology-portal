@@ -8,6 +8,7 @@ type YouTab = "transits" | "chart";
 export type PersonalTimingSummary = {
   headline: string;
   summary: string;
+  secondary?: string;
   keyFactors: string[];
   status: "idle" | "loading" | "ready" | "error";
 };
@@ -297,9 +298,17 @@ function YouUpdatesTab({
   return (
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && dailyUpdateSummary && (
-        <section className="daily-horoscope-summary" aria-label="Daily horoscope summary">
+        <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           <span className="eyebrow section-label">TLDR</span>
+          <h3>{dailyUpdateSummary.headline}</h3>
           <p>{dailyUpdateSummary.summary}</p>
+          {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
+          {dailyUpdateSummary.status === "loading" ? (
+            <span className="summary-skeleton" aria-hidden="true">
+              <span />
+              <span />
+            </span>
+          ) : null}
         </section>
       )}
       {hasSavedCurrentCity && personalTimingSummary && (
