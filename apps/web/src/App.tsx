@@ -2815,13 +2815,14 @@ function SkyDetailArticle({
   const paragraphs = articleBody;
   const generatedSections = (detail.sections ?? []).filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
-  );
+  ).map((section) => ({
+    ...section,
+    heading: section.heading.replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim()
+  }));
   const drilldown = detail.astrologyDrilldown;
-  const [lede, ...sectionParagraphs] = paragraphs;
+  const [lede] = paragraphs;
   const articleSub = (statement || (typeof lede === "string" ? lede : "")).trim();
-  const fallbackParagraphs = articleSub && typeof lede === "string" && articleSub === lede.trim()
-    ? sectionParagraphs
-    : paragraphs;
+  const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
   const visibleMetaRows = metaRows.filter((row) => row.label.toLowerCase() !== "signature");
@@ -2858,7 +2859,6 @@ function SkyDetailArticle({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-            {articleSub ? <p className="article-sub">{articleSub}</p> : null}
             <div className="article-header-actions">
               <div className="article-byline">
                 <span className="by-author">By tldr astro</span>
@@ -2893,7 +2893,6 @@ function SkyDetailArticle({
               {generatedSections.length > 0 ? (
                 generatedSections.map((section, index) => (
                   <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                    <span className="article-section__eyebrow sky-detail-section-num">{String(index + 1).padStart(2, "0")} · {section.heading}</span>
                     <h2>{section.heading}</h2>
                     <p>{section.body}</p>
                   </section>
@@ -2902,14 +2901,12 @@ function SkyDetailArticle({
                 <>
                   {bodyLede ? (
                     <section className="article-section sky-detail-section">
-                      <span className="article-section__eyebrow sky-detail-section-num">01 · What it means</span>
                       <h2>What it means</h2>
                       <p className="sky-detail-lede">{bodyLede}</p>
                     </section>
                   ) : null}
                   {bodySectionParagraphs.map((paragraph, index) => (
                     <section className="article-section sky-detail-section" key={index}>
-                      <span className="article-section__eyebrow sky-detail-section-num">{String(index + 2).padStart(2, "0")} · {detailSectionTitle(index)}</span>
                       <h2>{detailSectionTitle(index)}</h2>
                       <p>{paragraph}</p>
                     </section>

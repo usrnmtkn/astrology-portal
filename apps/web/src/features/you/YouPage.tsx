@@ -373,6 +373,10 @@ function cleanArticleText(value?: string | null) {
   return isPlaceholderArticleText(text) ? "" : text;
 }
 
+function cleanArticleHeading(value?: string | null) {
+  return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
+}
+
 function YouTransitArticlePage({
   article,
   onClose
@@ -384,18 +388,16 @@ function YouTransitArticlePage({
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [article.id]);
 
-  const subtitle = cleanArticleText(article.subtitle);
   const summary = cleanArticleText(article.summary);
   const sections = article.sections
     .map((section) => ({
-      heading: cleanArticleText(section.heading),
+      heading: cleanArticleHeading(section.heading),
       tldr: cleanArticleText(section.tldr),
       body: cleanArticleText(section.body)
     }))
     .filter((section) => section.heading || section.tldr || section.body);
   const metaRows = article.compactHeader ? [] : article.meta.filter((row) => cleanArticleText(row.value));
   const hasReadableBody = Boolean(summary || sections.length);
-  const sectionNumberOffset = summary ? 2 : 1;
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
 
   return (
@@ -412,7 +414,6 @@ function YouTransitArticlePage({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
-            {subtitle ? <p className="article-sub">{subtitle}</p> : null}
             {metaRows.length ? (
               <div className="article-meta sky-detail-meta">
                 {metaRows.map((row) => (
@@ -430,7 +431,6 @@ function YouTransitArticlePage({
             <div className="article-body-inner">
               {summary ? (
                 <section className="article-section sky-detail-section">
-                  <span className="article-section__eyebrow sky-detail-section-num">01 · {summaryHeading}</span>
                   <h2>{summaryHeading}</h2>
                   <p>{summary}</p>
                 </section>
@@ -441,7 +441,6 @@ function YouTransitArticlePage({
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                  <span className="article-section__eyebrow sky-detail-section-num">{String(index + sectionNumberOffset).padStart(2, "0")} · {heading}</span>
                   <h2>{heading}</h2>
                   {showTldr ? <p>{section.tldr}</p> : null}
                   {section.body ? <p>{section.body}</p> : null}
@@ -450,7 +449,6 @@ function YouTransitArticlePage({
               })}
               {!hasReadableBody ? (
                 <section className="article-section sky-detail-section">
-                  <span className="article-section__eyebrow sky-detail-section-num">01 · Interpretation pending</span>
                   <h2>Interpretation pending</h2>
                   <p>We have the timing for this transit, but the full written interpretation is not ready yet.</p>
                 </section>
