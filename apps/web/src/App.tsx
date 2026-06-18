@@ -3185,17 +3185,64 @@ function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string)
   return aspect.from === point ? aspect.to : aspect.from;
 }
 
+function natalAspectDetailArticle(
+  aspect: SkySnapshot["aspects"][number],
+  generatedContent: GeneratedContentMap = new Map()
+): YouTransitArticle {
+  const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
+  const title = `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
+  const content = fallbackFromHook(
+    "you.natal-aspect",
+    {
+      planetA: aspect.from,
+      aspect: aspect.type,
+      planetB: aspect.to
+    },
+    approvedVoiceOrKnowledgeFallback(contentKey)
+  );
+  const generated = liveGeneratedContent(generatedContent, contentKey);
+  const body = liveGeneratedBody(
+    generated,
+    content.detailParagraphs.length > 0
+      ? content.detailParagraphs
+      : [content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)]
+  );
+  const summary = liveGeneratedSummary(
+    generated,
+    content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+  );
+
+  return {
+    id: contentKey,
+    title,
+    glyph: pointGlyph(aspect.from),
+    subtitle: stripTldrPrefix(summary),
+    compactHeader: true,
+    bodyBeforeSections: true,
+    body,
+    summary: "",
+    summaryHeading: "",
+    sections: [],
+    meta: [
+      { label: "Aspect", value: titleCase(aspect.type) },
+      { label: "Orb", value: wholeDegreeOrb(aspect.orb) }
+    ]
+  };
+}
+
 function relatedAspectRowsForPlacement({
   aspects,
   generatedAt,
   generatedContent,
   mode,
+  onOpenNatalAspect,
   pointName
 }: {
   aspects: SkySnapshot["aspects"];
   generatedAt?: string;
   generatedContent: GeneratedContentMap;
   mode: "sky" | "natal";
+  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
   pointName: string;
 }) {
   return aspects
@@ -3224,12 +3271,8 @@ function relatedAspectRowsForPlacement({
         generated,
         fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
       );
-
-      return (
-        <div
-          className="article-related-aspect-row aspect-row aspect-row-static"
-          key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
-        >
+      const rowContent = (
+        <>
           <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
           <span className="aspect-row-copy">
             <h3>{title}</h3>
@@ -3239,6 +3282,29 @@ function relatedAspectRowsForPlacement({
             <span className="aspect-row-dot" aria-hidden="true" />
             <span>{wholeDegreeOrb(aspect.orb)}</span>
           </span>
+        </>
+      );
+
+      if (mode === "natal" && onOpenNatalAspect) {
+        return (
+          <button
+            aria-label={`Read more about ${title}`}
+            className="article-related-aspect-row aspect-row aspect-row-button"
+            key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
+            onClick={() => onOpenNatalAspect(aspect)}
+            type="button"
+          >
+            {rowContent}
+          </button>
+        );
+      }
+
+      return (
+        <div
+          className="article-related-aspect-row aspect-row aspect-row-static"
+          key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
+        >
+          {rowContent}
         </div>
       );
     });
@@ -7437,7 +7503,8 @@ function natalPlacementDetailArticle(
   position: PlanetPosition,
   natalSky: SkySnapshot | null,
   liveWriteup: LiveGeneratedContent | null,
-  generatedContent: GeneratedContentMap = new Map()
+  generatedContent: GeneratedContentMap = new Map(),
+  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void
 ): YouTransitArticle {
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
@@ -7455,6 +7522,7 @@ function natalPlacementDetailArticle(
     aspects: natalSky?.aspects ?? [],
     generatedContent,
     mode: "natal",
+    onOpenNatalAspect,
     pointName: position.planet
   });
 
@@ -9836,19 +9904,26 @@ function ProfileView({
 
     return null;
   };
+  const openNatalAspectArticle = (aspect: SkySnapshot["aspects"][number]) => {
+    setActivePlacementRouteId(null);
+    setTransitArticle(natalAspectDetailArticle(aspect, generatedContent));
+    if (window.location.hash.startsWith("#you/placement/")) {
+      window.history.pushState(null, "", "#you");
+    }
+  };
   const openPlacementArticle = (position: PlanetPosition, historyMode: "push" | "replace" = "push") => {
     const placementId = natalPlacementRouteId(position);
     const contentKey = natalPlacementWriteupContentKey(position);
     const liveWriteup = placementWriteups.get(contentKey) ?? null;
 
     setActivePlacementRouteId(placementId);
-    setTransitArticle(natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent));
+    setTransitArticle(natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, openNatalAspectArticle));
     updatePlacementRouteUrl(placementId, historyMode);
     void loadOrSeedPlacementWriteup(position).then((loadedWriteup) => {
       const nextWriteup = loadedWriteup ?? placementWriteups.get(contentKey) ?? null;
 
       if (nextWriteup && placementRouteIdFromUrl() === placementId) {
-        setTransitArticle(natalPlacementDetailArticle(position, natalSky, nextWriteup, generatedContent));
+        setTransitArticle(natalPlacementDetailArticle(position, natalSky, nextWriteup, generatedContent, openNatalAspectArticle));
       }
     });
   };
@@ -9860,7 +9935,7 @@ function ProfileView({
       if (routePosition) {
         const contentKey = natalPlacementWriteupContentKey(routePosition);
         setActivePlacementRouteId(routeId);
-        setTransitArticle(natalPlacementDetailArticle(routePosition, natalSky, placementWriteups.get(contentKey) ?? null, generatedContent));
+        setTransitArticle(natalPlacementDetailArticle(routePosition, natalSky, placementWriteups.get(contentKey) ?? null, generatedContent, openNatalAspectArticle));
         void loadOrSeedPlacementWriteup(routePosition);
         return;
       }
@@ -9967,9 +10042,12 @@ function ProfileView({
     );
 
     return (
-      <div
-        className="aspect-row aspect-row-static"
+      <button
+        aria-label={`Read more about ${aspect.from} ${aspect.type} ${aspect.to}`}
+        className="aspect-row aspect-row-button"
         key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+        onClick={() => openNatalAspectArticle(aspect)}
+        type="button"
       >
         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
         <span className="aspect-row-copy">
@@ -9980,7 +10058,7 @@ function ProfileView({
           <span className="aspect-row-dot" aria-hidden="true" />
           <span>{wholeDegreeOrb(aspect.orb)}</span>
         </span>
-      </div>
+      </button>
     );
   });
   const updateAspectRows = aspectRows.map((transit) => {
