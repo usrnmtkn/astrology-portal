@@ -256,10 +256,10 @@ export const fallbackHookDefinitions = [
     knowledgeIdTemplates: ["friends-circle-{topic}", "relationship-circle-{topic}", "{topic}"],
     requiredFacts: ["topic", "people affected", "shared timing pattern"],
     copy: {
-      headline: "Circle Theme: {{topic}}",
-      summary: "More than one person in your circle may be dealing with {{topic}} right now. The pattern is easier to handle when it is named as shared timing, not personal drama.",
-      body: "Circle cards look for repeated timing across multiple charts. When the same topic appears for more than one person, it can shape the mood of the group: what people avoid, need, ask for, or react to. The goal is to make the pattern visible enough to respond to it cleanly.",
-      bestMove: "Name the shared theme, then keep the next step simple: clarify plans, lower assumptions, ask directly, or give people room where the timing calls for it.",
+      headline: "One question is moving through different lives",
+      summary: "More than one person in this group may be moving through {{topic}} right now, but that does not mean they are living the same story.",
+      body: "This update looks for repeated timing across multiple charts. When the same topic appears for more than one person, it can describe a shared mood in the group without making everyone's experience identical. One person may meet it through a conversation, another through a deadline, a boundary, a money question, a health issue, or the need for privacy before they can explain what is happening.",
+      bestMove: "Name the shared pattern, then keep the response practical: clarify plans, ask directly, lower assumptions, or give people room where the timing calls for it.",
       emptyState: "If no approved content exists, leave the product surface blank."
     }
   },

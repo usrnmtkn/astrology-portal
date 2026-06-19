@@ -2898,6 +2898,7 @@ function SkyDetailArticle({
     ? []
     : metaRows.filter((row) => row.label.toLowerCase() !== "signature");
   const shareText = articleSub || detail.title;
+  const showArticleHeaderChrome = !detail.compactHeader;
 
   function copyArticleLink() {
     void navigator.clipboard?.writeText(window.location.href);
@@ -2930,28 +2931,30 @@ function SkyDetailArticle({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-            {detailSubtitle ? (
+            {showArticleHeaderChrome && detailSubtitle ? (
               <div className="article-tldr">
                 <span className="article-tldr__label">TLDR</span>
                 <p className="article-sub article-tldr__copy">{detailSubtitle}</p>
               </div>
             ) : null}
-            <div className="article-header-actions">
-              <div className="article-byline">
-                <span className="by-author">By tldr astro</span>
-              </div>
-              <div className="article-share" aria-label="Share this article">
-                <span className="share-lab">Share:</span>
-                <div className="share-btns">
-                  <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
-                    <Link size={18} aria-hidden="true" />
-                  </button>
-                  <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
-                    <ArrowUpRight size={18} aria-hidden="true" />
-                  </button>
+            {showArticleHeaderChrome ? (
+              <div className="article-header-actions">
+                <div className="article-byline">
+                  <span className="by-author">By tldr astro</span>
+                </div>
+                <div className="article-share" aria-label="Share this article">
+                  <span className="share-lab">Share:</span>
+                  <div className="share-btns">
+                    <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
+                      <Link size={18} aria-hidden="true" />
+                    </button>
+                    <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
+                      <ArrowUpRight size={18} aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
             {visibleMetaRows.length > 0 ? (
               <div className="article-meta sky-detail-meta">
                 {visibleMetaRows.map((row) => (
@@ -5028,6 +5031,114 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
   }));
 }
 
+function groupHouseHeadline(house: number) {
+  const headlines: Record<number, string> = {
+    1: "More than one person is figuring out how to show up",
+    2: "Security is becoming harder to ignore",
+    3: "One question is moving through different lives",
+    4: "The private foundation needs attention",
+    5: "More than one person needs room to feel alive",
+    6: "The small things are starting to carry more weight",
+    7: "Different relationships are asking for clearer terms",
+    8: "Trust is not landing the same way for everyone",
+    9: "One question is moving through different lives",
+    10: "Visibility is asking for different kinds of courage",
+    11: "Belonging is becoming a real question",
+    12: "Some things need privacy before they make sense"
+  };
+
+  return headlines[house] ?? "Different people are meeting the same kind of pressure";
+}
+
+function groupHouseThemes(house: number) {
+  const themes: Record<number, string> = {
+    1: "identity, presence, body, and first response",
+    2: "money, stability, self-worth, and what feels worth protecting",
+    3: "conversation, learning, local movement, and the details people keep noticing",
+    4: "home, family, privacy, and emotional security",
+    5: "creativity, pleasure, romance, and the need to feel alive",
+    6: "work, health, routines, maintenance, and daily stress",
+    7: "partnership, conflict, agreement, and one-to-one dynamics",
+    8: "trust, shared resources, vulnerability, and what is hard to control",
+    9: "belief, study, travel, perspective, and the search for meaning",
+    10: "career, reputation, responsibility, and visibility",
+    11: "friendship, groups, community, and shared goals",
+    12: "privacy, retreat, exhaustion, and hidden pressure"
+  };
+
+  return themes[house] ?? houseLifeAreas[house] ?? "a specific life topic";
+}
+
+function groupHouseExamples(house: number) {
+  const examples: Record<number, string> = {
+    1: "Someone may be changing how they enter a room. Someone else may be more aware of their body, image, or first response.",
+    2: "Someone may be thinking about money or stability. Someone else may be deciding what is actually worth keeping.",
+    3: "Someone may be stuck on a conversation. Someone else may be learning something through errands, messages, siblings, or the details of the day.",
+    4: "Someone may need quiet at home. Someone else may be dealing with family, memory, or the private structure underneath everything else.",
+    5: "Someone may want more pleasure or creative space. Someone else may be remembering what makes them feel wanted, playful, or seen.",
+    6: "Someone may feel overworked or stretched thin. Someone else may be dealing with a health issue, a messy schedule, or the quiet stress of keeping everything running.",
+    7: "Someone may be renegotiating a relationship. Someone else may be noticing where agreement, conflict, or attraction needs more honesty.",
+    8: "Someone may be dealing with money entanglements or trust. Someone else may be carrying something vulnerable that is not easy to explain.",
+    9: "Someone may be questioning a belief. Someone else may be pulled toward study, travel, teaching, or a larger frame for what has happened.",
+    10: "Someone may be under pressure to be visible. Someone else may be making decisions about work, reputation, or what responsibility now requires.",
+    11: "Someone may be reconsidering a friendship or group. Someone else may be thinking about where they belong and what future they want to help build.",
+    12: "Someone may need rest before they can explain what is wrong. Someone else may be carrying something privately while it is still taking shape."
+  };
+
+  return examples[house] ?? "The details may look different for each person, but the same kind of life topic is active.";
+}
+
+function groupPlanetHeadline(planet: string) {
+  const headlines: Record<string, string> = {
+    Moon: "Feelings may be closer to the surface",
+    Mercury: "The same conversation may be taking different forms",
+    Venus: "Different people are sorting out what feels worth choosing",
+    Mars: "More than one person may be reacting faster than usual",
+    Jupiter: "Possibility may be expanding in different directions",
+    Saturn: "Different people are meeting the same kind of pressure",
+    Uranus: "More than one person may need room to move differently",
+    Neptune: "Hope and reality may be harder to separate right now",
+    Pluto: "Control may be harder to keep out of the room",
+    Chiron: "The tender spot may be easier to notice"
+  };
+
+  return headlines[planet] ?? "One question is moving through different lives";
+}
+
+function groupPlanetThemes(planet: string) {
+  const themes: Record<string, string> = {
+    Moon: "mood, safety, memory, and emotional reaction",
+    Mercury: "messages, decisions, questions, and how things get explained",
+    Venus: "connection, money, desire, beauty, and what feels worth choosing",
+    Mars: "drive, conflict, urgency, and the need to act",
+    Jupiter: "growth, risk, belief, and the feeling that more is possible",
+    Saturn: "responsibility, limits, pressure, and what has to become more solid",
+    Uranus: "change, restlessness, freedom, and interrupted patterns",
+    Neptune: "longing, imagination, idealization, and blurred boundaries",
+    Pluto: "control, intensity, pressure, and what cannot stay buried",
+    Chiron: "sensitivity, old pain, and the place that wants a more honest response"
+  };
+
+  return themes[planet] ?? comparisonPointRole(planet);
+}
+
+function groupPlanetExamples(planet: string) {
+  const examples: Record<string, string> = {
+    Moon: "Someone may need more reassurance. Someone else may be reacting from a private feeling they have not fully named.",
+    Mercury: "Someone may need to clarify a conversation. Someone else may be changing their mind after new information arrives.",
+    Venus: "Someone may be thinking about what they want. Someone else may be weighing comfort, money, attraction, or whether a connection still feels mutual.",
+    Mars: "Someone may be ready to act. Someone else may be irritated because a decision has taken too long.",
+    Jupiter: "Someone may be taking a risk. Someone else may be trying to tell the difference between real opportunity and overextension.",
+    Saturn: "Someone may be carrying a deadline, boundary, or responsibility. Someone else may be feeling where a situation needs more structure.",
+    Uranus: "Someone may need space before they can explain themselves. Someone else may be breaking a routine that has become too tight.",
+    Neptune: "Someone may be hoping for more than the situation can hold. Someone else may be avoiding a truth because the dream feels easier.",
+    Pluto: "Someone may be trying to control an outcome. Someone else may be realizing that an old pattern has more power than they wanted to admit.",
+    Chiron: "Someone may be more sensitive than usual. Someone else may be finding language for a hurt they usually move around."
+  };
+
+  return examples[planet] ?? "The same pattern may be showing up through different choices, conversations, or timing pressures.";
+}
+
 function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
   const rows = charts
     .filter((chart) => chart.chartType !== "event" && chart.natalChart)
@@ -5066,34 +5177,44 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
     .filter(([, activeCharts]) => new Set(activeCharts.map((chart) => chart.id)).size >= 2)
     .map(([planet, activeCharts]) => {
       const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+      const names = readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName));
 
       return {
-        title: `${planet} is showing up for more than one person`,
-        body: `${readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName))} are all being touched by ${planet} right now. Conversations may keep circling back to ${comparisonPointRole(planet)}, even if each person is dealing with it in a different part of life.`
+        title: groupPlanetHeadline(planet),
+        body: `${names} are all being touched by ${planet} right now, so ${groupPlanetThemes(planet)} may be showing up in different ways. This does not mean they are living the same story. ${groupPlanetExamples(planet)}`
       };
     });
   const houseCards = Array.from(byHouse.entries())
     .filter(([, activeCharts]) => new Set(activeCharts.map((chart) => chart.id)).size >= 2)
     .map(([house, activeCharts]) => {
       const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+      const names = readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName));
 
       return {
-        title: `${houseLifeAreas[house]} are a shared theme`,
-        body: `${readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName))} are all being pulled toward ${ordinalHouse(house)} house topics. The details may be different, but ${houseLifeAreas[house]} are asking for attention across the circle.`
+        title: groupHouseHeadline(house),
+        body: `${names} all have current timing pressing on ${ordinalHouse(house)} house topics, so ${groupHouseThemes(house)} may be active for this group. This does not mean the same event is happening to everyone. ${groupHouseExamples(house)}`
       };
     });
   const profectionCards = Array.from(byProfectedHouse.entries())
     .filter(([, activeCharts]) => activeCharts.length >= 2)
-    .map(([house, activeCharts]) => ({
-      title: `${houseLifeAreas[house]} are repeating`,
-      body: `${readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName))} are in ${ordinalHouse(house)} house years. That means ${houseLifeAreas[house]} may be the background topic for more than one person right now.`
-    }));
+    .map(([house, activeCharts]) => {
+      const names = readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName));
+
+      return {
+        title: groupHouseHeadline(house),
+        body: `${names} are all in ${ordinalHouse(house)} house years, so ${groupHouseThemes(house)} may be running through more than one person's life right now. This does not mean they are living the same story. ${groupHouseExamples(house)}`
+      };
+    });
   const lordCards = Array.from(byLordOfYear.entries())
     .filter(([, activeCharts]) => activeCharts.length >= 2)
-    .map(([planet, activeCharts]) => ({
-      title: `${planet} is setting the year-long tone`,
-      body: `${readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName))} have ${planet} as lord of the year. ${planet} themes may feel louder for them, especially when the current sky touches that planet.`
-    }));
+    .map(([planet, activeCharts]) => {
+      const names = readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName));
+
+      return {
+        title: groupPlanetHeadline(planet),
+        body: `${names} all have ${planet} as lord of the year, so ${groupPlanetThemes(planet)} may be setting a background pattern for this group. This does not mean the year is moving the same way for everyone. ${groupPlanetExamples(planet)}`
+      };
+    });
 
   return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
 }

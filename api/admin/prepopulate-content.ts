@@ -455,7 +455,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">
         mode: "feed",
         eventType: "circle-feed",
         targetDate,
-        headline: "Saturn is active in your circle",
+        headline: "Different people are meeting the same kind of pressure",
         facts: {
           type: "circle_feed",
           topic: "saturn",
