@@ -15,6 +15,7 @@ type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE";
+type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -200,6 +201,14 @@ const contentStatusFilters: Array<{ key: AdminContentStatusFilter; label: string
   { key: "NEEDS_REVIEW", label: "Needs Review" },
   { key: "SCHEDULED", label: "Scheduled" },
   { key: "LIVE", label: "Published" }
+];
+
+const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }> = [
+  { key: "all", label: "All categories" },
+  { key: "Sky", label: "Sky" },
+  { key: "Natal Aspects", label: "Natal Aspects" },
+  { key: "Natal Chart", label: "Natal Chart" },
+  { key: "Relationship", label: "Relationship" }
 ];
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
@@ -1119,18 +1128,26 @@ function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "
   return "draft";
 }
 
-function contentCategoryLabel(record: AdminReviewRecord) {
-  const templateSurface = templateSurfaceFor(record.surface, record.eventType ?? undefined);
+function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCategoryFilter, "all"> {
+  const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
+  const normalizedContentKey = record.contentKey.toLowerCase();
 
-  if (templateSurface !== "sky" || record.surface !== "sky") {
-    return voiceTemplateLabels[templateSurface];
-  }
-
-  if (record.eventType?.includes("aspect")) {
+  if (record.surface === "sky") {
     return "Sky";
   }
 
-  return generatedContentSurfaceLabels[record.surface];
+  if (record.surface === "synastry" || record.surface === "composite" || record.surface === "relationship") {
+    return "Relationship";
+  }
+
+  if (
+    normalizedEventType.includes("natal-aspect")
+    || normalizedContentKey.includes("natal-") && /\b(conjunction|sextile|square|trine|opposition)\b/.test(normalizedContentKey)
+  ) {
+    return "Natal Aspects";
+  }
+
+  return "Natal Chart";
 }
 
 function contentStatusLabel(status: string) {
@@ -1267,7 +1284,7 @@ export function GeneratedContentAdminDashboard() {
   const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
   const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
   const [dateStart, setDateStart] = useState(() => dateInputValue());
   const [dateEnd, setDateEnd] = useState(() => dateInputValue(addDays(new Date(), 30)));
@@ -1345,7 +1362,6 @@ export function GeneratedContentAdminDashboard() {
         return first.title.localeCompare(second.title);
       });
   }, [categoryFilter, contentStatusFilter, personQuery, reviewRecords]);
-  const contentCategories = useMemo(() => Array.from(new Set(reviewRecords.map(contentCategoryLabel))).sort(), [reviewRecords]);
   const cmsStatusCounts = useMemo(() => contentStatusCounts(reviewRecords), [reviewRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? allContentRecords[0] ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
@@ -2915,10 +2931,9 @@ export function GeneratedContentAdminDashboard() {
                 </label>
                 <label>
                   <span>Category</span>
-                  <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-                    <option value="all">All</option>
-                    {contentCategories.map((category) => (
-                      <option key={category} value={category}>{category}</option>
+                  <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
+                    {contentCategoryFilters.map((category) => (
+                      <option key={category.key} value={category.key}>{category.label}</option>
                     ))}
                   </select>
                 </label>
