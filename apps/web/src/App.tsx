@@ -7928,12 +7928,30 @@ function retrogradeDetailKicker(position: PlanetPosition) {
   return `${skyDisplayPlanetName(position.planet)} Retrograde`;
 }
 
+function stripGeneratedTitleParagraph(paragraphs: string[], title: string) {
+  const normalizedTitle = normalizedArticleCopy(title);
+
+  return paragraphs.filter((paragraph, index) => {
+    if (index !== 0) {
+      return true;
+    }
+
+    const normalizedParagraph = normalizedArticleCopy(paragraph.replace(/^\*\*(.+?)\*\*$/u, "$1"));
+
+    return normalizedParagraph !== normalizedTitle;
+  });
+}
+
 function retrogradeKnowledgeCopy(
   position: PlanetPosition,
   generated: LiveGeneratedContent | null,
   content: ContentFallback
 ) {
-  const generatedSummary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0];
+  const generatedParagraphs = stripGeneratedTitleParagraph(
+    generatedContentParagraphs(generated),
+    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+  );
+  const generatedSummary = generatedParagraphs[0] || generated?.summary?.trim();
 
   if (generatedSummary) {
     return generatedSummary;
@@ -9593,6 +9611,10 @@ function RetrogradeCallout({
       content.summary,
       ...content.detailParagraphs
     ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
+    const generatedBodyParagraphs = stripGeneratedTitleParagraph(
+      liveGeneratedBody(generated, fallbackDetailParagraphs),
+      retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+    );
     const detailParagraphs = [
       ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
       ...(durationLine
@@ -9602,7 +9624,7 @@ function RetrogradeCallout({
             </span>
           ]
         : []),
-      ...liveGeneratedBody(generated, fallbackDetailParagraphs)
+      ...generatedBodyParagraphs
     ];
 
     return {
@@ -9614,8 +9636,9 @@ function RetrogradeCallout({
         title: retrogradePlacementTitle(position),
         meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
         retrograde: true,
+        plainBody: true,
         body: detailParagraphs,
-        sections: generatedDetailSections(generated),
+        sections: [],
         astrologyDrilldown: generatedAstrologyDrilldown(generated),
         content: content.bundle
       } satisfies SkyDetail,
