@@ -4181,21 +4181,80 @@ function natalPositionsInHouse(natalSky: SkySnapshot | null, house: number) {
 
 function profectionHouseMeaning(house: number) {
   const meanings: Record<number, string> = {
-    1: "A 1st house year often brings attention back to the person themselves: their body, presence, choices, and the way they are entering a new chapter. Other people may notice them changing before they have language for it.",
-    2: "A 2nd house year often brings attention to security, money, resources, values, and what helps someone feel steady. It can make practical choices feel more personal because worth and survival are closer to the surface.",
-    3: "A 3rd house year often brings life into the daily mind. Conversations, messages, siblings, neighbors, errands, learning, and the details of ordinary life can start carrying more meaning than usual.",
-    4: "A 4th house year often turns attention toward home, family, roots, memory, and the private foundation underneath everything else. What happens internally may matter as much as what is visible from the outside.",
-    5: "A 5th house year often brings attention to pleasure, creativity, romance, children, and the need to feel alive. It can show where someone is remembering what they want, not only what they are responsible for.",
-    6: "A 6th house year often brings attention to routines, work, health, maintenance, and the small habits that decide how sustainable life feels. The pressure is often practical, but it can affect the whole body.",
-    7: "A 7th house year often brings relationships into sharper focus. Agreements, attraction, conflict, partnership, and one-to-one dynamics may ask for clearer terms than before.",
-    8: "An 8th house year often brings attention to trust, shared resources, debt, intimacy, dependency, fear, and the parts of life people do not always discuss openly. The work is rarely casual.",
-    9: "A 9th house year often widens the frame. Belief, study, travel, teaching, publishing, and the search for meaning may become more important, especially when old answers stop feeling large enough.",
-    10: "A 10th house year often brings attention to career, visibility, reputation, responsibility, and the direction someone is building toward. More may be asked of them publicly or professionally.",
-    11: "An 11th house year often brings attention to friends, groups, networks, community, and the future someone wants to belong to. It can clarify which circles still feel alive and which ones no longer fit.",
-    12: "A 12th house year often turns the volume down on the outside world and turns the volume up on what is happening internally. It can coincide with privacy, retreat, fatigue, hidden pressure, endings, and things that need time before they can be explained."
+    1: "A 1st house year brings attention back to the person themselves: their body, choices, energy, and the way they are entering a new chapter. This is usually not about one dramatic event. It is more often about noticing that the old way of showing up does not quite fit anymore.",
+    2: "A 2nd house year brings attention to security, money, resources, values, and what helps someone feel steady. This is usually not about one dramatic event. It is more often about practical choices becoming personal because worth, comfort, and survival are closer to the surface.",
+    3: "A 3rd house year brings life into the daily mind. Conversations, messages, siblings, neighbors, errands, learning, and the details of ordinary life can start carrying more weight. The year can show where the usual pace, tone, or information flow needs adjustment.",
+    4: "A 4th house year turns attention toward home, family, roots, memory, and the private foundation underneath everything else. This is usually not only about what other people can see. It is more often about whether life feels safe, settled, and emotionally livable behind the scenes.",
+    5: "A 5th house year brings attention to pleasure, creativity, romance, children, and the need to feel alive. This is usually not just about having fun. It can show where someone has become disconnected from wanting, playing, making, or being seen in a way that feels honest.",
+    6: "A 6th house year brings attention to routines, work, health, maintenance, and the small habits that decide how sustainable life feels. The pressure is often practical, but it can affect the whole body when the daily load has become too much.",
+    7: "A 7th house year brings relationships into sharper focus. Agreements, attraction, conflict, partnership, and one-to-one dynamics may ask for clearer terms than before. The year can show where another person is no longer background noise.",
+    8: "An 8th house year brings attention to trust, shared resources, debt, intimacy, dependency, fear, and the parts of life people do not always discuss openly. This is rarely casual, but it does not have to be dramatic. It often shows where something needs more honesty and less avoidance.",
+    9: "A 9th house year widens the frame. Belief, study, travel, teaching, publishing, and the search for meaning may become more important, especially when old answers stop feeling large enough. The year can show where someone needs a bigger reason for what they are doing.",
+    10: "A 10th house year brings attention to career, visibility, reputation, responsibility, and the direction someone is building toward. More may be asked of them publicly or professionally, and the outside world may notice the pressure before they say much about it.",
+    11: "An 11th house year brings attention to friends, groups, networks, community, and the future someone wants to belong to. It can clarify which circles still feel alive and which ones no longer fit.",
+    12: "A 12th house year turns the volume down on the outside world and turns the volume up on what is happening internally. It can coincide with privacy, retreat, fatigue, hidden pressure, endings, and things that need time before they can be explained."
   };
 
   return meanings[house] ?? `A ${ordinalHouse(house)} house year often brings this area of life forward in ways that can take time to understand.`;
+}
+
+function houseRealLifeQuestion(house: number) {
+  const questions: Record<number, string> = {
+    1: "Can I still move through life as the same version of myself?",
+    2: "Does this actually support my stability, or am I carrying it out of habit?",
+    3: "Is the way I am communicating, learning, and moving through daily life still working?",
+    4: "Does home, family, or private life still feel safe enough to build from?",
+    5: "Where did joy, desire, play, or creative risk become harder to access?",
+    6: "Is this routine sustainable, or is the body starting to keep score?",
+    7: "Are the terms of this relationship, agreement, or conflict still honest?",
+    8: "Can I trust what I am sharing, owing, merging with, or depending on?",
+    9: "Is this belief, plan, or direction still large enough for the life I am living now?",
+    10: "Is this responsibility, role, or public direction still worth the weight it asks me to carry?",
+    11: "Do these friendships, groups, and future plans still feel like places I can belong?",
+    12: "What needs rest, privacy, or release before it can make sense?"
+  };
+
+  return questions[house] ?? "Is this part of life working, or is it starting to ask for more attention?";
+}
+
+function houseRealLifeSummary(house: number) {
+  const summaries: Record<number, string> = {
+    1: "how they are showing up, what their body is telling them, and whether they still recognize the role they have been playing",
+    2: "money, stability, self-worth, comfort, and the practical choices that make them feel secure or exposed",
+    3: "messages, decisions, siblings, local movement, learning, and the details that keep shaping the day",
+    4: "home, family, privacy, memory, and the emotional base they are trying to live from",
+    5: "pleasure, creativity, romance, children, and the part of life that needs to feel wanted rather than only managed",
+    6: "work, health, routines, stress, and the small obligations that can quietly become too heavy",
+    7: "partnership, conflict, attraction, agreements, and the people they have to meet directly",
+    8: "trust, shared money, intimacy, debt, vulnerability, and the things that are hard to control alone",
+    9: "belief, study, travel, distance, teaching, and the larger meaning behind their choices",
+    10: "work, visibility, reputation, responsibility, and the role other people expect them to hold",
+    11: "friendship, groups, community, belonging, and the future they are trying to build with other people",
+    12: "rest, privacy, endings, hidden pressure, and what they may be processing before they can explain it"
+  };
+
+  return summaries[house] ?? houseLifeAreas[house] ?? "this part of life";
+}
+
+function plainPlanetTopic(planet: string) {
+  const topics: Record<string, string> = {
+    Ascendant: "how they come across and how quickly other people can read them",
+    Descendant: "the kind of people and conflicts that pull them into direct relationship",
+    Sun: "energy, confidence, identity, and the need to feel respected",
+    Moon: "mood, safety, memory, and private reactions",
+    Mercury: "messages, decisions, questions, and the way they explain things",
+    Venus: "affection, pleasure, values, and what feels worth choosing",
+    Mars: "urgency, anger, desire, courage, and the impulse to act",
+    Jupiter: "growth, confidence, belief, and the sense that more is possible",
+    Saturn: "pressure, limits, commitment, and what has to become more realistic",
+    Uranus: "restlessness, change, and the need for more room",
+    Neptune: "longing, confusion, hope, and the places where reality feels harder to pin down",
+    Pluto: "control, intensity, fear, and the need to stop pretending something is small",
+    "North Node": "direction, repetition, and a pattern that feels important right now",
+    "True Node": "direction, repetition, and a pattern that feels important right now"
+  };
+
+  return topics[planet] ?? planet.toLowerCase();
 }
 
 function profectionSignTone(sign: string, house: number) {
@@ -4221,17 +4280,17 @@ function profectionNatalPlanetParagraph(chart: ManualChart, house: number, natal
   const name = chart.displayName;
 
   if (natalHousePositions.length === 0) {
-    return `${name} does not have natal planets in this house. That does not make the year unimportant. It means the profection is activating an area that may not always feel central in everyday life, and the next important question is which planet rules the house.`;
+    return `${name} does not have natal planets in this house. That does not make the year unimportant. It means this part of life may not always feel like the loudest part of their chart, but this year it still gets brought forward. To understand how the year develops, the next thing to watch is the planet that rules the house.`;
   }
 
   const planetNames = sentenceList(natalHousePositions.map((position) => position.planet));
   const planetDetails = natalHousePositions.slice(0, 2).map((position) => {
-    const role = comparisonPointRole(position.planet);
+    const role = plainPlanetTopic(position.planet);
 
     return `${position.planet} brings ${role} into the story`;
   });
 
-  return `${name} also has ${planetNames} in this house natally, which makes the year more personal. The profection is not just activating a random area of life. It is highlighting material that already belongs to their birth chart. ${planetDetails.join(". ")}.`;
+  return `${name} has ${planetNames} in this house natally, which makes the year more personal. The profection is activating something that already lives in their chart. ${planetDetails.join(". ")}. So this may feel less like a random life topic and more like a familiar pattern becoming harder to ignore.`;
 }
 
 function profectionRulerParagraph(chart: ManualChart, sign: string, house: number, ruler: string, rulerPosition: PlanetPosition | null) {
@@ -4242,10 +4301,11 @@ function profectionRulerParagraph(chart: ManualChart, sign: string, house: numbe
     return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. Its natal placement would show where this year's story keeps developing.`;
   }
 
-  const rulerHouseThemes = houseOverlayHouseMeaning(rulerPosition.house);
-  const rulerRole = comparisonPointRole(ruler);
+  const rulerHouseThemes = houseRealLifeSummary(rulerPosition.house);
+  const rulerRole = plainPlanetTopic(ruler);
+  const activatedThemes = houseRealLifeSummary(house);
 
-  return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. In ${name}'s chart, ${ruler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This connects the ${houseLabel} year to ${rulerHouseThemes}. Since ${ruler} describes ${rulerRole}, this may be where the year's themes become more concrete.`;
+  return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. In ${name}'s chart, ${ruler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${activatedThemes} with ${rulerHouseThemes}. In plain terms, ${rulerRole} may be the way the year's question becomes real. The year may keep asking: ${houseRealLifeQuestion(house)}`;
 }
 
 function relevantCircleTransits(transits: TransitItem[], timing: FriendTimingContext, natalHousePositions: PlanetPosition[]) {
@@ -4257,7 +4317,7 @@ function relevantCircleTransits(transits: TransitItem[], timing: FriendTimingCon
       || activePlanetNames.has(transit.natalPoint)
       || ["Ascendant", "Descendant", "Sun", "Moon", "Midheaven", "Imum Coeli"].includes(transit.natalPoint)
     ))
-    .slice(0, 3);
+    .slice(0, 2);
 }
 
 function aspectWithArticle(aspect: string) {
@@ -4267,17 +4327,24 @@ function aspectWithArticle(aspect: string) {
 function circleTransitParagraph(chart: ManualChart, transit: TransitItem, currentSky: SkySnapshot, timing: FriendTimingContext) {
   const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
   const direction = transit.direction === "applying" ? "forming" : "separating from";
-  const transitRole = comparisonPointRole(transit.transitPlanet);
-  const natalRole = comparisonPointRole(transit.natalPoint);
   const relevance = transit.natalPoint === timing.lordOfYear
-    ? `Because ${transit.natalPoint} is the lord of the year, this transit may be especially relevant right now.`
+    ? `Since ${transit.natalPoint} is the lord of the year, this ties directly into the main story.`
     : ["Ascendant", "Descendant"].includes(transit.natalPoint)
-      ? "Because this touches the horizon of the chart, it may affect how they show up with other people or how readable they feel from the outside."
+      ? "Since this touches one of the relationship and visibility points in the chart, it may affect how they show up with other people or how readable they feel from the outside."
       : ["Sun", "Moon"].includes(transit.natalPoint)
-        ? "Because this touches a core personal point, it may be easier to feel in mood, energy, identity, or daily choices."
-        : "This may add detail to the larger timing pattern.";
+        ? "Since this touches a core personal point, it may be easier to see in their mood, energy, confidence, or daily choices."
+        : "Since this touches something already active in the house-year story, it may make the main theme harder to ignore.";
+  const behavior = transit.natalPoint === timing.lordOfYear
+    ? `they may seem more aware of whether they have the energy, respect, room, or support to keep doing things the same way`
+    : transit.natalPoint === "Moon"
+      ? "their reactions may be closer to the surface, even if the outside situation looks ordinary"
+      : transit.natalPoint === "Sun"
+        ? "questions of confidence, energy, pride, or being taken seriously may feel more personal"
+        : ["Ascendant", "Descendant"].includes(transit.natalPoint)
+          ? "other people may notice the shift before they explain it, especially in tone, availability, or direct relationship dynamics"
+          : `the topic of ${plainPlanetTopic(transit.natalPoint)} may be harder for them to keep in the background`;
 
-  return `Transiting ${transit.transitPlanet} is ${direction} ${aspectWithArticle(transit.aspect)} to ${chart.displayName}'s ${transit.natalPoint} (${timingLabel}). This can bring ${transitRole} into contact with ${natalRole}. ${relevance}`;
+  return `This may be more noticeable right now because ${transit.transitPlanet} is ${direction} ${aspectWithArticle(transit.aspect)} to ${chart.displayName}'s ${transit.natalPoint} (${timingLabel}). ${relevance} In real life, this may look like ${behavior}. It does not have to be dramatic. It may simply make the main theme harder to ignore.`;
 }
 
 function circleSupportGuidance(chart: ManualChart, house: number) {
@@ -4318,19 +4385,19 @@ function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot,
   const paragraphs: string[] = [
     `${chart.displayName} is ${timing.age ?? "in an annual profection cycle"}, which places them in a ${houseLabel} profection year.`,
     profectionHouseMeaning(house),
-    `For ${chart.displayName}, the ${houseLabel} is in ${timing.profectedSign}. ${profectionSignTone(timing.profectedSign, house)}`,
+    `For ${chart.displayName}, the ${houseLabel} falls in ${timing.profectedSign}. That changes how the year behaves. ${profectionSignTone(timing.profectedSign, house)} The point is not just ${houseLifeAreas[house] ?? "the house topic"}. It is how ${timing.profectedSign} handles that part of life.`,
     profectionNatalPlanetParagraph(chart, house, natalHousePositions),
     profectionRulerParagraph(chart, timing.profectedSign, house, timing.lordOfYear, rulerPosition)
   ];
 
   if (topTransits.length > 0) {
-    paragraphs.push("The current transits add another layer.");
+    paragraphs.push("Why this is live right now");
     topTransits.forEach((transit) => {
       paragraphs.push(circleTransitParagraph(chart, transit, currentSky, timing));
     });
   }
 
-  paragraphs.push(`Overall, ${chart.displayName} may be moving through a year where ${houseLifeAreas[house] ?? "this part of life"} need more attention than usual. If they seem different from the outside, it may help to read that as timing before reading it as distance.`);
+  paragraphs.push(`Overall, ${chart.displayName} may be dealing with ${houseRealLifeSummary(house)}. If they seem different from the outside, it may be because this part of life is asking for more attention, not because they are simply being distant, difficult, or inconsistent.`);
   paragraphs.push(circleSupportGuidance(chart, house));
 
   return paragraphs.join("\n\n");
@@ -4338,21 +4405,23 @@ function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot,
 
 function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
   const names = readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName));
+  const houseLabel = `${ordinalHouse(house)} house`;
 
   return {
     glyph: "☉",
     kicker: "",
     title: groupHouseHeadline(house),
-    meta: `${ordinalHouse(house)} house years · ${names}`,
-    subtitle: `${ordinalHouse(house)} house years · ${names}`,
+    meta: `${houseLabel} years · ${names}`,
+    subtitle: `${houseLabel} years · ${names}`,
     compactHeader: true,
     plainBody: false,
     bodyBeforeSections: true,
     body: [
-      `The feed card is showing a shared timing pattern: more than one person in this group is moving through a ${ordinalHouse(house)} house year. That does not mean they are living the same story. It means the same kind of life topic is active in different charts at the same time.`
+      `The feed card is showing a shared timing pattern: more than one person in this group is moving through a ${houseLabel} year. That does not mean they are living the same story. It means the same part of life is active in different charts at the same time.`,
+      `For this group, the shared theme is ${groupHouseThemes(house)}. The details are different for each person, but the question is similar: ${houseRealLifeQuestion(house)}`
     ],
     sections: activeCharts.slice(0, 4).map((chart) => ({
-      heading: `${chart.displayName} · ${ordinalHouse(house)} house year`,
+      heading: `${chart.displayName} · ${houseLabel} year`,
       body: personProfectionDetailBody(chart, currentSky, focusAreas, sunriseOrb)
     }))
   };
@@ -5396,7 +5465,7 @@ function groupHouseHeadline(house: number) {
 
 function groupHouseThemes(house: number) {
   const themes: Record<number, string> = {
-    1: "identity, presence, body, and first response",
+    1: "how someone is showing up, how their body feels, and what kind of life they are ready to enter",
     2: "money, stability, self-worth, and what feels worth protecting",
     3: "conversation, learning, local movement, and the details people keep noticing",
     4: "home, family, privacy, and emotional security",
