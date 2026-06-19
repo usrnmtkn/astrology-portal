@@ -30,7 +30,7 @@
 .signup-form,
 .auth-card {
   border: 1px solid var(--card-border);
-  border-radius: 32px;
+  border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -104,7 +104,7 @@
 
 .auth-card__title {
   margin: 0 0 24px;
-  color: var(--app-text);
+  color: var(--card-title-color);
   font-family: var(--font-ui);
   font-size: var(--type-large-title-size);
   font-weight: var(--weight-medium);
@@ -117,7 +117,7 @@
   --auth-subtitle-heading-overlap: -12px;
 
   margin: var(--auth-subtitle-heading-overlap) 0 24px;
-  color: var(--app-muted);
+  color: var(--card-body-color);
   font-size: var(--type-nav-size);
   font-weight: var(--weight-regular);
   line-height: 1.35;
@@ -167,7 +167,7 @@
 .auth-page .signup-city-search label > span {
   display: block;
   margin-bottom: 9px;
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-family: var(--font-ui);
   font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
@@ -564,7 +564,7 @@
   align-items: center;
   gap: 16px;
   margin: 24px 0 20px;
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-size: var(--type-description-size);
   font-weight: var(--weight-semibold);
 }

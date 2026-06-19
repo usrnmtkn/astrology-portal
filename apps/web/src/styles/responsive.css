@@ -359,13 +359,13 @@
     max-width: 100%;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    min-height: calc(env(safe-area-inset-top, 0px) + 78px);
-    border-bottom: 1px solid var(--line);
-    background: var(--nav-scrolled-bg);
-    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
-    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    padding: calc(env(safe-area-inset-top, 0px) + 12px) var(--mobile-control-inset) 10px;
+    min-height: calc(env(safe-area-inset-top, 0px) + var(--top-control-height));
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
   }
 
   html[data-scrolled] .topbar {
@@ -374,15 +374,16 @@
     box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
   }
 
   .mode-guest .topbar,
   .mode-member .topbar {
-    border-bottom: 1px solid var(--line);
-    background: var(--nav-scrolled-bg);
-    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
-    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    border-bottom-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   html[data-scrolled] .mode-guest .topbar,
@@ -392,6 +393,7 @@
     box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
   }
 
   .auth-close-button {
@@ -890,7 +892,7 @@
   }
 
   :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
-    border-color: var(--line);
+    border-color: var(--card-border);
     background: var(--surface);
     box-shadow: var(--card-shadow);
   }

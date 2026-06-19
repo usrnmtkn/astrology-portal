@@ -133,7 +133,7 @@
 .you-empty-state p {
   max-width: 720px;
   margin: 0;
-  color: var(--muted);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   line-height: 1.45;
 }
@@ -166,7 +166,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px 16px;
-  color: var(--ink);
+  color: var(--card-title-color);
 }
 
 .you-empty-card,
@@ -183,7 +183,7 @@
 
 .you-empty-card > span,
 .friends-logic-card > span {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.12em;
@@ -200,7 +200,7 @@
 .you-empty-card p,
 .friends-logic-card p {
   margin: 0;
-  color: var(--muted);
+  color: var(--card-body-color);
   line-height: 1.45;
 }
 
@@ -499,7 +499,7 @@
 
 .friends-feed-card-button:hover {
   border-color: var(--card-border);
-  box-shadow: var(--table-shadow);
+  box-shadow: var(--card-shadow);
   transform: none;
 }
 
@@ -560,7 +560,7 @@
 }
 
 .friends-feed-card-body p {
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--text-row-body-size);
   line-height: var(--leading-body);
 }
@@ -737,7 +737,7 @@
 
 .friend-profile-card .manual-chart-signatures {
   margin-top: 4px;
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   line-height: 1.2;
 }
@@ -756,7 +756,7 @@
 }
 
 .you-profile-menu-trigger {
-  color: var(--muted);
+  color: var(--card-meta-color);
 }
 
 .you-profile-overflow-menu {
@@ -787,7 +787,7 @@
 
 .friend-hero-copy p,
 .you-signature-row {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
   line-height: 1.35;
@@ -840,7 +840,7 @@
 .friend-chart-page .friend-profile-copy-column > .section-label,
 .friend-chart-page .synastry-placements-comparison > .friend-section-label {
   margin: var(--friend-section-label-margin);
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.16em;
@@ -873,7 +873,7 @@
   border: 1px solid var(--card-border);
   border-radius: 999px;
   background: var(--surface-2);
-  color: var(--ink);
+  color: var(--card-glyph-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   line-height: 1;
@@ -906,7 +906,7 @@
 }
 
 .relationship-explainer-card__kicker {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
@@ -917,7 +917,7 @@
 
 .relationship-explainer-card p {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
@@ -939,7 +939,7 @@
 
 .relationship-api-summary h3 {
   margin: 0;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
@@ -949,7 +949,7 @@
 
 .relationship-api-summary p {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   line-height: var(--leading-body);
 }
@@ -967,7 +967,7 @@
   padding: 5px 8px;
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   line-height: 1.2;
@@ -1018,7 +1018,7 @@
 
 .friend-chart-page .friend-signature-card .you-signatures-main p {
   margin-top: 0;
-  color: var(--app-muted);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   font-weight: var(--weight-regular);
   line-height: 1.45;
@@ -1042,7 +1042,7 @@
 }
 
 .you-signatures-main p {
-  color: var(--text-muted);
+  color: var(--card-body-color);
   font-size: var(--type-md);
   font-weight: var(--weight-regular);
   line-height: 1.5;
@@ -1053,7 +1053,7 @@
   gap: 6px;
   padding: 14px var(--card-padding) 16px;
   border-top: 1px solid var(--card-border);
-  color: var(--text-muted);
+  color: var(--card-body-color);
 }
 
 .elemental-balance-head {
@@ -1066,7 +1066,7 @@
 }
 
 .elemental-balance-head > span:last-child {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-semibold);
   line-height: 1.2;
@@ -1074,7 +1074,7 @@
 
 .elemental-balance p {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--card-body-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-regular);
   line-height: 1.4;
@@ -1239,14 +1239,14 @@
 }
 
 .synastry-placement-column-inner .synastry-placement-row {
-  border-color: color-mix(in srgb, var(--synastry-accent) 18%, var(--card-border));
+  border-color: var(--card-border);
   background: color-mix(in srgb, var(--synastry-accent) 6%, var(--surface));
 }
 
 .friend-chart-page .synastry-placement-degree,
 .friend-chart-page .synastry-placement-house,
 .friend-chart-page .synastry-placement-meta {
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-size: var(--type-meta-size);
 }
 
@@ -1406,7 +1406,7 @@
 
 .friend-chart-page .friend-placement-column-title {
   padding: var(--friend-placement-column-title-padding);
-  color: var(--app-muted);
+  color: var(--card-meta-color);
 }
 
 .friend-placement-main {
@@ -1452,7 +1452,7 @@
   grid-area: meta;
   justify-self: end;
   min-width: 0;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-medium);
   line-height: 1.15;
@@ -1460,14 +1460,14 @@
 }
 
 .friend-chart-page .friend-placement-meta {
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-size: var(--friend-placement-meta-size);
   font-weight: var(--weight-semibold);
 }
 
 .friend-placement-summary {
   grid-area: summary;
-  color: var(--muted);
+  color: var(--card-body-color);
   font-size: var(--type-sm);
   line-height: 1.38;
   overflow-wrap: normal;
@@ -1475,7 +1475,7 @@
 
 .friend-chart-page .friend-placement-summary {
   margin-top: 0;
-  color: var(--app-muted);
+  color: var(--card-body-color);
   font-size: var(--friend-placement-summary-size);
   font-weight: var(--weight-regular);
   line-height: 1.3;
@@ -1503,14 +1503,6 @@
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
-}
-
-.friend-placement-row:last-child .planet-placement-row {
-  border-bottom: 1px solid var(--card-border);
-}
-
-.friend-placement-row:last-child .placement-table-row {
-  border-bottom: 1px solid var(--card-border);
 }
 
 .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
@@ -1551,10 +1543,6 @@
   box-shadow: var(--card-shadow);
 }
 
-.synastry-placement-table .planet-placement-row:last-child {
-  border-bottom: 1px solid var(--friend-placement-row-border, var(--card-border));
-}
-
 .synastry-placement-table > .synastry-placement-row:first-child,
 .synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
   border-radius: var(--card-radius);
@@ -1570,7 +1558,6 @@
 .friend-placement-row .planet-placement-row,
 .friend-placement-row .placement-table-row {
   border-color: var(--friend-placement-row-border, var(--card-border));
-  border-bottom: 1px solid var(--friend-placement-row-border, var(--card-border));
   border-radius: var(--card-radius);
   background: var(--friend-placement-row-bg, var(--card-bg));
   box-shadow: var(--card-shadow);
@@ -1628,7 +1615,7 @@
   --aspect-row-title-line: var(--friend-card-title-line);
   --aspect-row-title-tracking: -0.015em;
   --aspect-row-copy-margin: 4px;
-  --aspect-row-copy-color: var(--app-muted);
+  --aspect-row-copy-color: var(--card-body-color);
   --aspect-row-copy-size: var(--friend-row-description-size);
   --aspect-row-copy-line: 1.45;
   --aspect-row-meta-width: 30px;
@@ -1702,7 +1689,7 @@
 }
 
 .add-chart-modal__close {
-  color: var(--ink-2);
+  color: var(--card-meta-color);
 }
 
 .add-chart-modal__heading {
@@ -1712,7 +1699,7 @@
 .add-chart-modal__title {
   margin: 0;
   margin-right: 48px;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-card-title-size);
   font-weight: var(--weight-semibold);
@@ -1722,7 +1709,7 @@
 
 .add-chart-modal__subtitle {
   margin: 8px 0 8px;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-row-body-size);
   line-height: var(--leading-body);
@@ -1855,7 +1842,7 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  color: var(--ink-2);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
@@ -1897,7 +1884,7 @@
 }
 
 .add-chart-form .checkbox-row span {
-  color: var(--ink-2);
+  color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: 0;

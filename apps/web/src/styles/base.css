@@ -239,7 +239,7 @@ svg {
   .synastry-placement-column-header h3,
   .add-chart-modal__title
 ) {
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-row-title-size);
   font-weight: var(--weight-medium);
@@ -256,7 +256,7 @@ svg {
   .friends-feed-card-body p,
   .add-chart-modal__subtitle
 ) {
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-row-body-size);
   font-weight: var(--weight-regular);
@@ -286,7 +286,7 @@ svg {
   .synastry-placement-chip small,
   .settings-row__value
 ) {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
@@ -302,5 +302,6 @@ svg {
   .synastry-placement-glyph,
   .friends-feed-symbols
 ) {
+  color: var(--card-glyph-color);
   font-family: var(--font-glyph);
 }

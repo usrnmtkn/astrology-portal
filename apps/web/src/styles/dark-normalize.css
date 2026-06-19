@@ -1,10 +1,10 @@
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-table {
-  border-color: color-mix(in srgb, var(--synastry-accent) 24%, transparent);
+  border-color: var(--card-border);
   background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
 }
 
 :is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-placement-row {
-  border-bottom-color: color-mix(in srgb, var(--synastry-accent) 18%, transparent);
+  border-bottom-color: var(--card-border);
   background: color-mix(in srgb, var(--synastry-accent) 12%, var(--surface));
 }
 
@@ -65,7 +65,7 @@
   .planet-placement-row__meta,
   .synastry-intro
 ) {
-  color: var(--ink-2);
+  color: var(--card-body-color);
 }
 
 :is(.theme-dark, [data-theme="dark"]) :where(
@@ -111,12 +111,26 @@
   .manual-chart-row,
   .chart-row:not(.manual-chart-row),
   .synastry-placement-row,
+  .article-card,
+  .sky-detail-card,
+  .daily-horoscope-summary,
+  .daily-horoscope-writeup,
+  .personal-timing-summary,
+  .relationship-explainer-card,
+  .relationship-api-summary,
+  .you-signatures-card,
+  .friend-signature-card,
+  .friend-hero-card,
   .friend-profile-card,
   .you-profile-card,
   .you-empty-card,
+  .friends-logic-card,
   .friends-feed-card,
   .settings-card,
-  .account-card
+  .account-card,
+  .auth-card,
+  .signup-form,
+  .signup-story
 ) {
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);

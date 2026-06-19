@@ -38,7 +38,7 @@
   gap: 0;
   padding: clamp(28px, 3.2vw, 42px);
   border: 1px solid var(--card-border);
-  border-radius: var(--radius);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -57,7 +57,7 @@
 }
 
 .article-kicker {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-label);
   font-weight: var(--weight-semibold);
@@ -77,7 +77,7 @@
   border: 1px solid var(--card-border);
   border-radius: 999px;
   background: var(--accent-bg);
-  color: var(--wheel-glyph);
+  color: var(--card-glyph-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   letter-spacing: 0.04em;
@@ -94,7 +94,7 @@
 .article-title,
 .sky-detail-id h1 {
   margin: 0;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: clamp(30px, 3.1vw, 40px);
   font-weight: var(--weight-medium);
@@ -106,7 +106,7 @@
 .article-sub {
   max-width: 680px;
   margin: clamp(14px, 1.8vw, 18px) 0 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--article-body-size);
   font-weight: var(--weight-regular);
@@ -134,7 +134,7 @@
   align-items: center;
   gap: 10px 30px;
   margin: 0;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--article-label-size);
   font-weight: var(--weight-regular);
@@ -143,7 +143,7 @@
 }
 
 .by-author {
-  color: var(--ink-2);
+  color: var(--card-body-color);
 }
 
 .article-header-actions {
@@ -215,7 +215,7 @@
   display: grid;
   gap: 6px;
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--article-meta-size);
   font-weight: var(--weight-regular);
@@ -280,7 +280,7 @@
 .sky-detail-section p,
 .sky-detail-drilldown-body p {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--article-body-size);
   font-weight: var(--weight-regular);
@@ -308,7 +308,7 @@
 
 .sky-detail-intro-section p {
   max-width: none;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--article-meta-size);
   line-height: 1.5;
 }
@@ -553,7 +553,7 @@
 }
 
 .sky-detail-drilldown-body dt {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--article-label-size);
   font-weight: var(--weight-semibold);
@@ -565,7 +565,7 @@
   display: grid;
   gap: 4px;
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--article-meta-size);
   line-height: 1.4;
@@ -633,7 +633,7 @@
 }
 
 .ro-sum-n {
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 2.4rem);
   font-weight: var(--weight-medium);
@@ -643,7 +643,7 @@
 
 .ro-sum-label {
   margin-top: 6px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
@@ -680,7 +680,7 @@
 
 .ro-sum-cap {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   line-height: 1.5;
   text-wrap: pretty;
@@ -694,10 +694,10 @@
   width: 100%;
   padding: 14px 16px;
   border: 1px solid var(--card-border);
-  border-radius: 16px;
+  border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
-  color: var(--ink);
+  color: var(--card-title-color);
   text-align: left;
 }
 
@@ -708,7 +708,7 @@
 }
 
 .ro-more-text {
-  color: var(--ink);
+  color: var(--card-title-color);
   font-size: var(--text-description);
   font-weight: var(--weight-semibold);
   line-height: 1.35;
@@ -718,7 +718,7 @@
 .ro-more-chevron {
   width: 20px;
   height: 20px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   transition: transform 160ms ease;
 }
 
@@ -763,7 +763,7 @@
 }
 
 .ro-screen .sky-pl-rx {
-  color: var(--ink);
+  color: var(--card-meta-color);
   font-weight: var(--weight-medium);
 }
 
@@ -790,7 +790,7 @@
 .ro-sky-pl__blurb {
   display: block;
   margin: 7px 0 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   line-height: 1.45;
   text-wrap: pretty;
@@ -869,7 +869,7 @@
 .retro-top strong {
   display: block;
   margin: 0;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-size: var(--text-row-title-size);
   font-weight: var(--weight-medium);
   letter-spacing: -0.02em;
@@ -879,7 +879,7 @@
 .retro-until {
   flex: 0 0 auto;
   margin-top: 3px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-placement-meta);
   font-style: normal;
@@ -891,7 +891,7 @@
 
 .retro-sub {
   margin-top: 2px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
@@ -932,7 +932,7 @@
 }
 
 .retro-chapter {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-description);
   font-weight: var(--weight-medium);
   line-height: 1.35;
@@ -940,7 +940,7 @@
 
 .retro-copy,
 .retrograde-detail-line {
-  color: var(--text-muted);
+  color: var(--card-body-color);
   max-width: 760px;
   font-family: var(--font-body);
   font-size: var(--text-description);
@@ -998,7 +998,7 @@
   border: 1px solid var(--card-border);
   border-radius: 50%;
   background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
-  color: var(--wheel-glyph);
+  color: var(--card-glyph-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   line-height: 1;
@@ -1011,7 +1011,7 @@
 }
 
 .sky-lunar-pill-copy em {
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-family: var(--font-ui);
   font-size: var(--text-compact-label);
   font-style: normal;
@@ -1028,7 +1028,7 @@
   align-items: baseline;
   min-width: 0;
   margin: 1px 0 0;
-  color: var(--app-text);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-compact-title);
   font-weight: var(--weight-medium);
@@ -1042,7 +1042,7 @@
 }
 
 .sky-lunar-pill-copy h3 small {
-  color: var(--app-muted);
+  color: var(--card-meta-color);
   font-family: var(--font-ui);
   font-size: var(--text-compact-meta);
   font-variant-numeric: tabular-nums;
@@ -1052,7 +1052,7 @@
 
 .sky-lunar-pill-sub {
   margin-top: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-ui);
   font-size: var(--text-compact-caption);
   font-weight: var(--weight-regular);
@@ -1147,7 +1147,7 @@
 }
 
 .nl-badge .g {
-  color: var(--wheel-glyph);
+  color: var(--card-glyph-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   line-height: 1;
@@ -1173,7 +1173,7 @@
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-compact-title);
   font-weight: var(--weight-medium);
@@ -1211,7 +1211,7 @@
   max-width: 100%;
   margin-top: 2px;
   overflow: hidden;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-ui);
   font-size: var(--text-compact-caption);
   font-variant-numeric: tabular-nums;

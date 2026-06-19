@@ -33,25 +33,6 @@
 }
 
 :where(
-  .placement-table-wrap,
-  .placement-table-card,
-  .planet-placement-list,
-  .synastry-placement-table,
-  .friend-compare-list,
-  .you-list-card,
-  .aspects-card,
-  .friends-feed-card,
-  .daily-horoscope-summary,
-  .daily-horoscope-writeup,
-  .personal-timing-summary,
-  .friend-hero-card,
-  .you-profile-card,
-  .friend-profile-card
-) {
-  box-shadow: var(--table-shadow);
-}
-
-:where(
   .date-picker,
   .hero-city-picker,
   .friend-compare-popover,

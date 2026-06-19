@@ -147,7 +147,8 @@ export const pointRetrogradeIconFiles: Record<string, string> = {
 };
 
 const zodiacAssetPath = "/zodiac/";
+const zodiacAssetVersion = "card-glyph-20260619";
 
 export function zodiacAssetHref(fileName?: string) {
-  return fileName ? `${zodiacAssetPath}${fileName}` : null;
+  return fileName ? `${zodiacAssetPath}${fileName}?v=${zodiacAssetVersion}` : null;
 }
