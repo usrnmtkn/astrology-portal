@@ -8,10 +8,6 @@
   background: var(--card-bg);
 }
 
-.sky-pl-item:last-child .sky-pl {
-  border-bottom: 1px solid var(--card-border);
-}
-
 .sky-pl-glyph {
   display: flex;
   align-items: center;
@@ -45,7 +41,7 @@
   min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--weight-medium);
@@ -59,7 +55,7 @@
   align-items: baseline;
   gap: 0.6em;
   margin-top: 5px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-placement-meta);
   font-variant-numeric: tabular-nums;
@@ -69,7 +65,7 @@
 
 .sky-pl-degree,
 .sky-pl-status {
-  color: var(--muted);
+  color: var(--card-meta-color);
 }
 
 .sky-pl-rx {

@@ -21,12 +21,6 @@
   box-shadow: none;
 }
 
-.aspect-row:last-child,
-.aspect-row-button:last-child,
-.aspect-row-static:last-child {
-  border-bottom: 1px solid var(--card-border);
-}
-
 .aspect-row-glyphs {
   display: flex;
   align-items: center;
@@ -90,7 +84,7 @@
 .aspect-row-copy span,
 .aspect-row-copy p {
   margin: 0;
-  color: var(--aspect-row-copy-color, var(--ink-2));
+  color: var(--aspect-row-copy-color, var(--card-body-color));
   font-size: var(--aspect-row-copy-size, var(--text-row-body-size));
   font-weight: var(--weight-regular);
   line-height: var(--aspect-row-copy-line, var(--leading-body));
@@ -98,7 +92,7 @@
 
 .aspect-row-copy .aspect-row-subtitle {
   margin-top: var(--aspect-row-subtitle-margin, 4px);
-  color: var(--aspect-row-subtitle-color, var(--muted));
+  color: var(--aspect-row-subtitle-color, var(--card-meta-color));
   font-family: var(--font-body);
   font-size: var(--aspect-row-subtitle-size, var(--text-meta-size));
   font-weight: var(--aspect-row-subtitle-weight, var(--weight-medium));
@@ -114,7 +108,7 @@
   gap: 0 var(--card-list-gap);
   max-width: 100%;
   margin: 0;
-  color: var(--ink-3);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
@@ -148,7 +142,7 @@
   min-width: var(--aspect-row-meta-width, 30px);
   gap: var(--inline-gap, 6px);
   padding-top: 2px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--aspect-row-meta-size, var(--text-meta-size));
   font-variant-numeric: tabular-nums;
@@ -185,7 +179,7 @@
   justify-content: flex-start;
   gap: var(--sp-1);
   padding: 0;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-label-size);
   font-weight: var(--weight-semibold);
@@ -196,7 +190,7 @@
 
 .aspect-row-group-label em {
   display: none;
-  color: var(--ink-3);
+  color: var(--card-meta-color);
   font-style: normal;
   font-weight: var(--weight-semibold);
   white-space: nowrap;
@@ -259,13 +253,13 @@
 .daily-horoscope-writeup p,
 .personal-timing-summary p {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-size: var(--text-description);
   line-height: var(--leading-body);
 }
 
 .daily-horoscope-summary__secondary {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-meta-size);
 }
 
@@ -323,7 +317,7 @@
   padding: 5px 8px;
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   line-height: 1.2;
@@ -355,10 +349,6 @@
   padding: var(--updates-aspect-row-py) var(--updates-aspect-row-px);
   background: var(--card-bg);
   cursor: pointer;
-}
-
-.updates-aspect-row:last-child {
-  border-bottom: 1px solid var(--card-border);
 }
 
 .updates-aspect-row--background {
@@ -418,7 +408,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0 8px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
@@ -427,7 +417,7 @@
 
 .updates-aspect-row__description {
   display: block;
-  color: var(--ink-2);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-description);
   font-weight: var(--weight-regular);
@@ -444,7 +434,7 @@
 }
 
 .updates-aspect-row__detail span {
-  color: var(--ink-2);
+  color: var(--card-body-color);
   display: block;
   font-family: var(--font-body);
   font-size: var(--text-description);
@@ -461,7 +451,7 @@
   min-width: var(--updates-aspect-meta-width);
   gap: 6px;
   padding-top: 2px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
@@ -475,7 +465,7 @@
   width: 8px;
   height: 8px;
   border-radius: var(--radius-pill);
-  background: var(--muted);
+  background: var(--card-meta-color);
   opacity: 0.85;
 }
 

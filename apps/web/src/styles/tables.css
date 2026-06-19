@@ -21,11 +21,6 @@ button.placement-table-row {
   outline-offset: -2px;
 }
 
-.placement-table-row:last-child,
-.friend-placement-row:last-child .placement-table-row {
-  border-bottom: 1px solid var(--card-border);
-}
-
 .placement-table-row__glyph {
   display: grid;
   place-items: center;
@@ -66,7 +61,7 @@ button.placement-table-row {
 .placement-table-row__title {
   flex: 1 1 14rem;
   min-width: min(100%, 12rem);
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-table-title-size);
   font-weight: var(--weight-medium);
@@ -77,7 +72,7 @@ button.placement-table-row {
 .placement-table-row__rx {
   --rx-label-tighten-offset: -2px;
 
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
@@ -87,7 +82,7 @@ button.placement-table-row {
 }
 
 .placement-table-row__description {
-  color: var(--muted);
+  color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-table-body-size);
   font-weight: var(--weight-regular);
@@ -104,7 +99,7 @@ button.placement-table-row {
   max-width: 100%;
   text-align: left;
   white-space: normal;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-table-meta-size);
   font-weight: var(--weight-medium);
@@ -146,13 +141,6 @@ button.planet-placement-row {
   cursor: pointer;
 }
 
-.planet-placement-row:last-child,
-.sky-pl-item:last-child .planet-placement-row,
-.friend-placement-row:last-child .planet-placement-row,
-.synastry-placement-table .planet-placement-row:last-child {
-  border-bottom: 1px solid var(--card-border);
-}
-
 .planet-placement-row__glyph {
   display: flex;
   align-items: center;
@@ -162,7 +150,7 @@ button.planet-placement-row {
   min-width: 48px;
   height: 22px;
   margin-top: 2px;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   line-height: 1;
@@ -176,7 +164,7 @@ button.planet-placement-row {
   margin-top: 2px;
   border-radius: 0;
   background: transparent;
-  color: var(--ink);
+  color: var(--card-title-color);
   box-shadow: none;
 }
 
@@ -200,7 +188,7 @@ button.planet-placement-row {
   min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
-  color: var(--ink);
+  color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--weight-medium);
@@ -210,7 +198,7 @@ button.planet-placement-row {
 
 .planet-placement-row__degree,
 .planet-placement-row__meta {
-  color: var(--muted);
+  color: var(--card-meta-color);
 }
 
 .planet-placement-row__degree {
@@ -238,7 +226,7 @@ button.planet-placement-row {
 .big-three-row__degree,
 .friend-placement-row__degree,
 .composite-placement-row__degree {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-placement-degree);
   font-weight: var(--weight-medium);
@@ -250,7 +238,7 @@ button.planet-placement-row {
 .big-three-row__house,
 .friend-placement-row__house,
 .composite-placement-row__house {
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-placement-meta);
   font-weight: var(--weight-regular);
@@ -286,7 +274,7 @@ button.planet-placement-row {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
@@ -354,7 +342,7 @@ button.planet-placement-row {
   padding: 0 0.65em;
   border-radius: 999px;
   background: var(--surface-2);
-  color: var(--muted);
+  color: var(--card-meta-color);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
@@ -403,7 +391,7 @@ button.planet-placement-row {
 .spl-dig--weak,
 .spl-dig--neutral {
   background: var(--surface-2);
-  color: var(--muted);
+  color: var(--card-meta-color);
 }
 
 .spl-status-item {
@@ -443,7 +431,7 @@ button.planet-placement-row {
 }
 
 .spl-status-muted {
-  color: var(--muted);
+  color: var(--card-meta-color);
 }
 
 .placement-row-titleline {
@@ -455,7 +443,7 @@ button.planet-placement-row {
 }
 
 .placement-prose {
-  color: var(--text-muted);
+  color: var(--card-body-color);
   font-size: var(--type-md);
   font-weight: var(--weight-regular);
   line-height: 1.55;

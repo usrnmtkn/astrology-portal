@@ -251,7 +251,7 @@
   --mobile-overlay-padding: 18px 18px 22px;
   --snapshot-card-gap: 12px;
   --snapshot-card-padding: 10px 16px;
-  --snapshot-card-radius: 18px;
+  --snapshot-card-radius: var(--card-radius);
   --snapshot-icon-size: 44px;
   --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
   --layout-gap: clamp(var(--sp-5), 6vw, 112px);
@@ -269,9 +269,14 @@
   --card-shadow: var(--shadow-card);
   --card-shadow-flat: var(--shadow-flat);
   --card-shadow-raised: var(--card-shadow);
+  --card-title-color: var(--ink);
+  --card-body-color: var(--ink-2);
+  --card-meta-color: var(--muted);
+  --card-glyph-color: var(--wheel-glyph);
   --card-ring-shadow: 0 0 0 2px var(--card-bg);
   --avatar-ring-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
   --feature-card-shadow: var(--shadow-hero);
+  --shadow-soft: var(--card-shadow);
   --control-shadow: var(--shadow-floating);
   --control-thumb-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   --card-padding: var(--sp-3);
@@ -284,7 +289,7 @@
   --table-radius: var(--card-radius);
   --table-shadow: var(--card-shadow);
   --table-row-bg: var(--card-bg);
-  --table-row-border: var(--line-2);
+  --table-row-border: var(--card-border);
   --table-row-gap: var(--sp-2);
   --overlay-bg: var(--card-bg);
   --overlay-border: var(--card-border);
@@ -375,6 +380,7 @@
   /* 4. COMPATIBILITY ALIASES */
   --text: var(--ink);
   --text-muted: var(--ink-2);
+  --ink-3: var(--card-meta-color);
   --teal: var(--accent);
   --terra: #d58a61;
   --earth: #97aa82;
@@ -394,7 +400,7 @@
   --app-text: var(--ink);
   --app-muted: var(--muted);
   --app-card: var(--surface);
-  --app-border: var(--line);
+  --app-border: var(--card-border);
   --page-max: 1440px;
   --page-narrow: 1120px;
   --page-gutter: clamp(var(--sp-3), 5vw, 80px);
@@ -578,6 +584,7 @@
   --feature-card-shadow: var(--shadow-hero);
   --control-shadow: var(--nav-rest-shadow);
   --table-shadow: var(--card-shadow);
+  --table-row-border: var(--card-border);
   --overlay-shadow: var(--shadow-overlay);
   --modal-shadow: var(--overlay-shadow);
   --segmented-bg: var(--surface);
@@ -612,5 +619,5 @@
   --app-card: var(--surface);
   --app-text: var(--ink);
   --app-muted: var(--muted);
-  --app-border: var(--line);
+  --app-border: var(--card-border);
 }
