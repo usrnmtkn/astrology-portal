@@ -3393,7 +3393,7 @@ export function GeneratedContentAdminDashboard() {
                       <div className="admin-toolbar-actions">
                         <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading} title="Mark this content as needing review.">
                           <Flag size={16} aria-hidden="true" />
-                          Flag
+                          Needs Review
                         </button>
                         {isEditingReviewRecord ? (
                           <>
