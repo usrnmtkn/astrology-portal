@@ -44,8 +44,21 @@ export type PlacementHouseInsight = {
   rulerBody?: string;
 };
 
-export const placementPlanetOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
-const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+export const placementPlanetOrder = [
+  "Sun",
+  "Moon",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+  "Chiron",
+  "Lilith"
+];
+const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith"];
 
 const natalSignatureDescriptions: Record<string, string> = {
   Sun: "Your core self and vitality",
@@ -58,7 +71,9 @@ const natalSignatureDescriptions: Record<string, string> = {
   Saturn: "What you commit to and build",
   Uranus: "Where you break the pattern",
   Neptune: "Where you dream and idealize",
-  Pluto: "Where you transform and reclaim power"
+  Pluto: "Where you transform and reclaim power",
+  Chiron: "Where old tenderness asks for care",
+  Lilith: "Where the untamed part of you refuses to be managed"
 };
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
@@ -74,7 +89,9 @@ const chartPlacementDescriptions: Record<string, string> = {
   Saturn: "Where this chart builds and commits",
   Uranus: "How this chart breaks from pattern",
   Neptune: "How this chart dreams and imagines",
-  Pluto: "How this chart transforms"
+  Pluto: "How this chart transforms",
+  Chiron: "Where this chart touches repair and old tenderness",
+  Lilith: "Where this chart carries the untamed and uncontained"
 };
 
 const compositePlacementDescriptions: Record<string, string> = {
@@ -648,7 +665,7 @@ export function FriendPlacementTable({
   );
 }
 
-const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "True Node"];
+const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "True Node"];
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   if (!sky) {
