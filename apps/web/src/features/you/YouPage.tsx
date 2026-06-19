@@ -18,7 +18,9 @@ export type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  lensHint?: ReactNode;
   compactHeader?: boolean;
+  plainBody?: boolean;
   bodyBeforeSections?: boolean;
   body?: ReactNode[];
   summary: string;
@@ -394,6 +396,21 @@ function articleParagraphs(value?: string | null) {
     .filter(Boolean);
 }
 
+function dedupeArticleParagraphs(paragraphs: string[]) {
+  const seen = new Set<string>();
+
+  return paragraphs.filter((paragraph) => {
+    const normalized = paragraph.replace(/\s+/g, " ").trim().toLowerCase();
+
+    if (!normalized || seen.has(normalized)) {
+      return false;
+    }
+
+    seen.add(normalized);
+    return true;
+  });
+}
+
 function cleanArticleHeading(value?: string | null) {
   return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
 }
@@ -418,9 +435,9 @@ function YouTransitArticlePage({
     }))
     .filter((section) => section.heading || section.tldr || articleParagraphs(section.body).length);
   const introParagraphs = article.bodyBeforeSections
-    ? (article.body ?? [])
+    ? dedupeArticleParagraphs((article.body ?? [])
       .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
-      .filter(Boolean)
+      .filter(Boolean))
     : [];
   const metaRows = article.compactHeader ? [] : article.meta.filter((row) => cleanArticleText(row.value));
   const hasReadableBody = Boolean(summary || introParagraphs.length || sections.length);
@@ -455,8 +472,13 @@ function YouTransitArticlePage({
 
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {article.lensHint ? (
+                <aside className="article-lens-hint" aria-label="Placement lens">
+                  {typeof article.lensHint === "string" ? <p>{cleanArticleText(article.lensHint)}</p> : article.lensHint}
+                </aside>
+              ) : null}
               {introParagraphs.length ? (
-                <section className="article-section sky-detail-section sky-detail-intro-section">
+                <section className={`article-section sky-detail-section ${article.plainBody ? "sky-detail-plain-section" : "sky-detail-intro-section"}`}>
                   {introParagraphs.map((paragraph, index) => (
                     <p key={`intro-${index}`}>{paragraph}</p>
                   ))}
