@@ -4179,6 +4179,126 @@ function natalPositionsInHouse(natalSky: SkySnapshot | null, house: number) {
   return (natalSky?.positions ?? []).filter((position) => position.house === house);
 }
 
+function profectionHouseMeaning(house: number) {
+  const meanings: Record<number, string> = {
+    1: "A 1st house year often brings attention back to the person themselves: their body, presence, choices, and the way they are entering a new chapter. Other people may notice them changing before they have language for it.",
+    2: "A 2nd house year often brings attention to security, money, resources, values, and what helps someone feel steady. It can make practical choices feel more personal because worth and survival are closer to the surface.",
+    3: "A 3rd house year often brings life into the daily mind. Conversations, messages, siblings, neighbors, errands, learning, and the details of ordinary life can start carrying more meaning than usual.",
+    4: "A 4th house year often turns attention toward home, family, roots, memory, and the private foundation underneath everything else. What happens internally may matter as much as what is visible from the outside.",
+    5: "A 5th house year often brings attention to pleasure, creativity, romance, children, and the need to feel alive. It can show where someone is remembering what they want, not only what they are responsible for.",
+    6: "A 6th house year often brings attention to routines, work, health, maintenance, and the small habits that decide how sustainable life feels. The pressure is often practical, but it can affect the whole body.",
+    7: "A 7th house year often brings relationships into sharper focus. Agreements, attraction, conflict, partnership, and one-to-one dynamics may ask for clearer terms than before.",
+    8: "An 8th house year often brings attention to trust, shared resources, debt, intimacy, dependency, fear, and the parts of life people do not always discuss openly. The work is rarely casual.",
+    9: "A 9th house year often widens the frame. Belief, study, travel, teaching, publishing, and the search for meaning may become more important, especially when old answers stop feeling large enough.",
+    10: "A 10th house year often brings attention to career, visibility, reputation, responsibility, and the direction someone is building toward. More may be asked of them publicly or professionally.",
+    11: "An 11th house year often brings attention to friends, groups, networks, community, and the future someone wants to belong to. It can clarify which circles still feel alive and which ones no longer fit.",
+    12: "A 12th house year often turns the volume down on the outside world and turns the volume up on what is happening internally. It can coincide with privacy, retreat, fatigue, hidden pressure, endings, and things that need time before they can be explained."
+  };
+
+  return meanings[house] ?? `A ${ordinalHouse(house)} house year often brings this area of life forward in ways that can take time to understand.`;
+}
+
+function profectionSignTone(sign: string, house: number) {
+  const tones: Record<string, string> = {
+    Aries: "Aries gives the year a more immediate tone. The pressure may come through action, urgency, irritation, courage, or the need to choose before everything feels fully settled.",
+    Taurus: "Taurus gives the year a slower and more embodied tone. The pressure may show up around stability, comfort, money, the body, loyalty, and the need to feel secure. Taurus does not usually process through urgency. It takes time to settle into what feels solid.",
+    Gemini: "Gemini gives the year a more mental and responsive tone. The pressure may come through conversations, questions, information, movement, and the need to keep adjusting as new details arrive.",
+    Cancer: "Cancer gives the year a protective and emotionally sensitive tone. The pressure may come through family, memory, belonging, care, and the need to know what is safe enough to trust.",
+    Leo: "Leo gives the year a more visible and heart-centered tone. The pressure may come through being seen, wanting more life, creating something personal, or learning where pride and vulnerability sit close together.",
+    Virgo: "Virgo gives the year an analytical and practical tone. The pressure may come through thinking, tracking details, managing what feels unresolved, or trying to make sense of something that has not fully come into focus yet.",
+    Libra: "Libra gives the year a relational tone. The pressure may come through fairness, attraction, comparison, aesthetics, agreement, and the need to understand what balance actually costs.",
+    Scorpio: "Scorpio gives the year a private and intense tone. The pressure may come through trust, fear, desire, shared resources, secrecy, and the need to be honest about what is happening under the surface.",
+    Sagittarius: "Sagittarius gives the year a searching tone. The pressure may come through belief, distance, teaching, travel, honesty, and the need to understand what an experience means in a larger frame.",
+    Capricorn: "Capricorn gives the year a serious and consequential tone. The pressure may come through responsibility, timing, commitment, maturity, and the need to build something strong enough to hold weight.",
+    Aquarius: "Aquarius gives the year a future-minded and unconventional tone. The pressure may come through friendship, systems, distance, social patterns, and the need to understand where the old structure no longer fits.",
+    Pisces: "Pisces gives the year a porous and emotionally permeable tone. The pressure may come through longing, imagination, compassion, confusion, rest, and the need to feel what cannot be explained cleanly."
+  };
+
+  return tones[sign] ?? `For them, the ${ordinalHouse(house)} house is in ${sign}. That gives the year its own tone and pacing.`;
+}
+
+function profectionNatalPlanetParagraph(chart: ManualChart, house: number, natalHousePositions: PlanetPosition[]) {
+  const name = chart.displayName;
+
+  if (natalHousePositions.length === 0) {
+    return `${name} does not have natal planets in this house. That does not make the year unimportant. It means the profection is activating an area that may not always feel central in everyday life, and the next important question is which planet rules the house.`;
+  }
+
+  const planetNames = sentenceList(natalHousePositions.map((position) => position.planet));
+  const planetDetails = natalHousePositions.slice(0, 2).map((position) => {
+    const role = comparisonPointRole(position.planet);
+
+    return `${position.planet} brings ${role} into the story`;
+  });
+
+  return `${name} also has ${planetNames} in this house natally, which makes the year more personal. The profection is not just activating a random area of life. It is highlighting material that already belongs to their birth chart. ${planetDetails.join(". ")}.`;
+}
+
+function profectionRulerParagraph(chart: ManualChart, sign: string, house: number, ruler: string, rulerPosition: PlanetPosition | null) {
+  const name = chart.displayName;
+  const houseLabel = `${ordinalHouse(house)} house`;
+
+  if (!rulerPosition?.house) {
+    return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. Its natal placement would show where this year's story keeps developing.`;
+  }
+
+  const rulerHouseThemes = houseOverlayHouseMeaning(rulerPosition.house);
+  const rulerRole = comparisonPointRole(ruler);
+
+  return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. In ${name}'s chart, ${ruler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This connects the ${houseLabel} year to ${rulerHouseThemes}. Since ${ruler} describes ${rulerRole}, this may be where the year's themes become more concrete.`;
+}
+
+function relevantCircleTransits(transits: TransitItem[], timing: FriendTimingContext, natalHousePositions: PlanetPosition[]) {
+  const activePlanetNames = new Set(natalHousePositions.map((position) => position.planet));
+
+  return transits
+    .filter((transit) => (
+      transit.natalPoint === timing.lordOfYear
+      || activePlanetNames.has(transit.natalPoint)
+      || ["Ascendant", "Descendant", "Sun", "Moon", "Midheaven", "Imum Coeli"].includes(transit.natalPoint)
+    ))
+    .slice(0, 3);
+}
+
+function aspectWithArticle(aspect: string) {
+  return `${/^[aeiou]/i.test(aspect) ? "an" : "a"} ${aspect}`;
+}
+
+function circleTransitParagraph(chart: ManualChart, transit: TransitItem, currentSky: SkySnapshot, timing: FriendTimingContext) {
+  const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
+  const direction = transit.direction === "applying" ? "forming" : "separating from";
+  const transitRole = comparisonPointRole(transit.transitPlanet);
+  const natalRole = comparisonPointRole(transit.natalPoint);
+  const relevance = transit.natalPoint === timing.lordOfYear
+    ? `Because ${transit.natalPoint} is the lord of the year, this transit may be especially relevant right now.`
+    : ["Ascendant", "Descendant"].includes(transit.natalPoint)
+      ? "Because this touches the horizon of the chart, it may affect how they show up with other people or how readable they feel from the outside."
+      : ["Sun", "Moon"].includes(transit.natalPoint)
+        ? "Because this touches a core personal point, it may be easier to feel in mood, energy, identity, or daily choices."
+        : "This may add detail to the larger timing pattern.";
+
+  return `Transiting ${transit.transitPlanet} is ${direction} ${aspectWithArticle(transit.aspect)} to ${chart.displayName}'s ${transit.natalPoint} (${timingLabel}). This can bring ${transitRole} into contact with ${natalRole}. ${relevance}`;
+}
+
+function circleSupportGuidance(chart: ManualChart, house: number) {
+  const guidance: Record<number, string> = {
+    1: `If you are close to ${chart.displayName}, let them change shape without needing an instant explanation. They may be trying on a more honest way of showing up.`,
+    2: `If you are close to ${chart.displayName}, respect the pace at which they sort out money, comfort, and security. Practical steadiness may mean more than big reassurance.`,
+    3: `If you are close to ${chart.displayName}, listen for what they are trying to say, not only the first version of it. They may need conversation to understand their own thoughts.`,
+    4: `If you are close to ${chart.displayName}, do not assume privacy means disconnection. Home, family, memory, or emotional safety may need more room than usual.`,
+    5: `If you are close to ${chart.displayName}, notice what brings them back to life. They may need permission to want joy, attention, romance, or creative space without defending it.`,
+    6: `If you are close to ${chart.displayName}, pay attention to the small pressures. Work, health, routine, and exhaustion may be saying more than they can easily explain.`,
+    7: `If you are close to ${chart.displayName}, stay clear and fair. This is not the best timing for guessing games if the relationship needs honest terms.`,
+    8: `If you are close to ${chart.displayName}, move carefully around trust, money, intimacy, and control. They may need honesty without pressure.`,
+    9: `If you are close to ${chart.displayName}, give their questions room. They may be revising what they believe before they know how to describe the new shape of it.`,
+    10: `If you are close to ${chart.displayName}, recognize the pressure of being visible. Support may look like respecting the responsibility they are carrying.`,
+    11: `If you are close to ${chart.displayName}, pay attention to belonging. They may be learning which friendships, groups, and futures still feel real.`,
+    12: `If you are close to ${chart.displayName}, do not force definition too quickly. Let them have space without making them feel abandoned. They may need time before the words are ready.`
+  };
+
+  return guidance[house] ?? `If you are close to ${chart.displayName}, give them room to understand the timing at their own pace.`;
+}
+
 function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
   const timing = friendTimingContext(chart, currentSky);
 
@@ -4188,40 +4308,30 @@ function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot,
 
   const house = timing.profectedHouse;
   const houseLabel = `${ordinalHouse(house)} house`;
-  const houseThemes = groupHouseThemes(house);
   const rulerPosition = chart.natalChart.positions.find((position) => position.planet === timing.lordOfYear) ?? null;
   const natalHousePositions = natalPositionsInHouse(chart.natalChart, house);
-  const natalPoints = sentenceList(natalHousePositions.map((position) => position.planet));
-  const topTransits = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas).slice(0, 3);
+  const topTransits = relevantCircleTransits(
+    rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas),
+    timing,
+    natalHousePositions
+  );
   const paragraphs: string[] = [
     `${chart.displayName} is ${timing.age ?? "in an annual profection cycle"}, which places them in a ${houseLabel} profection year.`,
-    `For ${chart.displayName}, this is not just a generic ${houseLabel} year. Their ${houseLabel} is in ${timing.profectedSign}, so ${houseThemes} may be filtered through ${timing.profectedSign}'s way of sorting, responding, and making meaning.`
+    profectionHouseMeaning(house),
+    `For ${chart.displayName}, the ${houseLabel} is in ${timing.profectedSign}. ${profectionSignTone(timing.profectedSign, house)}`,
+    profectionNatalPlanetParagraph(chart, house, natalHousePositions),
+    profectionRulerParagraph(chart, timing.profectedSign, house, timing.lordOfYear, rulerPosition)
   ];
 
-  if (natalPoints) {
-    paragraphs.push(`They also have ${natalPoints} in this house natally, which means this timing is highlighting material that is already important in their birth chart. What is usually part of the background may be easier to notice this year.`);
-  } else {
-    paragraphs.push(`They do not need natal planets in this house for the year to matter. The profection still brings this part of life forward, especially through the ruler of the house.`);
-  }
-
-  if (rulerPosition?.house) {
-    paragraphs.push(`${timing.lordOfYear}, the ruler of ${timing.profectedSign}, becomes the lord of the year. In ${chart.displayName}'s chart, ${timing.lordOfYear} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, connecting this ${houseLabel} year to ${groupHouseThemes(rulerPosition.house)}. That is where some of the year's meaning may keep developing.`);
-  } else {
-    paragraphs.push(`${timing.lordOfYear}, the ruler of ${timing.profectedSign}, becomes the lord of the year. Its natal placement would show where this year's theme keeps developing.`);
-  }
-
   if (topTransits.length > 0) {
-    const transitLines = topTransits.map((transit) => {
-      const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
-      const direction = transit.direction === "applying" ? "forming" : "separating from";
-
-      return `Transiting ${transit.transitPlanet} is ${direction} a ${transit.aspect} to ${chart.displayName}'s ${transit.natalPoint} (${timingLabel}). This can bring ${groupPlanetThemes(transit.transitPlanet)} into contact with ${comparisonPointRole(transit.natalPoint)}.`;
+    paragraphs.push("The current transits add another layer.");
+    topTransits.forEach((transit) => {
+      paragraphs.push(circleTransitParagraph(chart, transit, currentSky, timing));
     });
-
-    paragraphs.push(`Current transits add another layer. ${transitLines.join(" ")}`);
   }
 
-  paragraphs.push(`Overall, ${chart.displayName} may need room to move through this timing at their own pace. If they seem different from the outside, it may help to read that as timing before reading it as distance.`);
+  paragraphs.push(`Overall, ${chart.displayName} may be moving through a year where ${houseLifeAreas[house] ?? "this part of life"} need more attention than usual. If they seem different from the outside, it may help to read that as timing before reading it as distance.`);
+  paragraphs.push(circleSupportGuidance(chart, house));
 
   return paragraphs.join("\n\n");
 }
@@ -7909,21 +8019,87 @@ function natalRulerParagraph({
   if (houseRuler && rulerPosition && rulerHouse) {
     const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
+    const originalArea = possessiveArea(focus);
 
     if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules the house. ${rulerProcess} In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so the lesson stays rooted in the same territory. That makes ${rulerHouseLink} central to how this placement develops.`;
+      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its ruler shows what the placement needs in order to function well, and where the story keeps leading. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps developing through the same territory. ${rulerProcess}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules the house. ${rulerProcess} In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, linking ${focus} with ${rulerHouseLink}. That connection matters because the placement does not develop in isolation; it keeps drawing those two life areas into the same conversation.`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its ruler shows what the placement needs in order to function well, and where the story keeps leading. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}. ${rulerProcess}`;
   }
 
   if (houseRuler) {
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules the house. ${rulerProcess} Its natal placement shows where this meaning becomes more personal and practical over time.`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its natal placement shows where this meaning becomes more personal and practical over time. ${rulerProcess}`;
   }
 
   return `The ruler of your ${houseLabel} shows where the meaning becomes more personal and practical over time.`;
+}
+
+function natalPlanetCoreFunction(planet: string) {
+  const functions: Record<string, string> = {
+    Sun: "how you build identity, confidence, vitality, and a sense of direction",
+    Moon: "how your emotional body responds before you have had time to explain yourself",
+    Mercury: "how your mind notices, learns, translates, and puts experience into words",
+    Venus: "what you value, what you are drawn to, and what helps connection feel real",
+    Mars: "how you act, pursue, defend, and move toward what you want",
+    Jupiter: "where you look for growth, meaning, faith, and a wider view of life",
+    Saturn: "where you build maturity, boundaries, responsibility, and earned confidence",
+    Uranus: "where you need freedom, honesty, disruption, and room to break old patterns",
+    Neptune: "where you are sensitive, imaginative, porous, and moved by longing",
+    Pluto: "where you meet intensity, control, honesty, pressure, and deep change"
+  };
+
+  return functions[planet] ?? "how this part of you becomes active";
+}
+
+function natalPlanetPlainFunction(planet: string) {
+  const functions: Record<string, string> = {
+    Sun: "build identity and direction",
+    Moon: "feel safe enough to respond clearly",
+    Mercury: "think, speak, and understand what is happening",
+    Venus: "choose what feels valuable, pleasurable, and real",
+    Mars: "act on desire without burning through your own stability",
+    Jupiter: "grow without losing judgment",
+    Saturn: "build something reliable through time and responsibility",
+    Uranus: "make freedom livable instead of only disruptive",
+    Neptune: "keep sensitivity connected to reality",
+    Pluto: "turn pressure into honesty instead of control"
+  };
+
+  return functions[planet] ?? "function with more awareness";
+}
+
+function natalPlanetStressExpression(planet: string) {
+  const expressions: Record<string, string> = {
+    Sun: "confidence can start depending too much on external proof",
+    Moon: "your mood and body may start reacting before your mind understands why",
+    Mercury: "your thoughts may loop, scatter, or become harder to name clearly",
+    Venus: "desire, comfort, or approval can start making the decision for you",
+    Mars: "action can turn into reaction, pressure, or unnecessary conflict",
+    Jupiter: "hope can become overreach or a story that avoids the details",
+    Saturn: "responsibility can harden into fear, pressure, or self-protection",
+    Uranus: "the need for freedom can become restlessness without direction",
+    Neptune: "longing can blur what is real or make boundaries harder to hold",
+    Pluto: "control can become a substitute for telling the truth"
+  };
+
+  return expressions[planet] ?? "this part of you can become more reactive";
+}
+
+function natalPlacementOpeningParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
+  const signTone = natalSignTonePhrases[position.sign] ?? "express this part of you with more honesty and precision";
+
+  return `Your ${position.planet} describes ${natalPlanetCoreFunction(position.planet)}. In ${position.sign}, your ${position.planet} responds with a ${signFrame.quality} quality. You may notice this through the need to ${signTone}. This is the part of you that is learning how to ${natalPlanetPlainFunction(position.planet)}.`;
+}
+
+function natalPlacementHouseSupportParagraph(
+  position: PlanetPosition,
+  houseFrame: { intro: string; focus: string; lived: string },
+  houseLabel: string
+) {
+  return `In the ${houseLabel}, this part of you is shaped through ${houseFrame.lived}. This area is not just an external circumstance. It directly affects how this placement develops, reacts, and finds stability. When this area of life is supported, your ${position.planet} has more room to work clearly. When it is strained, neglected, or out of balance, ${natalPlanetStressExpression(position.planet)}.`;
 }
 
 function natalPlacementSynthesisParagraph(
@@ -7999,6 +8175,17 @@ function approvedNatalPlacementBody(position: PlanetPosition) {
     ].join("\n\n");
   }
 
+  if (position.planet === "Moon" && position.sign === "Scorpio" && position.house === 6) {
+    return [
+      "Your Moon describes how your emotional body responds before you have had time to explain yourself. In Scorpio, your Moon responds deeply, privately, and instinctively. You may feel what is hidden before it is spoken. Tension, avoidance, resentment, fear, desire, and motive can register in your body before your mind has organized the meaning.",
+      "In the 6th house, that emotional sensitivity is tied to daily life. Work, health, stress, routines, chores, sleep, food, and the small things that keep life running affect you more than they may appear to. When your days are steady, honest, and manageable, your emotional system has more room to settle. When your days become draining, chaotic, unfair, or disconnected from what your body needs, your mood usually knows first.",
+      "This placement can make the body a truth-teller. You may notice stress as tension, exhaustion, fixation, withdrawal, defensiveness, or a strong need to regain control. That does not mean you are overreacting. It means something in your daily rhythm, workload, environment, or responsibility pattern may need attention.",
+      "Because Scorpio starts your 6th house, Mars rules this area of your chart. This means the lesson is not only to feel what is wrong. It is to respond to it. Mars asks for action, boundaries, and movement. If something in your daily life is costing you too much energy, the way through is not to keep absorbing it silently. The way through is to change the pattern, name the pressure, or act on what your instincts already know.",
+      "In your birth chart, Mars is in Aquarius in the 9th house. This connects your daily life to belief, perspective, study, travel, wisdom, and the search for a wider truth. Your routines cannot only be functional. They need to make sense to you. Your work, habits, and responsibilities need some connection to freedom, learning, and a larger view of where your life is going.",
+      "Over time, your emotional steadiness grows when your daily life is built around what your body keeps telling you. You need routines that protect your energy, responsibilities that are not quietly consuming you, and enough space to think beyond survival mode. The more your days support your body, your instincts, and your need for meaning, the less you have to live in defense."
+    ].join("\n\n");
+  }
+
   return "";
 }
 
@@ -8033,8 +8220,8 @@ function natalPlacementFallbackSection(
     : null;
   const rulerHouse = rulerPosition?.house ?? null;
 
-  const houseParagraph = natalPlanetHouseParagraph(position, houseFrame, houseLabel);
-  const signParagraph = natalPlanetSignParagraph(position, signFrame);
+  const signParagraph = natalPlacementOpeningParagraph(position, signFrame);
+  const houseParagraph = natalPlacementHouseSupportParagraph(position, houseFrame, houseLabel);
   const rulerParagraph = natalRulerParagraph({
     cuspSign,
     houseFrame,
@@ -8045,7 +8232,7 @@ function natalPlacementFallbackSection(
   });
   const integrationParagraph = natalPlacementSynthesisParagraph(position, houseFrame, planetFrame);
   const paragraphs = cleanNatalPlacementLensParagraphs({
-    fallbackParagraphs: [houseParagraph, signParagraph, rulerParagraph, integrationParagraph],
+    fallbackParagraphs: [signParagraph, houseParagraph, rulerParagraph, integrationParagraph],
     rebuiltRulerParagraph: rulerParagraph,
     rebuiltSynthesisParagraph: integrationParagraph
   });
@@ -8527,9 +8714,10 @@ function natalPlacementDetailArticle(
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
   ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): YouTransitArticle {
+  const isFriendOwner = ownerContext?.ownerKind !== "chart" && Boolean(ownerContext?.ownerName);
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
-  const approvedBody = approvedNatalPlacementBody(position);
+  const approvedBody = isFriendOwner ? "" : approvedNatalPlacementBody(position);
   const hasApprovedBody = Boolean(approvedBody);
   const hasLiveAuthoredBody = Boolean(liveBody && !isNatalPlacementLensWriteup(liveWriteup));
   const hasAuthoredBody = hasApprovedBody || hasLiveAuthoredBody;
