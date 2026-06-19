@@ -780,6 +780,12 @@ function stripTldrPrefix(value: string) {
   return value.replace(/^TLDR:\s*/i, "").trim();
 }
 
+function normalizedArticleCopy(value: ReactNode) {
+  return typeof value === "string"
+    ? stripTldrPrefix(value).replace(/\s+/g, " ").trim().toLowerCase()
+    : "";
+}
+
 function articleSectionFromText(heading: string, text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   const body = stripTldrPrefix(normalized);
@@ -2849,7 +2855,14 @@ function SkyDetailArticle({
   const [lede] = paragraphs;
   const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
   const articleSub = (detailSubtitle || statement || (typeof lede === "string" ? lede : "")).trim();
-  const fallbackParagraphs = paragraphs;
+  const articleSubCopy = normalizedArticleCopy(articleSub);
+  const fallbackParagraphs = paragraphs.filter((paragraph, index) => {
+    if (index !== 0 || !articleSubCopy) {
+      return true;
+    }
+
+    return normalizedArticleCopy(paragraph) !== articleSubCopy;
+  });
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
   const visibleMetaRows = detail.compactHeader
@@ -2930,7 +2943,13 @@ function SkyDetailArticle({
                   {typeof detail.lensHint === "string" ? <p>{detail.lensHint}</p> : detail.lensHint}
                 </aside>
               ) : null}
-              {generatedSections.length > 0 ? (
+              {detail.plainBody && fallbackParagraphs.length > 0 ? (
+                <section className="article-section sky-detail-section sky-detail-plain-section">
+                  {fallbackParagraphs.map((paragraph, paragraphIndex) => (
+                    <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
+                  ))}
+                </section>
+              ) : generatedSections.length > 0 ? (
                 <>
                   {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
                     <section className="article-section sky-detail-section sky-detail-intro-section">
@@ -2958,14 +2977,6 @@ function SkyDetailArticle({
                 </>
               ) : (
                 <>
-                  {detail.plainBody && fallbackParagraphs.length > 0 ? (
-                    <section className="article-section sky-detail-section sky-detail-plain-section">
-                      {fallbackParagraphs.map((paragraph, paragraphIndex) => (
-                        <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
-                      ))}
-                    </section>
-                  ) : (
-                    <>
                   {bodyLede ? (
                     <section className="article-section sky-detail-section">
                       <h2>What it means</h2>
@@ -2978,8 +2989,6 @@ function SkyDetailArticle({
                       <p>{paragraph}</p>
                     </section>
                   ))}
-                    </>
-                  )}
                 </>
               )}
               {drilldown ? (
