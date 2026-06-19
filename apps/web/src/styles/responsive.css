@@ -181,12 +181,52 @@
     font-size: 20px;
   }
 
+  .placement-table-row__body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "meta"
+      "status"
+      "description";
+    gap: 8px;
+  }
+
+  .placement-table-row__topline {
+    grid-area: title;
+    grid-column: 1 / -1;
+    display: block;
+  }
+
+  .placement-table-row__title {
+    display: block;
+    min-width: 0;
+  }
+
   .placement-table-row__meta {
-    grid-column: 2;
+    grid-area: meta;
+    grid-column: 1 / -1;
     justify-self: start;
     text-align: left;
     margin-top: 2px;
     white-space: normal;
+  }
+
+  .placement-table-row__status {
+    grid-area: status;
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .placement-table-row__description {
+    grid-area: description;
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+  }
+
+  .placement-table-row__status .spl-dig {
+    max-width: 100%;
+    white-space: nowrap;
   }
 
   .auth-birth-grid {
@@ -320,6 +360,11 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     min-height: calc(env(safe-area-inset-top, 0px) + 78px);
+    border-bottom: 1px solid var(--line);
+    background: var(--nav-scrolled-bg);
+    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     padding: calc(env(safe-area-inset-top, 0px) + 12px) var(--mobile-control-inset) 10px;
   }
 
@@ -333,10 +378,11 @@
 
   .mode-guest .topbar,
   .mode-member .topbar {
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--line);
+    background: var(--nav-scrolled-bg);
+    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
   }
 
   html[data-scrolled] .mode-guest .topbar,
