@@ -107,7 +107,7 @@ type AdminReviewRecord = {
   id: string;
   source: "global" | "private" | "calculated" | "saved";
   surface: GeneratedContentSurface;
-  status: string;
+  status: GeneratedContentStatus;
   mode: GeneratedContentMode;
   title: string;
   subtitle: string;
@@ -1320,26 +1320,40 @@ function adminErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
-async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
-  const response = await fetch(path, {
-    ...options,
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${secret}`,
-      ...(options.headers ?? {})
+async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}, timeoutMs = 75000) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(path, {
+      ...options,
+      signal: options.signal ?? controller.signal,
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${secret}`,
+        ...(options.headers ?? {})
+      }
+    });
+    const payload = await response.json().catch(() => null) as (T & { error?: string }) | null;
+
+    if (!response.ok) {
+      throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status);
     }
-  });
-  const payload = await response.json().catch(() => null) as (T & { error?: string }) | null;
 
-  if (!response.ok) {
-    throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status);
+    if (!payload) {
+      throw new AdminRequestError(`Expected JSON from ${path.split("?")[0]}, but the server returned a non-JSON response. If you are running locally, use the Vercel/API dev server for admin actions.`, response.status);
+    }
+
+    return payload;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new AdminRequestError(`Request to ${path.split("?")[0]} timed out after ${Math.round(timeoutMs / 1000)} seconds. The provider may still be failing upstream; try again or switch providers.`, 408);
+    }
+
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
   }
-
-  if (!payload) {
-    throw new AdminRequestError(`Expected JSON from ${path.split("?")[0]}, but the server returned a non-JSON response. If you are running locally, use the Vercel/API dev server for admin actions.`, response.status);
-  }
-
-  return payload;
 }
 
 export function GeneratedContentAdminDashboard() {
@@ -1791,7 +1805,7 @@ export function GeneratedContentAdminDashboard() {
     setReviewEditBody("");
   }
 
-  async function saveReviewEdit(record: AdminReviewRecord, requestedStatus: GeneratedContentStatus = "DRAFT") {
+  async function saveReviewEdit(record: AdminReviewRecord, requestedStatus?: GeneratedContentStatus) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
@@ -1799,7 +1813,7 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const nextStatus = statusForReviewSave(record, requestedStatus);
+      const nextStatus = statusForReviewSave(record, requestedStatus ?? record.status);
       const isActiveEdit = editingReviewId === record.id;
       const nextBody = (isActiveEdit ? reviewEditBody : readerFacingTextForReview(record)).trim() || readerFacingTextForReview(record);
       const nextSummary = (isActiveEdit ? reviewEditSummary : record.summary).trim() || nextBody.split(/\n+/)[0]?.trim() || nextBody;
@@ -1890,7 +1904,7 @@ export function GeneratedContentAdminDashboard() {
           : currentRecord
       )));
       setEditingReviewId(null);
-      setMessage(nextStatus === "LIVE" ? "Published this copy live." : nextStatus === "REVIEWED" ? "Approved this copy for review." : row ? "Saved edits as a draft." : "Saved edits.");
+      setMessage(nextStatus === "LIVE" ? "Saved changes to published copy." : nextStatus === "REVIEWED" ? "Approved this copy for review." : row ? "Saved edits as a draft." : "Saved edits.");
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -1947,17 +1961,19 @@ export function GeneratedContentAdminDashboard() {
             provider: reviewGenerationProvider,
             save: false,
             voiceNotes: [
+              voiceNotesFor(record.surface, record.eventType, record.reviewerNotes ?? ""),
               "Write a daily astrology transit interpretation in the TLDR Astro voice.",
               "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
               "The body text shown to the editor must start with 'TLDR:' and then use visible labels before each following paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
-              "Start with the aspect and date or timing. Explain the core dynamic in plain language and why it is useful while active.",
+              "In the TLDR paragraph, start with one plain-language situation the reader may notice. Mention the aspect and date only after the human situation is clear.",
+              "Keep the factual astrology headline unchanged, but keep the first reader-facing sentence useful without astrology knowledge.",
               "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
               "Give 2-3 concrete life examples: a bill, boundary, conversation, deadline, commitment, choice, pattern, responsibility, relationship, work, money, emotions, or timing.",
               "Give practical guidance tied directly to the planets and aspect. Avoid slogans, productivity coaching, guru language, and therapist register.",
               "Use soft certainty: may, can, often, more likely, easier, harder.",
               "Avoid: not through X but through Y, this is not dramatic astrology, the invitation is, lean into, step into, honor, release, unlock, universe, cosmic, manifesting.",
               "Do not mention schemas, source records, APIs, dashboards, generation process, natal houses, or private personalization."
-            ].join(" ")
+            ].filter(Boolean).join("\n\n")
           })
         }
       );
@@ -2040,14 +2056,14 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`${voiceTemplateLabels[activeTemplateSurface]} voice template reset.`);
   }
 
-  function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
-    const surfaceKey = templateSurfaceFor(draftWithFacts.surface, draftWithFacts.eventType);
+  function voiceNotesFor(surface: GeneratedContentSurface, eventType: string | null | undefined, reviewerNotes = "") {
+    const surfaceKey = templateSurfaceFor(surface, eventType ?? undefined);
     const config = voiceTemplates[surfaceKey];
     const template = config.template.trim();
     const generationGuide = config.generationGuide.trim();
     const bannedWords = config.bannedWords.trim();
     const phraseBank = config.phraseBank.trim();
-    const rowNotes = draftWithFacts.reviewerNotes.trim();
+    const rowNotes = reviewerNotes.trim();
 
     return [
       template ? `SURFACE VOICE TEMPLATE (${voiceTemplateLabels[surfaceKey]})\n${template}` : "",
@@ -2056,6 +2072,10 @@ export function GeneratedContentAdminDashboard() {
       phraseBank ? `LANGUAGE AND PHRASE BANK\nPrefer this kind of language when it fits the facts. Do not force every phrase:\n${phraseBank}` : "",
       rowNotes ? `ROW-SPECIFIC EDITORIAL NOTES\n${rowNotes}` : ""
     ].filter(Boolean).join("\n\n");
+  }
+
+  function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
+    return voiceNotesFor(draftWithFacts.surface, draftWithFacts.eventType, draftWithFacts.reviewerNotes);
   }
 
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
@@ -3106,7 +3126,7 @@ export function GeneratedContentAdminDashboard() {
                             </button>
                             <button className="admin-primary-button" type="button" onClick={() => void saveReviewEdit(selectedReviewRecord)} disabled={isLoading}>
                               <Save size={16} aria-hidden="true" />
-                              Save Draft
+                              {selectedReviewRecord.status === "LIVE" ? "Save Changes" : "Save Draft"}
                             </button>
                           </>
                         ) : (
