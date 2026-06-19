@@ -8029,12 +8029,44 @@ function friendSignTone(position: PlanetPosition, pronouns: ThirdPersonPronouns)
   return signTone;
 }
 
+function friendPlacementHouseFocus(position: PlanetPosition) {
+  const house = position.house ?? 0;
+  const dynamic = friendHouseDynamics[house] ?? `through ${readableHouseTopic(house).replace(/^your\s+/i, "")}`;
+
+  return dynamic.replace(/^through\s+/i, "");
+}
+
 function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
   const house = position.house ?? 0;
-  const planetOpener = friendPlanetOpeners[position.planet] ?? `shows how ${position.planet} becomes active`;
   const houseDynamic = friendHouseDynamics[house] ?? `through ${readableHouseTopic(house).replace(/^your\s+/i, "")}`;
+  const houseFocus = friendPlacementHouseFocus(position);
+  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this part of the chart";
+  const placement = `${position.planet} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
 
-  return `${possessiveLabel(ownerName)} ${position.planet} ${planetOpener}. With ${pronouns.possessive} ${position.planet} in ${position.sign}${position.house ? ` in the ${ordinalHouse(position.house)} house` : ""}, that development happens ${houseDynamic}.`;
+  switch (position.planet) {
+    case "Sun":
+      return `${possessiveLabel(ownerName)} Sun shows where ${pronouns.subject} build identity, confidence, and a sense of direction. With ${pronouns.possessive} ${placement}, that self-understanding forms ${houseDynamic}. This is one of the places where life keeps showing ${pronouns.object} what gives ${pronouns.object} energy, purpose, and a clearer sense of who ${pronouns.subject} are becoming.`;
+    case "Moon":
+      return `${possessiveLabel(ownerName)} Moon is tied to what helps ${pronouns.object} feel safe, steady, and emotionally held. With ${pronouns.possessive} ${placement}, feelings are closely connected to ${houseFocus}. What happens here can affect how settled ${pronouns.subject} feel in ${pronouns.possessive} body, and what ${pronouns.subject} need before ${pronouns.subject} can fully soften.`;
+    case "Mercury":
+      return `${possessiveLabel(ownerName)} Mercury shows how ${pronouns.subject} notice, think, learn, and give language to experience. With ${pronouns.possessive} ${placement}, the mind keeps returning to ${houseFocus}. This is where observation becomes understanding, and where the right words can change how ${pronouns.subject} move through a situation.`;
+    case "Venus":
+      return `${possessiveLabel(ownerName)} Venus shows what ${pronouns.subject} value, what ${pronouns.subject} are drawn toward, and what makes connection feel worth choosing. With ${pronouns.possessive} ${placement}, desire and self-worth are clarified through ${houseFocus}. This is where attraction has to become honest enough to show what actually feels good, mutual, and sustainable.`;
+    case "Mars":
+      return `${possessiveLabel(ownerName)} Mars shows how ${pronouns.subject} act, pursue, protect, and respond under pressure. With ${pronouns.possessive} ${placement}, drive becomes active ${houseDynamic}. This is where desire needs somewhere real to go, and where conflict can reveal what ${pronouns.subject} want badly enough to move toward.`;
+    case "Jupiter":
+      return `${possessiveLabel(ownerName)} Jupiter shows where ${pronouns.subject} look for growth, faith, meaning, and a wider view of life. With ${pronouns.possessive} ${placement}, expansion happens ${houseDynamic}. This is where experience can make life feel larger, as long as possibility stays connected to judgment.`;
+    case "Saturn":
+      return `${possessiveLabel(ownerName)} Saturn shows where ${pronouns.subject} build maturity, boundaries, patience, and earned confidence. With ${pronouns.possessive} ${placement}, responsibility gathers ${houseDynamic}. This is where pressure can become skill over time, especially when ${pronouns.subject} stop treating limits as proof that something is wrong.`;
+    case "Uranus":
+      return `${possessiveLabel(ownerName)} Uranus shows where ${pronouns.subject} need freedom, honesty, and room to break from an old pattern. With ${pronouns.possessive} ${placement}, change arrives ${houseDynamic}. This is where life can feel restless until ${pronouns.subject} find a truer way to move.`;
+    case "Neptune":
+      return `${possessiveLabel(ownerName)} Neptune shows where ${pronouns.subject} are sensitive, imaginative, porous, and easily moved by longing. With ${pronouns.possessive} ${placement}, inspiration and confusion can both gather ${houseDynamic}. This is where compassion needs clarity, so the dream does not blur what is actually happening.`;
+    case "Pluto":
+      return `${possessiveLabel(ownerName)} Pluto shows where ${pronouns.subject} meet intensity, control, fear, honesty, and deep change. With ${pronouns.possessive} ${placement}, transformation gathers ${houseDynamic}. This is where life tends to ask for truth instead of surface management.`;
+    default:
+      return `${possessiveLabel(ownerName)} ${position.planet} becomes active ${houseDynamic}. With ${pronouns.possessive} ${placement}, this part of the chart develops through lived experience rather than abstract description.`;
+  }
 }
 
 function friendPlacementRulerParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
@@ -8053,12 +8085,16 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
   const houseLabel = `${ordinalHouse(position.house)} house`;
 
   if (!rulerPosition?.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where this story becomes more personal and specific over time.`;
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules the house. Its natal placement shows where the story becomes more personal and specific over time.`;
   }
 
   const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
 
-  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this area of life. In ${pronouns.possessive} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, connecting this placement with ${rulerHouseDynamic}.`;
+  if (rulerPosition.planet === position.planet && rulerPosition.sign === position.sign && rulerPosition.house === position.house) {
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules the house. Since the ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the meaning concentrates around the same life material. That makes ${rulerHouseDynamic} central to how ${pronouns.possessive} ${position.planet} works.`;
+  }
+
+  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules the house. In ${pronouns.possessive} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, so this placement keeps leading back to ${rulerHouseDynamic}.`;
 }
 
 function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
@@ -8088,6 +8124,68 @@ function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPo
   }
 }
 
+function natalAspectsForPlacement(position: PlanetPosition, natalSky: SkySnapshot | null) {
+  return (natalSky?.aspects ?? [])
+    .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
+    .slice()
+    .sort((first, second) => first.orb - second.orb);
+}
+
+function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapshot | null) {
+  return natalAspectsForPlacement(position, natalSky).map((aspect) => ({
+    planetA: aspect.from,
+    aspect: aspect.type,
+    planetB: aspect.to,
+    otherPoint: aspectOtherPoint(aspect, position.planet),
+    orb: wholeDegreeOrb(aspect.orb),
+    meaning: aspect.meaning
+  }));
+}
+
+function natalPlacementAspectKnowledgeIds(position: PlanetPosition, natalSky: SkySnapshot | null) {
+  return natalAspectsForPlacement(position, natalSky).map((aspect) => aspectContentId(aspect.from, aspect.type, aspect.to));
+}
+
+function natalPlacementAspectParagraph(position: PlanetPosition, natalSky: SkySnapshot | null) {
+  const aspects = natalAspectsForPlacement(position, natalSky).slice(0, 3);
+
+  if (aspects.length === 0) {
+    return "";
+  }
+
+  const aspectClauses = aspects.map((aspect) => {
+    const otherPoint = aspectOtherPoint(aspect, position.planet);
+    const title = `${position.planet} ${aspect.type} ${otherPoint}`;
+    const description = aspectRelationshipDescription(position.planet, aspect.type, otherPoint);
+
+    return `${title} (${wholeDegreeOrb(aspect.orb)}): ${description}`;
+  });
+
+  return `Your ${position.planet} is also shaped by its natal aspects. ${aspectClauses.join(" ")}`;
+}
+
+function friendPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null) {
+  const aspects = natalAspectsForPlacement(position, natalSky).slice(0, 3);
+
+  if (aspects.length === 0) {
+    return "";
+  }
+
+  const aspectClauses = aspects.map((aspect) => {
+    const otherPoint = aspectOtherPoint(aspect, position.planet);
+    const title = `${position.planet} ${aspect.type} ${otherPoint}`;
+    const description = natalGeneratedCopyForOwner(
+      aspectRelationshipDescription(position.planet, aspect.type, otherPoint),
+      ownerName,
+      "person"
+    );
+
+    return `${title} (${wholeDegreeOrb(aspect.orb)}): ${description}`;
+  });
+
+  return `${possessiveLabel(ownerName)} ${position.planet} is also shaped by its natal aspects. ${aspectClauses.join(" ")}`;
+}
+
 function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person") {
   if (ownerKind === "chart") {
     return null;
@@ -8098,6 +8196,7 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
     friendPlacementHouseParagraph(ownerName, position, pronouns),
     friendSignTone(position, pronouns),
     friendPlacementRulerParagraph(ownerName, position, natalSky, pronouns),
+    friendPlacementAspectParagraph(ownerName, position, natalSky),
     friendPlacementSynthesisParagraph(ownerName, position, pronouns)
   ].map((paragraph) => paragraph.trim()).filter(Boolean);
 
@@ -8204,6 +8303,10 @@ function natalPlacementDetailArticle(
     : hasLiveAuthoredBody
       ? bodyParagraphs
       : [];
+  const placementAspectParagraph = natalPlacementAspectParagraph(position, natalSky);
+  const authoredBodyWithAspects = placementAspectParagraph
+    ? [...authoredBodyParagraphs, placementAspectParagraph]
+    : authoredBodyParagraphs;
   const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
@@ -8228,9 +8331,9 @@ function natalPlacementDetailArticle(
     subtitle: natalPlacementDetailSubtitle(position),
     lensHint: natalPlacementLensHint,
     compactHeader: true,
-    plainBody: authoredBodyParagraphs.length > 0,
+    plainBody: authoredBodyWithAspects.length > 0,
     bodyBeforeSections: true,
-    body: authoredBodyParagraphs,
+    body: authoredBodyWithAspects,
     summary: "",
     summaryHeading: "",
     sections,
@@ -8275,9 +8378,7 @@ function natalPlacementSkyDetail(
     title: ownerContext?.ownerKind === "person" ? `${possessiveLabel(ownerContext.ownerName)} ${article.title}` : article.title,
     meta: article.subtitle,
     subtitle: article.subtitle,
-    lensHint: ownerContext?.ownerKind === "person"
-      ? "The planet shows which part of the chart is being activated. The house shows where it becomes part of lived experience. The sign on the house shows the pattern it moves through, and the ruler of that sign shows where the meaning keeps developing over time."
-      : ownerAwareCopy(article.lensHint),
+    lensHint: ownerContext?.ownerKind === "person" ? undefined : ownerAwareCopy(article.lensHint),
     compactHeader: article.compactHeader,
     plainBody: friendBody ? true : article.plainBody,
     bodyBeforeSections: article.bodyBeforeSections,
@@ -10568,6 +10669,7 @@ function ProfileView({
       }
 
       const insight = natalHouseInsightForPosition(position, natalSky);
+      const placementAspects = natalPlacementAspectFacts(position, natalSky);
       setSeededPlacementDrafts((current) => {
         const next = new Set(current);
         next.add(contentKey);
@@ -10601,6 +10703,7 @@ function ProfileView({
             dignity: placementDignity(position)?.label ?? null,
             retrograde: position.motion === "retrograde"
           },
+          aspects: placementAspects,
           lenses: insight
             ? {
                 house: insight.houseBody,
@@ -10610,7 +10713,10 @@ function ProfileView({
               }
             : null
         },
-        knowledgeIds: [placementContentId(position.planet, position.sign)],
+        knowledgeIds: [
+          placementContentId(position.planet, position.sign),
+          ...natalPlacementAspectKnowledgeIds(position, natalSky)
+        ],
         sourceSnapshot: {
           source: "tldrastro-you-placement-detail",
           chartId: primaryChart?.id ?? null,
@@ -10621,6 +10727,8 @@ function ProfileView({
           "Write the main interpretation only. Do not copy or restate the lens sections as separate headings.",
           "Lead with what this placement means in plain direct prose before mechanics.",
           "Use the provided house lens and ruler thread as context, but author the write-up as a coherent interpretation.",
+          "Include the strongest natal aspects to this planet as part of the interpretation, not as a separate technical dump.",
+          "Explain how those aspects modify the planet's expression in everyday life.",
           "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, terrain gets processed, or makes this placement.",
           "Do not mention drafts, review status, generated content, databases, backend, or knowledge base.",
           "Keep it specific, human, and around 170 to 260 words."
