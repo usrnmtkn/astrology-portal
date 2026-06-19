@@ -1183,6 +1183,22 @@ function contentStatusCounts(records: AdminReviewRecord[]) {
   } satisfies Record<AdminContentStatusFilter, number>;
 }
 
+function categoryUsesDateFilter(category: AdminContentCategoryFilter) {
+  return category === "all" || category === "Sky";
+}
+
+function reviewSurfaceUsesDateFilter(surface: AdminReviewSurface) {
+  return surface === "upcomingAspects";
+}
+
+function reviewSurfacesForCategory(category: AdminContentCategoryFilter) {
+  if (category === "Sky") return ["upcomingAspects"] as AdminReviewSurface[];
+  if (category === "Relationship") return ["relationshipLayer"] as AdminReviewSurface[];
+  if (category === "Natal Aspects" || category === "Natal Chart") return ["transitNatal", "natalChart"] as AdminReviewSurface[];
+
+  return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
+}
+
 function recordOrbLabel(record: AdminReviewRecord) {
   const orb = record.facts?.orb;
 
@@ -1374,6 +1390,7 @@ export function GeneratedContentAdminDashboard() {
     : "";
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
+  const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
 
   async function checkTldrAstroApiStatus() {
     if (!isTldrAstroApiConfigured) {
@@ -1545,7 +1562,7 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status) {
-    const surfaces = Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
+    const surfaces = reviewSurfacesForCategory(categoryFilter);
     setSelectedId(null);
     setSelectedReviewId(null);
     setDraft(createAdminDraft(surface));
@@ -1560,10 +1577,17 @@ export function GeneratedContentAdminDashboard() {
       const payloads = await Promise.all(surfaces.map((reviewSurfaceKey) => {
         const params = new URLSearchParams({
           surface: reviewSurfaceKey,
-          status: "all",
-          startDate: dateStart,
-          endDate: dateEnd
+          status: "all"
         });
+        const shouldUseDateWindow = reviewSurfaceUsesDateFilter(reviewSurfaceKey);
+
+        if (shouldUseDateWindow && dateStart) {
+          params.set("startDate", dateStart);
+        }
+
+        if (shouldUseDateWindow && dateEnd) {
+          params.set("endDate", dateEnd);
+        }
 
         if (personQuery.trim()) {
           params.set("person", personQuery.trim());
@@ -1579,11 +1603,11 @@ export function GeneratedContentAdminDashboard() {
         limit: "100"
       });
 
-      if (dateStart) {
+      if (categoryFilter === "Sky" && dateStart) {
         privateParams.set("startDate", dateStart);
       }
 
-      if (dateEnd) {
+      if (categoryFilter === "Sky" && dateEnd) {
         privateParams.set("endDate", dateEnd);
       }
 
@@ -2923,11 +2947,11 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-review-filter-grid">
                 <label>
                   <span>Start date</span>
-                  <input type="date" value={dateStart} onChange={(event) => setDateStart(event.target.value)} />
+                  <input type="date" value={dateStart} onChange={(event) => setDateStart(event.target.value)} disabled={!isDateFilterActive} />
                 </label>
                 <label>
                   <span>End date</span>
-                  <input type="date" value={dateEnd} onChange={(event) => setDateEnd(event.target.value)} />
+                  <input type="date" value={dateEnd} onChange={(event) => setDateEnd(event.target.value)} disabled={!isDateFilterActive} />
                 </label>
                 <label>
                   <span>Category</span>

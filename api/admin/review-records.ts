@@ -356,13 +356,20 @@ function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurfa
   return row.surface === "synastry" || row.surface === "composite" || row.surface === "relationship";
 }
 
-async function savedContentRows(startDate: string, endDate: string) {
+async function savedContentRows(startDate?: string | null, endDate?: string | null) {
   const params = new URLSearchParams({
     select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,source_snapshot,reviewer_notes,model,updated_at",
-    order: "target_date.asc.nullslast",
+    order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: "1000"
   });
-  params.set("or", `(target_date.is.null,and(target_date.gte.${startDate},target_date.lte.${endDate}))`);
+
+  if (startDate && endDate) {
+    params.set("or", `(target_date.is.null,and(target_date.gte.${startDate},target_date.lte.${endDate}))`);
+  } else if (startDate) {
+    params.set("or", `(target_date.is.null,target_date.gte.${startDate})`);
+  } else if (endDate) {
+    params.set("or", `(target_date.is.null,target_date.lte.${endDate})`);
+  }
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
     headers: adminHeaders()
@@ -857,11 +864,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const surface = (requestUrl.searchParams.get("surface") ?? "upcomingAspects") as ReviewSurface;
     const status = requestUrl.searchParams.get("status");
     const person = requestUrl.searchParams.get("person") ?? "";
-    const start = parseDate(requestUrl.searchParams.get("startDate"), new Date());
-    const end = parseDate(requestUrl.searchParams.get("endDate"), new Date(start.getTime() + 30 * 86_400_000));
+    const requestedStartDate = requestUrl.searchParams.get("startDate");
+    const requestedEndDate = requestUrl.searchParams.get("endDate");
+    const hasDateWindow = Boolean(requestedStartDate || requestedEndDate);
+    const start = parseDate(requestedStartDate, new Date());
+    const end = parseDate(requestedEndDate, new Date(start.getTime() + 30 * 86_400_000));
     const startDate = dateOnly(start);
     const endDate = dateOnly(end);
-    const savedRowsList = await savedContentRows(startDate, endDate);
+    const savedRowsList = await savedContentRows(hasDateWindow ? startDate : null, hasDateWindow ? endDate : null);
     const savedRows = savedByContentKey(savedRowsList);
     let records: ReviewRecord[] = [];
     let prompt: string | null = null;
