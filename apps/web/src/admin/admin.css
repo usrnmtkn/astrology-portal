@@ -586,10 +586,9 @@ body,
 .admin-content-row {
   align-items: center;
   display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(240px, 1.5fr) minmax(120px, 0.7fr) minmax(112px, 0.55fr) minmax(120px, 0.6fr);
-  min-width: 720px;
-  padding: 0 14px;
+  gap: 6px 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0 16px;
 }
 
 .admin-content-table-head {
@@ -609,7 +608,9 @@ body,
   border-radius: 0;
   color: var(--admin-ink);
   justify-content: stretch;
-  min-height: 58px;
+  min-height: 74px;
+  padding-bottom: 12px;
+  padding-top: 12px;
   text-align: left;
 }
 
@@ -618,21 +619,24 @@ body,
   background: rgba(124, 134, 255, 0.12);
 }
 
-.admin-content-row strong {
-  font-size: 15px;
+.admin-content-row-title {
+  color: var(--admin-ink);
+  font-size: 16px;
+  font-weight: 850;
   letter-spacing: 0;
-  line-height: 1.25;
+  line-height: 1.3;
   overflow-wrap: anywhere;
 }
 
-.admin-content-row span:not(.admin-status),
-.admin-content-row time {
+.admin-content-row-meta {
   color: var(--admin-muted);
   font-size: 13px;
+  grid-column: 1 / -1;
+  line-height: 1.35;
 }
 
 .admin-title-field {
-  flex: 1 1 420px;
+  flex: 1 1 100%;
 }
 
 .admin-title-field span {
@@ -645,12 +649,13 @@ body,
 
 .admin-title-field input {
   background: transparent;
+  border: 0;
   border-color: transparent;
   color: var(--admin-ink);
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 850;
   height: auto;
-  line-height: 1.1;
+  line-height: 1.18;
   min-height: 0;
   padding: 0;
 }
@@ -658,7 +663,7 @@ body,
 .admin-post-editor {
   display: grid;
   gap: 18px;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(0, 1fr) 320px;
 }
 
 .admin-metadata-sidebar {
@@ -722,7 +727,7 @@ body,
 .admin-workbench {
   display: grid;
   gap: 18px;
-  grid-template-columns: minmax(330px, 420px) minmax(720px, 1fr);
+  grid-template-columns: minmax(420px, 520px) minmax(620px, 1fr);
 }
 
 .admin-review-filters {
@@ -915,10 +920,17 @@ body,
 .admin-editor-toolbar {
   align-items: flex-start;
   border-bottom: 1px solid var(--admin-line);
-  display: flex;
-  gap: 18px;
-  justify-content: space-between;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
   padding: 18px;
+}
+
+.admin-editor-heading {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
 }
 
 .admin-editor-grid {
@@ -988,9 +1000,9 @@ body,
 
 .admin-review-copy-heading h3 {
   color: var(--admin-ink);
-  font-size: 34px;
+  font-size: 24px;
   letter-spacing: 0;
-  line-height: 1.05;
+  line-height: 1.1;
   margin: 0;
 }
 

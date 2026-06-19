@@ -48,6 +48,22 @@ function adminHeaders() {
   };
 }
 
+async function readJsonBody(req: IncomingMessage) {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
+    id?: string;
+    status?: UserGeneratedContentStatus;
+    headline?: string;
+    summary?: string;
+    body?: string;
+  };
+}
+
 async function listUserGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/user-generated-content", "http://localhost");
   const status = requestUrl.searchParams.get("status") as UserGeneratedContentStatus | "all" | null;
@@ -108,18 +124,56 @@ async function listUserGeneratedContent(req: IncomingMessage) {
   return payload;
 }
 
+async function updateUserGeneratedContent(req: IncomingMessage) {
+  const body = await readJsonBody(req);
+
+  if (!body.id) {
+    throw new Error("id is required.");
+  }
+
+  const row: Record<string, unknown> = {
+    updated_at: new Date().toISOString()
+  };
+
+  if (body.status) row.status = body.status;
+  if (body.headline !== undefined) row.headline = body.headline;
+  if (body.summary !== undefined) row.summary = body.summary;
+  if (body.body !== undefined) row.body = body.body;
+
+  const response = await fetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?id=eq.${encodeURIComponent(body.id)}&select=id,user_id,subject_type,subject_id,content_key,surface,mode,status,event_type,target_date,provider,model,headline,summary,body,error,updated_at,created_at`, {
+    method: "PATCH",
+    headers: {
+      ...adminHeaders(),
+      prefer: "return=representation"
+    },
+    body: JSON.stringify(row)
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`Supabase personalized content update failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return payload;
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!isAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }
 
-  if (req.method !== "GET") {
-    sendJson(res, 405, { error: "Use GET." });
+  if (req.method !== "GET" && req.method !== "PATCH") {
+    sendJson(res, 405, { error: "Use GET or PATCH." });
     return;
   }
 
   try {
+    if (req.method === "PATCH") {
+      sendJson(res, 200, { ok: true, rows: await updateUserGeneratedContent(req) });
+      return;
+    }
+
     sendJson(res, 200, { ok: true, rows: await listUserGeneratedContent(req) });
   } catch (error) {
     sendJson(res, 500, {
