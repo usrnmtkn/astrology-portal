@@ -123,6 +123,19 @@ function addAlias(aliases: Set<string>, alias?: string | null) {
   }
 }
 
+function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: LiveGeneratedContent) {
+  if (alias.startsWith("sky-retrograde-")) {
+    const currentDate = current.targetDate ?? "";
+    const nextDate = next.targetDate ?? "";
+
+    if (nextDate !== currentDate) {
+      return nextDate > currentDate;
+    }
+  }
+
+  return false;
+}
+
 function isLegacyCurrentSkyEvent(eventType: string | null, prefix: "seasonal" | "lunar") {
   return eventType === `${prefix}-${["weath", "er"].join("")}`;
 }
@@ -333,7 +346,9 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
     const aliases = generatedContentAliases(row);
 
     for (const alias of aliases) {
-      if (!byKey.has(alias)) {
+      const existing = byKey.get(alias);
+
+      if (!existing || shouldReplaceAlias(alias, existing, content)) {
         byKey.set(alias, content);
       }
     }
