@@ -9,6 +9,10 @@ export type PersonalTimingSummary = {
   headline: string;
   summary: string;
   secondary?: string;
+  writeup?: Array<{
+    heading?: string;
+    body: string[];
+  }>;
   keyFactors: string[];
   status: "idle" | "loading" | "ready" | "error";
 };
@@ -320,6 +324,7 @@ function YouUpdatesTab({
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
+  const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
 
   return (
     <div className="subpane updates-section" id="sub-transits">
@@ -335,6 +340,18 @@ function YouUpdatesTab({
               <span />
             </span>
           ) : null}
+        </section>
+      )}
+      {hasSavedCurrentCity && dailyWriteup.length > 0 && (
+        <section className="daily-horoscope-writeup" aria-label="Daily horoscope write-up">
+          {dailyWriteup.map((section, sectionIndex) => (
+            <div className="daily-horoscope-writeup__section" key={`${section.heading ?? "daily"}-${sectionIndex}`}>
+              {section.heading ? <h3>{section.heading}</h3> : null}
+              {section.body.map((paragraph, paragraphIndex) => (
+                <p key={`${sectionIndex}-${paragraphIndex}`}>{paragraph}</p>
+              ))}
+            </div>
+          ))}
         </section>
       )}
       {hasSavedCurrentCity && personalTimingSummary && (
