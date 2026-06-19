@@ -6,6 +6,10 @@ import {
   type GenerateContentInput
 } from "./_lib/content-generation.js";
 
+type AdminGenerateContentInput = GenerateContentInput & {
+  save?: boolean;
+};
+
 async function readJsonBody(req: IncomingMessage) {
   const chunks: Buffer[] = [];
 
@@ -13,7 +17,7 @@ async function readJsonBody(req: IncomingMessage) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
 
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as GenerateContentInput;
+  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as AdminGenerateContentInput;
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -46,7 +50,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const input = await readJsonBody(req);
     const generated = await generateContent(input);
-    const saved = await saveGeneratedInterpretation(input, generated);
+    const saved = input.save === false ? [] : await saveGeneratedInterpretation(input, generated);
 
     sendJson(res, 200, {
       ok: true,
