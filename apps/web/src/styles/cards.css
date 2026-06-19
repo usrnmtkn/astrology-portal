@@ -16,6 +16,11 @@
   .manual-chart-row,
   .daily-horoscope-summary,
   .personal-timing-summary,
+  .article-card,
+  .sky-detail-card,
+  .friend-hero-card,
+  .you-profile-card,
+  .friend-profile-card,
   .sky-lunar-pill,
   .next-lun,
   .retro-list .retro
@@ -36,7 +41,10 @@
   .aspects-card,
   .friends-feed-card,
   .daily-horoscope-summary,
-  .personal-timing-summary
+  .personal-timing-summary,
+  .friend-hero-card,
+  .you-profile-card,
+  .friend-profile-card
 ) {
   box-shadow: var(--table-shadow);
 }

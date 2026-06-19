@@ -15,7 +15,7 @@
   .settings-signout-row,
   .account-editable-row
 ) {
-  background: var(--row-bg, var(--table-row-bg));
+  background: var(--row-bg, var(--card-bg));
   border-bottom-color: var(--table-row-border);
 }
 

@@ -2,7 +2,7 @@
 .picker-close {
   width: 40px;
   height: 40px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--button-border, var(--card-border));
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--ink);

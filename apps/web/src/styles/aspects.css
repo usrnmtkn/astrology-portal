@@ -348,6 +348,7 @@
 }
 
 .updates-aspect-row--selected {
+  border-color: var(--card-border);
   box-shadow: var(--card-shadow);
   opacity: 1;
 }
