@@ -10,10 +10,11 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "review" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "settings" | "privateRows" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
+type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -193,6 +194,14 @@ const reviewSurfaceLabels: Record<AdminReviewSurface, { label: string; descripti
   }
 };
 
+const contentStatusFilters: Array<{ key: AdminContentStatusFilter; label: string }> = [
+  { key: "all", label: "All" },
+  { key: "DRAFT", label: "Draft" },
+  { key: "NEEDS_REVIEW", label: "Needs Review" },
+  { key: "SCHEDULED", label: "Scheduled" },
+  { key: "LIVE", label: "Published" }
+];
+
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const personalizedSampleReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 
@@ -258,18 +267,14 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
-  if (activePage === "privateRows") return "Personal Content";
-  if (activePage === "templates") return "Templates & Voice";
-  if (activePage === "hooks") return "Content Hooks";
-  return "Content Review";
+  if (activePage === "settings") return "Settings";
+  return "Content";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
-  if (activePage === "privateRows") return "Admin / Content generation / Personal content";
-  if (activePage === "templates") return "Admin / Content generation / Templates & voice";
-  if (activePage === "hooks") return "Admin / Content generation / Content hooks";
-  return "Admin / Content generation / Review queue";
+  if (activePage === "settings") return "Admin / Settings";
+  return "Admin / Content";
 }
 
 function adminPageDescription(activePage: AdminDashboardPage) {
@@ -277,19 +282,11 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Track product updates across the internal dashboard and the public app in one chronological log.";
   }
 
-  if (activePage === "templates") {
-    return "Define the voice layer the generator should use for each astrology content family before drafts are generated.";
+  if (activePage === "settings") {
+    return "Manage generation templates, voice guidance, access, calculation API status, and app content hooks.";
   }
 
-  if (activePage === "hooks") {
-    return "Review the named hook points the app uses when a surface needs approved generated or voice-backed copy.";
-  }
-
-  if (activePage === "privateRows") {
-    return "Read-only visibility into natal and person-specific AI interpretations, including the provider and model used for each generated row.";
-  }
-
-  return "Audit astrology content by date range before it ships. Review upcoming aspects, transits to natal charts, natal placements, synastry, and composite content from one queue.";
+  return "Manage every generated or authored astrology entry from one filtered CMS list.";
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -1122,11 +1119,66 @@ function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "
   return "draft";
 }
 
-function statusForReviewSave(record: AdminReviewRecord, requestedStatus: GeneratedContentStatus) {
-  if (requestedStatus === "LIVE" && record.status !== "REVIEWED") {
-    return "REVIEWED";
+function contentCategoryLabel(record: AdminReviewRecord) {
+  const templateSurface = templateSurfaceFor(record.surface, record.eventType ?? undefined);
+
+  if (templateSurface !== "sky" || record.surface !== "sky") {
+    return voiceTemplateLabels[templateSurface];
   }
 
+  if (record.eventType?.includes("aspect")) {
+    return "Sky";
+  }
+
+  return generatedContentSurfaceLabels[record.surface];
+}
+
+function contentStatusLabel(status: string) {
+  if (status === "LIVE") return "Published";
+  if (status === "REVIEWED") return "Scheduled";
+  if (status === "ERROR") return "Needs Review";
+  if (status === "DRAFT") return "Draft";
+
+  return status;
+}
+
+function isDraftWithCopy(record: AdminReviewRecord) {
+  return record.status === "DRAFT" && (record.source === "saved" || record.source === "global" || Boolean(record.body.trim() || record.summary.trim()));
+}
+
+function recordMatchesContentStatus(record: AdminReviewRecord, filter: AdminContentStatusFilter) {
+  if (filter === "all") return true;
+  if (filter === "DRAFT") return isDraftWithCopy(record);
+  if (filter === "NEEDS_REVIEW") return record.status === "ERROR" || (record.status === "DRAFT" && !isDraftWithCopy(record));
+  if (filter === "SCHEDULED") return record.status === "REVIEWED";
+  if (filter === "LIVE") return record.status === "LIVE";
+
+  return true;
+}
+
+function contentStatusCounts(records: AdminReviewRecord[]) {
+  return {
+    all: records.length,
+    DRAFT: records.filter((record) => recordMatchesContentStatus(record, "DRAFT")).length,
+    NEEDS_REVIEW: records.filter((record) => recordMatchesContentStatus(record, "NEEDS_REVIEW")).length,
+    SCHEDULED: records.filter((record) => recordMatchesContentStatus(record, "SCHEDULED")).length,
+    LIVE: records.filter((record) => recordMatchesContentStatus(record, "LIVE")).length
+  } satisfies Record<AdminContentStatusFilter, number>;
+}
+
+function recordOrbLabel(record: AdminReviewRecord) {
+  const orb = record.facts?.orb;
+
+  return typeof orb === "number" ? `${orb.toFixed(1)}°` : typeof orb === "string" && orb ? `${orb}°` : "Not set";
+}
+
+function recordDirectionLabel(record: AdminReviewRecord) {
+  const direction = record.facts?.direction;
+
+  return typeof direction === "string" && direction ? direction : "Not set";
+}
+
+function statusForReviewSave(record: AdminReviewRecord, requestedStatus: GeneratedContentStatus) {
   return requestedStatus;
 }
 
@@ -1214,6 +1266,8 @@ export function GeneratedContentAdminDashboard() {
   const [secretDraft, setSecretDraft] = useState(secret);
   const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
+  const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
   const [dateStart, setDateStart] = useState(() => dateInputValue());
   const [dateEnd, setDateEnd] = useState(() => dateInputValue(addDays(new Date(), 30)));
@@ -1253,7 +1307,7 @@ export function GeneratedContentAdminDashboard() {
   const [totalMetricRows, setTotalMetricRows] = useState(0);
   const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
-  const [activePage, setActivePage] = useState<AdminDashboardPage>("review");
+  const [activePage, setActivePage] = useState<AdminDashboardPage>("content");
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -1263,15 +1317,11 @@ export function GeneratedContentAdminDashboard() {
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
-  const allReviewRecords = useMemo(() => {
+  const allContentRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
     return reviewRecords
       .filter((record) => {
-        if (reviewSurface === "upcomingAspects") {
-          return true;
-        }
-
         if (!normalizedPersonQuery) return true;
 
         return [
@@ -1282,6 +1332,8 @@ export function GeneratedContentAdminDashboard() {
           record.title
         ].some((value) => value?.toLowerCase().includes(normalizedPersonQuery));
       })
+      .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
+      .filter((record) => categoryFilter === "all" || contentCategoryLabel(record) === categoryFilter)
       .sort((first, second) => {
         const firstDate = first.targetDate ?? "";
         const secondDate = second.targetDate ?? "";
@@ -1292,8 +1344,10 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [personQuery, reviewRecords, reviewSurface]);
-  const selectedReviewRecord = allReviewRecords.find((record) => record.id === selectedReviewId) ?? allReviewRecords[0] ?? null;
+  }, [categoryFilter, contentStatusFilter, personQuery, reviewRecords]);
+  const contentCategories = useMemo(() => Array.from(new Set(reviewRecords.map(contentCategoryLabel))).sort(), [reviewRecords]);
+  const cmsStatusCounts = useMemo(() => contentStatusCounts(reviewRecords), [reviewRecords]);
+  const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? allContentRecords[0] ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord && selectedReviewRecord.source !== "private");
   const selectedReviewCopyState = selectedReviewRecord ? reviewCopyState(selectedReviewRecord) : "placeholder";
@@ -1474,30 +1528,11 @@ export function GeneratedContentAdminDashboard() {
     void checkTldrAstroApiStatus();
   }, []);
 
-  useEffect(() => {
-    if (activePage === "privateRows" && canUseApi) {
-      void loadPrivateRows();
-    }
-  }, [activePage, secret]);
-
   async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status) {
-    const nextSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
-    const params = new URLSearchParams({
-      surface: nextReviewSurface,
-      status: nextStatus,
-      startDate: dateStart,
-      endDate: dateEnd
-    });
-
-    if (personQuery.trim()) {
-      params.set("person", personQuery.trim());
-    }
-
-    setReviewSurface(nextReviewSurface);
-    setSurface(nextSurface);
+    const surfaces = Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
     setSelectedId(null);
     setSelectedReviewId(null);
-    setDraft(createAdminDraft(nextSurface));
+    setDraft(createAdminDraft(surface));
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
@@ -1506,15 +1541,65 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     setAccessStatus("checking");
     try {
-      const payload = await adminJsonRequest<AdminReviewRecordsPayload>(
-        `/api/admin/review-records?${params}`,
+      const payloads = await Promise.all(surfaces.map((reviewSurfaceKey) => {
+        const params = new URLSearchParams({
+          surface: reviewSurfaceKey,
+          status: "all",
+          startDate: dateStart,
+          endDate: dateEnd
+        });
+
+        if (personQuery.trim()) {
+          params.set("person", personQuery.trim());
+        }
+
+        return adminJsonRequest<AdminReviewRecordsPayload>(
+          `/api/admin/review-records?${params}`,
+          secret
+        );
+      }));
+      const privateParams = new URLSearchParams({
+        status: "all",
+        limit: "100"
+      });
+
+      if (dateStart) {
+        privateParams.set("startDate", dateStart);
+      }
+
+      if (dateEnd) {
+        privateParams.set("endDate", dateEnd);
+      }
+
+      const privatePayload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
+        `/api/admin/user-generated-content?${privateParams}`,
         secret
       );
+      const mergedRecords = new Map<string, AdminReviewRecord>();
 
-      setReviewRecords(payload.rows ?? []);
-      setReviewCounts(payload.counts);
+      payloads.flatMap((payload) => payload.rows ?? []).forEach((record) => {
+        mergedRecords.set(`${record.source}:${record.surface}:${record.contentKey}:${record.targetDate ?? ""}:${record.subjectId ?? ""}`, record);
+      });
+      (privatePayload.rows ?? []).map(privateReviewRecord).forEach((record) => {
+        mergedRecords.set(record.id, record);
+      });
+
+      const nextRecords = Array.from(mergedRecords.values());
+
+      setReviewRecords(nextRecords);
+      setPrivateRows(privatePayload.rows ?? []);
+      setReviewCounts({
+        total: nextRecords.length,
+        DRAFT: nextRecords.filter((record) => record.status === "DRAFT").length,
+        REVIEWED: nextRecords.filter((record) => record.status === "REVIEWED").length,
+        LIVE: nextRecords.filter((record) => record.status === "LIVE").length,
+        ARCHIVED: nextRecords.filter((record) => record.status === "ARCHIVED").length,
+        ERROR: nextRecords.filter((record) => record.status === "ERROR").length
+      });
       setAccessStatus("valid");
-      setMessage(payload.prompt ?? `Loaded ${(payload.rows ?? []).length} ${reviewSurfaceLabels[nextReviewSurface].label.toLowerCase()} review rows.`);
+      const prompts = payloads.map((payload) => payload.prompt).filter(Boolean);
+
+      setMessage(prompts[0] ?? `Loaded ${nextRecords.length} content rows.`);
     } catch (error) {
       setReviewRecords([]);
       setReviewCounts({
@@ -1864,8 +1949,9 @@ export function GeneratedContentAdminDashboard() {
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
     const nextReviewSurface = reviewSurfaceForGeneratedSurface(nextSurface === "all" ? "sky" : nextSurface);
 
-    setActivePage("review");
+    setActivePage("content");
     setStatus(nextStatus);
+    setContentStatusFilter(nextStatus === "LIVE" ? "LIVE" : nextStatus === "REVIEWED" ? "SCHEDULED" : nextStatus === "DRAFT" ? "DRAFT" : "all");
     setSurface(nextSurface);
     setSelectedId(null);
     setDraft(createAdminDraft(nextSurface));
@@ -1939,7 +2025,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedId(null);
     setSurface(nextDraft.surface);
     setStatus(nextDraft.status);
-    setActivePage("review");
+    setActivePage("content");
     setAreGenerationInputsOpen(true);
     setMessage(nextDraft.surface === "sky" ? "New Sky draft ready. Loading current Sky data..." : `New ${generatedContentSurfaceLabels[nextDraft.surface]} draft ready.`);
 
@@ -2209,42 +2295,22 @@ export function GeneratedContentAdminDashboard() {
 
         <nav className="admin-nav" aria-label="Content operations">
           <button
-            className={activePage === "review" && surface === "sky" && status === "DRAFT" ? "active" : ""}
+            className={activePage === "content" ? "active" : ""}
             type="button"
-            onClick={() => showQueue("DRAFT", "sky")}
-            disabled={!canUseApi}
-            aria-current={activePage === "review" && surface === "sky" && status === "DRAFT" ? "page" : undefined}
+            onClick={() => setActivePage("content")}
+            aria-current={activePage === "content" ? "page" : undefined}
           >
-            <LayoutDashboard size={18} aria-hidden="true" />
-            Content Review
+            <FileText size={18} aria-hidden="true" />
+            Content
           </button>
           <button
-            className={activePage === "templates" ? "active" : ""}
+            className={activePage === "settings" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("templates")}
-            aria-current={activePage === "templates" ? "page" : undefined}
+            onClick={() => setActivePage("settings")}
+            aria-current={activePage === "settings" ? "page" : undefined}
           >
             <Sparkles size={18} aria-hidden="true" />
-            Templates & Voice
-          </button>
-          <button
-            className={activePage === "privateRows" ? "active" : ""}
-            type="button"
-            onClick={() => setActivePage("privateRows")}
-            disabled={!canUseApi}
-            aria-current={activePage === "privateRows" ? "page" : undefined}
-          >
-            <Database size={18} aria-hidden="true" />
-            Personal Content
-          </button>
-          <button
-            className={activePage === "hooks" ? "active" : ""}
-            type="button"
-            onClick={() => setActivePage("hooks")}
-            aria-current={activePage === "hooks" ? "page" : undefined}
-          >
-            <KeyRound size={18} aria-hidden="true" />
-            Content Hooks
+            Settings
           </button>
           <button
             className={activePage === "releaseNotes" ? "active" : ""}
@@ -2255,68 +2321,7 @@ export function GeneratedContentAdminDashboard() {
             <BookOpenText size={18} aria-hidden="true" />
             Release Notes
           </button>
-          <button
-            className={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "active" : ""}
-            type="button"
-            onClick={() => showQueue("DRAFT")}
-            disabled={!canUseApi}
-            aria-current={activePage === "review" && status === "DRAFT" && !(surface === "sky") ? "page" : undefined}
-          >
-            <FileText size={18} aria-hidden="true" />
-            Drafts
-          </button>
-          <button
-            className={activePage === "review" && status === "LIVE" ? "active" : ""}
-            type="button"
-            onClick={() => showQueue("LIVE")}
-            disabled={!canUseApi}
-            aria-current={activePage === "review" && status === "LIVE" ? "page" : undefined}
-          >
-            <Eye size={18} aria-hidden="true" />
-            Live Content
-          </button>
-          <button
-            className={activePage === "review" && status === "REVIEWED" ? "active" : ""}
-            type="button"
-            onClick={() => showQueue("REVIEWED")}
-            disabled={!canUseApi}
-            aria-current={activePage === "review" && status === "REVIEWED" ? "page" : undefined}
-          >
-            <Check size={18} aria-hidden="true" />
-            Reviewed
-          </button>
         </nav>
-
-        <section className="admin-secret-panel" aria-label="Admin access">
-          <div className="admin-sidebar-section-title">
-            <KeyRound size={15} aria-hidden="true" />
-            Access
-          </div>
-          <form onSubmit={saveSecret}>
-            <label>
-              <span>CONTENT_GENERATION_SECRET</span>
-              <input
-                type="password"
-                value={secretDraft}
-                onChange={(event) => setSecretDraft(event.target.value)}
-                placeholder="Paste secret"
-              />
-            </label>
-            <button type="submit">
-              <Save size={15} aria-hidden="true" />
-              Save and Check Access
-            </button>
-            {accessStatus !== "empty" && (
-              <p className={`admin-access-note status-${accessStatus}`}>
-                {accessStatus === "checking"
-                  ? "Checking access..."
-                  : accessStatus === "valid"
-                    ? "Access confirmed."
-                    : "Access needs the current production secret."}
-              </p>
-            )}
-          </form>
-        </section>
 
         <a className="admin-public-link" href="/">
           Public app
@@ -2332,19 +2337,24 @@ export function GeneratedContentAdminDashboard() {
             <h1>{adminPageTitle(activePage)}</h1>
             <p>{adminPageDescription(activePage)}</p>
           </div>
-          {activePage === "review" && (
+          <div className={`admin-api-indicator status-${apiStatus.state}`}>
+            <Server size={15} aria-hidden="true" />
+            <span>
+              {apiStatus.state === "online"
+                ? "API online"
+                : apiStatus.state === "checking"
+                  ? "Checking API"
+                  : apiStatus.state === "notConfigured"
+                    ? "API missing"
+                    : "API offline"}
+            </span>
+            {apiStatus.latencyMs !== null && <small>{apiStatus.latencyMs}ms</small>}
+          </div>
+          {activePage === "content" && (
             <div className="admin-header-actions">
               <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
-                Reload Review Rows
-              </button>
-            </div>
-          )}
-          {activePage === "privateRows" && (
-            <div className="admin-header-actions">
-              <button type="button" onClick={() => void loadPrivateRows()} disabled={isLoading || !canUseApi}>
-                <RefreshCw size={16} aria-hidden="true" />
-                Reload Personal Content
+                Reload Content
               </button>
             </div>
           )}
@@ -2353,58 +2363,6 @@ export function GeneratedContentAdminDashboard() {
         <section className="admin-message-card" aria-live="polite">
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
-        </section>
-
-        <section className={`admin-api-status-card status-${apiStatus.state}`} aria-label="TLDR Astro API status">
-          <div className="admin-api-status-main">
-            <span className="admin-api-status-icon">
-              <Server size={18} aria-hidden="true" />
-            </span>
-            <div>
-              <p className="admin-eyebrow">Calculation API</p>
-              <h2>
-                {apiStatus.state === "online"
-                  ? "Cloud Run is online"
-                  : apiStatus.state === "checking"
-                    ? "Checking Cloud Run"
-                    : apiStatus.state === "notConfigured"
-                      ? "API not configured"
-                      : "Cloud Run needs attention"}
-              </h2>
-              <p>{tldrAstroApiStatusUrl || "Missing VITE_TLDRASTRO_API_URL"}</p>
-            </div>
-          </div>
-          <div className="admin-api-status-grid">
-            <article>
-              <span>Status</span>
-              <strong>
-                {apiStatus.state === "checking"
-                  ? "Checking"
-                  : apiStatus.state === "notConfigured"
-                    ? "Missing env"
-                    : apiStatus.state === "online"
-                      ? "Online"
-                      : "Offline"}
-              </strong>
-            </article>
-            <article>
-              <span>Ephemeris</span>
-              <strong>{apiStatus.health?.ephemeris?.available ? "Available" : "Unknown"}</strong>
-            </article>
-            <article>
-              <span>Latency</span>
-              <strong>{apiStatus.latencyMs === null ? "..." : `${apiStatus.latencyMs}ms`}</strong>
-            </article>
-            <article>
-              <span>Checked</span>
-              <strong>{adminApiCheckedAtLabel(apiStatus.checkedAt)}</strong>
-            </article>
-          </div>
-          {apiStatus.error && <p className="admin-api-status-error">{apiStatus.error}</p>}
-          <button type="button" onClick={() => void checkTldrAstroApiStatus()} disabled={apiStatus.state === "checking"}>
-            <Activity size={16} aria-hidden="true" />
-            Refresh API Status
-          </button>
         </section>
 
         {activePage === "releaseNotes" ? (
@@ -2457,6 +2415,199 @@ export function GeneratedContentAdminDashboard() {
                 </article>
               ))}
             </div>
+          </section>
+        ) : activePage === "settings" ? (
+          <section className="admin-settings-page" aria-label="Content settings">
+            <section className="admin-settings-grid">
+              <section className="admin-secret-panel" aria-label="Admin access">
+                <div className="admin-sidebar-section-title">
+                  <KeyRound size={15} aria-hidden="true" />
+                  Access
+                </div>
+                <form onSubmit={saveSecret}>
+                  <label>
+                    <span>CONTENT_GENERATION_SECRET</span>
+                    <input
+                      type="password"
+                      value={secretDraft}
+                      onChange={(event) => setSecretDraft(event.target.value)}
+                      placeholder="Paste secret"
+                    />
+                  </label>
+                  <button type="submit">
+                    <Save size={15} aria-hidden="true" />
+                    Save and Check Access
+                  </button>
+                  {accessStatus !== "empty" && (
+                    <p className={`admin-access-note status-${accessStatus}`}>
+                      {accessStatus === "checking"
+                        ? "Checking access..."
+                        : accessStatus === "valid"
+                          ? "Access confirmed."
+                          : "Access needs the current production secret."}
+                    </p>
+                  )}
+                </form>
+              </section>
+
+              <section className={`admin-api-status-card status-${apiStatus.state}`} aria-label="TLDR Astro API status">
+                <div className="admin-api-status-main">
+                  <span className="admin-api-status-icon">
+                    <Server size={18} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="admin-eyebrow">Calculation API</p>
+                    <h2>
+                      {apiStatus.state === "online"
+                        ? "Cloud Run is online"
+                        : apiStatus.state === "checking"
+                          ? "Checking Cloud Run"
+                          : apiStatus.state === "notConfigured"
+                            ? "API not configured"
+                            : "Cloud Run needs attention"}
+                    </h2>
+                    <p>{tldrAstroApiStatusUrl || "Missing VITE_TLDRASTRO_API_URL"}</p>
+                  </div>
+                </div>
+                <div className="admin-api-status-grid">
+                  <article>
+                    <span>Status</span>
+                    <strong>{apiStatus.state === "online" ? "Online" : apiStatus.state === "checking" ? "Checking" : apiStatus.state === "notConfigured" ? "Missing env" : "Offline"}</strong>
+                  </article>
+                  <article>
+                    <span>Ephemeris</span>
+                    <strong>{apiStatus.health?.ephemeris?.available ? "Available" : "Unknown"}</strong>
+                  </article>
+                  <article>
+                    <span>Latency</span>
+                    <strong>{apiStatus.latencyMs === null ? "..." : `${apiStatus.latencyMs}ms`}</strong>
+                  </article>
+                  <article>
+                    <span>Checked</span>
+                    <strong>{adminApiCheckedAtLabel(apiStatus.checkedAt)}</strong>
+                  </article>
+                </div>
+                {apiStatus.error && <p className="admin-api-status-error">{apiStatus.error}</p>}
+                <button type="button" onClick={() => void checkTldrAstroApiStatus()} disabled={apiStatus.state === "checking"}>
+                  <Activity size={16} aria-hidden="true" />
+                  Refresh API Status
+                </button>
+              </section>
+            </section>
+
+            <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Templates and voice</p>
+                  <h2>{voiceTemplateLabels[activeTemplateSurface]}</h2>
+                </div>
+                <div className="admin-template-actions">
+                  <button type="button" onClick={saveVoiceTemplates}>
+                    <Save size={16} aria-hidden="true" />
+                    Save Templates
+                  </button>
+                  <button type="button" onClick={resetActiveVoiceTemplate}>
+                    Reset {voiceTemplateLabels[activeTemplateSurface]}
+                  </button>
+                </div>
+              </div>
+
+              <div className="admin-template-tabs" role="tablist" aria-label="Template surface">
+                {(Object.keys(voiceTemplateLabels) as VoiceTemplateSurface[]).map((surfaceKey) => (
+                  <button
+                    key={surfaceKey}
+                    type="button"
+                    className={surfaceKey === activeTemplateSurface ? "active" : ""}
+                    onClick={() => setActiveTemplateSurface(surfaceKey)}
+                    role="tab"
+                    aria-selected={surfaceKey === activeTemplateSurface}
+                  >
+                    {voiceTemplateLabels[surfaceKey]}
+                  </button>
+                ))}
+              </div>
+
+              <label className="admin-field-wide">
+                <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
+                <textarea
+                  value={voiceTemplates[activeTemplateSurface].template}
+                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "template", event.target.value)}
+                  rows={10}
+                />
+              </label>
+
+              <label className="admin-field-wide admin-template-guide-field">
+                <span>AI generation guide</span>
+                <textarea
+                  value={voiceTemplates[activeTemplateSurface].generationGuide}
+                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "generationGuide", event.target.value)}
+                  rows={7}
+                />
+              </label>
+
+              <div className="admin-template-two-column">
+                <label className="admin-field-wide">
+                  <span>Banned words and phrases</span>
+                  <textarea
+                    value={voiceTemplates[activeTemplateSurface].bannedWords}
+                    onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "bannedWords", event.target.value)}
+                    rows={7}
+                  />
+                </label>
+
+                <label className="admin-field-wide">
+                  <span>Language and phrase bank</span>
+                  <textarea
+                    value={voiceTemplates[activeTemplateSurface].phraseBank}
+                    onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "phraseBank", event.target.value)}
+                    rows={7}
+                  />
+                </label>
+              </div>
+            </section>
+
+            <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Content hooks</p>
+                  <h2>Named Content Points</h2>
+                </div>
+              </div>
+
+              <div className="admin-hooks-grid">
+                {fallbackHookDefinitions.map((hook) => {
+                  const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
+                  const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
+
+                  return (
+                    <article className="admin-hook-card" key={hook.key}>
+                      <div className="admin-hook-card-header">
+                        <div>
+                          <p className="admin-eyebrow">{hook.surface} / {hook.mode}</p>
+                          <h3>{hook.label}</h3>
+                        </div>
+                        <span>{hook.domain}</span>
+                      </div>
+                      <p>{hook.description}</p>
+                      <dl className="admin-hook-meta">
+                        <div>
+                          <dt>Hook key</dt>
+                          <dd>{hook.key}</dd>
+                        </div>
+                        <div>
+                          <dt>Required facts</dt>
+                          <dd>{hook.requiredFacts.map((fact) => <code key={fact}>{fact}</code>)}</dd>
+                        </div>
+                        <div>
+                          <dt>Example IDs</dt>
+                          <dd>{sampleIds.map((sampleId) => <code key={sampleId}>{sampleId}</code>)}</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
           </section>
         ) : activePage === "privateRows" ? (
           <section className="admin-template-panel admin-private-page" aria-label="Personal generated content rows">
@@ -2531,9 +2682,9 @@ export function GeneratedContentAdminDashboard() {
                 <p>These are the app surfaces that need LIVE generated content or approved voice-backed copy. Use the labels below to identify what needs a generated row, template, or source-backed rewrite.</p>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => setActivePage("review")}>
+                <button type="button" onClick={() => setActivePage("content")}>
                   <LayoutDashboard size={16} aria-hidden="true" />
-                  Back to Review
+                  Back to Content
                 </button>
               </div>
             </div>
@@ -2699,11 +2850,39 @@ export function GeneratedContentAdminDashboard() {
           </section>
         ) : (
           <>
-            <section className="admin-review-filters" aria-label="Content review filters">
+            <section className="admin-content-toolbar" aria-label="Content filters">
               <div>
-                <p className="admin-eyebrow">Review window</p>
-                <h2>{reviewSurfaceLabels[reviewSurface].label}</h2>
-                <p>{reviewSurfaceLabels[reviewSurface].description}</p>
+                <p className="admin-eyebrow">Content library</p>
+                <h2>All Entries</h2>
+                <p>{reviewCounts.total} rows across generated, authored, global, and personal content.</p>
+              </div>
+              <div className="admin-new-actions" aria-label="New content">
+                <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
+                  <Sparkles size={16} aria-hidden="true" />
+                  Generate from Aspect
+                </button>
+                <button type="button" onClick={() => void startNewContent()} disabled={isLoading || !canUseApi}>
+                  <Plus size={16} aria-hidden="true" />
+                  Manual Entry
+                </button>
+              </div>
+            </section>
+
+            <section className="admin-content-filters" aria-label="Content list filters">
+              <div className="admin-status-pills" role="tablist" aria-label="Status">
+                {contentStatusFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={contentStatusFilter === filter.key ? "active" : ""}
+                    onClick={() => setContentStatusFilter(filter.key)}
+                    role="tab"
+                    aria-selected={contentStatusFilter === filter.key}
+                  >
+                    <span>{filter.label}</span>
+                    <strong>{cmsStatusCounts[filter.key]}</strong>
+                  </button>
+                ))}
               </div>
               <div className="admin-review-filter-grid">
                 <label>
@@ -2715,14 +2894,12 @@ export function GeneratedContentAdminDashboard() {
                   <input type="date" value={dateEnd} onChange={(event) => setDateEnd(event.target.value)} />
                 </label>
                 <label>
-                  <span>Status</span>
-                  <select value={status} onChange={(event) => setStatus(event.target.value as GeneratedContentStatus | "all")}>
-                    <option value="DRAFT">Draft</option>
-                    <option value="REVIEWED">Reviewed</option>
-                    <option value="LIVE">Live</option>
-                    <option value="ARCHIVED">Archived</option>
-                    <option value="ERROR">Error</option>
+                  <span>Category</span>
+                  <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
                     <option value="all">All</option>
+                    {contentCategories.map((category) => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
                   </select>
                 </label>
                 <label>
@@ -2736,66 +2913,28 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
 
-            <section className="admin-review-tabs" role="tablist" aria-label="Review surfaces">
-              {(Object.keys(reviewSurfaceLabels) as AdminReviewSurface[]).map((surfaceKey) => (
-                <button
-                  type="button"
-                  key={surfaceKey}
-                  className={reviewSurface === surfaceKey ? "active" : ""}
-                  onClick={() => void loadReviewWorkspace(surfaceKey)}
-                  role="tab"
-                  aria-selected={reviewSurface === surfaceKey}
-                >
-                  <span>{reviewSurfaceLabels[surfaceKey].label}</span>
-                  <small>{surfaceKey === reviewSurface ? allReviewRecords.length : ""}</small>
-                </button>
-              ))}
-            </section>
-
-            <section className="admin-metrics" aria-label="Content status summary">
-              <article>
-                <span>Review rows</span>
-                <strong>{reviewCounts.total}</strong>
-                <small>{adminDateLabel(dateStart)} - {adminDateLabel(dateEnd)}</small>
-              </article>
-              <article>
-                <span>Drafts</span>
-                <strong>{reviewCounts.DRAFT}</strong>
-                <small>Needs editorial review</small>
-              </article>
-              <article>
-                <span>Reviewed</span>
-                <strong>{reviewCounts.REVIEWED}</strong>
-                <small>Ready to publish</small>
-              </article>
-              <article>
-                <span>Live</span>
-                <strong>{reviewCounts.LIVE}</strong>
-                <small>Visible in app</small>
-              </article>
-              <article>
-                <span>Errors</span>
-                <strong>{reviewCounts.ERROR}</strong>
-                <small>Needs attention</small>
-              </article>
-            </section>
-
             <section className="admin-workbench admin-review-workspace">
               <aside className="admin-list-panel" aria-label="Generated content records">
                 <div className="admin-panel-header">
                   <div>
                     <p className="admin-eyebrow">Record list</p>
-                    <h2>Audit Queue</h2>
+                    <h2>Content</h2>
                   </div>
                   <BarChart3 size={18} aria-hidden="true" />
                 </div>
 
-                <div className="admin-row-list">
-                  {allReviewRecords.map((record) => (
+                <div className="admin-content-table">
+                  <div className="admin-content-table-head" aria-hidden="true">
+                    <span>Title</span>
+                    <span>Category</span>
+                    <span>Status</span>
+                    <span>Date</span>
+                  </div>
+                  {allContentRecords.map((record) => (
                     <button
                       type="button"
                       key={record.id}
-                      className={`admin-row-card ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
+                      className={`admin-content-row ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
                       onClick={() => {
                         setSelectedReviewId(record.id);
                         cancelReviewEdit();
@@ -2806,14 +2945,14 @@ export function GeneratedContentAdminDashboard() {
                         }
                       }}
                     >
-                      <span className={`admin-status status-${record.status.toLowerCase()}`}>{record.status}</span>
                       <strong>{record.title}</strong>
-                      <small>{record.surface} / {record.mode} / {adminDateLabel(record.targetDate)}</small>
-                      <small>{record.source === "private" ? "User-scoped" : "Shared library"} · {record.eventType || "No event type"}</small>
+                      <span>{contentCategoryLabel(record)}</span>
+                      <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                      <time>{adminDateLabel(record.targetDate)}</time>
                     </button>
                   ))}
-                  {allReviewRecords.length === 0 && (
-                    <p className="admin-empty">No content records match this review surface and date range yet.</p>
+                  {allContentRecords.length === 0 && (
+                    <p className="admin-empty">No content records match these filters yet.</p>
                   )}
                 </div>
               </aside>
@@ -2822,11 +2961,20 @@ export function GeneratedContentAdminDashboard() {
                 {selectedReviewRecord ? (
                   <>
                     <div className="admin-editor-toolbar">
-                      <div>
-                        <p className="admin-eyebrow">Content editing surface</p>
-                        <h2>{selectedReviewRecord.title}</h2>
+                      <label className="admin-title-field">
+                        <span>Title</span>
+                        <input
+                          value={isEditingReviewRecord ? reviewEditTitle : selectedReviewRecord.title}
+                          onChange={(event) => {
+                            if (!isEditingReviewRecord) {
+                              beginReviewEdit(selectedReviewRecord);
+                            }
+                            setReviewEditTitle(event.target.value);
+                          }}
+                          readOnly={!canEditSelectedReviewRecord}
+                        />
                         <small>{selectedReviewRecord.subtitle}</small>
-                      </div>
+                      </label>
                       <div className="admin-toolbar-actions">
                         <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading}>
                           <Eye size={16} aria-hidden="true" />
@@ -2852,39 +3000,25 @@ export function GeneratedContentAdminDashboard() {
                         <button
                           type="button"
                           onClick={() => {
-                            void saveReviewEdit(selectedReviewRecord, selectedReviewRecord.status === "REVIEWED" ? "LIVE" : "REVIEWED");
+                            void saveReviewEdit(selectedReviewRecord, "LIVE");
                           }}
                           disabled={!canEditSelectedReviewRecord || isLoading}
                         >
                           <Check size={16} aria-hidden="true" />
-                          {approveButtonLabel}
+                          Publish
                         </button>
                       </div>
                     </div>
 
-                    <section className="admin-review-context-strip" aria-label="Astrological context">
-                      <div>
-                        <span>Aspect</span>
-                        <strong>{selectedReviewRecord.title}</strong>
-                      </div>
-                      <div>
-                        <span>Timing</span>
-                        <strong>{selectedReviewRecord.subtitle}</strong>
-                      </div>
-                      <div>
-                        <span>Surface</span>
-                        <strong>{generatedContentSurfaceLabels[selectedReviewRecord.surface]}</strong>
-                      </div>
-                    </section>
-
+                    <section className="admin-post-editor">
                     <section className="admin-review-copy-workspace">
                       <div className="admin-review-copy-heading">
                         <div>
-                          <p className="admin-eyebrow">Reader-facing copy</p>
-                          <h3>{selectedReviewCopyState === "placeholder" ? "Placeholder copy" : selectedReviewCopyState === "saved" ? "Saved copy" : "Draft copy"}</h3>
+                          <p className="admin-eyebrow">Body</p>
+                          <h3>Reader-facing copy</h3>
                         </div>
                         <span className={`admin-review-copy-state state-${selectedReviewCopyState}`}>
-                          {selectedReviewCopyState === "placeholder" ? "Placeholder - not final" : selectedReviewCopyState === "saved" ? "Saved user-facing copy" : "Generated draft"}
+                          {contentStatusLabel(selectedReviewRecord.status)}
                         </span>
                       </div>
 
@@ -2908,7 +3042,6 @@ export function GeneratedContentAdminDashboard() {
                       </div>
 
                       <label className="admin-review-copy-editor">
-                        <span>User-facing text</span>
                         <textarea
                           rows={18}
                           value={selectedReviewText}
@@ -2924,37 +3057,56 @@ export function GeneratedContentAdminDashboard() {
                           }}
                         />
                       </label>
-                      <p className="admin-template-note">
-                        {selectedReviewCopyState === "placeholder"
-                          ? "This is only an auto-template placeholder. Generate or write final copy before approving."
-                          : isEditingReviewRecord
-                            ? "Save Draft stores this text for review. Approve saves it as reviewed copy; Publish Live makes it visible to the app."
-                            : "Click Edit to change this copy, or Generate Draft to replace draft and placeholder text."}
-                      </p>
                     </section>
 
-                    <details className="admin-advanced admin-review-json">
-                      <summary>Full record metadata</summary>
-                      <pre>{JSON.stringify({
-                        id: selectedReviewRecord.id,
-                        status: selectedReviewRecord.status,
-                        contentKey: selectedReviewRecord.contentKey,
-                        eventType: selectedReviewRecord.eventType,
-                        mode: selectedReviewRecord.mode,
-                        targetDate: selectedReviewRecord.targetDate,
-                        userId: selectedReviewRecord.userId,
-                        subjectId: selectedReviewRecord.subjectId,
-                        subjectType: selectedReviewRecord.subjectType,
-                        facts: selectedReviewRecord.facts,
-                        shallowFacts: shallowFactRows(selectedReviewRecord.facts),
-                        sourceSnapshot: selectedReviewRecord.sourceSnapshot,
-                        sections: selectedReviewRecord.sections,
-                        reviewerNotes: selectedReviewRecord.reviewerNotes,
-                        provider: selectedReviewRecord.provider,
-                        model: selectedReviewRecord.model,
-                        updatedAt: selectedReviewRecord.updatedAt
-                      }, null, 2)}</pre>
-                    </details>
+                    <aside className="admin-metadata-sidebar" aria-label="Content metadata">
+                      <h3>Metadata</h3>
+                      <dl>
+                        <div>
+                          <dt>Exact date</dt>
+                          <dd>{adminDateLabel(selectedReviewRecord.targetDate)}</dd>
+                        </div>
+                        <div>
+                          <dt>Orb</dt>
+                          <dd>{recordOrbLabel(selectedReviewRecord)}</dd>
+                        </div>
+                        <div>
+                          <dt>Forming/separating</dt>
+                          <dd>{recordDirectionLabel(selectedReviewRecord)}</dd>
+                        </div>
+                        <div>
+                          <dt>Surface</dt>
+                          <dd>{generatedContentSurfaceLabels[selectedReviewRecord.surface]}</dd>
+                        </div>
+                        <div>
+                          <dt>Category</dt>
+                          <dd>{contentCategoryLabel(selectedReviewRecord)}</dd>
+                        </div>
+                        <div>
+                          <dt>Status</dt>
+                          <dd>{contentStatusLabel(selectedReviewRecord.status)}</dd>
+                        </div>
+                      </dl>
+                      <details className="admin-advanced admin-review-json">
+                        <summary>Structured fields</summary>
+                        <pre>{JSON.stringify({
+                          id: selectedReviewRecord.id,
+                          contentKey: selectedReviewRecord.contentKey,
+                          eventType: selectedReviewRecord.eventType,
+                          mode: selectedReviewRecord.mode,
+                          userId: selectedReviewRecord.userId,
+                          subjectId: selectedReviewRecord.subjectId,
+                          subjectType: selectedReviewRecord.subjectType,
+                          facts: selectedReviewRecord.facts,
+                          sourceSnapshot: selectedReviewRecord.sourceSnapshot,
+                          reviewerNotes: selectedReviewRecord.reviewerNotes,
+                          provider: selectedReviewRecord.provider,
+                          model: selectedReviewRecord.model,
+                          updatedAt: selectedReviewRecord.updatedAt
+                        }, null, 2)}</pre>
+                      </details>
+                    </aside>
+                    </section>
                   </>
                 ) : (
                   <div className="admin-review-empty-detail">
