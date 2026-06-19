@@ -1290,6 +1290,13 @@ function contentStatusLabel(status: string) {
   return status;
 }
 
+function contentRestrictionLabel(record: AdminReviewRecord) {
+  if (record.source === "private" || record.userId || record.subjectId) return "Personal";
+  if (record.source === "calculated") return "Pending";
+
+  return "Public";
+}
+
 function isDraftWithCopy(record: AdminReviewRecord) {
   return record.status === "DRAFT" && (record.source === "saved" || record.source === "global" || Boolean(record.body.trim() || record.summary.trim()));
 }
@@ -1528,7 +1535,7 @@ export function GeneratedContentAdminDashboard() {
       });
   }, [categoryFilter, contentStatusFilter, personQuery, reviewRecords]);
   const cmsStatusCounts = useMemo(() => contentStatusCounts(reviewRecords), [reviewRecords]);
-  const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? allContentRecords[0] ?? null;
+  const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
   const selectedReviewCopyState = selectedReviewRecord ? reviewCopyState(selectedReviewRecord) : "placeholder";
@@ -1891,6 +1898,11 @@ export function GeneratedContentAdminDashboard() {
     setReviewEditTitle("");
     setReviewEditSummary("");
     setReviewEditBody("");
+  }
+
+  function closeReviewDrawer() {
+    cancelReviewEdit();
+    setSelectedReviewId(null);
   }
 
   async function saveReviewEdit(record: AdminReviewRecord, requestedStatus?: GeneratedContentStatus) {
@@ -3164,14 +3176,19 @@ export function GeneratedContentAdminDashboard() {
 
                 <div className="admin-content-table">
                   <div className="admin-content-table-head" aria-hidden="true">
-                    <span>Title</span>
+                    <span>Content</span>
+                    <span>Metadata</span>
+                    <span>Date</span>
+                    <span>Section</span>
                     <span>Status</span>
+                    <span>Restriction</span>
                   </div>
                   {allContentRecords.map((record) => (
                     <button
                       type="button"
                       key={record.id}
                       className={`admin-content-row ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
+                      title={`${record.title} · ${record.subtitle || record.contentKey}`}
                       onClick={() => {
                         setSelectedReviewId(record.id);
                         cancelReviewEdit();
@@ -3182,9 +3199,15 @@ export function GeneratedContentAdminDashboard() {
                         }
                       }}
                     >
-                      <span className="admin-content-row-title">{record.title}</span>
+                      <span className="admin-content-title-cell">
+                        <strong className="admin-content-row-title">{record.title}</strong>
+                        <small className="admin-content-row-subtitle">{record.subtitle || record.contentKey}</small>
+                      </span>
+                      <span className="admin-content-row-meta">{record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
+                      <span className="admin-content-row-date">{adminDateLabel(record.targetDate)}</span>
+                      <span className="admin-content-row-section">{contentCategoryLabel(record)}</span>
                       <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                      <span className="admin-content-row-meta">{contentCategoryLabel(record)} · {adminDateLabel(record.targetDate)}</span>
+                      <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
                     </button>
                   ))}
                   {allContentRecords.length === 0 && (
@@ -3192,11 +3215,20 @@ export function GeneratedContentAdminDashboard() {
                   )}
                 </div>
               </aside>
+            </section>
 
-              <section className="admin-editor-panel admin-review-detail" aria-label="Generated content record detail">
-                {selectedReviewRecord ? (
+            {selectedReviewRecord && (
+              <div className="admin-drawer-backdrop" role="presentation" onClick={closeReviewDrawer}>
+                <section className="admin-editor-panel admin-review-detail admin-editor-drawer" aria-label="Generated content record detail" onClick={(event) => event.stopPropagation()}>
                   <>
                     <div className="admin-editor-toolbar">
+                      <div className="admin-drawer-topbar">
+                        <p className="admin-eyebrow">Editing in place</p>
+                        <button type="button" onClick={closeReviewDrawer}>
+                          <X size={16} aria-hidden="true" />
+                          Close
+                        </button>
+                      </div>
                       <div className="admin-editor-heading">
                         <p className="admin-eyebrow">Post editor</p>
                         <span className={`admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
@@ -3367,15 +3399,9 @@ export function GeneratedContentAdminDashboard() {
                     </aside>
                     </section>
                   </>
-                ) : (
-                  <div className="admin-review-empty-detail">
-                    <p className="admin-eyebrow">No record selected</p>
-                    <h2>Choose a content row.</h2>
-                    <p>Use the date range and review surface filters to load the person and time window you want to audit.</p>
-                  </div>
-                )}
-              </section>
-            </section>
+                </section>
+              </div>
+            )}
           </>
         )}
       </section>
