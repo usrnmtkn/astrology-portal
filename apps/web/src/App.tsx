@@ -304,6 +304,7 @@ type SkyDetail = {
   subtitle?: string;
   lensHint?: ReactNode;
   compactHeader?: boolean;
+  plainBody?: boolean;
   bodyBeforeSections?: boolean;
   retrograde?: boolean;
   body: ReactNode[];
@@ -328,6 +329,7 @@ type YouTransitArticle = {
   subtitle: string;
   lensHint?: ReactNode;
   compactHeader?: boolean;
+  plainBody?: boolean;
   bodyBeforeSections?: boolean;
   body?: ReactNode[];
   summary: string;
@@ -2845,7 +2847,8 @@ function SkyDetailArticle({
   }));
   const drilldown = detail.astrologyDrilldown;
   const [lede] = paragraphs;
-  const articleSub = (statement || (typeof lede === "string" ? lede : "")).trim();
+  const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
+  const articleSub = (detailSubtitle || statement || (typeof lede === "string" ? lede : "")).trim();
   const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
@@ -2885,7 +2888,12 @@ function SkyDetailArticle({
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-            {detail.subtitle ? <p className="article-sub">{detail.subtitle}</p> : null}
+            {detailSubtitle ? (
+              <div className="article-tldr">
+                <span className="article-tldr__label">TLDR</span>
+                <p className="article-sub article-tldr__copy">{detailSubtitle}</p>
+              </div>
+            ) : null}
             <div className="article-header-actions">
               <div className="article-byline">
                 <span className="by-author">By tldr astro</span>
@@ -2950,6 +2958,14 @@ function SkyDetailArticle({
                 </>
               ) : (
                 <>
+                  {detail.plainBody && fallbackParagraphs.length > 0 ? (
+                    <section className="article-section sky-detail-section sky-detail-plain-section">
+                      {fallbackParagraphs.map((paragraph, paragraphIndex) => (
+                        <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
+                      ))}
+                    </section>
+                  ) : (
+                    <>
                   {bodyLede ? (
                     <section className="article-section sky-detail-section">
                       <h2>What it means</h2>
@@ -2962,6 +2978,8 @@ function SkyDetailArticle({
                       <p>{paragraph}</p>
                     </section>
                   ))}
+                    </>
+                  )}
                 </>
               )}
               {drilldown ? (
@@ -3211,7 +3229,8 @@ function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string)
 
 function natalAspectDetailArticle(
   aspect: SkySnapshot["aspects"][number],
-  generatedContent: GeneratedContentMap = new Map()
+  generatedContent: GeneratedContentMap = new Map(),
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): YouTransitArticle {
   const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
   const title = `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
@@ -3235,15 +3254,18 @@ function natalAspectDetailArticle(
     generated,
     content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
   );
+  const ownerAwareCopy = (value: string) => ownerContext
+    ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person")
+    : value;
 
   return {
     id: contentKey,
     title,
     glyph: pointGlyph(aspect.from),
-    subtitle: stripTldrPrefix(summary),
+    subtitle: stripTldrPrefix(ownerAwareCopy(summary)),
     compactHeader: true,
     bodyBeforeSections: true,
-    body,
+    body: body.map(ownerAwareCopy),
     summary: "",
     summaryHeading: "",
     sections: [],
@@ -3254,12 +3276,46 @@ function natalAspectDetailArticle(
   };
 }
 
+function currentSkyAspectDetailArticle(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  generatedContent: GeneratedContentMap
+): SkyDetail {
+  const title = `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
+  const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
+  const content = fallbackFromHook(
+    "sky.aspect-detail",
+    {
+      planetA: aspect.from,
+      aspect: aspect.type,
+      planetB: aspect.to
+    },
+    approvedVoiceOrKnowledgeFallback(contentKey, "sky")
+  );
+  const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
+  const rowSummary = liveGeneratedSummary(generated, content.summary);
+  const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
+
+  return {
+    glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
+    kicker: "",
+    title: generated?.headline ?? title,
+    meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
+    subtitle: stripTldrPrefix(rowSummary),
+    content: content.bundle,
+    body: detailParagraphs,
+    sections: generatedDetailSections(generated),
+    astrologyDrilldown: generatedAstrologyDrilldown(generated)
+  };
+}
+
 function relatedAspectRowsForPlacement({
   aspects,
   generatedAt,
   generatedContent,
   mode,
   onOpenNatalAspect,
+  onOpenSkyAspect,
   ownerContext,
   pointName
 }: {
@@ -3268,6 +3324,7 @@ function relatedAspectRowsForPlacement({
   generatedContent: GeneratedContentMap;
   mode: "sky" | "natal";
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
+  onOpenSkyAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
   ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
   pointName: string;
 }) {
@@ -3321,6 +3378,20 @@ function relatedAspectRowsForPlacement({
             className="article-related-aspect-row aspect-row aspect-row-button"
             key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
             onClick={() => onOpenNatalAspect(aspect)}
+            type="button"
+          >
+            {rowContent}
+          </button>
+        );
+      }
+
+      if (mode === "sky" && onOpenSkyAspect) {
+        return (
+          <button
+            aria-label={`Read more about ${title}`}
+            className="article-related-aspect-row aspect-row aspect-row-button"
+            key={`${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`}
+            onClick={() => onOpenSkyAspect(aspect)}
             type="button"
           >
             {rowContent}
@@ -4399,60 +4470,100 @@ function possessiveLabel(name: string) {
   return name.endsWith("s") ? `${name}'` : `${name}'s`;
 }
 
-function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
-  const subject = ownerKind === "chart" ? "This chart" : ownerName;
-  const possessive = ownerKind === "chart" ? "This chart's" : possessiveLabel(ownerName);
-  const reflexive = ownerKind === "chart" ? "itself" : subject;
+function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person") {
+  const isChart = ownerKind === "chart";
+  const firstSubject = isChart ? "This chart" : ownerName;
+  const firstPossessive = isChart ? "This chart's" : possessiveLabel(ownerName);
+  const pronouns = isChart
+    ? { subject: "it", object: "it", possessive: "its", reflexive: "itself" }
+    : { subject: "they", object: "them", possessive: "their", reflexive: "themselves" };
+  let namedMentionUsed = false;
 
-  return text
-    .replace(/\bpart of you being activated\b/g, `part of ${subject} that is being activated`)
-    .replace(/\bYou are learning\b/g, `${subject} is learning`)
-    .replace(/\byou are learning\b/g, `${subject} is learning`)
-    .replace(/\bYou are looking\b/g, `${subject} is looking`)
-    .replace(/\byou are looking\b/g, `${subject} is looking`)
-    .replace(/\bYou are not only\b/g, `${subject} is not only`)
-    .replace(/\byou are not only\b/g, `${subject} is not only`)
-    .replace(/\bYou are not here\b/g, `${subject} is not here`)
-    .replace(/\byou are not here\b/g, `${subject} is not here`)
-    .replace(/\bYou are\b/g, `${subject} is`)
-    .replace(/\byou are\b/g, `${subject} is`)
-    .replace(/\bYou have\b/g, `${subject} has`)
-    .replace(/\byou have\b/g, `${subject} has`)
-    .replace(/\bYou discover\b/g, `${subject} discovers`)
-    .replace(/\byou discover\b/g, `${subject} discovers`)
-    .replace(/\bYou learn\b/g, `${subject} learns`)
-    .replace(/\byou learn\b/g, `${subject} learns`)
-    .replace(/\bYou look\b/g, `${subject} looks`)
-    .replace(/\byou look\b/g, `${subject} looks`)
-    .replace(/\bYou build\b/g, `${subject} builds`)
-    .replace(/\byou build\b/g, `${subject} builds`)
-    .replace(/\bYou stop\b/g, `${subject} stops`)
-    .replace(/\byou stop\b/g, `${subject} stops`)
-    .replace(/\bYou give\b/g, `${subject} gives`)
-    .replace(/\byou give\b/g, `${subject} gives`)
-    .replace(/\bYou let\b/g, `${subject} lets`)
-    .replace(/\byou let\b/g, `${subject} lets`)
-    .replace(/\bYou can\b/g, `${subject} can`)
-    .replace(/\byou can\b/g, `${subject} can`)
-    .replace(/\bYou will\b/g, `${subject} will`)
-    .replace(/\byou will\b/g, `${subject} will`)
-    .replace(/\bYou need\b/g, `${subject} needs`)
-    .replace(/\byou need\b/g, `${subject} needs`)
-    .replace(/\bYou tend\b/g, `${subject} tends`)
-    .replace(/\byou tend\b/g, `${subject} tends`)
-    .replace(/\bYou feel\b/g, `${subject} feels`)
-    .replace(/\byou feel\b/g, `${subject} feels`)
-    .replace(/\bYou want\b/g, `${subject} wants`)
-    .replace(/\byou want\b/g, `${subject} wants`)
-    .replace(/\bYou may\b/g, `${subject} may`)
-    .replace(/\byou may\b/g, `${subject} may`)
-    .replace(/\byourself\b/g, reflexive)
-    .replace(/\bpart of you\b/g, `part of ${subject}`)
-    .replace(/\bwhat gives your life\b/g, `what gives ${possessive} life`)
-    .replace(/\bYour\b/g, possessive)
-    .replace(/\byour\b/g, possessive)
-    .replace(/\bYou\b/g, subject)
-    .replace(/\byou\b/g, subject);
+  const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+  const subject = (capitalized: boolean) => {
+    if (!namedMentionUsed) {
+      namedMentionUsed = true;
+      return firstSubject;
+    }
+
+    return capitalized ? capitalize(pronouns.subject) : pronouns.subject;
+  };
+  const possessive = (capitalized: boolean) => {
+    if (!namedMentionUsed) {
+      namedMentionUsed = true;
+      return firstPossessive;
+    }
+
+    return capitalized ? capitalize(pronouns.possessive) : pronouns.possessive;
+  };
+  const subjectWithBe = (capitalized: boolean) => {
+    const value = subject(capitalized);
+
+    return `${value} ${value === firstSubject || isChart ? "is" : "are"}`;
+  };
+  const subjectWithHave = (capitalized: boolean) => {
+    const value = subject(capitalized);
+
+    return `${value} ${value === firstSubject || isChart ? "has" : "have"}`;
+  };
+  const subjectWithVerb = (capitalized: boolean, baseVerb: string, thirdPersonVerb: string) => {
+    const value = subject(capitalized);
+
+    return `${value} ${value === firstSubject || isChart ? thirdPersonVerb : baseVerb}`;
+  };
+  const subjectWithModal = (capitalized: boolean, modal: string) => `${subject(capitalized)} ${modal}`;
+
+  return (text: string) => text
+      .replace(/\bpart of you being activated\b/g, `part of ${pronouns.object} that is being activated`)
+      .replace(/\bpart of you\b/g, `part of ${pronouns.object}`)
+      .replace(/\bwhat gives your life\b/g, `what gives ${pronouns.possessive} life`)
+      .replace(/\byourself\b/g, pronouns.reflexive)
+      .replace(/\bYour\b/g, () => possessive(true))
+      .replace(/\byour\b/g, () => possessive(false))
+      .replace(/\bYou are\b/g, () => subjectWithBe(true))
+      .replace(/\byou are\b/g, () => subjectWithBe(false))
+      .replace(/\bYou have\b/g, () => subjectWithHave(true))
+      .replace(/\byou have\b/g, () => subjectWithHave(false))
+      .replace(/\bYou discover\b/g, () => subjectWithVerb(true, "discover", "discovers"))
+      .replace(/\byou discover\b/g, () => subjectWithVerb(false, "discover", "discovers"))
+      .replace(/\bYou learn\b/g, () => subjectWithVerb(true, "learn", "learns"))
+      .replace(/\byou learn\b/g, () => subjectWithVerb(false, "learn", "learns"))
+      .replace(/\bYou look\b/g, () => subjectWithVerb(true, "look", "looks"))
+      .replace(/\byou look\b/g, () => subjectWithVerb(false, "look", "looks"))
+      .replace(/\bYou build\b/g, () => subjectWithVerb(true, "build", "builds"))
+      .replace(/\byou build\b/g, () => subjectWithVerb(false, "build", "builds"))
+      .replace(/\bYou stop\b/g, () => subjectWithVerb(true, "stop", "stops"))
+      .replace(/\byou stop\b/g, () => subjectWithVerb(false, "stop", "stops"))
+      .replace(/\bYou give\b/g, () => subjectWithVerb(true, "give", "gives"))
+      .replace(/\byou give\b/g, () => subjectWithVerb(false, "give", "gives"))
+      .replace(/\bYou let\b/g, () => subjectWithVerb(true, "let", "lets"))
+      .replace(/\byou let\b/g, () => subjectWithVerb(false, "let", "lets"))
+      .replace(/\bYou need\b/g, () => subjectWithVerb(true, "need", "needs"))
+      .replace(/\byou need\b/g, () => subjectWithVerb(false, "need", "needs"))
+      .replace(/\bYou tend\b/g, () => subjectWithVerb(true, "tend", "tends"))
+      .replace(/\byou tend\b/g, () => subjectWithVerb(false, "tend", "tends"))
+      .replace(/\bYou feel\b/g, () => subjectWithVerb(true, "feel", "feels"))
+      .replace(/\byou feel\b/g, () => subjectWithVerb(false, "feel", "feels"))
+      .replace(/\bYou want\b/g, () => subjectWithVerb(true, "want", "wants"))
+      .replace(/\byou want\b/g, () => subjectWithVerb(false, "want", "wants"))
+      .replace(/\bYou move\b/g, () => subjectWithVerb(true, "move", "moves"))
+      .replace(/\byou move\b/g, () => subjectWithVerb(false, "move", "moves"))
+      .replace(/\bYou live\b/g, () => subjectWithVerb(true, "live", "lives"))
+      .replace(/\byou live\b/g, () => subjectWithVerb(false, "live", "lives"))
+      .replace(/\bYou respond\b/g, () => subjectWithVerb(true, "respond", "responds"))
+      .replace(/\byou respond\b/g, () => subjectWithVerb(false, "respond", "responds"))
+      .replace(/\bYou can\b/g, () => subjectWithModal(true, "can"))
+      .replace(/\byou can\b/g, () => subjectWithModal(false, "can"))
+      .replace(/\bYou will\b/g, () => subjectWithModal(true, "will"))
+      .replace(/\byou will\b/g, () => subjectWithModal(false, "will"))
+      .replace(/\bYou may\b/g, () => subjectWithModal(true, "may"))
+      .replace(/\byou may\b/g, () => subjectWithModal(false, "may"))
+      .replace(/\bYou\b/g, () => subject(true))
+      .replace(/\byou\b/g, () => subject(false));
+}
+
+function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
+  return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind)(text);
 }
 
 function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
@@ -7804,14 +7915,16 @@ function natalPlacementDetailArticle(
   const liveBody = bodyParagraphs.join("\n\n").trim();
   const approvedBody = approvedNatalPlacementBody(position);
   const hasApprovedBody = Boolean(approvedBody);
-  const fallbackSection = hasApprovedBody
+  const hasLiveAuthoredBody = Boolean(liveBody && !isNatalPlacementLensWriteup(liveWriteup));
+  const hasAuthoredBody = hasApprovedBody || hasLiveAuthoredBody;
+  const fallbackSection = hasAuthoredBody
     ? null
     : natalPlacementFallbackSection(position, natalSky, {
       includeApprovedBody: true
     });
   const authoredBodyParagraphs = hasApprovedBody
     ? approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
-    : liveBody && !isNatalPlacementLensWriteup(liveWriteup)
+    : hasLiveAuthoredBody
       ? bodyParagraphs
       : [];
   const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
@@ -7838,6 +7951,7 @@ function natalPlacementDetailArticle(
     subtitle: natalPlacementDetailSubtitle(position),
     lensHint: natalPlacementLensHint,
     compactHeader: true,
+    plainBody: authoredBodyParagraphs.length > 0,
     bodyBeforeSections: true,
     body: authoredBodyParagraphs,
     summary: "",
@@ -7878,11 +7992,12 @@ function natalPlacementSkyDetail(
   return {
     glyph: article.glyph || pointGlyph(position.planet),
     kicker: "Natal placement",
-    title: article.title,
+    title: ownerContext?.ownerKind === "person" ? `${possessiveLabel(ownerContext.ownerName)} ${article.title}` : article.title,
     meta: article.subtitle,
     subtitle: article.subtitle,
     lensHint: ownerAwareCopy(article.lensHint),
     compactHeader: article.compactHeader,
+    plainBody: article.plainBody,
     bodyBeforeSections: article.bodyBeforeSections,
     retrograde: position.motion === "retrograde",
     body: (article.body ?? []).map(ownerAwareCopy),
@@ -8768,7 +8883,7 @@ function ActiveAspects({
   return (
     <SkyAspectsSection>
       {aspectGroups.map((group) => (
-        <SkyAspectGroup id={group.key} key={group.key}>
+          <SkyAspectGroup id={group.key} key={group.key}>
               {group.aspects.map((aspect) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
@@ -8784,8 +8899,6 @@ function ActiveAspects({
             );
             const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
             const rowSummary = liveGeneratedSummary(generated, content.summary);
-            const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
-            const body = detailParagraphs;
 
                 return (
                   <button
@@ -8793,16 +8906,7 @@ function ActiveAspects({
                     className="aspect-row aspect-row-button"
                     key={`${aspect.from}-${aspect.to}`}
                     aria-label={`Read more about ${title}`}
-                    onClick={() => onOpenDetail({
-                      glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
-                      kicker: "",
-                      title: generated?.headline ?? title,
-                      meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
-                      content: content.bundle,
-                      body,
-                      sections: generatedDetailSections(generated),
-                      astrologyDrilldown: generatedAstrologyDrilldown(generated)
-                    })}
+                    onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent))}
                   >
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
@@ -8911,6 +9015,7 @@ function PlacementTable({
             generatedAt,
             generatedContent,
             mode: "sky",
+            onOpenSkyAspect: (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent)),
             pointName: position.planet
           });
           const openDetail = () => onOpenDetail({
