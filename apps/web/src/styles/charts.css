@@ -348,7 +348,7 @@
   width: min(1240px, 100%);
   max-height: min(960px, calc(100svh - 28px));
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid var(--modal-border);
   border-radius: 28px;
   background: var(--bg);
   color: var(--ink);

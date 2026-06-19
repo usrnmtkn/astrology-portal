@@ -2356,6 +2356,20 @@ function chartFlowStepsLeft(profile: UserProfile) {
   ].filter(Boolean).length;
 }
 
+function SkyNavIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M12 3.75 14.35 9.65 20.25 12 14.35 14.35 12 20.25 9.65 14.35 3.75 12 9.65 9.65 12 3.75Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
 function SmileNavIcon({ size = 18 }: { size?: number }) {
   return (
     <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
@@ -2721,6 +2735,7 @@ type AspectTimingDisplay = {
 function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = new Date()) {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
+  const compactDuration = formatDurationCompact(start, end);
 
   if (sameLocalDate(start, end)) {
     return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
@@ -2734,11 +2749,7 @@ function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = n
     return "This week";
   }
 
-  if (durationDays <= 75) {
-    return "Longer influence";
-  }
-
-  return "Ongoing";
+  return compactDuration ?? "Ongoing";
 }
 
 function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date()) {
@@ -6439,7 +6450,7 @@ export function App() {
 
             <nav className="site-nav" aria-label="Primary navigation">
               <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}>
-                <Sparkles size={18} aria-hidden="true" />
+                <SkyNavIcon size={18} />
                 <span>Sky</span>
               </button>
               {userProfile && (
@@ -6572,7 +6583,7 @@ export function App() {
                   setMenuOpen(false);
                 }}
               >
-                <Sparkles size={20} aria-hidden="true" />
+                <SkyNavIcon size={20} />
                 <span>Sky</span>
               </button>
               {userProfile && (
@@ -6658,7 +6669,7 @@ export function App() {
                     <span className="sky-intro__lead-mobile">the sky.</span>
                   </h1>
                   <p className="sky-intro__copy">
-                    What is up there today, and what it actually means down here.
+                    What is up there today, and what it means down here.
                   </p>
                 </div>
                 {datePickerOpen && (

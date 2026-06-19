@@ -37,7 +37,7 @@
   display: grid;
   gap: 0;
   padding: clamp(28px, 3.2vw, 42px);
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -74,7 +74,7 @@
   min-width: 52px;
   height: 44px;
   padding: 0 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: 999px;
   background: var(--accent-bg);
   color: var(--wheel-glyph);
@@ -409,7 +409,7 @@
     height: 36px;
     padding: 0 12px;
     border-radius: 999px;
-    font-size: 20px;
+    font-size: var(--type-small-display-size);
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
@@ -423,7 +423,7 @@
 
   .article-sub {
     margin-top: 18px;
-    font-size: 16px;
+    font-size: var(--type-nav-size);
     line-height: 1.55;
   }
 
@@ -464,7 +464,7 @@
 
   .article-section h2,
   .sky-detail-section h2 {
-    font-size: 20px;
+    font-size: var(--type-small-display-size);
     line-height: 1.18;
   }
 
@@ -485,7 +485,7 @@
   }
 
   .article-related-aspect-row .aspect-row-copy h3 {
-    font-size: 18px;
+    font-size: var(--text-card-title);
   }
 }
 

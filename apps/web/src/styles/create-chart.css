@@ -65,7 +65,7 @@
   gap: 14px;
   width: 100%;
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: 18px;
   background: var(--surface-2);
   color: var(--ink);
@@ -162,7 +162,7 @@
 .city-search-field input {
   width: 100%;
   min-height: 60px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--input-border);
   border-radius: 18px;
   background: var(--surface-2);
   color: var(--ink);
