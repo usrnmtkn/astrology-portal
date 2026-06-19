@@ -4358,6 +4358,159 @@ function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[
   };
 }
 
+function strongestCircleTransitForPlanet(chart: ManualChart, planet: string, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
+  return rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas)
+    .filter((transit) => transit.transitPlanet === planet)
+    .sort((first, second) => {
+      const firstBackgroundPenalty = first.isSlowGeneralWeather ? 1 : 0;
+      const secondBackgroundPenalty = second.isSlowGeneralWeather ? 1 : 0;
+
+      return firstBackgroundPenalty - secondBackgroundPenalty || transitOrbValue(first) - transitOrbValue(second);
+    })[0] ?? null;
+}
+
+function strongestCircleTransitForHouse(chart: ManualChart, house: number, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
+  return rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas)
+    .filter((transit) => transit.natalHouse === house || chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint)?.house === house)
+    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second))[0] ?? null;
+}
+
+function circlePlanetDetailBody(chart: ManualChart, planet: string, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
+  const transit = strongestCircleTransitForPlanet(chart, planet, currentSky, focusAreas, sunriseOrb);
+
+  if (!transit) {
+    return `${chart.displayName} is part of this shared ${planet} pattern, but the exact chart contact is not available yet. Read this as a signal to look for ${groupPlanetThemes(planet)} in the way they are moving through the moment.`;
+  }
+
+  const timing = friendTimingContext(chart, currentSky);
+  const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
+  const direction = transit.direction === "applying" ? "forming" : "separating from";
+  const natalHouse = transit.natalHouse ?? chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint)?.house ?? null;
+  const housePhrase = natalHouse ? ` in their ${ordinalHouse(natalHouse)} house, the part of life connected to ${groupHouseThemes(natalHouse)}` : "";
+  const annualTiming = transit.natalPoint === timing.lordOfYear && timing.lordOfYear
+    ? `Because ${transit.natalPoint} is also their lord of the year, this contact may be louder than it looks from the outside.`
+    : natalHouse && timing.profectedHouse === natalHouse
+      ? `Because this touches their profected house for the year, the transit may land in a life area that is already active for them.`
+      : "";
+
+  return [
+    `For ${chart.displayName}, transiting ${planet} is ${direction} ${aspectWithArticle(transit.aspect)} to their ${transit.natalPoint} (${timingLabel}). This brings ${groupPlanetThemes(planet)} into contact with ${comparisonPointRole(transit.natalPoint)}${housePhrase}.`,
+    annualTiming || `That means the shared ${planet} weather is not landing in a generic way for them. It is pressing on a specific part of their chart, so the same planet may look different in their life than it does for everyone else.`,
+    `If you are close to ${chart.displayName}, watch for the way this shows up in real behavior rather than assuming the headline tells the whole story. ${groupPlanetExamples(planet)}`
+  ].join("\n\n");
+}
+
+function circlePlanetDetailArticle(planet: string, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
+  const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+  const names = readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName));
+
+  return {
+    glyph: pointGlyph(planet),
+    kicker: "",
+    title: groupPlanetHeadline(planet),
+    meta: `${planet} contacts · ${names}`,
+    subtitle: `${planet} contacts · ${names}`,
+    compactHeader: true,
+    plainBody: false,
+    bodyBeforeSections: true,
+    body: [
+      `The feed card is showing a shared transit pattern: more than one person is being touched by ${planet} right now. That does not mean they are living the same story. It means the same transiting planet is pressing on different parts of different charts.`
+    ],
+    sections: uniqueCharts.slice(0, 4).map((chart) => ({
+      heading: `${chart.displayName} · ${planet} transit`,
+      body: circlePlanetDetailBody(chart, planet, currentSky, focusAreas, sunriseOrb)
+    }))
+  };
+}
+
+function circleHouseDetailBody(chart: ManualChart, house: number, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
+  const transit = strongestCircleTransitForHouse(chart, house, currentSky, focusAreas, sunriseOrb);
+  const timing = friendTimingContext(chart, currentSky);
+  const yearNote = timing.profectedHouse === house
+    ? `This is also their ${ordinalHouse(house)} house profection year, so the house topic is not only being touched by transit. It is part of the larger annual timing.`
+    : "";
+
+  if (!transit) {
+    return [
+      `${chart.displayName} has current timing gathering around their ${ordinalHouse(house)} house, which brings attention to ${groupHouseThemes(house)}.`,
+      yearNote || `For them, this house may be active through several smaller signals rather than one obvious transit. The details may be easier to understand by watching what keeps repeating.`
+    ].filter(Boolean).join("\n\n");
+  }
+
+  const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
+  const direction = transit.direction === "applying" ? "forming" : "separating from";
+
+  return [
+    `${chart.displayName}'s ${ordinalHouse(house)} house is active through transiting ${transit.transitPlanet} ${direction} ${aspectWithArticle(transit.aspect)} to their ${transit.natalPoint} (${timingLabel}). This brings ${comparisonPointRole(transit.transitPlanet)} into ${groupHouseThemes(house)}.`,
+    yearNote || `The same house can be active for more than one person, but the lived story will not be identical. For ${chart.displayName}, the question is how this transit is changing the way that house topic needs to be handled now.`,
+    circleSupportGuidance(chart, house)
+  ].filter(Boolean).join("\n\n");
+}
+
+function circleHouseDetailArticle(house: number, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
+  const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+  const names = readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName));
+
+  return {
+    glyph: "⌂",
+    kicker: "",
+    title: groupHouseHeadline(house),
+    meta: `${ordinalHouse(house)} house contacts · ${names}`,
+    subtitle: `${ordinalHouse(house)} house contacts · ${names}`,
+    compactHeader: true,
+    plainBody: false,
+    bodyBeforeSections: true,
+    body: [
+      `The feed card is showing a shared house pattern: more than one person has current timing pressing on ${ordinalHouse(house)} house topics. That does not mean the same event is happening to everyone. It means a similar life area is active in different charts.`
+    ],
+    sections: uniqueCharts.slice(0, 4).map((chart) => ({
+      heading: `${chart.displayName} · ${ordinalHouse(house)} house`,
+      body: circleHouseDetailBody(chart, house, currentSky, focusAreas, sunriseOrb)
+    }))
+  };
+}
+
+function circleLordOfYearDetailArticle(planet: string, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
+  const uniqueCharts = Array.from(new Map(activeCharts.map((chart) => [chart.id, chart])).values());
+  const names = readableNameList(uniqueCharts.slice(0, 3).map((chart) => chart.displayName));
+
+  return {
+    glyph: pointGlyph(planet),
+    kicker: "",
+    title: groupPlanetHeadline(planet),
+    meta: `${planet} as lord of the year · ${names}`,
+    subtitle: `${planet} as lord of the year · ${names}`,
+    compactHeader: true,
+    plainBody: false,
+    bodyBeforeSections: true,
+    body: [
+      `The feed card is showing an annual timing pattern: more than one person has ${planet} as lord of the year. That means ${groupPlanetThemes(planet)} may be setting the tone in different charts, even when the visible circumstances are not the same.`
+    ],
+    sections: uniqueCharts.slice(0, 4).map((chart) => {
+      const timing = friendTimingContext(chart, currentSky);
+      const house = timing.profectedHouse;
+      const rulerPosition = chart.natalChart?.positions.find((position) => position.planet === planet) ?? null;
+      const transit = strongestCircleTransitForPlanet(chart, planet, currentSky, focusAreas, sunriseOrb);
+      const parts = [
+        timing.profectedHouse && timing.profectedSign
+          ? `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year, and ${planet} rules that year because ${timing.profectedSign} starts the house. This brings ${groupPlanetThemes(planet)} into the way they are handling ${house ? groupHouseThemes(house) : "this year's main topic"}.`
+          : `${chart.displayName} has ${planet} emphasized as part of the current annual timing.`,
+        rulerPosition?.house
+          ? `In their birth chart, ${planet} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, so the year keeps linking back to ${groupHouseThemes(rulerPosition.house)}.`
+          : "",
+        transit
+          ? circleTransitParagraph(chart, transit, currentSky, timing)
+          : `If you are close to ${chart.displayName}, it may help to notice how ${planet} themes are shaping their choices, timing, and reactions right now.`
+      ].filter(Boolean);
+
+      return {
+        heading: `${chart.displayName} · ${planet} year`,
+        body: parts.join("\n\n")
+      };
+    })
+  };
+}
+
 function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap) {
   const friendSky = chart.natalChart;
   const friendBigThree = manualChartBigThree(chart);
@@ -5372,7 +5525,8 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupPlanetHeadline(planet),
-        body: `${names} are all being touched by ${planet} right now, so ${groupPlanetThemes(planet)} may be showing up in different ways. This does not mean they are living the same story. ${groupPlanetExamples(planet)}`
+        body: `${names} are all being touched by ${planet} right now, so ${groupPlanetThemes(planet)} may be showing up in different ways. This does not mean they are living the same story. ${groupPlanetExamples(planet)}`,
+        detail: circlePlanetDetailArticle(planet, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
   const houseCards = Array.from(byHouse.entries())
@@ -5383,7 +5537,8 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupHouseHeadline(house),
-        body: `${names} all have current timing pressing on ${ordinalHouse(house)} house topics, so ${groupHouseThemes(house)} may be active for this group. This does not mean the same event is happening to everyone. ${groupHouseExamples(house)}`
+        body: `${names} all have current timing pressing on ${ordinalHouse(house)} house topics, so ${groupHouseThemes(house)} may be active for this group. This does not mean the same event is happening to everyone. ${groupHouseExamples(house)}`,
+        detail: circleHouseDetailArticle(house, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
   const profectionCards = Array.from(byProfectedHouse.entries())
@@ -5404,7 +5559,8 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupPlanetHeadline(planet),
-        body: `${names} all have ${planet} as lord of the year, so ${groupPlanetThemes(planet)} may be setting a background pattern for this group. This does not mean the year is moving the same way for everyone. ${groupPlanetExamples(planet)}`
+        body: `${names} all have ${planet} as lord of the year, so ${groupPlanetThemes(planet)} may be setting a background pattern for this group. This does not mean the year is moving the same way for everyone. ${groupPlanetExamples(planet)}`,
+        detail: circleLordOfYearDetailArticle(planet, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
 
