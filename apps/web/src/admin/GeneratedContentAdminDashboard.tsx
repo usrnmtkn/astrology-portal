@@ -130,6 +130,16 @@ type AdminReviewRecord = {
   rawPrivateRow?: AdminUserGeneratedContentRow;
 };
 
+type AdminReviewMetadataEdit = {
+  targetDate: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  status: GeneratedContentStatus;
+  category: Exclude<AdminContentCategoryFilter, "all">;
+  orb: string;
+  direction: string;
+};
+
 type AdminReviewCounts = Record<GeneratedContentStatus, number> & {
   total: number;
 };
@@ -954,6 +964,46 @@ function preferredReviewRecord(current: AdminReviewRecord | undefined, next: Adm
   return next.updatedAt > current.updatedAt ? next : current;
 }
 
+function normalizedRecordTitle(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function isSkyRetrogradeRecord(record: AdminReviewRecord) {
+  const eventType = (record.eventType ?? "").toLowerCase();
+  const title = normalizedRecordTitle(record.title);
+  const contentKey = record.contentKey.toLowerCase();
+
+  return record.surface === "sky" && (
+    eventType === "retrograde"
+    || contentKey.includes("retrograde")
+    || /\brx\b/.test(title)
+    || title.includes("retrograde")
+  );
+}
+
+function contentLibraryDedupeKey(record: AdminReviewRecord) {
+  const title = normalizedRecordTitle(record.title || record.contentKey);
+  const subject = record.subjectId ?? "";
+
+  if (isSkyRetrogradeRecord(record)) {
+    return `${record.source}:${record.surface}:retrograde:${title}:${subject}`;
+  }
+
+  return `${record.source}:${record.surface}:${title}:${record.targetDate ?? ""}:${subject}`;
+}
+
+function dedupeContentLibraryRecords(records: AdminReviewRecord[]) {
+  const grouped = new Map<string, AdminReviewRecord>();
+
+  records.forEach((record) => {
+    const key = contentLibraryDedupeKey(record);
+
+    grouped.set(key, preferredReviewRecord(grouped.get(key), record));
+  });
+
+  return Array.from(grouped.values());
+}
+
 function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): GeneratedContentSurface {
   if (category === "Sky") return "sky";
   if (category === "Natal Aspects" || category === "Natal Chart") return "natal";
@@ -1294,7 +1344,25 @@ function contentRestrictionLabel(record: AdminReviewRecord) {
   if (record.source === "private" || record.userId || record.subjectId) return "Personal";
   if (record.source === "calculated") return "Pending";
 
-  return "Public";
+  return "Visible";
+}
+
+function appLocationLabel(record: AdminReviewRecord) {
+  if (record.surface === "sky") return "Sky";
+  if (record.surface === "natal") return "Natal";
+  if (record.surface === "you") return "You";
+  if (record.surface === "synastry" || record.surface === "composite" || record.surface === "relationship") return "Circle";
+
+  return generatedContentSurfaceLabels[record.surface];
+}
+
+function appLocationDetail(record: AdminReviewRecord) {
+  if (record.surface === "synastry") return "Synastry";
+  if (record.surface === "composite") return "Composite";
+  if (record.surface === "relationship") return "Relationship";
+  if (record.surface === "you") return "Personal chart";
+
+  return contentCategoryLabel(record);
 }
 
 function isDraftWithCopy(record: AdminReviewRecord) {
@@ -1347,6 +1415,27 @@ function recordDirectionLabel(record: AdminReviewRecord) {
   const direction = record.facts?.direction;
 
   return typeof direction === "string" && direction ? direction : "Not set";
+}
+
+function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadataEdit {
+  const orb = record.facts?.orb;
+
+  return {
+    targetDate: record.targetDate ?? "",
+    surface: record.surface,
+    mode: record.mode,
+    status: record.status,
+    category: contentCategoryLabel(record),
+    orb: typeof orb === "number" ? String(orb) : typeof orb === "string" ? orb : "",
+    direction: recordDirectionLabel(record) === "Not set" ? "" : recordDirectionLabel(record)
+  };
+}
+
+function surfaceForContentCategory(category: Exclude<AdminContentCategoryFilter, "all">): GeneratedContentSurface {
+  if (category === "Sky") return "sky";
+  if (category === "Relationship") return "relationship";
+
+  return "natal";
 }
 
 function statusForReviewSave(record: AdminReviewRecord, requestedStatus: GeneratedContentStatus) {
@@ -1478,6 +1567,7 @@ export function GeneratedContentAdminDashboard() {
   const [reviewEditTitle, setReviewEditTitle] = useState("");
   const [reviewEditSummary, setReviewEditSummary] = useState("");
   const [reviewEditBody, setReviewEditBody] = useState("");
+  const [reviewEditMetadata, setReviewEditMetadata] = useState<AdminReviewMetadataEdit | null>(null);
   const [reviewGenerationProvider, setReviewGenerationProvider] = useState<AdminGenerationProvider>("claude");
   const [isGeneratingReviewDraft, setIsGeneratingReviewDraft] = useState(false);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
@@ -1506,10 +1596,11 @@ export function GeneratedContentAdminDashboard() {
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
+  const dedupedContentRecords = useMemo(() => dedupeContentLibraryRecords(reviewRecords), [reviewRecords]);
   const allContentRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
-    return reviewRecords
+    return dedupedContentRecords
       .filter((record) => {
         if (!normalizedPersonQuery) return true;
 
@@ -1533,8 +1624,8 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [categoryFilter, contentStatusFilter, personQuery, reviewRecords]);
-  const cmsStatusCounts = useMemo(() => contentStatusCounts(reviewRecords), [reviewRecords]);
+  }, [categoryFilter, contentStatusFilter, personQuery, dedupedContentRecords]);
+  const cmsStatusCounts = useMemo(() => contentStatusCounts(dedupedContentRecords), [dedupedContentRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
@@ -1549,6 +1640,11 @@ export function GeneratedContentAdminDashboard() {
       ? reviewEditBody
       : readerFacingTextForReview(selectedReviewRecord)
     : "";
+  const selectedReviewMetadata = selectedReviewRecord
+    ? isEditingReviewRecord
+      ? reviewEditMetadata ?? reviewMetadataForRecord(selectedReviewRecord)
+      : reviewMetadataForRecord(selectedReviewRecord)
+    : null;
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
@@ -1891,6 +1987,7 @@ export function GeneratedContentAdminDashboard() {
     setReviewEditTitle(record.title);
     setReviewEditSummary(reviewTldrForReview(record));
     setReviewEditBody(bodyWithoutLeadingTldr(copy));
+    setReviewEditMetadata(reviewMetadataForRecord(record));
   }
 
   function cancelReviewEdit() {
@@ -1898,6 +1995,18 @@ export function GeneratedContentAdminDashboard() {
     setReviewEditTitle("");
     setReviewEditSummary("");
     setReviewEditBody("");
+    setReviewEditMetadata(null);
+  }
+
+  function updateReviewMetadata(record: AdminReviewRecord, updates: Partial<AdminReviewMetadataEdit>) {
+    if (editingReviewId !== record.id) {
+      beginReviewEdit(record);
+    }
+
+    setReviewEditMetadata((currentMetadata) => ({
+      ...(currentMetadata ?? reviewMetadataForRecord(record)),
+      ...updates
+    }));
   }
 
   function closeReviewDrawer() {
@@ -1913,8 +2022,32 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const nextStatus = statusForReviewSave(record, requestedStatus ?? record.status);
       const isActiveEdit = editingReviewId === record.id;
+      const metadata = isActiveEdit ? reviewEditMetadata ?? reviewMetadataForRecord(record) : reviewMetadataForRecord(record);
+      const nextStatus = statusForReviewSave(record, requestedStatus ?? metadata.status);
+      const nextSurface = metadata.surface;
+      const nextMode = metadata.mode;
+      const nextTargetDate = metadata.targetDate.trim() || null;
+      const nextEventType = metadata.category !== contentCategoryLabel(record)
+        ? manualEntryEventType(metadata.category, nextSurface)
+        : record.eventType || "manual-review";
+      const nextFacts: Record<string, unknown> = {
+        ...(record.facts ?? {})
+      };
+
+      if (metadata.orb.trim()) {
+        const numericOrb = Number(metadata.orb);
+        nextFacts.orb = Number.isFinite(numericOrb) ? numericOrb : metadata.orb.trim();
+      } else {
+        delete nextFacts.orb;
+      }
+
+      if (metadata.direction.trim()) {
+        nextFacts.direction = metadata.direction.trim();
+      } else {
+        delete nextFacts.direction;
+      }
+
       const normalizedCopy = normalizeReviewCopy(
         isActiveEdit ? reviewEditSummary : reviewTldrForReview(record),
         isActiveEdit ? reviewEditBody : readerFacingTextForReview(record),
@@ -1968,16 +2101,16 @@ export function GeneratedContentAdminDashboard() {
           body: JSON.stringify({
             id: existingGlobalRowId || undefined,
             contentKey: record.contentKey,
-            surface: record.surface,
-            mode: record.mode,
+            surface: nextSurface,
+            mode: nextMode,
             status: nextStatus,
-            eventType: record.eventType || "manual-review",
-            targetDate: record.targetDate || null,
+            eventType: nextEventType,
+            targetDate: nextTargetDate,
             headline: nextTitle,
             summary: nextSummary,
             body: nextBody,
             sections: record.sections,
-            facts: record.facts ?? {},
+            facts: nextFacts,
             sourceSnapshot: {
               ...(record.sourceSnapshot ?? {}),
               adminReviewSource: record.source,
@@ -2000,10 +2133,15 @@ export function GeneratedContentAdminDashboard() {
           ? {
               ...currentRecord,
               source: "global",
+              surface: nextSurface,
+              mode: nextMode,
               status: nextStatus,
+              eventType: nextEventType,
               title: nextTitle,
+              targetDate: nextTargetDate,
               summary: nextSummary,
               body: nextBody,
+              facts: nextFacts,
               rawGlobalRow: row ?? currentRecord.rawGlobalRow
             }
           : currentRecord
@@ -3106,7 +3244,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Content library</p>
                 <h2>All Entries</h2>
-                <p>{reviewCounts.total} rows across generated, authored, global, and personal content.</p>
+                <p>{cmsStatusCounts.all} entries across generated, authored, global, and personal content.</p>
               </div>
               <div className="admin-new-actions" aria-label="New content">
                 <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
@@ -3177,11 +3315,10 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-content-table">
                   <div className="admin-content-table-head" aria-hidden="true">
                     <span>Content</span>
-                    <span>Metadata</span>
+                    <span>Lives in</span>
                     <span>Date</span>
-                    <span>Section</span>
-                    <span>Status</span>
-                    <span>Restriction</span>
+                    <span>Category</span>
+                    <span>Metadata</span>
                   </div>
                   {allContentRecords.map((record) => (
                     <button
@@ -3200,14 +3337,20 @@ export function GeneratedContentAdminDashboard() {
                       }}
                     >
                       <span className="admin-content-title-cell">
-                        <strong className="admin-content-row-title">{record.title}</strong>
+                        <span className="admin-content-title-line">
+                          <strong className="admin-content-row-title">{record.title}</strong>
+                          <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                          <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
+                        </span>
                         <small className="admin-content-row-subtitle">{record.subtitle || record.contentKey}</small>
                       </span>
-                      <span className="admin-content-row-meta">{record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
+                      <span className="admin-content-location">
+                        <strong>{appLocationLabel(record)}</strong>
+                        <small>{appLocationDetail(record)}</small>
+                      </span>
                       <span className="admin-content-row-date">{adminDateLabel(record.targetDate)}</span>
                       <span className="admin-content-row-section">{contentCategoryLabel(record)}</span>
-                      <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                      <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
+                      <span className="admin-content-row-meta">{record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
                     </button>
                   ))}
                   {allContentRecords.length === 0 && (
@@ -3352,32 +3495,92 @@ export function GeneratedContentAdminDashboard() {
 
                     <aside className="admin-metadata-sidebar" aria-label="Content metadata">
                       <h3>Metadata</h3>
-                      <dl>
-                        <div>
-                          <dt>Exact date</dt>
-                          <dd>{adminDateLabel(selectedReviewRecord.targetDate)}</dd>
-                        </div>
-                        <div>
-                          <dt>Orb</dt>
-                          <dd>{recordOrbLabel(selectedReviewRecord)}</dd>
-                        </div>
-                        <div>
-                          <dt>Forming/separating</dt>
-                          <dd>{recordDirectionLabel(selectedReviewRecord)}</dd>
-                        </div>
-                        <div>
-                          <dt>Surface</dt>
-                          <dd>{generatedContentSurfaceLabels[selectedReviewRecord.surface]}</dd>
-                        </div>
-                        <div>
-                          <dt>Category</dt>
-                          <dd>{contentCategoryLabel(selectedReviewRecord)}</dd>
-                        </div>
-                        <div>
-                          <dt>Status</dt>
-                          <dd>{contentStatusLabel(selectedReviewRecord.status)}</dd>
-                        </div>
-                      </dl>
+                      <div className="admin-metadata-fields">
+                        <label className="admin-metadata-field">
+                          <span>Exact date</span>
+                          <input
+                            type="date"
+                            value={selectedReviewMetadata?.targetDate ?? ""}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { targetDate: event.target.value })}
+                          />
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>Status</span>
+                          <select
+                            value={selectedReviewMetadata?.status ?? selectedReviewRecord.status}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { status: event.target.value as GeneratedContentStatus })}
+                          >
+                            <option value="DRAFT">Draft</option>
+                            <option value="ERROR">Needs Review</option>
+                            <option value="REVIEWED">Scheduled</option>
+                            <option value="LIVE">Published</option>
+                            <option value="ARCHIVED">Archived</option>
+                          </select>
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>App area</span>
+                          <select
+                            value={selectedReviewMetadata?.surface ?? selectedReviewRecord.surface}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { surface: event.target.value as GeneratedContentSurface })}
+                          >
+                            <option value="sky">Sky</option>
+                            <option value="you">You</option>
+                            <option value="natal">Natal</option>
+                            <option value="relationship">Circle</option>
+                            <option value="synastry">Synastry</option>
+                            <option value="composite">Composite</option>
+                          </select>
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>Category</span>
+                          <select
+                            value={selectedReviewMetadata?.category ?? contentCategoryLabel(selectedReviewRecord)}
+                            onChange={(event) => {
+                              const nextCategory = event.target.value as Exclude<AdminContentCategoryFilter, "all">;
+                              updateReviewMetadata(selectedReviewRecord, {
+                                category: nextCategory,
+                                surface: surfaceForContentCategory(nextCategory)
+                              });
+                            }}
+                          >
+                            <option value="Sky">Sky</option>
+                            <option value="Natal Aspects">Natal Aspects</option>
+                            <option value="Natal Chart">Natal Chart</option>
+                            <option value="Relationship">Relationship</option>
+                          </select>
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>Format</span>
+                          <select
+                            value={selectedReviewMetadata?.mode ?? selectedReviewRecord.mode}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { mode: event.target.value as GeneratedContentMode })}
+                          >
+                            <option value="feed">Feed</option>
+                            <option value="in_depth">In depth</option>
+                            <option value="article">Article</option>
+                          </select>
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>Orb</span>
+                          <input
+                            value={selectedReviewMetadata?.orb ?? ""}
+                            placeholder={recordOrbLabel(selectedReviewRecord)}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { orb: event.target.value })}
+                          />
+                        </label>
+                        <label className="admin-metadata-field">
+                          <span>Forming/separating</span>
+                          <select
+                            value={selectedReviewMetadata?.direction ?? ""}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { direction: event.target.value })}
+                          >
+                            <option value="">Not set</option>
+                            <option value="forming">Forming</option>
+                            <option value="separating">Separating</option>
+                            <option value="exact">Exact</option>
+                          </select>
+                        </label>
+                      </div>
                       <details className="admin-advanced admin-review-json">
                         <summary>Structured fields</summary>
                         <pre>{JSON.stringify({
