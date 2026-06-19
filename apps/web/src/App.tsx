@@ -7330,7 +7330,7 @@ function natalPlanetSignParagraph(position: PlanetPosition, signFrame: { quality
 
   switch (position.planet) {
     case "Sun":
-      return `There is a ${signFrame.quality} quality to the way your Sun grows here. You are learning to ${signTone}. Your identity becomes stronger when you stop performing the expected answer and let this sign show what genuinely gives you life.`;
+      return `There is a ${signFrame.quality} quality to the way your Sun grows here. You are learning to ${signTone}. Your identity becomes stronger when you stop accepting the expected answer and let this sign show what genuinely gives you life.`;
     case "Moon":
       return `There is a ${signFrame.quality} quality to the way your Moon responds here. Your instincts are shaped by the need to ${signTone}. Your body often knows when this pattern is being supported and when it has started protecting itself too hard.`;
     case "Mercury":
@@ -7603,9 +7603,32 @@ function cleanNatalPlacementLensParagraphs({
   });
 }
 
+function approvedNatalPlacementBody(position: PlanetPosition) {
+  if (position.planet === "Sun" && position.sign === "Aquarius" && position.house === 9) {
+    return [
+      "Your identity grows through the search for meaning. You are not here to accept a worldview just because it was handed to you. With your Sun in Aquarius in the 9th house, you discover who you are by questioning inherited beliefs, studying systems, exploring different perspectives, and testing ideas against lived experience.",
+      "There is a future-minded quality to this placement. You may be drawn to philosophy, spirituality, education, travel, social issues, or any field that helps you understand people and the world from a wider angle. You are not only collecting knowledge. You are looking for the kind of truth that can change how you live and what you contribute.",
+      "This placement also has a teaching quality. You may be able to take complex ideas and make them clearer for other people, especially when those ideas challenge old assumptions or open a new way forward. Your growth comes from staying curious, thinking independently, and letting your beliefs evolve as your experience deepens.",
+      "The strongest version of this placement is not detached from real life. It asks you to bring your ideas back down to earth. What you believe has to become something you can live, share, and build from. Over time, your sense of purpose becomes clearer when your originality serves something larger than yourself."
+    ].join("\n\n");
+  }
+
+  return "";
+}
+
 function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
+  }
+
+  const approvedBody = approvedNatalPlacementBody(position);
+
+  if (approvedBody) {
+    return {
+      heading: natalPlacementFullTitle(position),
+      tldr: "",
+      body: approvedBody
+    };
   }
 
   const house = position.house;
@@ -7641,7 +7664,7 @@ function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySn
 
   return {
     heading: natalPlacementFullTitle(position),
-    tldr: houseParagraph,
+    tldr: "",
     body
   };
 }
