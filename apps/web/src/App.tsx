@@ -819,6 +819,43 @@ function generatedArticleSections(generated: LiveGeneratedContent | null, fallba
   ));
 }
 
+function normalizeGeneratedDailyCopy(value: string) {
+  return stripTldrPrefix(value).replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function splitGeneratedDailyBody(value: string) {
+  return value
+    .split(/\n{2,}/)
+    .map((paragraph) => stripTldrPrefix(paragraph.trim()))
+    .filter(Boolean);
+}
+
+function generatedDailyWriteupSections(generated: LiveGeneratedContent | null, summary: string | null) {
+  const summaryCopy = summary ? normalizeGeneratedDailyCopy(summary) : "";
+  const keepParagraph = (paragraph: string) => {
+    const copy = normalizeGeneratedDailyCopy(paragraph);
+
+    return copy.length > 0 && copy !== summaryCopy && !(summaryCopy && copy.startsWith(summaryCopy));
+  };
+
+  const sections = generatedContentSections(generated)
+    .map((section) => ({
+      heading: section.heading,
+      body: splitGeneratedDailyBody(section.body).filter(keepParagraph)
+    }))
+    .filter((section) => section.body.length > 0);
+
+  if (sections.length > 0) {
+    return sections;
+  }
+
+  const paragraphs = generatedContentParagraphs(generated)
+    .map((paragraph) => stripTldrPrefix(paragraph))
+    .filter(keepParagraph);
+
+  return paragraphs.length > 0 ? [{ body: paragraphs }] : [];
+}
+
 function importContentRegistry(domain: ContentDomain): Promise<LazyContentRegistry> {
   if (domain === "sky") {
     return import("./content/skyRegistry");
@@ -4569,7 +4606,7 @@ function circleLordOfYearDetailArticle(planet: string, activeCharts: ManualChart
           : "",
         transit
           ? circleTransitParagraph(chart, transit, currentSky, timing)
-          : `If you are close to ${chart.displayName}, it may help to notice how ${planet} themes are shaping their choices, timing, and reactions right now.`
+          : `If you are close to ${chart.displayName}, it may help to notice how ${groupPlanetThemes(planet)} are shaping their choices, timing, and reactions right now.`
       ].filter(Boolean);
 
       return {
@@ -5504,7 +5541,7 @@ function groupHouseExamples(house: number) {
 function groupPlanetHeadline(planet: string) {
   const headlines: Record<string, string> = {
     Moon: "Feelings may be closer to the surface",
-    Mercury: "The same conversation may be taking different forms",
+    Mercury: "Different people may be trying to say what needs saying",
     Venus: "Different people are sorting out what feels worth choosing",
     Mars: "More than one person may be reacting faster than usual",
     Jupiter: "Possibility may be expanding in different directions",
@@ -6594,6 +6631,10 @@ export function App() {
             "Write this as the user's personal daily horoscope for the Updates page.",
             "Summarize the most important information from all of today's aspects, transits, and timing signals.",
             "Start the summary with 'TLDR:' followed by the plainest useful takeaway.",
+            "Use the summary field for the TLDR only.",
+            "Use the body or sections field for a separate daily write-up of 2 short paragraphs.",
+            "Do not repeat the TLDR sentence in the body.",
+            "The body should expand the practical read for today in 120 to 180 words.",
             "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
             "Name the concrete pressure, choice, behavior, or relationship pattern the user may notice today.",
             "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
@@ -6602,7 +6643,7 @@ export function App() {
             "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
             "Do not make this an annual profection explanation. The annual timing card appears separately below.",
             "Do not use the words profection, time lord, generated, source-backed, backend, or knowledge base.",
-            "Keep it warm, specific, practical, and around 70 to 110 words."
+            "Keep the TLDR summary around 40 to 70 words; keep the body around 120 to 180 words."
           ].join("\n")
         });
 
@@ -8247,16 +8288,16 @@ function natalRulerParagraph({
     const originalArea = possessiveArea(focus);
 
     if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its ruler shows what the placement needs in order to function well, and where the story keeps leading. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps developing through the same territory. ${rulerProcess}`;
+      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same part of life for clarity, pressure, and development. ${rulerProcess}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its ruler shows what the placement needs in order to function well, and where the story keeps leading. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps connecting back to ${rulerHouseLink}. ${rulerProcess}`;
   }
 
   if (houseRuler) {
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. This matters because the house does not develop in isolation. Its natal placement shows where this meaning becomes more personal and practical over time. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. Its natal placement shows where this meaning becomes more personal and practical over time. ${rulerProcess}`;
   }
 
   return `The ruler of your ${houseLabel} shows where the meaning becomes more personal and practical over time.`;
@@ -8962,7 +9003,7 @@ function natalPlacementDetailArticle(
   const lensBody = ownerPlacementStructureBody || fallbackSection?.body || (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
-      heading: "Placement structure",
+      heading: "",
       tldr: "",
       body: lensBody
     }]
@@ -11606,10 +11647,14 @@ function ProfileView({
   });
   const generatedDailyHeadline = personalTimingGenerated?.headline?.trim();
   const generatedDailySummary = liveGeneratedSummaryIfPresent(personalTimingGenerated);
+  const generatedDailyWriteup = generatedDailySummary
+    ? generatedDailyWriteupSections(personalTimingGenerated, generatedDailySummary)
+    : [];
   const dailyUpdateSummary = generatedDailyHeadline && generatedDailySummary
     ? {
         headline: generatedDailyHeadline,
         summary: generatedDailySummary,
+        writeup: generatedDailyWriteup,
         keyFactors: [],
         status: "ready" as const
       }
@@ -11709,12 +11754,12 @@ function RelationshipApiSummary({
 
   const headline = response?.app.headline ?? "Calculating relationship pattern";
   const summary = response?.app.summary
-    ?? "Checking synastry contacts, composite aspects, and relationship themes.";
+    ?? "Checking synastry contacts, composite aspects, and relationship patterns.";
   const keyFactors = response?.app.keyFactors ?? [];
 
   return (
     <section className="relationship-api-summary" aria-label={`${mode} relationship summary`}>
-      <span className="eyebrow section-label">{mode === "synastry" ? "Relationship themes" : "Composite themes"}</span>
+      <span className="eyebrow section-label">{mode === "synastry" ? "Relationship patterns" : "Composite pattern"}</span>
       <h3>{headline}</h3>
       <p>{summary}</p>
       {keyFactors.length > 0 && (

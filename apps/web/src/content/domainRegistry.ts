@@ -509,7 +509,7 @@ function approvedKnowledgeStatus(value: KnowledgeItem["status"] | undefined) {
 
 function readablePointTopic(point: string, mode: "sky" | "natal") {
   return (mode === "sky" ? skyPlanetTopic[point] ?? planetTopic[point] : planetTopic[point])
-    ?? `${titleize(point).toLowerCase()} themes`;
+    ?? `what ${titleize(point)} tends to describe`;
 }
 
 function readableAspectSummary(planetA: string, aspect: string, planetB: string, mode: "sky" | "natal") {
@@ -523,7 +523,7 @@ function readableAspectSummary(planetA: string, aspect: string, planetB: string,
     return `${planetALabel} ${verb} ${planetBLabel} today. ${sentenceStart(planetATheme)} ${aspectBridge(aspect, planetBTheme)}.`;
   }
 
-  return `${planetALabel} ${aspect} ${planetBLabel} can link ${planetATheme} with ${planetBTheme}.`;
+  return `${planetALabel} ${aspect} ${planetBLabel} describes a pattern between ${planetATheme} and ${planetBTheme}.`;
 }
 
 function skyAspectHeadline(planetA: string, aspect: string, planetB: string) {
@@ -559,8 +559,8 @@ function skyAspectHeadline(planetA: string, aspect: string, planetB: string) {
 function skyAspectNotice(planetA: string, aspect: string, planetB: string) {
   const planetALabel = titleize(planetA);
   const planetBLabel = titleize(planetB);
-  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
-  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
+  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `what ${planetALabel} tends to describe`;
+  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `what ${planetBLabel} tends to describe`;
   const pair = [planetA, planetB].sort().join("-");
   const specific: Record<string, string> = {
     "mercury-neptune": "Conversations can blur today. You may think you said one thing while someone else hears another, or a message may land in a tone nobody intended.",
@@ -587,14 +587,14 @@ function skyAspectNotice(planetA: string, aspect: string, planetB: string) {
     return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, so ${firstTopic} may work more easily with ${secondTopic}. You may notice a small opening where a usual pattern can shift without needing a dramatic push.`;
   }
 
-  return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, blending ${firstTopic} with ${secondTopic}. You may notice these two themes showing up at the same time instead of as separate issues.`;
+  return `${planetALabel} ${aspectVerb[aspect] ?? aspect} ${planetBLabel} today, so ${firstTopic} and ${secondTopic} may show up at the same time instead of as separate issues.`;
 }
 
 function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
   const planetALabel = titleize(planetA);
   const planetBLabel = titleize(planetB);
-  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `${planetALabel.toLowerCase()} themes`;
-  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `${planetBLabel.toLowerCase()} themes`;
+  const firstTopic = skyPlanetTopic[planetA] ?? planetTopic[planetA] ?? `what ${planetALabel} tends to describe`;
+  const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `what ${planetBLabel} tends to describe`;
   const pair = [planetA, planetB].sort().join("-");
   const specific: Record<string, string> = {
     "mercury-neptune": "Mercury describes how information moves. Neptune softens boundaries, so facts, impressions, memories, and wishes can slide into each other. The square creates friction between what is being said and what is actually clear.",
@@ -676,18 +676,17 @@ function natalAspectAdvice(planetA: string, aspect: string, planetB: string) {
 function transitNatalSummary(transiting: string, aspect: string, natal: string) {
   const transitingLabel = titleize(transiting);
   const natalLabel = titleize(natal);
-  const transitingTheme = planetTopic[transiting] ?? `${transitingLabel.toLowerCase()} themes`;
-  const natalTheme = planetTopic[natal] ?? `${natalLabel.toLowerCase()} themes`;
+  const transitingTheme = planetTopic[transiting] ?? `what ${transitingLabel} tends to describe`;
+  const natalTheme = planetTopic[natal] ?? `what ${natalLabel} tends to describe`;
   const verb = aspectVerb[aspect] ?? aspect;
 
-  return `${transitingLabel} ${verb} your natal ${natalLabel}, bringing ${transitingTheme} into contact with ${natalTheme}.`;
+  return `${transitingLabel} ${verb} your natal ${natalLabel}. This may make ${natalTheme} louder through ${transitingTheme}.`;
 }
 
 function transitNatalAdvice(transiting: string, aspect: string, natal: string) {
   const transitingLabel = titleize(transiting);
   const natalLabel = titleize(natal);
-  const transitTheme = planetTopic[transiting] ?? `${transitingLabel.toLowerCase()} themes`;
-  const natalTheme = planetTopic[natal] ?? `${natalLabel.toLowerCase()} themes`;
+  const natalTheme = planetTopic[natal] ?? `what ${natalLabel} tends to describe`;
 
   const actionByAspect: Record<string, string> = {
     conjunction: "Notice where the two topics are blending. Choose one concrete response instead of letting the whole pattern run the day.",
@@ -697,14 +696,14 @@ function transitNatalAdvice(transiting: string, aspect: string, natal: string) {
     sextile: "The support is available, but it still needs participation. Pick one small action that gives the opening somewhere practical to land."
   };
 
-  return `This transit can show where ${transitingLabel} themes are activating your natal ${natalLabel} pattern: ${natalTheme}. ${actionByAspect[aspect] ?? "Treat it as a short window for noticing the pattern and choosing the cleanest next step."}`;
+  return `This transit can make your natal ${natalLabel} pattern more noticeable: ${natalTheme}. ${actionByAspect[aspect] ?? "Treat it as a short window for noticing the pattern and choosing the cleanest next step."}`;
 }
 
 function placementSummary(planet: string, sign: string, mode: "sky" | "natal") {
   const planetLabel = titleize(planet);
   const signLabel = titleize(sign);
   const topic = mode === "sky" ? skyPlanetTopic[planet] ?? planetTopic[planet] : planetTopic[planet];
-  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+  const style = signStyle[sign] ?? `the ${signLabel} way of moving through life`;
 
   if (mode === "sky") {
     if (planet === "sun") {
@@ -725,7 +724,7 @@ function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
   const planetLabel = titleize(planet);
   const signLabel = titleize(sign);
   const topic = mode === "sky" ? skyPlanetTopic[planet] ?? planetTopic[planet] : planetTopic[planet];
-  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+  const style = signStyle[sign] ?? `the ${signLabel} way of moving through life`;
 
   if (mode === "sky") {
     if (planet === "sun") {
@@ -745,8 +744,8 @@ function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
 function skyPlacementDetailParagraphs(planet: string, sign: string) {
   const planetLabel = titleize(planet);
   const signLabel = titleize(sign);
-  const topic = skyPlanetTopic[planet] ?? planetTopic[planet] ?? `${planetLabel.toLowerCase()} themes`;
-  const style = signStyle[sign] ?? `${signLabel.toLowerCase()} themes`;
+  const topic = skyPlanetTopic[planet] ?? planetTopic[planet] ?? `what ${planetLabel} tends to describe`;
+  const style = signStyle[sign] ?? `the ${signLabel} way of moving through life`;
 
   if (planet === "sun") {
     return cleanParagraphs([
