@@ -3342,7 +3342,6 @@ export function GeneratedContentAdminDashboard() {
                           <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
                           <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
                         </span>
-                        <small className="admin-content-row-subtitle">{record.subtitle || record.contentKey}</small>
                       </span>
                       <span className="admin-content-location">
                         <strong>{appLocationLabel(record)}</strong>
@@ -3350,7 +3349,7 @@ export function GeneratedContentAdminDashboard() {
                       </span>
                       <span className="admin-content-row-date">{adminDateLabel(record.targetDate)}</span>
                       <span className="admin-content-row-section">{contentCategoryLabel(record)}</span>
-                      <span className="admin-content-row-meta">{record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
+                      <span className="admin-content-row-meta">{generatedContentSurfaceLabels[record.surface]} · {record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
                     </button>
                   ))}
                   {allContentRecords.length === 0 && (
