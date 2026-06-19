@@ -603,6 +603,7 @@ export function FriendPlacementTable({
   descriptionContext = "person",
   generatedContent,
   generatedContext = "natal",
+  onPlacementClick,
   ownerName,
   showTitle = true
 }: {
@@ -612,6 +613,7 @@ export function FriendPlacementTable({
   descriptionContext?: PlacementDescriptionContext;
   generatedContent?: unknown;
   generatedContext?: "natal" | "composite";
+  onPlacementClick?: (row: SocialPlacementRow) => void;
   ownerName?: string;
   showTitle?: boolean;
 }) {
@@ -632,6 +634,7 @@ export function FriendPlacementTable({
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
+                onClick={onPlacementClick ? () => onPlacementClick(row) : undefined}
                 pointName={row.label}
                 retrograde={row.retrograde}
                 title={placementTitleFromParts(row.label, row.sign, row.retrograde)}
