@@ -41,7 +41,7 @@ import {
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
-import type { PlacementHouseInsight } from "./components/charts/PlacementRows";
+import type { PlacementHouseInsight, SocialPlacementRow } from "./components/charts/PlacementRows";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -7775,6 +7775,33 @@ function natalPlacementDetailArticle(
   };
 }
 
+function natalPlacementSkyDetail(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  liveWriteup: LiveGeneratedContent | null,
+  generatedContent: GeneratedContentMap = new Map(),
+  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void
+): SkyDetail {
+  const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect);
+
+  return {
+    glyph: article.glyph || pointGlyph(position.planet),
+    kicker: "Natal placement",
+    title: article.title,
+    meta: article.subtitle,
+    subtitle: article.subtitle,
+    compactHeader: article.compactHeader,
+    bodyBeforeSections: article.bodyBeforeSections,
+    retrograde: position.motion === "retrograde",
+    body: article.body ?? [],
+    sections: article.sections.map((section) => ({
+      heading: section.heading,
+      body: section.body
+    })),
+    relatedAspects: article.relatedAspects
+  };
+}
+
 function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: GeneratedContentMap) {
   const content = approvedVoiceOrKnowledgeFallback(placementContentId("Ascendant", risingSign));
   const generated = generatedContent ? liveGeneratedContent(generatedContent, placementContentId("Ascendant", risingSign)) : null;
@@ -8690,7 +8717,6 @@ function ActiveAspects({
                       <h3>{title}</h3>
                       <span className="aspect-row-timing" aria-label={timing.label}>
                         <span className="planet-placement-row__duration">{timing.durationLabel}</span>
-                        <span aria-hidden="true">·</span>
                         <span>{timing.rangeLabel}</span>
                       </span>
                       {rowSummary ? <p>{rowSummary}</p> : null}
@@ -10336,7 +10362,6 @@ function ProfileView({
           </span>
           <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
             <span className="planet-placement-row__duration">{timing.durationLabel}</span>
-            <span aria-hidden="true">·</span>
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
@@ -10586,6 +10611,18 @@ function ManualChartsPanel({
   const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
   const selectedFriendMoon = selectedChart?.natalChart?.positions.find((position) => position.planet === "Moon");
+  const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
+    const position = selectedChart?.natalChart?.positions.find((candidate) => candidate.planet === row.label);
+
+    if (!position || !selectedChart?.natalChart) {
+      return;
+    }
+
+    const contentKey = natalPlacementWriteupContentKey(position);
+    const liveWriteup = relationshipGeneratedContent.get(contentKey) ?? null;
+
+    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, relationshipGeneratedContent));
+  };
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
     : selectedFriendSun
@@ -11320,6 +11357,7 @@ function ManualChartsPanel({
                       descriptionContext={selectedChartIsEvent ? "chart" : "person"}
                       generatedContent={relationshipGeneratedContent}
                       generatedContext="natal"
+                      onPlacementClick={openFriendNatalPlacementDetail}
                       ownerName={selectedChart.displayName}
                       showTitle={false}
                     />
