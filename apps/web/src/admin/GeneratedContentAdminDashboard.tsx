@@ -1813,16 +1813,6 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
-    if (record.source === "private") {
-      setMessage("Personal content rows are read-only in this dashboard for now.");
-      return;
-    }
-
-    if (record.status === "REVIEWED" || record.status === "LIVE") {
-      setMessage("This copy is already approved. Move it back to Draft before regenerating.");
-      return;
-    }
-
     const fallbackText = fallbackReaderTextForReview(record);
     setEditingReviewId(record.id);
     setReviewEditTitle(record.title);
@@ -1862,6 +1852,7 @@ export function GeneratedContentAdminDashboard() {
             },
             knowledgeIds: [],
             provider: reviewGenerationProvider,
+            save: false,
             voiceNotes: [
               "Write a daily astrology transit interpretation in the TLDR Astro voice.",
               "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
@@ -1891,8 +1882,6 @@ export function GeneratedContentAdminDashboard() {
         currentRecord.id === record.id
           ? {
               ...currentRecord,
-              source: "global",
-              status: "DRAFT",
               title: nextTitle,
               summary: nextSummary,
               body: nextBody,
@@ -1906,7 +1895,7 @@ export function GeneratedContentAdminDashboard() {
         setSelectedId(savedRow.id);
         setDraft(adminDraftFromRow(savedRow));
       }
-      setMessage(`Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Review and save before approving.`);
+      setMessage(`Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Save or publish when it looks right.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
