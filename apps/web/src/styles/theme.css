@@ -126,8 +126,8 @@
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
   --elev-card:
-    0 1px 1px rgba(28, 32, 52, 0.04),
-    0 8px 22px -18px rgba(28, 32, 52, 0.16);
+    0 1px 1px rgba(28, 32, 52, 0.025),
+    0 6px 18px -18px rgba(28, 32, 52, 0.11);
   --elev-hero:
     0 1px 1px rgba(28, 32, 52, 0.04),
     0 8px 18px -8px rgba(28, 32, 52, 0.13),
@@ -263,7 +263,7 @@
 
   /* 3. COMPONENT TOKENS */
   --card-bg: var(--surface);
-  --card-border: var(--line);
+  --card-border: var(--line-2);
   --card-radius: 10px;
   --card-radius-sm: 10px;
   --card-shadow: var(--shadow-card);
@@ -577,7 +577,7 @@
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
   --card-bg: var(--surface);
-  --card-border: var(--line);
+  --card-border: var(--line-2);
   --card-shadow: var(--shadow-card);
   --card-shadow-flat: var(--shadow-flat);
   --card-shadow-raised: var(--card-shadow);
