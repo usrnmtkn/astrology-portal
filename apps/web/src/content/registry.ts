@@ -697,11 +697,11 @@ const rowPhraseByAspect: Record<string, string> = {
 };
 
 const detailPhraseByAspect: Record<string, string> = {
-  conjunction: "These two themes are close together, so they may feel harder to separate. What usually runs in the background can become more obvious.",
-  opposition: "These two themes may pull in different directions. The tension can make each side easier to see.",
-  sextile: "These two themes can support each other, but the opening may be subtle. A small choice or conversation can make the connection easier to use.",
-  square: "These two themes can rub against each other. The friction may point to an adjustment that has been waiting for attention.",
-  trine: "These two themes can move together with less resistance. The ease may be quiet, but it can make the day feel more coherent."
+  conjunction: "These two parts of the day are close together, so they may feel harder to separate. What usually runs in the background can become more obvious.",
+  opposition: "These two parts of the day may pull in different directions. The tension can make each side easier to see.",
+  sextile: "These two parts of the day can support each other, but the opening may be subtle. A small choice or conversation can make the connection easier to use.",
+  square: "These two parts of the day can rub against each other. The friction may point to an adjustment that has been waiting for attention.",
+  trine: "These two parts of the day can move together with less resistance. The ease may be quiet, but it can make the day feel more coherent."
 };
 
 function generatedAspectDisplaySummary(planetAId: string, aspectId: string, planetBId: string, planetAThemes: string[], planetBThemes: string[]) {
@@ -714,7 +714,7 @@ function generatedAspectDisplaySummary(planetAId: string, aspectId: string, plan
 
 function generatedAspectDetailParagraphs(planetAName: string, aspectId: string, planetBName: string) {
   return [
-    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, bringing their themes into the same current sky story.`,
+    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, so what each planet describes may show up at the same time.`,
     detailPhraseByAspect[aspectId] ?? detailPhraseByAspect.conjunction
   ];
 }
@@ -745,7 +745,7 @@ function displaySignName(id: string) {
 function currentSkyPlacementBody(placement: CanonicalPlacement, planetId: string, signId: string) {
   const planetName = displayPlanetName(planetId);
   const signName = displaySignName(signId);
-  const process = currentSkyPlanetProcess[planetId] ?? currentSkyPlanetTopic[planetId] ?? `${planetName.toLowerCase()} themes`;
+  const process = currentSkyPlanetProcess[planetId] ?? currentSkyPlanetTopic[planetId] ?? `what ${planetName} tends to describe`;
   const quality = currentSkySignQuality[signId] ?? currentSkySignStyle[signId] ?? `${signName}'s style`;
   const observation = currentSkySignObservation[signId] ?? `${signName} gives the moment a distinct style`;
   const outcome = currentSkyPlanetOutcome[planetId] ?? `${process} may become easier to notice`;
@@ -1083,8 +1083,8 @@ function generatedAspectKnowledge(id: string): KnowledgeItem | null {
       coreTheme: `${sentenceStart(sentenceList(planetAThemes))} meets ${sentenceList(planetBThemes)} through ${sentenceList(aspectThemes)}.`,
       displaySummary: generatedAspectDisplaySummary(factors.planetA, factors.aspect, factors.planetB, planetAThemes, planetBThemes),
       detailParagraphs: generatedAspectDetailParagraphs(planetAName, factors.aspect, planetBName),
-      livedExperience: `${planetAName} and ${planetBName} are connected through a ${aspectName.toLowerCase()}, so the day may ask these two themes to be read together rather than separately.`,
-      gift: `A clearer relationship between ${planetAName.toLowerCase()} themes and ${planetBName.toLowerCase()} themes.`,
+      livedExperience: `${planetAName} and ${planetBName} are connected through a ${aspectName.toLowerCase()}, so what each planet describes may need to be read together rather than separately.`,
+      gift: `A clearer relationship between what ${planetAName} describes and what ${planetBName} describes.`,
       challenge: `Letting one side of the aspect dominate before the other has been understood.`
     },
     sources: [
