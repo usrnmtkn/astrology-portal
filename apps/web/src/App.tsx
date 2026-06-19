@@ -2926,14 +2926,7 @@ function SkyDetailArticle({
   const [lede] = paragraphs;
   const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
   const articleSub = (detailSubtitle || statement || (typeof lede === "string" ? lede : "")).trim();
-  const articleSubCopy = normalizedArticleCopy(articleSub);
-  const fallbackParagraphs = paragraphs.filter((paragraph, index) => {
-    if (index !== 0 || !articleSubCopy) {
-      return true;
-    }
-
-    return normalizedArticleCopy(paragraph) !== articleSubCopy;
-  });
+  const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
   const visibleMetaRows = metaRows.filter(() => false);
@@ -7947,15 +7940,48 @@ function stripGeneratedTitleParagraph(paragraphs: string[], title: string) {
   });
 }
 
+function firstSentences(value: string, count: number) {
+  const sentences = value
+    .replace(/\s+/g, " ")
+    .trim()
+    .match(/[^.!?]+[.!?]+(?:["')\]]+)?|[^.!?]+$/g)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) ?? [];
+
+  return sentences.slice(0, count).join(" ");
+}
+
+function retrogradeGeneratedBodyParagraphs(position: PlanetPosition, generated: LiveGeneratedContent | null) {
+  return stripGeneratedTitleParagraph(
+    generatedContentParagraphs(generated),
+    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+  );
+}
+
+function retrogradePreviewCopy(
+  position: PlanetPosition,
+  generated: LiveGeneratedContent | null,
+  content: ContentFallback
+) {
+  const generatedParagraphs = retrogradeGeneratedBodyParagraphs(position, generated);
+  const sourceText = generatedParagraphs.join(" ").trim() || generated?.summary?.trim();
+
+  if (sourceText) {
+    return firstSentences(sourceText, 3);
+  }
+
+  return firstSentences(
+    content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || "",
+    3
+  );
+}
+
 function retrogradeKnowledgeCopy(
   position: PlanetPosition,
   generated: LiveGeneratedContent | null,
   content: ContentFallback
 ) {
-  const generatedParagraphs = stripGeneratedTitleParagraph(
-    generatedContentParagraphs(generated),
-    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
-  );
+  const generatedParagraphs = retrogradeGeneratedBodyParagraphs(position, generated);
   const generatedSummary = generatedParagraphs[0] || generated?.summary?.trim();
 
   if (generatedSummary) {
@@ -9633,7 +9659,7 @@ function RetrogradeCallout({
     ];
 
     return {
-      blurb: retrogradeKnowledgeCopy(position, generated, content),
+      blurb: retrogradePreviewCopy(position, generated, content),
       count: formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
       detail: {
         glyph: `${position.glyph} ℞`,
