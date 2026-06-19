@@ -969,6 +969,7 @@ body,
 }
 
 .admin-review-context-strip span,
+.admin-review-tldr-editor span,
 .admin-review-copy-editor span,
 .admin-review-generation-bar span {
   color: var(--admin-muted);
@@ -1049,6 +1050,25 @@ body,
 .admin-review-copy-editor {
   display: grid;
   gap: 10px;
+}
+
+.admin-review-tldr-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-review-tldr-editor textarea {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.45;
+  min-height: 128px;
+  resize: vertical;
+}
+
+.admin-review-tldr-editor textarea[readonly] {
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(245, 243, 238, 0.86);
+  cursor: default;
 }
 
 .admin-review-copy-editor textarea {
