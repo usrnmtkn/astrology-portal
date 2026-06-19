@@ -1154,12 +1154,60 @@ function fallbackReaderTextForReview(record: AdminReviewRecord) {
   return `${title} is active in the selected ${surface} window.`;
 }
 
+function stripTldrPrefix(value: string) {
+  return value.trim().replace(/^tldr\s*:\s*/i, "").trim();
+}
+
+function splitLeadingTldr(value: string) {
+  const trimmed = value.trim();
+  const match = trimmed.match(/^tldr\s*:\s*([\s\S]*?)(?:\n{2,}([\s\S]*)|$)/i);
+
+  if (!match) {
+    return {
+      tldr: "",
+      body: value
+    };
+  }
+
+  return {
+    tldr: match[1]?.trim() ?? "",
+    body: match[2]?.trim() ?? ""
+  };
+}
+
+function reviewTldrForReview(record: AdminReviewRecord) {
+  const summary = stripTldrPrefix(record.summary);
+
+  if (summary) {
+    return summary;
+  }
+
+  return splitLeadingTldr(record.body).tldr;
+}
+
+function bodyWithoutLeadingTldr(value: string) {
+  const split = splitLeadingTldr(value);
+
+  return split.tldr ? split.body : value;
+}
+
+function normalizeReviewCopy(summary: string, body: string, fallbackBody: string) {
+  const splitBody = splitLeadingTldr(body);
+  const nextSummary = stripTldrPrefix(summary) || splitBody.tldr;
+  const nextBody = (splitBody.tldr ? splitBody.body : body).trim() || bodyWithoutLeadingTldr(fallbackBody).trim() || fallbackBody.trim();
+
+  return {
+    summary: nextSummary,
+    body: nextBody
+  };
+}
+
 function readerFacingTextForReview(record: AdminReviewRecord) {
   if (shouldUseDeterministicPlaceholder(record)) {
     return fallbackReaderTextForReview(record);
   }
 
-  return record.body.trim() || record.summary.trim() || fallbackReaderTextForReview(record);
+  return bodyWithoutLeadingTldr(record.body.trim() || fallbackReaderTextForReview(record));
 }
 
 function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "saved" {
@@ -1451,6 +1499,11 @@ export function GeneratedContentAdminDashboard() {
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
   const selectedReviewCopyState = selectedReviewRecord ? reviewCopyState(selectedReviewRecord) : "placeholder";
+  const selectedReviewTldr = selectedReviewRecord
+    ? isEditingReviewRecord
+      ? reviewEditSummary
+      : reviewTldrForReview(selectedReviewRecord)
+    : "";
   const selectedReviewText = selectedReviewRecord
     ? isEditingReviewRecord
       ? reviewEditBody
@@ -1792,10 +1845,11 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function beginReviewEdit(record: AdminReviewRecord) {
+    const copy = readerFacingTextForReview(record);
     setEditingReviewId(record.id);
     setReviewEditTitle(record.title);
-    setReviewEditSummary(record.summary.trim() || fallbackReaderTextForReview(record));
-    setReviewEditBody(readerFacingTextForReview(record));
+    setReviewEditSummary(reviewTldrForReview(record));
+    setReviewEditBody(bodyWithoutLeadingTldr(copy));
   }
 
   function cancelReviewEdit() {
@@ -1815,8 +1869,13 @@ export function GeneratedContentAdminDashboard() {
     try {
       const nextStatus = statusForReviewSave(record, requestedStatus ?? record.status);
       const isActiveEdit = editingReviewId === record.id;
-      const nextBody = (isActiveEdit ? reviewEditBody : readerFacingTextForReview(record)).trim() || readerFacingTextForReview(record);
-      const nextSummary = (isActiveEdit ? reviewEditSummary : record.summary).trim() || nextBody.split(/\n+/)[0]?.trim() || nextBody;
+      const normalizedCopy = normalizeReviewCopy(
+        isActiveEdit ? reviewEditSummary : reviewTldrForReview(record),
+        isActiveEdit ? reviewEditBody : readerFacingTextForReview(record),
+        readerFacingTextForReview(record)
+      );
+      const nextBody = normalizedCopy.body;
+      const nextSummary = normalizedCopy.summary;
       const nextTitle = (isActiveEdit ? reviewEditTitle : record.title).trim() || record.title;
       const existingRow = record.rawGlobalRow;
 
@@ -1924,8 +1983,8 @@ export function GeneratedContentAdminDashboard() {
     const fallbackText = fallbackReaderTextForReview(record);
     setEditingReviewId(record.id);
     setReviewEditTitle(record.title);
-    setReviewEditSummary(fallbackText.split(/\n+/)[0]?.trim() ?? fallbackText);
-    setReviewEditBody(fallbackText);
+    setReviewEditSummary(splitLeadingTldr(fallbackText).tldr);
+    setReviewEditBody(bodyWithoutLeadingTldr(fallbackText));
     setIsGeneratingReviewDraft(true);
     setMessage("Generating a draft. The deterministic placeholder is loaded while the provider responds.");
     try {
@@ -1982,8 +2041,13 @@ export function GeneratedContentAdminDashboard() {
       const generated = payload.generated;
       const savedRow = payload.saved?.[0] ?? null;
       const nextTitle = generated.headline?.trim() || record.title;
-      const nextSummary = generated.summary?.trim() || "";
-      const nextBody = generated.body?.trim() || nextSummary || fallbackReaderTextForReview(record);
+      const normalizedGeneratedCopy = normalizeReviewCopy(
+        generated.summary?.trim() || "",
+        generated.body?.trim() || "",
+        fallbackReaderTextForReview(record)
+      );
+      const nextSummary = normalizedGeneratedCopy.summary;
+      const nextBody = normalizedGeneratedCopy.body;
 
       setEditingReviewId(record.id);
       setReviewEditTitle(nextTitle);
@@ -3180,7 +3244,24 @@ export function GeneratedContentAdminDashboard() {
                         </button>
                       </div>
 
+                      <label className="admin-review-tldr-editor">
+                        <span>TLDR</span>
+                        <textarea
+                          rows={4}
+                          value={selectedReviewTldr}
+                          placeholder="Optional short reader-facing TLDR."
+                          readOnly={!canEditSelectedReviewRecord}
+                          onChange={(event) => {
+                            if (!isEditingReviewRecord && selectedReviewRecord) {
+                              beginReviewEdit(selectedReviewRecord);
+                            }
+                            setReviewEditSummary(stripTldrPrefix(event.target.value));
+                          }}
+                        />
+                      </label>
+
                       <label className="admin-review-copy-editor">
+                        <span>Body</span>
                         <textarea
                           rows={18}
                           value={selectedReviewText}
@@ -3189,9 +3270,14 @@ export function GeneratedContentAdminDashboard() {
                             if (!isEditingReviewRecord && selectedReviewRecord) {
                               beginReviewEdit(selectedReviewRecord);
                             }
-                            setReviewEditBody(event.target.value);
-                            if (!reviewEditSummary.trim()) {
-                              setReviewEditSummary(event.target.value.split(/\n+/)[0]?.trim() ?? "");
+                            const nextCopy = event.target.value;
+                            const splitCopy = splitLeadingTldr(nextCopy);
+
+                            if (splitCopy.tldr) {
+                              setReviewEditSummary((currentSummary) => currentSummary.trim() ? currentSummary : splitCopy.tldr);
+                              setReviewEditBody(splitCopy.body);
+                            } else {
+                              setReviewEditBody(nextCopy);
                             }
                           }}
                         />
