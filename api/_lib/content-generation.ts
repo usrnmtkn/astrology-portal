@@ -1714,6 +1714,7 @@ export function evaluateEditorialCoherence(
   const technicalMainCopy = technicalAstrologyInMainCopy(draft);
   const unsupportedExternalScene = unsupportedExternalSceneInMainCopy(draft, context.facts);
   const timeLordPlanet = timeLordPlanetFromFacts(context.facts);
+  const isDailySkyAspect = isDailySkyFeedAspect(context);
   const timeLordSceneText = [
     summary,
     openingBody,
@@ -1752,7 +1753,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (technicalMainCopy.hasTechnicalAstrology) {
+  if (!isDailySkyAspect && technicalMainCopy.hasTechnicalAstrology) {
     addEditorialFailure(
       failures,
       "TECHNICAL_ASTROLOGY_IN_MAIN_COPY",
@@ -1807,7 +1808,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText)) {
+  if (!isDailySkyAspect && (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText))) {
     addEditorialFailure(
       failures,
       "ASTROLOGY_OVERLOAD",
