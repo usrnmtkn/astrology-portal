@@ -631,6 +631,7 @@ function skyPlacementGeneratedContentKeys(position: PlanetPosition, generatedAt:
 
   if (position.motion === "retrograde") {
     keys.add(`sky-retrograde-${normalizeContentIdPart(position.planet)}-${dateKey}`);
+    keys.add(`sky-retrograde-${normalizeContentIdPart(position.planet)}`);
   }
 
   keys.add(placementContentId(position.planet, position.sign, "sky"));
@@ -4232,7 +4233,7 @@ function profectionHouseMeaning(house: number) {
     12: "A 12th house year turns the volume down on the outside world and turns the volume up on what is happening internally. It can coincide with privacy, retreat, fatigue, hidden pressure, endings, and things that need time before they can be explained."
   };
 
-  return meanings[house] ?? `A ${ordinalHouse(house)} house year often brings this area of life forward in ways that can take time to understand.`;
+  return meanings[house] ?? `A ${ordinalHouse(house)} house year often brings this part of life forward in ways that can take time to understand.`;
 }
 
 function houseRealLifeQuestion(house: number) {
@@ -8091,69 +8092,6 @@ const natalPlanetFallbackFrames: Record<string, NatalPlacementFrame> = {
   }
 };
 
-function natalPlanetHouseParagraph(
-  position: PlanetPosition,
-  houseFrame: { intro: string; focus: string; lived: string },
-  houseLabel: string
-) {
-  const focus = houseFrame.focus;
-  const title = natalPlacementFullTitle(position);
-
-  switch (position.planet) {
-    case "Sun":
-      return `Your identity grows through ${focus}. With your ${title}, you discover who you are through ${houseFrame.lived}. This placement becomes clearer when life gives you direct experience here, because your confidence needs something real to test itself against.`;
-    case "Moon":
-      return `Your emotional life is shaped through ${focus}. With your ${title}, your body, moods, and instincts respond strongly to ${houseFrame.lived}. This is where you learn what helps you feel safe enough to stay present, and what begins to unsettle you when your needs have been ignored for too long.`;
-    case "Mercury":
-      return `Your mind develops through ${focus}. With your ${title}, you learn by noticing patterns, asking better questions, and giving language to ${houseFrame.lived}. What you observe here can change how you think, speak, and move.`;
-    case "Venus":
-      return `Your sense of value grows through ${focus}. With your ${title}, love, desire, beauty, and attraction are tested through ${houseFrame.lived}. You learn what feels worth choosing by paying attention to what continues to feel real after the first pull passes.`;
-    case "Mars":
-      return `Your drive becomes active through ${focus}. With your ${title}, desire, courage, and action are tested through ${houseFrame.lived}. You may feel most alive here when there is something to protect, build, challenge, or move toward with your whole body behind it.`;
-    case "Jupiter":
-      return `Your growth opens through ${focus}. With your ${title}, opportunity comes through ${houseFrame.lived}. You expand by trusting experience, taking the wider view, and letting this part of your life show you what more is possible.`;
-    case "Saturn":
-      return `Your maturity develops through ${focus}. With your ${title}, responsibility, structure, and time shape how you deal with ${houseFrame.lived}. It may ask more of you at first, but it can become a place where effort turns into authority you can trust.`;
-    case "Uranus":
-      return `Your freedom develops through ${focus}. With your ${title}, change does not stay theoretical. It arrives through ${houseFrame.lived}, showing you where an old pattern has stopped telling the truth and where your life needs more room to breathe.`;
-    case "Neptune":
-      return `Your imagination gathers through ${focus}. With your ${title}, sensitivity, longing, compassion, and spiritual perception move through ${houseFrame.lived}. This area can inspire you deeply, but it also asks for enough clarity to keep the dream connected to real life.`;
-    case "Pluto":
-      return `Your power changes through ${focus}. With your ${title}, intensity gathers around ${houseFrame.lived}. This area can show where control, fear, honesty, and renewal have to be faced directly instead of managed from a distance.`;
-    default:
-      return `${position.planet} becomes active through ${focus}. With your ${title}, this placement develops through ${houseFrame.lived}.`;
-  }
-}
-
-function natalPlanetSignParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
-  const signTone = natalSignTonePhrases[position.sign] ?? "express this part of you with more honesty and precision";
-
-  switch (position.planet) {
-    case "Sun":
-      return `In ${position.sign}, your Sun has a ${signFrame.quality} quality. You are learning to ${signTone}. Your identity becomes stronger when you let this part of you move in its own language instead of forcing it into an answer that does not fit.`;
-    case "Moon":
-      return `In ${position.sign}, your Moon responds with a ${signFrame.quality} quality. Your instincts are shaped by the need to ${signTone}. Your body often knows when this pattern is supported and when it has started protecting itself too hard.`;
-    case "Mercury":
-      return `In ${position.sign}, Mercury works with a ${signFrame.quality} quality. Your perception sharpens when you can ${signTone}. Your mind works best when this pattern has room to observe clearly instead of becoming a habit you cannot question.`;
-    case "Venus":
-      return `In ${position.sign}, Venus chooses with a ${signFrame.quality} quality. Attraction teaches you to ${signTone}. What you value becomes clearer when desire is honest without letting comfort, approval, or chemistry make the whole decision for you.`;
-    case "Mars":
-      return `In ${position.sign}, Mars acts with a ${signFrame.quality} quality. Your drive sharpens when you can ${signTone}. Your energy is strongest when there is a real reason to move and enough self-awareness to keep force from becoming reaction.`;
-    case "Jupiter":
-      return `In ${position.sign}, Jupiter grows with a ${signFrame.quality} quality. Opportunity opens when you can ${signTone}. Your faith works best when it stays tied to experience instead of becoming a story you use to avoid the details.`;
-    case "Saturn":
-      return `In ${position.sign}, Saturn matures with a ${signFrame.quality} quality. The work is to ${signTone}. What lasts here is built slowly, through choices that prove they can hold weight over time.`;
-    case "Uranus":
-      return `In ${position.sign}, Uranus disrupts with a ${signFrame.quality} quality. Breakthrough often begins when you ${signTone}. Freedom becomes useful when it gives you a truer way to live, not just a reason to resist being shaped by anyone else.`;
-    case "Neptune":
-      return `In ${position.sign}, Neptune dreams with a ${signFrame.quality} quality. Your imagination is drawn to ${signTone}. Inspiration becomes more trustworthy when it has enough shape, honesty, and boundary to survive ordinary life.`;
-    case "Pluto":
-      return `In ${position.sign}, Pluto intensifies with a ${signFrame.quality} quality. Transformation often asks you to ${signTone}. Power becomes cleaner when you can tell the truth about what is driving you instead of staying loyal to control.`;
-    default:
-      return `In ${position.sign}, this placement takes on a ${signFrame.quality} quality. You are learning to ${signTone}.`;
-  }
-}
-
 const natalSignFallbackFrames: Record<string, { quality: string; motion: string }> = {
   Aries: {
     quality: "direct and initiating",
@@ -8288,16 +8226,16 @@ function natalRulerParagraph({
     const originalArea = possessiveArea(focus);
 
     if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same part of life for clarity, pressure, and development. ${rulerProcess}`;
+      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground for clarity, pressure, and development. ${rulerProcess}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps connecting back to ${rulerHouseLink}. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}, so the placement has to be understood through both. ${rulerProcess}`;
   }
 
   if (houseRuler) {
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. Its natal placement shows where this meaning becomes more personal and practical over time. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where the meaning becomes more personal and practical over time. ${rulerProcess}`;
   }
 
   return `The ruler of your ${houseLabel} shows where the meaning becomes more personal and practical over time.`;
@@ -8354,10 +8292,65 @@ function natalPlanetStressExpression(planet: string) {
   return expressions[planet] ?? "this part of you can become more reactive";
 }
 
+function natalPlanetPlacementLead(position: PlanetPosition) {
+  const houseLabel = position.house ? ` in the ${ordinalHouse(position.house)} house` : "";
+  const retrograde = position.motion === "retrograde" ? " is retrograde" : "";
+  const lead = `Your ${position.planet}${retrograde} in ${position.sign}${houseLabel}`;
+  const lines: Record<string, string> = {
+    Sun: `${lead} shows where identity has to become lived, not just understood.`,
+    Moon: `${lead} responds before you have had time to explain yourself.`,
+    Mercury: `${lead} shows how your mind looks for the point and turns experience into language.`,
+    Venus: `${lead} shows what you value, what you are drawn to, and what makes connection feel real.`,
+    Mars: `${lead} shows how desire becomes action and how you move toward what matters.`,
+    Jupiter: `${lead} shows where belief, confidence, and possibility have to prove themselves in real life.`,
+    Saturn: `${lead} shows where maturity is built through time, pressure, and choices that can hold weight.`,
+    Uranus: `${lead} shows where freedom needs a real shape instead of only a reaction against the old pattern.`,
+    Neptune: `${lead} shows where sensitivity, longing, and imagination need enough clarity to stay trustworthy.`,
+    Pluto: `${lead} shows where pressure asks for honesty, not control.`
+  };
+
+  return lines[position.planet] ?? `${lead} shows how this part of you works in real life.`;
+}
+
+function natalRetrogradePlacementNote(position: PlanetPosition, owner: "you" | "friend" = "you", pronouns: ThirdPersonPronouns = defaultFriendPronouns) {
+  if (position.motion !== "retrograde") {
+    return "";
+  }
+
+  if (owner === "friend") {
+    const subject = capitalizeText(pronouns.subject);
+    const notes: Record<string, string> = {
+      Mercury: `Because Mercury is retrograde, ${pronouns.possessive} mind may work by revisiting, rewording, checking, and thinking things through more than once. ${subject} may need time to find the right language, but the result can be more precise.`,
+      Venus: `Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before ${pronouns.subject} know what ${pronouns.subject} really value. ${subject} may not trust what ${pronouns.subject} want until it has proven itself over time.`,
+      Mars: `Because Mars is retrograde, action may build internally before it becomes visible. ${subject} may need to understand what ${pronouns.subject} are angry about, what ${pronouns.subject} want, or what is worth fighting for before ${pronouns.subject} move.`,
+      Jupiter: `Because Jupiter is retrograde, confidence may need to be built from the inside first. ${subject} may not fully believe an idea just because it sounds inspiring. ${subject} may need to test it, question it, and live with it before ${pronouns.subject} can call it true.`,
+      Saturn: `Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. ${subject} may carry pressure privately, or need to decide which rules are actually ${pronouns.possessive}.`,
+      Uranus: `Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. ${subject} may not rebel loudly, but ${pronouns.subject} may quietly refuse to live inside a pattern that no longer fits.`,
+      Neptune: `Because Neptune is retrograde, longing, sensitivity, imagination, and confusion may be processed privately. ${subject} may need to separate real intuition from wishful thinking.`,
+      Pluto: `Because Pluto is retrograde, power, control, fear, and deep change may work below the surface. ${subject} may go through major inner shifts before anyone else sees what has changed.`
+    };
+
+    return notes[position.planet] ?? "";
+  }
+
+  const notes: Record<string, string> = {
+    Mercury: "Because Mercury is retrograde, your mind may work by revisiting, rewording, checking, and thinking things through more than once. You may need time to find the right language, but the result can be more precise.",
+    Venus: "Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before you know what you really value. You may not trust what you want until it has proven itself over time.",
+    Mars: "Because Mars is retrograde, action may build internally before it becomes visible. You may need to understand what you are angry about, what you want, or what is worth fighting for before you move.",
+    Jupiter: "Because Jupiter is retrograde, confidence may need to be built from the inside first. You may not fully believe an idea just because it sounds inspiring. You may need to test it, question it, and live with it before you can call it true.",
+    Saturn: "Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. You may carry pressure privately, or need to decide which rules are actually yours.",
+    Uranus: "Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. You may not rebel loudly, but you may quietly refuse to live inside a pattern that no longer fits.",
+    Neptune: "Because Neptune is retrograde, longing, sensitivity, imagination, and confusion may be processed privately. You may need to separate real intuition from wishful thinking.",
+    Pluto: "Because Pluto is retrograde, power, control, fear, and deep change may work below the surface. You may go through major inner shifts before anyone else sees what has changed."
+  };
+
+  return notes[position.planet] ?? "";
+}
+
 function natalPlacementOpeningParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
   const signTone = natalSignTonePhrases[position.sign] ?? "express this part of you with more honesty and precision";
 
-  return `Your ${position.planet} describes ${natalPlanetCoreFunction(position.planet)}. In ${position.sign}, your ${position.planet} responds with a ${signFrame.quality} quality. You may notice this through the need to ${signTone}. This is the part of you that is learning how to ${natalPlanetPlainFunction(position.planet)}.`;
+  return `${natalPlanetPlacementLead(position)} In ${position.sign}, it moves with a ${signFrame.quality} quality. You may notice this through the need to ${signTone}.`;
 }
 
 function natalPlacementHouseSupportParagraph(
@@ -8365,7 +8358,7 @@ function natalPlacementHouseSupportParagraph(
   houseFrame: { intro: string; focus: string; lived: string },
   houseLabel: string
 ) {
-  return `In the ${houseLabel}, this part of you is shaped through ${houseFrame.lived}. This area is not just an external circumstance. It directly affects how this placement develops, reacts, and finds stability. When this area of life is supported, your ${position.planet} has more room to work clearly. When it is strained, neglected, or out of balance, ${natalPlanetStressExpression(position.planet)}.`;
+  return `In the ${houseLabel}, this comes through ${houseFrame.lived}. These are not just background circumstances. They affect how your ${position.planet} develops, reacts, and finds stability. When this part of life is supported, your ${position.planet} has more room to work clearly. When it is strained or neglected, ${natalPlanetStressExpression(position.planet)}.`;
 }
 
 function natalPlacementSynthesisParagraph(
@@ -8377,25 +8370,25 @@ function natalPlacementSynthesisParagraph(
 
   switch (position.planet) {
     case "Sun":
-      return `Over time, your sense of purpose becomes stronger when your ${focus} is tested against real life. The version of confidence that lasts is the one that helps you feel more honest, more rooted, and more willing to act from the center of yourself. Your path is not only about knowing who you are. It is about building a life that can hold that truth.`;
+      return `The gift is a clearer sense of direction that can survive contact with real life. The work is making sure confidence comes from what is true, not only from what gets recognized.`;
     case "Moon":
-      return `Over time, your emotional steadiness grows when your ${focus} gives your needs somewhere real to land. You are learning to trust what your body and mood are telling you before they have to become louder. The more this area of life supports honest care, the easier it becomes to respond instead of defend.`;
+      return `The gift is emotional honesty that has somewhere real to land. The work is listening before your body or mood has to get louder.`;
     case "Mercury":
-      return `Over time, your thinking becomes clearer when your ${focus} gives your mind something real to work with. You are learning how to turn perception into language and language into movement. The strongest version of this placement does not just notice the pattern. It says what is true clearly enough to change what happens next.`;
+      return `The gift is language that can make a situation clearer. The work is not letting the mind loop around what needs to be said or understood.`;
     case "Venus":
-      return `Over time, your sense of value becomes steadier when your ${focus} reflects what actually feels worth choosing. You are learning the difference between what attracts you quickly and what continues to feel good after the first pull passes. The more honest your choices become here, the more connection can feel both alive and sustainable.`;
+      return `The gift is knowing what feels worth choosing. The work is telling the difference between real value and the pull of comfort, approval, or chemistry.`;
     case "Mars":
-      return `Over time, your courage becomes more useful when your ${focus} gives your drive a worthy direction. You are learning how to act on desire without burning through your own stability. The strongest version of this placement does not just push, fight, or react. It moves with purpose because the target actually matters.`;
+      return `The gift is courage with a real target. The work is knowing when to act and when reaction would only drain you.`;
     case "Jupiter":
-      return `Over time, your confidence grows when your ${focus} gives your faith something real to stand on. You are learning how to recognize opportunity without turning every open door into an obligation. The wisdom here comes from letting experience expand you while still asking what is true, useful, and worth carrying forward.`;
+      return `The gift is a wider view that can open doors. The work is making sure the story still holds up after the excitement passes.`;
     case "Saturn":
-      return `Over time, your authority becomes stronger when your ${focus} is built through choices that can hold weight. You are learning that limits do not have to mean punishment. They can become the structure that lets trust, skill, and maturity develop into something reliable.`;
+      return `The gift is earned confidence. The work is not confusing pressure with proof that something is wrong.`;
     case "Uranus":
-      return `Over time, your freedom becomes more livable when your ${focus} can change without becoming ungrounded. You are learning which patterns need to break and which ones are still strong enough to support you. The point is not disruption for its own sake. It is a more honest way to live.`;
+      return `The gift is a truer kind of freedom. The work is making sure change becomes livable, not only disruptive.`;
     case "Neptune":
-      return `Over time, your imagination becomes more trustworthy when your ${focus} can hold both sensitivity and clarity. You are learning how to let longing, compassion, and inspiration matter without giving them permission to blur everything. The dream gets stronger when it can survive contact with real life.`;
+      return `The gift is sensitivity that can perceive what others miss. The work is keeping the dream clear enough to survive real life.`;
     case "Pluto":
-      return `Over time, your power becomes cleaner when your ${focus} is built on truth instead of control. You are learning where pressure is asking for honesty, not more defense. What changes you here can become strength, but only after you stop protecting the version of life that is already asking to transform.`;
+      return `The gift is strength that comes from telling the truth. The work is not letting control stand in for real change.`;
     default:
       return `Over time, ${planetFrame.growth} becomes steadier when your ${focus} reflects what is actually true for you. ${planetFrame.integration}.`;
   }
@@ -8415,17 +8408,17 @@ function cleanNatalPlacementLensParagraphs({
   rebuiltSynthesisParagraph: string;
 }) {
   return fallbackParagraphs.map((paragraph, index) => {
-    if (index === 2 && hasNatalPlacementTemplateLeak(paragraph)) {
+    if ((index === 2 || /^Because\b/.test(paragraph)) && hasNatalPlacementTemplateLeak(paragraph)) {
       return rebuiltRulerParagraph;
     }
 
-    if (index === 3 && hasNatalPlacementTemplateLeak(paragraph)) {
+    if ((index === 3 || /^(Over time|The gift)\b/.test(paragraph)) && hasNatalPlacementTemplateLeak(paragraph)) {
       return rebuiltSynthesisParagraph;
     }
 
-    return paragraph
+      return paragraph
       .replace(/\s+/g, " ")
-      .replace(/\bthis part of the chart\b/gi, "this area of life")
+      .replace(/\bthis part of the chart\b/gi, "this part of life")
       .replace(/\bboth places\b/gi, "the two areas of life")
       .trim();
   });
@@ -8487,6 +8480,7 @@ function natalPlacementFallbackSection(
   const rulerHouse = rulerPosition?.house ?? null;
 
   const signParagraph = natalPlacementOpeningParagraph(position, signFrame);
+  const retrogradeParagraph = natalRetrogradePlacementNote(position);
   const houseParagraph = natalPlacementHouseSupportParagraph(position, houseFrame, houseLabel);
   const rulerParagraph = natalRulerParagraph({
     cuspSign,
@@ -8498,7 +8492,7 @@ function natalPlacementFallbackSection(
   });
   const integrationParagraph = natalPlacementSynthesisParagraph(position, houseFrame, planetFrame);
   const paragraphs = cleanNatalPlacementLensParagraphs({
-    fallbackParagraphs: [signParagraph, houseParagraph, rulerParagraph, integrationParagraph],
+    fallbackParagraphs: [signParagraph, retrogradeParagraph, houseParagraph, rulerParagraph, integrationParagraph].filter(Boolean),
     rebuiltRulerParagraph: rulerParagraph,
     rebuiltSynthesisParagraph: integrationParagraph
   });
@@ -8636,36 +8630,70 @@ function friendSignTone(position: PlanetPosition, pronouns: ThirdPersonPronouns)
   return signTone;
 }
 
-function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+function friendPlacementSignBehavior(position: PlanetPosition, ownerName: string, pronouns: ThirdPersonPronouns) {
+  if (position.planet === "Jupiter" && position.sign === "Leo") {
+    return `In Leo, Jupiter wants confidence, warmth, and permission to care about what lights ${pronouns.object} up. ${ownerName} grows when ${pronouns.subject} let ${pronouns.possessive} perspective have a little more color and conviction.`;
+  }
+
+  if (position.planet === "Mercury" && position.sign === "Sagittarius") {
+    return `With Mercury in Sagittarius, ${pronouns.possessive} mind looks for the larger meaning behind the facts. ${capitalizeText(pronouns.subject)} may think best when an idea has room to expand, connect, and point toward something bigger.`;
+  }
+
+  if (position.planet === "Mars" && position.sign === "Capricorn") {
+    return `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`;
+  }
+
+  return friendSignTone(position, pronouns);
+}
+
+function friendHouseConcreteSentence(position: PlanetPosition, pronouns: ThirdPersonPronouns) {
   const house = position.house ?? 0;
-  const houseBridge = friendHousePlacementBridges[house]
-    ?? `This placement develops through ${readableHouseTopic(house).replace(/^your\s+/i, "")}.`;
-  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this area of life";
-  const placement = `${position.planet} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
+  const sentences: Record<number, string> = {
+    1: `In the 1st house, this shows through presence: the way ${pronouns.subject} enter situations, respond on instinct, and become recognizable before anything is explained.`,
+    2: `In the 2nd house, this is closely tied to worth: money, security, desire, comfort, and what ${pronouns.subject} want to hold onto because it matters.`,
+    3: `In the 3rd house, this comes through everyday life: conversations, questions, writing, learning, siblings, neighbors, and the small observations that keep shaping how ${pronouns.subject} see things.`,
+    4: `In the 4th house, this is tied to home, family, privacy, emotional security, and the foundation ${pronouns.subject} build underneath the rest of ${pronouns.possessive} life.`,
+    5: `In the 5th house, this comes through creativity, pleasure, romance, play, and the courage to let something personal be seen.`,
+    6: `In the 6th house, this comes through work, health, routines, maintenance, and the small choices that decide how sustainable daily life feels.`,
+    7: `In the 7th house, this becomes visible through relationship: partnership, attraction, conflict, agreement, and the people who meet ${pronouns.object} face to face.`,
+    8: `In the 8th house, this moves through trust, intimacy, shared resources, vulnerability, and the material that is harder to keep on the surface.`,
+    9: `In the 9th house, this develops through belief, study, travel, teaching, and the kind of truth that changes how ${pronouns.subject} live.`,
+    10: `In the 10th house, this shows through career, reputation, responsibility, visibility, and the public shape of ${pronouns.possessive} life.`,
+    11: `In the 11th house, this develops through friendship, groups, communities, shared goals, and the future ${pronouns.subject} want to help build.`,
+    12: `In the 12th house, this works privately through solitude, hidden pressure, rest, retreat, and the patterns ${pronouns.subject} may need quiet to understand.`
+  };
+
+  return sentences[house] ?? `This placement becomes clearer through ${readableHouseTopic(house).replace(/^your\s+/i, "")}.`;
+}
+
+function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this part of life";
+  const retrograde = position.motion === "retrograde" ? " retrograde" : "";
+  const placement = `${position.planet} is${retrograde} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
 
   switch (position.planet) {
     case "Sun":
-      return `${possessiveLabel(ownerName)} Sun shows how ${pronouns.subject} build identity, confidence, and a sense of direction. With ${pronouns.possessive} ${placement}, self-understanding is not abstract; it has to become something ${pronouns.subject} can live. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where ${ownerName} builds identity, confidence, and a sense of direction. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Moon":
-      return `${possessiveLabel(ownerName)} Moon is tied to what helps ${pronouns.object} feel safe, steady, and emotionally held. With ${pronouns.possessive} ${placement}, feelings are not separate from lived circumstances; the body tends to register what is working before the mind has explained it. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.possessive} body, moods, and instincts respond before everything has been explained. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Mercury":
-      return `${possessiveLabel(ownerName)} Mercury shows how ${pronouns.subject} notice, think, learn, and give language to experience. With ${pronouns.possessive} ${placement}, perception becomes stronger when ${pronouns.subject} can name what is actually happening. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.subject} notice, think, learn, and put experience into words. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Venus":
-      return `${possessiveLabel(ownerName)} Venus shows what ${pronouns.subject} value, what ${pronouns.subject} are drawn to, and what helps connection feel real. With ${pronouns.possessive} ${placement}, attraction is not only about chemistry; it also shows what feels worth choosing and protecting. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.subject} learn what feels valuable, desirable, and worth choosing. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Mars":
-      return `${possessiveLabel(ownerName)} Mars shows how ${pronouns.subject} act, pursue, protect, and respond under pressure. With ${pronouns.possessive} ${placement}, desire needs somewhere real to go, and conflict can reveal what ${pronouns.subject} want badly enough to move toward. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where desire becomes action and where ${pronouns.subject} learn what deserves ${pronouns.possessive} effort. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Jupiter":
-      return `${possessiveLabel(ownerName)} Jupiter shows where ${pronouns.subject} look for growth, faith, meaning, and a wider view of life. With ${pronouns.possessive} ${placement}, experience can make life feel larger, as long as possibility stays connected to judgment. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where ${ownerName} learns to trust ${pronouns.possessive} own voice, belief, and sense of possibility. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Saturn":
-      return `${possessiveLabel(ownerName)} Saturn shows where ${pronouns.subject} build maturity, boundaries, and earned confidence. With ${pronouns.possessive} ${placement}, pressure can become skill over time, especially when ${pronouns.subject} stop treating limits as proof that something is wrong. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where pressure can become maturity, skill, and earned confidence over time. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Uranus":
-      return `${possessiveLabel(ownerName)} Uranus shows where ${pronouns.subject} need freedom, honesty, and room to break from an old pattern. With ${pronouns.possessive} ${placement}, life can feel restless until ${pronouns.subject} find a truer way to move. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where freedom needs a real shape and old patterns become harder to keep repeating. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Neptune":
-      return `${possessiveLabel(ownerName)} Neptune shows where ${pronouns.subject} are sensitive, imaginative, and easily moved by longing. With ${pronouns.possessive} ${placement}, compassion needs clarity, so the dream does not blur what is actually happening. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where sensitivity, longing, and imagination need enough clarity to stay trustworthy. ${friendHouseConcreteSentence(position, pronouns)}`;
     case "Pluto":
-      return `${possessiveLabel(ownerName)} Pluto shows where ${pronouns.subject} meet intensity, control, honesty, and deep change. With ${pronouns.possessive} ${placement}, life tends to ask for truth instead of surface management. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. This is where pressure asks for honesty, not control. ${friendHouseConcreteSentence(position, pronouns)}`;
     default:
-      return `${possessiveLabel(ownerName)} ${position.planet} becomes active through ${placement}. ${houseBridge}`;
+      return `${possessiveLabel(ownerName)} ${placement}. ${friendHouseConcreteSentence(position, pronouns)}`;
   }
 }
 
@@ -8710,45 +8738,45 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
   const houseLabel = `${ordinalHouse(position.house)} house`;
 
   if (!rulerPosition?.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules the house. Its natal placement shows where this meaning becomes more personal over time.`;
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where the meaning keeps becoming more personal over time.`;
   }
 
   const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
   const placementConcern = friendPlacementRulerConcern(position);
 
   if (rulerPosition.planet === position.planet && rulerPosition.sign === position.sign && rulerPosition.house === position.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this area of life. Since the ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the emphasis doubles back on the same life material. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Since ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the same material gets emphasized twice. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
   }
 
-  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this area of life. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, connecting ${placementConcern} to ${rulerHouseDynamic}.`;
+  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${placementConcern} with ${rulerHouseDynamic}.`;
 }
 
 function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
   switch (position.planet) {
     case "Sun":
-      return `Over time, ${ownerName} becomes clearer when confidence is built from what actually gives ${pronouns.object} life, not from someone else's terms. The more ${pronouns.subject} can act from what ${pronouns.subject} want, value, and know to be true, the more direction this placement can give ${pronouns.object}.`;
+      return `The gift is a clearer sense of direction. The work is making sure confidence comes from what is true, not only from what gets recognized.`;
     case "Moon":
-      return `Over time, ${ownerName} becomes steadier when there is room to trust what ${pronouns.possessive} body and mood are registering. The more ${pronouns.subject} can protect ${pronouns.possessive} sensitivity without closing down around it, the easier it becomes for ${pronouns.object} to feel secure and present.`;
+      return `The gift is emotional honesty that has somewhere real to land. The work is listening before the body or mood has to get louder.`;
     case "Mercury":
-      return `Over time, ${ownerName} becomes clearer when ${pronouns.subject} trust the way ${pronouns.subject} notice, name, and connect information. The stronger ${pronouns.possessive} language becomes, the easier it is for ${pronouns.object} to turn perception into choices that actually change the situation.`;
+      return `The gift is finding words that help other people understand the point. The work is not rushing past the details just because the larger meaning is more exciting.`;
     case "Venus":
       if (position.sign === "Scorpio") {
-        return `Over time, this placement becomes stronger when ${ownerName} learns the difference between intensity and value. Not everything that pulls ${pronouns.object} in is worth keeping. The more clearly ${pronouns.subject} understand what supports ${pronouns.possessive} security, desire, and self-respect, the more Venus can become a source of steadiness instead of something tangled in fear, control, or uncertainty.`;
+        return `The gift is connection with depth and emotional truth. The work is learning the difference between intensity and value.`;
       }
 
-      return `Over time, ${ownerName} becomes more honest about the difference between what attracts ${pronouns.object} quickly and what continues to feel valuable. The more clearly ${pronouns.subject} understand desire, comfort, and worth, the more connection can become both alive and sustainable.`;
+      return `The gift is knowing what feels worth choosing. The work is telling the difference between real value and the pull of comfort, approval, or chemistry.`;
     case "Mars":
-      return `Over time, ${ownerName} becomes stronger by learning where action is needed and where reaction is only draining ${pronouns.object}. The more clearly ${pronouns.subject} know what ${pronouns.subject} want, the easier it becomes to move with courage instead of pressure.`;
+      return `The gift is courage with a real target. The work is knowing what deserves effort before reaction takes over.`;
     case "Jupiter":
-      return `Over time, ${ownerName} grows best when possibility stays connected to judgment. The more ${pronouns.subject} can tell the difference between a real opportunity and a story that only sounds expansive, the more wisdom this placement can build.`;
+      return `The gift is a bright, generous mind. The work is making sure the story still holds up after the excitement passes.`;
     case "Saturn":
-      return `Over time, ${ownerName} becomes more secure when pressure is treated as material to work with, not proof that something is wrong. The more ${pronouns.subject} build patiently and honestly, the more responsibility turns into confidence ${pronouns.subject} can trust.`;
+      return `The gift is earned confidence. The work is not confusing pressure with proof that something is wrong.`;
     case "Uranus":
-      return `Over time, ${ownerName} handles change better when it becomes honest instead of chaotic. The more ${pronouns.subject} understand which patterns have become too small, the easier it is to choose freedom that can actually be lived.`;
+      return `The gift is a truer kind of freedom. The work is making sure change becomes livable, not only disruptive.`;
     case "Neptune":
-      return `Over time, ${ownerName} becomes steadier when sensitivity is protected without letting it blur every boundary. The more clearly ${pronouns.subject} can hold longing, imagination, and compassion, the more trustworthy ${pronouns.possessive} inner guidance becomes.`;
+      return `The gift is sensitivity that can perceive what others miss. The work is keeping the dream clear enough to survive real life.`;
     case "Pluto":
-      return `Over time, ${ownerName} becomes stronger by telling the truth about what has power over ${pronouns.object}. The more honestly ${pronouns.subject} meet pressure, fear, and desire, the more transformation becomes strength instead of something ${pronouns.subject} has to control.`;
+      return `The gift is strength that comes from telling the truth. The work is not letting control stand in for real change.`;
     default:
       return `Over time, ${ownerName} can make this pattern more real in daily life. The more ${pronouns.subject} understand how it works, the more useful and honest it becomes.`;
   }
@@ -8797,7 +8825,7 @@ function friendSpecificPlacementBody(ownerName: string, position: PlanetPosition
   ) {
     return [
       `${possessiveLabel(ownerName)} Mars shows how ${pronouns.subject} act, pursue, defend, and move toward what ${pronouns.subject} want. In the 4th house, that drive is tied to home, family, privacy, emotional security, and the foundation ${pronouns.subject} build underneath the rest of ${pronouns.possessive} life. ${capitalizeText(pronouns.subject)} may feel most motivated when there is something to protect, something to stabilize, or something real that needs to be built from the ground up.`,
-      `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.possessive)} energy can be disciplined, strategic, and patient enough to keep going after the first wave of urgency passes. ${capitalizeText(pronouns.subject)} are not usually at ${pronouns.possessive} strongest when ${pronouns.subject} are reacting in the moment. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`,
+      `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.possessive)} effort can be disciplined, strategic, and patient enough to keep going after the first wave of urgency passes. ${capitalizeText(pronouns.subject)} are not usually at ${pronouns.possessive} strongest when ${pronouns.subject} are reacting in the moment. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`,
       `Saturn, the ruler of Capricorn, helps show where ${possessiveLabel(ownerName)} drive is tested and developed over time. In ${possessiveLabel(ownerName)} chart, Saturn is in Virgo in the 12th house, connecting ${pronouns.possessive} inner foundation to solitude, hidden pressure, private fears, retreat, and the work that happens beneath the surface. Some of ${pronouns.possessive} courage may be built privately, through the things ${pronouns.subject} process alone, the responsibilities ${pronouns.subject} carry quietly, or the patterns ${pronouns.subject} are learning not to let run ${pronouns.possessive} life from behind the scenes.`,
       `Over time, this placement becomes stronger when ${ownerName} learns how to act without burning through ${pronouns.possessive} own stability. ${capitalizeText(pronouns.possessive)} courage is not only about pushing harder. It is about knowing what deserves ${pronouns.possessive} effort, what needs protection, and what kind of foundation can actually support the life ${pronouns.subject} are trying to build.`
     ];
@@ -8868,9 +8896,9 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
 
   const paragraphs = [
     friendPlacementHouseParagraph(ownerName, position, pronouns),
-    friendSignTone(position, pronouns),
+    natalRetrogradePlacementNote(position, "friend", pronouns),
+    friendPlacementSignBehavior(position, ownerName, pronouns),
     friendPlacementRulerParagraph(ownerName, position, natalSky, pronouns),
-    friendIntegratedPlacementAspectParagraph(ownerName, position, natalSky, pronouns),
     friendPlacementSynthesisParagraph(ownerName, position, pronouns)
   ].map((paragraph) => paragraph.trim()).filter(Boolean);
 
@@ -8959,7 +8987,7 @@ function natalPlacementDetailSubtitle(position: PlanetPosition) {
   return parts.join(" · ");
 }
 
-const natalPlacementLensHint = "The planet shows the part of you being activated. The house shows where that energy becomes part of your lived experience. The sign on the house shows the pattern it moves through, and the ruler of that sign shows where the meaning keeps unfolding over time. This lens shows the architecture underneath the interpretation: what part of you is involved, where it becomes active, how it expresses itself, and where it keeps developing over time.";
+const natalPlacementLensHint = "This section shows how the placement is built: the planet or point, the sign, the house, and the ruler. It explains what part of the chart is involved, where it shows up in lived experience, how it expresses itself, and where it keeps developing over time.";
 const natalAngleLensHint = "The angle shows how this chart meets life directly. The sign shows the style of that orientation, and the ruler of the sign shows where it keeps developing over time. This lens explains how presence, instinct, body language, and direction become visible through the chart.";
 
 function placementLensHint(position: PlanetPosition) {
