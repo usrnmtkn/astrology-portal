@@ -387,6 +387,13 @@ function cleanArticleText(value?: string | null) {
   return isPlaceholderArticleText(text) ? "" : text;
 }
 
+function articleParagraphs(value?: string | null) {
+  return (value ?? "")
+    .split(/\n{2,}/)
+    .map((paragraph) => cleanArticleText(paragraph))
+    .filter(Boolean);
+}
+
 function cleanArticleHeading(value?: string | null) {
   return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
 }
@@ -407,9 +414,9 @@ function YouTransitArticlePage({
     .map((section) => ({
       heading: cleanArticleHeading(section.heading),
       tldr: cleanArticleText(section.tldr),
-      body: cleanArticleText(section.body)
+      body: section.body
     }))
-    .filter((section) => section.heading || section.tldr || section.body);
+    .filter((section) => section.heading || section.tldr || articleParagraphs(section.body).length);
   const introParagraphs = article.bodyBeforeSections
     ? (article.body ?? [])
       .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
@@ -463,9 +470,7 @@ function YouTransitArticlePage({
               ) : null}
               {sections.map((section, index) => {
                 const showTldr = section.tldr && section.tldr !== section.body;
-                const bodyParagraphs = section.body
-                  ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
-                  : [];
+                const bodyParagraphs = articleParagraphs(section.body);
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
