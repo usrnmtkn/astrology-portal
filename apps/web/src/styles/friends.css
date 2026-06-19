@@ -489,6 +489,20 @@
   background: var(--card-bg);
 }
 
+.friends-feed-card-button {
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  appearance: none;
+}
+
+.friends-feed-card-button:hover,
+.friends-feed-card-button:focus-visible {
+  border-color: color-mix(in srgb, var(--card-border) 62%, var(--ink) 38%);
+  transform: translateY(-1px);
+}
+
 .friends-circle-strip,
 .manual-chart-list,
 .friends-charts-view {
