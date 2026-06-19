@@ -1571,7 +1571,7 @@ export function GeneratedContentAdminDashboard() {
   const [reviewGenerationProvider, setReviewGenerationProvider] = useState<AdminGenerationProvider>("claude");
   const [isGeneratingReviewDraft, setIsGeneratingReviewDraft] = useState(false);
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
-  const [message, setMessage] = useState("Enter the content generation secret to review drafts.");
+  const [message, setMessage] = useState("Use filters or search to narrow the content library.");
   const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -1938,7 +1938,7 @@ export function GeneratedContentAdminDashboard() {
 
     setSecret(nextSecret);
     setAccessStatus(nextSecret ? "checking" : "empty");
-    setMessage(nextSecret ? "Checking admin access..." : "Enter the content generation secret to review drafts.");
+    setMessage(nextSecret ? "Checking admin access..." : "Use filters or search to narrow the content library.");
     try {
       if (nextSecret) {
         window.localStorage.setItem(adminSecretStorageKey, nextSecret);
@@ -3292,8 +3292,8 @@ export function GeneratedContentAdminDashboard() {
                   </select>
                 </label>
                 <label>
-                  <span>Person or subject</span>
-                  <input value={personQuery} onChange={(event) => setPersonQuery(event.target.value)} placeholder="User, chart, content key" />
+                  <span>Search content</span>
+                  <input value={personQuery} onChange={(event) => setPersonQuery(event.target.value)} placeholder="Title, app area, content key" />
                 </label>
                 <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
                   <RefreshCw size={16} aria-hidden="true" />
