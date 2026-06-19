@@ -7616,14 +7616,18 @@ function approvedNatalPlacementBody(position: PlanetPosition) {
   return "";
 }
 
-function natalPlacementFallbackSection(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"][number] | null {
+function natalPlacementFallbackSection(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  options: { includeApprovedBody?: boolean } = {}
+): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
   }
 
   const approvedBody = approvedNatalPlacementBody(position);
 
-  if (approvedBody) {
+  if (approvedBody && options.includeApprovedBody !== false) {
     return {
       heading: natalPlacementFullTitle(position),
       tldr: "",
@@ -7754,8 +7758,16 @@ function natalPlacementDetailArticle(
 ): YouTransitArticle {
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
-  const fallbackSection = natalPlacementFallbackSection(position, natalSky);
-  const authoredBodyParagraphs = liveBody && !isNatalPlacementLensWriteup(liveWriteup) ? bodyParagraphs : [];
+  const approvedBody = approvedNatalPlacementBody(position);
+  const hasApprovedBody = Boolean(approvedBody);
+  const fallbackSection = natalPlacementFallbackSection(position, natalSky, {
+    includeApprovedBody: !hasApprovedBody
+  });
+  const authoredBodyParagraphs = hasApprovedBody
+    ? approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    : liveBody && !isNatalPlacementLensWriteup(liveWriteup)
+      ? bodyParagraphs
+      : [];
   const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
