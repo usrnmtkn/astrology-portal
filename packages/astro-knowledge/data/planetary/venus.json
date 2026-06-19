@@ -2,62 +2,96 @@
   "id": "venus",
   "planet": "venus",
   "title": "Venus Meaning",
-  "overview": "Venus describes attraction, affection, pleasure, beauty, social ease, values, money, taste, and the way a person gives and receives sweetness. It shows what feels desirable, what feels worth protecting, and how harmony is created or avoided.",
-  "cycle": "Venus usually spends about three to five weeks in a sign, though retrograde cycles can extend the stay. Its sign describes love style, values, and aesthetic preference; its house shows where connection, pleasure, and value-seeking become most visible.",
+  "overview": "Venus describes attraction, pleasure, beauty, values, money, comfort, desire, and the conditions that help connection feel worth choosing. It shows what someone is drawn toward and what helps affection become real rather than only appealing.",
+  "cycle": "Venus moves through the zodiac in about a year, with retrograde cycles that ask for review around love, value, beauty, money, and desire. Its sign describes the style of relating; its house shows where ease, attraction, and value become active.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Venus in Aries loves directly, boldly, and with appetite for pursuit. This placement needs aliveness, honesty, and the freedom to want what it wants without over-explaining desire."
+      "body": "With Venus in Aries, you love passionately, thriving on challenges and the excitement of vibrant, competitive romance. You express affection with an adventurous spirit, cherishing spontaneous and enthusiastic displays of love."
     },
     {
       "sign": "taurus",
-      "body": "Venus in Taurus loves through steadiness, touch, loyalty, pleasure, and material care. This placement needs consistency and a love that can be felt in the body."
+      "body": "With Venus in Taurus, you are all about sensuality and tangible expressions of love. You are drawn to comfort, stability, and pleasure. You value fidelity and consistency, enjoying a slow-burning romance that gradually builds over time."
     },
     {
       "sign": "gemini",
-      "body": "Venus in Gemini loves through conversation, curiosity, wit, and mental connection. This placement needs variety, laughter, and a partner who keeps the mind awake."
+      "body": "With Venus in Gemini, your love life is marked by curiosity and excitement. Intellectual conversations captivate you, and a mental connection is often a prerequisite for romance. You value variety and intellectual compatibility in relationships."
     },
     {
       "sign": "cancer",
-      "body": "Venus in Cancer loves protectively, tenderly, and through emotional memory. This placement needs trust, care, and a bond that feels like a safe place to land."
+      "body": "With Venus in Cancer, your love is nurturing, protective, and deep. Home and family are central to your sense of comfort and security in a relationship."
     },
     {
       "sign": "leo",
-      "body": "Venus in Leo loves warmly, generously, creatively, and with a need for visible affection. This placement needs admiration, play, loyalty, and romance with heart."
+      "body": "With Venus in Leo, your love is dramatic, warm, and generous. You appreciate grand gestures of love and seek to be adored and admired in your relationships. You are drawn to people who are confident and expressive, and you enjoy sharing a glamorous social life with your partner."
     },
     {
       "sign": "virgo",
-      "body": "Venus in Virgo loves through service, attention, repair, and thoughtful detail. This placement needs sincerity and may show devotion by noticing what would make life easier."
+      "body": "With Venus in Virgo, your affection is shown through practical means. You value stability and show your love by taking care of the small details that contribute to your partner’s wellbeing. Your love language often involves acts of service, and you seek meaningful and productive relationships."
     },
     {
       "sign": "libra",
-      "body": "Venus in Libra loves through reciprocity, beauty, fairness, and partnership. This placement needs mutuality and can create harmony without losing the ability to choose."
+      "body": "With Venus in Libra, you value balance, harmony, and partnership in love. You are diplomatic and fair-minded in your relationships and are drawn to beauty and charm. Your sense of romance involves a deep appreciation for cooperation and shared experiences."
     },
     {
       "sign": "scorpio",
-      "body": "Venus in Scorpio loves intensely, privately, and with a need for emotional truth. This placement needs trust, depth, and relationships that can hold real vulnerability."
+      "body": "With Venus in Scorpio, your love is intense, passionate, and transformative. You seek deep emotional bonds and are drawn to mysteries and the hidden depths of your partner. Your relationships are intimate, reflecting your desire for deep emotional exchange."
     },
     {
       "sign": "sagittarius",
-      "body": "Venus in Sagittarius loves through honesty, adventure, humor, and shared meaning. This placement needs freedom and a bond that makes life feel wider."
+      "body": "With Venus in Sagittarius, your love is adventurous, optimistic, and freedom-loving. You prioritize honesty, intellectual stimulation, and shared adventures in relationships. You’re drawn to open-minded individuals who can broaden your horizons and share your zest for life."
     },
     {
       "sign": "capricorn",
-      "body": "Venus in Capricorn loves seriously, loyally, and through commitment that proves itself over time. This placement needs reliability, maturity, and shared long-term values."
+      "body": "With Venus in Capricorn, your love is mature, loyal, and reserved. You value practicality and reliability, preferring to show your affection through steadfast support and shared ambitions."
     },
     {
       "sign": "aquarius",
-      "body": "Venus in Aquarius loves through friendship, ideals, freedom, and respect for difference. This placement needs space inside connection and a bond that can hold individuality."
+      "body": "With Venus in Aquarius, your love is free-spirited, intellectual, and somewhat unconventional. You value friendship and shared ideals in your relationships, and you’re attracted to those who stimulate your mind and respect your need for independence."
     },
     {
       "sign": "pisces",
-      "body": "Venus in Pisces loves compassionately, imaginatively, and with great emotional openness. This placement needs tenderness, inspiration, and boundaries that keep devotion from becoming self-loss."
+      "body": "With Venus in Pisces, your love is compassionate, imaginative, and selfless. You value emotional connection and spiritual bonding, often showing your affection through empathetic selfless acts of kindness. You’re attracted to those who can share in your dreamy, romantic visions."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      541,
+      542,
+      543,
+      544,
+      545,
+      546,
+      547,
+      548,
+      549,
+      550,
+      551,
+      552,
+      553,
+      554,
+      555,
+      556,
+      557,
+      558,
+      559,
+      560,
+      561,
+      562,
+      563,
+      564,
+      565,
+      566,
+      567,
+      568,
+      569,
+      570,
+      571,
+      572,
+      573
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

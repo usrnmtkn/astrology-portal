@@ -2,62 +2,95 @@
   "id": "mars",
   "planet": "mars",
   "title": "Mars Meaning",
-  "overview": "Mars describes action, desire, anger, courage, conflict, heat, pursuit, boundaries, and the way a person uses force. It shows how effort is mobilized, how a person fights for what matters, and where raw energy needs direction.",
-  "cycle": "Mars usually spends about six to seven weeks in a sign, though retrograde cycles can keep it in one sign for several months. Its sign describes action style and conflict style; its house shows where drive, friction, and initiative concentrate.",
+  "overview": "Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen.",
+  "cycle": "Mars takes close to two years to move through the zodiac, with retrograde periods that slow or redirect momentum. Its sign describes the style of action; its house shows where pressure, effort, and courage become active.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Mars in Aries acts quickly, directly, and with strong initiative. This placement has clean ignition, but needs a worthy outlet so courage does not become needless conflict."
+      "body": "With Mars in Aries, you’re blessed with a surge of energy and assertiveness. You act with confidence and a pioneering spirit, eager to forge your own path. Quick decisions and rapid action are your signatures."
     },
     {
       "sign": "taurus",
-      "body": "Mars in Taurus acts slowly but persistently. This placement builds momentum through endurance, but can become immovable when anger has nowhere honest to go."
+      "body": "Mars in Taurus lends you a steady, persistent drive. You tackle tasks with determination, and once you’ve set a goal, it’s near impossible to deter you. Patience and a love for the sensual pleasures of life mark your journey."
     },
     {
       "sign": "gemini",
-      "body": "Mars in Gemini acts through words, ideas, movement, and quick decisions. This placement is mentally sharp and versatile, but needs focus so energy does not scatter."
+      "body": "With Mars in Gemini in your chart, your actions are powered by your intellect. Quick - thinking and versatility guide your moves. You may be drawn towards activities that involve communication, networking, or learning new skills."
     },
     {
       "sign": "cancer",
-      "body": "Mars in Cancer acts protectively and emotionally. This placement fights for home, family, and safety, but must watch indirect anger when needs are not named."
+      "body": "When Mars is in Cancer, your actions are motivated by emotion and intuition. You protect what you hold dear with a fierce determination. While you may approach situations cautiously, once you commit, you invest deep emotional energy."
     },
     {
       "sign": "leo",
-      "body": "Mars in Leo acts with pride, warmth, creativity, and dramatic force. This placement needs a stage for courage and a purpose that lets effort feel personal."
+      "body": "Mars in Leo gives you a flair for the dramatic. Your actions often attract attention, and you carry out your tasks with a sense of pride and a desire for recognition. Your energy levels are consistently high, and you face life with a courageous heart."
     },
     {
       "sign": "virgo",
-      "body": "Mars in Virgo acts through precision, improvement, service, and practical skill. This placement is effective when focused on useful work, but can turn heat into criticism."
+      "body": "With Mars in Virgo, you act with precision and practicality. You have an acute eye for detail and a desire for perfection. Your energy is applied in service, organization, and tasks that require meticulous attention."
     },
     {
       "sign": "libra",
-      "body": "Mars in Libra acts through strategy, negotiation, aesthetics, and the pursuit of fairness. This placement fights best when it knows what it wants and stops outsourcing the decision."
+      "body": "Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might find yourself in the role of a mediator. You may also have a knack for artistic pursuits."
     },
     {
       "sign": "scorpio",
-      "body": "Mars in Scorpio acts with depth, intensity, patience, and controlled force. This placement can endure pressure and move with precision, but must watch control as a defense."
+      "body": "You act with intensity and a strong will. Your actions are often guided by your deep intuition, and you’re not afraid to explore the hidden depths of any situation."
     },
     {
       "sign": "sagittarius",
-      "body": "Mars in Sagittarius acts through conviction, movement, risk, and the pursuit of truth. This placement needs a horizon, but must make sure belief is embodied in action."
+      "body": "If Mars is in Sagittarius, your actions embody an adventurous spirit. You relish taking risks and exploring new frontiers. Guided by optimism and enthusiasm, you’re always prepared for the next big adventure."
     },
     {
       "sign": "capricorn",
-      "body": "Mars in Capricorn acts with discipline, strategy, endurance, and respect for results. This placement can build real power through patience and directed effort."
+      "body": "With Mars in Capricorn, your actions are driven by your ambition and discipline. You have a strong work ethic and the patience to achieve your long-term goals. You act with practicality, and a strong sense of responsibility."
     },
     {
       "sign": "aquarius",
-      "body": "Mars in Aquarius acts through principle, innovation, independence, and group-minded change. This placement needs a cause and the freedom to move differently."
+      "body": "Mars in Aquarius bestows upon you a unique, innovative drive. You act based on your strong ideals and are willing to challenge the status quo. You may be drawn towards activities that benefit society as a whole or involve cutting-edge technology."
     },
     {
       "sign": "pisces",
-      "body": "Mars in Pisces acts through intuition, compassion, imagination, and subtle timing. This placement needs spiritual or creative purpose, plus boundaries strong enough to keep energy from leaking."
+      "body": "With Mars in Pisces, your actions are motivated by your empathy and intuition. You have a selfless desire to help and heal. Your actions might be guided by your deep spiritual beliefs or a strong sense of creative inspiration."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      474,
+      475,
+      476,
+      477,
+      478,
+      479,
+      480,
+      481,
+      482,
+      483,
+      484,
+      485,
+      486,
+      487,
+      488,
+      489,
+      490,
+      491,
+      492,
+      493,
+      494,
+      495,
+      496,
+      497,
+      498,
+      499,
+      500,
+      501,
+      502,
+      503,
+      504,
+      505
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

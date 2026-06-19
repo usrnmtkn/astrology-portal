@@ -2,62 +2,90 @@
   "id": "moon",
   "planet": "moon",
   "title": "Moon Meaning",
-  "overview": "The Moon describes emotional needs, instinctive reactions, memory, body rhythms, caretaking patterns, and what helps a person feel safe enough to respond rather than defend. It shows the private self: how feelings move, how comfort is sought, and what kind of environment supports steadiness.",
-  "cycle": "The Moon travels through the zodiac in about 27.3 days and changes signs roughly every two to two and a half days. Its sign describes emotional style; its house shows where the person seeks safety, familiarity, and nourishment.",
+  "overview": "The Moon describes the emotional body: instinct, memory, mood, safety, belonging, and the private responses that happen before everything has been explained. It shows what helps someone feel settled and what can unsettle them when their needs have gone unnoticed.",
+  "cycle": "The Moon moves quickly, completing the zodiac in about twenty-seven days and changing signs every few days. Its transits are brief but noticeable, often showing shifts in mood, body rhythm, attention, and emotional weather.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Moon in Aries feels quickly and responds directly. Emotional safety comes through autonomy, honest action, and the freedom to move instead of waiting for permission."
+      "body": "Moon in Aries expresses through directly, quickly, and with a need to act before the moment goes cold. This placement asks the planet's core function to move in a Aries way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "taurus",
-      "body": "Moon in Taurus seeks emotional steadiness through comfort, touch, routine, and reliable surroundings. Feelings settle when life feels simple, embodied, and materially secure."
+      "body": "Moon in Taurus expresses through steadily, patiently, and through what can be trusted by the body and senses. This placement asks the planet's core function to move in a Taurus way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "gemini",
-      "body": "Moon in Gemini processes feelings through language, movement, curiosity, and mental variety. Emotional regulation often comes from naming the feeling and talking it through."
+      "body": "Moon in Gemini expresses through through curiosity, language, movement, questions, and changing information. This placement asks the planet's core function to move in a Gemini way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "cancer",
-      "body": "Moon in Cancer is deeply responsive, protective, and tied to home, memory, and belonging. Emotional safety comes through care, privacy, and trusted bonds."
+      "body": "Moon in Cancer expresses through protectively, emotionally, and through memory, belonging, and care. This placement asks the planet's core function to move in a Cancer way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "leo",
-      "body": "Moon in Leo needs warmth, affection, play, and heartfelt recognition. Feelings want expression, and emotional safety grows when joy and loyalty are present."
+      "body": "Moon in Leo expresses through warmly, visibly, and through creativity, pride, play, and personal expression. This placement asks the planet's core function to move in a Leo way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "virgo",
-      "body": "Moon in Virgo processes emotions through order, usefulness, observation, and practical care. Safety comes from rhythm, repair, and knowing what can be done next."
+      "body": "Moon in Virgo expresses through carefully, practically, and through discernment, repair, service, and useful detail. This placement asks the planet's core function to move in a Virgo way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "libra",
-      "body": "Moon in Libra seeks emotional balance through harmony, fairness, beauty, and relational attunement. Safety grows when conflict can be addressed without losing respect."
+      "body": "Moon in Libra expresses through relationally, socially, and through fairness, beauty, balance, and comparison. This placement asks the planet's core function to move in a Libra way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "scorpio",
-      "body": "Moon in Scorpio feels intensely and needs emotional honesty, privacy, and trust. Safety comes from depth, loyalty, and the freedom to name what is usually hidden."
+      "body": "Moon in Scorpio expresses through privately, intensely, and through trust, depth, honesty, and the need to see beneath the surface. This placement asks the planet's core function to move in a Scorpio way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "sagittarius",
-      "body": "Moon in Sagittarius needs freedom, movement, humor, meaning, and room to breathe. Emotional safety grows when life still feels open and the story can keep expanding."
+      "body": "Moon in Sagittarius expresses through through meaning, movement, candor, study, and the search for a wider truth. This placement asks the planet's core function to move in a Sagittarius way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "capricorn",
-      "body": "Moon in Capricorn seeks emotional safety through competence, structure, responsibility, and self-command. Feelings may be private, but they are not absent."
+      "body": "Moon in Capricorn expresses through through discipline, consequence, timing, responsibility, and what can be built over time. This placement asks the planet's core function to move in a Capricorn way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "aquarius",
-      "body": "Moon in Aquarius needs space, perspective, friendship, and respect for individuality. Emotional safety grows when feelings can be understood without being crowded."
+      "body": "Moon in Aquarius expresses through through originality, systems, distance, community, and the need to question inherited rules. This placement asks the planet's core function to move in a Aquarius way, shaping how it responds, chooses, and develops over time."
     },
     {
       "sign": "pisces",
-      "body": "Moon in Pisces feels through empathy, imagination, atmosphere, and spiritual sensitivity. Safety comes through gentleness, creative release, and boundaries that keep compassion from becoming overwhelm."
+      "body": "Moon in Pisces expresses through through sensitivity, imagination, compassion, intuition, and porous awareness. This placement asks the planet's core function to move in a Pisces way, shaping how it responds, chooses, and develops over time."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      605,
+      606,
+      607,
+      608,
+      609,
+      610,
+      611,
+      612,
+      613,
+      614,
+      615,
+      616,
+      617,
+      618,
+      619,
+      620,
+      621,
+      622,
+      623,
+      624,
+      625,
+      626,
+      627,
+      628,
+      629,
+      630,
+      631
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

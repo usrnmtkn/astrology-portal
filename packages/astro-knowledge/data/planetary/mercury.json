@@ -2,62 +2,94 @@
   "id": "mercury",
   "planet": "mercury",
   "title": "Mercury Meaning",
-  "overview": "Mercury describes thought, speech, learning, translation, commerce, movement, humor, and the way a person makes connections between ideas. It shows how information is gathered, sorted, questioned, explained, and exchanged.",
-  "cycle": "Mercury usually spends about two to four weeks in a sign, though retrograde cycles can extend its stay. Its sign describes mental style and communication; its house shows where the mind stays busy and where messages need to move.",
+  "overview": "Mercury describes the mind in motion: thought, language, questions, interpretation, learning, writing, conversation, and the way information becomes useful. It shows how someone notices patterns, names what is happening, and makes decisions from what they observe.",
+  "cycle": "Mercury moves around the zodiac in roughly a year, with retrograde periods that slow down communication, review, and decision-making. Its sign describes the style of thinking; its house shows where the mind stays busy.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Mercury in Aries thinks quickly, speaks directly, and prefers decisive language. This placement learns by acting and may need to slow down long enough to hear the reply."
+      "body": "With Mercury in Aries, your communication is direct, assertive, and enthusiastic. You think on your feet, making you a natural problem-solver. You tackle intellectual challenges with boldness and excitement."
     },
     {
       "sign": "taurus",
-      "body": "Mercury in Taurus thinks carefully, speaks plainly, and trusts what can be tested. This placement needs time to decide, but once the mind is made up it tends to hold steady."
+      "body": "With Mercury in Taurus, your communication style is measured, grounded, and practical. You think things through thoroughly before voicing your opinions, and your words are typically well - considered and reliable."
     },
     {
       "sign": "gemini",
-      "body": "Mercury in Gemini is curious, agile, verbal, and quick to connect ideas. This placement learns through variety, conversation, comparison, and mental movement."
+      "body": "With Mercury in Gemini, you’re quick-witted and express thoughts eloquently. Skilled in conversation, you’re always ready to exchange ideas. Your adaptable and curious mind enjoys exploring multiple subjects."
     },
     {
       "sign": "cancer",
-      "body": "Mercury in Cancer thinks through feeling, memory, and emotional context. Communication is intuitive and protective, and words land best when safety is present."
+      "body": "With Mercury in Cancer, your thinking process is greatly influenced by your emotions. Your communication is intuitive, nurturing, and often indirect. You excel in understanding and conveying emotional subtleties."
     },
     {
       "sign": "leo",
-      "body": "Mercury in Leo communicates with warmth, confidence, creativity, and dramatic presence. This placement speaks best when the message has heart and personal meaning."
+      "body": "With Mercury in Leo, your communication style is bold, creative, and confident. You’re good at expressing your thoughts in dramatic and compelling ways. You enjoy being the center of attention, engaging others with your vivacious and charismatic speech."
     },
     {
       "sign": "virgo",
-      "body": "Mercury in Virgo analyzes, edits, improves, and notices what others miss. This placement communicates with precision and is strongest when its discernment serves repair rather than worry."
+      "body": "With Mercury in Virgo, your thoughts are analytical, detailed, and practical. You excel at problem - solving and critical thinking. You communicate clearly, logically, and you’re good at giving useful advice."
     },
     {
       "sign": "libra",
-      "body": "Mercury in Libra thinks relationally and weighs multiple sides before speaking. This placement is skilled at mediation, diplomacy, aesthetics, and fair-minded conversation."
+      "body": "With Mercury in Libra, your thinking process is balanced, diplomatic, and harmonious. You excel in mediating and finding fair solutions in conversations. You enjoy intellectual exchanges that involve give - and - take."
     },
     {
       "sign": "scorpio",
-      "body": "Mercury in Scorpio investigates beneath the surface and prefers meaningful conversation over empty noise. This placement notices subtext and can speak with penetrating honesty."
+      "body": "With Mercury in Scorpio, your communication is intense, probing, and insightful. You uncover truths and delve into deep topics, preferring meaningful conversations over small talk."
     },
     {
       "sign": "sagittarius",
-      "body": "Mercury in Sagittarius thinks broadly, speaks candidly, and looks for meaning behind the facts. This placement needs truth, perspective, and room for big questions."
+      "body": "With Mercury in Sagittarius, your communication is optimistic, broad-minded, and sincere. You’re a seeker of knowledge, engaging in philosophical and thought-provoking conversations. Your expression is open and honest."
     },
     {
       "sign": "capricorn",
-      "body": "Mercury in Capricorn thinks strategically, practically, and with respect for consequences. This placement communicates best through structure, planning, and clear purpose."
+      "body": "With Mercury in Capricorn, your communication is clear, organized, and serious. You’re good at strategic thinking and planning. Your words are chosen carefully and are often laced with practical wisdom."
     },
     {
       "sign": "aquarius",
-      "body": "Mercury in Aquarius thinks independently, experimentally, and collectively. This placement is drawn to systems, future possibilities, unusual ideas, and social patterns."
+      "body": "With Mercury in Aquarius, your thinking is innovative, idealistic, and somewhat unconventional. You enjoy intellectual exchanges about progressive ideas. You have the ability to communicate your unique ideas effectively."
     },
     {
       "sign": "pisces",
-      "body": "Mercury in Pisces thinks through image, feeling, symbol, and intuition. This placement communicates with imagination and empathy, but needs grounding when details matter."
+      "body": "With Mercury in Pisces, your communication is empathetic, imaginative, and intuitive. Your thinking process is often influenced by your feelings. You’re good at expressing ideas creatively and understanding others on an emotional level."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      574,
+      575,
+      576,
+      577,
+      578,
+      579,
+      580,
+      581,
+      582,
+      583,
+      584,
+      585,
+      586,
+      587,
+      588,
+      589,
+      590,
+      591,
+      592,
+      593,
+      594,
+      595,
+      596,
+      597,
+      598,
+      599,
+      600,
+      601,
+      602,
+      603,
+      604
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }

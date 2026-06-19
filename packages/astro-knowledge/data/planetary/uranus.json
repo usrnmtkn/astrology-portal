@@ -2,62 +2,95 @@
   "id": "uranus",
   "planet": "uranus",
   "title": "Uranus Meaning",
-  "overview": "Uranus is a modern interpretive planet associated with disruption, liberation, invention, awakening, instability, and the refusal to keep living inside a pattern that has gone stale. It does not replace traditional rulership logic, but it can describe the flavor of sudden change and individuation.",
-  "cycle": "Uranus takes about 84 years to complete the zodiac and spends roughly seven years in each sign. Its sign is often generational; its house and aspects show where the person experiences surprise, freedom, reinvention, and breaks from convention.",
+  "overview": "Uranus describes awakening, disruption, freedom, invention, rupture, surprise, and the part of life that refuses to stay trapped inside a stale pattern. It shows where someone needs room to change and where the old structure may no longer fit.",
+  "cycle": "Uranus takes about eighty-four years to move through the zodiac and spends about seven years in each sign. Its house transits mark longer chapters of change, liberation, instability, and new possibility.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Uranus in Aries describes a generation that disrupts through courage, independence, and bold action. Innovation comes through refusal to wait for permission."
+      "body": "Signifies impulsivity and innovation. Those with this placement may be pioneers and ground-breakers, often inclined to challenge the status quo."
     },
     {
       "sign": "taurus",
-      "body": "Uranus in Taurus describes disruption around money, land, food, bodies, values, and material security. Innovation comes through changing what stability means."
+      "body": "Indicates a desire for materialistic progress and financial innovation. Those with this placement can bring revolutionary changes in fields related to finance and the environment."
     },
     {
       "sign": "gemini",
-      "body": "Uranus in Gemini describes disruption through language, media, education, mobility, and information systems. Innovation comes through new ways of thinking and connecting."
+      "body": "Implies an innovative mind with unique communication styles. Those with this placement may invent or create revolutionary ideas in media, technology, or education."
     },
     {
       "sign": "cancer",
-      "body": "Uranus in Cancer describes disruption around home, family, belonging, and emotional inheritance. Innovation comes through redefining protection and private life."
+      "body": "Suggests new ideas and drastic changes in terms of home, family, and traditions. Those with this placement may redefine conventional notions of family and domesticity."
     },
     {
       "sign": "leo",
-      "body": "Uranus in Leo describes disruption through creativity, performance, leadership, and personal expression. Innovation comes through new ways of being seen."
+      "body": "Represents unique and innovative expressions of creativity and leadership. Those with this placement may revolutionize arts, entertainment, and leadership roles."
     },
     {
       "sign": "virgo",
-      "body": "Uranus in Virgo describes disruption around work, health, service, systems, and daily process. Innovation comes through better methods and practical reform."
+      "body": "Signifies advancements and revolutionary changes in healthcare and service sectors. Those with this placement may pioneer new methods in these fields."
     },
     {
       "sign": "libra",
-      "body": "Uranus in Libra describes disruption around partnership, justice, aesthetics, and social agreements. Innovation comes through changing how people relate and negotiate."
+      "body": "Implies innovation in diplomacy, relationships, and art. Those with this placement may challenge traditional norms in these areas."
     },
     {
       "sign": "scorpio",
-      "body": "Uranus in Scorpio describes disruption around intimacy, shared resources, power, psychology, and taboo material. Innovation comes through confronting what was hidden."
+      "body": "Suggests drastic transformations, often through trials and upheavals. Those with this placement may bring about radical changes in fields like psychology, metaphysics, or finance."
     },
     {
       "sign": "sagittarius",
-      "body": "Uranus in Sagittarius describes disruption around belief, travel, education, law, publishing, and global perspective. Innovation comes through challenging inherited truths."
+      "body": "Represents radical philosophy and exploration. Those with this placement may challenge established beliefs, ethics, or educational systems."
     },
     {
       "sign": "capricorn",
-      "body": "Uranus in Capricorn describes disruption around institutions, authority, career, government, and long-standing structures. Innovation comes through rebuilding systems."
+      "body": "Indicates a revolutionary approach to structures, systems, and governance. Those with this placement may bring about radical changes in traditional structures like governance, corporations, or societal hierarchy."
     },
     {
       "sign": "aquarius",
-      "body": "Uranus in Aquarius describes disruption around networks, technology, community, social ideals, and collective futures. Innovation comes through new forms of belonging."
+      "body": "Emphasizes individuality, freedom, and humanitarianism. Those with this placement may bring about revolutionary changes for the collective."
     },
     {
       "sign": "pisces",
-      "body": "Uranus in Pisces describes disruption around spirituality, compassion, art, dreams, and collective sensitivity. Innovation comes through awakening what had been submerged."
+      "body": "Signifies spirituality, intuition, and universal love. Those with this placement may introduce innovative ideas in the areas of spirituality, art, or healing. Transiting Uranus opposes its natal position typically between the ages of and. Those born in the 1930s to 1940s will experience this transit earlier, around ages to. Individuals born in the 1960s, 1970s, and 1980s will undergo this transit slightly later, between ages and."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      633,
+      634,
+      635,
+      636,
+      637,
+      638,
+      639,
+      640,
+      641,
+      642,
+      643,
+      644,
+      645,
+      646,
+      647,
+      648,
+      649,
+      650,
+      651,
+      652,
+      653,
+      654,
+      655,
+      656,
+      657,
+      658,
+      659,
+      660,
+      661,
+      662,
+      663,
+      664
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }
