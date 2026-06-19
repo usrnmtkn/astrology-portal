@@ -1,8 +1,4 @@
 :where(
-  .placement-table-wrap,
-  .list,
-  .you-list-card,
-  .aspects-card,
   .you-empty-card,
   .friends-logic-card,
   .friends-feed-card,
@@ -10,9 +6,6 @@
   .relationship-api-summary,
   .you-signatures-card,
   .friend-signature-card,
-  .synastry-placement-table,
-  .placement-table-card,
-  .friend-compare-list,
   .manual-chart-row,
   .daily-horoscope-summary,
   .daily-horoscope-writeup,
@@ -30,6 +23,28 @@
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
+}
+
+:where(
+  .placement-table-wrap,
+  .placement-table,
+  .planet-placement-list,
+  .placement-table-card,
+  .sky-pl-item,
+  .aspects-card,
+  .aspect-row-card,
+  .aspect-row-list,
+  .aspect-row-group,
+  .aspect-row-groups,
+  .you-list-card,
+  .list,
+  .synastry-placement-table,
+  .friend-compare-list
+) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 :where(
