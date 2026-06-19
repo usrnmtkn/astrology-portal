@@ -7296,7 +7296,7 @@ function natalPlanetHouseParagraph(
   houseFrame: { intro: string; focus: string; lived: string },
   houseLabel: string
 ) {
-  const focus = possessiveArea(houseFrame.focus);
+  const focus = houseFrame.focus;
   const title = natalPlacementFullTitle(position);
 
   switch (position.planet) {
@@ -7479,7 +7479,7 @@ function natalPlacementUseParagraph(
   position: PlanetPosition,
   houseFrame: { intro: string; focus: string; lived: string }
 ) {
-  const focus = possessiveArea(houseFrame.focus);
+  const focus = houseFrame.focus;
 
   switch (position.planet) {
     case "Sun":
@@ -7522,7 +7522,7 @@ function natalRulerParagraph({
   rulerHouse: number | null;
   rulerPosition: PlanetPosition | null;
 }) {
-  const focus = possessiveArea(houseFrame.focus);
+  const focus = houseFrame.focus;
 
   if (houseRuler && rulerPosition && rulerHouse) {
     const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
@@ -10619,9 +10619,10 @@ function ManualChartsPanel({
     }
 
     const contentKey = natalPlacementWriteupContentKey(position);
-    const liveWriteup = relationshipGeneratedContent.get(contentKey) ?? null;
+    const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
+    const liveWriteup = friendGeneratedContent.get(contentKey) ?? null;
 
-    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, relationshipGeneratedContent));
+    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, friendGeneratedContent));
   };
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
