@@ -3253,6 +3253,7 @@ function relatedAspectRowsForPlacement({
   generatedContent,
   mode,
   onOpenNatalAspect,
+  ownerContext,
   pointName
 }: {
   aspects: SkySnapshot["aspects"];
@@ -3260,6 +3261,7 @@ function relatedAspectRowsForPlacement({
   generatedContent: GeneratedContentMap;
   mode: "sky" | "natal";
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
   pointName: string;
 }) {
   return aspects
@@ -3288,12 +3290,15 @@ function relatedAspectRowsForPlacement({
         generated,
         fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
       );
+      const displaySummary = ownerContext && mode === "natal"
+        ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person")
+        : rowSummary;
       const rowContent = (
         <>
           <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
           <span className="aspect-row-copy">
             <h3>{title}</h3>
-            {rowSummary ? <p>{rowSummary}</p> : null}
+            {displaySummary ? <p>{displaySummary}</p> : null}
           </span>
           <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
             <span className="aspect-row-dot" aria-hidden="true" />
@@ -4390,12 +4395,40 @@ function possessiveLabel(name: string) {
 function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
   const subject = ownerKind === "chart" ? "This chart" : ownerName;
   const possessive = ownerKind === "chart" ? "This chart's" : possessiveLabel(ownerName);
+  const reflexive = ownerKind === "chart" ? "itself" : subject;
 
   return text
+    .replace(/\bpart of you being activated\b/g, `part of ${subject} that is being activated`)
+    .replace(/\bYou are learning\b/g, `${subject} is learning`)
+    .replace(/\byou are learning\b/g, `${subject} is learning`)
+    .replace(/\bYou are looking\b/g, `${subject} is looking`)
+    .replace(/\byou are looking\b/g, `${subject} is looking`)
+    .replace(/\bYou are not only\b/g, `${subject} is not only`)
+    .replace(/\byou are not only\b/g, `${subject} is not only`)
+    .replace(/\bYou are not here\b/g, `${subject} is not here`)
+    .replace(/\byou are not here\b/g, `${subject} is not here`)
     .replace(/\bYou are\b/g, `${subject} is`)
     .replace(/\byou are\b/g, `${subject} is`)
     .replace(/\bYou have\b/g, `${subject} has`)
     .replace(/\byou have\b/g, `${subject} has`)
+    .replace(/\bYou discover\b/g, `${subject} discovers`)
+    .replace(/\byou discover\b/g, `${subject} discovers`)
+    .replace(/\bYou learn\b/g, `${subject} learns`)
+    .replace(/\byou learn\b/g, `${subject} learns`)
+    .replace(/\bYou look\b/g, `${subject} looks`)
+    .replace(/\byou look\b/g, `${subject} looks`)
+    .replace(/\bYou build\b/g, `${subject} builds`)
+    .replace(/\byou build\b/g, `${subject} builds`)
+    .replace(/\bYou stop\b/g, `${subject} stops`)
+    .replace(/\byou stop\b/g, `${subject} stops`)
+    .replace(/\bYou give\b/g, `${subject} gives`)
+    .replace(/\byou give\b/g, `${subject} gives`)
+    .replace(/\bYou let\b/g, `${subject} lets`)
+    .replace(/\byou let\b/g, `${subject} lets`)
+    .replace(/\bYou can\b/g, `${subject} can`)
+    .replace(/\byou can\b/g, `${subject} can`)
+    .replace(/\bYou will\b/g, `${subject} will`)
+    .replace(/\byou will\b/g, `${subject} will`)
     .replace(/\bYou need\b/g, `${subject} needs`)
     .replace(/\byou need\b/g, `${subject} needs`)
     .replace(/\bYou tend\b/g, `${subject} tends`)
@@ -4406,6 +4439,9 @@ function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: 
     .replace(/\byou want\b/g, `${subject} wants`)
     .replace(/\bYou may\b/g, `${subject} may`)
     .replace(/\byou may\b/g, `${subject} may`)
+    .replace(/\byourself\b/g, reflexive)
+    .replace(/\bpart of you\b/g, `part of ${subject}`)
+    .replace(/\bwhat gives your life\b/g, `what gives ${possessive} life`)
     .replace(/\bYour\b/g, possessive)
     .replace(/\byour\b/g, possessive)
     .replace(/\bYou\b/g, subject)
@@ -7528,13 +7564,13 @@ function natalRulerParagraph({
     const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} shapes how this area develops. ${rulerProcess} With ${houseRuler} in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, ${focus} is connected to ${rulerHouseLink}. Over time, the meaning of this placement becomes clearer when those areas of life are allowed to speak to each other.`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. ${rulerProcess} In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${focus} connects back to ${rulerHouseLink}. Over time, the meaning of this placement becomes clearer when those areas of life are allowed to speak to each other.`;
   }
 
   if (houseRuler) {
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} shapes how this area develops. ${rulerProcess} Its placement shows where the meaning becomes more personal, practical, and specific over time.`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this area of your chart. ${rulerProcess} Its natal placement shows where the meaning becomes more personal, practical, and specific over time.`;
   }
 
   return `The ruler of your ${houseLabel} shows where this area of life becomes more personal, practical, and specific over time.`;
@@ -7754,7 +7790,8 @@ function natalPlacementDetailArticle(
   natalSky: SkySnapshot | null,
   liveWriteup: LiveGeneratedContent | null,
   generatedContent: GeneratedContentMap = new Map(),
-  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void
+  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): YouTransitArticle {
   const bodyParagraphs = generatedContentParagraphs(liveWriteup);
   const liveBody = bodyParagraphs.join("\n\n").trim();
@@ -7781,6 +7818,7 @@ function natalPlacementDetailArticle(
     generatedContent,
     mode: "natal",
     onOpenNatalAspect,
+    ownerContext,
     pointName: position.planet
   });
 
@@ -7815,9 +7853,17 @@ function natalPlacementSkyDetail(
   natalSky: SkySnapshot | null,
   liveWriteup: LiveGeneratedContent | null,
   generatedContent: GeneratedContentMap = new Map(),
-  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void
+  onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): SkyDetail {
-  const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect);
+  const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect, ownerContext);
+  const ownerAwareCopy = (value: ReactNode) => {
+    if (!ownerContext || typeof value !== "string") {
+      return value;
+    }
+
+    return natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person");
+  };
 
   return {
     glyph: article.glyph || pointGlyph(position.planet),
@@ -7828,10 +7874,10 @@ function natalPlacementSkyDetail(
     compactHeader: article.compactHeader,
     bodyBeforeSections: article.bodyBeforeSections,
     retrograde: position.motion === "retrograde",
-    body: article.body ?? [],
+    body: (article.body ?? []).map(ownerAwareCopy),
     sections: article.sections.map((section) => ({
       heading: section.heading,
-      body: section.body
+      body: ownerAwareCopy(section.body)
     })),
     relatedAspects: article.relatedAspects
   };
@@ -10649,6 +10695,15 @@ function ManualChartsPanel({
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
     const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const article = natalAspectDetailArticle(aspect, friendGeneratedContent);
+    const ownerName = selectedChart?.displayName ?? "This chart";
+    const ownerKind = selectedChartIsEvent ? "chart" : "person";
+    const ownerAwareCopy = (value: ReactNode) => {
+      if (typeof value !== "string") {
+        return value;
+      }
+
+      return natalGeneratedCopyForOwner(value, ownerName, ownerKind);
+    };
 
     onOpenDetail({
       glyph: article.glyph || pointGlyph(aspect.from),
@@ -10658,10 +10713,10 @@ function ManualChartsPanel({
       subtitle: article.subtitle,
       compactHeader: article.compactHeader,
       bodyBeforeSections: article.bodyBeforeSections,
-      body: article.body ?? [],
+      body: (article.body ?? []).map(ownerAwareCopy),
       sections: article.sections.map((section) => ({
         heading: section.heading,
-        body: section.body
+        body: ownerAwareCopy(section.body)
       }))
     });
   };
@@ -10676,7 +10731,17 @@ function ManualChartsPanel({
     const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const liveWriteup = friendGeneratedContent.get(contentKey) ?? null;
 
-    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, friendGeneratedContent, openFriendNatalAspectDetail));
+    onOpenDetail(natalPlacementSkyDetail(
+      position,
+      selectedChart.natalChart,
+      liveWriteup,
+      friendGeneratedContent,
+      openFriendNatalAspectDetail,
+      {
+        ownerName: selectedChart.displayName,
+        ownerKind: selectedChartIsEvent ? "chart" : "person"
+      }
+    ));
   };
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
