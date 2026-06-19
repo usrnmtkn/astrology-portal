@@ -4625,6 +4625,10 @@ const chartPronouns: ThirdPersonPronouns = {
   reflexive: "itself"
 };
 
+function capitalizeText(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function pronounSetForOwner(ownerKind: "person" | "chart" = "person") {
   return ownerKind === "chart" ? chartPronouns : defaultFriendPronouns;
 }
@@ -8116,44 +8120,30 @@ function natalPlacementAspectKnowledgeIds(position: PlanetPosition, natalSky: Sk
   return natalAspectsForPlacement(position, natalSky).map((aspect) => aspectContentId(aspect.from, aspect.type, aspect.to));
 }
 
-function natalPlacementAspectParagraph(position: PlanetPosition, natalSky: SkySnapshot | null) {
-  const aspects = natalAspectsForPlacement(position, natalSky).slice(0, 3);
+function friendIntegratedPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+  const aspects = natalAspectsForPlacement(position, natalSky);
 
-  if (aspects.length === 0) {
+  if (position.planet !== "Venus") {
     return "";
   }
 
-  const aspectClauses = aspects.map((aspect) => {
-    const otherPoint = aspectOtherPoint(aspect, position.planet);
-    const title = `${position.planet} ${aspect.type} ${otherPoint}`;
-    const description = aspectRelationshipDescription(position.planet, aspect.type, otherPoint);
+  const hasUranusConjunction = aspects.some((aspect) => (
+    aspect.type === "conjunction" && aspectOtherPoint(aspect, position.planet) === "Uranus"
+  ));
+  const hasTrueNodeSextile = aspects.some((aspect) => (
+    aspect.type === "sextile" && aspectOtherPoint(aspect, position.planet) === "True Node"
+  ));
+  const aspectNotes: string[] = [];
 
-    return `${title} (${wholeDegreeOrb(aspect.orb)}): ${description}`;
-  });
-
-  return `Your ${position.planet} is also shaped by its natal aspects. ${aspectClauses.join(" ")}`;
-}
-
-function friendPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null) {
-  const aspects = natalAspectsForPlacement(position, natalSky).slice(0, 3);
-
-  if (aspects.length === 0) {
-    return "";
+  if (hasUranusConjunction) {
+    aspectNotes.push(`Venus is also conjunct Uranus, which adds restlessness, originality, and surprise to the way ${ownerName} loves and chooses. ${capitalizeText(pronouns.subject)} may be drawn to people, aesthetics, or desires that interrupt ${pronouns.possessive} usual pattern. Connection may need honesty and depth, but it also needs freedom. If something becomes too controlled, predictable, or emotionally fixed, part of ${pronouns.object} may pull away just to feel like ${pronouns.subject} can breathe again.`);
   }
 
-  const aspectClauses = aspects.map((aspect) => {
-    const otherPoint = aspectOtherPoint(aspect, position.planet);
-    const title = `${position.planet} ${aspect.type} ${otherPoint}`;
-    const description = natalGeneratedCopyForOwner(
-      aspectRelationshipDescription(position.planet, aspect.type, otherPoint),
-      ownerName,
-      "person"
-    );
+  if (hasTrueNodeSextile) {
+    aspectNotes.push(`Venus sextile the True Node gives this placement a growth path. The things ${ownerName} values are not random. Attraction, pleasure, money, beauty, and connection can all become ways ${pronouns.subject} learn what ${pronouns.subject} are moving toward. When ${pronouns.subject} choose what feels alive and honest instead of what only feels familiar, Venus becomes part of ${pronouns.possessive} future direction.`);
+  }
 
-    return `${title} (${wholeDegreeOrb(aspect.orb)}): ${description}`;
-  });
-
-  return `${possessiveLabel(ownerName)} ${position.planet} is also shaped by its natal aspects. ${aspectClauses.join(" ")}`;
+  return aspectNotes.join("\n\n");
 }
 
 function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person") {
@@ -8166,7 +8156,7 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
     friendPlacementHouseParagraph(ownerName, position, pronouns),
     friendSignTone(position, pronouns),
     friendPlacementRulerParagraph(ownerName, position, natalSky, pronouns),
-    friendPlacementAspectParagraph(ownerName, position, natalSky),
+    friendIntegratedPlacementAspectParagraph(ownerName, position, natalSky, pronouns),
     friendPlacementSynthesisParagraph(ownerName, position, pronouns)
   ].map((paragraph) => paragraph.trim()).filter(Boolean);
 
@@ -8273,10 +8263,6 @@ function natalPlacementDetailArticle(
     : hasLiveAuthoredBody
       ? bodyParagraphs
       : [];
-  const placementAspectParagraph = natalPlacementAspectParagraph(position, natalSky);
-  const authoredBodyWithAspects = placementAspectParagraph
-    ? [...authoredBodyParagraphs, placementAspectParagraph]
-    : authoredBodyParagraphs;
   const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
@@ -8301,9 +8287,9 @@ function natalPlacementDetailArticle(
     subtitle: natalPlacementDetailSubtitle(position),
     lensHint: natalPlacementLensHint,
     compactHeader: true,
-    plainBody: authoredBodyWithAspects.length > 0,
+    plainBody: authoredBodyParagraphs.length > 0,
     bodyBeforeSections: true,
-    body: authoredBodyWithAspects,
+    body: authoredBodyParagraphs,
     summary: "",
     summaryHeading: "",
     sections,
