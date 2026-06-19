@@ -124,6 +124,14 @@ function addAlias(aliases: Set<string>, alias?: string | null) {
 }
 
 function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: LiveGeneratedContent) {
+  if (current.contentKey === alias) {
+    return false;
+  }
+
+  if (next.contentKey === alias) {
+    return true;
+  }
+
   if (alias.startsWith("sky-retrograde-")) {
     const currentDate = current.targetDate ?? "";
     const nextDate = next.targetDate ?? "";
