@@ -2112,6 +2112,35 @@ function manualChartBigThree(chart: ManualChart) {
   return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
 }
 
+const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
+
+function isSocialBigThreeRow(row: SocialPlacementRow) {
+  return socialBigThreeLabels.has(row.label);
+}
+
+function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot): PlanetPosition | null {
+  const existingPosition = sky.positions.find((position) => position.planet === row.label);
+
+  if (existingPosition) {
+    return existingPosition;
+  }
+
+  if (row.label !== "Ascendant") {
+    return null;
+  }
+
+  return {
+    planet: "Ascendant",
+    glyph: row.glyph || pointGlyph("Ascendant"),
+    sign: row.sign,
+    signGlyph: zodiacGlyphText(row.sign),
+    degree: row.degree,
+    house: row.house ?? 1,
+    motion: "direct",
+    theme: "presence"
+  };
+}
+
 function manualChartSubtitle(chart: ManualChart) {
   const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
   const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
@@ -4573,6 +4602,31 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
 
 function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
   return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind)(text);
+}
+
+type ThirdPersonPronouns = {
+  subject: string;
+  object: string;
+  possessive: string;
+  reflexive: string;
+};
+
+const defaultFriendPronouns: ThirdPersonPronouns = {
+  subject: "they",
+  object: "them",
+  possessive: "their",
+  reflexive: "themselves"
+};
+
+const chartPronouns: ThirdPersonPronouns = {
+  subject: "it",
+  object: "it",
+  possessive: "its",
+  reflexive: "itself"
+};
+
+function pronounSetForOwner(ownerKind: "person" | "chart" = "person") {
+  return ownerKind === "chart" ? chartPronouns : defaultFriendPronouns;
 }
 
 function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
@@ -7836,6 +7890,220 @@ function natalPlacementFallbackSection(
   };
 }
 
+const friendPlanetOpeners: Record<string, string> = {
+  Sun: "describes how identity, confidence, vitality, and direction become clearer",
+  Moon: "describes how emotional safety, instinct, memory, and belonging take shape",
+  Mercury: "describes how thinking, communication, learning, and perception develop",
+  Venus: "describes how attraction, pleasure, values, and connection become clearer",
+  Mars: "describes how desire, courage, conflict, and action move through life",
+  Jupiter: "describes how growth, faith, risk, and perspective expand over time",
+  Saturn: "describes how responsibility, boundaries, patience, and maturity are built",
+  Uranus: "describes where freedom, disruption, originality, and change become necessary",
+  Neptune: "describes where imagination, sensitivity, longing, and spiritual perception gather",
+  Pluto: "describes where intensity, control, honesty, and transformation become unavoidable",
+  Ascendant: "describes how presence, instinct, appearance, and first responses meet the world"
+};
+
+const friendHouseDynamics: Record<number, string> = {
+  1: "through the way they show up, move through a room, respond on instinct, and become recognizable to themselves",
+  2: "through money, appetite, stability, self-worth, and the choices that show what feels worth protecting",
+  3: "through conversation, learning, writing, siblings, local environment, and the patterns they notice in everyday life",
+  4: "through home, family memory, privacy, emotional security, and the roots that shape how safe life feels",
+  5: "through creativity, romance, pleasure, play, and the risk of letting the heart become visible",
+  6: "through work, health, routines, service, and the daily habits that decide how sustainable life feels",
+  7: "through direct contact with other people, especially the ones they partner with, argue with, choose, desire, or negotiate with",
+  8: "through trust, intimacy, shared resources, vulnerability, and the deeper material people often avoid",
+  9: "through belief, study, travel, teaching, and the wider truths they test against lived experience",
+  10: "through career, reputation, responsibility, authority, and the public shape their life takes over time",
+  11: "through friendship, community, networks, collaboration, and the future they want to help build",
+  12: "through solitude, dreams, hidden pressure, retreat, grief, imagination, and what works beneath the surface"
+};
+
+const friendRulerHouseDynamics: Record<number, string> = {
+  1: "identity, embodiment, instinct, and the way they meet life directly",
+  2: "money, self-worth, values, and the resources that help them feel secure",
+  3: "language, learning, siblings, and the immediate world they move through every day",
+  4: "home, family, emotional security, and the private structures that support their life",
+  5: "creativity, romance, pleasure, children, and the courage to be seen",
+  6: "work, health, routines, service, and the habits that keep life functioning",
+  7: "partnership, agreement, attraction, conflict, and the people who meet them face to face",
+  8: "trust, shared resources, intimacy, vulnerability, and the deeper material people often avoid",
+  9: "belief, study, travel, wisdom, and the search for a wider truth",
+  10: "career, reputation, responsibility, authority, and the public shape of their life",
+  11: "friends, networks, community, collaboration, and the future they want to help build",
+  12: "solitude, hidden pressure, dreams, retreat, and what works beneath the surface"
+};
+
+const friendSignPlanetTone: Record<string, Record<string, string>> = {
+  Aries: {
+    Sun: "They build confidence by acting directly, naming what they want, and letting movement teach them what thinking alone cannot. The same directness can become reactive when difference starts to feel like a contest.",
+    Moon: "Their instincts are quick, direct, and protective. Feelings may move fast here, and emotional clarity often comes after they have acted, spoken, or admitted what they want.",
+    Mercury: "Their mind works quickly and directly. They may learn by testing an idea out loud, saying the thing first, and refining it once the conversation has started.",
+    Venus: "Their affection is direct and alive. They tend to know what attracts them quickly, but they may need connection that leaves room for independence and honest desire.",
+    Mars: "Their drive is immediate and initiating. They are strongest when they can move, choose, and respond honestly without turning every pressure point into a fight."
+  },
+  Taurus: {
+    Sun: "They build confidence through steadiness, patience, and contact with what feels real. They are not here to rush into every idea just because it is available.",
+    Moon: "Their emotional life needs steadiness, touch, time, and proof. Safety often comes from what is consistent enough to trust.",
+    Mercury: "Their mind works best when ideas have weight, texture, and practical value. They may need time to decide what they think, but once something settles, it tends to stay.",
+    Venus: "Their way of loving is steady, embodied, and loyal to what feels real. Desire becomes clearer when comfort and value have time to prove themselves.",
+    Mars: "Their drive gathers slowly and becomes powerful once it has a reason to keep going. They may resist being pushed, but they can stay with what matters for a long time."
+  },
+  Gemini: {
+    Sun: "They build confidence through curiosity, language, and movement between ideas. Identity becomes clearer when they can ask questions, make connections, and keep learning.",
+    Moon: "Their feelings often move through language and pattern recognition. They may need conversation, movement, or information before an emotion becomes clear.",
+    Mercury: "Their mind is fast, responsive, and built for connection. They may understand life by comparing details, asking better questions, and letting new information change the picture.",
+    Venus: "Their attraction is sparked by curiosity, wit, and exchange. Connection needs movement, language, and enough freshness to stay alive.",
+    Mars: "Their drive moves through words, ideas, and quick choices. They may act by naming the option, making the call, or following the thread that keeps pulling their attention."
+  },
+  Cancer: {
+    Sun: "They build confidence through care, memory, belonging, and the instinct to protect what matters. Identity becomes stronger when they trust what helps them feel safe enough to stay present.",
+    Moon: "Their emotional life is protective, intuitive, and deeply tied to memory. They often know what matters before they can explain why.",
+    Mercury: "Their mind remembers tone, context, and emotional weather. Communication works best when it leaves room for care and what is not being said directly.",
+    Venus: "Their affection is protective and emotionally attuned. They may value connection that feels familiar, caring, and safe enough to soften into.",
+    Mars: "Their drive is protective before it is performative. They may act most fiercely when someone or something they care about needs defending."
+  },
+  Leo: {
+    Sun: "They build confidence by letting warmth, creativity, and personal meaning become visible. Identity strengthens when they are allowed to care openly about what lights them up.",
+    Moon: "Their emotional life needs warmth, recognition, and room for the heart to be visible. They may feel safest where generosity is returned honestly.",
+    Mercury: "Their mind communicates with warmth and presence. Ideas become stronger when they can make them vivid, personal, and recognizable.",
+    Venus: "Their affection is generous, expressive, and drawn to aliveness. They may need love that makes room for play, admiration, and visible care.",
+    Mars: "Their drive strengthens when desire has heart behind it. They can move with courage when the goal feels personal and worth being seen for."
+  },
+  Virgo: {
+    Sun: "They build confidence through care, refinement, usefulness, and the ability to improve what is workable. Identity strengthens when they can turn attention into craft.",
+    Moon: "Their emotional life is sensitive to what is functional, ordered, and cared for. Small details can affect their sense of ease more than they may show.",
+    Mercury: "Their mind is observant, practical, and built for refinement. They may understand things by noticing what is missing, what repeats, and what can be improved.",
+    Venus: "Their affection often shows through care, attention, and practical support. Love becomes real when it is useful without becoming self-erasing.",
+    Mars: "Their drive sharpens through skill, precision, and repair. They may act most effectively when there is a concrete problem to solve."
+  },
+  Libra: {
+    Sun: "They build confidence through relationship, contrast, fairness, and the choices that make exchange feel honest. Identity becomes clearer when they understand what balance actually costs.",
+    Moon: "Their emotional life is shaped by tone, reciprocity, and the quality of exchange. They may feel safest where conflict can be handled without losing respect.",
+    Mercury: "Their mind works through comparison, dialogue, and the search for a cleaner balance. They may understand themselves by hearing another side.",
+    Venus: "Their affection is relational, aesthetic, and attuned to mutuality. Connection needs beauty, fairness, and enough honesty to stay real.",
+    Mars: "Their drive moves through negotiation, strategy, and the pressure to choose. They may need to act before perfect balance is possible."
+  },
+  Scorpio: {
+    Sun: "They build confidence by telling the truth about trust, fear, desire, and what has power. Identity strengthens when they stop staying on the surface of what matters.",
+    Moon: "Their emotional life is private, intense, and deeply perceptive. They may sense what is unspoken before anyone has named it.",
+    Mercury: "Their mind goes beneath the obvious answer. They may think best when they can investigate motive, subtext, and what people avoid saying.",
+    Venus: "Their affection is intense and selective. They may need connection that can handle honesty, depth, and the vulnerability beneath desire.",
+    Mars: "Their drive is focused, private, and difficult to redirect once desire has locked in. They may act from instinct before they explain the pressure underneath."
+  },
+  Sagittarius: {
+    Sun: "They build confidence through exploration, belief, risk, study, and the search for a wider truth. Identity strengthens when experience keeps expanding what they think is possible.",
+    Moon: "Their emotional life needs space, honesty, and room to keep learning. They may feel safest when life does not become too small or over-contained.",
+    Mercury: "Their mind looks for meaning, pattern, and the larger frame. They may communicate best when an idea has room to breathe and connect to experience.",
+    Venus: "Their affection needs freedom, honesty, humor, and shared growth. They may be drawn to people and experiences that widen their world.",
+    Mars: "Their drive strengthens through movement, conviction, and the promise of more. They may act quickly when something feels meaningful enough to chase."
+  },
+  Capricorn: {
+    Sun: "They build confidence through time, responsibility, discipline, and the slow proof of building something real. Identity strengthens when effort turns into earned authority.",
+    Moon: "Their emotional life may be private, contained, and shaped by responsibility. Safety often comes from knowing what can be relied on.",
+    Mercury: "Their mind works through structure, consequence, and practical strategy. They may trust ideas more when those ideas can survive pressure.",
+    Venus: "Their affection is serious about loyalty, time, and what can be built. Connection becomes real when it has integrity and staying power.",
+    Mars: "Their drive is disciplined and consequential. They may move slowly at first, but they can keep climbing when the goal is worth the effort."
+  },
+  Aquarius: {
+    Sun: "They build confidence by questioning inherited answers, studying systems, and staying open to possibilities outside the accepted path.",
+    Moon: "Their emotional life needs space, perspective, and permission to be different. They may process feelings by stepping back far enough to see the pattern.",
+    Mercury: "Their mind is drawn to systems, possibilities, and unconventional connections. They may understand life by noticing patterns other people miss.",
+    Venus: "Their affection needs friendship, freedom, and room for honesty outside the usual script. They may value connection that lets both people stay distinct.",
+    Mars: "Their drive sharpens around freedom, change, and the refusal to keep repeating a pattern that no longer fits."
+  },
+  Pisces: {
+    Sun: "They build confidence through imagination, compassion, sensitivity, and the ability to stay open to what cannot be explained cleanly.",
+    Moon: "Their emotional life is porous, imaginative, and deeply responsive to atmosphere. They may need quiet, art, rest, or solitude to know what is really theirs.",
+    Mercury: "Their mind is intuitive, associative, and drawn to subtle meaning. They may understand through image, feeling, metaphor, or what arrives between the lines.",
+    Venus: "Their affection is sensitive, romantic, and easily moved by longing or compassion. Connection needs tenderness and enough clarity to keep projection from taking over.",
+    Mars: "Their drive moves through feeling, imagination, and the pull of something meaningful. They may act best when desire has a dream, cause, or creative current behind it."
+  }
+};
+
+function friendSignTone(position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+  const signTone = friendSignPlanetTone[position.sign]?.[position.planet]
+    ?? friendSignPlanetTone[position.sign]?.Sun
+    ?? `In ${position.sign}, this placement becomes more specific through the way ${pronouns.subject} meets life, solves problems, and stays true to what feels real.`;
+
+  return signTone;
+}
+
+function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+  const house = position.house ?? 0;
+  const planetOpener = friendPlanetOpeners[position.planet] ?? `shows how ${position.planet} becomes active`;
+  const houseDynamic = friendHouseDynamics[house] ?? `through ${readableHouseTopic(house).replace(/^your\s+/i, "")}`;
+
+  return `${possessiveLabel(ownerName)} ${position.planet} ${planetOpener}. With ${pronouns.possessive} ${position.planet} in ${position.sign}${position.house ? ` in the ${ordinalHouse(position.house)} house` : ""}, that development happens ${houseDynamic}.`;
+}
+
+function friendPlacementRulerParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+  if (!position.house) {
+    return "";
+  }
+
+  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, position.house) : position.sign;
+  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
+
+  if (!houseRuler) {
+    return "";
+  }
+
+  const rulerPosition = natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null;
+  const houseLabel = `${ordinalHouse(position.house)} house`;
+
+  if (!rulerPosition?.house) {
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where this story becomes more personal and specific over time.`;
+  }
+
+  const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
+
+  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this area of life. In ${pronouns.possessive} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, connecting this placement with ${rulerHouseDynamic}.`;
+}
+
+function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+  switch (position.planet) {
+    case "Sun":
+      return `Over time, this placement becomes stronger when ${ownerName} understands what gives ${pronouns.object} confidence without forcing ${pronouns.object} to disappear into someone else's terms. The more ${pronouns.subject} can act from what ${pronouns.subject} want, value, and know to be true, the more this placement becomes a source of clarity and direction.`;
+    case "Moon":
+      return `Over time, this placement becomes steadier when ${ownerName} has room to trust what ${pronouns.possessive} body and mood are registering. The more ${pronouns.subject} can protect ${pronouns.possessive} sensitivity without closing down around it, the easier it becomes for ${pronouns.object} to feel secure and present.`;
+    case "Mercury":
+      return `Over time, this placement becomes stronger when ${ownerName} trusts the way ${pronouns.subject} notices, names, and connects information. The clearer ${pronouns.possessive} language becomes, the easier it is for ${pronouns.object} to turn perception into choices that actually change the situation.`;
+    case "Venus":
+      return `Over time, this placement becomes stronger when ${ownerName} can tell the difference between what attracts ${pronouns.object} quickly and what continues to feel valuable. The more honest ${pronouns.subject} is about desire, comfort, and worth, the more connection can become both alive and sustainable.`;
+    case "Mars":
+      return `Over time, this placement becomes stronger when ${ownerName} learns where action is needed and where reaction is only draining ${pronouns.object}. The more clearly ${pronouns.subject} knows what ${pronouns.subject} wants, the easier it becomes to move with courage instead of pressure.`;
+    case "Jupiter":
+      return `Over time, this placement becomes stronger when ${ownerName} lets growth stay connected to judgment. The more ${pronouns.subject} can tell the difference between a real opportunity and a story that only sounds expansive, the more wisdom this placement can build.`;
+    case "Saturn":
+      return `Over time, this placement becomes stronger when ${ownerName} treats pressure as material to work with, not proof that something is wrong. The more ${pronouns.subject} builds patiently and honestly, the more responsibility turns into confidence ${pronouns.subject} can trust.`;
+    case "Uranus":
+      return `Over time, this placement becomes stronger when ${ownerName} lets change become honest instead of chaotic. The more ${pronouns.subject} understands which patterns have become too small, the easier it is to choose freedom that can actually be lived.`;
+    case "Neptune":
+      return `Over time, this placement becomes stronger when ${ownerName} protects ${pronouns.possessive} sensitivity without letting it blur every boundary. The more clearly ${pronouns.subject} can hold longing, imagination, and compassion, the more trustworthy ${pronouns.possessive} inner guidance becomes.`;
+    case "Pluto":
+      return `Over time, this placement becomes stronger when ${ownerName} tells the truth about what has power over ${pronouns.object}. The more honestly ${pronouns.subject} meets pressure, fear, and desire, the more transformation becomes strength instead of something ${pronouns.subject} has to control.`;
+    default:
+      return `Over time, this placement becomes stronger when ${ownerName} can make it real in daily life. The more ${pronouns.subject} understands how this pattern works, the more useful and honest it becomes.`;
+  }
+}
+
+function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person") {
+  if (ownerKind === "chart") {
+    return null;
+  }
+
+  const pronouns = pronounSetForOwner(ownerKind);
+  const paragraphs = [
+    friendPlacementHouseParagraph(ownerName, position, pronouns),
+    friendSignTone(position, pronouns),
+    friendPlacementRulerParagraph(ownerName, position, natalSky, pronouns),
+    friendPlacementSynthesisParagraph(ownerName, position, pronouns)
+  ].map((paragraph) => paragraph.trim()).filter(Boolean);
+
+  return paragraphs;
+}
+
 function natalPlacementSignTitle(position: PlanetPosition) {
   return placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde");
 }
@@ -7990,6 +8258,9 @@ function natalPlacementSkyDetail(
   ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): SkyDetail {
   const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect, ownerContext);
+  const friendBody = ownerContext?.ownerKind === "person"
+    ? friendNatalPlacementBody(ownerContext.ownerName, position, natalSky, ownerContext.ownerKind)
+    : null;
   const ownerAwareCopy = (value: ReactNode) => {
     if (!ownerContext || typeof value !== "string") {
       return value;
@@ -8004,13 +8275,15 @@ function natalPlacementSkyDetail(
     title: ownerContext?.ownerKind === "person" ? `${possessiveLabel(ownerContext.ownerName)} ${article.title}` : article.title,
     meta: article.subtitle,
     subtitle: article.subtitle,
-    lensHint: ownerAwareCopy(article.lensHint),
+    lensHint: ownerContext?.ownerKind === "person"
+      ? "The planet shows which part of the chart is being activated. The house shows where it becomes part of lived experience. The sign on the house shows the pattern it moves through, and the ruler of that sign shows where the meaning keeps developing over time."
+      : ownerAwareCopy(article.lensHint),
     compactHeader: article.compactHeader,
-    plainBody: article.plainBody,
+    plainBody: friendBody ? true : article.plainBody,
     bodyBeforeSections: article.bodyBeforeSections,
     retrograde: position.motion === "retrograde",
-    body: (article.body ?? []).map(ownerAwareCopy),
-    sections: article.sections.map((section) => ({
+    body: friendBody ?? (article.body ?? []).map(ownerAwareCopy),
+    sections: friendBody ? [] : article.sections.map((section) => ({
       heading: section.heading,
       body: ownerAwareCopy(section.body)
     })),
@@ -10817,6 +11090,42 @@ function ManualChartsPanel({
   const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
   const selectedFriendMoon = selectedChart?.natalChart?.positions.find((position) => position.planet === "Moon");
+  const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
+  const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
+  const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
+    ? selectedFriendBigThreeRows
+    : [
+      {
+        id: "Sun",
+        glyph: "☉",
+        label: "Sun",
+        sign: selectedFriendBigThree?.sun ?? "pending",
+        degree: 0,
+        house: null,
+        retrograde: false
+      },
+      {
+        id: "Moon",
+        glyph: "☽",
+        label: "Moon",
+        sign: selectedFriendBigThree?.moon ?? "pending",
+        degree: 0,
+        house: null,
+        retrograde: false
+      },
+      {
+        id: "Ascendant",
+        glyph: "↑",
+        label: "Ascendant",
+        sign: selectedFriendBigThree?.rising ?? "pending",
+        degree: 0,
+        house: selectedChart?.birthTimeUnknown ? null : 1,
+        retrograde: false
+      }
+    ];
+  const selectedFriendNatalPlacementRows = selectedChartIsEvent
+    ? selectedFriendPlacementRows
+    : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
     const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const article = natalAspectDetailArticle(aspect, friendGeneratedContent);
@@ -10846,9 +11155,13 @@ function ManualChartsPanel({
     });
   };
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
-    const position = selectedChart?.natalChart?.positions.find((candidate) => candidate.planet === row.label);
+    if (!selectedChart?.natalChart) {
+      return;
+    }
 
-    if (!position || !selectedChart?.natalChart) {
+    const position = planetPositionFromSocialRow(row, selectedChart.natalChart);
+
+    if (!position) {
       return;
     }
 
@@ -11559,46 +11872,39 @@ function ManualChartsPanel({
                 </section>
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
-                  {[
-                    {
-                      glyph: "☉",
-                      pointName: "Sun",
-                      retrograde: selectedFriendSun?.motion === "retrograde",
-                      title: selectedFriendSun ? natalPlacementSignTitle(selectedFriendSun) : `Sun in ${selectedFriendBigThree?.sun ?? "pending"}`,
-                      body: `${selectedChart.displayName}'s core self and vitality`
-                    },
-                    {
-                      glyph: "☽",
-                      pointName: "Moon",
-                      retrograde: selectedFriendMoon?.motion === "retrograde",
-                      title: selectedFriendMoon ? natalPlacementSignTitle(selectedFriendMoon) : `Moon in ${selectedFriendBigThree?.moon ?? "pending"}`,
-                      body: `${selectedChart.displayName}'s inner world and what they need to feel safe`
-                    },
-                    {
-                      glyph: "↑",
-                      pointName: "Ascendant",
-                      retrograde: false,
-                      title: `Ascendant in ${selectedFriendBigThree?.rising ?? "pending"}`,
-                      body: selectedChart.birthTimeUnknown ? "Add a birth time to confirm the rising sign." : `How ${selectedChart.displayName} meets the world and comes across`
-                    }
-                  ].map(({ glyph, pointName, retrograde, title, body }) => (
-                    <PlacementTableRow
-                      description={body}
-                      glyph={glyph}
-                      key={title}
-                      pointName={pointName}
-                      retrograde={retrograde}
-                      title={title}
-                      variant="friend"
-                    />
-                  ))}
+                  {selectedFriendBigThreeDisplayRows.map((row) => {
+                    const title = row.label === "Ascendant"
+                      ? `Ascendant in ${row.sign}`
+                      : placementTitleFromParts(row.label, row.sign, row.retrograde);
+                    const body = row.label === "Sun"
+                      ? `${selectedChart.displayName}'s core self and vitality`
+                      : row.label === "Moon"
+                        ? `${selectedChart.displayName}'s inner world and what they need to feel safe`
+                        : selectedChart.birthTimeUnknown
+                          ? "Add a birth time to confirm the rising sign."
+                          : `How ${selectedChart.displayName} meets the world and comes across`;
+                    const canOpenDetail = Boolean(selectedChart.natalChart && !row.sign.toLowerCase().includes("pending"));
+
+                    return (
+                      <PlacementTableRow
+                        description={body}
+                        glyph={row.glyph}
+                        key={row.id}
+                        onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}
+                        pointName={row.label}
+                        retrograde={row.retrograde}
+                        title={title}
+                        variant="friend"
+                      />
+                    );
+                  })}
                 </div>
                 {selectedChart.natalChart && (
                   <>
                     <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}</span>
                     <FriendPlacementTable
                       title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
-                      rows={socialPlacementRows(selectedChart.natalChart)}
+                      rows={selectedFriendNatalPlacementRows}
                       descriptionContext={selectedChartIsEvent ? "chart" : "person"}
                       generatedContent={relationshipGeneratedContent}
                       generatedContext="natal"
