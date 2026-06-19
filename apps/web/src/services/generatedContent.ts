@@ -104,6 +104,19 @@ function parsePlacementLabel(value?: string | null) {
   };
 }
 
+function parseRetrogradeLabel(value?: string | null) {
+  const match = value?.match(/^(.+?)\s+retrograde(?:\s+in\s+(.+?))?$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    planet: slugContentPart(match[1]),
+    sign: match[2] ? slugContentPart(match[2]) : null
+  };
+}
+
 function addAlias(aliases: Set<string>, alias?: string | null) {
   if (alias) {
     aliases.add(alias);
@@ -118,6 +131,7 @@ function generatedContentAliases(row: GeneratedContentRow) {
   const aliases = new Set<string>();
   const aspect = parseAspectLabel(row.headline);
   const placement = parsePlacementLabel(row.headline);
+  const retrograde = parseRetrogradeLabel(row.headline);
   const reversedAspect = aspect ? `${aspect.second}-${aspect.aspect}-${aspect.first}` : null;
   const directAspect = aspect ? `${aspect.first}-${aspect.aspect}-${aspect.second}` : null;
 
@@ -137,9 +151,10 @@ function generatedContentAliases(row: GeneratedContentRow) {
       addAlias(aliases, row.target_date ? `sky-moon-${placement.sign}-${row.target_date}` : null);
     }
 
-    if (row.event_type === "retrograde" && row.headline) {
-      const planet = slugContentPart(row.headline.replace(/\s+retrograde$/i, ""));
-      addAlias(aliases, row.target_date ? `sky-retrograde-${planet}-${row.target_date}` : null);
+    if (row.event_type === "retrograde" && retrograde?.planet) {
+      addAlias(aliases, row.target_date ? `sky-retrograde-${retrograde.planet}-${row.target_date}` : null);
+      addAlias(aliases, `sky-retrograde-${retrograde.planet}`);
+      addAlias(aliases, retrograde.sign ? `sky-${retrograde.planet}-in-${retrograde.sign}` : null);
     }
   }
 
