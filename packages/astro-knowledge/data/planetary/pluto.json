@@ -2,62 +2,96 @@
   "id": "pluto",
   "planet": "pluto",
   "title": "Pluto Meaning",
-  "overview": "Pluto is a modern interpretive planet associated with power, depth, compulsion, exposure, crisis, shadow material, transformation, and rebirth. It does not replace traditional rulership logic, but it can describe where hidden forces intensify and where a person is asked to change at the root.",
-  "cycle": "Pluto takes about 248 years to complete the zodiac and spends a variable amount of time in each sign because of its elliptical orbit. Its sign is generational; its house and aspects show where power dynamics, deep endings, repair, and rebirth tend to concentrate.",
+  "overview": "Pluto describes deep change, power, control, fear, survival, compulsion, hidden material, and the process of confronting what can no longer stay buried. It shows where life asks for honesty, release, and transformation at the root.",
+  "cycle": "Pluto moves very slowly, spending many years in each sign. Its house transits mark long chapters of pressure, excavation, ending, renewal, and the gradual transformation of a life area.",
   "signs": [
     {
       "sign": "aries",
-      "body": "Pluto in Aries describes a generation transforming identity, courage, conflict, and the right to act. Power is confronted through independence and raw initiative."
+      "body": "Indicates a generation with a transformative and powerful drive for self-discovery and personal empowerment. This placement can bring intense ambition, courage, and a desire for deep personal transformation."
     },
     {
       "sign": "taurus",
-      "body": "Pluto in Taurus describes a generation transforming money, land, food, bodies, values, and survival. Power is confronted through attachment, possession, and material security."
+      "body": "Suggests a generation with a strong focus on material transformation, financial matters, and building lasting foundations. This placement can bring changes in areas related to wealth, resources, and values."
     },
     {
       "sign": "gemini",
-      "body": "Pluto in Gemini describes a generation transforming language, media, education, movement, and information. Power is confronted through ideas and the control of narrative."
+      "body": "Implies a generation with a transformative approach to communication, information, and intellectual pursuits. This placement can bring deep changes in the areas of learning, technology, and global connectivity."
     },
     {
       "sign": "cancer",
-      "body": "Pluto in Cancer describes a generation transforming home, family, ancestry, belonging, and emotional inheritance. Power is confronted through memory and protection."
+      "body": "Signifies a generation with a deep emotional depth and transformative experiences related to home, family, and roots. This placement can bring intense changes in personal and familial dynamics."
     },
     {
       "sign": "leo",
-      "body": "Pluto in Leo describes a generation transforming creativity, leadership, fame, pleasure, and personal expression. Power is confronted through visibility and the need to be special."
+      "body": "Represents a generation with transformative expressions of creativity, self-expression, and personal identity. This placement can bring deep changes in areas related to art, leadership, and individuality."
     },
     {
       "sign": "virgo",
-      "body": "Pluto in Virgo describes a generation transforming labor, health, service, systems, and methods of repair. Power is confronted through usefulness, efficiency, and bodily maintenance."
+      "body": "Suggests a generation with a transformative approach to work, health, and service. This placement can bring changes in areas related to self-improvement, healing, and practical efficiency."
     },
     {
       "sign": "libra",
-      "body": "Pluto in Libra describes a generation transforming partnership, law, beauty, justice, and social contracts. Power is confronted through relationship and the demand for balance."
+      "body": "Indicates a generation with transformative experiences in relationships, partnerships, and the pursuit of balance and harmony."
     },
     {
       "sign": "scorpio",
-      "body": "Pluto in Scorpio describes a generation transforming intimacy, shared resources, taboo, psychology, and hidden power. Power is confronted through emotional truth and deep release."
+      "body": "Signifies a generation with intense transformative experiences, emotional depth, and a desire for change. This placement can bring deep transformations in areas related to power, sexuality, and spirituality."
     },
     {
       "sign": "sagittarius",
-      "body": "Pluto in Sagittarius describes a generation transforming belief, education, travel, law, and global worldview. Power is confronted through truth claims and the meaning systems people live by."
+      "body": "Implies a generation with transformative experiences in the areas of higher knowledge, belief systems, and philosophical pursuits. This placement can bring changes in areas related to travel, spirituality, and cultural understanding."
     },
     {
       "sign": "capricorn",
-      "body": "Pluto in Capricorn describes a generation transforming institutions, authority, career, government, and social hierarchy. Power is confronted through structure and accountability."
+      "body": "Suggests a generation with transformative experiences in the realms of authority, career, and structure. This placement can bring deep changes in areas related to governance, social systems, and ambition."
     },
     {
       "sign": "aquarius",
-      "body": "Pluto in Aquarius describes a generation transforming technology, networks, community, social ideals, and collective power. Power is confronted through systems of belonging and exclusion."
+      "body": "Represents a generation with transformative experiences in the realms of innovation, technology, and societal change. This placement can bring transformations in areas related to progress, revolution, and collective consciousness."
     },
     {
       "sign": "pisces",
-      "body": "Pluto in Pisces describes a generation transforming spirituality, art, compassion, escapism, and collective grief. Power is confronted through what dissolves, heals, or overwhelms."
+      "body": "Signifies a generation with transformative experiences in the realms of spirituality, compassion, and collective unity. This placement can bring deep changes in areas related to intuition, creativity, and the dissolution of boundaries."
     }
   ],
   "source": {
-    "title": "Project-authored planetary overview cleanup",
-    "pages": []
+    "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+    "pages": [
+      695,
+      696,
+      697,
+      698,
+      699,
+      700,
+      701,
+      702,
+      703,
+      704,
+      705,
+      706,
+      707,
+      708,
+      709,
+      710,
+      711,
+      712,
+      713,
+      714,
+      715,
+      716,
+      717,
+      718,
+      719,
+      720,
+      721,
+      722,
+      723,
+      724,
+      725,
+      726,
+      727
+    ]
   },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "REVIEWED"
 }
