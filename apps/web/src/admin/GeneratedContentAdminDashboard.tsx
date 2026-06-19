@@ -921,6 +921,56 @@ function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewReco
   };
 }
 
+function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): GeneratedContentSurface {
+  if (category === "Sky") return "sky";
+  if (category === "Natal Aspects" || category === "Natal Chart") return "natal";
+  if (category === "Relationship") return "relationship";
+  return fallbackSurface === "all" ? "sky" : fallbackSurface;
+}
+
+function manualEntryEventType(category: AdminContentCategoryFilter, surface: GeneratedContentSurface) {
+  if (category === "Natal Aspects") return "manual-natal-aspect";
+  if (category === "Natal Chart") return "manual-natal-chart";
+  if (category === "Relationship") return "manual-relationship";
+  if (surface === "sky") return "manual-sky";
+  return "manual-entry";
+}
+
+function manualEntryRecord(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): AdminReviewRecord {
+  const surface = manualEntrySurface(category, fallbackSurface);
+  const now = new Date();
+  const timestamp = now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  const targetDate = surface === "sky" ? dateInputValue(now) : null;
+  const eventType = manualEntryEventType(category, surface);
+  const title = "Untitled content";
+
+  return {
+    id: `manual:${timestamp}`,
+    source: "global",
+    surface,
+    status: "DRAFT",
+    mode: surface === "sky" ? "feed" : "in_depth",
+    title,
+    subtitle: `Manual entry / ${generatedContentSurfaceLabels[surface]} / ${adminDateLabel(targetDate)}`,
+    targetDate,
+    contentKey: `manual-${surface}-${timestamp}`,
+    eventType,
+    summary: "",
+    body: "",
+    sections: [],
+    facts: {
+      source: "manual-entry",
+      category: category === "all" ? contentCategoryFilters.find((item) => item.key !== "all" && item.key === "Sky")?.label ?? "Sky" : category
+    },
+    sourceSnapshot: {
+      source: "admin-manual-entry",
+      createdAt: now.toISOString()
+    },
+    reviewerNotes: "",
+    updatedAt: now.toISOString()
+  };
+}
+
 const skyBodyClauses: Record<string, string> = {
   Sun: "your identity and vitality",
   Moon: "your feelings and safety",
@@ -1279,10 +1329,14 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
       ...(options.headers ?? {})
     }
   });
-  const payload = await response.json().catch(() => null) as T & { error?: string };
+  const payload = await response.json().catch(() => null) as (T & { error?: string }) | null;
 
   if (!response.ok) {
     throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status);
+  }
+
+  if (!payload) {
+    throw new AdminRequestError(`Expected JSON from ${path.split("?")[0]}, but the server returned a non-JSON response. If you are running locally, use the Vercel/API dev server for admin actions.`, response.status);
   }
 
   return payload;
@@ -2076,20 +2130,28 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function startNewContent() {
-    const nextDraft = createAdminDraft(surface);
+  function startNewContent() {
+    const nextRecord = manualEntryRecord(categoryFilter, surface);
 
-    setDraft(nextDraft);
+    setReviewRecords((currentRecords) => [nextRecord, ...currentRecords.filter((record) => record.id !== nextRecord.id)]);
+    setReviewCounts((currentCounts) => ({
+      ...currentCounts,
+      total: currentCounts.total + 1,
+      DRAFT: currentCounts.DRAFT + 1
+    }));
+    setSelectedReviewId(nextRecord.id);
+    setEditingReviewId(nextRecord.id);
+    setReviewEditTitle(nextRecord.title);
+    setReviewEditSummary("");
+    setReviewEditBody("");
     setSelectedId(null);
-    setSurface(nextDraft.surface);
-    setStatus(nextDraft.status);
+    setDraft(createAdminDraft(nextRecord.surface, nextRecord.targetDate ?? dateInputValue()));
+    setSurface(nextRecord.surface);
+    setStatus("DRAFT");
+    setContentStatusFilter("DRAFT");
     setActivePage("content");
     setAreGenerationInputsOpen(true);
-    setMessage(nextDraft.surface === "sky" ? "New Sky draft ready. Loading current Sky data..." : `New ${generatedContentSurfaceLabels[nextDraft.surface]} draft ready.`);
-
-    if (nextDraft.surface === "sky") {
-      await loadFactsForDraft(nextDraft);
-    }
+    setMessage("Manual entry ready. Add a title and body, then save or publish.");
   }
 
   async function createDraft() {
@@ -2214,7 +2276,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
-    const requestedSurface = surface;
+    const requestedSurface: GeneratedContentSurfaceFilter = "sky";
 
     setIsLoading(true);
     try {
@@ -2231,11 +2293,11 @@ export function GeneratedContentAdminDashboard() {
           method: "POST",
           body: JSON.stringify({
             surface: requestedSurface,
-            targetDate: draft.targetDate || dateInputValue()
+            targetDate: dateStart || dateInputValue()
           })
         }
       );
-      const nextSurface = requestedSurface === "all" ? "all" : requestedSurface;
+      const nextSurface = requestedSurface;
       const firstRow = payload.rows?.[0] ?? null;
 
       setSurface(nextSurface);
@@ -2244,9 +2306,7 @@ export function GeneratedContentAdminDashboard() {
         setSelectedId(firstRow.id);
         setDraft(adminDraftFromRow(firstRow));
       }
-      setMessage(nextSurface === "sky" || nextSurface === "all"
-        ? `Prepared ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and generate the reader-facing copy when you are ready.`
-        : `Prepared ${payload.inserted} ${generatedContentSurfaceLabels[nextSurface]} content test rows for ${payload.targetDate}. These are test rows for the template and voice system, not global publishable content.`);
+      setMessage(`Prepared ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and generate the reader-facing copy when you are ready.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
@@ -3100,7 +3160,7 @@ export function GeneratedContentAdminDashboard() {
                         <textarea
                           rows={18}
                           value={selectedReviewText}
-                          readOnly={!isEditingReviewRecord}
+                          readOnly={!canEditSelectedReviewRecord}
                           onChange={(event) => {
                             if (!isEditingReviewRecord && selectedReviewRecord) {
                               beginReviewEdit(selectedReviewRecord);

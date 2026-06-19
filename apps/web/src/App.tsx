@@ -8098,6 +8098,58 @@ function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPo
   }
 }
 
+function friendSpecificPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+  const jupiterPosition = natalSky?.positions.find((candidate) => candidate.planet === "Jupiter") ?? null;
+  const saturnPosition = natalSky?.positions.find((candidate) => candidate.planet === "Saturn") ?? null;
+  const mercuryPosition = natalSky?.positions.find((candidate) => candidate.planet === "Mercury") ?? null;
+
+  if (
+    position.planet === "Ascendant"
+    && position.sign === "Gemini"
+    && mercuryPosition?.sign === "Aquarius"
+    && mercuryPosition.house === 9
+  ) {
+    return [
+      `${possessiveLabel(ownerName)} Ascendant describes how ${pronouns.subject} enter the world: ${pronouns.possessive} presence, first response, body language, and way of meeting new experiences.`,
+      `Gemini gives this Ascendant a curious, quick, and responsive quality. ${capitalizeText(pronouns.subject)} may move through life by asking questions, reading the room, making connections, and letting new information change how ${pronouns.subject} understand the moment.`,
+      `Mercury, the ruler of Gemini, shows where this Ascendant is developed further. In ${possessiveLabel(ownerName)} chart, Mercury is in Aquarius in the 9th house, linking ${pronouns.possessive} sense of self to belief, study, travel, philosophy, and wider perspective.`,
+      `${capitalizeText(pronouns.possessive)} way of moving through life becomes clearer when curiosity has room to turn into a larger understanding.`
+    ];
+  }
+
+  if (
+    position.planet === "Mercury"
+    && position.sign === "Sagittarius"
+    && position.house === 3
+    && jupiterPosition?.sign === "Leo"
+    && jupiterPosition.house === 11
+  ) {
+    return [
+      `${possessiveLabel(ownerName)} Mercury shows how ${pronouns.subject} notice, think, learn, and put experience into words. In the 3rd house, ${pronouns.possessive} mind is closely tied to everyday life: the conversations ${pronouns.subject} have, the questions ${pronouns.subject} follow, the things ${pronouns.subject} read, the places ${pronouns.subject} move through, and the patterns ${pronouns.subject} keep noticing in ${pronouns.possessive} immediate world. Small details can become important because they help ${ownerName} understand what is really happening.`,
+      `With Mercury in Sagittarius, ${pronouns.possessive} mind looks for the larger meaning behind the facts. ${capitalizeText(pronouns.subject)} may think best when an idea has room to expand, connect, and point toward something bigger. ${capitalizeText(pronouns.possessive)} communication can be honest, curious, and direct, especially when ${pronouns.subject} are trying to make sense of an experience instead of just repeating information.`,
+      `Jupiter, the ruler of Sagittarius, helps show where ${possessiveLabel(ownerName)} way of thinking and communicating finds room to grow. In ${possessiveLabel(ownerName)} chart, Jupiter is in Leo in the 11th house, connecting ${pronouns.possessive} ideas and conversations to friendships, groups, communities, and shared goals. ${capitalizeText(pronouns.subject)} may feel most inspired when exchanging ideas with others, and ${pronouns.possessive} confidence can grow through sharing ${pronouns.possessive} perspective in collaborative spaces where ${pronouns.subject} can inspire others, take a visible role, and help bring people together around a shared purpose.`,
+      `Over time, this placement becomes stronger when ${ownerName} learns how to turn what ${pronouns.subject} notice into meaning without rushing past the details. ${capitalizeText(pronouns.possessive)} gift is not only seeing the bigger picture. It is finding the words that help other people see it too.`
+    ];
+  }
+
+  if (
+    position.planet === "Mars"
+    && position.sign === "Capricorn"
+    && position.house === 4
+    && saturnPosition?.sign === "Virgo"
+    && saturnPosition.house === 12
+  ) {
+    return [
+      `${possessiveLabel(ownerName)} Mars shows how ${pronouns.subject} act, pursue, defend, and move toward what ${pronouns.subject} want. In the 4th house, that drive is tied to home, family, privacy, emotional security, and the foundation ${pronouns.subject} build underneath the rest of ${pronouns.possessive} life. ${capitalizeText(pronouns.subject)} may feel most motivated when there is something to protect, something to stabilize, or something real that needs to be built from the ground up.`,
+      `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.possessive)} energy can be disciplined, strategic, and patient enough to keep going after the first wave of urgency passes. ${capitalizeText(pronouns.subject)} are not usually at ${pronouns.possessive} strongest when ${pronouns.subject} are reacting in the moment. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`,
+      `Saturn, the ruler of Capricorn, helps show where ${possessiveLabel(ownerName)} drive is tested and developed over time. In ${possessiveLabel(ownerName)} chart, Saturn is in Virgo in the 12th house, connecting ${pronouns.possessive} inner foundation to solitude, hidden pressure, private fears, retreat, and the work that happens beneath the surface. Some of ${pronouns.possessive} courage may be built privately, through the things ${pronouns.subject} process alone, the responsibilities ${pronouns.subject} carry quietly, or the patterns ${pronouns.subject} are learning not to let run ${pronouns.possessive} life from behind the scenes.`,
+      `Over time, this placement becomes stronger when ${ownerName} learns how to act without burning through ${pronouns.possessive} own stability. ${capitalizeText(pronouns.possessive)} courage is not only about pushing harder. It is about knowing what deserves ${pronouns.possessive} effort, what needs protection, and what kind of foundation can actually support the life ${pronouns.subject} are trying to build.`
+    ];
+  }
+
+  return null;
+}
+
 function natalAspectsForPlacement(position: PlanetPosition, natalSky: SkySnapshot | null) {
   return (natalSky?.aspects ?? [])
     .filter((aspect) => aspect.from === position.planet || aspect.to === position.planet)
@@ -8152,6 +8204,12 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
   }
 
   const pronouns = pronounSetForOwner(ownerKind);
+  const specificBody = friendSpecificPlacementBody(ownerName, position, natalSky, pronouns);
+
+  if (specificBody) {
+    return specificBody;
+  }
+
   const paragraphs = [
     friendPlacementHouseParagraph(ownerName, position, pronouns),
     friendSignTone(position, pronouns),
@@ -8161,6 +8219,18 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
   ].map((paragraph) => paragraph.trim()).filter(Boolean);
 
   return paragraphs;
+}
+
+function placementStructureBody(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+) {
+  if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
+    return friendNatalPlacementBody(ownerContext.ownerName, position, natalSky, ownerContext.ownerKind ?? "person")?.join("\n\n") ?? "";
+  }
+
+  return "";
 }
 
 function natalPlacementSignTitle(position: PlanetPosition) {
@@ -8234,6 +8304,13 @@ function natalPlacementDetailSubtitle(position: PlanetPosition) {
 }
 
 const natalPlacementLensHint = "The planet shows the part of you being activated. The house shows where that energy becomes part of your lived experience. The sign on the house shows the pattern it moves through, and the ruler of that sign shows where the meaning keeps unfolding over time. This lens shows the architecture underneath the interpretation: what part of you is involved, where it becomes active, how it expresses itself, and where it keeps developing over time.";
+const natalAngleLensHint = "The angle shows how this chart meets life directly. The sign shows the style of that orientation, and the ruler of the sign shows where it keeps developing over time. This lens explains how presence, instinct, body language, and direction become visible through the chart.";
+
+function placementLensHint(position: PlanetPosition) {
+  return ["Ascendant", "Descendant", "Midheaven", "Imum Coeli"].includes(position.planet)
+    ? natalAngleLensHint
+    : natalPlacementLensHint;
+}
 
 function isNatalPlacementLensWriteup(writeup: LiveGeneratedContent | null) {
   return writeup?.provider === "deterministic" || writeup?.model === "placement-ruler-template-v1";
@@ -8263,10 +8340,13 @@ function natalPlacementDetailArticle(
     : hasLiveAuthoredBody
       ? bodyParagraphs
       : [];
-  const lensBody = fallbackSection?.body ?? (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
+  const ownerPlacementStructureBody = !hasAuthoredBody
+    ? placementStructureBody(position, natalSky, ownerContext)
+    : "";
+  const lensBody = ownerPlacementStructureBody || fallbackSection?.body || (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
   const sections = lensBody
     ? [{
-      heading: "",
+      heading: "Placement structure",
       tldr: "",
       body: lensBody
     }]
@@ -8285,7 +8365,7 @@ function natalPlacementDetailArticle(
     title: natalPlacementDetailTitle(position),
     glyph: position.glyph || pointGlyph(position.planet),
     subtitle: natalPlacementDetailSubtitle(position),
-    lensHint: natalPlacementLensHint,
+    lensHint: undefined,
     compactHeader: true,
     plainBody: authoredBodyParagraphs.length > 0,
     bodyBeforeSections: true,
