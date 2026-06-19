@@ -2,6 +2,7 @@ export type FriendCircleFeedCard = {
   label: string;
   title: string;
   body: string;
+  onSelect?: () => void;
 };
 
 export type FriendCircleFeedChart = {
@@ -50,8 +51,15 @@ export function FriendCircleFeed({
                   ? "Friend update · 2 days ago"
                   : `${index + 2} days ago`;
 
+            const CardElement = card.onSelect ? "button" : "article";
+
             return (
-              <article className="friends-feed-card" key={card.title}>
+              <CardElement
+                className={`friends-feed-card${card.onSelect ? " friends-feed-card-button" : ""}`}
+                key={card.title}
+                type={card.onSelect ? "button" : undefined}
+                onClick={card.onSelect}
+              >
                 <span className="friends-feed-avatar-stack" aria-hidden="true">
                   {previewCharts.map((chart) => (
                     <span className="friends-feed-avatar" key={chart.id}>
@@ -76,7 +84,7 @@ export function FriendCircleFeed({
                     </span>
                   )}
                 </span>
-              </article>
+              </CardElement>
             );
           })
         )}

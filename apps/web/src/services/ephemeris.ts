@@ -543,9 +543,7 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
     });
   });
 
-  return aspects
-    .sort((a, b) => a.orb - b.orb)
-    .slice(0, 5);
+  return aspects.sort((a, b) => a.orb - b.orb);
 }
 
 export const defaultLocation: LocationInput = {

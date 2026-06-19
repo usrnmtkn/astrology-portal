@@ -320,6 +320,10 @@ type SkyDetail = {
   content?: ContentBundle;
 };
 
+function isSkyDetail(value: unknown): value is SkyDetail {
+  return Boolean(value && typeof value === "object" && "title" in value && "body" in value);
+}
+
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
 
 type YouTransitArticle = {
@@ -2919,7 +2923,7 @@ function SkyDetailArticle({
 
   return (
     <section
-      className="article-page sky-detail-page"
+      className={`article-page sky-detail-page${detail.compactHeader ? " you-transit-article-page" : ""}`}
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -2927,7 +2931,7 @@ function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article className="article-shell sky-detail-article">
+      <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
@@ -4167,6 +4171,83 @@ function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
   return `${chart.displayName} is in a ${ordinalHouse(timing.profectedHouse)} house year, so ${houseLifeAreas[timing.profectedHouse]} may be taking up more space than usual. ${timing.lordOfYear} is lord of the year, so ${timing.lordOfYear} transits may land more noticeably for them.`;
 }
 
+function sentenceList(items: string[]) {
+  return readableNameList(items.filter(Boolean));
+}
+
+function natalPositionsInHouse(natalSky: SkySnapshot | null, house: number) {
+  return (natalSky?.positions ?? []).filter((position) => position.house === house);
+}
+
+function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number) {
+  const timing = friendTimingContext(chart, currentSky);
+
+  if (!chart.natalChart || !timing.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
+    return `${chart.displayName}'s birth time is needed before this timing can be read clearly.`;
+  }
+
+  const house = timing.profectedHouse;
+  const houseLabel = `${ordinalHouse(house)} house`;
+  const houseThemes = groupHouseThemes(house);
+  const rulerPosition = chart.natalChart.positions.find((position) => position.planet === timing.lordOfYear) ?? null;
+  const natalHousePositions = natalPositionsInHouse(chart.natalChart, house);
+  const natalPoints = sentenceList(natalHousePositions.map((position) => position.planet));
+  const topTransits = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrb), focusAreas).slice(0, 3);
+  const paragraphs: string[] = [
+    `${chart.displayName} is ${timing.age ?? "in an annual profection cycle"}, which places them in a ${houseLabel} profection year.`,
+    `For ${chart.displayName}, this is not just a generic ${houseLabel} year. Their ${houseLabel} is in ${timing.profectedSign}, so ${houseThemes} may be filtered through ${timing.profectedSign}'s way of sorting, responding, and making meaning.`
+  ];
+
+  if (natalPoints) {
+    paragraphs.push(`They also have ${natalPoints} in this house natally, which means this timing is highlighting material that is already important in their birth chart. What is usually part of the background may be easier to notice this year.`);
+  } else {
+    paragraphs.push(`They do not need natal planets in this house for the year to matter. The profection still brings this part of life forward, especially through the ruler of the house.`);
+  }
+
+  if (rulerPosition?.house) {
+    paragraphs.push(`${timing.lordOfYear}, the ruler of ${timing.profectedSign}, becomes the lord of the year. In ${chart.displayName}'s chart, ${timing.lordOfYear} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, connecting this ${houseLabel} year to ${groupHouseThemes(rulerPosition.house)}. That is where some of the year's meaning may keep developing.`);
+  } else {
+    paragraphs.push(`${timing.lordOfYear}, the ruler of ${timing.profectedSign}, becomes the lord of the year. Its natal placement would show where this year's theme keeps developing.`);
+  }
+
+  if (topTransits.length > 0) {
+    const transitLines = topTransits.map((transit) => {
+      const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
+      const direction = transit.direction === "applying" ? "forming" : "separating from";
+
+      return `Transiting ${transit.transitPlanet} is ${direction} a ${transit.aspect} to ${chart.displayName}'s ${transit.natalPoint} (${timingLabel}). This can bring ${groupPlanetThemes(transit.transitPlanet)} into contact with ${comparisonPointRole(transit.natalPoint)}.`;
+    });
+
+    paragraphs.push(`Current transits add another layer. ${transitLines.join(" ")}`);
+  }
+
+  paragraphs.push(`Overall, ${chart.displayName} may need room to move through this timing at their own pace. If they seem different from the outside, it may help to read that as timing before reading it as distance.`);
+
+  return paragraphs.join("\n\n");
+}
+
+function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
+  const names = readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName));
+
+  return {
+    glyph: "☉",
+    kicker: "",
+    title: groupHouseHeadline(house),
+    meta: `${ordinalHouse(house)} house years · ${names}`,
+    subtitle: `${ordinalHouse(house)} house years · ${names}`,
+    compactHeader: true,
+    plainBody: false,
+    bodyBeforeSections: true,
+    body: [
+      `The feed card is showing a shared timing pattern: more than one person in this group is moving through a ${ordinalHouse(house)} house year. That does not mean they are living the same story. It means the same kind of life topic is active in different charts at the same time.`
+    ],
+    sections: activeCharts.slice(0, 4).map((chart) => ({
+      heading: `${chart.displayName} · ${ordinalHouse(house)} house year`,
+      body: personProfectionDetailBody(chart, currentSky, focusAreas, sunriseOrb)
+    }))
+  };
+}
+
 function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: ManualChart, generatedContent?: GeneratedContentMap) {
   const friendSky = chart.natalChart;
   const friendBigThree = manualChartBigThree(chart);
@@ -5202,7 +5283,8 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupHouseHeadline(house),
-        body: `${names} are all in ${ordinalHouse(house)} house years, so ${groupHouseThemes(house)} may be running through more than one person's life right now. This does not mean they are living the same story. ${groupHouseExamples(house)}`
+        body: `${names} are all in ${ordinalHouse(house)} house years, so ${groupHouseThemes(house)} may be running through more than one person's life right now. This does not mean they are living the same story. ${groupHouseExamples(house)}`,
+        detail: circleProfectionDetailArticle(house, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
   const lordCards = Array.from(byLordOfYear.entries())
@@ -8530,8 +8612,8 @@ function natalPlacementSkyDetail(
     glyph: article.glyph || pointGlyph(position.planet),
     kicker: "",
     title: article.title,
-    meta: article.subtitle,
-    subtitle: article.subtitle,
+    meta: article.compactHeader ? "" : article.subtitle,
+    subtitle: article.compactHeader ? "" : article.subtitle,
     lensHint: ownerAwareCopy(article.lensHint),
     compactHeader: article.compactHeader,
     plainBody: article.plainBody,
@@ -9385,16 +9467,8 @@ function placementDetailKicker(position: PlanetPosition, activeAspects: SkySnaps
   return "";
 }
 
-function placementDetailTitle(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  const baseTitle = natalPlacementTitle(position);
-
-  const primaryAspect = activeAspects[0];
-  if (primaryAspect) {
-    const otherPlanet = primaryAspect.from === position.planet ? primaryAspect.to : primaryAspect.from;
-    return `${baseTitle} ${primaryAspect.type} ${otherPlanet}`;
-  }
-
-  return baseTitle;
+function placementDetailTitle(position: PlanetPosition, _activeAspects: SkySnapshot["aspects"]) {
+  return natalPlacementTitle(position);
 }
 
 function ActiveAspects({
@@ -9558,7 +9632,7 @@ function PlacementTable({
           const openDetail = () => onOpenDetail({
             glyph: detailGlyphForPlacement(position, activeAspects),
             kicker: placementDetailKicker(position, activeAspects),
-            title: generated?.headline ?? title,
+            title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${transitRangeLabel}`,
             retrograde: position.motion === "retrograde",
             body,
@@ -10778,7 +10852,10 @@ function ProfileView({
   );
   const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
     .filter((house) => !occupiedNatalHouses.has(house));
-  const natalAspectRows = (natalSky?.aspects ?? []).slice(0, 8);
+  const natalAspectRows = (natalSky?.aspects ?? [])
+    .slice()
+    .sort((first, second) => first.orb - second.orb)
+    .slice(0, 8);
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
@@ -11579,6 +11656,17 @@ function ManualChartsPanel({
     () => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees),
     [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
   );
+  const selectableCircleCards = useMemo(
+    () => circleCards.map((card) => {
+      const detail = "detail" in card && isSkyDetail(card.detail) ? card.detail : null;
+
+      return {
+        ...card,
+        onSelect: detail ? () => onOpenDetail(detail) : undefined
+      };
+    }),
+    [circleCards, onOpenDetail]
+  );
   const isLoadingCharts = status === "loading";
   const circlePreviewCharts = useMemo(
     () => {
@@ -11905,7 +11993,7 @@ function ManualChartsPanel({
 
       {resolvedFriendsMainView === "circle" && (
         <FriendCircleFeed
-          cards={circleCards}
+          cards={selectableCircleCards}
           fallbackInitials={circleFallbackInitials}
           isLoading={isLoadingCharts}
           previewCharts={circlePreviewCharts}
