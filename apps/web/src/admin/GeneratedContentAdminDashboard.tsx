@@ -1,4 +1,4 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Eye, FileText, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
@@ -3391,8 +3391,8 @@ export function GeneratedContentAdminDashboard() {
                         <small>{selectedReviewRecord.subtitle}</small>
                       </label>
                       <div className="admin-toolbar-actions">
-                        <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading}>
-                          <Eye size={16} aria-hidden="true" />
+                        <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading} title="Mark this content as needing review.">
+                          <Flag size={16} aria-hidden="true" />
                           Flag
                         </button>
                         {isEditingReviewRecord ? (
