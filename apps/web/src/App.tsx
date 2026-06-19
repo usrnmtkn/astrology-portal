@@ -7760,7 +7760,7 @@ function natalPlacementDetailArticle(
   const sections = lensBody
     ? [{
       heading: "",
-      tldr: lensBody,
+      tldr: "",
       body: lensBody
     }]
     : [];
@@ -10634,6 +10634,25 @@ function ManualChartsPanel({
   const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
   const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
   const selectedFriendMoon = selectedChart?.natalChart?.positions.find((position) => position.planet === "Moon");
+  const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
+    const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
+    const article = natalAspectDetailArticle(aspect, friendGeneratedContent);
+
+    onOpenDetail({
+      glyph: article.glyph || pointGlyph(aspect.from),
+      kicker: "Natal aspect",
+      title: article.title,
+      meta: article.subtitle,
+      subtitle: article.subtitle,
+      compactHeader: article.compactHeader,
+      bodyBeforeSections: article.bodyBeforeSections,
+      body: article.body ?? [],
+      sections: article.sections.map((section) => ({
+        heading: section.heading,
+        body: section.body
+      }))
+    });
+  };
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
     const position = selectedChart?.natalChart?.positions.find((candidate) => candidate.planet === row.label);
 
@@ -10645,7 +10664,7 @@ function ManualChartsPanel({
     const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const liveWriteup = friendGeneratedContent.get(contentKey) ?? null;
 
-    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, friendGeneratedContent));
+    onOpenDetail(natalPlacementSkyDetail(position, selectedChart.natalChart, liveWriteup, friendGeneratedContent, openFriendNatalAspectDetail));
   };
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
