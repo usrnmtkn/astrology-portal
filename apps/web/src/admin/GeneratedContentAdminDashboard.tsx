@@ -1859,7 +1859,6 @@ export function GeneratedContentAdminDashboard() {
     setReviewEditSummary(fallbackText.split(/\n+/)[0]?.trim() ?? fallbackText);
     setReviewEditBody(fallbackText);
     setIsGeneratingReviewDraft(true);
-    setIsLoading(true);
     setMessage("Generating a draft. The deterministic placeholder is loaded while the provider responds.");
     try {
       const payload = await adminJsonRequest<{
@@ -1943,7 +1942,6 @@ export function GeneratedContentAdminDashboard() {
       setMessage(`${adminErrorMessage(error, "Could not generate a review draft.")} The deterministic placeholder is loaded for editing.`);
     } finally {
       setIsGeneratingReviewDraft(false);
-      setIsLoading(false);
     }
   }
 
