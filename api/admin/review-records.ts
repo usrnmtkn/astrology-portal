@@ -340,14 +340,29 @@ async function skyForDate(date: Date): Promise<SkySnapshot> {
   }
 }
 
+function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurface) {
+  if (surface === "upcomingAspects") {
+    return row.surface === "sky";
+  }
+
+  if (surface === "transitNatal") {
+    return row.surface === "you";
+  }
+
+  if (surface === "natalChart") {
+    return row.surface === "natal";
+  }
+
+  return row.surface === "synastry" || row.surface === "composite" || row.surface === "relationship";
+}
+
 async function savedContentRows(startDate: string, endDate: string) {
   const params = new URLSearchParams({
     select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,source_snapshot,reviewer_notes,model,updated_at",
-    target_date: `gte.${startDate}`,
     order: "target_date.asc.nullslast",
     limit: "1000"
   });
-  params.append("target_date", `lte.${endDate}`);
+  params.set("or", `(target_date.is.null,and(target_date.gte.${startDate},target_date.lte.${endDate}))`);
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
     headers: adminHeaders()
@@ -359,6 +374,39 @@ async function savedContentRows(startDate: string, endDate: string) {
   }
 
   return (payload ?? []) as SavedContentRow[];
+}
+
+function savedReviewRecord(row: SavedContentRow): ReviewRecord {
+  return {
+    id: `saved:${row.id}`,
+    source: "saved",
+    surface: row.surface,
+    status: row.status,
+    mode: row.mode,
+    title: row.headline || row.content_key,
+    subtitle: `${row.surface} · ${row.mode}${row.target_date ? ` · ${row.target_date}` : ""}`,
+    targetDate: row.target_date,
+    contentKey: row.content_key,
+    eventType: row.event_type,
+    summary: row.summary ?? "",
+    body: row.body ?? "",
+    sections: sectionsFromSaved(row),
+    facts: row.facts,
+    sourceSnapshot: row.source_snapshot,
+    reviewerNotes: row.reviewer_notes,
+    model: row.model,
+    updatedAt: row.updated_at
+  };
+}
+
+function mergeSavedOnlyRecords(surface: ReviewSurface, records: ReviewRecord[], savedRows: SavedContentRow[]) {
+  const existingKeys = new Set(records.map((record) => record.contentKey));
+  const savedRecords = savedRows
+    .filter((row) => savedRowMatchesReviewSurface(row, surface))
+    .filter((row) => !existingKeys.has(row.content_key))
+    .map(savedReviewRecord);
+
+  return [...records, ...savedRecords];
 }
 
 function savedByContentKey(rows: SavedContentRow[]) {
@@ -813,7 +861,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const end = parseDate(requestUrl.searchParams.get("endDate"), new Date(start.getTime() + 30 * 86_400_000));
     const startDate = dateOnly(start);
     const endDate = dateOnly(end);
-    const savedRows = savedByContentKey(await savedContentRows(startDate, endDate));
+    const savedRowsList = await savedContentRows(startDate, endDate);
+    const savedRows = savedByContentKey(savedRowsList);
     let records: ReviewRecord[] = [];
     let prompt: string | null = null;
 
@@ -846,6 +895,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         records = natalChartRecords(charts[0], savedRows);
       }
     }
+
+    records = mergeSavedOnlyRecords(surface, records, savedRowsList);
 
     const filteredRecords = records.filter((record) => statusAllowed(status, record.status));
 
