@@ -8018,7 +8018,9 @@ const natalSignatureDescriptions: Record<string, string> = {
   Saturn: "What you commit to and build",
   Uranus: "Where you break the pattern",
   Neptune: "Where you dream and idealize",
-  Pluto: "Where you transform and reclaim power"
+  Pluto: "Where you transform and reclaim power",
+  Chiron: "Where old tenderness asks for care",
+  Lilith: "Where the untamed part of you refuses to be managed"
 };
 
 function readableHouseTopic(house: number) {

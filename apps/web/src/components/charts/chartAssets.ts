@@ -26,6 +26,8 @@ export function pointGlyph(point: string) {
     Uranus: "♅",
     Neptune: "♆",
     Pluto: "♇",
+    Chiron: "⚷",
+    Lilith: "⚸",
     "True Node": "☊",
     "North Node": "☊",
     "South Node": "☋",
