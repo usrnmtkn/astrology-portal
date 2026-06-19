@@ -1937,6 +1937,7 @@ export function GeneratedContentAdminDashboard() {
           body?: string;
           sections?: Array<{ heading: string; body: string }>;
           model?: string;
+          qualityWarning?: string;
         };
         saved?: AdminGeneratedContentRow[];
       }>(
@@ -1960,6 +1961,7 @@ export function GeneratedContentAdminDashboard() {
             knowledgeIds: [],
             provider: reviewGenerationProvider,
             save: false,
+            allowQualityFallback: true,
             voiceNotes: [
               voiceNotesFor(record.surface, record.eventType, record.reviewerNotes ?? ""),
               "Write a daily astrology transit interpretation in the TLDR Astro voice.",
@@ -2004,7 +2006,9 @@ export function GeneratedContentAdminDashboard() {
         setSelectedId(savedRow.id);
         setDraft(adminDraftFromRow(savedRow));
       }
-      setMessage(`Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Save or publish when it looks right.`);
+      setMessage(generated.qualityWarning
+        ? `Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft with an editorial warning: ${generated.qualityWarning}`
+        : `Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Save or publish when it looks right.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");

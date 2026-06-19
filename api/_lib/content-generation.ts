@@ -17,6 +17,7 @@ export type GenerateContentInput = {
   knowledgeIds?: string[];
   sourceSnapshot?: Record<string, unknown>;
   voiceNotes?: string;
+  allowQualityFallback?: boolean;
 };
 
 export type GeneratedAstrologyDraft = {
@@ -39,6 +40,7 @@ type GeneratedContent = GeneratedAstrologyDraft;
 export type StoredGeneratedContent = GeneratedContent & {
   responseId?: string;
   model: string;
+  qualityWarning?: string;
 };
 
 export class ContentGenerationQualityError extends Error {
@@ -1888,14 +1890,14 @@ export function evaluateEditorialCoherence(
   };
 }
 
-function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateContentInput): GeneratedContent {
+function parseGeneratedContentJson(raw: string, lockedHeadline: string): GeneratedContent {
   const parsed = JSON.parse(raw) as Partial<GeneratedContent>;
 
   if (!parsed.headline || !parsed.summary || !parsed.body) {
     throw new Error("Model response did not include headline, summary, and body.");
   }
 
-  const content = {
+  return {
     headline: lockedHeadline ?? parsed.headline,
     tldr: parsed.tldr,
     summary: parsed.summary,
@@ -1906,7 +1908,9 @@ function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateC
     astrologyDrilldown: parsed.astrologyDrilldown,
     sections: parsed.sections ?? []
   };
+}
 
+function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
   validateGeneratedContentQuality(content, input);
   validateAstrologyDrilldownQuality(content);
 
@@ -1921,6 +1925,12 @@ function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateC
   if (!editorialResult.passed) {
     throw new Error(`Editorial coherence gate failed (${editorialResult.score}/100): ${editorialResult.rewriteInstruction}`);
   }
+}
+
+function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateContentInput): GeneratedContent {
+  const content = parseGeneratedContentJson(raw, lockedHeadline);
+
+  validateGeneratedContentForInput(content, input);
 
   return content;
 }
@@ -1952,6 +1962,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const approvedExamples = await loadApprovedExamples(input);
   let qualityFeedback = "";
   let lastError: Error | null = null;
+  let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -1996,11 +2007,16 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     }
 
     try {
-      return {
-        ...parseResponseJson(outputText, lockedHeadline || "", input),
+      const draft = {
+        ...parseGeneratedContentJson(outputText, lockedHeadline || ""),
         responseId: payload.id,
         model
       };
+
+      lastDraft = draft;
+      validateGeneratedContentForInput(draft, input);
+
+      return draft;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
       qualityFeedback = [
@@ -2008,6 +2024,13 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
         "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
       ].join("\n");
     }
+  }
+
+  if (input.allowQualityFallback && lastDraft) {
+    return {
+      ...lastDraft,
+      qualityWarning: lastError?.message ?? "Generated content failed quality gates."
+    };
   }
 
   throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
@@ -2034,6 +2057,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   const approvedExamples = await loadApprovedExamples(input);
   let qualityFeedback = "";
   let lastError: Error | null = null;
+  let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -2092,11 +2116,16 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     }
 
     try {
-      return {
-        ...parseResponseJson(JSON.stringify(toolInput), lockedHeadline || "", input),
+      const draft = {
+        ...parseGeneratedContentJson(JSON.stringify(toolInput), lockedHeadline || ""),
         responseId: payload.id,
         model
       };
+
+      lastDraft = draft;
+      validateGeneratedContentForInput(draft, input);
+
+      return draft;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
       qualityFeedback = [
@@ -2104,6 +2133,13 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
         "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
       ].join("\n");
     }
+  }
+
+  if (input.allowQualityFallback && lastDraft) {
+    return {
+      ...lastDraft,
+      qualityWarning: lastError?.message ?? "Generated content failed quality gates."
+    };
   }
 
   throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
