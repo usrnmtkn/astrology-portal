@@ -893,6 +893,16 @@ function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
   };
 }
 
+function savedGlobalRowId(record: AdminReviewRecord) {
+  if (record.rawGlobalRow?.id) {
+    return record.rawGlobalRow.id;
+  }
+
+  const match = record.id.match(/^(?:global|saved):(.+)$/);
+
+  return match?.[1] ?? "";
+}
+
 function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewRecord {
   return {
     id: `private:${row.id}`,
@@ -919,6 +929,29 @@ function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewReco
     updatedAt: row.updated_at,
     rawPrivateRow: row
   };
+}
+
+const reviewStatusRank: Record<GeneratedContentStatus, number> = {
+  LIVE: 5,
+  REVIEWED: 4,
+  DRAFT: 3,
+  ERROR: 2,
+  ARCHIVED: 1
+};
+
+function preferredReviewRecord(current: AdminReviewRecord | undefined, next: AdminReviewRecord) {
+  if (!current) {
+    return next;
+  }
+
+  const currentRank = reviewStatusRank[current.status] ?? 0;
+  const nextRank = reviewStatusRank[next.status] ?? 0;
+
+  if (nextRank !== currentRank) {
+    return nextRank > currentRank ? next : current;
+  }
+
+  return next.updatedAt > current.updatedAt ? next : current;
 }
 
 function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): GeneratedContentSurface {
@@ -1739,7 +1772,8 @@ export function GeneratedContentAdminDashboard() {
       const mergedRecords = new Map<string, AdminReviewRecord>();
 
       payloads.flatMap((payload) => payload.rows ?? []).forEach((record) => {
-        mergedRecords.set(`${record.source}:${record.surface}:${record.contentKey}:${record.targetDate ?? ""}:${record.subjectId ?? ""}`, record);
+        const mergeKey = `${record.source}:${record.surface}:${record.contentKey}:${record.targetDate ?? ""}:${record.subjectId ?? ""}`;
+        mergedRecords.set(mergeKey, preferredReviewRecord(mergedRecords.get(mergeKey), record));
       });
       (privatePayload.rows ?? []).map(privateReviewRecord).forEach((record) => {
         mergedRecords.set(record.id, record);
@@ -1877,7 +1911,7 @@ export function GeneratedContentAdminDashboard() {
       const nextBody = normalizedCopy.body;
       const nextSummary = normalizedCopy.summary;
       const nextTitle = (isActiveEdit ? reviewEditTitle : record.title).trim() || record.title;
-      const existingRow = record.rawGlobalRow;
+      const existingGlobalRowId = savedGlobalRowId(record);
 
       if (record.source === "private" && record.rawPrivateRow) {
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
@@ -1918,9 +1952,9 @@ export function GeneratedContentAdminDashboard() {
         "/api/admin/generated-content",
         secret,
         {
-          method: existingRow ? "PATCH" : "POST",
+          method: existingGlobalRowId ? "PATCH" : "POST",
           body: JSON.stringify({
-            id: existingRow?.id,
+            id: existingGlobalRowId || undefined,
             contentKey: record.contentKey,
             surface: record.surface,
             mode: record.mode,
