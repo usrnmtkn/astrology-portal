@@ -213,6 +213,7 @@
 }
 
 .daily-horoscope-summary,
+.daily-horoscope-writeup,
 .personal-timing-summary {
   display: grid;
   gap: 10px;
@@ -221,13 +222,29 @@
   color: var(--ink);
 }
 
-.daily-horoscope-summary {
+.daily-horoscope-summary,
+.daily-horoscope-writeup {
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
 }
 
+.daily-horoscope-writeup {
+  gap: 18px;
+}
+
+.daily-horoscope-writeup__section {
+  display: grid;
+  gap: 10px;
+}
+
+.daily-horoscope-writeup__section + .daily-horoscope-writeup__section {
+  padding-top: 18px;
+  border-top: 1px solid var(--card-border);
+}
+
 .daily-horoscope-summary h3,
+.daily-horoscope-writeup h3,
 .personal-timing-summary h3 {
   margin: 0;
   color: var(--ink);
@@ -239,6 +256,7 @@
 }
 
 .daily-horoscope-summary p,
+.daily-horoscope-writeup p,
 .personal-timing-summary p {
   margin: 0;
   color: var(--ink-2);
