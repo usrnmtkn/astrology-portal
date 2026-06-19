@@ -252,6 +252,29 @@
   box-shadow: none;
 }
 
+.article-lens-hint {
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  padding: clamp(16px, 2.2vw, 22px);
+  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--ink) 8%);
+  border-radius: 12px;
+  background: #eef0f4;
+}
+
+.article-lens-hint p {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 0.82rem + 0.22vw, 1rem);
+  font-weight: var(--weight-regular);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .article-lens-hint {
+  border-color: color-mix(in srgb, var(--line) 72%, white 8%);
+  background: color-mix(in srgb, var(--card-bg) 88%, white 5%);
+}
+
 .article-section p,
 .sky-detail-lede,
 .sky-detail-section p,
