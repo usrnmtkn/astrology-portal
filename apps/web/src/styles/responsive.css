@@ -888,13 +888,13 @@
 
   .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
   .mode-member :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--row-card-shadow, var(--card-shadow));
   }
 
   :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
-    border-color: var(--card-border);
+    border-color: transparent;
     background: var(--surface);
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--row-card-shadow, var(--card-shadow));
   }
 
   .mode-guest .sky-lunar-brief,

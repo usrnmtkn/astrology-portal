@@ -132,10 +132,13 @@
   .signup-form,
   .signup-story
 ) {
-  border: 1px solid var(--card-border);
+  --surface-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+
+  border: 1px solid transparent;
   border-radius: var(--card-radius);
   background: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  background-clip: padding-box;
+  box-shadow: var(--surface-card-shadow);
 }
 
 :where(
@@ -143,8 +146,11 @@
   .friend-placement-row .placement-table-row,
   .synastry-placement-table .planet-placement-row
 ) {
-  border: 1px solid var(--card-border);
+  --surface-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+
+  border: 1px solid transparent;
   border-radius: var(--card-radius);
   background: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  background-clip: padding-box;
+  box-shadow: var(--surface-card-shadow);
 }

@@ -28,11 +28,16 @@
   .aspect-row-static,
   .updates-aspect-row
 ) {
+  --row-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+
+  appearance: none;
+  -webkit-appearance: none;
   min-width: 0;
-  border: 1px solid var(--card-border);
-  border-color: var(--card-border);
+  border: 1px solid transparent;
+  border-color: transparent;
   border-radius: var(--card-radius);
-  box-shadow: var(--card-shadow);
+  background-clip: padding-box;
+  box-shadow: var(--row-card-shadow);
   color: var(--ink);
   outline: 0;
   text-align: left;
@@ -52,12 +57,17 @@
 }
 
 :where(.manual-chart-row) {
+  --row-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+
+  appearance: none;
+  -webkit-appearance: none;
   min-width: 0;
-  border: 1px solid var(--card-border);
-  border-color: var(--card-border);
+  border: 1px solid transparent;
+  border-color: transparent;
   border-radius: var(--card-radius);
   background: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  background-clip: padding-box;
+  box-shadow: var(--row-card-shadow);
   color: var(--ink);
   outline: 0;
 }
