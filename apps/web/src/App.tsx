@@ -2936,11 +2936,18 @@ function SkyDetailArticle({
   });
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const shareTitle = `${detail.title} · TLDR Astro`;
-  const visibleMetaRows = detail.compactHeader
-    ? []
-    : metaRows.filter((row) => row.label.toLowerCase() !== "signature");
+  const visibleMetaRows = metaRows.filter(() => false);
   const shareText = articleSub || detail.title;
-  const showArticleHeaderChrome = !detail.compactHeader;
+  const showArticleHeaderChrome = false;
+  const hasRelatedAspects = Boolean(detail.relatedAspects?.rows.length);
+  const hasReadableBody = Boolean(
+    detail.lensHint ||
+      (detail.plainBody && fallbackParagraphs.length > 0) ||
+      generatedSections.length > 0 ||
+      fallbackParagraphs.length > 0 ||
+      drilldown
+  );
+  const isAspectsOnlyArticle = hasRelatedAspects && !hasReadableBody;
 
   function copyArticleLink() {
     void navigator.clipboard?.writeText(window.location.href);
@@ -2970,7 +2977,7 @@ function SkyDetailArticle({
         <span>Back</span>
       </button>
       <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
-        <div className="article-card sky-detail-card">
+        <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           <header className="article-id sky-detail-id">
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
             {showArticleHeaderChrome && detailSubtitle ? (
@@ -3053,13 +3060,11 @@ function SkyDetailArticle({
                 <>
                   {bodyLede ? (
                     <section className="article-section sky-detail-section">
-                      <h2>What it means</h2>
                       <p className="sky-detail-lede">{bodyLede}</p>
                     </section>
                   ) : null}
                   {bodySectionParagraphs.map((paragraph, index) => (
                     <section className="article-section sky-detail-section" key={index}>
-                      <h2>{detailSectionTitle(index)}</h2>
                       <p>{paragraph}</p>
                     </section>
                   ))}
