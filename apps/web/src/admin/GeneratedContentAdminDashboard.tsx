@@ -1349,14 +1349,14 @@ export function GeneratedContentAdminDashboard() {
   const cmsStatusCounts = useMemo(() => contentStatusCounts(reviewRecords), [reviewRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? allContentRecords[0] ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
-  const canEditSelectedReviewRecord = Boolean(selectedReviewRecord && selectedReviewRecord.source !== "private");
+  const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
   const selectedReviewCopyState = selectedReviewRecord ? reviewCopyState(selectedReviewRecord) : "placeholder";
   const selectedReviewText = selectedReviewRecord
     ? isEditingReviewRecord
       ? reviewEditBody
       : readerFacingTextForReview(selectedReviewRecord)
     : "";
-  const isSelectedReviewPublished = selectedReviewRecord?.status === "REVIEWED" || selectedReviewRecord?.status === "LIVE";
+  const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
 
   async function checkTldrAstroApiStatus() {
@@ -1703,19 +1703,50 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
-    if (record.source === "private") {
-      setMessage("Personal content rows are read-only in this dashboard for now.");
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const existingRow = record.rawGlobalRow;
       const nextStatus = statusForReviewSave(record, requestedStatus);
       const isActiveEdit = editingReviewId === record.id;
       const nextBody = (isActiveEdit ? reviewEditBody : readerFacingTextForReview(record)).trim() || readerFacingTextForReview(record);
       const nextSummary = (isActiveEdit ? reviewEditSummary : record.summary).trim() || nextBody.split(/\n+/)[0]?.trim() || nextBody;
       const nextTitle = (isActiveEdit ? reviewEditTitle : record.title).trim() || record.title;
+      const existingRow = record.rawGlobalRow;
+
+      if (record.source === "private" && record.rawPrivateRow) {
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
+          "/api/admin/user-generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: record.rawPrivateRow.id,
+              status: nextStatus,
+              headline: nextTitle,
+              summary: nextSummary,
+              body: nextBody
+            })
+          }
+        );
+        const row = payload.rows?.[0] ?? null;
+
+        setReviewRecords((currentRecords) => currentRecords.map((currentRecord) => (
+          currentRecord.id === record.id
+            ? {
+                ...currentRecord,
+                status: nextStatus,
+                title: nextTitle,
+                summary: nextSummary,
+                body: nextBody,
+                updatedAt: row?.updated_at ?? new Date().toISOString(),
+                rawPrivateRow: row ?? currentRecord.rawPrivateRow
+              }
+            : currentRecord
+        )));
+        setEditingReviewId(null);
+        setMessage(nextStatus === "LIVE" ? "Published this personal content row." : "Saved personal content edits.");
+        return;
+      }
+
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
@@ -2859,7 +2890,7 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-new-actions" aria-label="New content">
                 <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
                   <Sparkles size={16} aria-hidden="true" />
-                  Generate from Aspect
+                  Add Sky Drafts
                 </button>
                 <button type="button" onClick={() => void startNewContent()} disabled={isLoading || !canUseApi}>
                   <Plus size={16} aria-hidden="true" />
@@ -2926,9 +2957,7 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-content-table">
                   <div className="admin-content-table-head" aria-hidden="true">
                     <span>Title</span>
-                    <span>Category</span>
                     <span>Status</span>
-                    <span>Date</span>
                   </div>
                   {allContentRecords.map((record) => (
                     <button
@@ -2945,10 +2974,9 @@ export function GeneratedContentAdminDashboard() {
                         }
                       }}
                     >
-                      <strong>{record.title}</strong>
-                      <span>{contentCategoryLabel(record)}</span>
+                      <span className="admin-content-row-title">{record.title}</span>
                       <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                      <time>{adminDateLabel(record.targetDate)}</time>
+                      <span className="admin-content-row-meta">{contentCategoryLabel(record)} · {adminDateLabel(record.targetDate)}</span>
                     </button>
                   ))}
                   {allContentRecords.length === 0 && (
@@ -2961,6 +2989,10 @@ export function GeneratedContentAdminDashboard() {
                 {selectedReviewRecord ? (
                   <>
                     <div className="admin-editor-toolbar">
+                      <div className="admin-editor-heading">
+                        <p className="admin-eyebrow">Post editor</p>
+                        <span className={`admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
+                      </div>
                       <label className="admin-title-field">
                         <span>Title</span>
                         <input
@@ -3015,11 +3047,8 @@ export function GeneratedContentAdminDashboard() {
                       <div className="admin-review-copy-heading">
                         <div>
                           <p className="admin-eyebrow">Body</p>
-                          <h3>Reader-facing copy</h3>
+                          <h3>Copy</h3>
                         </div>
-                        <span className={`admin-review-copy-state state-${selectedReviewCopyState}`}>
-                          {contentStatusLabel(selectedReviewRecord.status)}
-                        </span>
                       </div>
 
                       <div className="admin-review-generation-bar">
