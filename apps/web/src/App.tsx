@@ -302,6 +302,7 @@ type SkyDetail = {
   title: string;
   meta: string;
   subtitle?: string;
+  lensHint?: ReactNode;
   compactHeader?: boolean;
   bodyBeforeSections?: boolean;
   retrograde?: boolean;
@@ -325,6 +326,7 @@ type YouTransitArticle = {
   title: string;
   glyph?: string;
   subtitle: string;
+  lensHint?: ReactNode;
   compactHeader?: boolean;
   bodyBeforeSections?: boolean;
   body?: ReactNode[];
@@ -2915,6 +2917,11 @@ function SkyDetailArticle({
 
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {detail.lensHint ? (
+                <aside className="article-lens-hint" aria-label="Placement lens">
+                  {typeof detail.lensHint === "string" ? <p>{detail.lensHint}</p> : detail.lensHint}
+                </aside>
+              ) : null}
               {generatedSections.length > 0 ? (
                 <>
                   {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
@@ -7797,9 +7804,11 @@ function natalPlacementDetailArticle(
   const liveBody = bodyParagraphs.join("\n\n").trim();
   const approvedBody = approvedNatalPlacementBody(position);
   const hasApprovedBody = Boolean(approvedBody);
-  const fallbackSection = natalPlacementFallbackSection(position, natalSky, {
-    includeApprovedBody: !hasApprovedBody
-  });
+  const fallbackSection = hasApprovedBody
+    ? null
+    : natalPlacementFallbackSection(position, natalSky, {
+      includeApprovedBody: true
+    });
   const authoredBodyParagraphs = hasApprovedBody
     ? approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
     : liveBody && !isNatalPlacementLensWriteup(liveWriteup)
@@ -7827,9 +7836,10 @@ function natalPlacementDetailArticle(
     title: natalPlacementDetailTitle(position),
     glyph: position.glyph || pointGlyph(position.planet),
     subtitle: natalPlacementDetailSubtitle(position),
+    lensHint: natalPlacementLensHint,
     compactHeader: true,
     bodyBeforeSections: true,
-    body: [natalPlacementLensHint, ...authoredBodyParagraphs],
+    body: authoredBodyParagraphs,
     summary: "",
     summaryHeading: "",
     sections,
@@ -7871,6 +7881,7 @@ function natalPlacementSkyDetail(
     title: article.title,
     meta: article.subtitle,
     subtitle: article.subtitle,
+    lensHint: ownerAwareCopy(article.lensHint),
     compactHeader: article.compactHeader,
     bodyBeforeSections: article.bodyBeforeSections,
     retrograde: position.motion === "retrograde",
