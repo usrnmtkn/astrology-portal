@@ -3676,25 +3676,446 @@ function natalHouseInsightForPosition(position: PlanetPosition, natalSky: SkySna
   return natalHouseInsightForHouse(position.house, natalSky);
 }
 
-const emptyHouseDescriptions: Record<number, string> = {
-  1: "No natal planets here can make identity feel less crowded. The Ascendant and its ruler still describe how this house speaks.",
-  2: "Money, resources, and self-worth may not demand constant attention, but the ruler of this house still shows how stability gets built.",
-  3: "Communication and daily movement may feel natural or less loaded. Look to the house ruler for the deeper pattern behind your voice.",
-  4: "Home and family may not be the loudest chart theme, but roots still matter. The ruler shows how emotional foundation gets handled.",
-  5: "Creativity, romance, pleasure, and children can flow without needing to carry the whole chart. The ruler shows where joy gets routed.",
-  6: "Routines, work, health, and maintenance may run with less inner friction. The ruler shows how daily life asks to be managed.",
-  7: "Relationships are still important, even when this house is empty. The ruler shows what partnership, attraction, and agreement answer to.",
-  8: "Intimacy, trust, debt, and shared power may not be constant pressure points. The ruler shows where deeper exchanges get processed.",
-  9: "Belief, study, travel, and perspective may feel easier to explore without needing to prove one fixed philosophy.",
-  10: "Career and public life may be flexible rather than overdefined. The ruler shows how visibility and responsibility develop over time.",
-  11: "Friends, groups, and future hopes may feel accessible without becoming the chart's main demand. The ruler shows where belonging leads.",
-  12: "Rest, privacy, dreams, and hidden pressure may move more quietly. The ruler shows how retreat and inner processing work in the chart."
-};
-
 function emptyHouseTitle(house: number, natalSky: SkySnapshot | null) {
   const houseSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
 
   return houseSign ? `Empty ${ordinalHouse(house)} House in ${houseSign}` : `Empty ${ordinalHouse(house)} House`;
+}
+
+const emptyHouseTopicLabels: Record<number, string> = {
+  1: "the self",
+  2: "worth and security",
+  3: "everyday perception",
+  4: "home and emotional foundation",
+  5: "creative life and pleasure",
+  6: "daily life and maintenance",
+  7: "relationship and agreement",
+  8: "trust and shared resources",
+  9: "meaning and perspective",
+  10: "public life and responsibility",
+  11: "friendship and belonging",
+  12: "rest and the hidden life"
+};
+
+const emptyHouseTopicSingulars: Record<number, string> = {
+  1: "identity",
+  2: "sense of worth",
+  3: "voice and perception",
+  4: "emotional foundation",
+  5: "creative life",
+  6: "daily rhythm",
+  7: "relationship pattern",
+  8: "relationship with trust",
+  9: "search for meaning",
+  10: "public direction",
+  11: "sense of belonging",
+  12: "inner life"
+};
+
+const emptyHouseTopicKeywords: Record<number, string> = {
+  1: "identity, presence, and approach to life",
+  2: "money, resources, self-worth, and stability",
+  3: "communication, learning, siblings, and everyday perception",
+  4: "home, family, roots, privacy, and emotional foundation",
+  5: "creativity, pleasure, romance, play, and personal expression",
+  6: "work, health, routines, service, and daily maintenance",
+  7: "partnership, attraction, agreement, and direct relationships",
+  8: "trust, intimacy, shared resources, debt, and deeper change",
+  9: "belief, study, travel, teaching, and wider perspective",
+  10: "career, reputation, responsibility, visibility, and public role",
+  11: "friends, groups, networks, shared goals, and belonging",
+  12: "rest, privacy, retreat, dreams, and hidden pressure"
+};
+
+const emptyHouseCardTopics: Record<number, string> = {
+  1: "identity, presence, and approach to life",
+  2: "money, self-worth, and sense of stability",
+  3: "communication, learning, and everyday perception",
+  4: "home, family, and emotional foundation",
+  5: "creativity, pleasure, and personal expression",
+  6: "work, health, and daily routines",
+  7: "relationships, attraction, and agreements",
+  8: "trust, intimacy, and shared resources",
+  9: "beliefs, study, and search for meaning",
+  10: "career, reputation, and public role",
+  11: "friendships, groups, and future goals",
+  12: "rest, privacy, and inner life"
+};
+
+const emptyHouseCardAreaLabels: Record<number, string> = {
+  1: "who you are",
+  2: "security",
+  3: "your voice",
+  4: "home",
+  5: "joy",
+  6: "daily life",
+  7: "relationship",
+  8: "trust",
+  9: "meaning",
+  10: "direction",
+  11: "belonging",
+  12: "what is hidden"
+};
+
+const emptyHouseFriendCardAreaLabels: Record<number, string> = {
+  1: "who they are",
+  2: "security",
+  3: "their voice",
+  4: "home",
+  5: "joy",
+  6: "daily life",
+  7: "relationship",
+  8: "trust",
+  9: "meaning",
+  10: "direction",
+  11: "belonging",
+  12: "what is hidden"
+};
+
+const emptyHouseSignExpressions: Record<string, string> = {
+  Aries: "direct, instinctive, brave, impatient with delay, and quick to move when something feels alive",
+  Taurus: "steady, embodied, patient, protective of comfort, and drawn toward what proves itself over time",
+  Gemini: "alert, observant, adaptable, curious, and responsive to whatever is changing in the room",
+  Cancer: "protective, sensitive, memory-led, private, and oriented around what feels safe enough to keep",
+  Leo: "warm, expressive, proud, creative, and drawn toward what lets the heart be recognized",
+  Virgo: "observant, precise, practical, discerning, and attentive to what can be repaired or improved",
+  Libra: "relational, aesthetic, diplomatic, comparison-minded, and aware of balance, fairness, and response",
+  Scorpio: "private, intense, perceptive, selective, and aware of what is happening beneath the surface",
+  Sagittarius: "restless, honest, searching, future-facing, and drawn toward the larger meaning of an experience",
+  Capricorn: "measured, responsible, strategic, patient, and focused on what can hold weight over time",
+  Aquarius: "future-minded, unconventional, systems-aware, independent, and interested in the wider pattern",
+  Pisces: "intuitive, imaginative, porous, compassionate, and sensitive to what is felt before it is explained"
+};
+
+const emptyHouseSignBehaviorsApplied: Record<string, string> = {
+  Aries: "moving first, taking initiative, and learning through direct contact with the situation",
+  Taurus: "testing what feels steady, useful, pleasurable, and worth keeping",
+  Gemini: "asking questions, changing perspective, naming what is happening, and gathering more information",
+  Cancer: "protecting what matters, following memory, and noticing what creates emotional safety",
+  Leo: "letting desire, creativity, pride, and personal warmth show more visibly",
+  Virgo: "paying attention to details, refining the pattern, and noticing what needs care or correction",
+  Libra: "reading contrast, noticing what feels balanced or unbalanced, and learning through relationship",
+  Scorpio: "tracking what is hidden, testing trust, and paying attention to what feels emotionally true",
+  Sagittarius: "following the larger question, looking for meaning, and letting experience widen the view",
+  Capricorn: "taking responsibility, respecting timing, and building something solid enough to last",
+  Aquarius: "questioning the inherited pattern, studying the system, and staying open to a different way forward",
+  Pisces: "listening beneath the surface, making room for feeling, and noticing what cannot be forced into certainty"
+};
+
+const emptyHouseRulerSignExpressions: Record<string, string> = {
+  Aries: "direct, brave, impatient with avoidance, and willing to act when something matters",
+  Taurus: "steady, embodied, loyal to what has value, and careful about what is worth keeping",
+  Gemini: "curious, verbal, changeable, and constantly gathering information from the immediate world",
+  Cancer: "protective, receptive, memory-led, and sensitive to the difference between safety and exposure",
+  Leo: "creative, warm, visible, and connected to the need for confidence and personal meaning",
+  Virgo: "discerning, practical, observant, and focused on making life more workable",
+  Libra: "relational, responsive, beauty-aware, and shaped by balance, fairness, and mutuality",
+  Scorpio: "intense, private, honest about what is hidden, and unwilling to settle for the surface",
+  Sagittarius: "searching, frank, meaning-driven, and drawn toward wider experience",
+  Capricorn: "serious, disciplined, consequence-aware, and built through time and responsibility",
+  Aquarius: "independent, future-minded, systems-aware, and willing to question the accepted pattern",
+  Pisces: "intuitive, imaginative, emotionally porous, and sensitive to what is happening beneath the facts"
+};
+
+const emptyHouseRulerSignShortExpressions: Record<string, string> = {
+  Aries: "direct action",
+  Taurus: "steadiness and value",
+  Gemini: "language and curiosity",
+  Cancer: "care and emotional memory",
+  Leo: "confidence and creative warmth",
+  Virgo: "discernment and practical care",
+  Libra: "relationship and balance",
+  Scorpio: "emotional honesty",
+  Sagittarius: "belief and wider perspective",
+  Capricorn: "discipline and responsibility",
+  Aquarius: "independence and future-minded thinking",
+  Pisces: "imagination and sensitivity"
+};
+
+const emptyHouseRulerHouseExperiences: Record<number, string> = {
+  1: "body, presence, self-definition, and the way life is met directly",
+  2: "money, self-worth, appetite, security, and the resources that support a life",
+  3: "conversation, writing, learning, siblings, local movement, and everyday perception",
+  4: "home, family, memory, privacy, roots, and the emotional foundation underneath everything else",
+  5: "creativity, pleasure, romance, children, play, and the courage to let something personal be seen",
+  6: "work, health, routine, service, maintenance, and the daily habits that keep life running",
+  7: "partnership, attraction, agreement, conflict, and the people met face to face",
+  8: "intimacy, trust, shared money, grief, debt, and the deeper exchanges that require honesty",
+  9: "belief, study, travel, teaching, spirituality, and the wider perspective built from experience",
+  10: "work, public role, reputation, responsibility, and the direction a life becomes known for",
+  11: "friendship, groups, networks, audience, shared goals, and the future someone wants to help build",
+  12: "solitude, rest, dreams, retreat, hidden pressure, grief, and the work that happens beneath the surface"
+};
+
+const emptyHouseRulerHousePathways: Record<number, string> = {
+  1: "presence and self-trust",
+  2: "values, resources, and a steadier relationship with worth",
+  3: "language, learning, and daily perception",
+  4: "roots, privacy, family, and emotional security",
+  5: "creativity, pleasure, and personal expression",
+  6: "routine, work, health, and the care of daily life",
+  7: "relationship, agreement, and honest exchange with others",
+  8: "trust, intimacy, shared resources, and deeper emotional honesty",
+  9: "belief, study, travel, and a wider view of life",
+  10: "work, visibility, responsibility, and public direction",
+  11: "community, friendship, collaboration, and shared purpose",
+  12: "rest, retreat, spiritual repair, and private processing"
+};
+
+const emptyHouseRulerHouseShortExpressions: Record<number, string> = {
+  1: "self-trust",
+  2: "security and values",
+  3: "language and observation",
+  4: "emotional foundation",
+  5: "creative expression",
+  6: "daily devotion",
+  7: "honest relationship",
+  8: "trust and depth",
+  9: "lived perspective",
+  10: "visible purpose",
+  11: "community and shared purpose",
+  12: "private repair"
+};
+
+const emptyHouseIntegratedInterpretations: Record<number, string> = {
+  1: "what makes you feel most like yourself",
+  2: "what truly sustains you, what drains you, and what helps you feel safe in your own life",
+  3: "which words, questions, and daily patterns actually help you understand your life",
+  4: "what gives you a private foundation strong enough to live from",
+  5: "what makes pleasure, creativity, and affection feel honest enough to share",
+  6: "which routines support your body, your work, and your ability to stay present",
+  7: "which relationships create real exchange instead of repeating old agreements",
+  8: "how to handle trust, intimacy, and shared resources without losing yourself",
+  9: "which beliefs can hold up when they are tested by lived experience",
+  10: "what kind of work, responsibility, and visibility can carry your real values",
+  11: "which friendships, communities, and future goals are worth growing toward",
+  12: "what needs rest, privacy, and room to be understood before it can be explained"
+};
+
+const emptyHouseFriendIntegratedInterpretations: Record<number, string> = {
+  1: "what makes them feel most like themselves",
+  2: "what truly sustains them, what drains them, and what helps them feel safe in their own life",
+  3: "which words, questions, and daily patterns actually help them understand their life",
+  4: "what gives them a private foundation strong enough to live from",
+  5: "what makes pleasure, creativity, and affection feel honest enough to share",
+  6: "which routines support their body, their work, and their ability to stay present",
+  7: "which relationships create real exchange instead of repeating old agreements",
+  8: "how to handle trust, intimacy, and shared resources without losing themselves",
+  9: "which beliefs can hold up when they are tested by lived experience",
+  10: "what kind of work, responsibility, and visibility can carry their real values",
+  11: "which friendships, communities, and future goals are worth growing toward",
+  12: "what needs rest, privacy, and room to be understood before it can be explained"
+};
+
+const emptyHouseCardRulerHouseTopics: Record<number, string> = {
+  1: "presence and self-trust",
+  2: "money, values, and security",
+  3: "language, learning, and everyday perception",
+  4: "home, family, and emotional security",
+  5: "creativity, pleasure, and self-expression",
+  6: "daily habits, work rhythms, and care",
+  7: "relationships, agreements, and honest exchange",
+  8: "trust, intimacy, and shared resources",
+  9: "shared beliefs, lived experience, and perspective",
+  10: "work, visibility, and public role",
+  11: "community, friendship, and shared purpose",
+  12: "rest, retreat, and private processing"
+};
+
+const emptyHouseCardRulerHouseLivedExpressions: Record<number, string> = {
+  1: "move through the world",
+  2: "build security",
+  3: "use your voice",
+  4: "build a private foundation",
+  5: "let yourself be seen",
+  6: "care for what keeps life running",
+  7: "meet other people honestly",
+  8: "handle depth with honesty",
+  9: "follow a wider view of life",
+  10: "grow into what you are known for",
+  11: "find where you belong",
+  12: "listen to what happens beneath the surface"
+};
+
+const emptyHouseFriendCardRulerHouseLivedExpressions: Record<number, string> = {
+  1: "move through the world",
+  2: "build security",
+  3: "use their voice",
+  4: "build a private foundation",
+  5: "let themselves be seen",
+  6: "care for what keeps life running",
+  7: "meet other people honestly",
+  8: "handle depth with honesty",
+  9: "follow a wider view of life",
+  10: "grow into what they are known for",
+  11: "find where they belong",
+  12: "listen to what happens beneath the surface"
+};
+
+const emptyHouseSignBehaviors: Record<string, string> = {
+  Aries: "action, courage, directness, heat, and the need to move before everything is settled",
+  Taurus: "the body, comfort, steadiness, pleasure, patience, and what proves itself over time",
+  Gemini: "language, movement, curiosity, questions, quick adaptation, and the need to keep the mind moving",
+  Cancer: "care, memory, protection, family, emotional security, and what feels safe enough to keep",
+  Leo: "warmth, visibility, creativity, pride, generosity, and the need to feel personally connected to what is happening",
+  Virgo: "discernment, repair, routine, usefulness, small details, and the instinct to make something work better",
+  Libra: "relationship, beauty, taste, fairness, balance, and the need to understand what is shared",
+  Scorpio: "privacy, intensity, honesty, endurance, trust, and the need to understand what is happening underneath the surface",
+  Sagittarius: "belief, distance, honesty, learning, perspective, and the need for a wider view",
+  Capricorn: "structure, responsibility, ambition, patience, consequence, and the need to build something that can hold weight",
+  Aquarius: "systems, friendship, distance, difference, future thinking, and the need to understand the larger pattern",
+  Pisces: "sensitivity, imagination, compassion, porousness, retreat, and the need to feel what cannot be explained cleanly"
+};
+
+function displayRulerName(ruler: string) {
+  if (ruler === "Moon" || ruler === "Sun") {
+    return `the ${ruler}`;
+  }
+
+  return ruler;
+}
+
+function emptyHouseContext(
+  house: number,
+  natalSky: SkySnapshot | null
+) {
+  const sign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
+  const ruler = sign ? traditionalSignRulers[sign] ?? "" : "";
+  const rulerPosition = ruler ? natalSky?.positions.find((candidate) => candidate.planet === ruler) ?? null : null;
+
+  return { sign, ruler, rulerPosition };
+}
+
+function emptyHouseCardDescription(
+  house: number,
+  natalSky: SkySnapshot | null,
+  context: "self" | "friend" = "self",
+  ownerName?: string
+) {
+  const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
+  const houseTopic = emptyHouseCardTopics[house] ?? emptyHouseTopicKeywords[house] ?? houseLifeAreas[house] ?? "this part of life";
+  const rulerLabel = displayRulerName(ruler || "the house ruler");
+  const rulerHouseLabel = rulerPosition?.house ? ` in the ${ordinalHouse(rulerPosition.house)} house` : "";
+  const areaLabel = context === "friend"
+    ? emptyHouseFriendCardAreaLabels[house] ?? "this part of their life"
+    : emptyHouseCardAreaLabels[house] ?? "this part of life";
+  const rulerHouseTopics = rulerPosition?.house
+    ? emptyHouseCardRulerHouseTopics[rulerPosition.house] ?? emptyHouseRulerHousePathways[rulerPosition.house] ?? "the ruler's house"
+    : "the ruler's placement";
+  const rulerHouseLivedExpression = rulerPosition?.house
+    ? context === "friend"
+      ? emptyHouseFriendCardRulerHouseLivedExpressions[rulerPosition.house] ?? "follow the ruler's placement"
+      : emptyHouseCardRulerHouseLivedExpressions[rulerPosition.house] ?? "follow the ruler's placement"
+    : context === "friend"
+      ? "follow its placement"
+      : "follow its placement";
+
+  if (house === 2 && sign === "Cancer" && ruler === "Moon" && rulerPosition?.house === 6) {
+    return context === "friend"
+      ? "Their money, self-worth, and stability are connected to the Moon in the 6th house. They may feel more secure when their routines are steady, their work life is manageable, and their daily needs are being cared for."
+      : "Your money, self-worth, and stability are connected to the Moon in the 6th house. You may feel more secure when your routines are steady, your work life is manageable, and your daily needs are being cared for.";
+  }
+
+  if (context === "friend") {
+    return `Their ${houseTopic} take shape through ${rulerLabel}${rulerHouseLabel}, so ${areaLabel} becomes clearer through ${rulerHouseTopics} and the way they ${rulerHouseLivedExpression}.`;
+  }
+
+  return `Your ${houseTopic} take shape through ${rulerLabel}${rulerHouseLabel}, so ${areaLabel} becomes clearer through ${rulerHouseTopics} and the way you ${rulerHouseLivedExpression}.`;
+}
+
+function emptyHouseDetailArticle(
+  house: number,
+  natalSky: SkySnapshot | null,
+  context: "self" | "friend" = "self",
+  ownerName?: string
+): YouTransitArticle {
+  const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
+  const title = emptyHouseTitle(house, natalSky);
+  const rulerLabel = displayRulerName(ruler || "the house ruler");
+  const possessiveRulerLabel = ruler || "ruler";
+  const houseKeywords = emptyHouseTopicKeywords[house] ?? houseLifeAreas[house] ?? "this part of life";
+  const houseTopic = emptyHouseTopicSingulars[house] ?? emptyHouseTopicLabels[house] ?? houseLifeAreas[house] ?? "this part of life";
+  const signKeywords = sign ? emptyHouseSignBehaviors[sign] ?? naturalSignLensBodies[sign] ?? "the style of the sign" : "the style of the sign";
+  const signExpression = sign ? emptyHouseSignExpressions[sign] ?? signKeywords : "the sign on the cusp";
+  const signBehavior = sign ? emptyHouseSignBehaviorsApplied[sign] ?? signKeywords : "following the sign on the cusp";
+  const rulerSignExpression = rulerPosition?.sign
+    ? emptyHouseRulerSignExpressions[rulerPosition.sign] ?? emptyHouseSignExpressions[rulerPosition.sign] ?? "expressed through that sign"
+    : "expressed through the ruler's sign";
+  const rulerSignShortExpression = rulerPosition?.sign
+    ? emptyHouseRulerSignShortExpressions[rulerPosition.sign] ?? rulerSignExpression
+    : "the ruler's style";
+  const rulerHouseTopics = rulerPosition?.house
+    ? emptyHouseRulerHouseExperiences[rulerPosition.house] ?? rulerHouseRouteKeywords[rulerPosition.house] ?? houseLifeAreas[rulerPosition.house] ?? "another part of the chart"
+    : "the part of the chart where it lives";
+  const rulerHousePathway = rulerPosition?.house
+    ? emptyHouseRulerHousePathways[rulerPosition.house] ?? rulerHouseTopics
+    : "pathway that feels true";
+  const rulerHouseShortExpression = rulerPosition?.house
+    ? emptyHouseRulerHouseShortExpressions[rulerPosition.house] ?? rulerHousePathway
+    : "the ruler's placement";
+  const integratedInterpretation = context === "friend"
+    ? emptyHouseFriendIntegratedInterpretations[house] ?? `how ${houseTopic} becomes more livable`
+    : emptyHouseIntegratedInterpretations[house] ?? `how ${houseTopic} becomes more livable`;
+  const rulerPlacementSentence = rulerPosition?.house
+    ? context === "friend"
+      ? `Their ${possessiveRulerLabel} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house.`
+      : `Your ${possessiveRulerLabel} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house.`
+    : context === "friend"
+      ? `Their ${possessiveRulerLabel} placement shows where this house becomes more concrete.`
+      : `Your ${possessiveRulerLabel} placement shows where this house becomes more concrete.`;
+  const rulerMeaningSentence = rulerPosition?.house
+    ? context === "friend"
+      ? `This adds a layer of ${rulerSignExpression} to the way they experience ${houseTopic}.`
+      : `This adds a layer of ${rulerSignExpression} to the way you experience ${houseTopic}.`
+    : context === "friend"
+      ? `This shows where their ${houseTopic} continues elsewhere in the chart.`
+      : `This shows where your ${houseTopic} continues elsewhere in your chart.`;
+  const rulerHouseSentence = rulerPosition?.house
+    ? context === "friend"
+      ? `Because ${rulerLabel} is in the ${ordinalHouse(rulerPosition.house)} house, this part of their chart becomes clearer through ${rulerHouseTopics}. They may come to understand this area of life through ${rulerHousePathway}.`
+      : `Because ${rulerLabel} is in the ${ordinalHouse(rulerPosition.house)} house, this part of your chart becomes clearer through ${rulerHouseTopics}. You may come to understand this area of life through ${rulerHousePathway}.`
+    : context === "friend"
+      ? `When ${rulerLabel} is activated, this house may become easier to see in their lived experience.`
+      : `When ${rulerLabel} is activated, this house may become easier to see in your lived experience.`;
+  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp. That sign sets the style. Then look at the planet that rules that sign. That planet becomes the messenger for the empty house, carrying its themes into the part of your chart where it lives. This area can become more active when its ruler is activated or when current planets move through it.";
+  const paragraphs = context === "friend"
+    ? [
+        `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this part of their chart. Even without planets here, their ${houseKeywords} are still reflected in the chart, but they are understood through the sign on the cusp and the planet that rules it.`,
+        `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, they meet this part of life through ${signKeywords}. Their ${houseTopic} may come through as ${signExpression}. They may experience this area by ${signBehavior}.`,
+        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of their ${ordinalHouse(house)} house, while ${rulerLabel} shows how and where those qualities are expressed in their life.`,
+        `${rulerPlacementSentence} ${rulerMeaningSentence}`,
+        rulerHouseSentence,
+        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as they learn how to work with ${integratedInterpretation}.`
+      ]
+    : [
+        `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this house. Even without planets here, your ${houseKeywords} are still reflected in your chart, but they are understood through the sign on the cusp and the planet that rules it.`,
+        `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, you meet this part of life through ${signKeywords}. Your ${houseTopic} may come through as ${signExpression}. You may experience this area by ${signBehavior}.`,
+        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of your ${ordinalHouse(house)} house, while ${rulerLabel} shows how and where those qualities are expressed in your life.`,
+        `${rulerPlacementSentence} ${rulerMeaningSentence}`,
+        rulerHouseSentence,
+        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as you learn how to work with ${integratedInterpretation}.`
+      ];
+
+  return {
+    id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
+    title,
+    glyph: sign ? zodiacSignGlyphs[sign] ?? "○" : "○",
+    subtitle: `${ordinalHouse(house)} House`,
+    lensHint: emptyHouseHint,
+    compactHeader: true,
+    plainBody: true,
+    bodyBeforeSections: true,
+    body: paragraphs,
+    summary: "",
+    summaryHeading: "",
+    sections: [],
+    meta: [
+      { label: "House", value: `${ordinalHouse(house)} House` },
+      { label: "Sign", value: sign },
+      { label: "Ruler", value: ruler },
+      { label: "Ruler placement", value: rulerPosition?.house ? `${rulerPosition.sign} · ${ordinalHouse(rulerPosition.house)} House` : "" }
+    ]
+  };
 }
 
 function timingContextForChart({
@@ -11616,10 +12037,16 @@ function ProfileView({
 
     return (
       <PlacementTableRow
-        description={emptyHouseDescriptions[house] ?? naturalHouseLensBodies[house] ?? null}
+        ariaLabel={`Read more about ${emptyHouseTitle(house, natalSky)}`}
+        description={emptyHouseCardDescription(house, natalSky)}
         glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
         house={house}
         key={`empty-house-${house}`}
+        onClick={() => {
+          setActivePlacementRouteId(null);
+          setTransitArticle(emptyHouseDetailArticle(house, natalSky));
+          updatePortalModeUrl("profile", "push");
+        }}
         title={emptyHouseTitle(house, natalSky)}
         variant="natal"
       />
@@ -12007,6 +12434,15 @@ function ManualChartsPanel({
   const selectedFriendNatalPlacementRows = selectedChartIsEvent
     ? selectedFriendPlacementRows
     : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
+  const selectedFriendOccupiedHouses = new Set(
+    (selectedChart?.natalChart?.positions ?? [])
+      .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
+      .map((position) => position.house)
+      .filter((house): house is number => typeof house === "number")
+  );
+  const selectedFriendEmptyHouses = selectedChart?.natalChart && !selectedChartIsEvent
+    ? Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !selectedFriendOccupiedHouses.has(house))
+    : [];
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
     const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const ownerName = selectedChart?.displayName ?? "This chart";
@@ -12059,6 +12495,30 @@ function ManualChartsPanel({
         ownerKind: selectedChartIsEvent ? "chart" : "person"
       }
     ));
+  };
+  const openFriendEmptyHouseDetail = (house: number) => {
+    if (!selectedChart?.natalChart) {
+      return;
+    }
+
+    const article = emptyHouseDetailArticle(house, selectedChart.natalChart, "friend", selectedChart.displayName);
+
+    onOpenDetail({
+      glyph: article.glyph || "○",
+      kicker: "",
+      title: article.title,
+      meta: article.subtitle,
+      subtitle: article.subtitle,
+      lensHint: article.lensHint,
+      compactHeader: article.compactHeader,
+      plainBody: article.plainBody,
+      bodyBeforeSections: article.bodyBeforeSections,
+      body: article.body ?? [],
+      sections: article.sections.map((section) => ({
+        heading: section.heading,
+        body: section.body
+      }))
+    });
   };
   const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
     ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
@@ -12802,6 +13262,35 @@ function ManualChartsPanel({
                       ownerName={selectedChart.displayName}
                       showTitle={false}
                     />
+                    {selectedFriendEmptyHouses.length > 0 && (
+                      <>
+                        <span className="eyebrow section-label friend-section-label">Empty houses</span>
+                        <div className="list you-list-card planet-placement-list" aria-label={`${selectedChart.displayName} empty houses`}>
+                          {selectedFriendEmptyHouses.map((house) => {
+                            const friendNatalChart = selectedChart.natalChart;
+
+                            if (!friendNatalChart) {
+                              return null;
+                            }
+
+                            const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
+
+                            return (
+                              <PlacementTableRow
+                                ariaLabel={`Read more about ${emptyHouseTitle(house, friendNatalChart)}`}
+                                description={emptyHouseCardDescription(house, friendNatalChart, "friend", selectedChart.displayName)}
+                                glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
+                                house={house}
+                                key={`friend-empty-house-${house}`}
+                                onClick={() => openFriendEmptyHouseDetail(house)}
+                                title={emptyHouseTitle(house, friendNatalChart)}
+                                variant="friend"
+                              />
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
                 {selectedChart.natalChart?.aspects.length ? (
