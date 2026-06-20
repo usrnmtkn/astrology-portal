@@ -613,10 +613,10 @@ body,
 .admin-content-row {
   align-items: center;
   display: grid;
-  gap: 8px 16px;
-  grid-template-columns: minmax(320px, 1.65fr) 126px 118px minmax(150px, 0.75fr) 132px minmax(160px, 0.8fr);
+  gap: 8px 18px;
+  grid-template-columns: minmax(520px, 2.4fr) 130px 122px minmax(150px, 0.7fr) 132px minmax(154px, 0.72fr);
   justify-items: start;
-  min-width: 1030px;
+  min-width: 1240px;
   padding: 0 24px;
 }
 
@@ -637,9 +637,9 @@ body,
   border-radius: 0;
   color: var(--admin-ink);
   justify-content: stretch;
-  min-height: 62px;
-  padding-bottom: 9px;
-  padding-top: 9px;
+  min-height: 68px;
+  padding-bottom: 11px;
+  padding-top: 11px;
   text-align: left;
 }
 
@@ -656,7 +656,6 @@ body,
 
 .admin-content-title-cell {
   display: grid;
-  gap: 4px;
   min-width: 0;
   width: 100%;
 }
@@ -672,16 +671,17 @@ body,
 
 .admin-content-row-title {
   color: var(--admin-ink);
-  display: block;
-  font-size: 18px;
+  display: -webkit-box;
+  font-size: 20px;
   font-weight: 700;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   letter-spacing: 0;
-  line-height: 1.12;
+  line-height: 1.14;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   text-align: left;
-  white-space: nowrap;
+  word-break: normal;
 }
 
 .admin-content-badge-cell {
@@ -716,6 +716,11 @@ body,
   text-overflow: ellipsis;
   text-transform: capitalize;
   white-space: nowrap;
+}
+
+.admin-content-row-date,
+.admin-content-row-section {
+  font-weight: 700;
 }
 
 .admin-content-row-date.missing {
@@ -1994,8 +1999,8 @@ body,
 
   .admin-content-table-head,
   .admin-content-row {
-    grid-template-columns: minmax(300px, 1.45fr) 118px 108px minmax(132px, 0.7fr) 120px minmax(148px, 0.78fr);
-    min-width: 940px;
+    grid-template-columns: minmax(360px, 1.8fr) 118px 106px minmax(128px, 0.64fr) 112px minmax(136px, 0.7fr);
+    min-width: 1000px;
     padding-left: 16px;
     padding-right: 16px;
   }
