@@ -6337,6 +6337,9 @@ export function App() {
       return;
     }
 
+    setDatePickerOpen(false);
+    setMobileSkyControlsOpen(false);
+    setCityPickerOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [selectedSkyDetail]);
@@ -7621,6 +7624,7 @@ export function App() {
   }
 
   const isTodayMode = mode === "guest" || mode === "member";
+  const showSkyDateControls = isTodayMode && !selectedSkyDetail;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
@@ -7697,7 +7701,7 @@ export function App() {
           </div>
 
         <div className="topbar-actions">
-          {isTodayMode && (
+          {showSkyDateControls && (
             <button
               className="sky-header-date-button"
               type="button"
@@ -7717,7 +7721,7 @@ export function App() {
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
-          {isTodayMode && mobileSkyControlsOpen && (
+          {showSkyDateControls && mobileSkyControlsOpen && (
             <div
               className="mobile-sky-controls"
               id="mobile-sky-controls"
