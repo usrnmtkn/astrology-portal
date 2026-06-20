@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Link,
   LogOut,
   MapPin,
   Moon,
@@ -2526,6 +2525,55 @@ function detailMetaRows(meta: string) {
   });
 }
 
+function articleTitleSignGlyph(title: string, meta = "") {
+  const source = `${title} ${meta}`;
+  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(source));
+
+  return sign ? zodiacSignGlyphs[sign] ?? "" : "";
+}
+
+function articleTitleHouseToken(title: string, meta = "") {
+  const match = `${title} ${meta}`.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+house\b/i);
+
+  return match ? `${match[1]}H` : "";
+}
+
+function articleEyebrowLabel(title: string, kicker?: string) {
+  if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
+    return "Aspect";
+  }
+
+  if (articleTitleSignGlyph(title)) {
+    return "Placement";
+  }
+
+  return kicker?.trim() || "Article";
+}
+
+function articleEyebrowGlyphs({
+  glyph,
+  meta,
+  title
+}: {
+  glyph?: string;
+  meta?: string;
+  title: string;
+}) {
+  const parts = [
+    ...(glyph ? glyph.split(/\s+/).filter(Boolean) : []),
+    articleTitleSignGlyph(title, meta),
+    articleTitleHouseToken(title, meta)
+  ].filter(Boolean);
+
+  return Array.from(new Set(parts));
+}
+
+function articleTldrText(value: string) {
+  return stripTldrPrefix(value)
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 const averageDailyMotion: Record<string, number> = {
   Sun: 0.9856,
   Moon: 13.176,
@@ -2995,13 +3043,15 @@ function SkyDetailArticle({
   const drilldown = detail.astrologyDrilldown;
   const [lede] = paragraphs;
   const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
-  const articleSub = (detailSubtitle || statement || (typeof lede === "string" ? lede : "")).trim();
+  const articleSub = articleTldrText(detailSubtitle || statement || (typeof lede === "string" ? lede : ""));
   const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
-  const shareTitle = `${detail.title} · TLDR Astro`;
-  const visibleMetaRows = metaRows.filter(() => false);
-  const shareText = articleSub || detail.title;
-  const showArticleHeaderChrome = false;
+  const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
+  const eyebrowGlyphs = articleEyebrowGlyphs({
+    glyph: detail.glyph,
+    meta: metaRows.map((row) => row.value).join(" "),
+    title: detail.title
+  });
   const hasRelatedAspects = Boolean(detail.relatedAspects?.rows.length);
   const hasReadableBody = Boolean(
     detail.lensHint ||
@@ -3011,23 +3061,6 @@ function SkyDetailArticle({
       drilldown
   );
   const isAspectsOnlyArticle = hasRelatedAspects && !hasReadableBody;
-
-  function copyArticleLink() {
-    void navigator.clipboard?.writeText(window.location.href);
-  }
-
-  function shareArticle() {
-    if (navigator.share) {
-      void navigator.share({
-        title: shareTitle,
-        text: shareText,
-        url: window.location.href
-      });
-      return;
-    }
-
-    copyArticleLink();
-  }
 
   return (
     <section
@@ -3042,38 +3075,24 @@ function SkyDetailArticle({
       <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           <header className="article-id sky-detail-id">
+            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.join(" ")}` : eyebrowLabel}>
+              <span>{eyebrowLabel}</span>
+              {eyebrowGlyphs.length ? (
+                <>
+                  <span className="article-eyebrow__slash" aria-hidden="true">/</span>
+                  <span className="article-eyebrow__glyphs" aria-hidden="true">
+                    {eyebrowGlyphs.map((part) => (
+                      <span className={/^\d{1,2}H$/.test(part) ? "article-eyebrow__house" : undefined} key={part}>{part}</span>
+                    ))}
+                  </span>
+                </>
+              ) : null}
+            </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-            {showArticleHeaderChrome && detailSubtitle ? (
+            {articleSub ? (
               <div className="article-tldr">
                 <span className="article-tldr__label">TLDR</span>
-                <p className="article-sub article-tldr__copy">{detailSubtitle}</p>
-              </div>
-            ) : null}
-            {showArticleHeaderChrome ? (
-              <div className="article-header-actions">
-                <div className="article-byline">
-                  <span className="by-author">By tldr astro</span>
-                </div>
-                <div className="article-share" aria-label="Share this article">
-                  <span className="share-lab">Share:</span>
-                  <div className="share-btns">
-                    <button className="share-btn" type="button" aria-label="Copy article link" onClick={copyArticleLink}>
-                      <Link size={18} aria-hidden="true" />
-                    </button>
-                    <button className="share-btn" type="button" aria-label="Share article" onClick={shareArticle}>
-                      <ArrowUpRight size={18} aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {visibleMetaRows.length > 0 ? (
-              <div className="article-meta sky-detail-meta">
-                {visibleMetaRows.map((row) => (
-                  <p className="m-row" key={`${row.label}-${row.value}`}>
-                    <b>{row.label}:</b> {row.value}
-                  </p>
-                ))}
+                <p className="article-sub article-tldr__copy">{articleSub}</p>
               </div>
             ) : null}
           </header>

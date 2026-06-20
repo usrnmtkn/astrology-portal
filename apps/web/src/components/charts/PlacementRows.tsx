@@ -548,8 +548,7 @@ export function PlanetPlacementRow({
 
   const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
   const hasDignity = Boolean(dignity);
-  const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
-  const rowStatuses = statuses.filter((status) => status.tone !== "retrograde");
+  const rowStatuses = statuses;
   const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
   const rowClassName = [
     "planet-placement-row",
@@ -562,12 +561,7 @@ export function PlanetPlacementRow({
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
-          {!hasDignity ? <span className="planet-placement-row__degree placement-row__degree">{degree}</span> : null}
-          {titleStatuses.map((status) => (
-            <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
-              {status.label}
-            </span>
-          ))}
+          <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
@@ -580,17 +574,16 @@ export function PlanetPlacementRow({
         ) : (
           <span className="planet-placement-row__meta placement-row__house">
             <span>{houseLabel}</span>
-            {hasDignity ? <span>{degree}</span> : null}
           </span>
         )}
         {hasDignity || rowStatuses.length > 0 ? (
           <span className="planet-placement-row__status" aria-label={`${title} status`}>
-            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
             {rowStatuses.map((status) => (
               <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
-                {status.label.toUpperCase()}
+                {status.label}
               </span>
             ))}
+            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
           </span>
         ) : null}
       </span>
