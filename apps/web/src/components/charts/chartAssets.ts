@@ -2,6 +2,61 @@ export function normalizeAspectType(type: string) {
   return type.toLowerCase().replace(/[\s_-]+/g, "");
 }
 
+export function normalizeGlyphKey(value: string) {
+  return value.toLowerCase().replace(/\s+/g, "");
+}
+
+export const PLANET_GLYPHS: Record<string, string> = {
+  sun: "☉",
+  moon: "☽",
+  mercury: "☿",
+  venus: "♀",
+  mars: "♂",
+  jupiter: "♃",
+  saturn: "♄",
+  uranus: "♅",
+  neptune: "♆",
+  pluto: "♇",
+  chiron: "⚷",
+  northnode: "☊",
+  truenode: "☊",
+  southnode: "☋",
+  lilith: "⚸",
+  ceres: "⚳",
+  ascendant: "↑",
+  midheaven: "MC"
+};
+
+export const SIGN_GLYPHS: Record<string, string> = {
+  aries: "♈",
+  taurus: "♉",
+  gemini: "♊",
+  cancer: "♋",
+  leo: "♌",
+  virgo: "♍",
+  libra: "♎",
+  scorpio: "♏",
+  sagittarius: "♐",
+  capricorn: "♑",
+  aquarius: "♒",
+  pisces: "♓"
+};
+
+export const HOUSE_GLYPHS: Record<number, string> = {
+  1: "I",
+  2: "II",
+  3: "III",
+  4: "IV",
+  5: "V",
+  6: "VI",
+  7: "VII",
+  8: "VIII",
+  9: "IX",
+  10: "X",
+  11: "XI",
+  12: "XII"
+};
+
 export function aspectGlyph(type: string) {
   const glyphs: Record<string, string> = {
     conjunction: "☌",
@@ -15,27 +70,15 @@ export function aspectGlyph(type: string) {
 }
 
 export function pointGlyph(point: string) {
-  const glyphs: Record<string, string> = {
-    Sun: "☉",
-    Moon: "☽",
-    Mercury: "☿",
-    Venus: "♀",
-    Mars: "♂",
-    Jupiter: "♃",
-    Saturn: "♄",
-    Uranus: "♅",
-    Neptune: "♆",
-    Pluto: "♇",
-    Chiron: "⚷",
-    Lilith: "⚸",
-    "True Node": "☊",
-    "North Node": "☊",
-    "South Node": "☋",
-    Ascendant: "↑",
-    Midheaven: "MC"
-  };
+  return PLANET_GLYPHS[normalizeGlyphKey(point)] ?? point.slice(0, 1);
+}
 
-  return glyphs[point] ?? point.slice(0, 1);
+export function signGlyph(sign: string) {
+  return SIGN_GLYPHS[normalizeGlyphKey(sign)] ?? "";
+}
+
+export function houseGlyph(house?: number) {
+  return house ? HOUSE_GLYPHS[house] ?? "" : "";
 }
 
 export const zodiacSignIconFiles: Record<string, string> = {
