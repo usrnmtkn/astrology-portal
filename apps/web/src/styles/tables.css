@@ -225,6 +225,12 @@ button.planet-placement-row {
   white-space: nowrap;
 }
 
+.planet-placement-row__meta > span:not(.planet-placement-row__duration):not(.spl-status-item) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .placement-row__degree,
 .big-three-row__degree,
 .friend-placement-row__degree,

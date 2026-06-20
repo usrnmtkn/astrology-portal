@@ -32,6 +32,12 @@
   box-shadow: none;
 }
 
+.placement-section .planet-placement-list,
+.placement-section .placement-table,
+.aspect-section .aspect-row-list {
+  gap: 10px;
+}
+
 .planet-placement-list > :where(.placement-table-row, .planet-placement-row) {
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);

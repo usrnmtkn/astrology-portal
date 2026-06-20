@@ -432,6 +432,57 @@ function cleanArticleHeading(value?: string | null) {
   return cleanArticleText(value).replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
 }
 
+const articleZodiacGlyphs: Record<string, string> = {
+  Aries: "♈",
+  Taurus: "♉",
+  Gemini: "♊",
+  Cancer: "♋",
+  Leo: "♌",
+  Virgo: "♍",
+  Libra: "♎",
+  Scorpio: "♏",
+  Sagittarius: "♐",
+  Capricorn: "♑",
+  Aquarius: "♒",
+  Pisces: "♓"
+};
+
+function articleTitleSignGlyph(title: string, meta = "") {
+  const source = `${title} ${meta}`;
+  const sign = Object.keys(articleZodiacGlyphs).find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(source));
+
+  return sign ? articleZodiacGlyphs[sign] : "";
+}
+
+function articleTitleHouseToken(title: string, meta = "") {
+  const match = `${title} ${meta}`.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+house\b/i);
+
+  return match ? `${match[1]}H` : "";
+}
+
+function articleEyebrowLabel(title: string, meta: YouTransitArticle["meta"]) {
+  if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
+    return "Aspect";
+  }
+
+  if (articleTitleSignGlyph(title)) {
+    return "Placement";
+  }
+
+  return meta.find((row) => cleanArticleText(row.value))?.label || "Article";
+}
+
+function articleEyebrowGlyphs(article: YouTransitArticle) {
+  const metaText = article.meta.map((row) => row.value).join(" ");
+  const parts = [
+    ...(article.glyph ? article.glyph.split(/\s+/).filter(Boolean) : []),
+    articleTitleSignGlyph(article.title, metaText),
+    articleTitleHouseToken(article.title, metaText)
+  ].filter(Boolean);
+
+  return Array.from(new Set(parts));
+}
+
 function YouTransitArticlePage({
   article,
   onClose
@@ -456,9 +507,11 @@ function YouTransitArticlePage({
       .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
       .filter(Boolean))
     : [];
-  const metaRows = article.compactHeader ? [] : article.meta.filter((row) => cleanArticleText(row.value));
   const hasReadableBody = Boolean(summary || introParagraphs.length || sections.length);
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
+  const articleTldr = cleanArticleText(article.subtitle || summary || introParagraphs[0] || sections[0]?.tldr);
+  const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);
+  const eyebrowGlyphs = articleEyebrowGlyphs(article);
 
   return (
     <section
@@ -473,14 +526,24 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
+            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.join(" ")}` : eyebrowLabel}>
+              <span>{eyebrowLabel}</span>
+              {eyebrowGlyphs.length ? (
+                <>
+                  <span className="article-eyebrow__slash" aria-hidden="true">/</span>
+                  <span className="article-eyebrow__glyphs" aria-hidden="true">
+                    {eyebrowGlyphs.map((part) => (
+                      <span className={/^\d{1,2}H$/.test(part) ? "article-eyebrow__house" : undefined} key={part}>{part}</span>
+                    ))}
+                  </span>
+                </>
+              ) : null}
+            </div>
             <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
-            {metaRows.length ? (
-              <div className="article-meta sky-detail-meta">
-                {metaRows.map((row) => (
-                  <p className="m-row" key={`${row.label}-${row.value}`}>
-                    <b>{row.label}:</b> {row.value}
-                  </p>
-                ))}
+            {articleTldr ? (
+              <div className="article-tldr">
+                <span className="article-tldr__label">TLDR</span>
+                <p className="article-sub article-tldr__copy">{articleTldr}</p>
               </div>
             ) : null}
           </header>

@@ -958,6 +958,13 @@
     line-height: 1.28;
   }
 
+  .mode-guest :where(.planet-placement-row__duration, .aspect-row-timing .planet-placement-row__duration),
+  .mode-member :where(.planet-placement-row__duration, .aspect-row-timing .planet-placement-row__duration) {
+    padding: 6px 11px;
+    font-size: var(--sky-mobile-badge);
+    line-height: 1;
+  }
+
   .chart-shell,
   .chart-frame,
   .wheel,
@@ -1364,8 +1371,7 @@
 
   .sky-detail-page {
     width: 100%;
-    padding: calc(var(--top-control-top) + var(--top-control-height) + var(--top-control-height) + 54px) var(--mobile-page-gutter)
-      var(--mobile-page-gutter);
+    padding: 104px var(--mobile-page-gutter) var(--mobile-page-gutter);
   }
 
   .article-shell,
@@ -1377,13 +1383,7 @@
   .article-title,
   .sky-detail-id h1 {
     font-size: clamp(28px, 8vw, 36px);
-    line-height: 1.04;
-  }
-
-  .article-share {
-    align-items: center;
-    flex-direction: row;
-    gap: 9px;
+    line-height: 1.08;
   }
 
   .segmented-control {
