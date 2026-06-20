@@ -89,7 +89,7 @@
   font-family: var(--font-body);
   font-size: var(--chart-sign-label-size, 13px);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-label);
   paint-order: normal;
   text-anchor: middle;
   text-shadow: none;
@@ -210,7 +210,7 @@
   font-size: var(--chart-degree-size, 10px);
   font-weight: var(--weight-semibold);
   dominant-baseline: central;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   text-anchor: middle;
 }
 
@@ -383,7 +383,7 @@
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-label);
   line-height: 1.2;
   text-transform: uppercase;
 }

@@ -108,7 +108,7 @@
   font-size: var(--text-button-size);
   line-height: 1;
   white-space: nowrap;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   overflow: hidden;
 }
 
@@ -186,7 +186,7 @@
   color: var(--card-meta-color);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -323,7 +323,7 @@
   color: var(--surface);
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
 }
 
 .manual-chart-avatar {
@@ -373,7 +373,7 @@
   font-size: var(--text-placement-meta);
   font-weight: var(--weight-regular);
   line-height: 1.35;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
@@ -732,7 +732,7 @@
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
   line-height: 1.05;
-  letter-spacing: -0.015em;
+  letter-spacing: var(--tracking-tight);
 }
 
 .friend-profile-card .manual-chart-signatures {
@@ -782,7 +782,7 @@
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
   line-height: 1.05;
-  letter-spacing: -0.015em;
+  letter-spacing: var(--tracking-tight);
 }
 
 .friend-hero-copy p,
@@ -798,7 +798,7 @@
   flex-wrap: wrap;
   gap: 6px 14px;
   min-width: 0;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
 }
 
 .you-signature-row > span {
@@ -843,7 +843,7 @@
   color: var(--card-meta-color);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
 }
 
 .friend-chart-page .friend-profile-copy-column > .friend-section-label:first-child,
@@ -1091,7 +1091,7 @@
   color: var(--ink);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-label);
   line-height: 1.2;
   text-align: center;
   text-transform: uppercase;
@@ -1135,7 +1135,7 @@
 .friend-chart-legend em {
   color: var(--muted);
   font-style: normal;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-pill);
 }
 
 .synastry-placements-comparison,
@@ -1186,7 +1186,7 @@
   font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
   line-height: 1.05;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-tight);
 }
 
 .synastry-placement-panel-title {
@@ -1290,7 +1290,7 @@
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-body);
   line-height: 1;
 }
 
@@ -1763,7 +1763,7 @@
   font-size: var(--text-button-size);
   font-variant-numeric: tabular-nums;
   font-weight: 500;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   padding: 12px 14px;
   text-transform: none;
@@ -1846,7 +1846,7 @@
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   text-transform: none;
 }
@@ -1887,7 +1887,7 @@
   color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   text-transform: none;
 }
@@ -1903,7 +1903,7 @@
   font-family: var(--font-body);
   font-size: var(--text-button-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   padding: 14px;
   cursor: pointer;

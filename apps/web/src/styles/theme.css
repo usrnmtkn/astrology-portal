@@ -56,9 +56,11 @@
   --color-synastry-accent: #c8915f;
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
   --symbols: "Noto Sans Symbols", "Segoe UI Symbol", serif;
   --font-serif: var(--serif);
+  --font-sans: var(--sans);
   --font-mono: var(--mono);
   --font-symbol: var(--symbols);
 
@@ -205,11 +207,16 @@
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 600;
-  --tracking-display: -0.022em;
-  --tracking-title: -0.018em;
-  --tracking-nav: -0.005em;
-  --tracking-label: 0.1em;
-  --tracking-tiny: 0.13em;
+  --tracking-body: normal;
+  --tracking-normal: normal;
+  --tracking-display: -0.012em;
+  --tracking-title: normal;
+  --tracking-tight: -0.01em;
+  --tracking-nav: 0;
+  --tracking-label: 0.12em;
+  --tracking-pill: 0.04em;
+  --tracking-number: 0;
+  --tracking-tiny: var(--tracking-label);
   --leading-tight: 1.02;
   --leading-body: 1.6;
 

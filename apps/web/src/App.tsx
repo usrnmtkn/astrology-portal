@@ -30,6 +30,7 @@ import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
 import {
   AspectGlyphs,
+  DurationLabelText,
   FriendPlacementTable,
   InlineGlyphIcon,
   PlanetPlacementRow,
@@ -6390,6 +6391,80 @@ function FeatureLoadingFallback() {
   return <div className="feature-loading-fallback" aria-hidden="true" />;
 }
 
+function SkyLoadingWheel() {
+  const wheelSigns = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
+
+  return (
+    <div className="sky-loading-wheel" aria-hidden="true">
+      <svg viewBox="0 0 240 240" role="img">
+        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="110" />
+        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="82" />
+        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="38" />
+        <circle className="sky-loading-wheel__center" cx="120" cy="120" r="8" />
+        {Array.from({ length: 12 }).map((_, index) => {
+          const angle = ((index * 30) - 90) * (Math.PI / 180);
+          const inner = 40;
+          const outer = 110;
+          const x1 = 120 + Math.cos(angle) * inner;
+          const y1 = 120 + Math.sin(angle) * inner;
+          const x2 = 120 + Math.cos(angle) * outer;
+          const y2 = 120 + Math.sin(angle) * outer;
+
+          return (
+            <line
+              className="sky-loading-wheel__spoke"
+              key={index}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+            />
+          );
+        })}
+        {wheelSigns.map((sign, index) => {
+          const angle = ((index * 30) - 75) * (Math.PI / 180);
+          const x = 120 + Math.cos(angle) * 92;
+          const y = 120 + Math.sin(angle) * 92;
+
+          return (
+            <text className="sky-loading-wheel__sign" key={sign} x={x} y={y}>
+              {sign}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function SkyLoadingCard({ compact = false }: { compact?: boolean }) {
+  const bodyLines = compact ? ["short", "long"] : ["short", "long", "long", "medium"];
+
+  return (
+    <article className={`sky-loading-card${compact ? " sky-loading-card--compact" : ""}`} aria-hidden="true">
+      <span className="sky-loading-card__dot" />
+      <div className="sky-loading-card__main">
+        <span className="sky-loading-line sky-loading-line--title" />
+        <span className="sky-loading-line sky-loading-line--meta" />
+        <div className="sky-loading-card__body">
+          {bodyLines.map((size, index) => (
+            <span className={`sky-loading-line sky-loading-line--${size}`} key={`${size}-${index}`} />
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function SkyLoadingCards({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`sky-loading-cards${compact ? " sky-loading-cards--compact" : ""}`} role="status" aria-label="Loading current sky">
+      <SkyLoadingCard compact={compact} />
+      <SkyLoadingCard compact={compact} />
+    </div>
+  );
+}
+
 export function App() {
   if (isAdminContentPath()) {
     return (
@@ -8177,7 +8252,7 @@ export function App() {
                   </span>
                 </button>
                 {isSkyLoading ? (
-                  <div className="sky-loading-block sky-loading-block--cards" aria-label="Loading current sky highlights" />
+                  <SkyLoadingCards compact />
                 ) : (
                   <SkyCards sky={sky} />
                 )}
@@ -8203,13 +8278,13 @@ export function App() {
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
-                <div className="sky-loading-block sky-loading-block--chart" />
+                <SkyLoadingWheel />
               </section>
             )}
 
             <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
               {isSkyLoading && (
-                <div className="sky-loading-block sky-loading-block--content" aria-label="Loading current sky placements" />
+                <SkyLoadingCards />
               )}
               {!isSkyLoading && (mode === "guest" || mode === "member") && (
                 <RetrogradeCallout
@@ -10217,7 +10292,9 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
           <h4>
             <span>{title}</span>
           </h4>
-          <span className="nl-until">{countdownLabel}</span>
+          <span className="nl-until">
+            <DurationLabelText label={countdownLabel} />
+          </span>
         </div>
         <span className="nl-sub" data-when={exactAt.toISOString()}>
           {dateTimeLabel}
@@ -10276,7 +10353,9 @@ function RetrogradeCallout({
       ...(durationLine
         ? [
             <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
-              <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>{durationLine}</span>
+              <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
+                <DurationLabelText label={durationLine} />
+              </span>
             </span>
           ]
         : []),
@@ -10337,7 +10416,11 @@ function RetrogradeCallout({
             </span>
           </span>
           <span className="sky-pl-range ro-sky-pl__timing">
-            {row.remainingCount ? <span className="sky-pl-duration sky-pl-duration--retrograde">{row.remainingCount}</span> : null}
+            {row.remainingCount ? (
+              <span className="sky-pl-duration sky-pl-duration--retrograde">
+                <DurationLabelText label={row.remainingCount} />
+              </span>
+            ) : null}
             <span>{row.range}</span>
           </span>
           {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
@@ -10687,7 +10770,9 @@ function ActiveAspects({
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
                       <span className="aspect-row-timing" aria-label={timing.label}>
-                        <span className="planet-placement-row__duration">{timing.durationLabel}</span>
+                        <span className="planet-placement-row__duration">
+                          <DurationLabelText label={timing.durationLabel} />
+                        </span>
                         <span>{timing.rangeLabel}</span>
                       </span>
                       {rowSummary ? <p>{rowSummary}</p> : null}
@@ -12353,7 +12438,9 @@ function ProfileView({
             {title}
           </span>
           <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-            <span className="planet-placement-row__duration">{timing.durationLabel}</span>
+            <span className="planet-placement-row__duration">
+              <DurationLabelText label={timing.durationLabel} />
+            </span>
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}

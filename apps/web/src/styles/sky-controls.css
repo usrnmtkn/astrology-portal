@@ -252,7 +252,7 @@ html[data-scrolled] .sky-header-date-button {
   color: var(--muted);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 

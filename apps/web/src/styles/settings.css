@@ -120,7 +120,7 @@ button.settings-signout-row {
   font-family: var(--font-body);
   font-size: var(--text-row-value);
   font-weight: var(--weight-regular);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.35;
   text-align: right;
   text-transform: none;
@@ -136,7 +136,7 @@ button.settings-signout-row {
   font-family: var(--font-ui);
   font-size: var(--text-row-value);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   text-transform: none;
 }

@@ -114,7 +114,7 @@
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-regular);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-number);
   line-height: 1.35;
 }
 
@@ -127,7 +127,7 @@
   color: var(--duration-badge-fg);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
   text-transform: uppercase;
 }
