@@ -765,6 +765,7 @@
   font-family: var(--font-body);
   font-size: var(--retrograde-row-degree-size);
   font-weight: var(--weight-medium);
+  letter-spacing: 0;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -803,9 +804,10 @@
   letter-spacing: var(--tracking-label);
 }
 
-.ro-sky-pl__timing {
+.ro-screen .ro-sky-pl__timing {
   gap: 10px;
   align-items: center;
+  letter-spacing: 0;
 }
 
 .ro-sky-pl__timing .sky-pl-duration + span::before {
