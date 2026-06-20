@@ -2694,14 +2694,16 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
   }
 
   if (remainingMs >= 86_400_000) {
-    return formatDurationCompact(startInput, endInput);
+    const duration = formatDurationCompact(startInput, endInput);
+
+    return duration ? `${duration} left` : null;
   }
 
   const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
   const hours = Math.floor(remainingMinutes / 60);
   const minutes = remainingMinutes % 60;
 
-  return `${hours}H ${minutes}MIN`;
+  return `${hours}H ${minutes}MIN left`;
 }
 
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {

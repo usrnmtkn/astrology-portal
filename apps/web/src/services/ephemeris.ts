@@ -160,11 +160,11 @@ function compactDurationLabelFromDays(days: number) {
   const roundedDays = Math.ceil(days);
 
   if (roundedDays < 1) {
-    return "TODAY";
+    return "TODAY left";
   }
 
   if (roundedDays < 30) {
-    return `${roundedDays}D`;
+    return `${roundedDays}D left`;
   }
 
   const months = roundedDays >= 365
@@ -172,13 +172,15 @@ function compactDurationLabelFromDays(days: number) {
     : Math.max(1, Math.round(roundedDays / 30.44));
 
   if (months < 12) {
-    return `${months}M`;
+    return `${months}M left`;
   }
 
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
 
-  return remainingMonths > 0 ? `${years}Y ${remainingMonths}M` : `${years}Y`;
+  const duration = remainingMonths > 0 ? `${years}Y ${remainingMonths}M` : `${years}Y`;
+
+  return `${duration} left`;
 }
 
 function refineSignBoundary(
