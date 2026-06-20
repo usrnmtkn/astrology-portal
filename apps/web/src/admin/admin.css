@@ -604,17 +604,19 @@ body,
 .admin-content-table {
   display: grid;
   gap: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-color: rgba(193, 127, 90, 0.55) rgba(255, 255, 255, 0.06);
 }
 
 .admin-content-table-head,
 .admin-content-row {
   align-items: center;
   display: grid;
-  gap: 8px 18px;
-  grid-template-columns: minmax(430px, 1.8fr) minmax(130px, 0.5fr) minmax(128px, 0.45fr) minmax(170px, 0.55fr) minmax(300px, 1fr);
+  gap: 8px 16px;
+  grid-template-columns: minmax(320px, 1.65fr) 126px 118px minmax(150px, 0.75fr) 132px minmax(160px, 0.8fr);
   justify-items: start;
-  min-width: 1220px;
+  min-width: 1030px;
   padding: 0 24px;
 }
 
@@ -635,9 +637,9 @@ body,
   border-radius: 0;
   color: var(--admin-ink);
   justify-content: stretch;
-  min-height: 70px;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  min-height: 62px;
+  padding-bottom: 9px;
+  padding-top: 9px;
   text-align: left;
 }
 
@@ -654,7 +656,7 @@ body,
 
 .admin-content-title-cell {
   display: grid;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
   width: 100%;
 }
@@ -670,18 +672,24 @@ body,
 
 .admin-content-row-title {
   color: var(--admin-ink);
-  display: -webkit-box;
-  font-size: 16px;
+  display: block;
+  font-size: 18px;
   font-weight: 700;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
   letter-spacing: 0;
-  line-height: 1.16;
-  flex: 1 1 auto;
-  max-width: 100%;
+  line-height: 1.12;
   min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
   text-align: left;
+  white-space: nowrap;
+}
+
+.admin-content-badge-cell {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+  width: 100%;
 }
 
 .admin-content-row-subtitle,
@@ -701,13 +709,17 @@ body,
 .admin-content-row-section,
 .admin-content-location small {
   color: rgba(200, 192, 176, 0.76);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.25;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   text-transform: capitalize;
   white-space: nowrap;
+}
+
+.admin-content-row-date.missing {
+  color: #d69b78;
 }
 
 .admin-content-location {
@@ -719,7 +731,7 @@ body,
 
 .admin-content-location strong {
   color: var(--admin-ink);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.15;
 }
@@ -1982,8 +1994,8 @@ body,
 
   .admin-content-table-head,
   .admin-content-row {
-    grid-template-columns: minmax(340px, 1.4fr) minmax(116px, 0.5fr) minmax(116px, 0.42fr) minmax(140px, 0.52fr) minmax(240px, 0.95fr);
-    min-width: 980px;
+    grid-template-columns: minmax(300px, 1.45fr) 118px 108px minmax(132px, 0.7fr) 120px minmax(148px, 0.78fr);
+    min-width: 940px;
     padding-left: 16px;
     padding-right: 16px;
   }

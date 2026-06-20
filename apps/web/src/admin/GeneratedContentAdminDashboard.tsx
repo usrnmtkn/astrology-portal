@@ -807,6 +807,18 @@ function adminDateLabel(value: string | null) {
   }).format(date);
 }
 
+function contentRecordDateLabel(record: AdminReviewRecord) {
+  if (record.targetDate) {
+    return adminDateLabel(record.targetDate);
+  }
+
+  if (record.status === "REVIEWED") {
+    return "Missing date";
+  }
+
+  return "No date";
+}
+
 function compactAdminText(value: string | null | undefined, fallback = "No reader-facing copy saved yet.") {
   const normalized = (value ?? "").replace(/\s+/g, " ").trim();
 
@@ -1363,6 +1375,14 @@ function appLocationDetail(record: AdminReviewRecord) {
   if (record.surface === "you") return "Personal chart";
 
   return contentCategoryLabel(record);
+}
+
+function recordMetadataLabel(record: AdminReviewRecord) {
+  return [
+    generatedContentSurfaceLabels[record.surface],
+    record.mode.replaceAll("_", " "),
+    record.contentKey
+  ].filter(Boolean).join(" · ");
 }
 
 function isDraftWithCopy(record: AdminReviewRecord) {
@@ -3315,17 +3335,18 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-content-table">
                   <div className="admin-content-table-head" aria-hidden="true">
                     <span>Content</span>
+                    <span>Status</span>
+                    <span>Visibility</span>
                     <span>Lives in</span>
                     <span>Date</span>
                     <span>Category</span>
-                    <span>Metadata</span>
                   </div>
                   {allContentRecords.map((record) => (
                     <button
                       type="button"
                       key={record.id}
                       className={`admin-content-row ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
-                      title={`${record.title} · ${record.subtitle || record.contentKey}`}
+                      title={`${record.title} · ${recordMetadataLabel(record)}`}
                       onClick={() => {
                         setSelectedReviewId(record.id);
                         cancelReviewEdit();
@@ -3337,19 +3358,23 @@ export function GeneratedContentAdminDashboard() {
                       }}
                     >
                       <span className="admin-content-title-cell">
-                        <span className="admin-content-title-line">
-                          <strong className="admin-content-row-title">{record.title}</strong>
-                          <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                          <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
-                        </span>
+                        <strong className="admin-content-row-title" title={record.title}>{record.title}</strong>
+                        <span className="admin-content-row-meta" title={recordMetadataLabel(record)}>{recordMetadataLabel(record)}</span>
+                      </span>
+                      <span className="admin-content-badge-cell">
+                        <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                      </span>
+                      <span className="admin-content-badge-cell">
+                        <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
                       </span>
                       <span className="admin-content-location">
                         <strong>{appLocationLabel(record)}</strong>
                         <small>{appLocationDetail(record)}</small>
                       </span>
-                      <span className="admin-content-row-date">{adminDateLabel(record.targetDate)}</span>
+                      <span className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate ? "missing" : ""}`}>
+                        {contentRecordDateLabel(record)}
+                      </span>
                       <span className="admin-content-row-section">{contentCategoryLabel(record)}</span>
-                      <span className="admin-content-row-meta">{generatedContentSurfaceLabels[record.surface]} · {record.mode.replaceAll("_", " ")} · {record.contentKey}</span>
                     </button>
                   ))}
                   {allContentRecords.length === 0 && (
