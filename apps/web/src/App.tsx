@@ -4077,23 +4077,28 @@ function emptyHouseDetailArticle(
     : context === "friend"
       ? `When ${rulerLabel} is activated, this house may become easier to see in their lived experience.`
       : `When ${rulerLabel} is activated, this house may become easier to see in your lived experience.`;
-  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp. That sign sets the style. Then look at the planet that rules that sign. That planet becomes the messenger for the empty house, carrying its themes into the part of your chart where it lives. This area can become more active when its ruler is activated or when current planets move through it.";
+  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp. That sign sets the style. Then look at the planet that rules that sign. That planet becomes the messenger for the empty house, carrying its themes into the part of your chart where it lives. A birth chart can describe a pattern before it feels obvious. This area may become clearer when its ruler is activated, when current planets move through it, or when timing techniques bring it forward.";
+  const timingParagraph = rulerPosition?.house
+    ? `Because this house is empty, it may not always feel like a constant focus. The connection between this house and the ${ordinalHouse(rulerPosition.house)} house may also take time to recognize. It can become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`
+    : context === "friend"
+      ? `Because this house is empty, it may not always feel like a constant focus. This part of the chart may become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`
+      : `Because this house is empty, it may not always feel like a constant focus. This part of your chart may become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`;
   const paragraphs = context === "friend"
     ? [
         `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this part of their chart. Even without planets here, their ${houseKeywords} are still reflected in the chart, but they are understood through the sign on the cusp and the planet that rules it.`,
         `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, they meet this part of life through ${signKeywords}. Their ${houseTopic} may come through as ${signExpression}. They may experience this area by ${signBehavior}.`,
-        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of their ${ordinalHouse(house)} house, while ${rulerLabel} shows how and where those qualities are expressed in their life.`,
+        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of their ${ordinalHouse(house)} house, while ${rulerLabel} shows where that story continues, what other part of life it becomes connected to, and where the topic may become easier to recognize over time.`,
         `${rulerPlacementSentence} ${rulerMeaningSentence}`,
         rulerHouseSentence,
-        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as they learn how to work with ${integratedInterpretation}.`
+        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as they learn how to work with ${integratedInterpretation}. ${timingParagraph}`
       ]
     : [
         `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this house. Even without planets here, your ${houseKeywords} are still reflected in your chart, but they are understood through the sign on the cusp and the planet that rules it.`,
         `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, you meet this part of life through ${signKeywords}. Your ${houseTopic} may come through as ${signExpression}. You may experience this area by ${signBehavior}.`,
-        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of your ${ordinalHouse(house)} house, while ${rulerLabel} shows how and where those qualities are expressed in your life.`,
+        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of your ${ordinalHouse(house)} house, while ${rulerLabel} shows where that story continues, what other part of life it becomes connected to, and where the topic may become easier to recognize over time.`,
         `${rulerPlacementSentence} ${rulerMeaningSentence}`,
         rulerHouseSentence,
-        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as you learn how to work with ${integratedInterpretation}.`
+        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as you learn how to work with ${integratedInterpretation}. ${timingParagraph}`
       ];
 
   return {
