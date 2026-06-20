@@ -1,5 +1,5 @@
-import type { PlanetPosition, SkySnapshot } from "../../types";
-import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
+import type { PlanetPosition } from "../../types";
+import { houseGlyph, pointGlyph, signGlyph } from "../../components/charts/chartAssets";
 
 const zodiacSigns = [
   "Aries",
@@ -27,25 +27,6 @@ function angularDistance(first: number, second: number) {
 
 function zodiacSignForLongitude(longitude: number) {
   return zodiacSigns[Math.floor(normalizedAngle(longitude) / 30)] ?? "Aries";
-}
-
-function zodiacGlyphText(sign: string) {
-  const glyphs: Record<string, string> = {
-    Aries: "♈",
-    Taurus: "♉",
-    Gemini: "♊",
-    Cancer: "♋",
-    Leo: "♌",
-    Virgo: "♍",
-    Libra: "♎",
-    Scorpio: "♏",
-    Sagittarius: "♐",
-    Capricorn: "♑",
-    Aquarius: "♒",
-    Pisces: "♓"
-  };
-
-  return glyphs[sign] ?? "";
 }
 
 function zodiacLongitude(position?: PlanetPosition) {
@@ -76,7 +57,7 @@ function positionFromLongitude({
     planet,
     glyph,
     sign,
-    signGlyph: zodiacGlyphText(sign),
+    signGlyph: signGlyph(sign),
     degree: normalizedLongitude % 30,
     house: 0,
     motion: "direct",
@@ -191,18 +172,13 @@ export function natalPlacementTitle(position: PlanetPosition) {
   return `${position.planet}${position.motion === "retrograde" ? " Rx" : ""} in ${position.sign}`;
 }
 
-export function detailGlyphForPlacement(position: PlanetPosition, activeAspects: SkySnapshot["aspects"]) {
-  const primaryAspect = activeAspects[0];
-
-  if (primaryAspect) {
-    return `${pointGlyph(primaryAspect.from)} ${aspectGlyph(primaryAspect.type)} ${pointGlyph(primaryAspect.to)}`;
-  }
-
-  if (position.motion === "retrograde") {
-    return `${position.glyph} ℞`;
-  }
-
-  return `${position.glyph} ${position.signGlyph}`;
+export function detailGlyphForPlacement(position: PlanetPosition) {
+  return [
+    pointGlyph(position.planet),
+    position.motion === "retrograde" ? "℞" : "",
+    signGlyph(position.sign),
+    houseGlyph(position.house)
+  ].filter(Boolean).join(" ");
 }
 
 export function aspectTone(type: string) {

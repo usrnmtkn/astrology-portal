@@ -44,10 +44,12 @@ import type { PlacementHouseInsight, SocialPlacementRow } from "./components/cha
 import {
   aspectGlyph,
   aspectIconFiles,
+  houseGlyph,
   normalizeAspectType,
   pointGlyph,
   pointIconFiles,
   pointRetrogradeIconFiles,
+  signGlyph,
   zodiacAssetHref,
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
@@ -2538,6 +2540,27 @@ function articleTitleHouseToken(title: string, meta = "") {
   return match ? `${match[1]}H` : "";
 }
 
+function articlePlacementGlyphs(title: string, meta = "") {
+  const source = `${title} ${meta}`;
+  const match = source.match(
+    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+  );
+
+  if (!match) {
+    return [];
+  }
+
+  const [, body, retrograde, sign, house] = match;
+  const glyphs = [
+    pointGlyph(body.trim()),
+    retrograde ? "℞" : "",
+    signGlyph(sign.trim()),
+    house ? houseGlyph(Number.parseInt(house, 10)) : ""
+  ].filter(Boolean);
+
+  return Array.from(new Set(glyphs));
+}
+
 function articleEyebrowLabel(title: string, kicker?: string) {
   if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
     return "Aspect";
@@ -2559,6 +2582,12 @@ function articleEyebrowGlyphs({
   meta?: string;
   title: string;
 }) {
+  const placementGlyphs = articlePlacementGlyphs(title, meta);
+
+  if (placementGlyphs.length > 0) {
+    return placementGlyphs;
+  }
+
   const parts = [
     ...(glyph ? glyph.split(/\s+/).filter(Boolean) : []),
     articleTitleSignGlyph(title, meta),
@@ -10676,7 +10705,7 @@ function PlacementTable({
             pointName: position.planet
           });
           const openDetail = () => onOpenDetail({
-            glyph: detailGlyphForPlacement(position, activeAspects),
+            glyph: detailGlyphForPlacement(position),
             kicker: placementDetailKicker(position, activeAspects),
             title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${transitRangeLabel}`,
