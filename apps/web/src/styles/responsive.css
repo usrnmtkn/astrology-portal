@@ -178,7 +178,7 @@
   .placement-table-row__glyph {
     width: 40px;
     min-width: 40px;
-    font-size: 20px;
+    font-size: var(--type-small-display-size);
   }
 
   .placement-table-row__body {
@@ -519,41 +519,43 @@
     left: var(--mobile-page-gutter);
     z-index: calc(var(--z-topbar) - 1);
     display: grid;
-    gap: 22px;
+    gap: 16px;
     border: 1px solid var(--overlay-border);
-    border-radius: 18px;
+    border-radius: 22px;
     background: var(--surface);
-    box-shadow: var(--overlay-shadow);
-    padding: var(--mobile-overlay-padding);
+    box-shadow:
+      0 1px 1px rgba(28, 32, 52, 0.04),
+      0 18px 48px -28px rgba(28, 32, 52, 0.28);
+    padding: 16px;
   }
 
   .mobile-sky-controls__tabs {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: center;
-    min-height: 58px;
+    min-height: 50px;
     border: 1px solid var(--segmented-border);
-    border-radius: 26px;
+    border-radius: 25px;
     background: var(--surface);
-    padding: 5px;
+    padding: 4px;
   }
 
   .mobile-sky-controls__tabs button {
     min-width: 0;
-    height: 48px;
+    height: 42px;
     border: 0;
-    border-radius: 22px;
+    border-radius: 21px;
     background: transparent;
     color: var(--ink-2);
     font-family: var(--font-ui);
-    font-size: var(--text-nav);
+    font-size: var(--nav-link-size);
     font-weight: var(--weight-semibold);
     line-height: 1;
   }
 
   .mobile-sky-controls__tabs button.active {
-    background: var(--ink);
-    color: var(--surface);
+    background: var(--surface-2);
+    color: var(--ink);
   }
 
   .date-picker {
@@ -612,7 +614,7 @@
   }
 
   .mobile-sky-controls__label {
-    margin-bottom: -12px;
+    margin: 2px 0 -6px;
     color: var(--muted);
     font-family: var(--font-ui);
     font-size: var(--text-section-label-size);
@@ -625,14 +627,14 @@
   .mobile-sky-controls__location {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     width: 100%;
-    min-height: 58px;
+    min-height: 54px;
     border: 1px solid var(--input-border);
     border-radius: 14px;
     background: var(--surface-2);
     color: var(--ink);
-    padding: 0 18px;
+    padding: 0 16px;
     text-align: left;
   }
 

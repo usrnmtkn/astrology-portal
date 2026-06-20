@@ -186,6 +186,10 @@
   --text-row-title-size: var(--text-card-title);
   --text-row-body-size: var(--text-description);
   --text-meta-size: 13px;
+  --retrograde-row-glyph-size: var(--text-glyph);
+  --retrograde-row-title-size: var(--text-row-title-size);
+  --retrograde-row-degree-size: var(--text-placement-degree);
+  --retrograde-row-body-size: var(--text-row-body-size);
   --text-button-size: var(--text-row-value);
   --text-table-title-size: var(--text-card-title);
   --text-table-body-size: var(--text-description);

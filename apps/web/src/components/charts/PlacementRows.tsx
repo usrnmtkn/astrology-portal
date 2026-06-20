@@ -426,7 +426,7 @@ export function PlacementTableRow({
   variant?: "natal" | "friend" | "composite";
 }) {
   const meta = placementTableMeta(house, degree);
-  const hasStatusLine = Boolean(dignity || retrograde);
+  const hasDignity = Boolean(dignity);
   const className = [
     "placement-table-row",
     `placement-table-row--${variant}`,
@@ -438,19 +438,23 @@ export function PlacementTableRow({
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
+          {retrograde ? (
+            <span className="spl-status-item spl-status-retrograde placement-table-row__retrograde">
+              RETROGRADE
+            </span>
+          ) : null}
         </span>
         {meta ? (
           <span className="placement-table-row__meta placement-row__house placement-row__degree">
             <span>{meta}</span>
           </span>
         ) : null}
-        {hasStatusLine ? (
+        {description ? <span className="placement-table-row__description">{description}</span> : null}
+        {hasDignity ? (
           <span className="placement-table-row__status" aria-label={`${title} status`}>
             <DignityBadge dignity={dignity ?? null} />
-            {retrograde ? <span className="spl-status-item spl-status-retrograde">Retrograde</span> : null}
           </span>
         ) : null}
-        {description ? <span className="placement-table-row__description">{description}</span> : null}
       </span>
     </>
   );
