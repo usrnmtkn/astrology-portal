@@ -3359,7 +3359,6 @@ export function GeneratedContentAdminDashboard() {
                     >
                       <span className="admin-content-title-cell">
                         <strong className="admin-content-row-title" title={record.title}>{record.title}</strong>
-                        <span className="admin-content-row-meta" title={recordMetadataLabel(record)}>{recordMetadataLabel(record)}</span>
                       </span>
                       <span className="admin-content-badge-cell">
                         <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
