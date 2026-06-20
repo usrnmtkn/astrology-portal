@@ -3332,50 +3332,75 @@ export function GeneratedContentAdminDashboard() {
                   <BarChart3 size={18} aria-hidden="true" />
                 </div>
 
-                <div className="admin-content-table">
-                  <div className="admin-content-table-head" aria-hidden="true">
-                    <span>Content</span>
-                    <span>Status</span>
-                    <span>Visibility</span>
-                    <span>Lives in</span>
-                    <span>Date</span>
-                    <span>Category</span>
-                  </div>
-                  {allContentRecords.map((record) => (
-                    <button
-                      type="button"
-                      key={record.id}
-                      className={`admin-content-row ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
-                      title={`${record.title} · ${recordMetadataLabel(record)}`}
-                      onClick={() => {
-                        setSelectedReviewId(record.id);
-                        cancelReviewEdit();
-                        if (record.rawGlobalRow) {
-                          setSelectedId(record.rawGlobalRow.id);
-                          setDraft(adminDraftFromRow(record.rawGlobalRow));
-                          void loadRowDetails(record.rawGlobalRow.id);
-                        }
-                      }}
-                    >
-                      <span className="admin-content-title-cell">
-                        <strong className="admin-content-row-title" title={record.title}>{record.title}</strong>
-                      </span>
-                      <span className="admin-content-badge-cell">
-                        <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
-                      </span>
-                      <span className="admin-content-badge-cell">
-                        <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
-                      </span>
-                      <span className="admin-content-location">
-                        <strong>{appLocationLabel(record)}</strong>
-                        <small>{appLocationDetail(record)}</small>
-                      </span>
-                      <span className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate ? "missing" : ""}`}>
-                        {contentRecordDateLabel(record)}
-                      </span>
-                      <span className="admin-content-row-section">{contentCategoryLabel(record)}</span>
-                    </button>
-                  ))}
+                <div className="admin-content-table-scroll">
+                  <table className="admin-content-table">
+                    <colgroup>
+                      <col className="admin-content-col-title" />
+                      <col className="admin-content-col-status" />
+                      <col className="admin-content-col-visibility" />
+                      <col className="admin-content-col-location" />
+                      <col className="admin-content-col-date" />
+                      <col className="admin-content-col-category" />
+                    </colgroup>
+                    <thead className="admin-content-table-head">
+                      <tr>
+                        <th scope="col">Content</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Visibility</th>
+                        <th scope="col">Lives in</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Category</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allContentRecords.map((record) => {
+                        const openRecord = () => {
+                          setSelectedReviewId(record.id);
+                          cancelReviewEdit();
+                          if (record.rawGlobalRow) {
+                            setSelectedId(record.rawGlobalRow.id);
+                            setDraft(adminDraftFromRow(record.rawGlobalRow));
+                            void loadRowDetails(record.rawGlobalRow.id);
+                          }
+                        };
+
+                        return (
+                          <tr
+                            key={record.id}
+                            className={`admin-content-row ${record.id === selectedReviewRecord?.id ? "selected" : ""}`}
+                            onClick={openRecord}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                openRecord();
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            title={`${record.title} · ${recordMetadataLabel(record)}`}
+                          >
+                            <td className="admin-content-title-cell">
+                              <strong className="admin-content-row-title">{record.title}</strong>
+                            </td>
+                            <td className="admin-content-badge-cell">
+                              <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                            </td>
+                            <td className="admin-content-badge-cell">
+                              <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
+                            </td>
+                            <td className="admin-content-location">
+                              <strong>{appLocationLabel(record)}</strong>
+                              <small>{appLocationDetail(record)}</small>
+                            </td>
+                            <td className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate ? "missing" : ""}`}>
+                              {contentRecordDateLabel(record)}
+                            </td>
+                            <td className="admin-content-row-section">{contentCategoryLabel(record)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                   {allContentRecords.length === 0 && (
                     <p className="admin-empty">No content records match these filters yet.</p>
                   )}
