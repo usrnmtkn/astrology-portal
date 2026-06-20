@@ -302,6 +302,7 @@ type SkyDetail = {
   kicker: string;
   title: string;
   meta: string;
+  duration?: string;
   subtitle?: string;
   lensHint?: ReactNode;
   compactHeader?: boolean;
@@ -882,6 +883,8 @@ type ProfilePersistencePayload = {
   updatedAt: string;
 };
 
+type SkyLoadStatus = "loading" | "ready" | "fallback";
+
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
@@ -891,6 +894,7 @@ const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
 const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
+const skySnapshotSessionStoragePrefix = "tldrastro:skySnapshot";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
@@ -1636,6 +1640,56 @@ function skyDateTimeFromInput(value: string, location: LocationInput, now: Date 
   const localTime = timeInZoneForInput(now, resolvedLocation.timeZone);
 
   return zonedDateTimeToUtc(value, localTime, resolvedLocation.timeZone);
+}
+
+function skySnapshotCacheKey(location: LocationInput, date: string) {
+  const resolvedLocation = withTimeZone(location);
+  const latitude = Number.isFinite(resolvedLocation.latitude) ? resolvedLocation.latitude.toFixed(3) : "0";
+  const longitude = Number.isFinite(resolvedLocation.longitude) ? resolvedLocation.longitude.toFixed(3) : "0";
+
+  return `${skySnapshotSessionStoragePrefix}:${date}:${latitude}:${longitude}:${resolvedLocation.timeZone ?? ""}`;
+}
+
+function isCachedSkySnapshot(value: unknown): value is SkySnapshot {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const snapshot = value as Partial<SkySnapshot>;
+
+  return typeof snapshot.generatedAt === "string"
+    && typeof snapshot.ascendant === "string"
+    && typeof snapshot.midheaven === "string"
+    && Array.isArray(snapshot.positions)
+    && Array.isArray(snapshot.aspects)
+    && Boolean(snapshot.location);
+}
+
+function readCachedSkySnapshot(cacheKey: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const saved = window.sessionStorage.getItem(cacheKey);
+    const parsed = saved ? JSON.parse(saved) : null;
+
+    return isCachedSkySnapshot(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedSkySnapshot(cacheKey: string, snapshot: SkySnapshot) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(cacheKey, JSON.stringify(snapshot));
+  } catch {
+    return;
+  }
 }
 
 function formatSkyDate(value: string) {
@@ -3118,6 +3172,9 @@ function SkyDetailArticle({
               ) : null}
             </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
+            {detail.duration ? (
+              <p className="article-duration">{detail.duration}</p>
+            ) : null}
             {articleSub ? (
               <div className="article-tldr">
                 <span className="article-tldr__label">TLDR</span>
@@ -3494,12 +3551,14 @@ function currentSkyAspectDetailArticle(
   const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
   const rowSummary = liveGeneratedSummary(generated, content.summary);
   const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
+  const timing = currentSkyAspectTransitRange(aspect, generatedAt);
 
   return {
     glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
     kicker: "",
     title: generated?.headline ?? title,
-    meta: `${aspectTone(aspect.type).toUpperCase()} · ${currentSkyAspectTransitRange(aspect, generatedAt)}`,
+    meta: `${aspectTone(aspect.type).toUpperCase()} · ${timing}`,
+    duration: timing,
     subtitle: stripTldrPrefix(rowSummary),
     content: content.bundle,
     body: detailParagraphs,
@@ -6387,11 +6446,14 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
+  const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
+  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot>(() => {
     const initialLocation = withTimeZone(initialLocationState.location);
 
-    return getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
+    return initialCachedSky ?? getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
   });
+  const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "ready" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -6814,18 +6876,29 @@ export function App() {
     let cancelled = false;
     const skyLocation = withTimeZone(location);
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
+    const cacheKey = skySnapshotCacheKey(skyLocation, skyDate);
+    const cachedSky = readCachedSkySnapshot(cacheKey);
 
-    setSky(getCurrentSky(skyLocation, selectedDateTime));
+    if (cachedSky) {
+      setSky(cachedSky);
+      setSkyStatus("ready");
+    } else {
+      setSkyStatus("loading");
+    }
+
     getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
       .then((nextSky) => {
         if (!cancelled) {
           setSky(nextSky);
+          setSkyStatus("ready");
+          writeCachedSkySnapshot(cacheKey, nextSky);
         }
       })
       .catch((error) => {
         console.warn("Swiss Ephemeris sky calculation failed; using static sky snapshot.", error);
         if (!cancelled) {
           setSky(getCurrentSky(skyLocation, selectedDateTime));
+          setSkyStatus("fallback");
         }
       });
 
@@ -7747,12 +7820,13 @@ export function App() {
   }
 
   const isTodayMode = mode === "guest" || mode === "member";
+  const isSkyLoading = isTodayMode && skyStatus === "loading";
   const showSkyDateControls = isTodayMode && !selectedSkyDetail;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
   const skyFullChartTitleId = "sky-full-chart-title";
-  const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(sky.location.label)}`;
+  const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;
 
   function selectSkyDateFromMobileControls(nextDate: string) {
     setSkyDate(nextDate);
@@ -7831,7 +7905,7 @@ export function App() {
               ref={mobileDatePickerTriggerRef}
               aria-expanded={mobileSkyControlsOpen}
               aria-controls="mobile-sky-controls"
-              aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(sky.location.label)}`}
+              aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`}
               onClick={() => {
                 setCityPickerOpen(false);
                 setDatePickerOpen(false);
@@ -7884,7 +7958,7 @@ export function App() {
                 onClick={openMobileCityPicker}
               >
                 <MapPin size={18} aria-hidden="true" />
-                <span>{compactCityLabel(sky.location.label)}</span>
+                <span>{compactCityLabel(location.label)}</span>
               </button>
             </div>
           )}
@@ -8079,7 +8153,12 @@ export function App() {
                   className="mobile-full-chart-card"
                   type="button"
                   aria-label="Open full current sky chart"
+                  disabled={isSkyLoading}
                   onClick={() => {
+                    if (isSkyLoading) {
+                      return;
+                    }
+
                     setDatePickerOpen(false);
                     setCityPickerOpen(false);
                     setMobileSkyControlsOpen(false);
@@ -8097,11 +8176,15 @@ export function App() {
                     <ArrowRight size={18} />
                   </span>
                 </button>
-                <SkyCards sky={sky} />
+                {isSkyLoading ? (
+                  <div className="sky-loading-block sky-loading-block--cards" aria-label="Loading current sky highlights" />
+                ) : (
+                  <SkyCards sky={sky} />
+                )}
               </section>
             )}
 
-            {!isSignupMode && !usesFullPageLayout && (
+            {!isSignupMode && !usesFullPageLayout && !isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
@@ -8118,9 +8201,17 @@ export function App() {
                 </div>
               </section>
             )}
+            {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
+              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
+                <div className="sky-loading-block sky-loading-block--chart" />
+              </section>
+            )}
 
             <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
-              {(mode === "guest" || mode === "member") && (
+              {isSkyLoading && (
+                <div className="sky-loading-block sky-loading-block--content" aria-label="Loading current sky placements" />
+              )}
+              {!isSkyLoading && (mode === "guest" || mode === "member") && (
                 <RetrogradeCallout
                   positions={sky.positions}
                   generatedAt={sky.generatedAt}
@@ -8128,7 +8219,7 @@ export function App() {
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
-              {mode === "guest" && (
+              {!isSkyLoading && mode === "guest" && (
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
@@ -8138,7 +8229,7 @@ export function App() {
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
-              {mode === "member" && (
+              {!isSkyLoading && mode === "member" && (
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
@@ -10200,6 +10291,7 @@ function RetrogradeCallout({
         kicker: retrogradeDetailKicker(position),
         title: retrogradePlacementTitle(position),
         meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
+        duration: retrogradeRangeText(retrogradeWindow),
         retrograde: true,
         plainBody: true,
         body: detailParagraphs,
@@ -10709,6 +10801,7 @@ function PlacementTable({
             kicker: placementDetailKicker(position, activeAspects),
             title,
             meta: `${formatPlacementPosition(position).toUpperCase()} · ${transitRangeLabel}`,
+            duration: transitRangeLabel,
             retrograde: position.motion === "retrograde",
             body,
             sections: generatedDetailSections(generated),
