@@ -172,13 +172,13 @@ button.planet-placement-row {
 .planet-placement-row__body {
   display: grid;
   min-width: 0;
-  gap: 6px;
+  gap: 8px;
 }
 
 .planet-placement-row__topline {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   min-width: 0;
   gap: 6px 10px;
 }
@@ -193,7 +193,7 @@ button.planet-placement-row {
   font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--weight-medium);
-  line-height: 1.16;
+  line-height: 1.34;
   letter-spacing: var(--tracking-title);
 }
 
@@ -213,9 +213,9 @@ button.planet-placement-row {
 .planet-placement-row__meta {
   display: flex;
   flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 0.6em;
-  margin-top: 4px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: var(--weight-regular);
@@ -262,9 +262,9 @@ button.planet-placement-row {
   position: relative;
   top: -1px;
   min-height: 0;
-  margin-right: 2px;
-  padding: 1px 7px;
-  border-radius: 5px;
+  margin-right: 0;
+  padding: 6px 11px;
+  border-radius: var(--duration-badge-radius);
   background: var(--duration-badge-bg);
   color: var(--duration-badge-fg);
   font-family: var(--font-body);
@@ -281,7 +281,7 @@ button.planet-placement-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
+  gap: 8px 10px;
   color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-medium);
@@ -290,14 +290,14 @@ button.planet-placement-row {
 }
 
 .planet-placement-row__status .spl-dig {
-  padding: 4px 9px;
+  padding: 6px 11px;
   border-radius: 999px;
   font-family: var(--font-body);
   font-size: 10.5px;
   font-weight: var(--weight-semibold);
   letter-spacing: 0.07em;
   line-height: 1;
-  margin: 8px 0 0;
+  margin: 0;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -430,21 +430,22 @@ button.planet-placement-row {
 }
 
 .spl-status-alert {
+  background: color-mix(in srgb, var(--status-alert) 14%, var(--surface));
   color: var(--status-alert);
 }
 
 .spl-status-retrograde {
-  min-height: 1.35em;
-  padding: 0.08em 0.64em;
+  min-height: 0;
+  padding: 6px 11px;
   border-radius: 999px;
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
   font-family: var(--font-body);
   font-size: var(--type-xs);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--tracking-label);
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .spl-status-retrograde::before {
@@ -452,7 +453,25 @@ button.planet-placement-row {
 }
 
 .spl-status-muted {
+  background: var(--accent-bg);
   color: var(--card-meta-color);
+}
+
+.planet-placement-row__status .spl-status-item {
+  min-height: 0;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.planet-placement-row__status .spl-status-item::before {
+  display: none;
 }
 
 .placement-row-titleline {
