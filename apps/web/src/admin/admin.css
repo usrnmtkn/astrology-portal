@@ -97,7 +97,7 @@ body,
   font-weight: 900;
   height: 40px;
   justify-content: center;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   width: 40px;
 }
 
@@ -160,7 +160,7 @@ body,
   font-size: 12px;
   font-weight: 800;
   gap: 8px;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -210,7 +210,7 @@ body,
 
 .admin-dashboard-header h1 {
   font-size: clamp(38px, 5vw, 64px);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 0.96;
   margin: 8px 0 12px;
 }
@@ -335,7 +335,7 @@ body,
 
 .admin-api-status-main h2 {
   font-size: 20px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.1;
   margin: 3px 0 5px;
 }
@@ -368,14 +368,14 @@ body,
   color: var(--admin-muted);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .admin-api-status-grid strong {
   color: var(--admin-ink);
   font-size: 14px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.25;
 }
 
@@ -404,7 +404,7 @@ body,
 
 .admin-template-header h2 {
   font-size: 32px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1;
   margin: 4px 0 8px;
 }
@@ -499,14 +499,14 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .admin-template-guidance strong {
   color: var(--admin-ink);
   font-size: 20px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.16;
 }
 
@@ -532,13 +532,13 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .admin-metrics strong {
   font-size: 38px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1;
 }
 
@@ -567,7 +567,7 @@ body,
 .admin-content-toolbar h2 {
   color: var(--admin-ink);
   font-size: 32px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.05;
   margin: 4px 0 6px;
 }
@@ -598,7 +598,7 @@ body,
 
 .admin-status-pills strong {
   font-size: 16px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
 }
 
 .admin-content-table-scroll {
@@ -647,7 +647,7 @@ body,
   font-size: 10px;
   font-weight: 850;
   height: 46px;
-  letter-spacing: 0.32em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -711,7 +711,7 @@ body,
   display: block;
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.16;
   overflow: visible;
   text-align: left;
@@ -785,7 +785,7 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 850;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -823,7 +823,7 @@ body,
 .admin-metadata-sidebar h3 {
   color: var(--admin-ink);
   font-size: 19px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   margin: 0;
 }
 
@@ -849,7 +849,7 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 850;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -881,7 +881,7 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 850;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -922,7 +922,7 @@ body,
 
 .admin-review-filters h2 {
   font-size: 30px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.05;
   margin: 5px 0 8px;
 }
@@ -968,7 +968,7 @@ body,
   color: var(--admin-ink);
   font-size: 17px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.15;
 }
 
@@ -1007,7 +1007,7 @@ body,
 .admin-panel-header h2,
 .admin-editor-toolbar h2 {
   font-size: 24px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.1;
   margin: 4px 0 0;
 }
@@ -1045,7 +1045,7 @@ body,
 
 .admin-row-card strong {
   font-size: 16px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.22;
 }
 
@@ -1056,7 +1056,7 @@ body,
   font-size: 9px;
   font-weight: 900;
   justify-self: start;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
   padding: 4px 8px;
   text-transform: uppercase;
   flex: 0 0 auto;
@@ -1095,7 +1095,7 @@ body,
   font-size: 9px;
   font-weight: 900;
   justify-self: start;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
   padding: 4px 8px;
   text-transform: uppercase;
   flex: 0 0 auto;
@@ -1251,7 +1251,7 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 850;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -1278,7 +1278,7 @@ body,
 .admin-review-copy-heading h3 {
   color: var(--admin-ink);
   font-size: 24px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.1;
   margin: 0;
 }
@@ -1289,7 +1289,7 @@ body,
   color: var(--admin-muted);
   font-size: 12px;
   font-weight: 850;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   padding: 8px 10px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1522,7 +1522,7 @@ body,
 
 .admin-preview-modal-header h2 {
   font-size: clamp(24px, 3vw, 44px);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1;
   margin: 4px 0 6px;
 }
@@ -1558,7 +1558,7 @@ body,
 .admin-preview-page h1 {
   color: var(--admin-ink-dark);
   font-size: clamp(52px, 7vw, 104px);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 0.95;
   margin: 0 0 10px;
 }
@@ -1618,14 +1618,14 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .admin-release-summary strong {
   color: var(--admin-ink);
   font-size: 25px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.08;
 }
 
@@ -1656,7 +1656,7 @@ body,
   color: rgba(245, 243, 238, 0.84);
   font-size: 22px;
   font-weight: 750;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.12;
 }
 
@@ -1686,7 +1686,7 @@ body,
   color: var(--admin-muted);
   font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-label);
   padding: 5px 9px;
   text-transform: uppercase;
 }
@@ -1706,7 +1706,7 @@ body,
 .admin-release-card h3 {
   color: var(--admin-ink);
   font-size: clamp(25px, 3vw, 40px);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.02;
   margin: 0 0 10px;
 }
@@ -1777,7 +1777,7 @@ body,
 .admin-hook-card h3 {
   color: var(--admin-ink);
   font-size: 24px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.08;
   margin: 8px 0 0;
 }
@@ -1816,7 +1816,7 @@ body,
   color: var(--admin-muted);
   font-size: 12px;
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -1856,7 +1856,7 @@ body,
   color: var(--admin-muted);
   font-size: 12px;
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -1890,7 +1890,7 @@ body,
 
 .admin-private-row-card h3 {
   font-size: 22px;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.15;
   margin: 5px 0 0;
 }
@@ -1945,7 +1945,7 @@ body,
   color: var(--admin-muted);
   font-size: 10px;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 

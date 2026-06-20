@@ -50,7 +50,7 @@
   font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   text-align: center;
   white-space: nowrap;
   cursor: pointer;

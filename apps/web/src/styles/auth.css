@@ -144,7 +144,7 @@
   gap: 8px;
   color: var(--muted);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -188,7 +188,7 @@
   background: var(--surface-2);
   padding: 18px;
   color: var(--ink);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   text-transform: none;
 }
 
@@ -208,7 +208,7 @@
   font-family: var(--font-ui);
   font-size: var(--input-font-size);
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.2;
   padding: 0 var(--input-padding-x);
   box-sizing: border-box;
@@ -259,7 +259,7 @@
 .signup-city-search label > span {
   color: var(--muted);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -413,7 +413,7 @@
   width: fit-content;
   color: var(--ink);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   text-transform: none;
 }
 

@@ -337,6 +337,23 @@ export function AspectGlyphs({ from, aspect, to }: { from: string; aspect: strin
   );
 }
 
+export function DurationLabelText({ label }: { label: string }) {
+  const match = label.match(/^(.*?)(\s+left)$/iu);
+
+  if (!match) {
+    const className = /\d/u.test(label) ? "duration-label__value" : "duration-label__text";
+
+    return <span className={className}>{label}</span>;
+  }
+
+  return (
+    <>
+      <span className="duration-label__value">{match[1]}</span>
+      <span className="duration-label__suffix">{"\u00A0left"}</span>
+    </>
+  );
+}
+
 function uppercaseDignityLabel(dignity: PlacementDignity) {
   return dignity.label.toUpperCase();
 }
@@ -565,9 +582,15 @@ export function PlanetPlacementRow({
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
-            {durationLabel ? <span className="planet-placement-row__duration">{durationLabel}</span> : null}
+            {durationLabel ? (
+              <span className="planet-placement-row__duration">
+                <DurationLabelText label={durationLabel} />
+              </span>
+            ) : null}
             {retrogradeDurationLabel ? (
-              <span className="spl-status-item spl-status-retrograde">{retrogradeDurationLabel}</span>
+              <span className="spl-status-item spl-status-retrograde">
+                <DurationLabelText label={retrogradeDurationLabel} />
+              </span>
             ) : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>

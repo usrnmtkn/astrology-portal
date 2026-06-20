@@ -220,7 +220,7 @@ button.planet-placement-row {
   font-size: 13.5px;
   font-weight: var(--weight-regular);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-number);
   line-height: 1.35;
   white-space: nowrap;
 }
@@ -252,7 +252,7 @@ button.planet-placement-row {
   font-size: var(--text-placement-meta);
   font-weight: var(--weight-regular);
   line-height: 1.35;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   font-variant-numeric: tabular-nums;
 }
 
@@ -277,10 +277,27 @@ button.planet-placement-row {
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+.duration-label__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-number);
+}
+
+.duration-label__text {
+  letter-spacing: var(--tracking-pill);
+}
+
+.duration-label__suffix {
+  font-family: var(--font-sans);
+  font-variant-numeric: normal;
+  letter-spacing: var(--tracking-body);
+  text-transform: none;
 }
 
 .planet-placement-row__status {
@@ -291,7 +308,7 @@ button.planet-placement-row {
   color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: var(--tracking-pill);
   line-height: 1.25;
 }
 
@@ -301,7 +318,7 @@ button.planet-placement-row {
   font-family: var(--font-body);
   font-size: 10.5px;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.07em;
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
   margin: 0;
   text-transform: uppercase;
@@ -372,7 +389,7 @@ button.planet-placement-row {
   color: var(--card-meta-color);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
@@ -400,7 +417,7 @@ button.planet-placement-row {
   font-family: var(--font-ui);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   line-height: 1.25;
   overflow-wrap: break-word;
   pointer-events: none;
@@ -450,7 +467,7 @@ button.planet-placement-row {
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-label);
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
 }
 
@@ -470,7 +487,7 @@ button.planet-placement-row {
   font-family: var(--font-body);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: var(--tracking-pill);
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;

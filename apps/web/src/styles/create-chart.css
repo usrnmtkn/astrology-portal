@@ -100,7 +100,7 @@
   color: var(--muted);
   font-size: var(--type-caption-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -154,7 +154,7 @@
   min-width: 0;
   color: var(--muted);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -168,6 +168,6 @@
   color: var(--ink);
   padding: var(--form-field-padding);
   font: inherit;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-number);
   text-transform: none;
 }
