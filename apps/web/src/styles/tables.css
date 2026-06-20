@@ -212,15 +212,17 @@ button.planet-placement-row {
 
 .planet-placement-row__meta {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: baseline;
   gap: 0.6em;
+  margin-top: 4px;
   font-family: var(--font-body);
-  font-size: var(--text-placement-meta);
+  font-size: 13.5px;
   font-weight: var(--weight-regular);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   line-height: 1.35;
+  white-space: nowrap;
 }
 
 .placement-row__degree,
@@ -254,20 +256,25 @@ button.planet-placement-row {
 }
 
 .planet-placement-row__duration {
-  display: inline-flex;
+  display: inline-block;
   align-items: center;
   justify-content: center;
-  min-height: 20px;
-  padding: 2px 7px;
-  border-radius: var(--duration-badge-radius);
+  position: relative;
+  top: -1px;
+  min-height: 0;
+  margin-right: 2px;
+  padding: 1px 7px;
+  border-radius: 5px;
   background: var(--duration-badge-bg);
   color: var(--duration-badge-fg);
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-label);
+  letter-spacing: 0;
   line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .planet-placement-row__status {
@@ -280,6 +287,19 @@ button.planet-placement-row {
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: 1.25;
+}
+
+.planet-placement-row__status .spl-dig {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.07em;
+  line-height: 1;
+  margin: 8px 0 0;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .planet-placement-row--natal,
