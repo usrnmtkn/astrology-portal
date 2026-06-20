@@ -38,3 +38,7 @@
 .synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg {
   filter: var(--filter-retrograde-glyph);
 }
+
+.ro-screen .sky-pl-glyph .placement-glyph-svg {
+  filter: var(--filter-glyph-current);
+}

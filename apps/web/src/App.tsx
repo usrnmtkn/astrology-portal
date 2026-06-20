@@ -2628,6 +2628,50 @@ function calendarMonthDiff(start: Date, end: Date) {
   return Math.max(0, months);
 }
 
+function differenceInCalendarDays(start: Date, end: Date) {
+  return Math.max(0, Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000));
+}
+
+function daysInUtcMonth(year: number, month: number) {
+  return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+}
+
+function addCalendarMonths(start: Date, months: number) {
+  const year = start.getUTCFullYear() + Math.floor((start.getUTCMonth() + months) / 12);
+  const month = (start.getUTCMonth() + months) % 12;
+  const normalizedMonth = month < 0 ? month + 12 : month;
+  const normalizedYear = month < 0 ? year - 1 : year;
+  const day = Math.min(start.getUTCDate(), daysInUtcMonth(normalizedYear, normalizedMonth));
+
+  return new Date(Date.UTC(normalizedYear, normalizedMonth, day));
+}
+
+function differenceInCalendarParts(startInput: string | Date, endInput: string | Date) {
+  const start = dateFromDurationInput(startInput);
+  const end = dateFromDurationInput(endInput);
+
+  if (!start || !end || end.getTime() < start.getTime()) {
+    return null;
+  }
+
+  let totalMonths = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
+  let monthAnchor = addCalendarMonths(start, totalMonths);
+
+  if (monthAnchor.getTime() > end.getTime()) {
+    totalMonths = Math.max(0, totalMonths - 1);
+    monthAnchor = addCalendarMonths(start, totalMonths);
+  }
+
+  const days = differenceInCalendarDays(monthAnchor, end);
+
+  return {
+    totalDays: differenceInCalendarDays(start, end),
+    years: Math.floor(totalMonths / 12),
+    months: totalMonths % 12,
+    days
+  };
+}
+
 function getDurationParts(startInput: string | Date, endInput: string | Date) {
   const start = dateFromDurationInput(startInput);
   const end = dateFromDurationInput(endInput);
@@ -2694,9 +2738,7 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
   }
 
   if (remainingMs >= 86_400_000) {
-    const duration = formatDurationCompact(startInput, endInput);
-
-    return duration ? `${duration} left` : null;
+    return formatCountdown(startInput, endInput);
   }
 
   const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
@@ -2704,6 +2746,32 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
   const minutes = remainingMinutes % 60;
 
   return `${hours}H ${minutes}MIN left`;
+}
+
+function formatCountdown(startInput: string | Date, endInput: string | Date) {
+  const parts = differenceInCalendarParts(startInput, endInput);
+
+  if (!parts) {
+    return null;
+  }
+
+  if (parts.totalDays < 1) {
+    return "TODAY left";
+  }
+
+  if (parts.totalDays < 60) {
+    return parts.years === 0 && parts.months === 1 && parts.days === 0
+      ? "1M left"
+      : `${parts.totalDays}D left`;
+  }
+
+  const segments = [
+    parts.years > 0 ? `${parts.years}Y` : null,
+    parts.months > 0 ? `${parts.months}M` : null,
+    parts.days > 0 ? `${parts.days}D` : null
+  ].filter(Boolean);
+
+  return `${segments.length > 0 ? segments.join(" ") : `${parts.totalDays}D`} left`;
 }
 
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
@@ -9727,14 +9795,8 @@ const retrogradeWindows: RetrogradeWindow[] = [
   },
   {
     planet: "North Node",
-    retrogradeStart: "2026-05-11",
-    retrogradeEnd: "2026-06-07",
-    shadows: "not-applicable"
-  },
-  {
-    planet: "North Node",
-    retrogradeStart: "2026-06-08",
-    retrogradeEnd: "2026-06-19",
+    retrogradeStart: "2025-01-29",
+    retrogradeEnd: "2026-08-18",
     shadows: "not-applicable"
   },
   {
@@ -9806,31 +9868,7 @@ function formatRetrogradeCountChip(retrogradeStartDate?: string, retrogradeEndDa
     return null;
   }
 
-  const duration = getDurationParts(retrogradeStartDate, retrogradeEndDate);
-
-  if (!duration) {
-    return null;
-  }
-
-  if (duration.days < 1) {
-    return "TODAY";
-  }
-
-  if (duration.days < 30) {
-    return `${duration.days}D`;
-  }
-
-  if (duration.days < 84) {
-    return `${Math.max(1, Math.round(duration.days / 7))}W`;
-  }
-
-  if (duration.months < 12) {
-    return `${duration.months}M`;
-  }
-
-  return duration.remainingMonths > 0
-    ? `${duration.years}Y ${duration.remainingMonths}M`
-    : `${duration.years}Y`;
+  return formatCountdown(retrogradeStartDate, retrogradeEndDate)?.replace(/\s+left$/u, "") ?? null;
 }
 
 function joinRetrogradeNames(names: string[]) {
@@ -9954,6 +9992,20 @@ function signChapterEndLabel(position: PlanetPosition) {
 
 function compactRetrogradeTiming(position: PlanetPosition, window?: RetrogradeWindow) {
   return window ? retrogradeDetailRange(window) : "Dates calculating";
+}
+
+function retrogradeRemainingCountLabel(generatedAt: string, window?: RetrogradeWindow) {
+  const count = formatRetrogradeCountChip(generatedAt, window?.retrogradeEnd);
+
+  return count ? `${count} left` : null;
+}
+
+function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string, retrogradeWindow?: RetrogradeWindow | null) {
+  if (position.motion === "retrograde" && retrogradeWindow?.retrogradeEnd) {
+    return formatCountdown(generatedAt, retrogradeWindow.retrogradeEnd);
+  }
+
+  return compactTransitDurationLabel(position, generatedAt);
 }
 
 function SkyCards({ sky }: { sky: SkySnapshot }) {
@@ -10107,6 +10159,7 @@ function RetrogradeCallout({
         astrologyDrilldown: generatedAstrologyDrilldown(generated),
         content: content.bundle
       } satisfies SkyDetail,
+      remainingCount: retrogradeRemainingCountLabel(generatedAt, retrogradeWindow),
       range: retrogradeRangeText(retrogradeWindow)
     };
   };
@@ -10140,10 +10193,11 @@ function RetrogradeCallout({
                 {skyDisplayPlanetName(position.planet)} <span className="sky-pl-rx">Rx</span> in {position.sign}
               </span>
               <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
-              {row.count ? <span className="spl-status-item spl-status-retrograde">{row.count}</span> : null}
+              <span className="spl-status-item spl-status-retrograde ro-sky-pl__badge">Retrograde</span>
             </span>
           </span>
-          <span className="sky-pl-range">
+          <span className="sky-pl-range ro-sky-pl__timing">
+            {row.remainingCount ? <span className="sky-pl-duration sky-pl-duration--retrograde">{row.remainingCount}</span> : null}
             <span>{row.range}</span>
           </span>
           {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
@@ -10566,13 +10620,16 @@ function PlacementTable({
           const retrogradeWindow = position.motion === "retrograde"
             ? retrogradeWindowFor(position, generatedAt)
             : null;
-          const retrogradeDurationLabel = formatRetrogradeDuration(
+          const statuses = placementStatuses(position);
+          const isRetrograde = position.motion === "retrograde";
+          const durationLabel = primaryPlacementDurationLabel(position, generatedAt, retrogradeWindow);
+          const retrogradeDurationLabel = isRetrograde ? null : formatRetrogradeDuration(
             retrogradeWindow?.retrogradeStart,
             retrogradeWindow?.retrogradeEnd
           );
-          const statuses = placementStatuses(position);
-          const durationLabel = compactTransitDurationLabel(position, generatedAt);
-          const transitRangeLabel = placementTransitRangeLabel(position, generatedAt);
+          const transitRangeLabel = isRetrograde && retrogradeWindow
+            ? retrogradeRangeText(retrogradeWindow)
+            : placementTransitRangeLabel(position, generatedAt);
           const contentKey = placementContentId(position.planet, position.sign, "sky");
           const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
           const placementHookKey = position.planet === "Sun"
@@ -10628,7 +10685,7 @@ function PlacementTable({
                 onClick={openDetail}
                 pointName={position.planet}
                 rangeLabel={transitRangeLabel}
-                retrograde={position.motion === "retrograde"}
+                retrograde={isRetrograde}
                 retrogradeDurationLabel={retrogradeDurationLabel}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
                 title={natalPlacementTitle(position)}

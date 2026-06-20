@@ -125,46 +125,48 @@ html[data-scrolled] .sky-header-date-button {
   right: calc((var(--top-icon-button-size) * 2) + (var(--top-control-gap) * 2));
   z-index: var(--z-picker);
   display: grid;
-  gap: 18px;
-  width: min(520px, calc(100vw - 64px));
+  gap: 16px;
+  width: min(480px, calc(100vw - 64px));
   border: 1px solid var(--overlay-border);
-  border-radius: 18px;
+  border-radius: 22px;
   background: var(--surface);
-  box-shadow: var(--overlay-shadow);
-  padding: 18px;
+  box-shadow:
+    0 1px 1px rgba(28, 32, 52, 0.04),
+    0 18px 48px -28px rgba(28, 32, 52, 0.28);
+  padding: 16px;
 }
 
 .mobile-sky-controls__tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  min-height: 52px;
+  min-height: 50px;
   border: 1px solid var(--segmented-border);
-  border-radius: 26px;
+  border-radius: 25px;
   background: var(--surface);
-  padding: 5px;
+  padding: 4px;
 }
 
 .mobile-sky-controls__tabs button {
   min-width: 0;
   height: 42px;
   border: 0;
-  border-radius: 22px;
+  border-radius: 21px;
   background: transparent;
   color: var(--ink-2);
   font-family: var(--font-ui);
-  font-size: var(--text-nav);
+  font-size: var(--nav-link-size);
   font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
 .mobile-sky-controls__tabs button.active {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .mobile-sky-controls__label {
-  margin-bottom: -8px;
+  margin: 2px 0 -6px;
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: var(--type-meta-size);
@@ -177,14 +179,14 @@ html[data-scrolled] .sky-header-date-button {
 .mobile-sky-controls__location {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   width: 100%;
-  min-height: 56px;
+  min-height: 54px;
   border: 1px solid var(--input-border);
   border-radius: 14px;
   background: var(--surface-2);
   color: var(--ink);
-  padding: 0 18px;
+  padding: 0 16px;
   text-align: left;
 }
 
