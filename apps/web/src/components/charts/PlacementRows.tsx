@@ -311,8 +311,18 @@ export function natalPlacementDescription(planet: string, context: PlacementDesc
   return natalSignatureDescriptions[planet] ?? "";
 }
 
-export function InlineGlyphIcon({ fallback, href, label }: { fallback: string; href: string | null; label: string }) {
-  if (!href) {
+export function InlineGlyphIcon({
+  fallback,
+  href,
+  label,
+  preferTextGlyph = false
+}: {
+  fallback: string;
+  href: string | null;
+  label: string;
+  preferTextGlyph?: boolean;
+}) {
+  if (!href || preferTextGlyph) {
     return (
       <span className="inline-glyph-icon inline-glyph-icon--fallback" aria-label={label}>
         {fallback}
@@ -330,9 +340,9 @@ export function InlineGlyphIcon({ fallback, href, label }: { fallback: string; h
 export function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: string }) {
   return (
     <span className="aspect-row-glyphs" aria-hidden="true">
-      <InlineGlyphIcon fallback={pointGlyph(from)} href={zodiacAssetHref(pointIconFiles[from])} label={from} />
-      <InlineGlyphIcon fallback={aspectGlyph(aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(aspect)])} label={aspect} />
-      <InlineGlyphIcon fallback={pointGlyph(to)} href={zodiacAssetHref(pointIconFiles[to])} label={to} />
+      <InlineGlyphIcon fallback={pointGlyph(from)} href={zodiacAssetHref(pointIconFiles[from])} label={from} preferTextGlyph />
+      <InlineGlyphIcon fallback={aspectGlyph(aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(aspect)])} label={aspect} preferTextGlyph />
+      <InlineGlyphIcon fallback={pointGlyph(to)} href={zodiacAssetHref(pointIconFiles[to])} label={to} preferTextGlyph />
     </span>
   );
 }
@@ -358,6 +368,28 @@ function uppercaseDignityLabel(dignity: PlacementDignity) {
   return dignity.label.toUpperCase();
 }
 
+function dignityPillClassName(tone: PlacementDignity["tone"]) {
+  return [
+    "ui-pill",
+    tone === "good" ? "ui-pill--dignity-good" : "ui-pill--dignity",
+    "spl-dig",
+    `spl-dig--${tone}`
+  ].join(" ");
+}
+
+function statusPillClassName(tone: PlacementRowStatus["tone"]) {
+  const variantClass =
+    tone === "retrograde"
+      ? "ui-pill--retrograde"
+      : tone === "alert"
+        ? "ui-pill--alert"
+        : tone === "muted"
+          ? "ui-pill--muted"
+          : "ui-pill--neutral";
+
+  return ["ui-pill", variantClass, "spl-status-item", `spl-status-${tone}`].join(" ");
+}
+
 export function DignityBadge({ dignity, uppercase = false }: { dignity: PlacementDignity | null; uppercase?: boolean }) {
   if (!dignity) {
     return null;
@@ -368,7 +400,7 @@ export function DignityBadge({ dignity, uppercase = false }: { dignity: Placemen
   return (
     <FloatingTooltip
       ariaLabel={`${label}. ${dignity.description}`}
-      className={`spl-dig spl-dig--${dignity.tone}`}
+      className={dignityPillClassName(dignity.tone)}
       content={dignity.description}
     >
       {label}
@@ -394,22 +426,28 @@ export function PlacementGlyphIcon({
   className,
   fallback,
   pointName,
-  retrograde = false
+  retrograde = false,
+  preferTextGlyph = false
 }: {
   className: string;
   fallback: string;
   pointName?: string;
   retrograde?: boolean;
+  preferTextGlyph?: boolean;
 }) {
+  const retrogradeFileName = pointName && retrograde ? pointRetrogradeIconFiles[pointName] : undefined;
   const fileName = pointName
-    ? retrograde
-      ? pointRetrogradeIconFiles[pointName] ?? pointIconFiles[pointName]
-      : pointIconFiles[pointName]
+    ? retrogradeFileName ?? (preferTextGlyph ? undefined : pointIconFiles[pointName])
     : undefined;
   const href = zodiacAssetHref(fileName);
+  const useTextGlyph = !href;
+  const glyphClassName = [
+    className,
+    useTextGlyph ? "placement-glyph--text" : ""
+  ].filter(Boolean).join(" ");
 
   return (
-    <span className={className} aria-hidden="true">
+    <span className={glyphClassName} aria-hidden="true">
       {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
     </span>
   );
@@ -456,7 +494,7 @@ export function PlacementTableRow({
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
           {retrograde ? (
-            <span className="spl-status-item spl-status-retrograde placement-table-row__retrograde">
+            <span className="ui-pill ui-pill--retrograde spl-status-item spl-status-retrograde placement-table-row__retrograde">
               RETROGRADE
             </span>
           ) : null}
@@ -564,51 +602,66 @@ export function PlanetPlacementRow({
   }
 
   const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
-  const hasDignity = Boolean(dignity);
-  const rowStatuses = statuses;
+  const titleStatuses = statuses.filter((status) => status.tone === "retrograde");
+  const timingStatuses = statuses.filter((status) => status.tone !== "retrograde");
   const houseLabel = typeof house === "number" ? `${ordinalHouse(house)} House` : "House pending";
   const rowClassName = [
+    "sky-card",
     "planet-placement-row",
     `planet-placement-row--${variant}`,
+    onClick ? "planet-placement-row--clickable" : "",
     retrograde ? "is-retrograde" : ""
   ].filter(Boolean).join(" ");
   const content = (
     <>
-      <PlacementGlyphIcon className="planet-placement-row__glyph" fallback={glyph} pointName={pointName} retrograde={retrograde} />
+      <PlacementGlyphIcon
+        className="planet-placement-row__glyph"
+        fallback={glyph}
+        pointName={pointName}
+        preferTextGlyph
+        retrograde={retrograde}
+      />
       <span className="planet-placement-row__body">
         <span className="planet-placement-row__topline">
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
+          {titleStatuses.map((status) => (
+            <span className={statusPillClassName(status.tone)} key={status.label}>
+              {status.label}
+            </span>
+          ))}
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
             {durationLabel ? (
-              <span className="planet-placement-row__duration">
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                 <DurationLabelText label={durationLabel} />
               </span>
             ) : null}
             {retrogradeDurationLabel ? (
-              <span className="spl-status-item spl-status-retrograde">
+              <span className="ui-pill ui-pill--retrograde ui-pill--mixed spl-status-item spl-status-retrograde">
                 <DurationLabelText label={retrogradeDurationLabel} />
               </span>
             ) : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
-          </span>
-        ) : (
-          <span className="planet-placement-row__meta placement-row__house">
-            <span>{houseLabel}</span>
-          </span>
-        )}
-        {hasDignity || rowStatuses.length > 0 ? (
-          <span className="planet-placement-row__status" aria-label={`${title} status`}>
-            {rowStatuses.map((status) => (
-              <span className={`spl-status-item spl-status-${status.tone}`} key={status.label}>
+            {timingStatuses.map((status) => (
+              <span className={statusPillClassName(status.tone)} key={status.label}>
                 {status.label}
               </span>
             ))}
             <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
           </span>
-        ) : null}
+        ) : (
+          <span className="planet-placement-row__meta placement-row__house">
+            <span>{houseLabel}</span>
+            {timingStatuses.map((status) => (
+              <span className={statusPillClassName(status.tone)} key={status.label}>
+                {status.label}
+              </span>
+            ))}
+            <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
+          </span>
+        )}
       </span>
     </>
   );

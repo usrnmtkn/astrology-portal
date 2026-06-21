@@ -26,7 +26,7 @@
   font-family: var(--font-body);
   font-size: var(--text-section-heading-size);
   font-weight: var(--weight-regular);
-  line-height: 1.45;
+  line-height: var(--leading-description);
   text-wrap: pretty;
 }
 
@@ -172,7 +172,7 @@ html[data-scrolled] .sky-header-date-button {
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: uppercase;
 }
 

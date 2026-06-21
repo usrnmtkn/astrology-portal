@@ -1,0 +1,66 @@
+.ui-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pill-min-height);
+  min-height: var(--pill-min-height);
+  max-width: 100%;
+  padding: var(--pill-padding);
+  border-radius: var(--pill-radius);
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
+  font: var(--pill-font-weight) var(--pill-font-size) / var(--pill-line-height) var(--pill-font-family);
+  font-family: var(--pill-font-family);
+  font-size: var(--pill-font-size);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--pill-font-weight);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--pill-line-height);
+  text-transform: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.ui-pill :where(*) {
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+}
+
+.ui-pill--mixed {
+  letter-spacing: var(--tracking-number);
+  text-transform: none;
+}
+
+.ui-pill--neutral {
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
+}
+
+.ui-pill--retrograde {
+  background: var(--retrograde-bg);
+  color: var(--retrograde-accent);
+}
+
+.ui-pill--dignity,
+.ui-pill--muted {
+  background: var(--surface-2);
+  color: var(--card-meta-color);
+}
+
+.ui-pill--dignity-good {
+  background: var(--dig-good-bg);
+  color: var(--dig-good);
+}
+
+.ui-pill--alert {
+  background: color-mix(in srgb, var(--status-alert) 14%, var(--surface));
+  color: var(--status-alert);
+}
+
+.ui-pill.nl-until {
+  text-transform: uppercase;
+}

@@ -82,7 +82,7 @@
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: uppercase;
 }
 
@@ -148,6 +148,6 @@
 }
 
 .crg {
-  font-size: 24px;
+  font-size: var(--type-large-title-size);
   text-align: center;
 }

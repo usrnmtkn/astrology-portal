@@ -106,7 +106,7 @@
 
 .create-chart-step-copy strong {
   font-size: var(--type-small-display-size);
-  line-height: 1.1;
+  line-height: var(--leading-h1);
 }
 
 .create-chart-fields {
@@ -137,7 +137,7 @@
 
 .create-chart-fab-copy {
   display: grid;
-  line-height: 1.05;
+  line-height: var(--leading-display);
 }
 
 .field-line,

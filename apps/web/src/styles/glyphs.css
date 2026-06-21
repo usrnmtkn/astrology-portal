@@ -6,6 +6,28 @@
   object-fit: contain;
 }
 
+.placement-glyph--text {
+  position: relative;
+  color: var(--card-title-color);
+  font-family: var(--font-glyph);
+  font-weight: var(--weight-regular);
+  letter-spacing: 0;
+  line-height: 1;
+  text-shadow: none;
+  -webkit-text-stroke: 0 currentColor;
+  -webkit-text-stroke-width: 0;
+  font-synthesis: none;
+}
+
+.ro-screen .sky-pl-glyph.placement-glyph--text,
+.placement-section .planet-placement-row__glyph.placement-glyph--text {
+  color: var(--card-title-color);
+  font-family: var(--font-glyph);
+  font-size: var(--text-glyph);
+  font-weight: var(--weight-regular);
+  filter: none;
+}
+
 .sky-pl-glyph .placement-glyph-svg,
 .planet-placement-row__glyph .placement-glyph-svg {
   width: 24px;
@@ -32,13 +54,16 @@
 
 .ro-screen .sky-pl-glyph .placement-glyph-svg,
 .ro-cluster-badge .placement-glyph-svg,
-.ro-more-badge .placement-glyph-svg,
-.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
-.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg,
-.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg {
+.ro-more-badge .placement-glyph-svg {
   filter: var(--filter-retrograde-glyph);
 }
 
-.ro-screen .sky-pl-glyph .placement-glyph-svg {
-  filter: var(--filter-glyph-current);
+.ro-screen .sky-pl-glyph .placement-glyph-svg,
+.ro-cluster-badge .placement-glyph-svg,
+.ro-more-badge .placement-glyph-svg,
+.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
+.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg,
+.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg,
+.placement-section .planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg {
+  filter: var(--filter-glyph-neutral);
 }

@@ -542,7 +542,7 @@ function YouTransitArticlePage({
             <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
             {articleTldr ? (
               <div className="article-tldr">
-                <span className="article-tldr__label">TLDR</span>
+                <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
                 <p className="article-sub article-tldr__copy">{articleTldr}</p>
               </div>
             ) : null}
@@ -584,12 +584,6 @@ function YouTransitArticlePage({
                 </section>
                 );
               })}
-              {!hasReadableBody ? (
-                <section className="article-section sky-detail-section">
-                  <h2>Interpretation pending</h2>
-                  <p>We have the timing for this transit, but the full written interpretation is not ready yet.</p>
-                </section>
-              ) : null}
               {article.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
                   <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>

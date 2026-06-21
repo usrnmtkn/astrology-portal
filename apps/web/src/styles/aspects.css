@@ -2,8 +2,8 @@
 .aspect-row-button,
 .aspect-row-static {
   --row-bg: var(--card-bg);
-  --aspect-row-padding: var(--card-row-padding, 16px 20px);
-  --aspect-row-copy-gap: 8px;
+  --aspect-row-padding: var(--sky-card-padding);
+  --aspect-row-copy-gap: var(--space-2);
 
   display: grid;
   grid-template-columns: var(--aspect-row-template, 78px minmax(0, 1fr) 30px);
@@ -11,11 +11,12 @@
   width: 100%;
   gap: var(--aspect-row-gap, var(--card-row-gap));
   padding: var(--aspect-row-padding, var(--card-row-padding));
+  text-align: left;
 }
 
 .aspect-row-list {
   display: grid;
-  gap: 10px;
+  gap: var(--card-list-gap);
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -35,8 +36,13 @@
   gap: 8px;
   font-family: var(--font-glyph);
   font-size: var(--aspect-row-glyph-size, 20px);
+  font-weight: var(--weight-regular);
   line-height: 1;
+  text-shadow: none;
   white-space: nowrap;
+  -webkit-text-stroke: 0 currentColor;
+  -webkit-text-stroke-width: 0;
+  font-synthesis: none;
 }
 
 .inline-glyph-icon {
@@ -48,8 +54,13 @@
   color: currentColor;
   font-family: var(--font-glyph);
   font-size: var(--aspect-inline-icon-size, 20px);
+  font-weight: var(--weight-regular);
   line-height: 1;
   text-align: center;
+  text-shadow: none;
+  -webkit-text-stroke: 0 currentColor;
+  -webkit-text-stroke-width: 0;
+  font-synthesis: none;
 }
 
 .inline-glyph-icon img {
@@ -68,6 +79,7 @@
   display: grid;
   min-width: 0;
   gap: var(--aspect-row-copy-gap, var(--inline-gap, 6px));
+  text-align: left;
 }
 
 .aspect-row-copy strong,
@@ -79,17 +91,17 @@
   word-break: normal;
   font-size: var(--aspect-row-title-size, var(--text-row-title-size));
   font-weight: var(--aspect-row-title-weight, var(--weight-medium));
-  line-height: var(--aspect-row-title-line, 1.34);
+  line-height: var(--aspect-row-title-line, var(--leading-title));
   letter-spacing: var(--aspect-row-title-tracking, var(--tracking-title));
 }
 
-.aspect-row-copy span,
+.aspect-row-copy > span:not(.ui-pill),
 .aspect-row-copy p {
   margin: 0;
   color: var(--aspect-row-copy-color, var(--card-body-color));
   font-size: var(--aspect-row-copy-size, var(--text-row-body-size));
   font-weight: var(--weight-regular);
-  line-height: var(--aspect-row-copy-line, var(--leading-body));
+  line-height: var(--aspect-row-copy-line, var(--leading-description));
 }
 
 .aspect-row-copy .aspect-row-subtitle {
@@ -99,7 +111,7 @@
   font-size: var(--aspect-row-subtitle-size, var(--text-meta-size));
   font-weight: var(--aspect-row-subtitle-weight, var(--weight-medium));
   letter-spacing: var(--aspect-row-subtitle-tracking, var(--tracking-label));
-  line-height: 1.2;
+  line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
@@ -115,21 +127,7 @@
   font-size: var(--text-meta-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
-  line-height: 1.35;
-}
-
-.aspect-row-timing .planet-placement-row__duration,
-.updates-aspect-row__meta-line .planet-placement-row__duration {
-  min-height: 0;
-  padding: 6px 11px;
-  border-radius: var(--duration-badge-radius);
-  background: var(--duration-badge-bg);
-  color: var(--duration-badge-fg);
-  font-size: var(--text-eyebrow);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-pill);
-  line-height: 1;
-  text-transform: uppercase;
+  line-height: var(--leading-meta);
 }
 
 .aspect-row-timing > span:not(.planet-placement-row__duration) {
@@ -193,7 +191,7 @@
   font-size: var(--text-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.1;
+  line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
@@ -255,7 +253,7 @@
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: 1.16;
+  line-height: var(--leading-title);
 }
 
 .daily-horoscope-summary p,
@@ -329,7 +327,7 @@
   color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
 }
 
 .updates-aspect-list {
@@ -358,6 +356,7 @@
   padding: var(--updates-aspect-row-py) var(--updates-aspect-row-px);
   background: var(--card-bg);
   cursor: pointer;
+  text-align: left;
 }
 
 .updates-aspect-row--background {
@@ -375,6 +374,7 @@
   align-content: start;
   gap: var(--updates-aspect-copy-gap);
   min-width: 0;
+  text-align: left;
 }
 
 .updates-aspect-row__glyphs,
@@ -408,7 +408,7 @@
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: 1.16;
+  line-height: var(--leading-title);
   overflow-wrap: anywhere;
 }
 
@@ -421,7 +421,7 @@
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  line-height: 1.3;
+  line-height: var(--leading-meta);
 }
 
 .updates-aspect-row__description {
