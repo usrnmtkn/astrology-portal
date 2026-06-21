@@ -93,7 +93,7 @@ h6,
 .detail-modal h2,
 .today-hero h1 {
   font-weight: var(--weight-regular);
-  line-height: 1.04;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
 }
 
@@ -132,21 +132,21 @@ svg {
 .type-display {
   font-size: var(--text-display);
   font-weight: var(--weight-regular);
-  line-height: 1.04;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
 }
 
 .type-page-title {
   font-size: var(--text-title);
   font-weight: var(--weight-regular);
-  line-height: 1.04;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
 }
 
 .type-card-title {
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
-  line-height: var(--leading-tight);
+  line-height: var(--leading-title);
   letter-spacing: var(--tracking-title);
 }
 
@@ -155,7 +155,7 @@ svg {
   font-family: var(--font-display);
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
-  line-height: 1.12;
+  line-height: var(--leading-title);
   letter-spacing: var(--tracking-title);
 }
 
@@ -178,7 +178,7 @@ svg {
 .type-body-strong {
   color: var(--ink);
   font-weight: var(--weight-medium);
-  line-height: 1.4;
+  line-height: var(--leading-description);
 }
 
 .type-section-label,
@@ -188,7 +188,7 @@ svg {
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
@@ -196,7 +196,7 @@ svg {
   font-family: var(--font-ui);
   font-size: var(--text-description);
   font-weight: var(--weight-medium);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   letter-spacing: var(--tracking-normal);
 }
 
@@ -221,7 +221,7 @@ svg {
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-label);
   text-transform: uppercase;
 }
 
@@ -242,13 +242,13 @@ svg {
   font-size: var(--text-row-title-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: 1.16;
+  line-height: var(--leading-title);
 }
 
 :where(
   .placement-table-row__description,
   .aspect-row-copy p,
-  .aspect-row-copy span,
+  .aspect-row-copy > span:not(.ui-pill),
   .updates-aspect-row__description,
   .settings-row-description,
   .friends-feed-card-body p,

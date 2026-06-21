@@ -237,14 +237,14 @@ body.modal-open {
 }
 
 .chart-modal-heading h3 {
-  font-size: clamp(28px, 5vw, 42px);
-  line-height: 0.95;
+  font-size: var(--type-display-size);
+  line-height: var(--leading-display);
   font-weight: var(--weight-semibold);
 }
 
 .chart-modal-heading p {
   color: var(--muted);
-  line-height: 1.4;
+  line-height: var(--leading-description);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .modal-overlay {

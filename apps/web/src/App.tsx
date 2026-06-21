@@ -2742,6 +2742,25 @@ function formatTransitRange(start: Date, end: Date) {
   return formatEditorialDateRange(start, end);
 }
 
+function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Date()) {
+  if (sameLocalDate(start, end)) {
+    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start, true);
+  }
+
+  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
+
+  if (sameMonth) {
+    return `${formatEditorialDate(start)} - ${end.getUTCDate()}, ${end.getUTCFullYear()}`;
+  }
+
+  if (sameYear) {
+    return `${formatEditorialDate(start)} - ${formatEditorialDate(end)}, ${end.getUTCFullYear()}`;
+  }
+
+  return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
+}
+
 function dateFromDurationInput(value: string | Date) {
   const date = typeof value === "string"
     ? new Date(`${value.slice(0, 10)}T00:00:00Z`)
@@ -2982,7 +3001,7 @@ function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], g
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
 
-  return formatTransitRange(window.start, window.end);
+  return formatSkyAspectDateRange(window.start, window.end, new Date(generatedAt));
 }
 
 function fastestSkyAspectPlanet(aspect: SkySnapshot["aspects"][number]) {
@@ -3035,7 +3054,7 @@ function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = n
   return compactDuration ?? "Ongoing";
 }
 
-function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date()) {
+function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false) {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
 
@@ -3045,10 +3064,12 @@ function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new D
 
   if (durationMs < 86_400_000 || durationDays < 365) {
     if (sameLocalDate(start, end)) {
-      return formatEditorialDate(start);
+      return includeYear ? formatEditorialDate(start, true) : formatEditorialDate(start);
     }
 
-    return formatEditorialDateRange(start, end, referenceDate);
+    return includeYear
+      ? formatSkyAspectDateRange(start, end, referenceDate)
+      : formatEditorialDateRange(start, end, referenceDate);
   }
 
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -3060,9 +3081,9 @@ function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new D
   return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
 
-function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = new Date()): AspectTimingDisplay {
+function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false): AspectTimingDisplay {
   const durationLabel = aspectTimingCategoryForWindow(start, end, referenceDate);
-  const rangeLabel = aspectRangeLabelForWindow(start, end, referenceDate);
+  const rangeLabel = aspectRangeLabelForWindow(start, end, referenceDate, includeYear);
 
   return {
     durationLabel,
@@ -3074,7 +3095,7 @@ function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = ne
 function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
 
-  return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt));
+  return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt), true);
 }
 
 function detailSectionTitle(index: number) {
@@ -3178,7 +3199,7 @@ function SkyDetailArticle({
             ) : null}
             {articleSub ? (
               <div className="article-tldr">
-                <span className="article-tldr__label">TLDR</span>
+                <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
                 <p className="article-sub article-tldr__copy">{articleSub}</p>
               </div>
             ) : null}
@@ -4130,20 +4151,476 @@ const emptyHouseFriendCardRulerHouseLivedExpressions: Record<number, string> = {
   12: "listen to what happens beneath the surface"
 };
 
-const emptyHouseSignBehaviors: Record<string, string> = {
-  Aries: "action, courage, directness, heat, and the need to move before everything is settled",
-  Taurus: "the body, comfort, steadiness, pleasure, patience, and what proves itself over time",
-  Gemini: "language, movement, curiosity, questions, quick adaptation, and the need to keep the mind moving",
-  Cancer: "care, memory, protection, family, emotional security, and what feels safe enough to keep",
-  Leo: "warmth, visibility, creativity, pride, generosity, and the need to feel personally connected to what is happening",
-  Virgo: "discernment, repair, routine, usefulness, small details, and the instinct to make something work better",
-  Libra: "relationship, beauty, taste, fairness, balance, and the need to understand what is shared",
-  Scorpio: "privacy, intensity, honesty, endurance, trust, and the need to understand what is happening underneath the surface",
-  Sagittarius: "belief, distance, honesty, learning, perspective, and the need for a wider view",
-  Capricorn: "structure, responsibility, ambition, patience, consequence, and the need to build something that can hold weight",
-  Aquarius: "systems, friendship, distance, difference, future thinking, and the need to understand the larger pattern",
-  Pisces: "sensitivity, imagination, compassion, porousness, retreat, and the need to feel what cannot be explained cleanly"
-};
+function emptyHouseSignSentence(sign: string, house: number, context: "self" | "friend") {
+  const subject = context === "friend" ? "they" : "you";
+  const possessive = context === "friend" ? "their" : "your";
+  const topic = emptyHouseTopicSingulars[house] ?? "this topic";
+  const firstHouseSubject = context === "friend" ? "they" : "you";
+
+  if (house === 1) {
+    const firstHouseSentences: Record<string, string> = {
+      Aries: `With Aries rising, ${firstHouseSubject} meet life head-on. The first response is usually movement: decide, act, and learn what is true by doing.`,
+      Taurus: `With Taurus rising, ${firstHouseSubject} need time to trust what is in front of ${context === "friend" ? "them" : "you"}. ${capitalizeText(possessive)} presence can feel steadier when the body has caught up with the moment.`,
+      Gemini: `With Gemini rising, ${firstHouseSubject} meet the world through curiosity. Language is how ${subject} reach for the room: noticing quickly, asking questions, and changing shape as new information arrives.`,
+      Cancer: `With Cancer rising, ${firstHouseSubject} meet life by sensing whether something feels safe. ${capitalizeText(possessive)} presence may open slowly, then become protective once care is involved.`,
+      Leo: `With Leo rising, ${firstHouseSubject} need life to feel personal enough to care about. ${capitalizeText(possessive)} presence becomes stronger when warmth and visibility are not treated like liabilities.`,
+      Virgo: `With Virgo rising, ${firstHouseSubject} notice what is off before anyone explains it. ${capitalizeText(possessive)} presence can be quiet at first, but it sharpens when something needs attention.`,
+      Libra: `With Libra rising, ${firstHouseSubject} enter life through response. ${capitalizeText(possessive)} presence is shaped by the room, the other person, and the balance ${subject} are trying to understand.`,
+      Scorpio: `With Scorpio rising, ${firstHouseSubject} do not give everything away at the door. ${capitalizeText(possessive)} presence can feel private because ${subject} are often reading more than ${subject} are saying.`,
+      Sagittarius: `With Sagittarius rising, ${firstHouseSubject} need life to feel open enough to move. ${capitalizeText(possessive)} presence becomes clearer when there is room for honesty, distance, and a bigger question.`,
+      Capricorn: `With Capricorn rising, ${firstHouseSubject} tend to arrive with care. ${capitalizeText(possessive)} presence is built through time, proof, and the slow confidence of knowing what ${subject} can handle.`,
+      Aquarius: `With Aquarius rising, ${firstHouseSubject} may stand slightly outside the expected script. ${capitalizeText(possessive)} presence becomes clearer when ${subject} do not have to shrink into a role that was never built for ${context === "friend" ? "them" : "you"}.`,
+      Pisces: `With Pisces rising, ${firstHouseSubject} absorb the atmosphere before choosing a shape. ${capitalizeText(possessive)} presence can feel fluid because ${subject} are often responding to what has not been said yet.`
+    };
+
+    return firstHouseSentences[sign] ?? `With ${sign || "the cusp sign"} on the 1st house cusp, ${subject} meet life through the style of that sign.`;
+  }
+
+  const sentences: Record<string, string> = {
+    Aries: `With Aries on the ${ordinalHouse(house)} house cusp, ${topic} needs a direct move. ${capitalizeText(subject)} may have to start the conversation, make the first choice, or act before the whole answer is clear.`,
+    Taurus: `With Taurus on the ${ordinalHouse(house)} house cusp, ${subject} may need calm, repetition, and physical proof before ${topic} feels settled. When life gets loud or rushed, familiar routines and a slower pace can help ${context === "friend" ? "them" : "you"} know what is actually worth keeping.`,
+    Gemini: `With Gemini on the ${ordinalHouse(house)} house cusp, ${topic} becomes easier to understand once ${subject} can talk it through, question it, and let the story change as new information arrives.`,
+    Cancer: `With Cancer on the ${ordinalHouse(house)} house cusp, ${topic} is tied to comfort, care, and the need to feel protected. When the situation feels unsettled, ${subject} may hold on tighter, pull back, or look for something familiar before making a choice.`,
+    Leo: `With Leo on the ${ordinalHouse(house)} house cusp, ${topic} has to feel personal. ${capitalizeText(subject)} may need room to be seen, take pride in what ${subject} want, or choose something because it genuinely matters.`,
+    Virgo: `With Virgo on the ${ordinalHouse(house)} house cusp, ${topic} becomes clearer through the details ${subject} cannot ignore. The point is not perfection; it is learning what actually makes life work better.`,
+    Libra: `With Libra on the ${ordinalHouse(house)} house cusp, ${topic} often becomes visible through another person. ${capitalizeText(possessive)} work is noticing the difference between real balance and simply keeping things pleasant.`,
+    Scorpio: `With Scorpio on the ${ordinalHouse(house)} house cusp, ${topic} is rarely casual. This house becomes clearer when ${subject} are honest about what is trusted, withheld, wanted, or feared.`,
+    Sagittarius: `With Sagittarius on the ${ordinalHouse(house)} house cusp, ${topic} needs a wider horizon. ${capitalizeText(possessive)} understanding here grows when experience challenges the first explanation and asks for something truer.`,
+    Capricorn: `With Capricorn on the ${ordinalHouse(house)} house cusp, ${topic} develops through time and consequence. This house may not reveal itself quickly, but it becomes more solid when ${subject} respect what has to be built.`,
+    Aquarius: `With Aquarius on the ${ordinalHouse(house)} house cusp, ${subject} may not approach ${topic} the way other people expect. ${capitalizeText(subject)} may need freedom to question the usual rules, try a different route, or choose something because it makes sense to ${context === "friend" ? "them" : "you"}, not because it is popular.`,
+    Pisces: `With Pisces on the ${ordinalHouse(house)} house cusp, ${topic} may not follow a straight line. ${capitalizeText(subject)} may need time, quiet, creativity, or a more compassionate pace before the right choice becomes clear.`
+  };
+
+  if (house === 11 && sign === "Aries") {
+    return context === "friend"
+      ? "With Aries on the 11th house cusp, belonging may require initiative. They may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until they feel completely certain can keep them outside of the spaces they are meant to test for themselves."
+      : "With Aries on the 11th house cusp, belonging may require initiative. You may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until you feel completely certain can keep you outside of the spaces you are meant to test for yourself.";
+  }
+
+  if (house === 2 && sign === "Cancer") {
+    return context === "friend"
+      ? "With Cancer on the 2nd house cusp, their sense of worth is tied to care, comfort, and feeling like they have enough to rely on. Money may not feel separate from emotion here. When they feel unsettled, it can affect how they spend, save, protect, or hold on."
+      : "With Cancer on the 2nd house cusp, your sense of worth is tied to care, comfort, and feeling like you have enough to rely on. Money may not feel separate from emotion here. When you feel unsettled, it can affect how you spend, save, protect, or hold on.";
+  }
+
+  if (house === 10 && sign === "Cancer") {
+    return context === "friend"
+      ? "With Cancer on the 10th house cusp, their career path may be shaped by care, familiarity, and the need to feel emotionally safe before they commit to a direction. When work feels unstable or unclear, they may hold on tighter, pull back, or look for something familiar before making a move."
+      : "With Cancer on the 10th house cusp, your career path may be shaped by care, familiarity, and the need to feel emotionally safe before you commit to a direction. When work feels unstable or unclear, you may hold on tighter, pull back, or look for something familiar before making a move.";
+  }
+
+  if (house === 10 && sign === "Pisces") {
+    return context === "friend"
+      ? "With Pisces on the 10th house cusp, their career path may not follow a straight line. They may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. They may need time to understand what kind of public role actually fits them."
+      : "With Pisces on the 10th house cusp, your career path may not follow a straight line. You may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. You may need time to understand what kind of public role actually fits you.";
+  }
+
+  if (house === 5 && sign === "Aquarius") {
+    return context === "friend"
+      ? "With Aquarius on the 5th house cusp, they may not enjoy what they are supposed to enjoy. Their creativity can be more experimental, unusual, thoughtful, or outside the usual style. They may need freedom to make something strange, personal, or different before it starts to feel like theirs."
+      : "With Aquarius on the 5th house cusp, you may not enjoy what you are supposed to enjoy. Your creativity can be more experimental, unusual, thoughtful, or outside the usual style. You may need freedom to make something strange, personal, or different before it starts to feel like yours.";
+  }
+
+  if (house === 9 && sign === "Gemini") {
+    return context === "friend"
+      ? "With Gemini on the 9th house cusp, they may look for meaning by asking questions, comparing ideas, and talking things through. They may not hold one fixed belief forever. Their views can change when they get new information, meet different people, study something closely, or hear another side of the story."
+      : "With Gemini on the 9th house cusp, you may look for meaning by asking questions, comparing ideas, and talking things through. You may not hold one fixed belief forever. Your views can change when you get new information, meet different people, study something closely, or hear another side of the story.";
+  }
+
+  return sentences[sign] ?? `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, ${subject} meet ${topic} through the behavior of that sign.`;
+}
+
+function emptyHouseNaturalName(house: number, context: "self" | "friend") {
+  const possessive = context === "friend" ? "their" : "your";
+  const names: Record<number, string> = {
+    1: context === "friend" ? "their rising sign" : "your rising sign",
+    2: "money, worth, resources, and stability",
+    3: "voice, daily life, siblings, and local environment",
+    4: "home, family, roots, and private life",
+    5: "creativity, pleasure, romance, and joy",
+    6: "work, health, routine, and daily responsibility",
+    7: "partnership, close relationships, and one-on-one dynamics",
+    8: "trust, intimacy, shared resources, and emotional debt",
+    9: "belief, learning, travel, and perspective",
+    10: "work, reputation, public role, and direction",
+    11: "friends, groups, community, and future goals",
+    12: "rest, privacy, solitude, and hidden pressure"
+  };
+
+  return names[house] ?? `${possessive} ${ordinalHouse(house)} house`;
+}
+
+function emptyHouseStyleTopic(house: number, context: "self" | "friend") {
+  const possessive = context === "friend" ? "their" : "your";
+  const topics: Record<number, string> = {
+    1: `${possessive} identity`,
+    2: `${possessive} stability`,
+    3: `${possessive} voice`,
+    4: `${possessive} private life`,
+    5: `${possessive} joy`,
+    6: `${possessive} daily life`,
+    7: `${possessive} relationships`,
+    8: `${possessive} trust`,
+    9: `${possessive} worldview`,
+    10: `${possessive} direction`,
+    11: `${possessive} belonging`,
+    12: `${possessive} inner life`
+  };
+
+  return topics[house] ?? `${possessive} ${emptyHouseTopicSingulars[house] ?? "experience"}`;
+}
+
+function emptyHousePlanetFunction(ruler: string, context: "self" | "friend") {
+  const possessive = context === "friend" ? "their" : "your";
+  const functions: Record<string, string> = {
+    Sun: `how ${context === "friend" ? "they" : "you"} become more fully ${context === "friend" ? "themselves" : "yourself"}`,
+    Moon: `what ${possessive} body remembers and what helps ${context === "friend" ? "them" : "you"} feel cared for`,
+    Mercury: `how ${context === "friend" ? "they" : "you"} think, speak, and make contact`,
+    Venus: `what affects comfort, attachment, desire, and the ability to let the guard down`,
+    Mars: `what makes ${context === "friend" ? "them" : "you"} move, defend, or act`,
+    Jupiter: `what helps ${context === "friend" ? "them" : "you"} make life bigger, clearer, and more meaningful`,
+    Saturn: `where time, structure, privacy, or permission may be needed before anything feels possible`
+  };
+
+  return functions[ruler] ?? `how this part of ${context === "friend" ? "them" : "you"} moves through life`;
+}
+
+function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: string, context: "self" | "friend") {
+  const rulerLabel = displayRulerName(ruler || "the ruler");
+  const need = emptyHouseNeedPhrase(house, context);
+  const harder = emptyHouseHarderPhrase(house, context);
+
+  if (house === 2 && sign === "Cancer" && ruler === "Moon") {
+    return context === "friend"
+      ? "Cancer is ruled by the Moon, so the Moon is their guide here. It carries the story of what helps them feel cared for, what their body remembers, and what they need in order to feel steady."
+      : "Cancer is ruled by the Moon, so the Moon is your guide here. It carries the story of what helps you feel cared for, what your body remembers, and what you need in order to feel steady.";
+  }
+
+  if (house === 10 && sign === "Cancer" && ruler === "Moon") {
+    return context === "friend"
+      ? "Cancer is ruled by the Moon, so the Moon shows what affects their sense of direction. It points to what helps them feel steady enough to take responsibility, be seen, and make public choices."
+      : "Cancer is ruled by the Moon, so the Moon shows what affects your sense of direction. It points to what helps you feel steady enough to take responsibility, be seen, and make public choices.";
+  }
+
+  if (house === 10 && sign === "Pisces" && ruler === "Jupiter") {
+    return context === "friend"
+      ? "Pisces is ruled by Jupiter, so Jupiter shows what helps them build confidence in their direction and recognize what kind of work has meaning for them."
+      : "Pisces is ruled by Jupiter, so Jupiter shows what helps you build confidence in your direction and recognize what kind of work has meaning for you.";
+  }
+
+  if (house === 5 && sign === "Aquarius" && ruler === "Saturn") {
+    return context === "friend"
+      ? "Aquarius is ruled by Saturn, so Saturn shows what can make joy easier or harder to access. For them, pleasure may not be automatic. They may need time, structure, privacy, or permission before they let themselves create, play, flirt, or be seen."
+      : "Aquarius is ruled by Saturn, so Saturn shows what can make joy easier or harder to access. For you, pleasure may not be automatic. You may need time, structure, privacy, or permission before you let yourself create, play, flirt, or be seen.";
+  }
+
+  return `${sign || "This sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what can make ${need} easier or harder to access. It points to ${emptyHousePlanetFunction(ruler, context)}.`;
+}
+
+function emptyHouseNeedPhrase(house: number, context: "self" | "friend") {
+  const possessive = context === "friend" ? "their" : "your";
+  const phrases: Record<number, string> = {
+    1: `${possessive} ability to show up honestly`,
+    2: `${possessive} money, support, self-worth, and sense of stability`,
+    3: `${possessive} ability to think clearly and say what needs saying`,
+    4: `${possessive} ability to feel rooted and private`,
+    5: `${possessive} ability to enjoy, create, and be seen`,
+    6: `${possessive} ability to keep daily life workable`,
+    7: `${possessive} ability to meet people directly`,
+    8: `${possessive} ability to trust, share, and be honest about what is heavy`,
+    9: `${possessive} beliefs, studies, travel plans, teaching, and sense of direction`,
+    10: `${possessive} work, reputation, public choices, and sense of direction`,
+    11: `${possessive} ability to find people, groups, and goals that fit`,
+    12: `${possessive} ability to rest, retreat, and process what has been carried privately`
+  };
+
+  return phrases[house] ?? `${possessive} relationship with this topic`;
+}
+
+function emptyHouseHarderPhrase(house: number, context: "self" | "friend") {
+  const object = context === "friend" ? "them" : "you";
+  const subject = context === "friend" ? "they" : "you";
+  const phrases: Record<number, string> = {
+    1: `${object} feel visible or self-possessed`,
+    2: `${object} feel steady with money, resources, or self-worth`,
+    3: `${object} find the words or trust what ${subject} notice`,
+    4: `${object} relax at home or feel safe in private`,
+    5: `${object} create, play, flirt, or be seen without turning everything into a test`,
+    6: `${object} keep up with work, health, and the basic rhythm of the day`,
+    7: `${object} trust a relationship or say what the agreement really is`,
+    8: `${object} talk about trust, shared money, grief, or emotional debt`,
+    9: `${object} trust a belief, plan, trip, or wider direction`,
+    10: context === "friend"
+      ? "them know what role fits, what responsibility is theirs, or what they want to be known for"
+      : "you know what role fits, what responsibility is yours, or what you want to be known for",
+    11: `${object} know where ${subject} belong`,
+    12: `${object} rest, sleep, or admit what has been held alone`
+  };
+
+  return phrases[house] ?? `${object} know what to do next`;
+}
+
+function emptyHouseRulerHousePhrase(house: number, context: "self" | "friend") {
+  const phrases: Record<number, string> = {
+    1: context === "friend" ? "the way they enter a room and respond first" : "the way you enter a room and respond first",
+    2: context === "friend" ? "what helps them feel supported and steady" : "what helps you feel supported and steady",
+    3: context === "friend" ? "the words, questions, and daily exchanges that shape their thinking" : "the words, questions, and daily exchanges that shape your thinking",
+    4: context === "friend" ? "home, family, and the private ground they return to" : "home, family, and the private ground you return to",
+    5: context === "friend" ? "what lets them create, enjoy, and take up space" : "what lets you create, enjoy, and take up space",
+    6: context === "friend" ? "the condition of their workday, body, and routines" : "the condition of your workday, body, and routines",
+    7: context === "friend" ? "the people they meet directly and the agreements they make with them" : "the people you meet directly and the agreements you make with them",
+    8: context === "friend" ? "trust, shared burdens, and what they carry with other people" : "trust, shared burdens, and what you carry with other people",
+    9: context === "friend" ? "the questions that pull them beyond what they were handed" : "the questions that pull you beyond what you were handed",
+    10: context === "friend" ? "the work they become known for and the role they are still building" : "the work you become known for and the role you are still building",
+    11: context === "friend" ? "the groups, friendships, and shared futures that give their ideas somewhere to go" : "the groups, friendships, and shared futures that give your ideas somewhere to go",
+    12: context === "friend" ? "what they carry privately or need time alone to sort through" : "what you carry privately or need time alone to sort through"
+  };
+
+  return phrases[house] ?? "the part of life where the ruler lives";
+}
+
+function emptyHouseRulerHouseConcreteSentence(house: number, context: "self" | "friend") {
+  const sentences: Record<number, string> = {
+    1: context === "friend"
+      ? "This may show up through how they enter a room, introduce themselves, respond first, or make decisions about who they are becoming."
+      : "This may show up through how you enter a room, introduce yourself, respond first, or make decisions about who you are becoming.",
+    2: context === "friend"
+      ? "This may show up through what they can afford, what they save, what they spend on, and what helps them feel like they have enough."
+      : "This may show up through what you can afford, what you save, what you spend on, and what helps you feel like you have enough.",
+    3: context === "friend"
+      ? "This may show up through how they speak, what they write, what they ask, how they learn, and the daily conversations that keep shaping their thinking."
+      : "This may show up through how you speak, what you write, what you ask, how you learn, and the daily conversations that keep shaping your thinking.",
+    4: context === "friend"
+      ? "This may show up through where they feel at home, what they keep private, and the family patterns or obligations they carry behind closed doors."
+      : "This may show up through where you feel at home, what you keep private, and the family patterns or obligations you carry behind closed doors.",
+    5: context === "friend"
+      ? "This may show up through what they make, how they flirt, what they enjoy, how they date, or what they create before they judge it."
+      : "This may show up through what you make, how you flirt, what you enjoy, how you date, or what you create before you judge it.",
+    6: context === "friend"
+      ? "This may show up through workload, schedule, health habits, chores, errands, and the small tasks that keep life running."
+      : "This may show up through workload, schedule, health habits, chores, errands, and the small tasks that keep life running.",
+    7: context === "friend"
+      ? "This may show up through who they choose, how they argue, how they repair, what they expect from partners, and what they avoid saying directly."
+      : "This may show up through who you choose, how you argue, how you repair, what you expect from partners, and what you avoid saying directly.",
+    8: context === "friend"
+      ? "This may show up through shared bills, debt, trust, grief, secrets, vulnerability, or what they carry with other people."
+      : "This may show up through shared bills, debt, trust, grief, secrets, vulnerability, or what you carry with other people.",
+    9: context === "friend"
+      ? "This may show up through what they study, what changes their mind, where they travel, what they teach, or what they refuse to inherit without question."
+      : "This may show up through what you study, what changes your mind, where you travel, what you teach, or what you refuse to inherit without question.",
+    10: context === "friend"
+      ? "This may show up through work, reputation, public responsibility, leadership, and the role they are building over time."
+      : "This may show up through work, reputation, public responsibility, leadership, and the role you are building over time.",
+    11: context === "friend"
+      ? "This may show up through friends, group chats, communities, audiences, collaborators, and the people they build with or leave behind."
+      : "This may show up through friends, group chats, communities, audiences, collaborators, and the people you build with or leave behind.",
+    12: context === "friend"
+      ? "This may show up through sleep, privacy, burnout, recovery, guilt, avoidance, and what they need before they can relax."
+      : "This may show up through sleep, privacy, burnout, recovery, guilt, avoidance, and what you need before you can relax."
+  };
+
+  return sentences[house] ?? "";
+}
+
+function emptyHouseRulerSignSentence(sign: string, context: "self" | "friend") {
+  const subject = context === "friend" ? "they" : "you";
+  const object = context === "friend" ? "them" : "you";
+  const sentences: Record<string, string> = {
+    Aries: context === "friend"
+      ? "They may think quickly and speak directly. They may need honest conversations more than polished ones."
+      : "You may think quickly and speak directly. You may need honest conversations more than polished ones.",
+    Taurus: `It may need time, proof, and a pace the body can trust.`,
+    Gemini: `It may become clearer when ${subject} can question it, name it, and keep the conversation moving.`,
+    Cancer: `It may be shaped by the need for care, familiarity, and emotional steadiness.`,
+    Leo: `It may need ${object} to take ${context === "friend" ? "their" : "your"} own point of view seriously.`,
+    Virgo: context === "friend"
+      ? "They may hold back if they think it has to be useful, polished, correct, or worth showing."
+      : "You may hold back if you think it has to be useful, polished, correct, or worth showing.",
+    Libra: `It may become easier to understand through other people and the balance a relationship requires.`,
+    Scorpio: `It may ask for honesty about what is trusted, feared, wanted, or withheld.`,
+    Sagittarius: `It may need enough room to test an idea against real experience.`,
+    Capricorn: `It may develop slowly, through effort that proves what can actually last.`,
+    Aquarius: `It may need enough distance to question the pattern instead of simply living inside it.`,
+    Pisces: `It may need quiet, imagination, and room for what cannot be explained right away.`
+  };
+
+  return sentences[sign] ?? "";
+}
+
+function emptyHouseRulerPlacementParagraph(
+  house: number,
+  ruler: string,
+  rulerPosition: PlanetPosition | null,
+  context: "self" | "friend"
+) {
+  const owner = context === "friend" ? "Their" : "Your";
+  const rulerName = ruler || "ruler";
+
+  if (!rulerPosition?.house) {
+    return `${owner} ${rulerName} placement shows where this part of ${context === "friend" ? "their" : "your"} chart becomes easier to see.`;
+  }
+
+  if (house === 1 && rulerName === "Mercury" && rulerPosition.sign === "Aquarius" && rulerPosition.house === 9) {
+    return context === "friend"
+      ? `Their Mercury is in Aquarius, in the 9th house. Their identity is tied to the questions that pull them beyond what they were handed. They may come to know themselves through the ideas they test, the beliefs they outgrow, and the perspective they build from experience.`
+      : `Your Mercury is in Aquarius, in the 9th house. Your identity is tied to the questions that pull you beyond what you were handed. You may come to know yourself through the ideas you test, the beliefs you outgrow, and the perspective you build from experience.`;
+  }
+
+  if (house === 1 && rulerName === "Mercury" && rulerPosition.sign === "Pisces" && rulerPosition.house === 10) {
+    return context === "friend"
+      ? `Their Mercury is in Pisces, in the 10th house. Their identity is tied to their work, their reputation, and the role they are still building. They come to know themselves through their voice, their sensitivity, the path they walk in the world, and the way others recognize what they bring.`
+      : `Your Mercury is in Pisces, in the 10th house. Your identity is tied to your work, your reputation, and the role you are still building. You come to know yourself through your voice, your sensitivity, the path you walk in the world, and the way others recognize what you bring.`;
+  }
+
+  if (house === 12 && rulerPosition.house === 8) {
+    return context === "friend"
+      ? `Their ${rulerName} is in ${rulerPosition.sign}, in the 8th house. Their private life is tied to trust, shared burdens, and the emotional weight they carry with other people. They may need time, consistency, and real trust before they can fully let down.`
+      : `Your ${rulerName} is in ${rulerPosition.sign}, in the 8th house. Your private life is tied to trust, shared burdens, and the emotional weight you carry with other people. You may need time, consistency, and real trust before you can fully let down.`;
+  }
+
+  if (house === 2 && rulerPosition.house === 6) {
+    return context === "friend"
+      ? `Their ${rulerName} is in ${rulerPosition.sign}, in the 6th house. Their sense of stability is tied to work, routines, health, and the way their daily needs are handled. They may feel more secure when their days are manageable, their body is not being ignored, and their workload is not quietly draining them.`
+      : `Your ${rulerName} is in ${rulerPosition.sign}, in the 6th house. Your sense of stability is tied to work, routines, health, and the way your daily needs are handled. You may feel more secure when your days are manageable, your body is not being ignored, and your workload is not quietly draining you.`;
+  }
+
+  if (house === 10 && rulerName === "Moon" && rulerPosition.sign === "Scorpio" && rulerPosition.house === 2) {
+    return context === "friend"
+      ? "Their Moon is in Scorpio, in the 2nd house. This ties their work and reputation to money, self-worth, resources, and what makes them feel secure. They may think carefully about what they can afford, what they need to protect, and whether a role actually supports their stability. With Scorpio here, there can also be a need to be honest about fear, control, trust, and what they are holding back."
+      : "Your Moon is in Scorpio, in the 2nd house. This ties your work and reputation to money, self-worth, resources, and what makes you feel secure. You may think carefully about what you can afford, what you need to protect, and whether a role actually supports your stability. With Scorpio here, there can also be a need to be honest about fear, control, trust, and what you are holding back.";
+  }
+
+  if (house === 11 && rulerPosition.house === 9) {
+    return context === "friend"
+      ? `Their ${rulerName} is in ${rulerPosition.sign}, in the 9th house. Their friendships, groups, and future goals are tied to belief, learning, travel, teaching, and the wider view they build for themselves. They may find their people through ideas that challenge the usual script, or through spaces where difference is not treated like a problem to solve.`
+      : `Your ${rulerName} is in ${rulerPosition.sign}, in the 9th house. Your friendships, groups, and future goals are tied to belief, learning, travel, teaching, and the wider view you build for yourself. You may find your people through ideas that challenge the usual script, or through spaces where difference is not treated like a problem to solve.`;
+  }
+
+  if (house === 10 && rulerName === "Jupiter" && rulerPosition.sign === "Leo" && rulerPosition.house === 3) {
+    return context === "friend"
+      ? "Their Jupiter is in Leo, in the 3rd house. This ties career and public direction to voice, ideas, writing, teaching, and daily communication. They may become more visible through what they explain, create, teach, or share with the people around them. With Jupiter in Leo, they may need to take their own point of view seriously. Their direction may become clearer when they stop hiding their ideas and let themselves be seen as someone with something to say."
+      : "Your Jupiter is in Leo, in the 3rd house. This ties career and public direction to voice, ideas, writing, teaching, and daily communication. You may become more visible through what you explain, create, teach, or share with the people around you. With Jupiter in Leo, you may need to take your own point of view seriously. Your direction may become clearer when you stop hiding your ideas and let yourself be seen as someone with something to say.";
+  }
+
+  if (house === 5 && rulerName === "Saturn" && rulerPosition.sign === "Virgo" && rulerPosition.house === 12) {
+    return context === "friend"
+      ? "Their Saturn is in Virgo, in the 12th house. This ties creativity and pleasure to private pressure, overthinking, rest, solitude, and the way they criticize themselves when no one else is watching. They may hold back from creating because they think it has to be useful, polished, correct, or worth showing."
+      : "Your Saturn is in Virgo, in the 12th house. This ties creativity and pleasure to private pressure, overthinking, rest, solitude, and the way you criticize yourself when no one else is watching. You may hold back from creating because you think it has to be useful, polished, correct, or worth showing.";
+  }
+
+  if (house === 9 && rulerName === "Mercury" && rulerPosition.sign === "Aries" && rulerPosition.house === 7) {
+    return context === "friend"
+      ? "Their Mercury is in Aries, in the 7th house. This connects their worldview to close relationships, direct conversations, arguments, agreements, and the people they meet one-on-one. They may learn a lot through debate, partnership, disagreement, or having someone challenge what they thought was true. With Mercury in Aries, they may think quickly and speak directly. They may need honest conversations more than polished ones. Their beliefs may become clearer when they stop waiting for everyone to agree and say what they actually think."
+      : "Your Mercury is in Aries, in the 7th house. This connects your worldview to close relationships, direct conversations, arguments, agreements, and the people you meet one-on-one. You may learn a lot through debate, partnership, disagreement, or having someone challenge what you thought was true. With Mercury in Aries, you may think quickly and speak directly. You may need honest conversations more than polished ones. Your beliefs may become clearer when you stop waiting for everyone to agree and say what you actually think.";
+  }
+
+  const topic = emptyHouseStyleTopic(house, context);
+  const rulerHousePhrase = emptyHouseRulerHousePhrase(rulerPosition.house, context);
+  const rulerSignSentence = emptyHouseRulerSignSentence(rulerPosition.sign, context);
+  const concreteSentence = emptyHouseRulerHouseConcreteSentence(rulerPosition.house, context);
+
+  return context === "friend"
+    ? `Their ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} is tied to ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`
+    : `Your ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} is tied to ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`;
+}
+
+function emptyHouseActivationParagraph(house: number, ruler: string, context: "self" | "friend") {
+  const possessive = context === "friend" ? "their" : "your";
+  const rulerLabel = displayRulerName(ruler || "the ruler");
+  const housePhrase = house === 1
+    ? context === "friend" ? "their rising sign" : "your rising sign"
+    : `${possessive} ${ordinalHouse(house)} house`;
+  const behavior = emptyHouseActivationBehavior(house, context);
+
+  return `When ${rulerLabel} is activated, or when planets move through ${housePhrase}, ${behavior}`;
+}
+
+function emptyHouseActivationBehavior(house: number, context: "self" | "friend") {
+  const isFriend = context === "friend";
+  const subject = isFriend ? "they" : "you";
+  const possessive = isFriend ? "their" : "your";
+
+  const behaviors: Record<number, string> = {
+    1: isFriend
+      ? "they may become more aware of how they enter a room. They may change how they dress, speak more directly, or notice how quickly other people respond to their presence."
+      : "you may become more aware of how you enter a room. You may change how you dress, speak more directly, or notice how quickly other people respond to your presence.",
+    2: isFriend
+      ? "money and self-worth can move to the front. They may look more closely at what they can afford, what they actually need, where they are overextending themselves, or what no longer feels worth keeping."
+      : "money and self-worth can move to the front. You may look more closely at what you can afford, what you actually need, where you are overextending yourself, or what no longer feels worth keeping.",
+    3: isFriend
+      ? "they may need to say the thing, send the message, ask the question, or follow up on a detail that keeps returning to mind."
+      : "you may need to say the thing, send the message, ask the question, or follow up on a detail that keeps returning to mind.",
+    4: isFriend
+      ? "home and family may need a direct response. They may need privacy, a clearer boundary, a repaired routine, or a more honest relationship with the place they return to."
+      : "home and family may need a direct response. You may need privacy, a clearer boundary, a repaired routine, or a more honest relationship with the place you return to.",
+    5: isFriend
+      ? "questions around joy, romance, creativity, and visibility may come forward. They may need to stop editing the life out of something before it has a chance to become interesting."
+      : "questions around joy, romance, creativity, and visibility may come forward. You may need to stop editing the life out of something before it has a chance to become interesting.",
+    6: isFriend
+      ? "their schedule, body, or workload may ask for attention. They may change a habit, book the appointment, ask for help, or admit that the current rhythm is not working."
+      : "your schedule, body, or workload may ask for attention. You may change a habit, book the appointment, ask for help, or admit that the current rhythm is not working.",
+    7: isFriend
+      ? "a relationship may need clearer terms. They may define an agreement, name what feels unequal, or decide who gets direct access to them."
+      : "a relationship may need clearer terms. You may define an agreement, name what feels unequal, or decide who gets direct access to you.",
+    8: isFriend
+      ? "trust, shared money, or emotional debt may need to be named. They may talk about what is owed, admit what feels too heavy, or decide what they no longer want to carry alone."
+      : "trust, shared money, or emotional debt may need to be named. You may talk about what is owed, admit what feels too heavy, or decide what you no longer want to carry alone.",
+    9: isFriend
+      ? "questions about belief, learning, travel, teaching, or direction may come forward. They may study something seriously, plan a trip, speak more openly about what they believe, or realize an old idea no longer fits."
+      : "questions about belief, learning, travel, teaching, or direction may come forward. You may study something seriously, plan a trip, speak more openly about what you believe, or realize an old idea no longer fits.",
+    10: isFriend
+      ? "questions about work, reputation, and direction may come forward. They may need to decide what they want to be known for, what kind of work actually supports them, or what role no longer feels worth carrying."
+      : "questions about work, reputation, and direction may come forward. You may need to decide what you want to be known for, what kind of work actually supports you, or what role no longer feels worth carrying.",
+    11: isFriend
+      ? "their relationship to groups and belonging may ask for action. They may reach out first, speak up in a group, leave a circle that no longer fits, or follow a belief that puts them in contact with different people."
+      : "your relationship to groups and belonging may ask for action. You may reach out first, speak up in a group, leave a circle that no longer fits, or follow a belief that puts you in contact with different people.",
+    12: isFriend
+      ? "what they have been carrying privately may need space. They may pull back, sleep more, cancel an obligation, name a quiet fear, or realize they need solitude before they can explain what is happening."
+      : "what you have been carrying privately may need space. You may pull back, sleep more, cancel an obligation, name a quiet fear, or realize you need solitude before you can explain what is happening."
+  };
+
+  return behaviors[house] ?? `${possessive} relationship to this topic becomes easier to see through what ${subject} choose next.`;
+}
+
+function emptyHouseCardSignBehavior(sign: string, house: number, context: "self" | "friend") {
+  const subject = context === "friend" ? "they" : "you";
+  const object = context === "friend" ? "them" : "you";
+  const behaviors: Record<string, string> = {
+    Aries: "by acting before the whole answer is clear",
+    Taurus: "through familiar routines, physical comfort, and what holds up under pressure",
+    Gemini: house === 1 ? "by asking questions and reading the room quickly" : "by talking it through and letting the story change",
+    Cancer: `through care, comfort, and what helps ${object} feel settled`,
+    Leo: "when it feels personal enough to care about",
+    Virgo: "by noticing what needs to be handled, simplified, or repaired",
+    Libra: "through the balance a relationship reveals",
+    Scorpio: "through what is trusted, withheld, or finally named",
+    Sagittarius: context === "friend" ? "by testing what they believe against real experience" : "by testing what you believe against real experience",
+    Capricorn: "through what has to be built slowly",
+    Aquarius: "by stepping back far enough to see the pattern",
+    Pisces: "through what is felt before it can be explained"
+  };
+
+  return behaviors[sign] ?? `the way ${subject} respond to that sign`;
+}
+
+function emptyHouseCardRulerHouseLife(house: number, context: "self" | "friend") {
+  const lives: Record<number, string> = {
+    1: context === "friend" ? "the way they enter a room" : "the way you enter a room",
+    2: context === "friend" ? "what helps them feel supported" : "what helps you feel supported",
+    3: context === "friend" ? "the words and questions they keep returning to" : "the words and questions you keep returning to",
+    4: context === "friend" ? "the private ground they return to" : "the private ground you return to",
+    5: context === "friend" ? "what lets them create and take up space" : "what lets you create and take up space",
+    6: context === "friend" ? "the condition of their daily life" : "the condition of your daily life",
+    7: context === "friend" ? "the people they meet directly" : "the people you meet directly",
+    8: context === "friend" ? "what they carry with other people" : "what you carry with other people",
+    9: context === "friend" ? "the beliefs they are willing to test" : "the beliefs you are willing to test",
+    10: context === "friend" ? "the role they grow into publicly" : "the role you grow into publicly",
+    11: context === "friend" ? "the future they imagine with other people" : "the future you imagine with other people",
+    12: context === "friend" ? "what they process in private" : "what you process in private"
+  };
+
+  return lives[house] ?? "the part of life where the ruler sits";
+}
 
 function displayRulerName(ruler: string) {
   if (ruler === "Moon" || ruler === "Sun") {
@@ -4171,22 +4648,11 @@ function emptyHouseCardDescription(
   ownerName?: string
 ) {
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
-  const houseTopic = emptyHouseCardTopics[house] ?? emptyHouseTopicKeywords[house] ?? houseLifeAreas[house] ?? "this part of life";
   const rulerLabel = displayRulerName(ruler || "the house ruler");
-  const rulerHouseLabel = rulerPosition?.house ? ` in the ${ordinalHouse(rulerPosition.house)} house` : "";
-  const areaLabel = context === "friend"
-    ? emptyHouseFriendCardAreaLabels[house] ?? "this part of their life"
-    : emptyHouseCardAreaLabels[house] ?? "this part of life";
-  const rulerHouseTopics = rulerPosition?.house
-    ? emptyHouseCardRulerHouseTopics[rulerPosition.house] ?? emptyHouseRulerHousePathways[rulerPosition.house] ?? "the ruler's house"
-    : "the ruler's placement";
-  const rulerHouseLivedExpression = rulerPosition?.house
-    ? context === "friend"
-      ? emptyHouseFriendCardRulerHouseLivedExpressions[rulerPosition.house] ?? "follow the ruler's placement"
-      : emptyHouseCardRulerHouseLivedExpressions[rulerPosition.house] ?? "follow the ruler's placement"
-    : context === "friend"
-      ? "follow its placement"
-      : "follow its placement";
+  const topic = emptyHouseTopicSingulars[house] ?? emptyHouseCardAreaLabels[house] ?? "this topic";
+  const signBehavior = sign ? emptyHouseCardSignBehavior(sign, house, context) : "the sign on the cusp";
+  const rulerHouseLabel = rulerPosition?.house ? `the ${ordinalHouse(rulerPosition.house)} house` : "its placement";
+  const rulerHouseLife = rulerPosition?.house ? emptyHouseCardRulerHouseLife(rulerPosition.house, context) : "where that planet lives";
 
   if (house === 2 && sign === "Cancer" && ruler === "Moon" && rulerPosition?.house === 6) {
     return context === "friend"
@@ -4194,11 +4660,17 @@ function emptyHouseCardDescription(
       : "Your money, self-worth, and stability are connected to the Moon in the 6th house. You may feel more secure when your routines are steady, your work life is manageable, and your daily needs are being cared for.";
   }
 
-  if (context === "friend") {
-    return `Their ${houseTopic} take shape through ${rulerLabel}${rulerHouseLabel}, so ${areaLabel} becomes clearer through ${rulerHouseTopics} and the way they ${rulerHouseLivedExpression}.`;
+  if (house === 10 && sign === "Pisces" && ruler === "Jupiter" && rulerPosition?.sign === "Leo" && rulerPosition.house === 3) {
+    return context === "friend"
+      ? "Their career path may not follow a straight line. With Pisces on the empty 10th house and Jupiter in Leo in the 3rd, their direction may become clearer through speaking, writing, teaching, storytelling, or sharing their ideas more openly. They may need to trust their voice before they know what role fits."
+      : "Your career path may not follow a straight line. With Pisces on the empty 10th house and Jupiter in Leo in the 3rd, your direction may become clearer through speaking, writing, teaching, storytelling, or sharing your ideas more openly. You may need to trust your voice before you know what role fits.";
   }
 
-  return `Your ${houseTopic} take shape through ${rulerLabel}${rulerHouseLabel}, so ${areaLabel} becomes clearer through ${rulerHouseTopics} and the way you ${rulerHouseLivedExpression}.`;
+  if (context === "friend") {
+    return `With ${sign || "the cusp sign"} on the empty ${ordinalHouse(house)} house, their ${topic} may show up ${signBehavior}. ${rulerLabel} is in ${rulerHouseLabel}, connecting this to ${rulerHouseLife}.`;
+  }
+
+  return `With ${sign || "the cusp sign"} on the empty ${ordinalHouse(house)} house, your ${topic} may show up ${signBehavior}. ${rulerLabel} is in ${rulerHouseLabel}, connecting this to ${rulerHouseLife}.`;
 }
 
 function emptyHouseDetailArticle(
@@ -4210,74 +4682,20 @@ function emptyHouseDetailArticle(
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
   const title = emptyHouseTitle(house, natalSky);
   const rulerLabel = displayRulerName(ruler || "the house ruler");
-  const possessiveRulerLabel = ruler || "ruler";
-  const houseKeywords = emptyHouseTopicKeywords[house] ?? houseLifeAreas[house] ?? "this part of life";
-  const houseTopic = emptyHouseTopicSingulars[house] ?? emptyHouseTopicLabels[house] ?? houseLifeAreas[house] ?? "this part of life";
-  const signKeywords = sign ? emptyHouseSignBehaviors[sign] ?? naturalSignLensBodies[sign] ?? "the style of the sign" : "the style of the sign";
-  const signExpression = sign ? emptyHouseSignExpressions[sign] ?? signKeywords : "the sign on the cusp";
-  const signBehavior = sign ? emptyHouseSignBehaviorsApplied[sign] ?? signKeywords : "following the sign on the cusp";
-  const rulerSignExpression = rulerPosition?.sign
-    ? emptyHouseRulerSignExpressions[rulerPosition.sign] ?? emptyHouseSignExpressions[rulerPosition.sign] ?? "expressed through that sign"
-    : "expressed through the ruler's sign";
-  const rulerSignShortExpression = rulerPosition?.sign
-    ? emptyHouseRulerSignShortExpressions[rulerPosition.sign] ?? rulerSignExpression
-    : "the ruler's style";
-  const rulerHouseTopics = rulerPosition?.house
-    ? emptyHouseRulerHouseExperiences[rulerPosition.house] ?? rulerHouseRouteKeywords[rulerPosition.house] ?? houseLifeAreas[rulerPosition.house] ?? "another part of the chart"
-    : "the part of the chart where it lives";
-  const rulerHousePathway = rulerPosition?.house
-    ? emptyHouseRulerHousePathways[rulerPosition.house] ?? rulerHouseTopics
-    : "pathway that feels true";
-  const rulerHouseShortExpression = rulerPosition?.house
-    ? emptyHouseRulerHouseShortExpressions[rulerPosition.house] ?? rulerHousePathway
-    : "the ruler's placement";
-  const integratedInterpretation = context === "friend"
-    ? emptyHouseFriendIntegratedInterpretations[house] ?? `how ${houseTopic} becomes more livable`
-    : emptyHouseIntegratedInterpretations[house] ?? `how ${houseTopic} becomes more livable`;
-  const rulerPlacementSentence = rulerPosition?.house
-    ? context === "friend"
-      ? `Their ${possessiveRulerLabel} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house.`
-      : `Your ${possessiveRulerLabel} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house.`
-    : context === "friend"
-      ? `Their ${possessiveRulerLabel} placement shows where this house becomes more concrete.`
-      : `Your ${possessiveRulerLabel} placement shows where this house becomes more concrete.`;
-  const rulerMeaningSentence = rulerPosition?.house
-    ? context === "friend"
-      ? `This adds a layer of ${rulerSignExpression} to the way they experience ${houseTopic}.`
-      : `This adds a layer of ${rulerSignExpression} to the way you experience ${houseTopic}.`
-    : context === "friend"
-      ? `This shows where their ${houseTopic} continues elsewhere in the chart.`
-      : `This shows where your ${houseTopic} continues elsewhere in your chart.`;
-  const rulerHouseSentence = rulerPosition?.house
-    ? context === "friend"
-      ? `Because ${rulerLabel} is in the ${ordinalHouse(rulerPosition.house)} house, this part of their chart becomes clearer through ${rulerHouseTopics}. They may come to understand this area of life through ${rulerHousePathway}.`
-      : `Because ${rulerLabel} is in the ${ordinalHouse(rulerPosition.house)} house, this part of your chart becomes clearer through ${rulerHouseTopics}. You may come to understand this area of life through ${rulerHousePathway}.`
-    : context === "friend"
-      ? `When ${rulerLabel} is activated, this house may become easier to see in their lived experience.`
-      : `When ${rulerLabel} is activated, this house may become easier to see in your lived experience.`;
-  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp. That sign sets the style. Then look at the planet that rules that sign. That planet becomes the messenger for the empty house, carrying its themes into the part of your chart where it lives. A birth chart can describe a pattern before it feels obvious. This area may become clearer when its ruler is activated, when current planets move through it, or when timing techniques bring it forward.";
-  const timingParagraph = rulerPosition?.house
-    ? `Because this house is empty, it may not always feel like a constant focus. The connection between this house and the ${ordinalHouse(rulerPosition.house)} house may also take time to recognize. It can become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`
-    : context === "friend"
-      ? `Because this house is empty, it may not always feel like a constant focus. This part of the chart may become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`
-      : `Because this house is empty, it may not always feel like a constant focus. This part of your chart may become more obvious when ${rulerLabel} is activated, when current planets move through the ${ordinalHouse(house)} house, or when timing techniques bring these topics forward.`;
+  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp and the planet that rules that sign. A birth chart can describe a pattern before it feels obvious. This area may become clearer when its ruler is activated or when current planets move through it.";
   const paragraphs = context === "friend"
     ? [
-        `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this part of their chart. Even without planets here, their ${houseKeywords} are still reflected in the chart, but they are understood through the sign on the cusp and the planet that rules it.`,
-        `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, they meet this part of life through ${signKeywords}. Their ${houseTopic} may come through as ${signExpression}. They may experience this area by ${signBehavior}.`,
-        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of their ${ordinalHouse(house)} house, while ${rulerLabel} shows where that story continues, what other part of life it becomes connected to, and where the topic may become easier to recognize over time.`,
-        `${rulerPlacementSentence} ${rulerMeaningSentence}`,
-        rulerHouseSentence,
-        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as they learn how to work with ${integratedInterpretation}. ${timingParagraph}`
-      ]
+        emptyHouseSignSentence(sign, house, context),
+        emptyHouseRulerGuideParagraph(house, sign, ruler, context),
+        emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, context),
+        emptyHouseActivationParagraph(house, ruler, context)
+      ].filter(Boolean)
     : [
-        `An empty ${ordinalHouse(house)} house means there are no natal planets placed directly in this house. Even without planets here, your ${houseKeywords} are still reflected in your chart, but they are understood through the sign on the cusp and the planet that rules it.`,
-        `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, you meet this part of life through ${signKeywords}. Your ${houseTopic} may come through as ${signExpression}. You may experience this area by ${signBehavior}.`,
-        `Because ${sign || "this sign"} is ruled by ${rulerLabel}, ${rulerLabel} is the key planet to look at when interpreting this house. ${sign || "The cusp sign"} describes the style and approach of your ${ordinalHouse(house)} house, while ${rulerLabel} shows where that story continues, what other part of life it becomes connected to, and where the topic may become easier to recognize over time.`,
-        `${rulerPlacementSentence} ${rulerMeaningSentence}`,
-        rulerHouseSentence,
-        `This can describe someone whose ${houseTopic} develops through both ${rulerSignShortExpression} and ${rulerHouseShortExpression}. Over time, this part of life may become clearer as you learn how to work with ${integratedInterpretation}. ${timingParagraph}`
-      ];
+        emptyHouseSignSentence(sign, house, context),
+        emptyHouseRulerGuideParagraph(house, sign, ruler, context),
+        emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, context),
+        emptyHouseActivationParagraph(house, ruler, context)
+      ].filter(Boolean);
 
   return {
     id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
@@ -4835,7 +5253,7 @@ function profectionHouseMeaning(house: number) {
     12: "A 12th house year turns the volume down on the outside world and turns the volume up on what is happening internally. It can coincide with privacy, retreat, fatigue, hidden pressure, endings, and things that need time before they can be explained."
   };
 
-  return meanings[house] ?? `A ${ordinalHouse(house)} house year often brings this part of life forward in ways that can take time to understand.`;
+  return meanings[house] ?? `A ${ordinalHouse(house)} house year can bring ${houseLifeAreas[house] ?? "the house topic"} into focus in ways that take time to understand.`;
 }
 
 function houseRealLifeQuestion(house: number) {
@@ -4854,7 +5272,7 @@ function houseRealLifeQuestion(house: number) {
     12: "What needs rest, privacy, or release before it can make sense?"
   };
 
-  return questions[house] ?? "Is this part of life working, or is it starting to ask for more attention?";
+  return questions[house] ?? "Is this topic working, or is it starting to ask for more attention?";
 }
 
 function houseRealLifeSummary(house: number) {
@@ -4873,7 +5291,7 @@ function houseRealLifeSummary(house: number) {
     12: "rest, privacy, endings, hidden pressure, and what they may be processing before they can explain it"
   };
 
-  return summaries[house] ?? houseLifeAreas[house] ?? "this part of life";
+  return summaries[house] ?? houseLifeAreas[house] ?? "the house topic";
 }
 
 function plainPlanetTopic(planet: string) {
@@ -4920,7 +5338,7 @@ function profectionNatalPlanetParagraph(chart: ManualChart, house: number, natal
   const name = chart.displayName;
 
   if (natalHousePositions.length === 0) {
-    return `${name} does not have natal planets in this house. That does not make the year unimportant. It means this part of life may not always feel like the loudest part of their chart, but this year it still gets brought forward. To understand how the year develops, the next thing to watch is the planet that rules the house.`;
+    return `${name} does not have natal planets in this house. That does not make the year unimportant. It means the house may not always feel like the loudest part of their chart, but this year it still gets brought forward. To understand how the year develops, the next thing to watch is the planet that rules the house.`;
   }
 
   const planetNames = sentenceList(natalHousePositions.map((position) => position.planet));
@@ -5037,7 +5455,7 @@ function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot,
     });
   }
 
-  paragraphs.push(`Overall, ${chart.displayName} may be dealing with ${houseRealLifeSummary(house)}. If they seem different from the outside, it may be because this part of life is asking for more attention, not because they are simply being distant, difficult, or inconsistent.`);
+  paragraphs.push(`Overall, ${chart.displayName} may be dealing with ${houseRealLifeSummary(house)}. If they seem different from the outside, it may be because these topics are asking for more attention, not because they are simply being distant, difficult, or inconsistent.`);
   paragraphs.push(circleSupportGuidance(chart, house));
 
   return paragraphs.join("\n\n");
@@ -5340,7 +5758,7 @@ function houseOverlayHouseMeaning(house: number) {
     12: "privacy, retreat, hidden patterns, grief, dreams, and what is processed behind the scenes"
   };
 
-  return meanings[house] ?? houseLifeAreas[house] ?? "this part of life";
+  return meanings[house] ?? houseLifeAreas[house] ?? "the house topic";
 }
 
 function houseOverlayConcreteExamples(house: number) {
@@ -5359,7 +5777,7 @@ function houseOverlayConcreteExamples(house: number) {
     12: "privacy, rest, dreams, grief, hidden patterns, secrecy, and the feelings that are harder to explain in public"
   };
 
-  return examples[house] ?? houseLifeAreas[house] ?? "the concrete details of this part of life";
+  return examples[house] ?? houseLifeAreas[house] ?? "the concrete details of this house";
 }
 
 function synastryPointWeight(point: string) {
@@ -6086,21 +6504,78 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
 
 function groupHouseHeadline(house: number) {
   const headlines: Record<number, string> = {
-    1: "More than one person is figuring out how to show up",
-    2: "Security is becoming harder to ignore",
-    3: "One question is moving through different lives",
-    4: "The private foundation needs attention",
-    5: "More than one person needs room to feel alive",
-    6: "The small things are starting to carry more weight",
+    1: "More than one person may be changing how they show up",
+    2: "Money or comfort may be on their mind",
+    3: "Messages or decisions may be taking up more room",
+    4: "Home or family may need more room",
+    5: "More than one person may need more joy",
+    6: "Daily stress may be showing up",
     7: "Different relationships are asking for clearer terms",
-    8: "Trust is not landing the same way for everyone",
-    9: "One question is moving through different lives",
-    10: "Visibility is asking for different kinds of courage",
-    11: "Belonging is becoming a real question",
+    8: "Trust may feel more complicated",
+    9: "A bigger question may be coming up",
+    10: "Work pressure may be louder",
+    11: "Friendship may feel more complicated",
     12: "Some things need privacy before they make sense"
   };
 
-  return headlines[house] ?? "Different people are meeting the same kind of pressure";
+  return headlines[house] ?? "More than one person may be dealing with the same issue";
+}
+
+function groupHousePlainTopic(house: number) {
+  const topics: Record<number, string> = {
+    1: "how they show up",
+    2: "money, comfort, or what they can afford",
+    3: "a conversation, message, errand, or decision",
+    4: "home, family, privacy, or something from the past",
+    5: "fun, attention, romance, or a creative need",
+    6: "work, health, chores, or a messy schedule",
+    7: "a relationship or agreement",
+    8: "trust, shared money, or something private",
+    9: "a belief, plan, trip, or bigger question",
+    10: "work, responsibility, or being seen",
+    11: "a friendship, group, or plan for the future",
+    12: "something they may still be processing privately"
+  };
+
+  return topics[house] ?? "the same issue";
+}
+
+function groupHouseFeedNotice(house: number) {
+  const notices: Record<number, string> = {
+    1: "Someone may be changing how they show up. Someone else may be more aware of their body, image, or first reaction.",
+    2: "They may be thinking about money, comfort, or what they can actually afford right now.",
+    3: "A conversation, message, errand, or decision may be taking up more space than expected.",
+    4: "Home, family, privacy, or something from the past may need more attention than usual.",
+    5: "They may want more fun, attention, romance, or room to make something that feels personal.",
+    6: "Work, health, chores, or a messy schedule may be catching up with them.",
+    7: "A relationship may need clearer terms, a direct conversation, or less guessing.",
+    8: "Money shared with someone else, trust, jealousy, or something private may be harder to ignore.",
+    9: "They may be questioning what they believe, where they are going, or what a recent experience means.",
+    10: "Work, reputation, responsibility, or being seen may feel heavier than usual.",
+    11: "They may be rethinking a friendship, group, or plan for the future.",
+    12: "They may be quieter than usual because something is still being processed privately."
+  };
+
+  return notices[house] ?? "The same kind of topic may be showing up through different choices, conversations, or timing.";
+}
+
+function groupHouseSocialCue(house: number) {
+  const cues: Record<number, string> = {
+    1: "Give them room to change without asking for an instant explanation.",
+    2: "Offer practical help before giving a pep talk.",
+    3: "Listen for what they are trying to say before jumping in with advice.",
+    4: "Do not take their need for privacy personally.",
+    5: "Make room for joy without making them justify it.",
+    6: "Ask what would make the day easier.",
+    7: "Be clear, direct, and fair.",
+    8: "Do not push for more than they are ready to share.",
+    9: "Let them think out loud before expecting a final answer.",
+    10: "Respect the pressure they may be carrying.",
+    11: "Ask what feels off instead of assuming they are pulling away.",
+    12: "Stay available, but do not force them to explain too soon."
+  };
+
+  return cues[house] ?? "Ask what would actually help.";
 }
 
 function groupHouseThemes(house: number) {
@@ -6145,17 +6620,68 @@ function groupPlanetHeadline(planet: string) {
   const headlines: Record<string, string> = {
     Moon: "Feelings may be closer to the surface",
     Mercury: "Different people may be trying to say what needs saying",
-    Venus: "Different people are sorting out what feels worth choosing",
+    Venus: "Different people may be figuring out what they want",
     Mars: "More than one person may be reacting faster than usual",
-    Jupiter: "Possibility may be expanding in different directions",
-    Saturn: "Different people are meeting the same kind of pressure",
+    Jupiter: "More may feel possible, but not simple",
+    Saturn: "Different people may be taking something seriously",
     Uranus: "More than one person may need room to move differently",
     Neptune: "Hope and reality may be harder to separate right now",
     Pluto: "Control may be harder to keep out of the room",
     Chiron: "The tender spot may be easier to notice"
   };
 
-  return headlines[planet] ?? "One question is moving through different lives";
+  return headlines[planet] ?? "More than one person may be dealing with the same issue";
+}
+
+function groupPlanetPlainTopic(planet: string) {
+  const topics: Record<string, string> = {
+    Moon: "feelings, moods, or the need for reassurance",
+    Mercury: "a conversation, decision, or message",
+    Venus: "what they want, like, or feel drawn toward",
+    Mars: "anger, urgency, or the need to act",
+    Jupiter: "an opportunity, risk, or bigger choice",
+    Saturn: "a responsibility, limit, or serious decision",
+    Uranus: "the need for space or a change in routine",
+    Neptune: "a hope, confusion, or unclear situation",
+    Pluto: "control, pressure, or an old pattern",
+    Chiron: "something sensitive that needs care"
+  };
+
+  return topics[planet] ?? "the same issue";
+}
+
+function groupPlanetFeedNotice(planet: string) {
+  const notices: Record<string, string> = {
+    Moon: "Someone may need more reassurance. Someone else may be reacting from a feeling they have not fully explained yet.",
+    Mercury: "Someone may need to clarify a conversation. Someone else may be changing their mind after new information.",
+    Venus: "Someone may be thinking about what they want. Someone else may be asking whether a connection, purchase, or plan still feels right.",
+    Mars: "Someone may be ready to act. Someone else may be irritated because a decision is taking too long.",
+    Jupiter: "Someone may be tempted to say yes to more than they can handle. Someone else may be trying to decide whether an opportunity is actually worth it.",
+    Saturn: "Someone may be taking a deadline, boundary, or responsibility seriously. Someone else may need time before they decide.",
+    Uranus: "Someone may need more space than usual. Someone else may be tired of a routine that feels too tight.",
+    Neptune: "Someone may be hoping for more than the situation can hold. Someone else may be avoiding a truth because the dream feels easier.",
+    Pluto: "Someone may be trying to control an outcome. Someone else may be realizing an old pattern has more power than they wanted to admit.",
+    Chiron: "Someone may be more sensitive than usual. Someone else may finally have words for something that has hurt for a while."
+  };
+
+  return notices[planet] ?? "The same pressure may be showing up through different choices or conversations.";
+}
+
+function groupPlanetSocialCue(planet: string) {
+  const cues: Record<string, string> = {
+    Moon: "Listen before giving advice.",
+    Mercury: "Ask one clear question and let them answer in their own time.",
+    Venus: "Do not assume you know what they want.",
+    Mars: "Give them a direct option instead of adding more pressure.",
+    Jupiter: "Help them check the details before they overcommit.",
+    Saturn: "Ask what would actually help instead of hyping them up.",
+    Uranus: "Give them room without making it a problem.",
+    Neptune: "Be kind, but do not feed the fantasy.",
+    Pluto: "Stay honest and do not turn it into a power struggle.",
+    Chiron: "Be gentle and do not make them explain the hurt too quickly."
+  };
+
+  return cues[planet] ?? "Ask what would actually help.";
 }
 
 function groupPlanetThemes(planet: string) {
@@ -6234,7 +6760,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupPlanetHeadline(planet),
-        body: `${names} are all being touched by ${planet} right now, so ${groupPlanetThemes(planet)} may be showing up in different ways. This does not mean they are living the same story. ${groupPlanetExamples(planet)}`,
+        body: `${names} are all being touched by ${planet} right now. ${groupPlanetFeedNotice(planet)} ${groupPlanetSocialCue(planet)}`,
         detail: circlePlanetDetailArticle(planet, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -6246,7 +6772,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupHouseHeadline(house),
-        body: `${names} all have current timing pressing on ${ordinalHouse(house)} house topics, so ${groupHouseThemes(house)} may be active for this group. This does not mean the same event is happening to everyone. ${groupHouseExamples(house)}`,
+        body: `${names} may all be dealing with ${groupHousePlainTopic(house)} in different ways. ${groupHouseFeedNotice(house)} ${groupHouseSocialCue(house)}`,
         detail: circleHouseDetailArticle(house, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -6257,7 +6783,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupHouseHeadline(house),
-        body: `${names} are all in ${ordinalHouse(house)} house years, so ${groupHouseThemes(house)} may be running through more than one person's life right now. This does not mean they are living the same story. ${groupHouseExamples(house)}`,
+        body: `${names} may all be dealing with ${groupHousePlainTopic(house)} in different ways this year. ${groupHouseFeedNotice(house)} ${groupHouseSocialCue(house)}`,
         detail: circleProfectionDetailArticle(house, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -6268,7 +6794,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
 
       return {
         title: groupPlanetHeadline(planet),
-        body: `${names} all have ${planet} as lord of the year, so ${groupPlanetThemes(planet)} may be setting a background pattern for this group. This does not mean the year is moving the same way for everyone. ${groupPlanetExamples(planet)}`,
+        body: `${names} may all be dealing with ${groupPlanetPlainTopic(planet)} in different ways this year. ${groupPlanetFeedNotice(planet)} ${groupPlanetSocialCue(planet)}`,
         detail: circleLordOfYearDetailArticle(planet, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -8241,11 +8767,11 @@ export function App() {
                   }}
                 >
                   <span className="mobile-full-chart-card__icon" aria-hidden="true">
-                    <span className="mobile-full-chart-card__wheel" />
+                    <img className="mobile-full-chart-card__wheel" src={zodiacAssetHref("sun-wheel-glyph.svg") ?? ""} alt="" />
                   </span>
                   <span className="mobile-full-chart-card__copy">
-                    <strong>Full chart</strong>
-                    <span>The wheel &amp; aspects</span>
+                    <strong>View chart</strong>
+                    <span>{skyFullChartMeta}</span>
                   </span>
                   <span className="mobile-full-chart-card__arrow" aria-hidden="true">
                     <ArrowRight size={18} />
@@ -8738,7 +9264,7 @@ const natalSignatureDescriptions: Record<string, string> = {
 };
 
 function readableHouseTopic(house: number) {
-  return houseLifeAreas[house] ?? "this part of life";
+  return houseLifeAreas[house] ?? "this house";
 }
 
 const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; lived: string }> = {
@@ -8821,7 +9347,7 @@ const natalPlanetFallbackFrames: Record<string, NatalPlacementFrame> = {
     integration: "what you notice becomes useful when you give it language and let it change how you move"
   },
   Venus: {
-    house: "desire, value, and connection are shaped here. You learn what feels worth choosing by noticing what brings ease, beauty, pleasure, or honest attraction into this part of life",
+    house: "desire, value, and connection are shaped here. You learn what feels worth choosing by noticing what brings ease, beauty, pleasure, or honest attraction into the house where Venus sits",
     growth: "your sense of value",
     integration: "what you want becomes clearer when it is tested against what actually feels sustaining"
   },
@@ -8831,7 +9357,7 @@ const natalPlanetFallbackFrames: Record<string, NatalPlacementFrame> = {
     integration: "your energy becomes more effective when it has a clear direction and a real problem to meet"
   },
   Jupiter: {
-    house: "growth comes through this territory. You tend to find opportunity when you take the larger view, trust your experience, and let this part of life teach you something bigger",
+    house: "growth comes through this territory. You tend to find opportunity when you take the larger view, trust your experience, and let the house placement teach you something bigger",
     growth: "your faith in life",
     integration: "your confidence grows when experience gives your optimism something real to stand on"
   },
@@ -8846,7 +9372,7 @@ const natalPlanetFallbackFrames: Record<string, NatalPlacementFrame> = {
     integration: "the breakthrough matters most when it gives you a more honest way to live"
   },
   Neptune: {
-    house: "longing, imagination, and sensitivity gather here. You may idealize this part of life, but you also receive subtle information through it",
+    house: "longing, imagination, and sensitivity gather here. You may idealize the house topic, but you also receive subtle information through it",
     growth: "your imagination",
     integration: "the dream becomes stronger when it is held with enough clarity to survive real life"
   },
@@ -8991,16 +9517,16 @@ function natalRulerParagraph({
     const originalArea = possessiveArea(focus);
 
     if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground for clarity, pressure, and development. ${rulerProcess}`;
+      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground for clarity, pressure, and development. ${rulerProcess}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}, so the placement has to be understood through both. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}, so the placement has to be understood through both. ${rulerProcess}`;
   }
 
   if (houseRuler) {
     const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where the meaning becomes more personal and practical over time. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. Its natal placement shows where the meaning becomes more personal and practical over time. ${rulerProcess}`;
   }
 
   return `The ruler of your ${houseLabel} shows where the meaning becomes more personal and practical over time.`;
@@ -9123,7 +9649,7 @@ function natalPlacementHouseSupportParagraph(
   houseFrame: { intro: string; focus: string; lived: string },
   houseLabel: string
 ) {
-  return `In the ${houseLabel}, this comes through ${houseFrame.lived}. These are not just background circumstances. They affect how your ${position.planet} develops, reacts, and finds stability. When this part of life is supported, your ${position.planet} has more room to work clearly. When it is strained or neglected, ${natalPlanetStressExpression(position.planet)}.`;
+  return `In the ${houseLabel}, this comes through ${houseFrame.lived}. These are not just background circumstances. They affect how your ${position.planet} develops, reacts, and finds stability. When these conditions are supported, your ${position.planet} has more room to work clearly. When they are strained or neglected, ${natalPlanetStressExpression(position.planet)}.`;
 }
 
 function natalPlacementSynthesisParagraph(
@@ -9183,7 +9709,7 @@ function cleanNatalPlacementLensParagraphs({
 
       return paragraph
       .replace(/\s+/g, " ")
-      .replace(/\bthis part of the chart\b/gi, "this part of life")
+      .replace(/\bthis part of the chart\b/gi, "this placement")
       .replace(/\bboth places\b/gi, "the two areas of life")
       .trim();
   });
@@ -9275,7 +9801,7 @@ const friendHousePlacementBridges: Record<number, string> = {
   2: "In the 2nd house, this is closely tied to worth: money, security, desire, comfort, and the things they want to hold onto because they matter.",
   3: "In the 3rd house, this moves through everyday perception: what they notice, how they speak, what they keep learning, and the immediate world that keeps shaping their thoughts.",
   4: "In the 4th house, this reaches into their private foundation. Home, family, memory, and emotional security all shape how safely this part of them can develop.",
-  5: "In the 5th house, this becomes part of creative risk. Pleasure, romance, play, and the courage to be seen all show where this part of them wants room to come alive.",
+  5: "In the 5th house, this becomes part of creative risk. Pleasure, romance, play, and the courage to be seen all show where this part of them needs room to be chosen and enjoyed.",
   6: "In the 6th house, this becomes part of daily maintenance. Work, health, routines, and the small choices that keep life functioning can affect how steadily this part of them works.",
   7: "In the 7th house, this becomes visible through direct relationship. Partnership, attraction, conflict, and agreement all show them what cannot be worked out alone.",
   8: "In the 8th house, this moves through trust. Intimacy, shared resources, vulnerability, and the deeper material people often avoid can make this placement feel more charged and consequential.",
@@ -9432,7 +9958,7 @@ function friendHouseConcreteSentence(position: PlanetPosition, pronouns: ThirdPe
 }
 
 function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
-  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this part of life";
+  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this house";
   const retrograde = position.motion === "retrograde" ? " retrograde" : "";
   const placement = `${position.planet} is${retrograde} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
 
@@ -9503,17 +10029,17 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
   const houseLabel = `${ordinalHouse(position.house)} house`;
 
   if (!rulerPosition?.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Its natal placement shows where the meaning keeps becoming more personal over time.`;
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. Its natal placement shows where the meaning keeps becoming more personal over time.`;
   }
 
   const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
   const placementConcern = friendPlacementRulerConcern(position);
 
   if (rulerPosition.planet === position.planet && rulerPosition.sign === position.sign && rulerPosition.house === position.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. Since ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the same material gets emphasized twice. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
+    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. Since ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the same material gets emphasized twice. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
   }
 
-  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this part of the chart. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${placementConcern} with ${rulerHouseDynamic}.`;
+  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${placementConcern} with ${rulerHouseDynamic}.`;
 }
 
 function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
@@ -10234,27 +10760,27 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
   return (
     <section className="sky-lunar-brief" aria-label="Sky highlights">
       <div className="sky-lunar-pills" aria-label="Current Sun and Moon phase">
-        <span className="sky-lunar-pill">
-          <span className="sky-lunar-pill-icon" aria-hidden="true">☉</span>
+        <span className="sky-card sky-lunar-pill snap-card">
+          <span className="sky-lunar-pill-icon snap-ic" aria-hidden="true">☉</span>
           <span className="sky-lunar-pill-copy">
-            <em>Sun</em>
+            <em className="snap-cl">Sun</em>
             <h3>
-              <span>{sunSignLabel}</span>
-              {sunDegree && <small>{sunDegree}</small>}
+              <span className="snap-sign">{sunSignLabel}</span>
+              {sunDegree && <small className="deg">{sunDegree}</small>}
             </h3>
           </span>
         </span>
-        <span className="sky-lunar-pill sky-lunar-pill--moon">
-          <span className="sky-lunar-pill-icon sky-lunar-pill-phase" aria-hidden="true">
+        <span className="sky-card sky-lunar-pill sky-lunar-pill--moon snap-card">
+          <span className="sky-lunar-pill-icon sky-lunar-pill-phase snap-ic" aria-hidden="true">
             <MoonPhaseArt phase={sky.moonPhase} />
           </span>
           <span className="sky-lunar-pill-copy">
-            <em>Moon</em>
+            <em className="snap-cl">Moon</em>
             <h3>
-              <span>{moonSignLabel}</span>
-              {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}
+              <span className="snap-sign">{moonSignLabel}</span>
+              {moonDegree && shouldShowMoonDegree && <small className="deg">{moonDegree}</small>}
             </h3>
-            <small className="sky-lunar-pill-sub">{sky.moonPhase}</small>
+            <small className="sky-lunar-pill-sub snap-phase">{sky.moonPhase}</small>
           </span>
         </span>
       </div>
@@ -10279,7 +10805,7 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
 
   return (
     <div
-      className="next-lun"
+      className="sky-card next-lun"
       role="group"
       aria-label={`${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
     >
@@ -10289,10 +10815,13 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
 
       <div className="nl-main">
         <div className="nl-top">
-          <h4>
-            <span>{title}</span>
-          </h4>
-          <span className="nl-until">
+          <div className="nl-copy">
+            <em className="nl-eyebrow">Upcoming</em>
+            <h4>
+              <span>{title}</span>
+            </h4>
+          </div>
+          <span className="ui-pill ui-pill--neutral ui-pill--mixed nl-until">
             <DurationLabelText label={countdownLabel} />
           </span>
         </div>
@@ -10353,7 +10882,7 @@ function RetrogradeCallout({
       ...(durationLine
         ? [
             <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
-              <span className="retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
+              <span className="ui-pill ui-pill--retrograde ui-pill--mixed retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
                 <DurationLabelText label={durationLine} />
               </span>
             </span>
@@ -10394,7 +10923,7 @@ function RetrogradeCallout({
 
     return (
       <button
-        className={`sky-pl ro-sky-pl${compact ? " ro-sky-pl--compact" : ""}`}
+        className={`sky-card sky-pl ro-sky-pl${compact ? " ro-sky-pl--compact" : ""}`}
         type="button"
         aria-label={`Read more about ${retrogradePlacementTitle(position)}`}
         onClick={() => onOpenDetail(row.detail)}
@@ -10403,6 +10932,7 @@ function RetrogradeCallout({
           className="sky-pl-glyph"
           fallback={position.glyph}
           pointName={position.planet}
+          preferTextGlyph
           retrograde={position.motion === "retrograde"}
         />
         <span className="sky-pl-body">
@@ -10412,18 +10942,17 @@ function RetrogradeCallout({
                 {skyDisplayPlanetName(position.planet)} <span className="sky-pl-rx">Rx</span> in {position.sign}
               </span>
               <span className="sky-pl-degree">{formatPlanetDegree(position)}</span>
-              <span className="spl-status-item spl-status-retrograde ro-sky-pl__badge">Retrograde</span>
+              <span className="ui-pill ui-pill--retrograde spl-status-item spl-status-retrograde ro-sky-pl__badge">Retrograde</span>
             </span>
           </span>
           <span className="sky-pl-range ro-sky-pl__timing">
             {row.remainingCount ? (
-              <span className="sky-pl-duration sky-pl-duration--retrograde">
+              <span className="ui-pill ui-pill--retrograde ui-pill--mixed sky-pl-duration sky-pl-duration--retrograde">
                 <DurationLabelText label={row.remainingCount} />
               </span>
             ) : null}
             <span>{row.range}</span>
           </span>
-          {!compact ? <span className="ro-sky-pl__blurb">{row.blurb}</span> : null}
         </span>
       </button>
     );
@@ -10447,6 +10976,7 @@ function RetrogradeCallout({
                   fallback={position.glyph}
                   key={`cluster-${position.planet}`}
                   pointName={position.planet}
+                  preferTextGlyph
                   retrograde={position.motion === "retrograde"}
                 />
               ))}
@@ -10494,6 +11024,7 @@ function RetrogradeCallout({
                       fallback={position.glyph}
                       key={`outer-${position.planet}`}
                       pointName={position.planet}
+                      preferTextGlyph
                       retrograde={position.motion === "retrograde"}
                     />
                   ))}
@@ -10761,7 +11292,7 @@ function ActiveAspects({
                 return (
                   <button
                     type="button"
-                    className="aspect-row aspect-row-button"
+                    className="sky-card aspect-row aspect-row-button"
                     key={`${aspect.from}-${aspect.to}`}
                     aria-label={`Read more about ${title}`}
                     onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent))}
@@ -10770,7 +11301,7 @@ function ActiveAspects({
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
                       <span className="aspect-row-timing" aria-label={timing.label}>
-                        <span className="planet-placement-row__duration">
+                        <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                           <DurationLabelText label={timing.durationLabel} />
                         </span>
                         <span>{timing.rangeLabel}</span>
@@ -11706,7 +12237,10 @@ function SettingsView({
               ) : (
                 <button className="settings-row settings-row-button" type="button" onClick={startCurrentLocationEdit}>
                   <span className="settings-row__label">Current location</span>
-                  <span className="settings-row__value">{currentCityDisplay}</span>
+                  <span className="settings-row__field">
+                    <span className="settings-row__value">{currentCityDisplay}</span>
+                    <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+                  </span>
                 </button>
               )}
             </div>
@@ -11977,37 +12511,46 @@ function AccountView({
         <div className="settings-card">
           <div className="settings-list">
             <label className="settings-row account-editable-row">
-              <span>Date</span>
-              <input
-                className="account-row-input"
-                type="date"
-                value={draftBirthDate}
-                onChange={(event) => setDraftBirthDate(event.target.value)}
-                aria-label="Birth date"
-              />
+              <span className="settings-row__label">Date</span>
+              <span className="settings-row__field">
+                <input
+                  className="account-row-input"
+                  type="date"
+                  value={draftBirthDate}
+                  onChange={(event) => setDraftBirthDate(event.target.value)}
+                  aria-label="Birth date"
+                />
+                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+              </span>
             </label>
             <label className="settings-row account-editable-row">
-              <span>Time</span>
-              <input
-                className="account-row-input"
-                type="text"
-                inputMode="text"
-                value={draftBirthTime}
-                onChange={(event) => setDraftBirthTime(event.target.value)}
-                placeholder="Not set"
-                aria-label="Birth time"
-              />
+              <span className="settings-row__label">Time</span>
+              <span className="settings-row__field">
+                <input
+                  className="account-row-input"
+                  type="text"
+                  inputMode="text"
+                  value={draftBirthTime}
+                  onChange={(event) => setDraftBirthTime(event.target.value)}
+                  placeholder="Not set"
+                  aria-label="Birth time"
+                />
+                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+              </span>
             </label>
             <label className="settings-row account-editable-row">
-              <span>Place</span>
-              <input
-                className="account-row-input"
-                type="text"
-                value={draftBirthCity}
-                onChange={(event) => setDraftBirthCity(event.target.value)}
-                placeholder="Not set"
-                aria-label="Birth place"
-              />
+              <span className="settings-row__label">Place</span>
+              <span className="settings-row__field">
+                <input
+                  className="account-row-input"
+                  type="text"
+                  value={draftBirthCity}
+                  onChange={(event) => setDraftBirthCity(event.target.value)}
+                  placeholder="Not set"
+                  aria-label="Birth place"
+                />
+                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
+              </span>
             </label>
             <div className="settings-row">
               <span className="settings-row__label">House system</span>
@@ -12438,7 +12981,7 @@ function ProfileView({
             {title}
           </span>
           <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-            <span className="planet-placement-row__duration">
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
               <DurationLabelText label={timing.durationLabel} />
             </span>
             <span>{timing.rangeLabel}</span>
@@ -12999,7 +13542,7 @@ function ManualChartsPanel({
       <span aria-hidden="true">🎂</span>
       <strong>{upcomingBirthday.chart.displayName}'s birthday</strong>
       <span>{birthdayDateLabel(upcomingBirthday.date)}</span>
-      <b>{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
+      <b className="ui-pill ui-pill--retrograde">{birthdayCountdownLabel(upcomingBirthday.daysUntil)}</b>
     </div>
   ) : null;
 
@@ -13689,9 +14232,9 @@ function ManualChartsPanel({
                         })}
                       >
                         <span className="aspect-row-glyphs" aria-hidden="true">
-                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} />
-                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} />
-                          <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} />
+                          <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
+                          <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
+                          <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
                         </span>
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>

@@ -276,7 +276,7 @@ export const fallbackHookDefinitions = [
       headline: "{{lifeArea}}",
       summary: "Use this focus to prioritize astrology connected to {{lifeAreaDescription}}.",
       body: "When this is turned on, TLDR Astro can surface more cards related to {{lifeAreaDescription}}. It does not make the topic more important in your chart; it simply helps the app choose what to show first.",
-      bestMove: "Turn it on when this area of life is actively on your mind. Turn it off when you want a broader read.",
+      bestMove: "Turn it on when this topic is actively on your mind. Turn it off when you want a broader read.",
       emptyState: "Choose the areas of life you want the app to prioritize."
     }
   }

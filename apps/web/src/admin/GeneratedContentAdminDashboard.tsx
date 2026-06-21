@@ -1244,9 +1244,7 @@ function fallbackReaderTextForReview(record: AdminReviewRecord) {
   }
 
   const title = record.title.trim() || record.contentKey;
-  const surface = generatedContentSurfaceLabels[record.surface].toLowerCase();
-
-  return `${title} is active in the selected ${surface} window.`;
+  return `Reader-facing copy has not been written for ${title} yet.`;
 }
 
 function stripTldrPrefix(value: string) {
@@ -2852,7 +2850,7 @@ export function GeneratedContentAdminDashboard() {
                       <div>
                         <div className="admin-release-tags" aria-label="Release areas">
                           {note.areas.map((area) => (
-                            <span className={`admin-release-tag admin-release-tag-${area.toLowerCase()}`} key={area}>
+                            <span className={`ui-pill admin-release-tag admin-release-tag-${area.toLowerCase()}`} key={area}>
                               {area}
                             </span>
                           ))}
@@ -3092,7 +3090,7 @@ export function GeneratedContentAdminDashboard() {
                       <p className="admin-eyebrow">{row.subject_type} / {row.surface} / {row.mode}</p>
                       <h3>{row.headline || row.content_key}</h3>
                     </div>
-                    <span className={`admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                    <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
                   </header>
                   <div className="admin-provider-meta" aria-label="AI provider and model">
                     <span>Provider: <strong>{row.provider || "unknown"}</strong></span>
@@ -3428,10 +3426,10 @@ export function GeneratedContentAdminDashboard() {
                               <strong className="admin-content-row-title">{record.title}</strong>
                             </td>
                             <td className="admin-content-badge-cell">
-                              <span className={`admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                              <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
                             </td>
                             <td className="admin-content-badge-cell">
-                              <span className={`admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
+                              <span className={`ui-pill admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
                             </td>
                             <td className="admin-content-location">
                               <strong>{appLocationLabel(record)}</strong>
@@ -3467,7 +3465,7 @@ export function GeneratedContentAdminDashboard() {
                       </div>
                       <div className="admin-editor-heading">
                         <p className="admin-eyebrow">Post editor</p>
-                        <span className={`admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
+                        <span className={`ui-pill admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
                       </div>
                       <label className="admin-title-field">
                         <span>Title</span>

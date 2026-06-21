@@ -23,7 +23,7 @@
   font-family: var(--font-display);
   font-size: var(--text-page-title-size);
   font-weight: var(--weight-regular);
-  line-height: 1.04;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
 }
 
@@ -75,11 +75,8 @@
 }
 
 .friends-birthday-chiclet b {
-  border-radius: 999px;
   background: color-mix(in srgb, var(--accent-bg) 78%, transparent);
   color: var(--accent);
-  padding: 6px 11px;
-  font-weight: var(--weight-semibold);
 }
 
 .manual-chart-add-button,
@@ -127,7 +124,7 @@
 .you-empty-state h1 {
   margin: 0;
   font-size: var(--text-display);
-  line-height: 0.98;
+  line-height: var(--leading-display);
 }
 
 .you-empty-state p {
@@ -135,7 +132,7 @@
   margin: 0;
   color: var(--card-body-color);
   font-size: var(--text-description);
-  line-height: 1.45;
+  line-height: var(--leading-description);
 }
 
 .you-empty-cta {
@@ -194,14 +191,14 @@
 .friends-logic-card h3 {
   margin: 0;
   font-size: var(--text-card-title);
-  line-height: 1.12;
+  line-height: var(--leading-h1);
 }
 
 .you-empty-card p,
 .friends-logic-card p {
   margin: 0;
   color: var(--card-body-color);
-  line-height: 1.45;
+  line-height: var(--leading-description);
 }
 
 .you-empty-card button {
@@ -344,7 +341,7 @@
   overflow: visible;
   font-size: var(--type-xl);
   font-weight: var(--weight-medium);
-  line-height: 1.16;
+  line-height: var(--leading-title);
   letter-spacing: var(--tracking-title);
   text-overflow: clip;
   white-space: normal;
@@ -359,7 +356,7 @@
   color: var(--muted);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
-  line-height: 1.35;
+  line-height: var(--leading-meta);
   letter-spacing: var(--tracking-normal);
 }
 
@@ -372,7 +369,7 @@
   font-family: var(--font-body);
   font-size: var(--text-placement-meta);
   font-weight: var(--weight-regular);
-  line-height: 1.35;
+  line-height: var(--leading-meta);
   letter-spacing: var(--tracking-number);
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -556,7 +553,7 @@
 .friends-feed-card-body h3 {
   font-size: var(--text-card-title-size);
   font-weight: var(--weight-semibold);
-  line-height: 1.18;
+  line-height: var(--leading-title);
 }
 
 .friends-feed-card-body p {
@@ -731,7 +728,7 @@
 .friend-profile-card .friend-hero-copy h2 {
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
-  line-height: 1.05;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -739,7 +736,7 @@
   margin-top: 4px;
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
 }
 
 .friend-profile-card .friend-kebab,
@@ -781,7 +778,7 @@
   overflow-wrap: anywhere;
   font-size: var(--id-name-size);
   font-weight: var(--weight-semibold);
-  line-height: 1.05;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -790,7 +787,7 @@
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
-  line-height: 1.35;
+  line-height: var(--leading-meta);
 }
 
 .you-signature-row {
@@ -911,7 +908,7 @@
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: uppercase;
 }
 
@@ -944,7 +941,7 @@
   font-size: var(--text-card-title);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: 1.16;
+  line-height: var(--leading-title);
 }
 
 .relationship-api-summary p {
@@ -970,7 +967,7 @@
   color: var(--card-meta-color);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
 }
 
 .composite-placements-section {
@@ -1013,7 +1010,7 @@
 
 .friend-chart-page .friend-signature-card .you-signatures-main h3 {
   font-size: var(--text-card-title);
-  line-height: 1.1;
+  line-height: var(--leading-h1);
 }
 
 .friend-chart-page .friend-signature-card .you-signatures-main p {
@@ -1021,7 +1018,7 @@
   color: var(--card-body-color);
   font-size: var(--text-description);
   font-weight: var(--weight-regular);
-  line-height: 1.45;
+  line-height: var(--leading-description);
 }
 
 .friend-chart-page .friend-signature-card .elemental-balance {
@@ -1037,7 +1034,7 @@
 .you-signatures-main h3 {
   font-size: var(--type-xl);
   font-weight: var(--weight-semibold);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -1045,7 +1042,7 @@
   color: var(--card-body-color);
   font-size: var(--type-md);
   font-weight: var(--weight-regular);
-  line-height: 1.5;
+  line-height: var(--leading-description);
 }
 
 .elemental-balance {
@@ -1069,7 +1066,7 @@
   color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-semibold);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
 }
 
 .elemental-balance p {
@@ -1077,7 +1074,7 @@
   color: var(--card-body-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-regular);
-  line-height: 1.4;
+  line-height: var(--leading-description);
 }
 
 .friend-chart-legend {
@@ -1092,7 +1089,7 @@
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-align: center;
   text-transform: uppercase;
   user-select: none;
@@ -1185,7 +1182,7 @@
   font-family: var(--font-display);
   font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
-  line-height: 1.05;
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -1286,7 +1283,7 @@
 }
 
 .synastry-placement-rx-mark {
-  color: var(--retrograde-accent);
+  color: var(--wheel-glyph);
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-semibold);
@@ -1329,7 +1326,7 @@
   font-family: var(--font-body);
   font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
-  line-height: 1.12;
+  line-height: var(--leading-h1);
 }
 
 .synastry-placement-column-inner .synastry-placement-glyph,
@@ -1342,7 +1339,7 @@
   color: var(--muted);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
-  line-height: 1.1;
+  line-height: var(--leading-h1);
   text-align: right;
   white-space: nowrap;
 }
@@ -1358,7 +1355,7 @@
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
-  line-height: 1.25;
+  line-height: var(--leading-meta);
   min-width: 0;
   white-space: nowrap;
 }
@@ -1386,7 +1383,7 @@
   color: var(--muted);
   font-size: var(--type-xs);
   font-weight: var(--weight-semibold);
-  line-height: 1.15;
+  line-height: var(--leading-title);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -1431,14 +1428,14 @@
   overflow: visible;
   font-size: var(--type-lg);
   font-weight: var(--weight-semibold);
-  line-height: 1.15;
+  line-height: var(--leading-title);
   text-overflow: clip;
   white-space: normal;
 }
 
 .friend-chart-page .friend-placement-label {
   font-size: var(--friend-placement-label-size);
-  line-height: 1.12;
+  line-height: var(--leading-h1);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1455,7 +1452,7 @@
   color: var(--card-meta-color);
   font-size: var(--type-sm);
   font-weight: var(--weight-medium);
-  line-height: 1.15;
+  line-height: var(--leading-title);
   white-space: nowrap;
 }
 
@@ -1469,7 +1466,7 @@
   grid-area: summary;
   color: var(--card-body-color);
   font-size: var(--type-sm);
-  line-height: 1.38;
+  line-height: var(--leading-description);
   overflow-wrap: normal;
 }
 
@@ -1478,7 +1475,7 @@
   color: var(--card-body-color);
   font-size: var(--friend-placement-summary-size);
   font-weight: var(--weight-regular);
-  line-height: 1.3;
+  line-height: var(--leading-meta);
 }
 
 .friend-placement-row,
@@ -1762,9 +1759,9 @@
   font-family: var(--font-body);
   font-size: var(--text-button-size);
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-number);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   padding: 12px 14px;
   text-transform: none;
 }
@@ -1847,7 +1844,7 @@
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-number);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: none;
 }
 
@@ -1888,7 +1885,7 @@
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-number);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: none;
 }
 
@@ -1904,7 +1901,7 @@
   font-size: var(--text-button-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-number);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   padding: 14px;
   cursor: pointer;
 }
@@ -1922,15 +1919,15 @@
 
 .manual-chart-form-heading h3,
 .friend-chart-modal-heading h3 {
-  font-size: clamp(28px, 5vw, 42px);
-  line-height: 0.95;
+  font-size: var(--type-display-size);
+  line-height: var(--leading-display);
   font-weight: var(--weight-semibold);
 }
 
 .manual-chart-form-heading p,
 .friend-chart-modal-heading p {
   color: var(--muted);
-  line-height: 1.4;
+  line-height: var(--leading-description);
 }
 
 .friend-placement-column-compact .friend-placement-table {

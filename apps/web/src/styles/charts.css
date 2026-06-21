@@ -384,7 +384,7 @@
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-transform: uppercase;
 }
 
@@ -529,7 +529,7 @@
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
-  line-height: 1.2;
+  line-height: var(--leading-meta);
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;

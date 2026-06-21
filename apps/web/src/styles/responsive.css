@@ -194,11 +194,15 @@
   .placement-table-row__topline {
     grid-area: title;
     grid-column: 1 / -1;
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-1);
   }
 
   .placement-table-row__title {
-    display: block;
+    display: inline-flex;
+    flex: 0 1 auto;
     min-width: 0;
   }
 
@@ -234,6 +238,17 @@
   }
 }
 
+/* Sky card radius repair: keep card corners consistent after list edge rules. */
+.ro-screen .sky-card,
+.placement-section .sky-card,
+.aspect-section .sky-card {
+  border-radius: var(--radius-sm);
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
 /* Responsive: compact sky/update rows */
 @media (max-width: 760px) {
   .sky-lunar-pills {
@@ -241,29 +256,94 @@
   }
 
   .sky-lunar-pill {
-    min-height: 66px;
-    gap: 12px;
-    padding: 9px 14px;
+    min-height: 0;
+    grid-template-columns: var(--snap-icon-size) minmax(0, 1fr);
+    gap: var(--snap-card-gap);
+    padding: var(--snap-card-padding);
+    border-radius: var(--snap-card-radius);
   }
 
-  .sky-lunar-pill-icon {
-    width: 42px;
-    height: 42px;
-    flex-basis: 42px;
+  .sky-lunar-pill-icon,
+  .nl-badge {
+    width: var(--snap-icon-size);
+    height: var(--snap-icon-size);
+    flex-basis: var(--snap-icon-size);
+  }
+
+  .moon-phase-art {
+    width: var(--snap-moon-disc-size);
+    height: var(--snap-moon-disc-size);
   }
 
   .sky-lunar-pill-copy h3 {
-    gap: 5px;
-    font-size: var(--text-compact-title);
-    line-height: 1.1;
+    gap: var(--sign-degree-gap);
+    font-size: var(--snap-sign-size);
+    line-height: var(--leading-title);
   }
 
   .sky-lunar-pill-copy h3 small {
-    font-size: var(--text-compact-meta);
+    font-size: var(--snap-degree-size);
   }
 
   .sky-lunar-pill-sub {
-    font-size: var(--text-compact-caption);
+    font-size: var(--snap-phase-size);
+  }
+
+  .next-lun {
+    min-height: 0;
+    grid-template-columns: var(--snap-icon-size) minmax(0, 1fr);
+    gap: var(--snap-next-gap);
+    padding: var(--snap-next-padding);
+    border-radius: var(--snap-card-radius);
+  }
+
+  .ro-screen .sky-pl,
+  .placement-section .planet-placement-row {
+    min-height: var(--sky-card-mobile-min-height);
+    gap: var(--sky-placement-mobile-gap);
+    padding: var(--sky-placement-mobile-padding);
+    border-radius: var(--radius-sm);
+    grid-template-columns:
+      var(--sky-placement-mobile-glyph-column-size)
+      minmax(0, 1fr);
+  }
+
+  .aspect-section .aspect-row,
+  .aspect-section .aspect-row-button,
+  .aspect-section .aspect-row-static {
+    min-height: var(--sky-card-mobile-min-height);
+    gap: var(--sky-card-mobile-grid-gap);
+    padding: var(--sky-card-mobile-padding);
+    border-radius: var(--radius-sm);
+  }
+
+  .ro-screen .sky-pl-glyph,
+  .placement-section .planet-placement-row__glyph {
+    width: var(--sky-placement-mobile-glyph-column-size);
+    min-width: var(--sky-placement-mobile-glyph-column-size);
+  }
+
+  .aspect-section .aspect-row,
+  .aspect-section .aspect-row-button,
+  .aspect-section .aspect-row-static {
+    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+  }
+
+  .aspect-section .aspect-row-glyphs {
+    width: var(--sky-card-mobile-glyph-column-size);
+    min-width: var(--sky-card-mobile-glyph-column-size);
+  }
+
+  .nl-top {
+    gap: 12px;
+  }
+
+  .nl-top h4 {
+    font-size: var(--snap-next-title-size);
+  }
+
+  .nl-sub {
+    font-size: var(--snap-next-subtitle-size);
   }
 
   .updates-aspect-row {
@@ -333,7 +413,7 @@
 /* Responsive: phone shell and stacked content */
 @media (max-width: 720px) {
   :root {
-    --top-control-top: 16px;
+    --top-control-top: 24px;
     --top-control-height: 52px;
     --top-icon-button-size: 52px;
     --top-brand-size: 32px;
@@ -359,13 +439,13 @@
     max-width: 100%;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    min-height: calc(env(safe-area-inset-top, 0px) + var(--top-control-height));
+    min-height: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
     border-bottom: 1px solid transparent;
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
+    padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   }
 
   html[data-scrolled] .topbar {
@@ -374,7 +454,7 @@
     box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
+    padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   }
 
   .mode-guest .topbar,
@@ -393,7 +473,7 @@
     box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-    padding: env(safe-area-inset-top, 0px) var(--mobile-control-inset) 0;
+    padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   }
 
   .auth-close-button {
@@ -419,7 +499,7 @@
   .mode-member.app-shell {
     padding-right: 0;
     padding-left: 0;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 101px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + 85px);
   }
 
   .brand-word {
@@ -514,7 +594,7 @@
   .mode-guest .mobile-sky-controls,
   .mode-member .mobile-sky-controls {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 82px);
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + 6px);
     right: var(--mobile-page-gutter);
     left: var(--mobile-page-gutter);
     z-index: calc(var(--z-topbar) - 1);
@@ -620,7 +700,7 @@
     font-size: var(--text-section-label-size);
     font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-label);
-    line-height: 1.2;
+    line-height: var(--leading-meta);
     text-transform: uppercase;
   }
 
@@ -668,7 +748,7 @@
   .date-picker,
   .hero-city-picker {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 76px);
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + 2px);
     right: var(--mobile-control-inset);
     z-index: calc(var(--z-topbar) - 1);
     width: min(340px, calc(100vw - var(--mobile-control-inset) * 2));
@@ -770,29 +850,29 @@
   .mode-guest .mobile-full-chart-card,
   .mode-member .mobile-full-chart-card {
     position: sticky;
-    top: calc(env(safe-area-inset-top, 0px) + 82px);
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) - 6px);
     z-index: 80;
     display: grid;
-    grid-template-columns: 42px minmax(0, 1fr) 32px;
+    grid-template-columns: 58px minmax(0, 1fr) 48px;
     align-items: center;
-    column-gap: 13px;
+    column-gap: var(--space-4);
     width: 100%;
-    border: 0;
-    border-radius: 16px;
-    background: var(--pill-bg);
-    color: var(--pill-fg);
-    box-shadow: var(--feature-card-shadow);
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    background: var(--card-bg);
+    color: var(--card-title-color);
+    box-shadow: var(--card-shadow);
     cursor: pointer;
-    margin-top: -22px;
-    padding: 10px 13px;
+    margin-top: -18px;
+    padding: 18px 20px 18px 18px;
     text-align: left;
-    transform: translateY(-22px);
+    transform: translateY(-18px);
   }
 
   :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card {
     border: 1px solid var(--card-border);
-    background: var(--surface);
-    color: var(--ink);
+    background: var(--card-bg);
+    color: var(--card-title-color);
   }
 
   :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy strong {
@@ -803,19 +883,25 @@
     color: var(--ink-2);
   }
 
-  :is(.theme-dark, [data-theme="dark"]) :where(.mobile-full-chart-card__icon, .mobile-full-chart-card__arrow) {
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__icon {
     background: var(--surface-2);
+    color: var(--ink);
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__arrow {
+    background: color-mix(in srgb, var(--surface-2) 86%, var(--ink) 14%);
     color: var(--ink);
   }
 
   html[data-scrolled] .mode-guest .mobile-full-chart-card,
   html[data-scrolled] .mode-member .mobile-full-chart-card {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 82px);
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) - 6px);
     right: var(--mobile-page-gutter);
     left: var(--mobile-page-gutter);
     width: auto;
     margin-top: 0;
+    box-shadow: 0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent), 0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
     transform: none;
   }
 
@@ -824,68 +910,64 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
   }
 
   .mobile-full-chart-card__icon {
-    width: 42px;
-    height: 42px;
+    width: 58px;
+    height: 58px;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
+    color: var(--ink);
   }
 
   .mobile-full-chart-card__arrow {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     padding: 0;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--app-card) 78%, var(--app-text) 10%);
+    color: var(--ink);
   }
 
   .mobile-full-chart-card__arrow svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2.4;
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.25;
   }
 
   .mobile-full-chart-card__wheel {
-    position: relative;
     display: block;
-    width: 27px;
-    height: 27px;
-    border: 1px solid rgba(244, 244, 242, 0.52);
-    border-radius: 50%;
-    background:
-      linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(244, 244, 242, 0.38) 0 calc(50% + 0.5px), transparent 0),
-      linear-gradient(0deg, transparent calc(50% - 0.5px), rgba(244, 244, 242, 0.38) 0 calc(50% + 0.5px), transparent 0);
-  }
-
-  .mobile-full-chart-card__wheel::before {
-    content: "";
-    position: absolute;
-    inset: 5px;
-    border: 1px solid rgba(244, 244, 242, 0.3);
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    filter: var(--filter-glyph-current);
+    object-fit: contain;
   }
 
   .mobile-full-chart-card__copy {
     display: grid;
     min-width: 0;
     align-content: center;
-    gap: 3px;
+    gap: 4px;
   }
 
   .mobile-full-chart-card__copy strong {
-    color: #ffffff;
+    color: var(--card-title-color);
     font-family: var(--font-ui);
     font-size: var(--sky-mobile-feature-title);
     font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-tight);
-    line-height: 1.1;
+    letter-spacing: var(--tracking-title);
+    line-height: var(--leading-title);
   }
 
   .mobile-full-chart-card__copy span {
-    color: rgba(242, 242, 241, 0.6);
+    display: block;
+    overflow: hidden;
+    color: var(--card-meta-color);
     font-family: var(--font-body);
     font-size: var(--text-meta-size);
-    line-height: 1.1;
+    line-height: var(--leading-meta);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
@@ -929,40 +1011,28 @@
     font-size: var(--sky-mobile-label);
   }
 
-  .mode-guest :where(.nl-until, .retro-pill, .badge--retrograde, .badge--countdown, .sky-pl-duration),
-  .mode-member :where(.nl-until, .retro-pill, .badge--retrograde, .badge--countdown, .sky-pl-duration) {
-    font-size: var(--sky-mobile-badge);
-  }
-
   .mode-guest :where(.sky-pl-title, .ro-screen .sky-pl-title, .planet-placement-row__title, .retro-top strong),
   .mode-member :where(.sky-pl-title, .ro-screen .sky-pl-title, .planet-placement-row__title, .retro-top strong) {
     font-size: var(--sky-mobile-row-title);
-    line-height: 1.14;
+    line-height: var(--leading-title);
   }
 
   .mode-guest :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retro-copy, .retrograde-detail-line),
   .mode-member :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retro-copy, .retrograde-detail-line) {
     font-size: var(--sky-mobile-meta);
-    line-height: 1.28;
+    line-height: var(--leading-meta);
   }
 
   .mode-guest .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3),
   .mode-member .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3) {
     font-size: var(--sky-mobile-row-title);
-    line-height: 1.14;
+    line-height: var(--leading-title);
   }
 
-  .mode-guest .aspect-section :where(.aspect-row-copy span, .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
-  .mode-member .aspect-section :where(.aspect-row-copy span, .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta) {
+  .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
+  .mode-member .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta) {
     font-size: var(--sky-mobile-meta);
-    line-height: 1.28;
-  }
-
-  .mode-guest :where(.planet-placement-row__duration, .aspect-row-timing .planet-placement-row__duration),
-  .mode-member :where(.planet-placement-row__duration, .aspect-row-timing .planet-placement-row__duration) {
-    padding: 6px 11px;
-    font-size: var(--sky-mobile-badge);
-    line-height: 1;
+    line-height: var(--leading-meta);
   }
 
   .chart-shell,
@@ -993,18 +1063,22 @@
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
   }
 
-  .planet-placement-row {
-    grid-template-columns: 40px minmax(0, 1fr) auto;
-    gap: var(--mobile-row-gap);
-    padding: var(--sp-2);
+  .placement-section .planet-placement-row {
+    grid-template-columns:
+      var(--sky-placement-mobile-glyph-column-size)
+      minmax(0, 1fr)
+      var(--sky-placement-mobile-chevron-column-size);
+    gap: var(--sky-placement-mobile-gap);
+    min-height: var(--sky-card-mobile-min-height);
+    padding: var(--sky-placement-mobile-padding);
   }
 
-  .planet-placement-row__glyph {
-    width: 40px;
-    min-width: 40px;
+  .placement-section .planet-placement-row__glyph {
+    width: var(--sky-placement-mobile-glyph-column-size);
+    min-width: var(--sky-placement-mobile-glyph-column-size);
   }
 
-  .planet-placement-row__topline {
+  .placement-section .planet-placement-row__topline {
     gap: var(--sp-half) var(--sp-1);
   }
 
@@ -1091,10 +1165,11 @@
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static {
-    --aspect-row-template: 1fr;
-    --aspect-row-gap: var(--mobile-row-gap);
-    --aspect-row-padding: var(--mobile-card-padding);
-    grid-template-columns: 1fr;
+    --aspect-row-template: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    --aspect-row-gap: var(--sky-card-mobile-grid-gap);
+    --aspect-row-padding: var(--sky-card-mobile-padding);
+    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    min-height: var(--sky-card-mobile-min-height);
   }
 
   .mode-guest .aspect-section .aspect-row,
@@ -1103,30 +1178,27 @@
   .mode-member .aspect-section .aspect-row,
   .mode-member .aspect-section .aspect-row-button,
   .mode-member .aspect-section .aspect-row-static {
-    --aspect-row-template: minmax(0, 1fr) auto;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "glyphs meta"
-      "copy copy";
+    --aspect-row-template: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
     align-items: start;
-    gap: 14px 16px;
+    gap: var(--sky-card-mobile-grid-gap);
   }
 
   .mode-guest .aspect-section .aspect-row-glyphs,
   .mode-member .aspect-section .aspect-row-glyphs {
-    grid-area: glyphs;
+    grid-area: auto;
     justify-content: flex-start;
   }
 
   .mode-guest .aspect-section .aspect-row-copy,
   .mode-member .aspect-section .aspect-row-copy {
-    grid-area: copy;
+    grid-area: auto;
   }
 
   .mode-guest .aspect-section .aspect-row-meta,
   .mode-member .aspect-section .aspect-row-meta {
-    grid-area: meta;
-    align-self: start;
+    grid-area: auto;
+    align-self: center;
     justify-self: end;
     padding-top: 0;
     white-space: nowrap;
@@ -1320,6 +1392,12 @@
     gap: 18px;
   }
 
+  .settings-row__field,
+  .account-editable-row .settings-row__field {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .settings-theme-control {
     max-width: calc(100vw - var(--mobile-settings-control-reserved-width));
   }
@@ -1382,8 +1460,8 @@
 
   .article-title,
   .sky-detail-id h1 {
-    font-size: clamp(28px, 8vw, 36px);
-    line-height: 1.08;
+    font-size: var(--type-h1-size);
+    line-height: var(--leading-h1);
   }
 
   .segmented-control {
