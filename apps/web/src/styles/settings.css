@@ -216,6 +216,17 @@ button.settings-signout-row {
   font-variant-numeric: tabular-nums;
 }
 
+.account-row-input[type="date"] {
+  appearance: textfield;
+  -webkit-appearance: none;
+}
+
+.account-row-input[type="date"]::-webkit-calendar-picker-indicator,
+.account-row-input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+  -webkit-appearance: none;
+}
+
 .account-row-input:focus {
   outline: none;
 }
