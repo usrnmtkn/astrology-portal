@@ -1709,15 +1709,8 @@ function formatSkyFullChartDate(value: string) {
   });
 }
 
-function formatSkyHeroTitle(value: string, today = new Date()) {
-  const selectedDay = localDayStart(dateFromInput(value));
-  const todayDay = localDayStart(today);
-  const dayDelta = Math.round((selectedDay.getTime() - todayDay.getTime()) / 86_400_000);
-
-  if (dayDelta === -1) return "Yesterday, simple.";
-  if (dayDelta === 0) return "Today, simple.";
-  if (dayDelta === 1) return "Tomorrow, simple.";
-  return "The sky, simple.";
+function formatSkyHeroTitle() {
+  return "The sky today.";
 }
 
 function formatSkyHeaderDateLabel(value: string, today = new Date()) {
@@ -8683,73 +8676,109 @@ export function App() {
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
-            {isTodayMode && (
-              <section className="today-hero" aria-label="Today controls">
-                <div className="sky-intro">
-                  <h1 className="sky-intro__lead">
-                    <span className="sky-intro__lead-desktop">{formatSkyHeroTitle(skyDate)}</span>
-                    <span className="sky-intro__lead-mobile">the sky.</span>
-                  </h1>
-                  <p className="sky-intro__copy">
-                    What is up there today, and what it means down here.
-                  </p>
-                </div>
-                {datePickerOpen && (
-                  <SkyDatePicker
-                    value={skyDate}
-                    pickerRef={datePickerRef}
-                    onClose={() => {
-                      setDatePickerOpen(false);
-                      (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                    }}
-                    onSelect={(nextDate) => {
-                      setSkyDate(nextDate);
-                      setDatePickerOpen(false);
-                      (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                    }}
-                  />
-                )}
-                {cityPickerOpen && (
-                  <form
-                    className="city-picker hero-city-picker"
-                    id="city-picker"
-                    ref={cityPickerRef}
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      applyManualLocation();
-                    }}
-                  >
-                    <label>
-                      <span>City</span>
-                      <input
-                        ref={cityPickerInputRef}
-                        value={manualLocation}
-                        onChange={(event) => setManualLocation(event.target.value)}
-                        aria-label="City"
-                        placeholder="Search for a city"
-                        autoFocus
-                      />
-                    </label>
-                    <CitySuggestions
-                      suggestions={citySuggestions}
-                      status={citySearchStatus}
-                      mapboxEnabled={hasMapboxToken()}
-                      onSelect={applyCitySuggestion}
+            {!isSignupMode && !usesFullPageLayout && !isSkyLoading && (
+              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
+                <div className="chart-shell sky-chart-shell">
+                  <div className="chart-frame">
+                    <SkyWheel
+                      positions={sky.positions}
+                      aspects={sky.aspects}
+                      ascendant={sky.ascendant}
+                      ascendantLongitude={sky.ascendantLongitude}
+                      midheavenLongitude={sky.midheavenLongitude}
+                      houseSignLabelStyle={activeHouseSignLabelStyle}
+                      variant="zodiac"
                     />
-                    <div className="city-picker-actions">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCityPickerOpen(false);
-                          cityPickerTriggerRef.current?.focus();
-                        }}
-                      >
-                        Cancel
-                      </button>
-                      <button type="submit">Update</button>
-                    </div>
-                  </form>
-                )}
+                  </div>
+                </div>
+              </section>
+            )}
+            {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
+              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
+                <SkyLoadingWheel />
+              </section>
+            )}
+
+            <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
+              {isTodayMode && (
+                <section className="today-hero" aria-label="Today controls">
+                  <div className="sky-intro">
+                    <h1 className="sky-intro__lead">
+                      <span className="sky-intro__lead-desktop">{formatSkyHeroTitle()}</span>
+                      <span className="sky-intro__lead-mobile">The sky today.</span>
+                    </h1>
+                    <p className="sky-intro__copy">
+                      What is up there today, and what it means down here.
+                    </p>
+                  </div>
+                  {datePickerOpen && (
+                    <SkyDatePicker
+                      value={skyDate}
+                      pickerRef={datePickerRef}
+                      onClose={() => {
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                      onSelect={(nextDate) => {
+                        setSkyDate(nextDate);
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                    />
+                  )}
+                  {cityPickerOpen && (
+                    <form
+                      className="city-picker hero-city-picker"
+                      id="city-picker"
+                      ref={cityPickerRef}
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        applyManualLocation();
+                      }}
+                    >
+                      <label>
+                        <span>City</span>
+                        <input
+                          ref={cityPickerInputRef}
+                          value={manualLocation}
+                          onChange={(event) => setManualLocation(event.target.value)}
+                          aria-label="City"
+                          placeholder="Search for a city"
+                          autoFocus
+                        />
+                      </label>
+                      <CitySuggestions
+                        suggestions={citySuggestions}
+                        status={citySearchStatus}
+                        mapboxEnabled={hasMapboxToken()}
+                        onSelect={applyCitySuggestion}
+                      />
+                      <div className="city-picker-actions">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCityPickerOpen(false);
+                            cityPickerTriggerRef.current?.focus();
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit">Update</button>
+                      </div>
+                    </form>
+                  )}
+                </section>
+              )}
+              {isTodayMode && (
+                <section className="today-summary-cards" aria-label="Sky summary">
+                  {isSkyLoading ? (
+                    <SkyLoadingCards compact />
+                  ) : (
+                    <SkyCards sky={sky} />
+                  )}
+                </section>
+              )}
+              {isTodayMode && (
                 <button
                   className="mobile-full-chart-card"
                   type="button"
@@ -8777,38 +8806,7 @@ export function App() {
                     <ArrowRight size={18} />
                   </span>
                 </button>
-                {isSkyLoading ? (
-                  <SkyLoadingCards compact />
-                ) : (
-                  <SkyCards sky={sky} />
-                )}
-              </section>
-            )}
-
-            {!isSignupMode && !usesFullPageLayout && !isSkyLoading && (
-              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
-                <div className="chart-shell sky-chart-shell">
-                  <div className="chart-frame">
-                    <SkyWheel
-                      positions={sky.positions}
-                      aspects={sky.aspects}
-                      ascendant={sky.ascendant}
-                      ascendantLongitude={sky.ascendantLongitude}
-                      midheavenLongitude={sky.midheavenLongitude}
-                      houseSignLabelStyle={activeHouseSignLabelStyle}
-                      variant="zodiac"
-                    />
-                  </div>
-                </div>
-              </section>
-            )}
-            {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
-              <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
-                <SkyLoadingWheel />
-              </section>
-            )}
-
-            <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
+              )}
               {isSkyLoading && (
                 <SkyLoadingCards />
               )}
