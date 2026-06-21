@@ -1305,13 +1305,13 @@ function reviewTldrForReview(record: AdminReviewRecord) {
 function bodyWithoutLeadingTldr(value: string) {
   const split = splitLeadingTldr(value);
 
-  return split.tldr ? split.body : value;
+  return split.tldr ? split.body.trim() : value.trim();
 }
 
 function normalizeReviewCopy(summary: string, body: string, fallbackBody: string) {
   const splitBody = splitLeadingTldr(body);
   const nextSummary = stripTldrPrefix(summary) || splitBody.tldr;
-  const nextBody = (splitBody.tldr ? splitBody.body : body).trim() || bodyWithoutLeadingTldr(fallbackBody).trim() || fallbackBody.trim();
+  const nextBody = bodyWithoutLeadingTldr(splitBody.tldr ? splitBody.body : body) || bodyWithoutLeadingTldr(fallbackBody);
 
   return {
     summary: nextSummary,
