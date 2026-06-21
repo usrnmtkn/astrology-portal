@@ -1297,6 +1297,23 @@ function normalizeReviewCopy(summary: string, body: string, fallbackBody: string
   };
 }
 
+function normalizeGeneratedDraftCopy(
+  generated: {
+    tldr?: string;
+    summary?: string;
+    body?: string;
+  },
+  fallbackBody: string
+) {
+  const splitBody = splitLeadingTldr(generated.body?.trim() || "");
+
+  return normalizeReviewCopy(
+    generated.tldr?.trim() || splitBody.tldr || generated.summary?.trim() || "",
+    generated.body?.trim() || "",
+    fallbackBody
+  );
+}
+
 function readerFacingTextForReview(record: AdminReviewRecord) {
   if (shouldUseDeterministicPlaceholder(record)) {
     return fallbackReaderTextForReview(record);
@@ -2196,6 +2213,7 @@ export function GeneratedContentAdminDashboard() {
         ok: boolean;
         generated: {
           headline?: string;
+          tldr?: string;
           summary?: string;
           body?: string;
           sections?: Array<{ heading: string; body: string }>;
@@ -2232,11 +2250,7 @@ export function GeneratedContentAdminDashboard() {
       const generated = payload.generated;
       const savedRow = payload.saved?.[0] ?? null;
       const nextTitle = generated.headline?.trim() || record.title;
-      const normalizedGeneratedCopy = normalizeReviewCopy(
-        generated.summary?.trim() || "",
-        generated.body?.trim() || "",
-        fallbackReaderTextForReview(record)
-      );
+      const normalizedGeneratedCopy = normalizeGeneratedDraftCopy(generated, fallbackReaderTextForReview(record));
       const nextSummary = normalizedGeneratedCopy.summary;
       const nextBody = normalizedGeneratedCopy.body;
 
@@ -2533,6 +2547,7 @@ export function GeneratedContentAdminDashboard() {
         ok: boolean;
         generated: {
           headline: string;
+          tldr?: string;
           summary: string;
           body: string;
           sections: Array<{ heading: string; body: string }>;
@@ -2558,16 +2573,24 @@ export function GeneratedContentAdminDashboard() {
         }
       );
       const row = payload.saved?.[0];
+      const normalizedGeneratedCopy = normalizeGeneratedDraftCopy(payload.generated, draftWithFacts.body || draft.body || draft.summary);
+      const normalizedGeneratedRow = row
+        ? {
+            ...row,
+            summary: normalizedGeneratedCopy.summary,
+            body: normalizedGeneratedCopy.body
+          }
+        : null;
 
-      if (row) {
-        setSelectedId(row.id);
-        setDraft(adminDraftFromRow(row));
+      if (normalizedGeneratedRow) {
+        setSelectedId(normalizedGeneratedRow.id);
+        setDraft(adminDraftFromRow(normalizedGeneratedRow));
       } else {
         setDraft((currentDraft) => ({
           ...currentDraft,
           headline: payload.generated.headline,
-          summary: payload.generated.summary,
-          body: payload.generated.body,
+          summary: normalizedGeneratedCopy.summary,
+          body: normalizedGeneratedCopy.body,
           sectionsJson: JSON.stringify(payload.generated.sections ?? [], null, 2)
         }));
       }
