@@ -3533,13 +3533,64 @@ function natalPointTheme(point: string) {
   return themes[point] ?? point.toLowerCase();
 }
 
-function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: string) {
+type AspectCopyContext = {
+  positions?: PlanetPosition[];
+  direction?: "applying" | "separating";
+  timingLabel?: string;
+};
+
+function skyAspectPosition(point: string, positions?: PlanetPosition[]) {
+  return positions?.find((position) => position.planet === point) ?? null;
+}
+
+function aspectHousePhrase(point: string, positions?: PlanetPosition[]) {
+  const position = skyAspectPosition(point, positions);
+
+  if (!position?.house) {
+    return "";
+  }
+
+  const phrases: Record<number, string> = {
+    1: "your body, mood, and first response",
+    2: "money, comfort, or feeling supported",
+    3: "a conversation, message, or decision",
+    4: "home, family, or what helps you settle",
+    5: "pleasure, dating, creativity, or what feels alive",
+    6: "work rhythms, health, or daily needs",
+    7: "a relationship, agreement, or one-on-one exchange",
+    8: "trust, shared money, or a feeling that has more weight",
+    9: "belief, study, travel, or a wider perspective",
+    10: "work, reputation, or a public decision",
+    11: "friends, groups, or future plans",
+    12: "rest, privacy, or what is happening behind the scenes"
+  };
+
+  return phrases[position.house] ?? readableHouseTopic(position.house).replace(/^your\s+/i, "");
+}
+
+function aspectTimingNudge(context?: AspectCopyContext) {
+  if (context?.direction === "applying") {
+    return "This may be building now.";
+  }
+
+  if (context?.direction === "separating") {
+    return "This may be easing now, or helping you understand what was just stirred up.";
+  }
+
+  return "";
+}
+
+function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
   const points = new Set([firstPoint, secondPoint]);
   const titleAspect = aspect === "opposition" ? "opposite" : aspect;
   const title = `${firstPoint} ${titleAspect} ${secondPoint}`;
+  const moonHouse = points.has("Moon") ? aspectHousePhrase("Moon", context?.positions) : "";
+  const timingNudge = aspectTimingNudge(context);
 
   if (aspect === "sextile" && points.has("Jupiter") && points.has("Moon")) {
-    return `${title} can make it easier to trust what you need. There may be more room for comfort, generosity, support, or an honest emotional response.`;
+    const focus = moonHouse || "comfort, generosity, support, or an honest emotional response";
+
+    return `${title} may make it easier to ask for what you need. This can help with ${focus}, as long as you do not treat a good feeling like a final answer.${timingNudge ? ` ${timingNudge}` : ""}`;
   }
 
   if (aspect === "square" && points.has("Jupiter") && points.has("Chiron")) {
@@ -3552,6 +3603,22 @@ function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: str
 
   if (aspect === "opposition" && points.has("Venus") && points.has("Pluto")) {
     return `${title} can make relationships, money, or desire feel more charged than usual. Watch for control, jealousy, obsession, or the need to know where you stand before the situation is actually clear.`;
+  }
+
+  if (aspect === "sextile" && points.has("Chiron") && (points.has("North Node") || points.has("True Node"))) {
+    return `${title} can make an old sensitivity easier to understand without letting it decide the whole story. A small repair, honest conversation, or different choice may point you toward what needs to grow next.`;
+  }
+
+  if (aspect === "trine" && points.has("Moon") && points.has("Mars")) {
+    const focus = moonHouse || "what you feel and what you do next";
+
+    return `${title} can help your reaction and your next move line up more naturally. This can be useful for ${focus}, especially if you act before the feeling gets stale.`;
+  }
+
+  if (aspect === "sextile" && points.has("Moon") && points.has("Mercury")) {
+    const focus = moonHouse || "what you need";
+
+    return `${title} can make it easier to put a feeling into words. A message, decision, or conversation may help clarify ${focus}.`;
   }
 
   return undefined;
@@ -3648,8 +3715,8 @@ function aspectLivedExample(firstPoint: string, secondPoint: string, tone: "supp
   return "A useful opening may be available if you choose to act on it.";
 }
 
-function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string) {
-  const specificCopy = aspectSpecificCopy(firstPoint, aspect, secondPoint);
+function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
+  const specificCopy = aspectSpecificCopy(firstPoint, aspect, secondPoint, context);
 
   if (specificCopy) {
     return specificCopy;
@@ -3739,7 +3806,8 @@ function natalAspectDetailArticle(
 function currentSkyAspectDetailArticle(
   aspect: SkySnapshot["aspects"][number],
   generatedAt: string,
-  generatedContent: GeneratedContentMap
+  generatedContent: GeneratedContentMap,
+  positions?: PlanetPosition[]
 ): SkyDetail {
   const title = `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
   const contentKey = currentSkyAspectContentId(aspect.from, aspect.type, aspect.to);
@@ -3753,7 +3821,7 @@ function currentSkyAspectDetailArticle(
     approvedVoiceOrKnowledgeFallback(contentKey, "sky")
   );
   const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
-  const fallbackSummary = fallbackPreviewText(content) || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to);
+  const fallbackSummary = aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content);
   const rowSummary = liveGeneratedSummary(generated, fallbackSummary);
   const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
   const body = detailParagraphs.length > 0 ? detailParagraphs : [stripTldrPrefix(rowSummary)];
@@ -3781,7 +3849,8 @@ function relatedAspectRowsForPlacement({
   onOpenNatalAspect,
   onOpenSkyAspect,
   ownerContext,
-  pointName
+  pointName,
+  positions
 }: {
   aspects: SkySnapshot["aspects"];
   generatedAt?: string;
@@ -3791,6 +3860,7 @@ function relatedAspectRowsForPlacement({
   onOpenSkyAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
   ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
   pointName: string;
+  positions?: PlanetPosition[];
 }) {
   return aspects
     .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
@@ -3816,7 +3886,9 @@ function relatedAspectRowsForPlacement({
           );
       const rowSummary = liveGeneratedSummary(
         generated,
-        fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
+        mode === "sky"
+          ? aspectRelationshipDescription(pointName, aspect.type, otherPoint, { positions }) || fallback.summary
+          : fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
       );
       const displaySummary = ownerContext && mode === "natal"
         ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person")
@@ -11583,7 +11655,7 @@ function ActiveAspects({
             const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
             const rowSummary = liveGeneratedSummary(
               generated,
-              fallbackPreviewText(content) || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+              aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content)
             );
 
                 return (
@@ -11592,7 +11664,7 @@ function ActiveAspects({
                     className="sky-card aspect-row aspect-row-button"
                     key={`${aspect.from}-${aspect.to}`}
                     aria-label={`Read more about ${title}`}
-                    onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent))}
+                    onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
                   >
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
@@ -11706,8 +11778,9 @@ function PlacementTable({
             generatedAt,
             generatedContent,
             mode: "sky",
-            onOpenSkyAspect: (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent)),
-            pointName: position.planet
+            onOpenSkyAspect: (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions)),
+            pointName: position.planet,
+            positions
           });
           const openDetail = () => onOpenDetail({
             glyph: detailGlyphForPlacement(position),
