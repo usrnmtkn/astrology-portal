@@ -46,11 +46,11 @@
 }
 
 html[data-scrolled] .topbar {
-  border-bottom-color: var(--line);
-  background: var(--nav-scrolled-bg);
-  box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
-  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  border-bottom-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   padding-top: 16px;
 }
 

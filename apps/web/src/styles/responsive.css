@@ -410,6 +410,14 @@
     -webkit-backdrop-filter: none;
   }
 
+  html[data-scrolled] .topbar {
+    border-bottom: 1px solid var(--line);
+    background: var(--nav-scrolled-bg);
+    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  }
+
   .site-nav {
     display: none;
   }
@@ -421,12 +429,12 @@
 
   .mode-guest .today-summary-cards,
   .mode-member .today-summary-cards {
-    order: 3;
+    order: 1;
   }
 
   .mode-guest .mobile-full-chart-card,
   .mode-member .mobile-full-chart-card {
-    order: 2;
+    order: 3;
     position: sticky;
     top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
     z-index: calc(var(--z-topbar) - 1);
@@ -985,9 +993,14 @@
     overflow: clip;
   }
 
+  .mode-guest .today-hero:has(+ .today-summary-cards .sky-today-ledger),
+  .mode-member .today-hero:has(+ .today-summary-cards .sky-today-ledger) {
+    display: none;
+  }
+
   .mode-guest .today-summary-cards,
   .mode-member .today-summary-cards {
-    order: 3;
+    order: 1;
     gap: 18px;
   }
 
@@ -1018,7 +1031,7 @@
 
   .mode-guest .mobile-full-chart-card,
   .mode-member .mobile-full-chart-card {
-    order: 2;
+    order: 3;
     position: sticky;
     top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
     z-index: calc(var(--z-topbar) - 1);
@@ -1146,6 +1159,30 @@
   .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
   .mode-member :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
     box-shadow: var(--row-card-shadow, var(--card-shadow));
+  }
+
+  .mode-guest .today-summary-cards .sky-today-ledger,
+  .mode-member .today-summary-cards .sky-today-ledger {
+    display: block;
+  }
+
+  html[data-scrolled] .mode-guest .today-summary-cards .sky-today-ledger__foot,
+  html[data-scrolled] .mode-member .today-summary-cards .sky-today-ledger__foot {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--sp-1));
+    right: var(--mobile-page-gutter);
+    left: var(--mobile-page-gutter);
+    z-index: calc(var(--z-topbar) - 1);
+    width: auto;
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    background: var(--card-bg);
+    box-shadow: var(--row-card-shadow, var(--card-shadow));
+  }
+
+  .mode-guest .today-summary-cards .sky-lunar-brief,
+  .mode-member .today-summary-cards .sky-lunar-brief {
+    display: none;
   }
 
   :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
@@ -1340,10 +1377,10 @@
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static {
-    --aspect-row-template: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    --aspect-row-template: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
     --aspect-row-gap: var(--sky-card-mobile-grid-gap);
     --aspect-row-padding: var(--sky-card-mobile-padding);
-    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    grid-template-columns: var(--aspect-row-template);
     align-items: start;
     min-height: var(--sky-card-mobile-min-height);
   }
@@ -1354,8 +1391,8 @@
   .mode-member .aspect-section .aspect-row,
   .mode-member .aspect-section .aspect-row-button,
   .mode-member .aspect-section .aspect-row-static {
-    --aspect-row-template: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
-    grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    --aspect-row-template: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
+    grid-template-columns: var(--aspect-row-template);
     align-items: start;
     gap: var(--sky-card-mobile-grid-gap);
   }

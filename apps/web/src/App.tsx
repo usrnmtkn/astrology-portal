@@ -1544,6 +1544,16 @@ function isLocationInput(value: unknown): value is LocationInput {
   );
 }
 
+function sameLocationInput(first: LocationInput, second: LocationInput) {
+  const firstTimeZone = first.timeZone ?? "";
+  const secondTimeZone = second.timeZone ?? "";
+
+  return first.label === second.label
+    && first.latitude === second.latitude
+    && first.longitude === second.longitude
+    && firstTimeZone === secondTimeZone;
+}
+
 function isUserProfile(value: unknown): value is UserProfile {
   if (!value || typeof value !== "object") {
     return false;
@@ -7578,6 +7588,31 @@ export function App() {
   }, [hasLocationPreference, location]);
 
   useEffect(() => {
+    if (!userProfile?.currentLocation && !userProfile?.currentLocationData) {
+      return;
+    }
+
+    const nextLocation = userProfile.currentLocationData
+      ? withTimeZone(userProfile.currentLocationData)
+      : locationFromLabel(userProfile.currentLocation ?? defaultLocation.label);
+
+    if (sameLocationInput(location, nextLocation)) {
+      return;
+    }
+
+    setLocation(nextLocation);
+    setManualLocation(nextLocation.label);
+    setHasLocationPreference(true);
+  }, [
+    location,
+    userProfile?.currentLocation,
+    userProfile?.currentLocationData?.label,
+    userProfile?.currentLocationData?.latitude,
+    userProfile?.currentLocationData?.longitude,
+    userProfile?.currentLocationData?.timeZone
+  ]);
+
+  useEffect(() => {
     try {
       if (userProfile) {
         window.localStorage.setItem(userProfileStorageKey, JSON.stringify(userProfile));
@@ -8774,38 +8809,19 @@ export function App() {
                   {isSkyLoading ? (
                     <SkyLoadingCards compact />
                   ) : (
-                    <SkyCards sky={sky} />
+                    <SkyCards
+                      sky={sky}
+                      dateLabel={formatSkyFullChartDate(skyDate)}
+                      locationLabel={compactCityLabel(location.label)}
+                      onOpenChart={() => {
+                        setDatePickerOpen(false);
+                        setCityPickerOpen(false);
+                        setMobileSkyControlsOpen(false);
+                        setSkyFullChartOpen(true);
+                      }}
+                    />
                   )}
                 </section>
-              )}
-              {isTodayMode && (
-                <button
-                  className="mobile-full-chart-card"
-                  type="button"
-                  aria-label="Open full current sky chart"
-                  disabled={isSkyLoading}
-                  onClick={() => {
-                    if (isSkyLoading) {
-                      return;
-                    }
-
-                    setDatePickerOpen(false);
-                    setCityPickerOpen(false);
-                    setMobileSkyControlsOpen(false);
-                    setSkyFullChartOpen(true);
-                  }}
-                >
-                  <span className="mobile-full-chart-card__icon" aria-hidden="true">
-                    <img className="mobile-full-chart-card__wheel" src={zodiacAssetHref("sun-wheel-glyph.svg") ?? ""} alt="" />
-                  </span>
-                  <span className="mobile-full-chart-card__copy">
-                    <strong>View chart</strong>
-                    <span>{skyFullChartMeta}</span>
-                  </span>
-                  <span className="mobile-full-chart-card__arrow" aria-hidden="true">
-                    <ArrowRight size={18} />
-                  </span>
-                </button>
               )}
               {isSkyLoading && (
                 <SkyLoadingCards />
@@ -10746,7 +10762,42 @@ function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: st
   return compactTransitDurationLabel(position, generatedAt);
 }
 
-function SkyCards({ sky }: { sky: SkySnapshot }) {
+function ChartWheelMini() {
+  return (
+    <svg className="sky-today-ledger__wheelmini" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <circle cx="16" cy="16" r="13.5" />
+      <circle cx="16" cy="16" r="6.5" />
+      <circle cx="16" cy="16" r="2.1" />
+      {Array.from({ length: 12 }, (_, index) => {
+        const angle = (index * 30 - 90) * Math.PI / 180;
+        const inner = 7.6;
+        const outer = 13.5;
+
+        return (
+          <line
+            key={index}
+            x1={16 + Math.cos(angle) * inner}
+            y1={16 + Math.sin(angle) * inner}
+            x2={16 + Math.cos(angle) * outer}
+            y2={16 + Math.sin(angle) * outer}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function SkyCards({
+  sky,
+  dateLabel,
+  locationLabel,
+  onOpenChart
+}: {
+  sky: SkySnapshot;
+  dateLabel: string;
+  locationLabel: string;
+  onOpenChart: () => void;
+}) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
   const sunDegree = formatBriefPlacementDegree(sun);
@@ -10754,36 +10805,101 @@ function SkyCards({ sky }: { sky: SkySnapshot }) {
   const sunSignLabel = compactSkyChicletSign(sun?.sign ?? "Current");
   const moonSignLabel = compactSkyChicletSign(sky.moonStatus?.label ?? moon?.sign ?? "Current");
   const shouldShowMoonDegree = sky.moonStatus?.kind !== "void";
+  const event = nextMoonEvent(sky);
+  const exactAt = event?.occursAt;
+  const selectedDate = new Date(sky.generatedAt);
+  const nextTitle = event ? `${event.name} in ${event.sign}` : "Next lunation";
+  const nextDateTimeLabel = exactAt && !Number.isNaN(exactAt.getTime()) ? formatLunationDateTime(exactAt) : "";
+  const nextCountdownLabel = exactAt && !Number.isNaN(exactAt.getTime())
+    ? lunationCountdownLabel(selectedDate, exactAt).toLowerCase()
+    : "";
+  const nextTimingLabel = [nextDateTimeLabel, nextCountdownLabel].filter(Boolean).join(" · ");
 
   return (
-    <section className="sky-lunar-brief" aria-label="Sky highlights">
-      <div className="sky-lunar-pills" aria-label="Current Sun and Moon phase">
-        <span className="sky-card sky-lunar-pill snap-card">
-          <span className="sky-lunar-pill-icon snap-ic" aria-hidden="true">☉</span>
-          <span className="sky-lunar-pill-copy">
-            <em className="snap-cl">Sun</em>
-            <h3>
-              <span className="snap-sign">{sunSignLabel}</span>
-              {sunDegree && <small className="deg">{sunDegree}</small>}
-            </h3>
+    <>
+      <section className="sky-today-ledger" aria-label="The sky today">
+        <header className="sky-today-ledger__head">
+          <h3>
+            <span>The sky</span>
+            {" "}
+            <span className="soft">today</span>
+          </h3>
+          <p>
+            <span>{dateLabel}</span>
+            <span>{locationLabel}</span>
+          </p>
+        </header>
+
+        <div className="sky-today-ledger__row">
+          <span className="sky-today-ledger__badge" aria-hidden="true">
+            <span className="sky-today-ledger__glyph">{"☉\uFE0E"}</span>
           </span>
-        </span>
-        <span className="sky-card sky-lunar-pill sky-lunar-pill--moon snap-card">
-          <span className="sky-lunar-pill-icon sky-lunar-pill-phase snap-ic" aria-hidden="true">
+          <span className="sky-today-ledger__label">Sun</span>
+          <span className="sky-today-ledger__value">
+            <strong>{sunSignLabel} {sunDegree && <small>{sunDegree}</small>}</strong>
+          </span>
+        </div>
+
+        <div className="sky-today-ledger__row">
+          <span className="sky-today-ledger__badge sky-today-ledger__badge--disc" aria-hidden="true">
             <MoonPhaseArt phase={sky.moonPhase} />
           </span>
-          <span className="sky-lunar-pill-copy">
-            <em className="snap-cl">Moon</em>
-            <h3>
-              <span className="snap-sign">{moonSignLabel}</span>
-              {moonDegree && shouldShowMoonDegree && <small className="deg">{moonDegree}</small>}
-            </h3>
-            <small className="sky-lunar-pill-sub snap-phase">{sky.moonPhase}</small>
+          <span className="sky-today-ledger__label">Moon</span>
+          <span className="sky-today-ledger__value">
+            <strong>{moonSignLabel} {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}</strong>
+            <span>{sky.moonPhase}</span>
           </span>
-        </span>
-      </div>
-      <NextLunationChicklet sky={sky} />
-    </section>
+        </div>
+
+        <div className="sky-today-ledger__row">
+          <span className="sky-today-ledger__badge sky-today-ledger__badge--disc" aria-hidden="true">
+            <MoonPhaseArt phase={event?.name ?? "Full Moon"} />
+          </span>
+          <span className="sky-today-ledger__label">Next</span>
+          <span className="sky-today-ledger__value">
+            <strong className="sky-today-ledger__name">{nextTitle}</strong>
+            {nextTimingLabel && <span>{nextTimingLabel}</span>}
+          </span>
+        </div>
+
+        <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
+          <ChartWheelMini />
+          <span>View chart</span>
+          <span className="sky-today-ledger__arrow" aria-hidden="true">
+            <ArrowRight size={18} />
+          </span>
+        </button>
+      </section>
+
+      <section className="sky-lunar-brief" aria-label="Sky highlights">
+        <div className="sky-lunar-pills" aria-label="Current Sun and Moon phase">
+          <span className="sky-card sky-lunar-pill snap-card">
+            <span className="sky-lunar-pill-icon snap-ic" aria-hidden="true">☉</span>
+            <span className="sky-lunar-pill-copy">
+              <em className="snap-cl">Sun</em>
+              <h3>
+                <span className="snap-sign">{sunSignLabel}</span>
+                {sunDegree && <small className="deg">{sunDegree}</small>}
+              </h3>
+            </span>
+          </span>
+          <span className="sky-card sky-lunar-pill sky-lunar-pill--moon snap-card">
+            <span className="sky-lunar-pill-icon sky-lunar-pill-phase snap-ic" aria-hidden="true">
+              <MoonPhaseArt phase={sky.moonPhase} />
+            </span>
+            <span className="sky-lunar-pill-copy">
+              <em className="snap-cl">Moon</em>
+              <h3>
+                <span className="snap-sign">{moonSignLabel}</span>
+                {moonDegree && shouldShowMoonDegree && <small className="deg">{moonDegree}</small>}
+              </h3>
+              <small className="sky-lunar-pill-sub snap-phase">{sky.moonPhase}</small>
+            </span>
+          </span>
+        </div>
+        <NextLunationChicklet sky={sky} />
+      </section>
+    </>
   );
 }
 
@@ -11285,7 +11401,10 @@ function ActiveAspects({
               approvedVoiceOrKnowledgeFallback(contentKey, "sky")
             );
             const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
-            const rowSummary = liveGeneratedSummary(generated, content.summary);
+            const rowSummary = liveGeneratedSummary(
+              generated,
+              fallbackPreviewText(content) || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+            );
 
                 return (
                   <button
@@ -11298,13 +11417,13 @@ function ActiveAspects({
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
+                      {rowSummary ? <p>{rowSummary}</p> : null}
                       <span className="aspect-row-timing" aria-label={timing.label}>
                         <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                           <DurationLabelText label={timing.durationLabel} />
                         </span>
                         <span>{timing.rangeLabel}</span>
                       </span>
-                      {rowSummary ? <p>{rowSummary}</p> : null}
                     </div>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
