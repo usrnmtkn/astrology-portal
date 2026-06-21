@@ -3580,6 +3580,10 @@ function aspectTimingNudge(context?: AspectCopyContext) {
   return "";
 }
 
+function comparableText(value: string) {
+  return value.replace(/\s+/g, " ").trim().toLowerCase();
+}
+
 function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
   const points = new Set([firstPoint, secondPoint]);
   const titleAspect = aspect === "opposition" ? "opposite" : aspect;
@@ -3823,8 +3827,16 @@ function currentSkyAspectDetailArticle(
   const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
   const fallbackSummary = aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content);
   const rowSummary = liveGeneratedSummary(generated, fallbackSummary);
+  const subtitle = stripTldrPrefix(rowSummary);
   const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
-  const body = detailParagraphs.length > 0 ? detailParagraphs : [stripTldrPrefix(rowSummary)];
+  const normalizedSubtitle = comparableText(subtitle);
+  const body = detailParagraphs.filter((paragraph) => {
+    if (typeof paragraph !== "string") {
+      return true;
+    }
+
+    return comparableText(stripTldrPrefix(paragraph)) !== normalizedSubtitle;
+  });
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
 
   return {
@@ -3833,7 +3845,7 @@ function currentSkyAspectDetailArticle(
     title: generated?.headline ?? title,
     meta: `${aspectTone(aspect.type).toUpperCase()} · ${timing}`,
     duration: timing,
-    subtitle: stripTldrPrefix(rowSummary),
+    subtitle,
     content: content.bundle,
     body,
     sections: generatedDetailSections(generated),
