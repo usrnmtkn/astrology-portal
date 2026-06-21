@@ -4,6 +4,8 @@
   --row-bg: var(--card-bg);
   --aspect-row-padding: var(--sky-card-padding);
   --aspect-row-copy-gap: var(--space-2);
+  --aspect-row-glyph-gap: var(--space-2);
+  --aspect-row-glyph-width: calc((var(--aspect-inline-icon-size, 20px) * 3) + (var(--aspect-row-glyph-gap) * 2));
 
   display: grid;
   grid-template-columns: var(--aspect-row-template, 78px minmax(0, 1fr) 30px);
@@ -33,7 +35,7 @@
   min-width: var(--aspect-row-glyph-width, 78px);
   height: 25px;
   margin-top: 1px;
-  gap: 8px;
+  gap: var(--aspect-row-glyph-gap);
   font-family: var(--font-glyph);
   font-size: var(--aspect-row-glyph-size, 20px);
   font-weight: var(--weight-regular);

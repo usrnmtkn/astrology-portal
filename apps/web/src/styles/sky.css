@@ -922,17 +922,17 @@
 .aspect-section .aspect-row,
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {
-  grid-template-columns: var(--sky-card-glyph-column-size) minmax(0, 1fr) auto;
+  --aspect-row-gap: var(--space-4);
+  grid-template-columns: var(--aspect-row-glyph-width) minmax(0, 1fr) auto;
   align-items: start;
 }
 
 .aspect-section .aspect-row-glyphs {
   align-self: start;
-  width: var(--sky-card-glyph-column-size);
-  min-width: var(--sky-card-glyph-column-size);
+  width: var(--aspect-row-glyph-width);
+  min-width: var(--aspect-row-glyph-width);
   height: var(--text-glyph);
   margin-top: 0;
-  gap: 5px;
   font-size: var(--sky-aspect-glyph-size);
 }
 
@@ -953,7 +953,7 @@
 }
 
 .aspect-section .aspect-row-meta {
-  align-self: center;
+  align-self: start;
   padding-top: 0;
 }
 
@@ -1102,6 +1102,227 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   width: 100%;
+}
+
+.sky-today-ledger {
+  display: none;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: none;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.sky-today-ledger__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 18px 20px 14px;
+}
+
+.sky-today-ledger__head h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: var(--weight-regular);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.sky-today-ledger__head .soft {
+  color: var(--muted);
+}
+
+.sky-today-ledger__head p {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: 1.25;
+  text-align: right;
+}
+
+.sky-today-ledger__row,
+.sky-today-ledger__foot {
+  border-top: 1px solid var(--line);
+}
+
+.sky-today-ledger__row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 20px;
+}
+
+.sky-today-ledger__badge {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--wheel-glyph);
+}
+
+.sky-today-ledger__glyph {
+  font-family: var(--font-glyph);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.sky-today-ledger__badge .moon-phase-art {
+  width: 23px;
+  height: 23px;
+  border: 0;
+  box-shadow: none;
+}
+
+.sky-today-ledger__badge .moon-phase-art--full-moon {
+  background: var(--moon-phase-light, #f0cf6a);
+}
+
+.sky-today-ledger__label {
+  flex: 0 0 58px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.sky-today-ledger__value {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 3px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.25;
+}
+
+.sky-today-ledger__value strong {
+  min-width: 0;
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--retrograde-row-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+.sky-today-ledger__value small {
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--retrograde-row-degree-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--leading-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.sky-today-ledger__value span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.sky-today-ledger__value .sky-today-ledger__name {
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--retrograde-row-title-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-title);
+}
+
+.sky-today-ledger__foot {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: var(--surface-2);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 15px 20px;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.sky-today-ledger__wheelmini {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--wheel-glyph);
+}
+
+.sky-today-ledger__wheelmini :where(circle, line) {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.sky-today-ledger__wheelmini circle:nth-of-type(3) {
+  fill: currentColor;
+}
+
+.sky-today-ledger__foot > span:not(.sky-today-ledger__arrow) {
+  flex: 1 1 auto;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+}
+
+.sky-today-ledger__arrow {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.sky-today-ledger__foot:hover {
+  background: color-mix(in srgb, var(--surface-2) 88%, var(--ink) 4%);
+}
+
+.sky-today-ledger__foot:hover .sky-today-ledger__arrow {
+  background: var(--ink);
+  color: var(--surface);
+  transform: translateX(2px);
 }
 
 .sky-lunar-pill {
