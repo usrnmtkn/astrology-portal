@@ -9,7 +9,7 @@
   */
 
   /* 1. PRIMITIVE TOKENS */
-  --color-bg-warm: #eef0f4;
+  --color-bg-warm: #cdd2d5;
   --color-paper: var(--color-bg-warm);
   --color-white: #ffffff;
   --color-surface: var(--color-white);
@@ -128,9 +128,7 @@
   --elev-pill:
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
-  --elev-card:
-    0 1px 1px rgba(28, 32, 52, 0.025),
-    0 6px 18px -18px rgba(28, 32, 52, 0.11);
+  --elev-card: 0 1px 2px rgba(46, 52, 62, 0.05);
   --elev-hero:
     0 1px 1px rgba(28, 32, 52, 0.04),
     0 8px 18px -8px rgba(28, 32, 52, 0.13),
@@ -144,11 +142,24 @@
     0 4px 16px rgba(28, 32, 52, 0.06);
   --shadow-flat: none;
   --shadow: var(--shadow-card);
-  --bg-grad: none;
+  --bg-grad:
+    radial-gradient(135% 105% at 14% -2%,
+      rgba(243, 245, 246, 0.95) 0%, rgba(243, 245, 246, 0) 56%),
+    radial-gradient(120% 110% at 98% 104%,
+      rgba(150, 164, 176, 0.5) 0%, rgba(150, 164, 176, 0) 62%),
+    linear-gradient(146deg,
+      rgba(228, 231, 233, 0.62) 0%,
+      rgba(193, 201, 208, 0.3) 48%,
+      rgba(160, 173, 184, 0.55) 100%);
   --orb-grad:
     radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.78), transparent 56%),
     radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.42), transparent 55%),
     radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.4), transparent 60%);
+  --glass-bg: rgba(255, 255, 255, 0.42);
+  --glass-edge:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  --glass-shadow: 0 22px 46px -30px rgba(46, 52, 62, 0.4);
 
   --font-display: var(--font-serif);
   --font-body: var(--font-mono);
@@ -589,8 +600,8 @@
 
 .theme-dark,
 [data-theme="dark"] {
-  --color-bg-warm: #000000;
-  --color-paper: #000000;
+  --color-bg-warm: #16181b;
+  --color-paper: #16181b;
   --color-surface: #1f222b;
   --color-surface-2: #2a2e39;
   --color-surface-3: #333844;
@@ -615,10 +626,24 @@
   --color-wheel-glyph: #f2f2f1;
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
+  --bg-grad:
+    radial-gradient(135% 105% at 14% -2%,
+      rgba(58, 66, 74, 0.6) 0%, rgba(58, 66, 74, 0) 56%),
+    radial-gradient(120% 110% at 98% 104%,
+      rgba(30, 40, 48, 0.65) 0%, rgba(30, 40, 48, 0) 62%),
+    linear-gradient(146deg,
+      rgba(42, 47, 54, 0.7) 0%,
+      rgba(27, 31, 37, 0.4) 48%,
+      rgba(18, 22, 28, 0.7) 100%);
   --orb-grad:
     radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.34), transparent 56%),
     radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.2), transparent 55%),
     radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.18), transparent 60%);
+  --glass-bg: rgba(31, 34, 43, 0.48);
+  --glass-edge:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  --glass-shadow: 0 22px 46px -30px rgba(0, 0, 0, 0.6);
   --color-status-alert: #d6a24b;
   --color-retrograde-accent: #9b7cff;
   --color-retrograde-bg: rgba(155, 124, 255, 0.18);
