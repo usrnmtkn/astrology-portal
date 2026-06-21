@@ -287,7 +287,7 @@
   }
 
   .sky-lunar-pill-sub {
-    font-size: var(--snap-phase-size);
+    font-size: var(--type-meta-size);
   }
 
   .next-lun {
@@ -348,7 +348,7 @@
   }
 
   .nl-sub {
-    font-size: var(--snap-next-subtitle-size);
+    font-size: var(--type-meta-size);
   }
 
   .updates-aspect-row {

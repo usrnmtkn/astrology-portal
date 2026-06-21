@@ -736,7 +736,7 @@
   margin-top: 4px;
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
-  line-height: var(--leading-meta);
+  line-height: var(--leading-tight);
 }
 
 .friend-profile-card .friend-kebab,
@@ -770,7 +770,7 @@
 .you-profile-copy {
   display: grid;
   min-width: 0;
-  gap: 10px;
+  gap: 5px;
 }
 
 .friend-hero-copy h2,
@@ -787,7 +787,7 @@
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-meta);
+  line-height: var(--leading-tight);
 }
 
 .you-signature-row {
