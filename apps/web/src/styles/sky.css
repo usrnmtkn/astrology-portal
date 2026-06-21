@@ -105,6 +105,21 @@
   text-transform: none;
 }
 
+.article-eyebrow__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.article-eyebrow__icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: var(--filter-glyph-current);
+  object-fit: contain;
+}
+
 .article-eyebrow__house {
   font-family: var(--font-body);
   font-size: var(--type-label-size);
@@ -1391,10 +1406,10 @@
   margin: 0;
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: var(--snap-sign-size);
+  font-size: var(--retrograde-row-title-size);
   font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
 }
 
 .sky-lunar-pill-copy h3 span,
@@ -1404,8 +1419,8 @@
 
 .sky-lunar-pill-copy h3 small {
   color: var(--card-meta-color);
-  font-family: var(--font-ui);
-  font-size: var(--snap-degree-size);
+  font-family: var(--font-body);
+  font-size: var(--retrograde-row-degree-size);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-number);
@@ -1542,10 +1557,10 @@
   overflow: hidden;
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: var(--snap-next-title-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-h2);
+  font-size: var(--retrograde-row-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

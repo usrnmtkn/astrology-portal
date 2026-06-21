@@ -52,6 +52,7 @@ import {
   pointRetrogradeIconFiles,
   signGlyph,
   zodiacAssetHref,
+  zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
@@ -2592,6 +2593,46 @@ function articleTitleSignGlyph(title: string, meta = "") {
   return sign ? zodiacSignGlyphs[sign] ?? "" : "";
 }
 
+type ArticleEyebrowGlyph = {
+  key: string;
+  label: string;
+  text?: string;
+  href?: string | null;
+  house?: boolean;
+};
+
+function textArticleGlyph(text: string, label = text): ArticleEyebrowGlyph | null {
+  return text ? { key: `text-${label}-${text}`, label, text } : null;
+}
+
+function signArticleGlyph(sign: string): ArticleEyebrowGlyph | null {
+  const normalizedSign = zodiacSigns.find((candidate) => candidate.toLowerCase() === sign.toLowerCase());
+
+  if (!normalizedSign) {
+    return null;
+  }
+
+  return {
+    key: `sign-${normalizedSign}`,
+    label: normalizedSign,
+    text: signGlyph(normalizedSign),
+    href: zodiacAssetHref(zodiacSignIconFiles[normalizedSign])
+  };
+}
+
+function uniqueArticleGlyphs(glyphs: Array<ArticleEyebrowGlyph | null>) {
+  const seen = new Set<string>();
+
+  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph => {
+    if (!glyph || seen.has(glyph.key)) {
+      return false;
+    }
+
+    seen.add(glyph.key);
+    return true;
+  });
+}
+
 function articleTitleHouseToken(title: string, meta = "") {
   const match = `${title} ${meta}`.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+house\b/i);
 
@@ -2609,14 +2650,12 @@ function articlePlacementGlyphs(title: string, meta = "") {
   }
 
   const [, body, retrograde, sign, house] = match;
-  const glyphs = [
-    pointGlyph(body.trim()),
-    retrograde ? "℞" : "",
-    signGlyph(sign.trim()),
-    house ? houseGlyph(Number.parseInt(house, 10)) : ""
-  ].filter(Boolean);
-
-  return Array.from(new Set(glyphs));
+  return uniqueArticleGlyphs([
+    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
+    retrograde ? textArticleGlyph("℞", "Retrograde") : null,
+    signArticleGlyph(sign.trim()),
+    house ? { key: `house-${house}`, label: `${house} house`, text: houseGlyph(Number.parseInt(house, 10)), house: true } : null
+  ]);
 }
 
 function articleEyebrowLabel(title: string, kicker?: string) {
@@ -2646,13 +2685,15 @@ function articleEyebrowGlyphs({
     return placementGlyphs;
   }
 
-  const parts = [
-    ...(glyph ? glyph.split(/\s+/).filter(Boolean) : []),
-    articleTitleSignGlyph(title, meta),
-    articleTitleHouseToken(title, meta)
-  ].filter(Boolean);
+  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
 
-  return Array.from(new Set(parts));
+  return uniqueArticleGlyphs([
+    ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
+    sign ? signArticleGlyph(sign) : null,
+    articleTitleHouseToken(title, meta)
+      ? { key: `house-${articleTitleHouseToken(title, meta)}`, label: articleTitleHouseToken(title, meta), text: articleTitleHouseToken(title, meta), house: true }
+      : null
+  ]);
 }
 
 function articleTldrText(value: string) {
@@ -3183,14 +3224,16 @@ function SkyDetailArticle({
       <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           <header className="article-id sky-detail-id">
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.join(" ")}` : eyebrowLabel}>
+            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
                   <span className="article-eyebrow__slash" aria-hidden="true">/</span>
                   <span className="article-eyebrow__glyphs" aria-hidden="true">
-                    {eyebrowGlyphs.map((part) => (
-                      <span className={/^\d{1,2}H$/.test(part) ? "article-eyebrow__house" : undefined} key={part}>{part}</span>
+                    {eyebrowGlyphs.map((glyph) => (
+                      <span className={glyph.house ? "article-eyebrow__house" : glyph.href ? "article-eyebrow__icon" : undefined} key={glyph.key}>
+                        {glyph.href ? <img src={glyph.href} alt="" aria-hidden="true" /> : glyph.text}
+                      </span>
                     ))}
                   </span>
                 </>
@@ -3490,18 +3533,154 @@ function natalPointTheme(point: string) {
   return themes[point] ?? point.toLowerCase();
 }
 
-function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string) {
-  const firstTheme = natalPointTheme(firstPoint);
-  const secondTheme = natalPointTheme(secondPoint);
-  const aspectCopy: Record<string, string> = {
-    conjunction: "These parts of you operate in the same room, intensifying each other and making this pattern hard to ignore.",
-    sextile: "These parts of you can cooperate when you choose to use them together.",
-    square: "These parts of you create friction, which can become motivation once you stop treating one side as the problem.",
-    trine: "These parts of you tend to move together naturally, often becoming a quiet strength.",
-    opposition: "These parts of you pull awareness between two poles, asking for balance rather than a winner."
+function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: string) {
+  const points = new Set([firstPoint, secondPoint]);
+  const titleAspect = aspect === "opposition" ? "opposite" : aspect;
+  const title = `${firstPoint} ${titleAspect} ${secondPoint}`;
+
+  if (aspect === "sextile" && points.has("Jupiter") && points.has("Moon")) {
+    return `${title} can make it easier to trust what you need. There may be more room for comfort, generosity, support, or an honest emotional response.`;
+  }
+
+  if (aspect === "square" && points.has("Jupiter") && points.has("Chiron")) {
+    return `${title} can make confidence and old hurt rub against each other. A bigger opportunity may bring up an old fear of not being ready, not being chosen, or not knowing enough.`;
+  }
+
+  if (aspect === "sextile" && points.has("Mars") && points.has("Mercury")) {
+    return `${title} can help you say what needs to be said and act on a decision more quickly. It is useful for direct conversations, problem-solving, and turning an idea into a next step.`;
+  }
+
+  if (aspect === "opposition" && points.has("Venus") && points.has("Pluto")) {
+    return `${title} can make relationships, money, or desire feel more charged than usual. Watch for control, jealousy, obsession, or the need to know where you stand before the situation is actually clear.`;
+  }
+
+  return undefined;
+}
+
+function aspectPlainTheme(point: string) {
+  const themes: Record<string, string> = {
+    Sun: "confidence and direction",
+    Moon: "mood, comfort, and what you need",
+    Mercury: "thinking, language, and decisions",
+    Venus: "relationships, pleasure, and what feels worth choosing",
+    Mars: "action, anger, and momentum",
+    Jupiter: "confidence, opportunity, and belief",
+    Saturn: "responsibility, limits, and commitment",
+    Uranus: "freedom, surprise, and disruption",
+    Neptune: "longing, uncertainty, and imagination",
+    Pluto: "control, pressure, and what is hard to ignore",
+    Chiron: "old hurt, insecurity, and feeling exposed",
+    "North Node": "future direction and the next step",
+    "True Node": "future direction and the next step",
+    "South Node": "old patterns and what is familiar",
+    Ascendant: "presence, body, and first response",
+    Midheaven: "work, visibility, and direction"
   };
 
-  return `${firstPoint} ${aspect} ${secondPoint} links ${firstTheme} with ${secondTheme}. ${aspectCopy[aspect] ?? "This aspect shows how the two drives modify each other in practice."}`;
+  return themes[point] ?? point.toLowerCase();
+}
+
+function aspectLivedExample(firstPoint: string, secondPoint: string, tone: "support" | "pressure" | "focus" | "pushPull") {
+  const pair = new Set([firstPoint, secondPoint]);
+
+  if (pair.has("Mercury") && pair.has("Mars")) {
+    return tone === "pressure"
+      ? "Words can come out fast, so pause before a direct point turns into a fight."
+      : "This is useful for direct conversations, quick decisions, and turning an idea into a next step.";
+  }
+
+  if (pair.has("Venus") && pair.has("Pluto")) {
+    return tone === "support"
+      ? "It can be easier to name what you want without pretending the stakes are lower than they are."
+      : "Watch for control, jealousy, obsession, or the need to know where you stand before the situation is actually clear.";
+  }
+
+  if (pair.has("Jupiter") && pair.has("Moon")) {
+    return tone === "pressure"
+      ? "A bigger want can press against what actually feels safe, comfortable, or emotionally honest."
+      : "There may be more room for comfort, generosity, support, or an honest emotional response.";
+  }
+
+  if (pair.has("Jupiter") && pair.has("Chiron")) {
+    return "A bigger opportunity may bring up an old fear of not being ready, not being chosen, or not knowing enough.";
+  }
+
+  if (pair.has("Saturn") && pair.has("Moon")) {
+    return tone === "pressure"
+      ? "A feeling may need to be taken seriously instead of managed around."
+      : "It can be easier to make a steady choice, keep a promise, or say the serious thing plainly.";
+  }
+
+  if (pair.has("Uranus")) {
+    return tone === "pressure"
+      ? "A sudden change may make it harder to keep doing things the usual way."
+      : "A small change, unexpected message, or different choice can open more room than expected.";
+  }
+
+  if (pair.has("Neptune")) {
+    return tone === "pressure"
+      ? "It may be harder to tell what is real, wished for, or being avoided."
+      : "Imagination, softness, or a less rigid answer may be easier to access.";
+  }
+
+  if (pair.has("Pluto")) {
+    return tone === "pressure"
+      ? "A buried feeling, power dynamic, or need for control may be harder to ignore."
+      : "It can be easier to be honest about what has weight instead of treating it like a small thing.";
+  }
+
+  if (pair.has("Chiron")) {
+    return "An old sensitivity may show you what still needs honesty, repair, or more care than usual.";
+  }
+
+  if (tone === "pressure") {
+    return "A choice, conversation, or reaction may show where adjustment is needed.";
+  }
+
+  if (tone === "pushPull") {
+    return "You may need more perspective before deciding which side deserves more weight.";
+  }
+
+  if (tone === "focus") {
+    return "The pattern may be louder than usual, making it easier to see what needs attention.";
+  }
+
+  return "A useful opening may be available if you choose to act on it.";
+}
+
+function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string) {
+  const specificCopy = aspectSpecificCopy(firstPoint, aspect, secondPoint);
+
+  if (specificCopy) {
+    return specificCopy;
+  }
+
+  const firstTheme = aspectPlainTheme(firstPoint);
+  const secondTheme = aspectPlainTheme(secondPoint);
+  const titleAspect = aspect === "opposition" ? "opposite" : aspect;
+  const title = `${firstPoint} ${titleAspect} ${secondPoint}`;
+
+  if (aspect === "sextile") {
+    return `${title} can make it easier to move between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "support")}`;
+  }
+
+  if (aspect === "trine") {
+    return `${title} can help ${firstTheme} and ${secondTheme} move with less resistance. ${aspectLivedExample(firstPoint, secondPoint, "support")}`;
+  }
+
+  if (aspect === "conjunction") {
+    return `${title} puts ${firstTheme} and ${secondTheme} in the same room. ${aspectLivedExample(firstPoint, secondPoint, "focus")}`;
+  }
+
+  if (aspect === "square") {
+    return `${title} can put pressure on the relationship between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "pressure")}`;
+  }
+
+  if (aspect === "opposition") {
+    return `${title} can pull attention between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "pushPull")}`;
+  }
+
+  return `${title} may make the connection between ${firstTheme} and ${secondTheme} easier to notice in real life.`;
 }
 
 function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string) {
@@ -3574,8 +3753,10 @@ function currentSkyAspectDetailArticle(
     approvedVoiceOrKnowledgeFallback(contentKey, "sky")
   );
   const generated = liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt));
-  const rowSummary = liveGeneratedSummary(generated, content.summary);
+  const fallbackSummary = fallbackPreviewText(content) || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to);
+  const rowSummary = liveGeneratedSummary(generated, fallbackSummary);
   const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
+  const body = detailParagraphs.length > 0 ? detailParagraphs : [stripTldrPrefix(rowSummary)];
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
 
   return {
@@ -3586,7 +3767,7 @@ function currentSkyAspectDetailArticle(
     duration: timing,
     subtitle: stripTldrPrefix(rowSummary),
     content: content.bundle,
-    body: detailParagraphs,
+    body,
     sections: generatedDetailSections(generated),
     astrologyDrilldown: generatedAstrologyDrilldown(generated)
   };
@@ -5366,7 +5547,7 @@ function profectionRulerParagraph(chart: ManualChart, sign: string, house: numbe
   const rulerRole = plainPlanetTopic(ruler);
   const activatedThemes = houseRealLifeSummary(house);
 
-  return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. In ${name}'s chart, ${ruler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${activatedThemes} with ${rulerHouseThemes}. In plain terms, ${rulerRole} may be the way the year's question becomes real. The year may keep asking: ${houseRealLifeQuestion(house)}`;
+  return `Because ${sign} rules ${name}'s ${houseLabel}, ${ruler} becomes the lord of the year. In ${name}'s chart, ${ruler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, so the year may move between ${activatedThemes} and ${rulerHouseThemes}. In plain terms, ${rulerRole} may be the way the year's question becomes real. The year may keep asking: ${houseRealLifeQuestion(house)}`;
 }
 
 function relevantCircleTransits(transits: TransitItem[], timing: FriendTimingContext, natalHousePositions: PlanetPosition[]) {
@@ -5869,7 +6050,7 @@ function synastryAspectMeaning(aspect: string) {
   const meanings: Record<string, string> = {
     conjunction: "This contact is hard to miss because the two parts of the chart keep showing up together.",
     opposition: "This contact can feel magnetic and exposing because each person may carry one side of the pattern.",
-    square: "This contact creates friction. It can bring momentum, but it needs honesty before it turns into irritation.",
+    square: "This contact can put pressure on the connection. It can bring momentum, but it needs honesty before it turns into irritation.",
     trine: "This contact tends to feel natural. It can make the connection easier to trust because less translation is needed.",
     sextile: "This contact gives the relationship an opening. It works best when both people actually use it."
   };
@@ -8542,7 +8723,6 @@ export function App() {
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
               }}
             >
-              <CalendarDays className="sky-header-date-button__calendar" aria-hidden="true" />
               <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
@@ -9534,7 +9714,7 @@ function natalRulerParagraph({
       return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground for clarity, pressure, and development. ${rulerProcess}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house. This links ${originalArea} with ${rulerHouseLink}, so the placement has to be understood through both. ${rulerProcess}`;
+    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} has to be understood alongside ${rulerHouseLink}. ${rulerProcess}`;
   }
 
   if (houseRuler) {
@@ -10053,7 +10233,7 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
     return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. Since ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the same material gets emphasized twice. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
   }
 
-  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house. This links ${placementConcern} with ${rulerHouseDynamic}.`;
+  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, so ${placementConcern} has to be read alongside ${rulerHouseDynamic}.`;
 }
 
 function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {

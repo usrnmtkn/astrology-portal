@@ -278,12 +278,12 @@
 
   .sky-lunar-pill-copy h3 {
     gap: var(--sign-degree-gap);
-    font-size: var(--snap-sign-size);
+    font-size: var(--retrograde-row-title-size);
     line-height: var(--leading-title);
   }
 
   .sky-lunar-pill-copy h3 small {
-    font-size: var(--snap-degree-size);
+    font-size: var(--retrograde-row-degree-size);
   }
 
   .sky-lunar-pill-sub {
@@ -344,7 +344,7 @@
   }
 
   .nl-top h4 {
-    font-size: var(--snap-next-title-size);
+    font-size: var(--retrograde-row-title-size);
   }
 
   .nl-sub {

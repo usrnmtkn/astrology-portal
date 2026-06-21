@@ -1625,6 +1625,12 @@
   border-color: var(--card-border);
 }
 
+.friend-chart-page .aspect-row-meta {
+  justify-self: end;
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .friend-chart-modal-backdrop {
   position: fixed;
   inset: 0;

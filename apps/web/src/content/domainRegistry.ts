@@ -597,7 +597,7 @@ function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
   const secondTopic = skyPlanetTopic[planetB] ?? planetTopic[planetB] ?? `what ${planetBLabel} tends to describe`;
   const pair = [planetA, planetB].sort().join("-");
   const specific: Record<string, string> = {
-    "mercury-neptune": "Mercury describes how information moves. Neptune softens boundaries, so facts, impressions, memories, and wishes can slide into each other. The square creates friction between what is being said and what is actually clear.",
+    "mercury-neptune": "Mercury describes how information moves. Neptune softens boundaries, so facts, impressions, memories, and wishes can slide into each other. The square can make it harder to separate what is being said from what is actually clear.",
     "moon-uranus": "The Moon describes instinct and immediate need. Uranus brings disruption, freedom, and the urge to break pattern. A trine can make the change easier to use if you do not treat the first reaction as the only option.",
     "sun-saturn": "The Sun shows where attention is going. Saturn adds structure, discipline, and reality checks. A sextile is an opening, so focus is available if you choose one concrete place to put it.",
     "venus-saturn": "Venus describes affection, pleasure, and value. Saturn asks for proof, patience, and maturity. The contact can make care feel more serious, but also more trustworthy when it is backed by action.",
@@ -609,9 +609,9 @@ function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
     "moon-pluto": "The Moon describes emotional need. Pluto brings depth, control, fear, and transformation. The contact can pull a feeling up from underneath the surface."
   };
   const aspectMeaning: Record<string, string> = {
-    conjunction: "A conjunction blends the planets, so it can be harder to tell where one topic ends and the other begins.",
+    conjunction: "A conjunction puts both planets in the same space, so the topic can feel more focused, louder, or harder to ignore.",
     opposition: "An opposition creates contrast, so the day may show two needs, views, or instincts facing each other.",
-    square: "A square creates friction, so the issue may become obvious through pressure, interruption, or a choice that cannot stay vague.",
+    square: "A square puts pressure on the issue, so it may show up through interruption, discomfort, or a choice that cannot stay vague.",
     trine: "A trine is a supportive angle, so the useful part may feel available without much force.",
     sextile: "A sextile is an opening, but it usually works best when you take a small step toward it."
   };
