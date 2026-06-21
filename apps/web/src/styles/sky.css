@@ -1439,6 +1439,10 @@
   white-space: nowrap;
 }
 
+.sky-lunar-pill-sub--spacer {
+  visibility: hidden;
+}
+
 .moon-phase-art {
   position: relative;
   display: block;
