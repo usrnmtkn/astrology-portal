@@ -815,6 +815,14 @@ body,
   padding: 0;
 }
 
+.admin-title-field .admin-astro-facts-line {
+  color: #d6a178;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
 .admin-post-editor {
   display: grid;
   gap: 18px;
