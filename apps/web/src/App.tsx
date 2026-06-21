@@ -11052,8 +11052,17 @@ function SkyCards({
   const sunDegree = formatBriefPlacementDegree(sun);
   const moonDegree = formatBriefPlacementDegree(moon);
   const sunSignLabel = compactSkyChicletSign(sun?.sign ?? "Current");
-  const moonSignLabel = compactSkyChicletSign(sky.moonStatus?.label ?? moon?.sign ?? "Current");
-  const shouldShowMoonDegree = sky.moonStatus?.kind !== "void";
+  const moonSign = sky.moonStatus?.sign ?? moon?.sign ?? "Current";
+  const moonSignLabel = compactSkyChicletSign(moonSign);
+  const moonIsVoid = sky.moonStatus?.kind === "void";
+  const shouldShowMoonDegree = !moonIsVoid;
+  const moonTitleLabel = moonSignLabel;
+  const voidRemainingLabel = sky.moonStatus?.remainingLabel
+    ?.replace(/\b(\d+)\s*hrs?\b/iu, "$1h")
+    .replace(/\b(\d+)\s*min\b/iu, "$1m");
+  const moonSubLabel = moonIsVoid && voidRemainingLabel
+    ? `VoC · ${voidRemainingLabel} left`
+    : sky.moonPhase;
   const event = nextMoonEvent(sky);
   const exactAt = event?.occursAt;
   const selectedDate = new Date(sky.generatedAt);
@@ -11095,8 +11104,8 @@ function SkyCards({
           </span>
           <span className="sky-today-ledger__label">Moon</span>
           <span className="sky-today-ledger__value">
-            <strong>{moonSignLabel} {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}</strong>
-            <span>{sky.moonPhase}</span>
+            <strong>{moonTitleLabel} {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}</strong>
+            <span>{moonSubLabel}</span>
           </span>
         </div>
 
@@ -11130,6 +11139,9 @@ function SkyCards({
                 <span className="snap-sign">{sunSignLabel}</span>
                 {sunDegree && <small className="deg">{sunDegree}</small>}
               </h3>
+              <small className="sky-lunar-pill-sub sky-lunar-pill-sub--spacer snap-phase" aria-hidden="true">
+                &nbsp;
+              </small>
             </span>
           </span>
           <span className="sky-card sky-lunar-pill sky-lunar-pill--moon snap-card">
@@ -11139,10 +11151,10 @@ function SkyCards({
             <span className="sky-lunar-pill-copy">
               <em className="snap-cl">Moon</em>
               <h3>
-                <span className="snap-sign">{moonSignLabel}</span>
+                <span className="snap-sign">{moonTitleLabel}</span>
                 {moonDegree && shouldShowMoonDegree && <small className="deg">{moonDegree}</small>}
               </h3>
-              <small className="sky-lunar-pill-sub snap-phase">{sky.moonPhase}</small>
+              <small className="sky-lunar-pill-sub snap-phase">{moonSubLabel}</small>
             </span>
           </span>
         </div>
