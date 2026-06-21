@@ -2016,7 +2016,7 @@ function parseGeneratedContentJson(raw: string, lockedHeadline: string): Generat
     throw new Error("Model response did not include headline, summary, and body.");
   }
 
-  return {
+  return normalizeGeneratedCopyFields({
     headline: lockedHeadline ?? parsed.headline,
     tldr: parsed.tldr,
     summary: parsed.summary,
@@ -2026,6 +2026,40 @@ function parseGeneratedContentJson(raw: string, lockedHeadline: string): Generat
     sceneLock: parsed.sceneLock,
     astrologyDrilldown: parsed.astrologyDrilldown,
     sections: parsed.sections ?? []
+  });
+}
+
+function stripGeneratedTldrPrefix(value: string) {
+  return value.trim().replace(/^tldr\s*:\s*/i, "").trim();
+}
+
+function splitGeneratedLeadingTldr(value: string) {
+  const trimmed = value.trim();
+  const match = trimmed.match(/^tldr\s*:\s*([\s\S]*?)(?:\n{2,}([\s\S]*)|$)/i);
+
+  if (!match) {
+    return {
+      tldr: "",
+      body: value
+    };
+  }
+
+  return {
+    tldr: match[1]?.trim() ?? "",
+    body: match[2]?.trim() ?? ""
+  };
+}
+
+function normalizeGeneratedCopyFields(content: GeneratedContent): GeneratedContent {
+  const splitBody = splitGeneratedLeadingTldr(content.body);
+  const tldr = stripGeneratedTldrPrefix(content.tldr ?? "") || splitBody.tldr || stripGeneratedTldrPrefix(content.summary);
+  const body = (splitBody.tldr ? splitBody.body : content.body).trim() || content.body.trim();
+
+  return {
+    ...content,
+    tldr,
+    summary: tldr,
+    body
   };
 }
 
