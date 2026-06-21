@@ -9494,21 +9494,6 @@ function retrogradePreviewCopy(
   );
 }
 
-function retrogradeKnowledgeCopy(
-  position: PlanetPosition,
-  generated: LiveGeneratedContent | null,
-  content: ContentFallback
-) {
-  const generatedParagraphs = retrogradeGeneratedBodyParagraphs(position, generated);
-  const generatedSummary = generatedParagraphs[0] || generated?.summary?.trim();
-
-  if (generatedSummary) {
-    return generatedSummary;
-  }
-
-  return content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || "";
-}
-
 function ordinalHouse(house: number) {
   const rem100 = house % 100;
 
@@ -11244,11 +11229,9 @@ function RetrogradeCallout({
       ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
       : null;
     const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+    const tldr = generated?.summary?.trim() || content.summary || "";
     const fallbackDetailParagraphs = [
-      retrogradeKnowledgeCopy(position, generated, content),
-      generated?.summary,
       content.body,
-      content.summary,
       ...content.detailParagraphs
     ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
     const generatedBodyParagraphs = stripGeneratedTitleParagraph(
@@ -11278,6 +11261,7 @@ function RetrogradeCallout({
         title: retrogradePlacementTitle(position),
         meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
         duration: retrogradeRangeText(retrogradeWindow),
+        subtitle: tldr,
         retrograde: true,
         plainBody: true,
         body: detailParagraphs,
