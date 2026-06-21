@@ -262,11 +262,29 @@ const bannedUserFacingPhrases = [
   "this aspect teaches",
   "the lesson is",
   "the invitation is",
+  "this transit invites you to",
+  "consider that perhaps",
+  "everything happens for a reason",
+  "gentle reminder",
   "lean into",
   "step into",
   "hold space",
   "the universe",
   "universe is asking",
+  "sacred container",
+  "divine timing",
+  "trust the process",
+  "love and light",
+  "high vibes only",
+  "just be grateful",
+  "sit with that",
+  "honor your journey",
+  "step into your power",
+  "perform",
+  "performance",
+  "performing",
+  "shrink",
+  "shrinking",
   "cosmic",
   "cosmos",
   "manifesting",
@@ -282,6 +300,7 @@ const requiredHeadingsByMode: Record<ContentMode, string[]> = {
   article: ["What You May Notice", "What To Do", "Timing", "Closing"]
 };
 const dailySkyAspectHeadings = ["TLDR", "Planetary Meaning", "How It May Show Up", "How To Work With It", "Timing"];
+const transitArticleHeadings = ["Opening", "Validation", "The Astrology", "The Shadow", "Permission & Integration", "Collective Close"];
 
 const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
 export const editorialBannedPhrases = [
@@ -599,10 +618,10 @@ function modeRules(mode: ContentMode) {
   }
 
   return [
-    "Article Mode: collective astrology and lunar events.",
-    "Length: full essay.",
-    "Structure: event opening, key aspects, collective meaning, personal application, reflection questions when useful.",
-    "Tone: lyrical but concrete, mythic but understandable."
+    "Article Mode: full transit essay.",
+    "Length: full essay in longer continuous paragraphs.",
+    "Structure: one-line opening, specific validation, astrology translated into lived experience, shadow, earned permission, collective affirmation close.",
+    "Tone: sharp, observational, grounded, and unsentimental. It should feel closer to an honest essay than a horoscope."
   ].join("\n");
 }
 
@@ -652,6 +671,83 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
       "Do not sound like a therapist, guru, or productivity coach.",
       "Say the Moon and the Sun for transiting sky planets. Never say your Moon or your Sun on this surface.",
       "No em dashes."
+    ].join("\n");
+  }
+
+  if (isTransitArticle(input)) {
+    return [
+      "OUTPUT SHAPE FOR TRANSIT ARTICLE",
+      exactHeadline,
+      "Write a transit article in Marie Satori's voice about the supplied transit, aspect, retrograde, ingress, lunation, or sky event.",
+      "This is a full article, not a feed card. The body should move in longer, continuous paragraphs where a full thought deepens as it goes.",
+      "Return JSON only and fill every schema field.",
+      "",
+      "Article voice:",
+      "Direct, observational, and grounded. Name patterns plainly without cushioning them and without dramatizing them.",
+      "The voice should feel like the smartest, most honest friend in the room: someone who notices what the reader is doing before they have admitted it to themselves, and tells them plainly.",
+      "Closer to a sharp essay than a horoscope. If a line could be read aloud in a quiet room and still feel true, keep it. If it sounds like a card from a gift shop, cut it.",
+      "",
+      "Body structure:",
+      "1. Opening: Pick one opening type and write one line only. Let it land before moving on.",
+      "2. Validation: Build specific, restrained validation. Name behavior, not just feeling. One or two specifics is enough.",
+      "3. The Astrology: State the transit plainly: planet, sign, aspect when present, date or active range when available. Translate immediately into observable life.",
+      "4. The Shadow: Name what goes wrong with this transit. Name the lie or coping pattern it can make easy to believe.",
+      "5. Permission & Integration: Use 'You're allowed to...' or 'You don't have to...' only after the honest read. Say what becomes available in grounded language.",
+      "6. Collective Close: End with the signature close: three 'Not one of us...' sentences, then a collective metaphor, then one 'May we each...' line.",
+      "",
+      "Opening options. Pick ONE:",
+      "- No one knows {specific internal effort} it has taken just to {specific action}.",
+      "- There is a point where {pattern} stops being {protective function} and starts becoming {problem}.",
+      "- What looks like {surface behavior} may actually be {deeper motivation}.",
+      "- Your body may register {truth, desire, resistance, or fatigue} before your mind can explain it.",
+      "- You may take longer to {act, decide, or respond} because {specific reason}.",
+      "- Something may build quietly before it ever becomes visible.",
+      "- At some point, not choosing also becomes a choice.",
+      "- Courage may look less like {dramatic action} and more like {grounded action}.",
+      "- You may already know the pattern. The harder part is deciding what to do once you see it.",
+      "- There is a moment when {old strategy} no longer gives you the protection it used to.",
+      "- There is a difference between {healthy expression} and {distorted expression}.",
+      "- Maybe the issue is not {obvious problem}. Maybe the issue is {deeper pattern}.",
+      "",
+      "JSON field mapping:",
+      "headline: factual transit title only. Preserve the supplied headline when present.",
+      "tldr: one direct sentence that names the core human pattern in the article.",
+      "summary: two or three sentences max. It should preview the article without flattening it into keywords.",
+      "body: the full polished article from the opening line through the collective close. Do not use markdown headings inside body. Do not use bullets or numbered lists.",
+      "action: one grounded permission or action from the Permission & Integration section.",
+      "timing: one clean timing sentence from the provided facts.",
+      `sections: include exactly these section headings in order for review only: ${transitArticleHeadings.join(", ")}.`,
+      "astrologyDrilldown: explain the factual transit mechanics briefly, with title 'Why this?'.",
+      "",
+      "Collective close rules:",
+      "The close must contain three sentences beginning 'Not one of us...'. Each one should negate a lie exposed by the transit.",
+      "Then use one collective metaphor, such as a chorus, constellation, orchestra, garden, ecosystem, or gallery.",
+      "End with one sentence beginning 'May we each...'.",
+      "Optionally sign off with '[Transit] blessings, Marie' only if the piece naturally calls for it.",
+      "",
+      "Guardrails:",
+      "No em dashes.",
+      "No bullets in the body.",
+      "No punchy fragment stacks.",
+      "No gift-shop lines.",
+      "No 'everything happens for a reason'.",
+      "No 'the universe is asking'.",
+      "No 'this transit invites you to'.",
+      "No 'hold space for'.",
+      "No 'sacred container'.",
+      "No 'divine timing'.",
+      "No 'trust the process'.",
+      "No 'love and light'.",
+      "No 'high vibes only'.",
+      "No 'just be grateful'.",
+      "No 'sit with that'.",
+      "No 'honor your journey'.",
+      "No 'step into your power'.",
+      "No perform, performance, or performing. Say what is actually happening: playing a role, running a script, putting on a face, or going through the motions.",
+      "No shrink or shrinking. Say what is actually happening: making yourself smaller for someone's comfort, swallowing what you wanted to say, or taking up less room than you need.",
+      "Do not over-explain astrology as astrology. Connect the technical facts to lived experience seamlessly.",
+      "Do not invent events that are not supported by the facts.",
+      "Use restraint. Specific behavior matters more than emotional intensity."
     ].join("\n");
   }
 
@@ -1034,9 +1130,31 @@ function isDailySkyFeedAspect(input: Pick<GenerateContentInput, "surface" | "mod
     );
 }
 
+function isTransitArticle(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
+  const factType = stringValue(input.facts?.type);
+  const contentType = stringValue(input.facts?.contentType);
+  const eventType = normalizeText(input.eventType);
+
+  return input.mode === "article" && (
+    input.surface === "sky" ||
+    eventType.includes("transit") ||
+    eventType.includes("retrograde") ||
+    eventType.includes("aspect") ||
+    eventType.includes("ingress") ||
+    eventType.includes("lunation") ||
+    normalizeText(factType).includes("transit") ||
+    normalizeText(factType).includes("retrograde") ||
+    normalizeText(contentType).includes("transit")
+  );
+}
+
 function requiredSectionHeadingsForInput(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
   if (isDailySkyFeedAspect(input)) {
     return dailySkyAspectHeadings;
+  }
+
+  if (isTransitArticle(input)) {
+    return transitArticleHeadings;
   }
 
   return requiredHeadingsByMode[input.mode] ?? [];
@@ -1700,9 +1818,10 @@ export function evaluateEditorialCoherence(
   context: GenerationContext
 ): EditorialGateResult {
   const failures: EditorialFailure[] = [];
+  const isTransitArticleContext = isTransitArticle(context);
   const summary = stringValue(draft.summary);
   const body = stringValue(draft.body);
-  const firstSummarySentence = firstSentence(summary || body);
+  const firstSummarySentence = isTransitArticleContext ? firstSentence(body || summary) : firstSentence(summary || body);
   const openingBody = firstParagraph(body);
   const reviewText = [summary, openingBody, ...(draft.sections ?? []).map((section) => section.body)].join("\n");
   const normalizedFirstSentence = normalizeText(firstSummarySentence);
@@ -1755,7 +1874,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (!isDailySkyAspect && technicalMainCopy.hasTechnicalAstrology) {
+  if (!isDailySkyAspect && !isTransitArticleContext && technicalMainCopy.hasTechnicalAstrology) {
     addEditorialFailure(
       failures,
       "TECHNICAL_ASTROLOGY_IN_MAIN_COPY",
@@ -1810,7 +1929,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (!isDailySkyAspect && (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText))) {
+  if (!isDailySkyAspect && !isTransitArticleContext && (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText))) {
     addEditorialFailure(
       failures,
       "ASTROLOGY_OVERLOAD",

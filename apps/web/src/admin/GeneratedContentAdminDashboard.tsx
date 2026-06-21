@@ -2225,20 +2225,7 @@ export function GeneratedContentAdminDashboard() {
             provider: reviewGenerationProvider,
             save: false,
             allowQualityFallback: true,
-            voiceNotes: [
-              voiceNotesFor(record.surface, record.eventType, record.reviewerNotes ?? ""),
-              "Write a daily astrology transit interpretation in the TLDR Astro voice.",
-              "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
-              "The body text shown to the editor must start with 'TLDR:' and then use visible labels before each following paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
-              "In the TLDR paragraph, start with one plain-language situation the reader may notice. Mention the aspect and date only after the human situation is clear.",
-              "Keep the factual astrology headline unchanged, but keep the first reader-facing sentence useful without astrology knowledge.",
-              "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
-              "Give 2-3 concrete life examples: a bill, boundary, conversation, deadline, commitment, choice, pattern, responsibility, relationship, work, money, emotions, or timing.",
-              "Give practical guidance tied directly to the planets and aspect. Avoid slogans, productivity coaching, guru language, and therapist register.",
-              "Use soft certainty: may, can, often, more likely, easier, harder.",
-              "Avoid: not through X but through Y, this is not dramatic astrology, the invitation is, lean into, step into, honor, release, unlock, universe, cosmic, manifesting.",
-              "Do not mention schemas, source records, APIs, dashboards, generation process, natal houses, or private personalization."
-            ].filter(Boolean).join("\n\n")
+            voiceNotes: voiceNotesForReviewRecord(record)
           })
         }
       );
@@ -2348,6 +2335,41 @@ export function GeneratedContentAdminDashboard() {
 
   function voiceNotesForDraft(draftWithFacts: AdminGeneratedContentDraft) {
     return voiceNotesFor(draftWithFacts.surface, draftWithFacts.eventType, draftWithFacts.reviewerNotes);
+  }
+
+  function voiceNotesForReviewRecord(record: AdminReviewRecord) {
+    const baseNotes = voiceNotesFor(record.surface, record.eventType, record.reviewerNotes ?? "");
+
+    if (record.mode === "article") {
+      return [
+        baseNotes,
+        "Write a full transit article in Marie Satori's voice.",
+        "Use longer, continuous paragraphs where one full thought deepens as it goes. Do not use punchy fragment stacks, bullets, or markdown headings inside the body.",
+        "Open with one landing line only, then build restrained validation, the astrology, the shadow, permission and integration, and the collective close.",
+        "The close must include three sentences beginning 'Not one of us...', then one collective metaphor, then one sentence beginning 'May we each...'.",
+        "Name specific behavior rather than stacking emotional language.",
+        "Use explicit permission with 'You're allowed to...' or 'You don't have to...' only after naming the pattern honestly.",
+        "Do not use em dashes.",
+        "Do not use: this transit invites you to, everything happens for a reason, gentle reminder, the universe is asking you to, hold space, sacred container, divine timing, trust the process, love and light, high vibes only, just be grateful, sit with that, honor your journey, step into your power.",
+        "Do not use perform, performance, performing, shrink, or shrinking. Name the actual behavior instead.",
+        "Do not mention schemas, source records, APIs, dashboards, generation process, or backend details."
+      ].filter(Boolean).join("\n\n");
+    }
+
+    return [
+      baseNotes,
+      "Write a daily astrology transit interpretation in the TLDR Astro voice.",
+      "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
+      "The body text shown to the editor must start with 'TLDR:' and then use visible labels before each following paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
+      "In the TLDR paragraph, start with one plain-language situation the reader may notice. Mention the aspect and date only after the human situation is clear.",
+      "Keep the factual astrology headline unchanged, but keep the first reader-facing sentence useful without astrology knowledge.",
+      "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
+      "Give 2-3 concrete life examples: a bill, boundary, conversation, deadline, commitment, choice, pattern, responsibility, relationship, work, money, emotions, or timing.",
+      "Give practical guidance tied directly to the planets and aspect. Avoid slogans, productivity coaching, guru language, and therapist register.",
+      "Use soft certainty: may, can, often, more likely, easier, harder.",
+      "Avoid: not through X but through Y, this is not dramatic astrology, the invitation is, lean into, step into, honor, release, unlock, universe, cosmic, manifesting.",
+      "Do not mention schemas, source records, APIs, dashboards, generation process, natal houses, or private personalization."
+    ].filter(Boolean).join("\n\n");
   }
 
   function showQueue(nextStatus: GeneratedContentStatus | "all", nextSurface = surface) {
