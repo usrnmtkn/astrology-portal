@@ -42,7 +42,8 @@
     gap: 36px;
   }
 
-  .chart-layout {
+  .chart-layout,
+  .sky-layout {
     grid-template-columns: 1fr;
     width: min(760px, calc(100vw - var(--page-gutter) * 2));
     gap: 36px;
@@ -299,6 +300,7 @@
 
   .ro-screen .sky-pl,
   .placement-section .planet-placement-row {
+    align-items: start;
     min-height: var(--sky-card-mobile-min-height);
     gap: var(--sky-placement-mobile-gap);
     padding: var(--sky-placement-mobile-padding);
@@ -319,6 +321,7 @@
 
   .ro-screen .sky-pl-glyph,
   .placement-section .planet-placement-row__glyph {
+    align-self: start;
     width: var(--sky-placement-mobile-glyph-column-size);
     min-width: var(--sky-placement-mobile-glyph-column-size);
   }
@@ -327,9 +330,11 @@
   .aspect-section .aspect-row-button,
   .aspect-section .aspect-row-static {
     grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    align-items: start;
   }
 
   .aspect-section .aspect-row-glyphs {
+    align-self: start;
     width: var(--sky-card-mobile-glyph-column-size);
     min-width: var(--sky-card-mobile-glyph-column-size);
   }
@@ -407,6 +412,154 @@
 
   .site-nav {
     display: none;
+  }
+
+  .mode-guest .today-hero,
+  .mode-member .today-hero {
+    order: 1;
+  }
+
+  .mode-guest .today-summary-cards,
+  .mode-member .today-summary-cards {
+    order: 3;
+  }
+
+  .mode-guest .mobile-full-chart-card,
+  .mode-member .mobile-full-chart-card {
+    order: 2;
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
+    z-index: calc(var(--z-topbar) - 1);
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) 48px;
+    align-items: center;
+    column-gap: var(--space-4);
+    width: 100%;
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    background: var(--card-bg);
+    color: var(--card-title-color);
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    margin-top: 0;
+    padding: 18px 20px 18px 18px;
+    text-align: left;
+    transform: none;
+  }
+
+  html[data-scrolled] .mode-guest .mobile-full-chart-card,
+  html[data-scrolled] .mode-member .mobile-full-chart-card {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
+    right: var(--mobile-page-gutter);
+    left: var(--mobile-page-gutter);
+    width: auto;
+    max-width: none;
+    margin-top: 0;
+    box-shadow:
+      0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent),
+      0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
+    transform: none;
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card {
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--card-title-color);
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy strong {
+    color: var(--ink);
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy span {
+    color: var(--ink-2);
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__icon {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+
+  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__arrow {
+    background: color-mix(in srgb, var(--surface-2) 86%, var(--ink) 14%);
+    color: var(--ink);
+  }
+
+  .mobile-full-chart-card__icon,
+  .mobile-full-chart-card__arrow {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+  }
+
+  .mobile-full-chart-card__icon {
+    width: 58px;
+    height: 58px;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
+    color: var(--ink);
+  }
+
+  .mobile-full-chart-card__arrow {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--app-card) 78%, var(--app-text) 10%);
+    color: var(--ink);
+  }
+
+  .mobile-full-chart-card__arrow svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.25;
+  }
+
+  .mobile-full-chart-card__wheel {
+    display: block;
+    width: 36px;
+    height: 36px;
+    filter: var(--filter-glyph-current);
+    object-fit: contain;
+  }
+
+  .mobile-full-chart-card__copy {
+    display: grid;
+    min-width: 0;
+    align-content: center;
+    gap: 4px;
+  }
+
+  .mobile-full-chart-card__copy strong {
+    color: var(--card-title-color);
+    font-family: var(--font-ui);
+    font-size: var(--sky-mobile-feature-title);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-title);
+    line-height: var(--leading-title);
+  }
+
+  .mobile-full-chart-card__copy span {
+    display: block;
+    overflow: hidden;
+    color: var(--card-meta-color);
+    font-family: var(--font-body);
+    font-size: var(--text-meta-size);
+    line-height: var(--leading-meta);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mode-guest .sky-lunar-brief,
+  .mode-member .sky-lunar-brief,
+  .mode-guest .retrograde-section,
+  .mode-member .retrograde-section,
+  .mode-guest .placement-section,
+  .mode-member .placement-section,
+  .mode-guest .aspect-section,
+  .mode-member .aspect-section {
+    order: 4;
   }
 }
 
@@ -507,6 +660,7 @@
   }
 
   .nav-pill {
+    gap: 8px;
     min-height: var(--top-control-height);
     max-width: calc(100vw - var(--mobile-nav-reserved-width));
     border-color: var(--nav-border);
@@ -783,6 +937,7 @@
   .mode-guest .sky-layout,
   .mode-member .sky-layout {
     gap: 0;
+    overflow: visible;
   }
 
   .mode-guest .page-shell,
@@ -792,6 +947,10 @@
 
   .mode-guest .today-hero,
   .mode-member .today-hero,
+  .mode-guest .today-summary-cards,
+  .mode-member .today-summary-cards,
+  .mode-guest .mobile-full-chart-card,
+  .mode-member .mobile-full-chart-card,
   .mode-guest .detail-panel,
   .mode-member .detail-panel,
   .mode-guest .sky-lunar-brief,
@@ -809,6 +968,11 @@
     margin-inline: auto;
   }
 
+  .mode-guest :where(.today-hero, .today-summary-cards, .mobile-full-chart-card, .detail-panel),
+  .mode-member :where(.today-hero, .today-summary-cards, .mobile-full-chart-card, .detail-panel) {
+    grid-column: 1;
+  }
+
   .mode-guest .sky-panel,
   .mode-member .sky-panel {
     display: none;
@@ -821,10 +985,17 @@
     overflow: clip;
   }
 
+  .mode-guest .today-summary-cards,
+  .mode-member .today-summary-cards {
+    order: 3;
+    gap: 18px;
+  }
+
   .mode-guest .detail-panel,
   .mode-member .detail-panel {
     order: 2;
-    gap: 40px;
+    gap: 18px;
+    overflow: visible;
   }
 
   .mode-guest .sky-intro__lead,
@@ -835,8 +1006,6 @@
 
   .mode-guest .sky-intro__lead-desktop,
   .mode-member .sky-intro__lead-desktop,
-  .mode-guest .sky-intro__copy,
-  .mode-member .sky-intro__copy,
   .mode-guest .today-controls,
   .mode-member .today-controls {
     display: none;
@@ -849,9 +1018,10 @@
 
   .mode-guest .mobile-full-chart-card,
   .mode-member .mobile-full-chart-card {
+    order: 2;
     position: sticky;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) - 6px);
-    z-index: 80;
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
+    z-index: calc(var(--z-topbar) - 1);
     display: grid;
     grid-template-columns: 58px minmax(0, 1fr) 48px;
     align-items: center;
@@ -863,10 +1033,25 @@
     color: var(--card-title-color);
     box-shadow: var(--card-shadow);
     cursor: pointer;
-    margin-top: -18px;
+    margin-top: 0;
     padding: 18px 20px 18px 18px;
     text-align: left;
-    transform: translateY(-18px);
+    transform: none;
+  }
+
+  html[data-scrolled] .mode-guest .mobile-full-chart-card,
+  html[data-scrolled] .mode-member .mobile-full-chart-card {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
+    right: var(--mobile-page-gutter);
+    left: var(--mobile-page-gutter);
+    width: auto;
+    max-width: none;
+    margin-top: 0;
+    box-shadow:
+      0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent),
+      0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
+    transform: none;
   }
 
   :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card {
@@ -891,18 +1076,6 @@
   :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__arrow {
     background: color-mix(in srgb, var(--surface-2) 86%, var(--ink) 14%);
     color: var(--ink);
-  }
-
-  html[data-scrolled] .mode-guest .mobile-full-chart-card,
-  html[data-scrolled] .mode-member .mobile-full-chart-card {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) - 6px);
-    right: var(--mobile-page-gutter);
-    left: var(--mobile-page-gutter);
-    width: auto;
-    margin-top: 0;
-    box-shadow: 0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent), 0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
-    transform: none;
   }
 
   .mobile-full-chart-card__icon,
@@ -1066,14 +1239,15 @@
   .placement-section .planet-placement-row {
     grid-template-columns:
       var(--sky-placement-mobile-glyph-column-size)
-      minmax(0, 1fr)
-      var(--sky-placement-mobile-chevron-column-size);
+      minmax(0, 1fr);
+    align-items: start;
     gap: var(--sky-placement-mobile-gap);
     min-height: var(--sky-card-mobile-min-height);
     padding: var(--sky-placement-mobile-padding);
   }
 
   .placement-section .planet-placement-row__glyph {
+    align-self: start;
     width: var(--sky-placement-mobile-glyph-column-size);
     min-width: var(--sky-placement-mobile-glyph-column-size);
   }
@@ -1085,6 +1259,7 @@
   .auth-shell,
   .signup-grid,
   .manual-chart-grid,
+  .synastry-placement-columns,
   .synastry-placement-strip,
   .friend-placement-table,
   .friend-placement-column-compact .friend-placement-table {
@@ -1169,6 +1344,7 @@
     --aspect-row-gap: var(--sky-card-mobile-grid-gap);
     --aspect-row-padding: var(--sky-card-mobile-padding);
     grid-template-columns: var(--sky-card-mobile-glyph-column-size) minmax(0, 1fr) auto;
+    align-items: start;
     min-height: var(--sky-card-mobile-min-height);
   }
 
@@ -1186,6 +1362,7 @@
 
   .mode-guest .aspect-section .aspect-row-glyphs,
   .mode-member .aspect-section .aspect-row-glyphs {
+    align-self: start;
     grid-area: auto;
     justify-content: flex-start;
   }
@@ -1472,12 +1649,6 @@
     height: 40px;
     padding: 0 var(--sp-2);
     font-size: var(--type-description-size);
-  }
-}
-
-@media (max-width: 599px) {
-  .sky-header-date-button {
-    display: none;
   }
 }
 

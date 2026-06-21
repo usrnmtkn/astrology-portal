@@ -429,7 +429,7 @@
   --nav-radius: var(--radius-pill);
   --nav-padding: var(--sp-half);
   --nav-link-size: 15px;
-  --nav-scrolled-bg: #ffffff;
+  --nav-scrolled-bg: color-mix(in srgb, var(--bg) 74%, transparent);
   --nav-border: rgba(28, 32, 52, 0.09);
   --nav-border-hover: color-mix(in srgb, var(--ink) 10%, transparent);
   --nav-link-hover-bg: #f5f3fa;
@@ -719,7 +719,7 @@
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
   --nav-surface: var(--surface);
-  --nav-scrolled-bg: var(--surface);
+  --nav-scrolled-bg: color-mix(in srgb, var(--bg) 76%, transparent);
   --nav-border: rgba(255, 255, 255, 0.08);
   --nav-border-hover: rgba(255, 255, 255, 0.14);
   --nav-link-hover-bg: rgba(255, 255, 255, 0.07);

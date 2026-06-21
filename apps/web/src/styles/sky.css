@@ -650,12 +650,13 @@
   grid-template-columns:
     var(--sky-placement-glyph-column-size)
     minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
   gap: var(--sky-placement-card-gap);
   padding: var(--sky-card-padding);
 }
 
 .ro-screen .sky-pl-glyph {
+  align-self: start;
   justify-self: center;
   width: var(--sky-placement-glyph-column-size);
   min-width: var(--sky-placement-glyph-column-size);
@@ -891,12 +892,13 @@
   grid-template-columns:
     var(--sky-placement-glyph-column-size)
     minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
   gap: var(--sky-placement-card-gap);
   padding: var(--sky-card-padding);
 }
 
 .placement-section .planet-placement-row__glyph {
+  align-self: start;
   justify-self: center;
   width: var(--sky-placement-glyph-column-size);
   min-width: var(--sky-placement-glyph-column-size);
@@ -921,11 +923,11 @@
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {
   grid-template-columns: var(--sky-card-glyph-column-size) minmax(0, 1fr) auto;
-  align-items: center;
+  align-items: start;
 }
 
 .aspect-section .aspect-row-glyphs {
-  align-self: center;
+  align-self: start;
   width: var(--sky-card-glyph-column-size);
   min-width: var(--sky-card-glyph-column-size);
   height: var(--text-glyph);
