@@ -4560,8 +4560,6 @@ function emptyHousePlanetFunction(ruler: string, context: "self" | "friend") {
 
 function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: string, context: "self" | "friend") {
   const rulerLabel = displayRulerName(ruler || "the ruler");
-  const need = emptyHouseNeedPhrase(house, context);
-  const harder = emptyHouseHarderPhrase(house, context);
 
   if (house === 2 && sign === "Cancer" && ruler === "Moon") {
     return context === "friend"
@@ -4587,7 +4585,13 @@ function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: strin
       : "Aquarius is ruled by Saturn, so Saturn shows what can make joy easier or harder to access. For you, pleasure may not be automatic. You may need time, structure, privacy, or permission before you let yourself create, play, flirt, or be seen.";
   }
 
-  return `${sign || "This sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what can make ${need} easier or harder to access. It points to ${emptyHousePlanetFunction(ruler, context)}.`;
+  if (house === 12) {
+    return context === "friend"
+      ? `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for them to let down.`
+      : `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for you to let down.`;
+  }
+
+  return `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} is the planet to follow here. It shows ${emptyHousePlanetFunction(ruler, context)} and where ${emptyHouseNaturalName(house, context)} starts to matter in ordinary life.`;
 }
 
 function emptyHouseNeedPhrase(house: number, context: "self" | "friend") {
@@ -4793,8 +4797,8 @@ function emptyHouseRulerPlacementParagraph(
   const concreteSentence = emptyHouseRulerHouseConcreteSentence(rulerPosition.house, context);
 
   return context === "friend"
-    ? `Their ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} is tied to ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`
-    : `Your ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} is tied to ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`;
+    ? `Their ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} may become easier to read through ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`
+    : `Your ${rulerName} is in ${rulerPosition.sign}, in the ${ordinalHouse(rulerPosition.house)} house. ${capitalizeText(topic)} may become easier to read through ${rulerHousePhrase}. ${concreteSentence} ${rulerSignSentence}`;
 }
 
 function emptyHouseActivationParagraph(house: number, ruler: string, context: "self" | "friend") {
@@ -4805,7 +4809,7 @@ function emptyHouseActivationParagraph(house: number, ruler: string, context: "s
     : `${possessive} ${ordinalHouse(house)} house`;
   const behavior = emptyHouseActivationBehavior(house, context);
 
-  return `When ${rulerLabel} is activated, or when planets move through ${housePhrase}, ${behavior}`;
+  return `This house can stay quiet for stretches of time. When ${rulerLabel} is activated, or when planets move through ${housePhrase}, ${behavior}`;
 }
 
 function emptyHouseActivationBehavior(house: number, context: "self" | "friend") {
@@ -4895,6 +4899,30 @@ function emptyHouseCardRulerHouseLife(house: number, context: "self" | "friend")
   return lives[house] ?? "the part of life where the ruler sits";
 }
 
+function emptyHouseCardAreaFocus(house: number) {
+  const areas: Record<number, string> = {
+    1: "who you are",
+    2: "security",
+    3: "your voice",
+    4: "home",
+    5: "joy",
+    6: "daily life",
+    7: "connection",
+    8: "trust",
+    9: "direction",
+    10: "public direction",
+    11: "belonging",
+    12: "what is hidden"
+  };
+
+  return areas[house] ?? "this part of life";
+}
+
+function topicTakesShapeClause(topic: string, owner: "your" | "their") {
+  const plural = /,|\band\b/.test(topic);
+  return `${capitalizeText(owner)} ${topic} ${plural ? "take" : "takes"} shape`;
+}
+
 function displayRulerName(ruler: string) {
   if (ruler === "Moon" || ruler === "Sun") {
     return `the ${ruler}`;
@@ -4923,9 +4951,10 @@ function emptyHouseCardDescription(
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
   const rulerLabel = displayRulerName(ruler || "the house ruler");
   const topic = emptyHouseTopicSingulars[house] ?? emptyHouseCardAreaLabels[house] ?? "this topic";
-  const signBehavior = sign ? emptyHouseCardSignBehavior(sign, house, context) : "the sign on the cusp";
   const rulerHouseLabel = rulerPosition?.house ? `the ${ordinalHouse(rulerPosition.house)} house` : "its placement";
+  const rulerHouseTopics = rulerPosition?.house ? emptyHouseCardRulerHouseTopics[rulerPosition.house] ?? "the place where the ruler sits" : "where that planet lives";
   const rulerHouseLife = rulerPosition?.house ? emptyHouseCardRulerHouseLife(rulerPosition.house, context) : "where that planet lives";
+  const areaFocus = emptyHouseCardAreaFocus(house);
 
   if (house === 2 && sign === "Cancer" && ruler === "Moon" && rulerPosition?.house === 6) {
     return context === "friend"
@@ -4940,10 +4969,11 @@ function emptyHouseCardDescription(
   }
 
   if (context === "friend") {
-    return `With ${sign || "the cusp sign"} on the empty ${ordinalHouse(house)} house, their ${topic} may show up ${signBehavior}. ${rulerLabel} is in ${rulerHouseLabel}, connecting this to ${rulerHouseLife}.`;
+    const friendArea = areaFocus.replace(/^your\b/i, "their");
+    return `${topicTakesShapeClause(topic, "their")} through ${rulerLabel} in ${rulerHouseLabel}, so ${friendArea} becomes clearer through ${rulerHouseTopics} and the way they experience ${rulerHouseLife}.`;
   }
 
-  return `With ${sign || "the cusp sign"} on the empty ${ordinalHouse(house)} house, your ${topic} may show up ${signBehavior}. ${rulerLabel} is in ${rulerHouseLabel}, connecting this to ${rulerHouseLife}.`;
+  return `${topicTakesShapeClause(topic, "your")} through ${rulerLabel} in ${rulerHouseLabel}, so ${areaFocus} becomes clearer through ${rulerHouseTopics} and the way you experience ${rulerHouseLife}.`;
 }
 
 function emptyHouseDetailArticle(
@@ -9758,10 +9788,22 @@ const natalPlacementTemplateLeakPatterns = [
   /\bcarries the thread\b/i,
   /\bboth places\b/i,
   /\bthemes\b/i,
+  /\benergy\b/i,
+  /\bactivates\b/i,
+  /\bintegration\b/i,
+  /\blife area\b/i,
   /\broutes? this placement\b/i,
   /\bthe story becomes more specific\b/i,
   /\bthis placement becomes more alive\b/i,
-  /\ballowed to speak to each other\b/i
+  /\ballowed to speak to each other\b/i,
+  /\bthese are not just background circumstances\b/i,
+  /\bthey affect how your\b/i,
+  /\bwhen these conditions are supported\b/i,
+  /\bwhen they are strained or neglected\b/i,
+  /\bthe gift is\b/i,
+  /\bthe work is\b/i,
+  /\bhas to be understood alongside\b/i,
+  /\bthis is inviting you\b/i
 ];
 
 function possessiveArea(focus: string) {
@@ -9787,23 +9829,26 @@ function natalRulerParagraph({
 
   if (houseRuler && rulerPosition && rulerHouse) {
     const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
-    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
     const originalArea = possessiveArea(focus);
+    const concreteSentence = emptyHouseRulerHouseConcreteSentence(rulerHouse, "self");
+    const concreteFollow = concreteSentence
+      ? ` ${concreteSentence.replace(/^This may show up through /, "This may show up through ")}`
+      : "";
 
     if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is also in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground for clarity, pressure, and development. ${rulerProcess}`;
+      return `${houseRuler} also sits in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground. The pattern becomes clearer through the choices, pressures, and repeated situations that happen there.${concreteFollow}`;
     }
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} has to be understood alongside ${rulerHouseLink}. ${rulerProcess}`;
+    return `${cuspSign} points this house toward ${houseRuler}. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, pulling ${originalArea} toward ${rulerHouseLink}. The connection becomes practical through what happens in that house.${concreteFollow}`;
   }
 
   if (houseRuler) {
-    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `Its placement shows where the lesson becomes concrete.`;
+    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `${houseRuler} shows where this pattern becomes easier to recognize in real life.`;
 
-    return `Because ${cuspSign} starts your ${houseLabel}, ${houseRuler} rules this house. Its natal placement shows where the meaning becomes more personal and practical over time. ${rulerProcess}`;
+    return `${cuspSign} points this house toward ${houseRuler}. ${rulerProcess}`;
   }
 
-  return `The ruler of your ${houseLabel} shows where the meaning becomes more personal and practical over time.`;
+  return `The ruler of your ${houseLabel} shows where this pattern becomes easier to recognize in real life.`;
 }
 
 function natalPlanetCoreFunction(planet: string) {
@@ -9915,7 +9960,7 @@ function natalRetrogradePlacementNote(position: PlanetPosition, owner: "you" | "
 function natalPlacementOpeningParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
   const signTone = natalSignTonePhrases[position.sign] ?? "express this part of you with more honesty and precision";
 
-  return `${natalPlanetPlacementLead(position)} In ${position.sign}, it moves with a ${signFrame.quality} quality. You may notice this through the need to ${signTone}.`;
+  return `${natalPlanetPlacementLead(position)} In ${position.sign}, this part of you tends to ${signTone}.`;
 }
 
 function natalPlacementHouseSupportParagraph(
@@ -9923,7 +9968,7 @@ function natalPlacementHouseSupportParagraph(
   houseFrame: { intro: string; focus: string; lived: string },
   houseLabel: string
 ) {
-  return `In the ${houseLabel}, this comes through ${houseFrame.lived}. These are not just background circumstances. They affect how your ${position.planet} develops, reacts, and finds stability. When these conditions are supported, your ${position.planet} has more room to work clearly. When they are strained or neglected, ${natalPlanetStressExpression(position.planet)}.`;
+  return `In the ${houseLabel}, this shows up through ${houseFrame.lived}. The house makes the pattern concrete: it shows where ordinary choices, pressure, and timing can make the placement easier to recognize. If this house is strained, ${natalPlanetStressExpression(position.planet)}.`;
 }
 
 function natalPlacementSynthesisParagraph(
@@ -9935,25 +9980,25 @@ function natalPlacementSynthesisParagraph(
 
   switch (position.planet) {
     case "Sun":
-      return `The gift is a clearer sense of direction that can survive contact with real life. The work is making sure confidence comes from what is true, not only from what gets recognized.`;
+      return `Confidence lasts longer when it is built from what is true, not only from what gets recognized. Over time, this can become a direction that still holds up when real life tests it.`;
     case "Moon":
-      return `The gift is emotional honesty that has somewhere real to land. The work is listening before your body or mood has to get louder.`;
+      return `Emotional honesty works better when it has somewhere real to land. The steadier path is listening before your body or mood has to get louder.`;
     case "Mercury":
-      return `The gift is language that can make a situation clearer. The work is not letting the mind loop around what needs to be said or understood.`;
+      return `Your words can make a situation clearer when they stay connected to what is actually happening. The mind gets steadier when it stops looping around what needs to be said or understood.`;
     case "Venus":
-      return `The gift is knowing what feels worth choosing. The work is telling the difference between real value and the pull of comfort, approval, or chemistry.`;
+      return `Connection becomes more honest when you can tell the difference between real value and the pull of comfort, approval, or chemistry. What lasts is what still feels worth choosing after the first pull settles.`;
     case "Mars":
-      return `The gift is courage with a real target. The work is knowing when to act and when reaction would only drain you.`;
+      return `Courage becomes more useful when it has a real target. The clearer path is knowing when to act and when reaction would only drain you.`;
     case "Jupiter":
-      return `The gift is a wider view that can open doors. The work is making sure the story still holds up after the excitement passes.`;
+      return `A wider view can open doors, but the story still needs to hold up after the excitement passes. Growth becomes stronger when it can survive contact with details.`;
     case "Saturn":
-      return `The gift is earned confidence. The work is not confusing pressure with proof that something is wrong.`;
+      return `Earned confidence grows through time and repeated proof. Pressure does not always mean something is wrong; sometimes it shows what needs a stronger structure.`;
     case "Uranus":
-      return `The gift is a truer kind of freedom. The work is making sure change becomes livable, not only disruptive.`;
+      return `Freedom becomes more useful when it can be lived, not only demanded. Change works best when it gives the pattern a real way forward.`;
     case "Neptune":
-      return `The gift is sensitivity that can perceive what others miss. The work is keeping the dream clear enough to survive real life.`;
+      return `Sensitivity can perceive what others miss, but the dream still needs enough shape to survive real life. Clarity protects what is actually worth trusting.`;
     case "Pluto":
-      return `The gift is strength that comes from telling the truth. The work is not letting control stand in for real change.`;
+      return `Strength returns when the truth is easier to face than to control. Real change lasts longer when it is not forced just to escape fear.`;
     default:
       return `Over time, ${planetFrame.growth} becomes steadier when your ${focus} reflects what is actually true for you. ${planetFrame.integration}.`;
   }
@@ -10303,45 +10348,45 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
   const houseLabel = `${ordinalHouse(position.house)} house`;
 
   if (!rulerPosition?.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. Its natal placement shows where the meaning keeps becoming more personal over time.`;
+    return `${cuspSign} points ${possessiveLabel(ownerName)} ${houseLabel} toward ${houseRuler}. That ruler shows where this pattern may become easier to recognize through real choices and timing.`;
   }
 
   const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
   const placementConcern = friendPlacementRulerConcern(position);
 
   if (rulerPosition.planet === position.planet && rulerPosition.sign === position.sign && rulerPosition.house === position.house) {
-    return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. Since ${houseRuler} is also in ${position.sign} in the ${houseLabel}, the same material gets emphasized twice. That makes ${placementConcern} central to how ${pronouns.possessive} ${position.planet} works.`;
+    return `${houseRuler} also sits in ${position.sign} in ${possessiveLabel(ownerName)} ${houseLabel}, so ${placementConcern} keeps returning to the same ground. That can make this placement feel more concentrated, familiar, and hard to ignore.`;
   }
 
-  return `Because ${cuspSign} starts ${possessiveLabel(ownerName)} ${houseLabel}, ${houseRuler} rules this house. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, so ${placementConcern} has to be read alongside ${rulerHouseDynamic}.`;
+  return `${cuspSign} points ${possessiveLabel(ownerName)} ${houseLabel} toward ${houseRuler}. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, pulling ${placementConcern} toward ${rulerHouseDynamic}.`;
 }
 
 function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
   switch (position.planet) {
     case "Sun":
-      return `The gift is a clearer sense of direction. The work is making sure confidence comes from what is true, not only from what gets recognized.`;
+      return `Confidence gets stronger when it comes from what is true, not only from what gets recognized.`;
     case "Moon":
-      return `The gift is emotional honesty that has somewhere real to land. The work is listening before the body or mood has to get louder.`;
+      return `Emotional honesty works better when it has somewhere real to land, before the body or mood has to get louder.`;
     case "Mercury":
-      return `The gift is finding words that help other people understand the point. The work is not rushing past the details just because the larger meaning is more exciting.`;
+      return `Their words become more useful when they help other people understand the point without rushing past the details.`;
     case "Venus":
       if (position.sign === "Scorpio") {
-        return `The gift is connection with depth and emotional truth. The work is learning the difference between intensity and value.`;
+        return `Connection becomes steadier when they can tell the difference between intensity and value.`;
       }
 
-      return `The gift is knowing what feels worth choosing. The work is telling the difference between real value and the pull of comfort, approval, or chemistry.`;
+      return `What lasts is what still feels worth choosing after comfort, approval, or chemistry stops making the decision for them.`;
     case "Mars":
-      return `The gift is courage with a real target. The work is knowing what deserves effort before reaction takes over.`;
+      return `Courage becomes more useful when they know what deserves effort before reaction takes over.`;
     case "Jupiter":
-      return `The gift is a bright, generous mind. The work is making sure the story still holds up after the excitement passes.`;
+      return `Their wider view becomes stronger when the story still holds up after the excitement passes.`;
     case "Saturn":
-      return `The gift is earned confidence. The work is not confusing pressure with proof that something is wrong.`;
+      return `Confidence becomes steadier when pressure is treated as information, not proof that something is wrong.`;
     case "Uranus":
-      return `The gift is a truer kind of freedom. The work is making sure change becomes livable, not only disruptive.`;
+      return `Freedom becomes more useful when change gives them a livable way forward.`;
     case "Neptune":
-      return `The gift is sensitivity that can perceive what others miss. The work is keeping the dream clear enough to survive real life.`;
+      return `Sensitivity becomes easier to trust when the dream has enough shape to survive real life.`;
     case "Pluto":
-      return `The gift is strength that comes from telling the truth. The work is not letting control stand in for real change.`;
+      return `Strength returns when truth matters more than control.`;
     default:
       return `Over time, ${ownerName} can make this pattern more real in daily life. The more ${pronouns.subject} understand how it works, the more useful and honest it becomes.`;
   }

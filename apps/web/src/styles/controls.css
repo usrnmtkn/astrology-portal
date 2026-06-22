@@ -55,6 +55,9 @@
   white-space: nowrap;
   cursor: pointer;
   overflow: hidden;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .segmented-control .segmented-control__item.segmented-control__item--active {
@@ -65,8 +68,13 @@
 }
 
 .segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
-  background: var(--surface-2);
+  background: var(--segmented-hover-bg, var(--surface-2));
   color: var(--segmented-hover-fg, var(--ink));
+}
+
+.segmented-control .segmented-control__item.segmented-control__item--active:hover {
+  background: var(--segmented-active-hover-bg, var(--segmented-active-bg));
+  color: var(--segmented-active-fg);
 }
 
 .segmented-control .segmented-control__item:focus-visible {
