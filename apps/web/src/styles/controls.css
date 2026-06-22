@@ -68,7 +68,7 @@
 }
 
 .segmented-control .segmented-control__item:not(.segmented-control__item--active):hover {
-  background: var(--segmented-hover-bg, var(--surface-2));
+  background: transparent;
   color: var(--segmented-hover-fg, var(--ink));
 }
 
