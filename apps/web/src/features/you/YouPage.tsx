@@ -72,7 +72,6 @@ export type YouPageProps = {
   signatureTitle: string;
   signaturesReady: boolean;
   transitArticle?: YouTransitArticle | null;
-  transitsDrawn: boolean;
 };
 
 function YouEmptyState({
@@ -312,15 +311,13 @@ function YouUpdatesTab({
   dailyUpdateSummary,
   hasSavedCurrentCity,
   onCreateChart,
-  personalTimingSummary,
-  transitsDrawn
+  personalTimingSummary
 }: {
   aspectRows: ReactNode[];
   dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
-  transitsDrawn: boolean;
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
@@ -377,12 +374,12 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
-      {hasSavedCurrentCity && aspectRows.length > 0 && transitsDrawn && (
+      {hasSavedCurrentCity && aspectRows.length > 0 && (
         <div className="updates-aspect-list" aria-label="Aspects">
           {aspectRows}
         </div>
       )}
-      {hasSavedCurrentCity && (!transitsDrawn || aspectRows.length === 0) && (
+      {hasSavedCurrentCity && aspectRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
           <h3>No major updates to your chart today.</h3>
@@ -628,8 +625,7 @@ export function YouPage({
   signatureBody,
   signatureTitle,
   signaturesReady,
-  transitArticle,
-  transitsDrawn
+  transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
 
@@ -691,7 +687,6 @@ export function YouPage({
               hasSavedCurrentCity={hasSavedCurrentCity}
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
-              transitsDrawn={transitsDrawn}
             />
           )}
         </main>
