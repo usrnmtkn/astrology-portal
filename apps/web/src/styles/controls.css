@@ -2,7 +2,7 @@
   display: inline-grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: 3px;
+  gap: var(--segmented-gap);
   width: fit-content;
   max-width: 100%;
   min-width: 0;
@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   min-width: max-content;
-  height: 40px;
+  height: var(--segmented-item-height);
   min-height: 0;
   padding: 0 var(--segmented-item-px);
   border: 0;
@@ -60,6 +60,7 @@
 .segmented-control .segmented-control__item.segmented-control__item--active {
   background: var(--segmented-active-bg);
   color: var(--segmented-active-fg);
+  font-weight: var(--weight-semibold);
   box-shadow: var(--segmented-active-shadow, none);
 }
 
@@ -74,7 +75,7 @@
 }
 
 .segmented-control--compact .segmented-control__item {
-  height: 40px;
+  height: var(--segmented-item-height);
   padding: 0 18px;
-  font-size: var(--text-row-value);
+  font-size: var(--text-button-size);
 }
