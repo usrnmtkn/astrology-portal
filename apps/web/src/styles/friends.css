@@ -28,54 +28,18 @@
 }
 
 .friends-page:not(.friend-detail-page) .friends-page-heading {
-  display: none;
+  display: block;
 }
 
 .friends-top-tabs {
-  justify-self: stretch;
-  display: flex;
-  gap: 42px;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid var(--hairline);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
+  justify-self: center;
+  width: min(340px, 100%);
+  margin: 0 auto;
 }
 
 .friends-top-tabs.segmented-control .segmented-control__item {
-  position: relative;
-  justify-content: flex-start;
-  height: 48px;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--muted);
-  box-shadow: none;
-  font-family: var(--font-ui);
-  font-size: var(--type-xl);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-normal);
-}
-
-.friends-top-tabs.segmented-control .segmented-control__item.segmented-control__item--active {
-  background: transparent;
-  color: var(--ink);
-  box-shadow: none;
-}
-
-.friends-top-tabs.segmented-control .segmented-control__item.segmented-control__item--active::after {
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 86px;
-  height: 3px;
-  border-radius: 999px;
-  background: var(--ink);
-  content: "";
+  width: 100%;
+  min-width: 0;
 }
 
 .manual-chart-workspace-list-only {
@@ -259,13 +223,13 @@
 
 .manual-chart-cards {
   display: grid;
-  gap: 0;
+  gap: var(--card-list-gap);
   width: 100%;
   max-width: 100%;
   overflow: visible;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-sm);
-  background: var(--card-bg);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
@@ -280,9 +244,10 @@
   gap: 0;
   padding: 0;
   overflow: visible;
-  border-bottom: 1px solid var(--card-border);
-  border-radius: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .manual-chart-row--menu-open {
@@ -290,14 +255,11 @@
 }
 
 .manual-chart-row:first-child {
-  border-top-left-radius: var(--radius-sm);
-  border-top-right-radius: var(--radius-sm);
+  border-radius: var(--card-radius);
 }
 
 .manual-chart-row:last-child {
-  border-bottom: 1px solid var(--card-border);
-  border-bottom-right-radius: var(--radius-sm);
-  border-bottom-left-radius: var(--radius-sm);
+  border-radius: var(--card-radius);
 }
 
 .manual-chart-select {
@@ -2067,10 +2029,10 @@
 }
 
 .app-shell.mode-friends .manual-chart-cards {
-  gap: 0;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-sm);
-  background: var(--card-bg);
+  gap: var(--card-list-gap);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   overflow: visible;
 }
 
@@ -2081,7 +2043,7 @@
     "cta actions";
   min-height: 118px;
   padding: 0;
-  border-radius: 0;
+  border-radius: var(--card-radius);
 }
 
 .app-shell.mode-friends .manual-chart-select {

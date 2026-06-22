@@ -468,7 +468,9 @@
   --segmented-active-bg: var(--surface-2);
   --segmented-active-fg: var(--ink);
   --segmented-inactive-fg: var(--muted);
+  --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 88%, var(--ink) 12%);
   --segmented-hover-fg: var(--ink);
+  --segmented-active-hover-bg: color-mix(in srgb, var(--surface-2) 82%, var(--ink) 10%);
   --segmented-shadow: var(--card-shadow);
   --segmented-active-shadow: none;
   --id-card-radius: var(--card-radius);
@@ -734,7 +736,9 @@
   --segmented-active-bg: var(--surface-2);
   --segmented-active-fg: var(--ink);
   --segmented-inactive-fg: var(--muted);
+  --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 82%, white 10%);
   --segmented-hover-fg: var(--ink);
+  --segmented-active-hover-bg: color-mix(in srgb, var(--surface-2) 74%, white 14%);
   --segmented-shadow: var(--card-shadow);
   --segmented-active-shadow: none;
   --input-bg: var(--surface-2);
