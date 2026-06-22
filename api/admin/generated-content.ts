@@ -69,6 +69,7 @@ async function readJsonBody(req: IncomingMessage) {
     facts?: unknown;
     knowledgeIds?: string[];
     sourceSnapshot?: unknown;
+    promptVersion?: string;
     reviewerNotes?: string;
   };
 }
