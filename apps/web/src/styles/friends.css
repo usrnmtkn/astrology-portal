@@ -27,9 +27,55 @@
   letter-spacing: var(--tracking-display);
 }
 
+.friends-page:not(.friend-detail-page) .friends-page-heading {
+  display: none;
+}
+
 .friends-top-tabs {
-  justify-self: center;
+  justify-self: stretch;
+  display: flex;
+  gap: 42px;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.friends-top-tabs.segmented-control .segmented-control__item {
+  position: relative;
+  justify-content: flex-start;
+  height: 48px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  font-family: var(--font-ui);
+  font-size: var(--type-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-normal);
+}
+
+.friends-top-tabs.segmented-control .segmented-control__item.segmented-control__item--active {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.friends-top-tabs.segmented-control .segmented-control__item.segmented-control__item--active::after {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 86px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ink);
+  content: "";
 }
 
 .manual-chart-workspace-list-only {
@@ -213,24 +259,30 @@
 
 .manual-chart-cards {
   display: grid;
-  gap: var(--card-list-gap);
+  gap: 0;
   width: 100%;
   max-width: 100%;
   overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
   box-shadow: none;
 }
 
 .manual-chart-row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 68px;
-  min-height: 108px;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  grid-template-areas:
+    "select actions"
+    "cta actions";
+  min-height: 118px;
   gap: 0;
   padding: 0;
   overflow: visible;
+  border-bottom: 1px solid var(--card-border);
+  border-radius: 0;
+  background: var(--card-bg);
 }
 
 .manual-chart-row--menu-open {
@@ -238,25 +290,26 @@
 }
 
 .manual-chart-row:first-child {
-  border-top-left-radius: var(--card-radius);
-  border-top-right-radius: var(--card-radius);
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
 }
 
 .manual-chart-row:last-child {
   border-bottom: 1px solid var(--card-border);
-  border-bottom-right-radius: var(--card-radius);
-  border-bottom-left-radius: var(--card-radius);
+  border-bottom-right-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
 }
 
 .manual-chart-select {
+  grid-area: select;
   display: grid;
-  grid-template-columns: 74px minmax(0, 1fr);
-  align-items: center;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: start;
   width: 100%;
   min-width: 0;
   max-width: 100%;
   gap: 24px;
-  padding: 16px 20px;
+  padding: 28px 20px 18px 28px;
   border: 0;
   background: transparent;
   text-align: left;
@@ -324,8 +377,8 @@
 }
 
 .manual-chart-avatar {
-  width: 68px;
-  height: 68px;
+  width: 82px;
+  height: 82px;
   font-size: var(--text-button-size);
 }
 
@@ -379,21 +432,21 @@
 .manual-chart-actions {
   position: relative;
   z-index: 2;
-  grid-column: 3;
+  grid-area: actions;
   display: grid;
   place-items: center;
-  width: 68px;
-  min-width: 68px;
+  width: 64px;
+  min-width: 64px;
   padding: 0;
 }
 
 .manual-chart-row-cta {
-  grid-column: 2;
+  grid-area: cta;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   min-width: 0;
-  padding: 22px 6px;
+  padding: 0 20px 26px 134px;
 }
 
 .manual-chart-birth-time-button {
@@ -476,13 +529,14 @@
 
 .friends-feed-card {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto 24px;
   align-items: center;
-  gap: var(--card-padding);
-  padding: 28px;
+  gap: 34px;
+  min-height: 190px;
+  padding: 46px 52px;
   width: 100%;
   border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
+  border-radius: var(--radius);
   background: var(--card-bg);
 }
 
@@ -519,6 +573,8 @@
 
 .friends-feed-avatar-stack {
   display: flex;
+  justify-self: end;
+  align-items: center;
 }
 
 .friends-feed-avatar {
@@ -547,7 +603,7 @@
 .friends-feed-card-body {
   display: grid;
   min-width: 0;
-  gap: 8px;
+  gap: 14px;
 }
 
 .friends-feed-card-body h3 {
@@ -560,6 +616,18 @@
   color: var(--card-body-color);
   font-size: var(--text-row-body-size);
   line-height: var(--leading-body);
+}
+
+.friends-feed-chevron {
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: 24px;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 34px;
+  font-weight: var(--weight-regular);
+  line-height: 1;
 }
 
 .friend-detail-page {
@@ -1948,7 +2016,7 @@
    to the desktop relationship layouts without touching chart geometry. */
 .app-shell.mode-friends {
   --friends-page-rail: min(1640px, calc(100vw - 96px));
-  --friends-tab-content-width: min(var(--friends-content-width), var(--friends-page-rail));
+  --friends-tab-content-width: var(--friends-page-rail);
   --friend-detail-copy-width: minmax(480px, 532px);
   --friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
 }
@@ -1999,19 +2067,27 @@
 }
 
 .app-shell.mode-friends .manual-chart-cards {
-  border-radius: 0;
+  gap: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
   overflow: visible;
 }
 
 .app-shell.mode-friends .manual-chart-row {
-  border-radius: var(--card-radius);
-  min-height: 140px;
-  padding: 20px 40px;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  grid-template-areas:
+    "select actions"
+    "cta actions";
+  min-height: 118px;
+  padding: 0;
+  border-radius: 0;
 }
 
 .app-shell.mode-friends .manual-chart-select {
   gap: 24px;
-  grid-template-columns: 62px minmax(0, 1fr);
+  grid-template-columns: 82px minmax(0, 1fr);
+  padding: 28px 20px 18px 28px;
 }
 
 .app-shell.mode-friends .friend-profile-panel {
@@ -2102,11 +2178,12 @@
 
   .app-shell.mode-friends .manual-chart-row {
     min-height: 0;
-    padding: 22px 20px;
+    padding: 0;
   }
 
   .app-shell.mode-friends .manual-chart-select {
     gap: 18px;
     grid-template-columns: 56px minmax(0, 1fr);
+    padding: 22px 14px 14px 18px;
   }
 }

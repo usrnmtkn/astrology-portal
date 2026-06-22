@@ -775,29 +775,32 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: center;
-    min-height: 50px;
+    min-height: calc(var(--segmented-item-height) + var(--segmented-padding) * 2);
     border: 1px solid var(--segmented-border);
-    border-radius: 25px;
-    background: var(--surface);
-    padding: 4px;
+    border-radius: var(--segmented-radius);
+    background: var(--segmented-bg);
+    box-shadow: var(--segmented-shadow);
+    gap: var(--segmented-gap);
+    padding: var(--segmented-padding);
   }
 
   .mobile-sky-controls__tabs button {
     min-width: 0;
-    height: 42px;
+    height: var(--segmented-item-height);
     border: 0;
-    border-radius: 21px;
+    border-radius: var(--segmented-radius);
     background: transparent;
-    color: var(--ink-2);
+    color: var(--segmented-inactive-fg);
     font-family: var(--font-ui);
-    font-size: var(--nav-link-size);
-    font-weight: var(--weight-semibold);
+    font-size: var(--text-button-size);
+    font-weight: var(--weight-medium);
     line-height: 1;
   }
 
   .mobile-sky-controls__tabs button.active {
-    background: var(--surface-2);
-    color: var(--ink);
+    background: var(--segmented-active-bg);
+    color: var(--segmented-active-fg);
+    font-weight: var(--weight-semibold);
   }
 
   .date-picker {
@@ -1444,17 +1447,21 @@
   }
 
   .manual-chart-row {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 42px;
+    grid-template-areas:
+      "select actions"
+      "cta cta";
     min-height: 0;
   }
 
   .manual-chart-row-cta {
-    grid-column: 1;
+    grid-area: cta;
     justify-content: flex-start;
     padding: 0 58px 20px 94px;
   }
 
   .manual-chart-select {
+    grid-area: select;
     grid-template-columns: 58px minmax(0, 1fr);
     align-items: start;
     gap: 16px;
@@ -1468,7 +1475,7 @@
 
   .manual-chart-actions {
     position: absolute;
-    grid-column: auto;
+    grid-area: actions;
     top: 18px;
     right: 12px;
     width: 42px;
@@ -1477,12 +1484,14 @@
 
   .app-shell.mode-friends .manual-chart-row {
     grid-template-columns: minmax(0, 1fr) 42px;
+    grid-template-areas:
+      "select actions"
+      "cta cta";
     align-items: start;
   }
 
   .app-shell.mode-friends .manual-chart-select {
-    grid-column: 1;
-    grid-row: 1;
+    grid-area: select;
     padding-right: 16px;
   }
 
@@ -1490,8 +1499,7 @@
     position: relative;
     top: auto;
     right: auto;
-    grid-column: 2;
-    grid-row: 1;
+    grid-area: actions;
     align-self: start;
     justify-self: end;
     height: 46px;
@@ -1499,7 +1507,7 @@
   }
 
   .app-shell.mode-friends .manual-chart-row-cta {
-    grid-column: 1 / -1;
+    grid-area: cta;
   }
 
   .friends-page-heading h1 {
@@ -1683,9 +1691,9 @@
   }
 
   .segmented-control .segmented-control__item {
-    height: 40px;
-    padding: 0 var(--sp-2);
-    font-size: var(--type-description-size);
+    height: var(--segmented-item-height);
+    padding: 0 var(--segmented-item-px);
+    font-size: var(--text-button-size);
   }
 }
 

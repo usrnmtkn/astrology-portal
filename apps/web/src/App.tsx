@@ -45,7 +45,6 @@ import type { PlacementHouseInsight, SocialPlacementRow } from "./components/cha
 import {
   aspectGlyph,
   aspectIconFiles,
-  houseGlyph,
   normalizeAspectType,
   pointGlyph,
   pointIconFiles,
@@ -2639,6 +2638,12 @@ function articleTitleHouseToken(title: string, meta = "") {
   return match ? `${match[1]}H` : "";
 }
 
+function articleHouseToken(house: string | number) {
+  const parsedHouse = typeof house === "number" ? house : Number.parseInt(house, 10);
+
+  return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
+}
+
 function articlePlacementGlyphs(title: string, meta = "") {
   const source = `${title} ${meta}`;
   const match = source.match(
@@ -2654,7 +2659,7 @@ function articlePlacementGlyphs(title: string, meta = "") {
     textArticleGlyph(pointGlyph(body.trim()), body.trim()),
     retrograde ? textArticleGlyph("℞", "Retrograde") : null,
     signArticleGlyph(sign.trim()),
-    house ? { key: `house-${house}`, label: `${house} house`, text: houseGlyph(Number.parseInt(house, 10)), house: true } : null
+    house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
   ]);
 }
 
@@ -3282,7 +3287,7 @@ function SkyDetailArticle({
 
                     return (
                       <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
-                        {section.heading ? <h2>{section.heading}</h2> : null}
+                        {section.heading ? <h3>{section.heading}</h3> : null}
                         {bodyParagraphs.length > 0
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
                             <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
@@ -5732,6 +5737,15 @@ function personProfectionDetailBody(chart: ManualChart, currentSky: SkySnapshot,
 function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[], currentSky: SkySnapshot, focusAreas: LifeAreaFocus[], sunriseOrb: number): SkyDetail {
   const names = readableNameList(activeCharts.slice(0, 3).map((chart) => chart.displayName));
   const houseLabel = `${ordinalHouse(house)} house`;
+  const groupIntro =
+    house === 12
+      ? [
+          "For this group, the focus is on what happens behind the scenes. Privacy, withdrawal, burnout, hidden pressure, and the need to release what has been carried for too long may be more present right now.",
+          "The details will be personal to each person, but the question moving through the group is similar: What needs space, rest, or privacy before it can be understood?"
+        ]
+      : [
+          `For this group, the focus is on ${groupHouseThemes(house)}. The details will be personal to each person, but the question moving through the group is similar: ${houseRealLifeQuestion(house)}`
+        ];
 
   return {
     glyph: "☉",
@@ -5742,10 +5756,7 @@ function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[
     compactHeader: true,
     plainBody: false,
     bodyBeforeSections: true,
-    body: [
-      `The feed card is showing a shared timing pattern: more than one person in this group is moving through a ${houseLabel} year. That does not mean they are living the same story. It means the same part of life is active in different charts at the same time.`,
-      `For this group, the shared theme is ${groupHouseThemes(house)}. The details are different for each person, but the question is similar: ${houseRealLifeQuestion(house)}`
-    ],
+    body: groupIntro,
     sections: activeCharts.slice(0, 4).map((chart) => ({
       heading: `${chart.displayName} · ${houseLabel} year`,
       body: personProfectionDetailBody(chart, currentSky, focusAreas, sunriseOrb)
