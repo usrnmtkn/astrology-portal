@@ -132,6 +132,11 @@
   gap: var(--section-gap);
 }
 
+.admin-loading-fallback {
+  min-height: 100vh;
+  padding: var(--modal-panel-padding);
+}
+
 .chart-row:not(.manual-chart-row) {
   --row-bg: var(--card-bg);
 

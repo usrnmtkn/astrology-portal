@@ -549,8 +549,8 @@
   --friends-feed-avatar-overlap: -14px;
 
   margin-left: var(--friends-feed-avatar-overlap);
-  background: #e9eefb;
-  color: #171a22;
+  background: var(--friend-avatar-secondary-bg);
+  color: var(--friend-avatar-secondary-fg);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friends-feed-avatar {
@@ -558,8 +558,8 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friends-feed-avatar + .friends-feed-avatar {
-  background: #e9eefb;
-  color: #171a22;
+  background: var(--friend-avatar-secondary-bg);
+  color: var(--friend-avatar-secondary-fg);
 }
 
 .friends-feed-card-body {
@@ -1668,7 +1668,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--modal-backdrop-bg);
 }
 
 .friend-chart-modal {
@@ -1684,7 +1684,7 @@
 }
 
 .friend-chart-modal-root .modal-overlay {
-  background: rgba(15, 15, 15, 0.45);
+  background: var(--modal-backdrop-strong-bg);
   backdrop-filter: blur(4px);
 }
 

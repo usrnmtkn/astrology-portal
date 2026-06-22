@@ -639,7 +639,7 @@ export function PlanetPlacementRow({
               </span>
             ) : null}
             {retrogradeDurationLabel ? (
-              <span className="ui-pill ui-pill--retrograde ui-pill--mixed spl-status-item spl-status-retrograde">
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                 <DurationLabelText label={retrogradeDurationLabel} />
               </span>
             ) : null}

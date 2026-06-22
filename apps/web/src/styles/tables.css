@@ -400,10 +400,6 @@ button.planet-placement-row {
   gap: 0.4em;
 }
 
-.spl-status-item::before {
-  display: none;
-}
-
 .placement-row-titleline {
   display: flex;
   flex-wrap: wrap;
