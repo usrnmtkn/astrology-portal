@@ -205,7 +205,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     facts: body.facts ?? {},
     knowledge_ids: body.knowledgeIds ?? [],
     source_snapshot: body.sourceSnapshot ?? {},
-    prompt_version: "manual-admin",
+    prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     model: "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
@@ -308,6 +308,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
+  }
+
+  if (typeof body.promptVersion === "string") {
+    patch.prompt_version = body.promptVersion.trim() || "manual-admin";
   }
 
   if (typeof body.reviewerNotes === "string") {

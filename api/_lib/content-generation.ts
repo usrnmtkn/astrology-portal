@@ -174,7 +174,7 @@ type FrameworkSnapshot = {
   sections?: FrameworkSection[];
 };
 
-const promptVersion = "tldr-astro-v4";
+const promptVersion = "tldr-astro-v5";
 const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultOpenAiModel = "gpt-4.1-mini";
@@ -261,6 +261,21 @@ const bannedUserFacingPhrases = [
   "this placement asks",
   "this aspect teaches",
   "the lesson is",
+  "themes",
+  "energy",
+  "activates",
+  "integration",
+  "life area",
+  "these are not just background circumstances",
+  "they affect how your",
+  "when these conditions are supported",
+  "when they are strained or neglected",
+  "the gift is",
+  "the work is",
+  "has to be understood alongside",
+  "this part of the chart",
+  "this area of your chart",
+  "care out loud",
   "the invitation is",
   "this transit invites you to",
   "consider that perhaps",
@@ -559,6 +574,11 @@ const fallbackStyleGuide = [
   "- Do not invent childhood causes, trauma claims, karmic explanations, or psychological diagnoses.",
   "- Do not use \"you are\" as an identity statement.",
   "- Do not use \"this placement asks you to,\" \"this aspect works best when,\" or \"the useful thing to notice is.\"",
+  "- Do not use these words or phrases in reader-facing copy: themes, energy, activates, integration, life area, the gift is, the work is, these are not just background circumstances, has to be understood alongside, care out loud.",
+  "- For natal placements, do not define the planet, sign, and house in a fixed textbook sequence. Start with what the placement does in a person, then make the sign, house, retrograde condition, ruler, and aspects matter only when they explain real behavior.",
+  "- For empty houses, do not open by saying there are no planets in the house. Start with the sign on the cusp and what that looks like in real life. Use the ruler to show where the house becomes easier to recognize through concrete choices, events, or timing.",
+  "- For friend chart copy, use the friend's name naturally once, then use pronouns. Default to they, their, and them unless provided otherwise.",
+  "- Keep natal aspects separate from the placement body unless explicitly asked to weave them in.",
   "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
   "- Translate source symbolism into concrete human experience.",
   "",
@@ -1285,6 +1305,48 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
   ].filter(Boolean).join("\n\n");
 }
 
+function natalPlacementFactInstruction(input: GenerateContentInput) {
+  const facts = input.facts;
+  const type = stringValue(facts.type) || input.eventType;
+  const isNatalPlacement = input.eventType.includes("natal-placement")
+    || type === "natal_placement"
+    || (input.surface === "natal" && Boolean(stringValue(facts.sign) && stringValue(facts.house)));
+
+  if (!isNatalPlacement) {
+    return "";
+  }
+
+  const placementBody = stringValue(facts.placementBody)
+    || stringValue(facts.planet)
+    || stringValue(facts.body)
+    || stringValue(facts.point)
+    || stringValue(facts.node);
+  const placementSign = stringValue(facts.placementSign) || stringValue(facts.sign) || stringValue(facts.planetSign);
+  const placementHouse = stringValue(facts.placementHouse) || stringValue(facts.house) || stringValue(facts.houseNumber);
+  const rulerBody = stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler);
+  const rulerSign = stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign);
+  const rulerHouse = stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse);
+  const retrogradeValue = facts.retrograde ?? facts.isRetrograde;
+  const isRetrograde = retrogradeValue === true || (typeof retrogradeValue === "string" && retrogradeValue.toLowerCase() === "true");
+  const isNode = ["north node", "south node", "true node"].includes(placementBody.toLowerCase());
+
+  return [
+    "NATAL PLACEMENT FACT LOCK",
+    "This is a natal placement. These placement facts are required source facts, not optional color.",
+    `Placement body: ${placementBody || "missing"}.`,
+    `Placement sign: ${placementSign || "missing"}.`,
+    `Placement house: ${placementHouse || "missing"}.`,
+    `Placement ruler: ${rulerBody || "missing"}.`,
+    `Ruler sign in this chart: ${rulerSign || "missing"}.`,
+    `Ruler house in this chart: ${rulerHouse || "missing"}.`,
+    `Retrograde: ${isNode ? "not applicable for nodes" : isRetrograde ? "yes" : "no"}.`,
+    "Write the placement as the body or node in its sign, expressed through its house.",
+    "Use the ruler placement as chart-specific context: the ruler's sign and house show where this placement develops, routes, or becomes easier to recognize in lived experience.",
+    "Do not skip the house. Do not skip the ruler placement when ruler sign and ruler house are provided.",
+    "For North Node and South Node, never mention retrograde. Treat them as valid placements with sign, house, and sign ruler."
+  ].join("\n");
+}
+
 function exampleFromRow(row: ApprovedExampleRow): ApprovedExample | null {
   const headline = stringValue(row.headline);
   const summary = stringValue(row.summary);
@@ -1599,6 +1661,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "EVENT TYPE",
     input.eventType,
+    "",
+    natalPlacementFactInstruction(input),
     "",
     "TARGET DATE",
     input.targetDate ?? "not specified",
