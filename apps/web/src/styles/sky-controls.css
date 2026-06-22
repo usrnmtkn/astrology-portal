@@ -138,9 +138,7 @@ html[data-scrolled] .sky-header-date-button {
   border: 1px solid var(--overlay-border);
   border-radius: 22px;
   background: var(--surface);
-  box-shadow:
-    0 1px 1px rgba(28, 32, 52, 0.04),
-    0 18px 48px -28px rgba(28, 32, 52, 0.28);
+  box-shadow: var(--shadow-mobile-panel);
   padding: 16px;
 }
 

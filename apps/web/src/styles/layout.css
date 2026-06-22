@@ -177,7 +177,7 @@ body.modal-open {
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(20, 20, 20, 0.18);
+  background: var(--modal-overlay-bg);
   backdrop-filter: blur(8px);
 }
 
@@ -248,7 +248,7 @@ body.modal-open {
 }
 
 :is(.theme-dark, [data-theme="dark"]) .modal-overlay {
-  background: rgba(0, 0, 0, 0.48);
+  background: var(--modal-overlay-dark-bg);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .modal-panel {

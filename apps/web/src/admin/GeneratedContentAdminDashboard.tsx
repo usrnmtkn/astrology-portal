@@ -4,10 +4,14 @@ import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
 import {
+  compositeAspectContentKey,
   natalAspectContentKey,
   natalHouseContentKey,
   natalRulerContentKey,
-  natalSignContentKey
+  natalSignContentKey,
+  skyAspectContentKey,
+  synastryAspectContentKey,
+  transitToNatalAspectContentKey
 } from "../services/generatedContentKeys";
 import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
 import "./admin.css";
@@ -22,7 +26,18 @@ type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "r
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
-type AdminContentBlockFilter = "all" | "sign" | "house" | "ruler" | "aspect" | "synthesis" | "essay";
+type AdminContentBlockFilter =
+  | "all"
+  | "sign"
+  | "house"
+  | "ruler"
+  | "natal_aspect"
+  | "sky_aspect"
+  | "transit_to_natal_aspect"
+  | "synastry_aspect"
+  | "composite_aspect"
+  | "synthesis"
+  | "essay";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -125,6 +140,7 @@ type AdminReviewRecord = {
   summary: string;
   body: string;
   sections: Array<{ heading: string; body: string }>;
+  blockType?: AdminContentBlockFilter | null;
   facts: Record<string, unknown> | null;
   sourceSnapshot: Record<string, unknown> | null;
   reviewerNotes: string | null;
@@ -247,7 +263,11 @@ const contentBlockFilters: Array<{ key: AdminContentBlockFilter; label: string }
   { key: "sign", label: "Sign" },
   { key: "house", label: "House" },
   { key: "ruler", label: "Ruler" },
-  { key: "aspect", label: "Aspect" },
+  { key: "natal_aspect", label: "Natal aspect" },
+  { key: "sky_aspect", label: "Sky aspect" },
+  { key: "transit_to_natal_aspect", label: "Transit to natal" },
+  { key: "synastry_aspect", label: "Synastry aspect" },
+  { key: "composite_aspect", label: "Composite aspect" },
   { key: "synthesis", label: "Synthesis" },
   { key: "essay", label: "Legacy essay" }
 ];
@@ -1554,7 +1574,7 @@ function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCa
 }
 
 function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
-  const savedType = record.rawGlobalRow?.block_type;
+  const savedType = record.rawGlobalRow?.block_type ?? record.blockType;
 
   if (savedType && savedType !== "all") {
     return savedType;
@@ -1566,13 +1586,21 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
   if (normalizedKey.startsWith("natal.sign.")) return "sign";
   if (normalizedKey.startsWith("natal.house.")) return "house";
   if (normalizedKey.startsWith("natal.ruler.")) return "ruler";
-  if (normalizedKey.startsWith("natal.aspect.")) return "aspect";
+  if (normalizedKey.startsWith("natal.aspect.")) return "natal_aspect";
+  if (normalizedKey.startsWith("sky.aspect.")) return "sky_aspect";
+  if (normalizedKey.startsWith("transit.aspect.")) return "transit_to_natal_aspect";
+  if (normalizedKey.startsWith("synastry.aspect.")) return "synastry_aspect";
+  if (normalizedKey.startsWith("composite.aspect.")) return "composite_aspect";
   if (normalizedKey.startsWith("natal.synthesis.")) return "synthesis";
+  if (record.surface === "sky" && normalizedEventType.includes("current-aspect")) return "sky_aspect";
+  if (record.surface === "you" && normalizedEventType.includes("transit-to-natal")) return "transit_to_natal_aspect";
+  if ((record.surface === "synastry" || record.surface === "relationship") && normalizedEventType.includes("synastry-aspect")) return "synastry_aspect";
+  if (record.surface === "composite" && normalizedEventType.includes("composite-aspect")) return "composite_aspect";
   if (
     normalizedEventType.includes("natal-aspect")
     || normalizedKey.includes("natal-") && /\b(conjunction|sextile|square|trine|opposition)\b/.test(normalizedKey)
   ) {
-    return "aspect";
+    return "natal_aspect";
   }
 
   return record.surface === "natal" ? "essay" : "all";
@@ -1961,13 +1989,14 @@ export function GeneratedContentAdminDashboard() {
   const selectedMetadataIsNatalPlacement = selectedMetadataCategory === "Natal Chart";
   const selectedMetadataIsNatalAspect = selectedMetadataCategory === "Natal Aspects";
   const selectedMetadataIsModularNatalBlock = selectedMetadataIsNatal && selectedMetadataBlockType !== "all" && selectedMetadataBlockType !== "essay";
-  const selectedMetadataUsesAspectFields = selectedMetadataBlockType === "aspect" || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect;
+  const selectedMetadataUsesAspectFields = selectedMetadataBlockType.endsWith("_aspect") || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect;
+  const selectedMetadataIsTimeBasedAspect = selectedMetadataBlockType === "sky_aspect" || selectedMetadataBlockType === "transit_to_natal_aspect";
   const selectedMetadataUsesPlacementBody = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "house", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesPlacementSign = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesPlacementHouse = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["house", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesPlacementRuler = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["ruler", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesFullRulerPlacement = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || selectedMetadataBlockType === "synthesis");
-  const selectedMetadataUsesAspectTiming = selectedMetadataUsesAspectFields && !selectedMetadataIsModularNatalBlock;
+  const selectedMetadataUsesAspectTiming = selectedMetadataUsesAspectFields && selectedMetadataIsTimeBasedAspect;
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
@@ -2431,11 +2460,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined
     };
 
-    if (metadata.surface !== "natal" || blockType === "all" || blockType === "essay") {
+    if (blockType === "all" || blockType === "essay") {
       return base;
     }
 
-    if (blockType === "sign" && trimmedBody && trimmedSign) {
+    if (metadata.surface === "natal" && blockType === "sign" && trimmedBody && trimmedSign) {
       return {
         ...base,
         contentKey: natalSignContentKey(trimmedBody, trimmedSign),
@@ -2450,7 +2479,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       };
     }
 
-    if (blockType === "house" && trimmedBody && trimmedHouse) {
+    if (metadata.surface === "natal" && blockType === "house" && trimmedBody && trimmedHouse) {
       return {
         ...base,
         contentKey: natalHouseContentKey(trimmedBody, trimmedHouse),
@@ -2465,7 +2494,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       };
     }
 
-    if (blockType === "ruler" && trimmedRuler) {
+    if (metadata.surface === "natal" && blockType === "ruler" && trimmedRuler) {
       return {
         ...base,
         contentKey: natalRulerContentKey(trimmedRuler),
@@ -2480,7 +2509,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       };
     }
 
-    if (blockType === "aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+    if (metadata.surface === "natal" && blockType === "natal_aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
       return {
         ...base,
         contentKey: natalAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
@@ -2501,7 +2530,95 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       };
     }
 
-    if (blockType === "synthesis" && trimmedBody && trimmedSign && trimmedHouse) {
+    if (metadata.surface === "sky" && blockType === "sky_aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+      return {
+        ...base,
+        contentKey: skyAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
+        eventType: "current-aspect",
+        facts: {
+          ...baseFacts,
+          blockType,
+          body1: trimmedBody1,
+          planetA: trimmedBody1,
+          from: trimmedBody1,
+          aspect: trimmedAspect,
+          type: trimmedAspect,
+          aspectType: trimmedAspect,
+          body2: trimmedBody2,
+          planetB: trimmedBody2,
+          to: trimmedBody2
+        },
+        promptVersion: "sky-aspect-block-v1"
+      };
+    }
+
+    if (metadata.surface === "you" && blockType === "transit_to_natal_aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+      return {
+        ...base,
+        contentKey: transitToNatalAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
+        eventType: "transit-to-natal",
+        facts: {
+          ...baseFacts,
+          blockType,
+          transiting: trimmedBody1,
+          transitPlanet: trimmedBody1,
+          body1: trimmedBody1,
+          aspect: trimmedAspect,
+          type: trimmedAspect,
+          aspectType: trimmedAspect,
+          natal: trimmedBody2,
+          natalPoint: trimmedBody2,
+          body2: trimmedBody2
+        },
+        promptVersion: "transit-to-natal-aspect-v1"
+      };
+    }
+
+    if ((metadata.surface === "synastry" || metadata.surface === "relationship") && blockType === "synastry_aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+      return {
+        ...base,
+        contentKey: synastryAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
+        eventType: "synastry-aspect",
+        facts: {
+          ...baseFacts,
+          blockType,
+          personABody: trimmedBody1,
+          planetA: trimmedBody1,
+          body1: trimmedBody1,
+          aspect: trimmedAspect,
+          type: trimmedAspect,
+          aspectType: trimmedAspect,
+          personBBody: trimmedBody2,
+          planetB: trimmedBody2,
+          body2: trimmedBody2
+        },
+        promptVersion: "synastry-aspect-block-v1"
+      };
+    }
+
+    if (metadata.surface === "composite" && blockType === "composite_aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+      return {
+        ...base,
+        contentKey: compositeAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
+        eventType: "composite-aspect",
+        facts: {
+          ...baseFacts,
+          blockType,
+          body1: trimmedBody1,
+          planetA: trimmedBody1,
+          from: trimmedBody1,
+          aspect: trimmedAspect,
+          type: trimmedAspect,
+          aspectType: trimmedAspect,
+          body2: trimmedBody2,
+          planetB: trimmedBody2,
+          to: trimmedBody2
+        },
+        promptVersion: "composite-aspect-block-v1"
+      };
+    }
+
+    if (metadata.surface === "natal" && blockType === "synthesis" && trimmedBody && trimmedSign && trimmedHouse) {
       return {
         ...base,
         contentKey: `natal.synthesis.${record.contentKey.replace(/[^a-z0-9._-]+/gi, "-").toLowerCase()}`,
@@ -2706,7 +2823,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       return;
     }
 
-    if (metadata.surface === "natal" && metadata.blockType === "aspect" && (!metadata.body1.trim() || !metadata.aspect.trim() || !metadata.body2.trim())) {
+    if (metadata.blockType.endsWith("_aspect") && (!metadata.body1.trim() || !metadata.aspect.trim() || !metadata.body2.trim())) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
       setMessage("Aspect blocks need body A, aspect, and body B before generating.");
@@ -4168,19 +4285,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <option value="Relationship">Relationship</option>
                           </select>
                         </label>
-                        {selectedMetadataIsNatal && (
-                          <label className="admin-metadata-field">
-                            <span>Block type</span>
-                            <select
-                              value={selectedReviewMetadata?.blockType ?? "essay"}
-                              onChange={(event) => updateReviewMetadata(selectedReviewRecord, { blockType: event.target.value as AdminContentBlockFilter })}
-                            >
-                              {contentBlockFilters.filter((filter) => filter.key !== "all").map((filter) => (
-                                <option key={filter.key} value={filter.key}>{filter.label}</option>
-                              ))}
-                            </select>
-                          </label>
-                        )}
+                        <label className="admin-metadata-field">
+                          <span>Block type</span>
+                          <select
+                            value={selectedReviewMetadata?.blockType ?? "essay"}
+                            onChange={(event) => updateReviewMetadata(selectedReviewRecord, { blockType: event.target.value as AdminContentBlockFilter })}
+                          >
+                            {contentBlockFilters.filter((filter) => filter.key !== "all").map((filter) => (
+                              <option key={filter.key} value={filter.key}>{filter.label}</option>
+                            ))}
+                          </select>
+                        </label>
                         <label className="admin-metadata-field">
                           <span>Format</span>
                           <select

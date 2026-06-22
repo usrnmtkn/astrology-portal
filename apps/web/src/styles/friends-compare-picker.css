@@ -74,13 +74,13 @@
 }
 
 .friend-compare-modal-root .modal-overlay {
-  background: rgba(229, 232, 238, 0.64);
+  background: var(--friend-compare-overlay-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .friend-compare-modal-root .modal-overlay {
-  background: rgba(12, 13, 18, 0.62);
+  background: var(--friend-compare-overlay-dark-bg);
 }
 
 .modal-panel.friend-compare-popover {

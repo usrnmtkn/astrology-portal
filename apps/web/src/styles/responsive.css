@@ -413,7 +413,7 @@
   html[data-scrolled] .topbar {
     border-bottom: 1px solid var(--line);
     background: var(--nav-scrolled-bg);
-    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    box-shadow: var(--shadow-topbar-scrolled);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
   }
@@ -612,7 +612,7 @@
   html[data-scrolled] .topbar {
     border-bottom: 1px solid var(--line);
     background: var(--nav-scrolled-bg);
-    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    box-shadow: var(--shadow-topbar-scrolled);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
@@ -631,7 +631,7 @@
   html[data-scrolled] .mode-member .topbar {
     border-bottom: 1px solid var(--line);
     background: var(--nav-scrolled-bg);
-    box-shadow: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+    box-shadow: var(--shadow-topbar-scrolled);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
@@ -765,9 +765,7 @@
     border: 1px solid var(--overlay-border);
     border-radius: 22px;
     background: var(--surface);
-    box-shadow:
-      0 1px 1px rgba(28, 32, 52, 0.04),
-      0 18px 48px -28px rgba(28, 32, 52, 0.28);
+    box-shadow: var(--shadow-mobile-panel);
     padding: 16px;
   }
 
