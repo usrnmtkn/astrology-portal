@@ -3,6 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
+import {
+  natalAspectContentKey,
+  natalHouseContentKey,
+  natalRulerContentKey,
+  natalSignContentKey
+} from "../services/generatedContentKeys";
 import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
 import "./admin.css";
 
@@ -16,6 +22,7 @@ type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "r
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
+type AdminContentBlockFilter = "all" | "sign" | "house" | "ruler" | "aspect" | "synthesis" | "essay";
 type ReleaseNoteArea = "Dashboard" | "App";
 type ReleaseNote = {
   date: string;
@@ -52,6 +59,7 @@ type AdminGeneratedContentRow = {
   summary: string | null;
   body: string | null;
   sections: Array<{ heading: string; body: string }> | Record<string, unknown> | null;
+  block_type?: AdminContentBlockFilter | null;
   facts: Record<string, unknown> | null;
   knowledge_ids: string[] | null;
   source_snapshot: Record<string, unknown> | null;
@@ -136,6 +144,7 @@ type AdminReviewMetadataEdit = {
   mode: GeneratedContentMode;
   status: GeneratedContentStatus;
   category: Exclude<AdminContentCategoryFilter, "all">;
+  blockType: AdminContentBlockFilter;
   orb: string;
   direction: string;
   body1: string;
@@ -231,6 +240,16 @@ const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: st
   { key: "Natal Aspects", label: "Natal Aspects" },
   { key: "Natal Chart", label: "Natal Chart" },
   { key: "Relationship", label: "Relationship" }
+];
+
+const contentBlockFilters: Array<{ key: AdminContentBlockFilter; label: string }> = [
+  { key: "all", label: "All block types" },
+  { key: "sign", label: "Sign" },
+  { key: "house", label: "House" },
+  { key: "ruler", label: "Ruler" },
+  { key: "aspect", label: "Aspect" },
+  { key: "synthesis", label: "Synthesis" },
+  { key: "essay", label: "Legacy essay" }
 ];
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
@@ -1523,13 +1542,46 @@ function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCa
   }
 
   if (
-    normalizedEventType.includes("natal-aspect")
+    normalizedContentKey.startsWith("natal.aspect.")
+    || normalizedContentKey.startsWith("natal-aspect-")
+    || normalizedEventType.includes("natal-aspect")
     || normalizedContentKey.includes("natal-") && /\b(conjunction|sextile|square|trine|opposition)\b/.test(normalizedContentKey)
   ) {
     return "Natal Aspects";
   }
 
   return "Natal Chart";
+}
+
+function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
+  const savedType = record.rawGlobalRow?.block_type;
+
+  if (savedType && savedType !== "all") {
+    return savedType;
+  }
+
+  const normalizedKey = record.contentKey.toLowerCase();
+  const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
+
+  if (normalizedKey.startsWith("natal.sign.")) return "sign";
+  if (normalizedKey.startsWith("natal.house.")) return "house";
+  if (normalizedKey.startsWith("natal.ruler.")) return "ruler";
+  if (normalizedKey.startsWith("natal.aspect.")) return "aspect";
+  if (normalizedKey.startsWith("natal.synthesis.")) return "synthesis";
+  if (
+    normalizedEventType.includes("natal-aspect")
+    || normalizedKey.includes("natal-") && /\b(conjunction|sextile|square|trine|opposition)\b/.test(normalizedKey)
+  ) {
+    return "aspect";
+  }
+
+  return record.surface === "natal" ? "essay" : "all";
+}
+
+function contentBlockTypeLabel(record: AdminReviewRecord) {
+  const blockType = contentBlockType(record);
+
+  return contentBlockFilters.find((filter) => filter.key === blockType)?.label ?? "Content";
 }
 
 function contentStatusLabel(status: string) {
@@ -1669,6 +1721,7 @@ function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadata
     mode: record.mode,
     status: record.status,
     category: contentCategoryLabel(record),
+    blockType: contentBlockType(record),
     orb: typeof orb === "number" ? String(orb) : typeof orb === "string" ? orb : "",
     direction: recordDirectionLabel(record) === "Not set" ? "" : recordDirectionLabel(record),
     body1: factStringFromSources(record, ["body1", "planetA", "from", "transitPlanet", "planet", "point"]),
@@ -1801,6 +1854,7 @@ export function GeneratedContentAdminDashboard() {
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
+  const [contentBlockFilter, setContentBlockFilter] = useState<AdminContentBlockFilter>("all");
   const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
   const [dateStart, setDateStart] = useState(() => dateInputValue());
   const [dateEnd, setDateEnd] = useState(() => dateInputValue(addDays(new Date(), 30)));
@@ -1869,6 +1923,7 @@ export function GeneratedContentAdminDashboard() {
       })
       .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
       .filter((record) => categoryFilter === "all" || contentCategoryLabel(record) === categoryFilter)
+      .filter((record) => contentBlockFilter === "all" || contentBlockType(record) === contentBlockFilter)
       .sort((first, second) => {
         const firstDate = first.targetDate ?? "";
         const secondDate = second.targetDate ?? "";
@@ -1879,7 +1934,7 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [categoryFilter, contentStatusFilter, personQuery, dedupedContentRecords]);
+  }, [categoryFilter, contentBlockFilter, contentStatusFilter, personQuery, dedupedContentRecords]);
   const cmsStatusCounts = useMemo(() => contentStatusCounts(dedupedContentRecords), [dedupedContentRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
@@ -1901,9 +1956,18 @@ export function GeneratedContentAdminDashboard() {
       : reviewMetadataForRecord(selectedReviewRecord)
     : null;
   const selectedMetadataCategory = selectedReviewMetadata?.category ?? (selectedReviewRecord ? contentCategoryLabel(selectedReviewRecord) : "Sky");
+  const selectedMetadataBlockType = selectedReviewMetadata?.blockType ?? "all";
+  const selectedMetadataIsNatal = selectedReviewMetadata?.surface === "natal";
   const selectedMetadataIsNatalPlacement = selectedMetadataCategory === "Natal Chart";
   const selectedMetadataIsNatalAspect = selectedMetadataCategory === "Natal Aspects";
-  const selectedMetadataUsesAspectFields = !selectedMetadataIsNatalPlacement || selectedMetadataIsNatalAspect;
+  const selectedMetadataIsModularNatalBlock = selectedMetadataIsNatal && selectedMetadataBlockType !== "all" && selectedMetadataBlockType !== "essay";
+  const selectedMetadataUsesAspectFields = selectedMetadataBlockType === "aspect" || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect;
+  const selectedMetadataUsesPlacementBody = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "house", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementSign = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementHouse = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["house", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementRuler = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["ruler", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesFullRulerPlacement = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || selectedMetadataBlockType === "synthesis");
+  const selectedMetadataUsesAspectTiming = selectedMetadataUsesAspectFields && !selectedMetadataIsModularNatalBlock;
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
@@ -2293,10 +2357,10 @@ export function GeneratedContentAdminDashboard() {
     setSelectedReviewId(null);
   }
 
-  function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminReviewMetadataEdit) {
-    const nextFacts: Record<string, unknown> = {
-      ...(record.facts ?? {})
-    };
+function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminReviewMetadataEdit) {
+  const nextFacts: Record<string, unknown> = {
+    ...(record.facts ?? {})
+  };
 
     if (metadata.orb.trim()) {
       const numericOrb = Number(metadata.orb);
@@ -2349,6 +2413,116 @@ export function GeneratedContentAdminDashboard() {
     return nextFacts;
   }
 
+  function modularNatalReviewPayload(record: AdminReviewRecord, metadata: AdminReviewMetadataEdit) {
+    const blockType = metadata.blockType;
+    const trimmedBody = metadata.placementBody.trim();
+    const trimmedSign = metadata.placementSign.trim();
+    const trimmedHouse = metadata.placementHouse.trim();
+    const trimmedRuler = metadata.rulerBody.trim();
+    const trimmedAspect = metadata.aspect.trim().toLowerCase();
+    const trimmedBody1 = metadata.body1.trim();
+    const trimmedBody2 = metadata.body2.trim();
+    const baseFacts = factsWithReviewMetadata(record, metadata);
+    const base = {
+      blockType,
+      contentKey: record.contentKey,
+      eventType: record.eventType || "manual-review",
+      facts: baseFacts,
+      promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined
+    };
+
+    if (metadata.surface !== "natal" || blockType === "all" || blockType === "essay") {
+      return base;
+    }
+
+    if (blockType === "sign" && trimmedBody && trimmedSign) {
+      return {
+        ...base,
+        contentKey: natalSignContentKey(trimmedBody, trimmedSign),
+        eventType: "natal-sign-block",
+        facts: {
+          blockType,
+          body: trimmedBody,
+          planet: trimmedBody,
+          sign: trimmedSign
+        },
+        promptVersion: "natal-sign-block-v1"
+      };
+    }
+
+    if (blockType === "house" && trimmedBody && trimmedHouse) {
+      return {
+        ...base,
+        contentKey: natalHouseContentKey(trimmedBody, trimmedHouse),
+        eventType: "natal-house-block",
+        facts: {
+          blockType,
+          body: trimmedBody,
+          planet: trimmedBody,
+          house: trimmedHouse
+        },
+        promptVersion: "natal-house-block-v1"
+      };
+    }
+
+    if (blockType === "ruler" && trimmedRuler) {
+      return {
+        ...base,
+        contentKey: natalRulerContentKey(trimmedRuler),
+        eventType: "natal-ruler-block",
+        facts: {
+          blockType,
+          body: trimmedRuler,
+          planet: trimmedRuler,
+          ruler: trimmedRuler
+        },
+        promptVersion: "natal-ruler-block-v1"
+      };
+    }
+
+    if (blockType === "aspect" && trimmedBody1 && trimmedAspect && trimmedBody2) {
+      return {
+        ...base,
+        contentKey: natalAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
+        eventType: "natal-aspect",
+        facts: {
+          blockType,
+          body1: trimmedBody1,
+          planetA: trimmedBody1,
+          from: trimmedBody1,
+          aspect: trimmedAspect,
+          type: trimmedAspect,
+          aspectType: trimmedAspect,
+          body2: trimmedBody2,
+          planetB: trimmedBody2,
+          to: trimmedBody2
+        },
+        promptVersion: "natal-aspect-block-v1"
+      };
+    }
+
+    if (blockType === "synthesis" && trimmedBody && trimmedSign && trimmedHouse) {
+      return {
+        ...base,
+        contentKey: `natal.synthesis.${record.contentKey.replace(/[^a-z0-9._-]+/gi, "-").toLowerCase()}`,
+        eventType: "natal-synthesis-block",
+        facts: {
+          blockType,
+          body: trimmedBody,
+          planet: trimmedBody,
+          sign: trimmedSign,
+          house: trimmedHouse,
+          ruler: trimmedRuler || undefined,
+          rulerSign: metadata.rulerSign.trim() || undefined,
+          rulerHouse: metadata.rulerHouse.trim() || undefined
+        },
+        promptVersion: "natal-synthesis-block-v1"
+      };
+    }
+
+    return base;
+  }
+
   async function saveReviewEdit(record: AdminReviewRecord, requestedStatus?: GeneratedContentStatus) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -2363,10 +2537,13 @@ export function GeneratedContentAdminDashboard() {
       const nextSurface = metadata.surface;
       const nextMode = metadata.mode;
       const nextTargetDate = metadata.targetDate.trim() || null;
-      const nextEventType = metadata.category !== contentCategoryLabel(record)
-        ? manualEntryEventType(metadata.category, nextSurface)
-        : record.eventType || "manual-review";
-      const nextFacts = factsWithReviewMetadata(record, metadata);
+      const modularPayload = modularNatalReviewPayload(record, metadata);
+      const nextEventType = modularPayload.eventType !== (record.eventType || "manual-review")
+        ? modularPayload.eventType
+        : metadata.category !== contentCategoryLabel(record)
+          ? manualEntryEventType(metadata.category, nextSurface)
+          : record.eventType || "manual-review";
+      const nextFacts = modularPayload.facts;
 
       const normalizedCopy = normalizeReviewCopy(
         isActiveEdit ? reviewEditSummary : reviewTldrForReview(record),
@@ -2420,7 +2597,7 @@ export function GeneratedContentAdminDashboard() {
           method: existingGlobalRowId ? "PATCH" : "POST",
           body: JSON.stringify({
             id: existingGlobalRowId || undefined,
-            contentKey: record.contentKey,
+            contentKey: modularPayload.contentKey,
             surface: nextSurface,
             mode: nextMode,
             status: nextStatus,
@@ -2438,7 +2615,8 @@ export function GeneratedContentAdminDashboard() {
             },
             knowledgeIds: [],
             reviewerNotes: record.reviewerNotes ?? "",
-            promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined
+            promptVersion: modularPayload.promptVersion,
+            blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType
           })
         }
       );
@@ -2458,6 +2636,7 @@ export function GeneratedContentAdminDashboard() {
               mode: nextMode,
               status: nextStatus,
               eventType: nextEventType,
+              contentKey: modularPayload.contentKey,
               title: nextTitle,
               targetDate: nextTargetDate,
               summary: nextSummary,
@@ -2488,10 +2667,12 @@ export function GeneratedContentAdminDashboard() {
     const metadata = editingReviewId === record.id
       ? reviewEditMetadata ?? reviewMetadataForRecord(record)
       : reviewMetadataForRecord(record);
-    const nextFacts = factsWithReviewMetadata(record, metadata);
+    const modularPayload = modularNatalReviewPayload(record, metadata);
+    const nextFacts = modularPayload.facts;
 
     if (
-      metadata.category === "Natal Chart"
+      metadata.surface === "natal"
+      && (metadata.blockType === "all" || metadata.blockType === "essay")
       && (!metadata.placementBody.trim()
         || !metadata.placementSign.trim()
         || !metadata.placementHouse.trim()
@@ -2501,6 +2682,34 @@ export function GeneratedContentAdminDashboard() {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
       setMessage("Natal placement needs body, sign, house, and ruler sign and house before generating. The ruler placement comes from this chart, not the sign.");
+      return;
+    }
+
+    if (metadata.surface === "natal" && metadata.blockType === "sign" && (!metadata.placementBody.trim() || !metadata.placementSign.trim())) {
+      beginReviewEdit(record);
+      setReviewEditMetadata(metadata);
+      setMessage("Sign blocks need only the body and sign before generating.");
+      return;
+    }
+
+    if (metadata.surface === "natal" && metadata.blockType === "house" && (!metadata.placementBody.trim() || !metadata.placementHouse.trim())) {
+      beginReviewEdit(record);
+      setReviewEditMetadata(metadata);
+      setMessage("House blocks need only the body and house before generating.");
+      return;
+    }
+
+    if (metadata.surface === "natal" && metadata.blockType === "ruler" && !metadata.rulerBody.trim()) {
+      beginReviewEdit(record);
+      setReviewEditMetadata(metadata);
+      setMessage("Ruler blocks need only the ruling body before generating.");
+      return;
+    }
+
+    if (metadata.surface === "natal" && metadata.blockType === "aspect" && (!metadata.body1.trim() || !metadata.aspect.trim() || !metadata.body2.trim())) {
+      beginReviewEdit(record);
+      setReviewEditMetadata(metadata);
+      setMessage("Aspect blocks need body A, aspect, and body B before generating.");
       return;
     }
 
@@ -2531,16 +2740,16 @@ export function GeneratedContentAdminDashboard() {
         {
           method: "POST",
           body: JSON.stringify({
-            contentKey: record.contentKey,
-            surface: record.surface,
-            mode: record.mode,
-            eventType: record.eventType || "manual-review",
+            contentKey: modularPayload.contentKey,
+            surface: metadata.surface,
+            mode: metadata.mode,
+            eventType: modularPayload.eventType,
             headline: record.title,
-            targetDate: record.targetDate || undefined,
+            targetDate: metadata.targetDate.trim() || record.targetDate || undefined,
             facts: nextFacts,
             sourceSnapshot: {
               ...(record.sourceSnapshot ?? {}),
-              promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined,
+              promptVersion: modularPayload.promptVersion,
               adminReviewSource: record.source,
               generatedFromReviewRecordId: record.id
             },
@@ -2548,6 +2757,7 @@ export function GeneratedContentAdminDashboard() {
             provider: reviewGenerationProvider,
             save: false,
             allowQualityFallback: true,
+            blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType,
             voiceNotes: voiceNotesForReviewRecord(record)
           })
         }
@@ -3662,6 +3872,14 @@ export function GeneratedContentAdminDashboard() {
                   </select>
                 </label>
                 <label>
+                  <span>Block type</span>
+                  <select value={contentBlockFilter} onChange={(event) => setContentBlockFilter(event.target.value as AdminContentBlockFilter)}>
+                    {contentBlockFilters.map((filter) => (
+                      <option key={filter.key} value={filter.key}>{filter.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
                   <span>Search content</span>
                   <input value={personQuery} onChange={(event) => setPersonQuery(event.target.value)} placeholder="Title, app area, content key" />
                 </label>
@@ -3740,7 +3958,7 @@ export function GeneratedContentAdminDashboard() {
                             </td>
                             <td className="admin-content-location">
                               <strong>{appLocationLabel(record)}</strong>
-                              <small>{appLocationDetail(record)}</small>
+                              <small>{record.surface === "natal" ? contentBlockTypeLabel(record) : appLocationDetail(record)}</small>
                             </td>
                             <td className={`admin-content-row-date ${record.status === "REVIEWED" && !record.targetDate ? "missing" : ""}`}>
                               {contentRecordDateLabel(record)}
@@ -3950,6 +4168,19 @@ export function GeneratedContentAdminDashboard() {
                             <option value="Relationship">Relationship</option>
                           </select>
                         </label>
+                        {selectedMetadataIsNatal && (
+                          <label className="admin-metadata-field">
+                            <span>Block type</span>
+                            <select
+                              value={selectedReviewMetadata?.blockType ?? "essay"}
+                              onChange={(event) => updateReviewMetadata(selectedReviewRecord, { blockType: event.target.value as AdminContentBlockFilter })}
+                            >
+                              {contentBlockFilters.filter((filter) => filter.key !== "all").map((filter) => (
+                                <option key={filter.key} value={filter.key}>{filter.label}</option>
+                              ))}
+                            </select>
+                          </label>
+                        )}
                         <label className="admin-metadata-field">
                           <span>Format</span>
                           <select
@@ -3963,26 +4194,30 @@ export function GeneratedContentAdminDashboard() {
                         </label>
                         {selectedMetadataUsesAspectFields && (
                           <>
-                            <label className="admin-metadata-field">
-                              <span>Orb</span>
-                              <input
-                                value={selectedReviewMetadata?.orb ?? ""}
-                                placeholder={recordOrbLabel(selectedReviewRecord)}
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { orb: event.target.value })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Forming/separating</span>
-                              <select
-                                value={selectedReviewMetadata?.direction ?? ""}
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { direction: event.target.value })}
-                              >
-                                <option value="">Not set</option>
-                                <option value="forming">Forming</option>
-                                <option value="separating">Separating</option>
-                                <option value="exact">Exact</option>
-                              </select>
-                            </label>
+                            {selectedMetadataUsesAspectTiming && (
+                              <>
+                                <label className="admin-metadata-field">
+                                  <span>Orb</span>
+                                  <input
+                                    value={selectedReviewMetadata?.orb ?? ""}
+                                    placeholder={recordOrbLabel(selectedReviewRecord)}
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { orb: event.target.value })}
+                                  />
+                                </label>
+                                <label className="admin-metadata-field">
+                                  <span>Forming/separating</span>
+                                  <select
+                                    value={selectedReviewMetadata?.direction ?? ""}
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { direction: event.target.value })}
+                                  >
+                                    <option value="">Not set</option>
+                                    <option value="forming">Forming</option>
+                                    <option value="separating">Separating</option>
+                                    <option value="exact">Exact</option>
+                                  </select>
+                                </label>
+                              </>
+                            )}
                             <label className="admin-metadata-field">
                               <span>Planet/body A</span>
                               <input
@@ -3991,14 +4226,16 @@ export function GeneratedContentAdminDashboard() {
                                 onChange={(event) => updateReviewMetadata(selectedReviewRecord, { body1: event.target.value })}
                               />
                             </label>
-                            <label className="admin-metadata-field">
-                              <span>Sign A</span>
-                              <input
-                                value={selectedReviewMetadata?.sign1 ?? ""}
-                                placeholder="Cancer"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign1: event.target.value })}
-                              />
-                            </label>
+                            {selectedMetadataUsesAspectTiming && (
+                              <label className="admin-metadata-field">
+                                <span>Sign A</span>
+                                <input
+                                  value={selectedReviewMetadata?.sign1 ?? ""}
+                                  placeholder="Cancer"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign1: event.target.value })}
+                                />
+                              </label>
+                            )}
                             <label className="admin-metadata-field">
                               <span>Aspect</span>
                               <input
@@ -4015,81 +4252,100 @@ export function GeneratedContentAdminDashboard() {
                                 onChange={(event) => updateReviewMetadata(selectedReviewRecord, { body2: event.target.value })}
                               />
                             </label>
-                            <label className="admin-metadata-field">
-                              <span>Sign B</span>
-                              <input
-                                value={selectedReviewMetadata?.sign2 ?? ""}
-                                placeholder="Taurus"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign2: event.target.value })}
-                              />
-                            </label>
+                            {selectedMetadataUsesAspectTiming && (
+                              <label className="admin-metadata-field">
+                                <span>Sign B</span>
+                                <input
+                                  value={selectedReviewMetadata?.sign2 ?? ""}
+                                  placeholder="Taurus"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign2: event.target.value })}
+                                />
+                              </label>
+                            )}
                           </>
                         )}
-                        {selectedMetadataIsNatalPlacement && (
+                        {(selectedMetadataUsesPlacementBody
+                          || selectedMetadataUsesPlacementSign
+                          || selectedMetadataUsesPlacementHouse
+                          || selectedMetadataUsesPlacementRuler) && (
                           <>
-                            <label className="admin-metadata-field">
-                              <span>Placement body</span>
-                              <select
-                                value={selectedReviewMetadata?.placementBody ?? ""}
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementBody: event.target.value })}
-                              >
-                                <option value="">Select body</option>
-                                {natalPlacementBodies.map((body) => (
-                                  <option key={body} value={body}>{body}</option>
-                                ))}
-                              </select>
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Placement sign</span>
-                              <input
-                                value={selectedReviewMetadata?.placementSign ?? ""}
-                                placeholder="Aquarius"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementSign: event.target.value })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Placement house</span>
-                              <input
-                                value={selectedReviewMetadata?.placementHouse ?? ""}
-                                inputMode="numeric"
-                                placeholder="9"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementHouse: event.target.value })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field admin-metadata-checkbox">
-                              <span>Retrograde</span>
-                              <input
-                                type="checkbox"
-                                checked={Boolean(selectedReviewMetadata?.placementRetrograde)}
-                                disabled={isNodePlacement(selectedReviewMetadata?.placementBody ?? "")}
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementRetrograde: event.target.checked })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Ruler body</span>
-                              <input
-                                value={selectedReviewMetadata?.rulerBody ?? ""}
-                                placeholder="Saturn"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerBody: event.target.value })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Ruler sign</span>
-                              <input
-                                value={selectedReviewMetadata?.rulerSign ?? ""}
-                                placeholder="Virgo"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerSign: event.target.value })}
-                              />
-                            </label>
-                            <label className="admin-metadata-field">
-                              <span>Ruler house</span>
-                              <input
-                                value={selectedReviewMetadata?.rulerHouse ?? ""}
-                                inputMode="numeric"
-                                placeholder="4"
-                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerHouse: event.target.value })}
-                              />
-                            </label>
+                            {selectedMetadataUsesPlacementBody && (
+                              <label className="admin-metadata-field">
+                                <span>Placement body</span>
+                                <select
+                                  value={selectedReviewMetadata?.placementBody ?? ""}
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementBody: event.target.value })}
+                                >
+                                  <option value="">Select body</option>
+                                  {natalPlacementBodies.map((body) => (
+                                    <option key={body} value={body}>{body}</option>
+                                  ))}
+                                </select>
+                              </label>
+                            )}
+                            {selectedMetadataUsesPlacementSign && (
+                              <label className="admin-metadata-field">
+                                <span>Placement sign</span>
+                                <input
+                                  value={selectedReviewMetadata?.placementSign ?? ""}
+                                  placeholder="Aquarius"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementSign: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesPlacementHouse && (
+                              <label className="admin-metadata-field">
+                                <span>Placement house</span>
+                                <input
+                                  value={selectedReviewMetadata?.placementHouse ?? ""}
+                                  inputMode="numeric"
+                                  placeholder="9"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementHouse: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesPlacementBody && !selectedMetadataIsModularNatalBlock && (
+                              <label className="admin-metadata-field admin-metadata-checkbox">
+                                <span>Retrograde</span>
+                                <input
+                                  type="checkbox"
+                                  checked={Boolean(selectedReviewMetadata?.placementRetrograde)}
+                                  disabled={isNodePlacement(selectedReviewMetadata?.placementBody ?? "")}
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { placementRetrograde: event.target.checked })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesPlacementRuler && (
+                              <label className="admin-metadata-field">
+                                <span>Ruler body</span>
+                                <input
+                                  value={selectedReviewMetadata?.rulerBody ?? ""}
+                                  placeholder="Saturn"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerBody: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesFullRulerPlacement && (
+                              <>
+                                <label className="admin-metadata-field">
+                                  <span>Ruler sign</span>
+                                  <input
+                                    value={selectedReviewMetadata?.rulerSign ?? ""}
+                                    placeholder="Virgo"
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerSign: event.target.value })}
+                                  />
+                                </label>
+                                <label className="admin-metadata-field">
+                                  <span>Ruler house</span>
+                                  <input
+                                    value={selectedReviewMetadata?.rulerHouse ?? ""}
+                                    inputMode="numeric"
+                                    placeholder="4"
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerHouse: event.target.value })}
+                                  />
+                                </label>
+                              </>
+                            )}
                           </>
                         )}
                       </div>

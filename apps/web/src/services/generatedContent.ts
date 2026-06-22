@@ -1,6 +1,8 @@
 import { supabase } from "./auth";
+import { generatedContentAliases } from "./generatedContentKeys";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
+export type GeneratedContentBlockType = "sign" | "house" | "ruler" | "aspect" | "synthesis" | "essay";
 
 export type LiveGeneratedContent = {
   id: string;
@@ -13,6 +15,7 @@ export type LiveGeneratedContent = {
   summary: string | null;
   body: string;
   sections: unknown;
+  blockType?: GeneratedContentBlockType | null;
   provider?: string | null;
   model: string | null;
   updatedAt: string;
@@ -29,6 +32,7 @@ type GeneratedContentRow = {
   summary: string | null;
   body: string;
   sections: unknown | null;
+  block_type?: GeneratedContentBlockType | null;
   provider: string | null;
   model: string | null;
   updated_at: string;
@@ -63,64 +67,11 @@ function fromRow(row: GeneratedContentRow): LiveGeneratedContent {
     summary: row.summary,
     body: row.body,
     sections: row.sections ?? {},
+    blockType: row.block_type ?? null,
     provider: row.provider ?? null,
     model: row.model,
     updatedAt: row.updated_at
   };
-}
-
-function slugContentPart(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function parseAspectLabel(value?: string | null) {
-  const match = value?.match(/^(.+?)\s+(conjunction|opposition|square|trine|sextile)\s+(.+?)$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    first: slugContentPart(match[1]),
-    aspect: slugContentPart(match[2]),
-    second: slugContentPart(match[3])
-  };
-}
-
-function parsePlacementLabel(value?: string | null) {
-  const match = value?.match(/^(.+?)\s+in\s+(.+?)$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    point: slugContentPart(match[1]),
-    sign: slugContentPart(match[2])
-  };
-}
-
-function parseRetrogradeLabel(value?: string | null) {
-  const match = value?.match(/^(.+?)\s+retrograde(?:\s+in\s+(.+?))?$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    planet: slugContentPart(match[1]),
-    sign: match[2] ? slugContentPart(match[2]) : null
-  };
-}
-
-function addAlias(aliases: Set<string>, alias?: string | null) {
-  if (alias) {
-    aliases.add(alias);
-  }
 }
 
 function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: LiveGeneratedContent) {
@@ -142,75 +93,6 @@ function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: 
   }
 
   return false;
-}
-
-function isLegacyCurrentSkyEvent(eventType: string | null, prefix: "seasonal" | "lunar") {
-  return eventType === `${prefix}-${["weath", "er"].join("")}`;
-}
-
-function generatedContentAliases(row: GeneratedContentRow) {
-  const aliases = new Set<string>();
-  const aspect = parseAspectLabel(row.headline);
-  const placement = parsePlacementLabel(row.headline);
-  const retrograde = parseRetrogradeLabel(row.headline);
-  const reversedAspect = aspect ? `${aspect.second}-${aspect.aspect}-${aspect.first}` : null;
-  const directAspect = aspect ? `${aspect.first}-${aspect.aspect}-${aspect.second}` : null;
-
-  if (row.surface === "sky") {
-    if (row.event_type === "current-aspect" && directAspect) {
-      addAlias(aliases, row.target_date ? `sky-aspect-${directAspect}-${row.target_date}` : null);
-      addAlias(aliases, `sky-${directAspect}`);
-      addAlias(aliases, row.target_date ? `sky-aspect-${reversedAspect}-${row.target_date}` : null);
-      addAlias(aliases, `sky-${reversedAspect}`);
-    }
-
-    if ((row.event_type === "seasonal-current" || isLegacyCurrentSkyEvent(row.event_type, "seasonal")) && placement?.sign) {
-      addAlias(aliases, row.target_date ? `sky-season-${placement.sign}-${row.target_date}` : null);
-    }
-
-    if ((row.event_type === "lunar-cycle" || isLegacyCurrentSkyEvent(row.event_type, "lunar")) && placement?.sign) {
-      addAlias(aliases, row.target_date ? `sky-moon-${placement.sign}-${row.target_date}` : null);
-    }
-
-    if (row.event_type === "retrograde" && retrograde?.planet) {
-      addAlias(aliases, row.target_date ? `sky-retrograde-${retrograde.planet}-${row.target_date}` : null);
-      addAlias(aliases, `sky-retrograde-${retrograde.planet}`);
-      addAlias(aliases, retrograde.sign ? `sky-${retrograde.planet}-in-${retrograde.sign}` : null);
-    }
-  }
-
-  if ((row.surface === "natal" || row.surface === "you") && directAspect) {
-    addAlias(aliases, `natal-${directAspect}`);
-    addAlias(aliases, `natal-${reversedAspect}`);
-
-    if (row.event_type?.includes("transit") || row.content_key.startsWith("transit-natal-")) {
-      addAlias(aliases, `transit-natal-${directAspect}`);
-      addAlias(aliases, `transit-natal-${reversedAspect}`);
-    }
-  }
-
-  if ((row.surface === "natal" || row.surface === "you") && placement) {
-    addAlias(aliases, `natal-${placement.point}-in-${placement.sign}`);
-    addAlias(aliases, `${placement.point}-in-${placement.sign}`);
-  }
-
-  if ((row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") && directAspect) {
-    ["relationship", "synastry", "composite"].forEach((prefix) => {
-      addAlias(aliases, `${prefix}-${directAspect}`);
-      addAlias(aliases, `${prefix}-${reversedAspect}`);
-    });
-    addAlias(aliases, directAspect);
-    addAlias(aliases, reversedAspect);
-  }
-
-  if ((row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") && placement) {
-    ["relationship", "synastry", "composite"].forEach((prefix) => {
-      addAlias(aliases, `${prefix}-${placement.point}-in-${placement.sign}`);
-    });
-    addAlias(aliases, `${placement.point}-in-${placement.sign}`);
-  }
-
-  return Array.from(aliases);
 }
 
 export function generatedContentParagraphs(content?: LiveGeneratedContent | null) {

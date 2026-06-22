@@ -1308,14 +1308,7 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
 function natalPlacementFactInstruction(input: GenerateContentInput) {
   const facts = input.facts;
   const type = stringValue(facts.type) || input.eventType;
-  const isNatalPlacement = input.eventType.includes("natal-placement")
-    || type === "natal_placement"
-    || (input.surface === "natal" && Boolean(stringValue(facts.sign) && stringValue(facts.house)));
-
-  if (!isNatalPlacement) {
-    return "";
-  }
-
+  const blockType = stringValue(facts.blockType);
   const placementBody = stringValue(facts.placementBody)
     || stringValue(facts.planet)
     || stringValue(facts.body)
@@ -1326,6 +1319,63 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
   const rulerBody = stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler);
   const rulerSign = stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign);
   const rulerHouse = stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse);
+  const aspectBodyA = stringValue(facts.body1) || stringValue(facts.planetA) || stringValue(facts.from);
+  const aspectBodyB = stringValue(facts.body2) || stringValue(facts.planetB) || stringValue(facts.to);
+  const aspectType = stringValue(facts.aspect);
+
+  if (input.surface === "natal" && blockType && blockType !== "essay" && blockType !== "synthesis") {
+    const commonRules = [
+      "NATAL MODULAR BLOCK FACT LOCK",
+      `Block type: ${blockType}.`,
+      "Write this as one reusable interpretation block, not a full placement essay.",
+      "Only interpret the facts listed for this block. Do not import missing sign, house, ruler, or aspect details from examples."
+    ];
+
+    if (blockType === "sign") {
+      return [
+        ...commonRules,
+        `Placement body: ${placementBody || "missing"}.`,
+        `Placement sign: ${placementSign || "missing"}.`,
+        "Write only the body-in-sign meaning. Do not mention house, ruler placement, timing, or aspects."
+      ].join("\n");
+    }
+
+    if (blockType === "house") {
+      return [
+        ...commonRules,
+        `Placement body: ${placementBody || "missing"}.`,
+        `Placement house: ${placementHouse || "missing"}.`,
+        "Write only how this body expresses through this house. Do not mention sign, ruler placement, timing, or aspects."
+      ].join("\n");
+    }
+
+    if (blockType === "ruler") {
+      return [
+        ...commonRules,
+        `Ruler body: ${rulerBody || placementBody || "missing"}.`,
+        "Write only a reusable ruler/dispositor meaning for this ruling body. Do not mention a specific sign or house unless those facts are explicitly provided."
+      ].join("\n");
+    }
+
+    if (blockType === "aspect") {
+      return [
+        ...commonRules,
+        `Body A: ${aspectBodyA || "missing"}.`,
+        `Aspect: ${aspectType || "missing"}.`,
+        `Body B: ${aspectBodyB || "missing"}.`,
+        "Write only the natal aspect meaning between these bodies. Do not mention transits, dates, houses, signs, or timing."
+      ].join("\n");
+    }
+  }
+
+  const isNatalPlacement = input.eventType.includes("natal-placement")
+    || type === "natal_placement"
+    || (input.surface === "natal" && Boolean(stringValue(facts.sign) && stringValue(facts.house)));
+
+  if (!isNatalPlacement) {
+    return "";
+  }
+
   const retrogradeValue = facts.retrograde ?? facts.isRetrograde;
   const isRetrograde = retrogradeValue === true || (typeof retrogradeValue === "string" && retrogradeValue.toLowerCase() === "true");
   const isNode = ["north node", "south node", "true node"].includes(placementBody.toLowerCase());

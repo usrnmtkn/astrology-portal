@@ -98,6 +98,12 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import {
+  natalAspectContentKey,
+  natalHouseContentKey,
+  natalRulerContentKey,
+  natalSignContentKey
+} from "./services/generatedContentKeys";
+import {
   createManualChart,
   deleteManualChart,
   listManualCharts,
@@ -3889,7 +3895,10 @@ function relatedAspectRowsForPlacement({
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
       const generated = mode === "sky" && generatedAt
         ? liveGeneratedContentByKeys(generatedContent, skyAspectGeneratedContentKeys(aspect, generatedAt))
-        : liveGeneratedContent(generatedContent, aspectContentId(aspect.from, aspect.type, aspect.to));
+        : liveGeneratedContentByKeys(generatedContent, [
+            natalAspectContentKey(aspect.from, aspect.type, aspect.to),
+            aspectContentId(aspect.from, aspect.type, aspect.to)
+          ]);
       const fallback = mode === "sky"
         ? fallbackFromHook(
             "sky.aspect-detail",
@@ -10115,6 +10124,177 @@ function natalPlacementFallbackSection(
   };
 }
 
+function articleSection(heading: string, paragraphs: string[]): YouTransitArticle["sections"][number] | null {
+  const body = paragraphs.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n");
+
+  return body ? { heading, tldr: "", body } : null;
+}
+
+function natalPlacementSignModuleParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
+  const retrograde = position.motion === "retrograde" ? " retrograde" : "";
+
+  return `Your ${position.planet}${retrograde} in ${position.sign} describes ${natalPlanetCoreFunction(position.planet)}. In ${position.sign}, this part of you is ${signFrame.quality}. ${signFrame.motion}`;
+}
+
+function natalPlacementSignModule(
+  position: PlanetPosition,
+  generatedContent: GeneratedContentMap
+): YouTransitArticle["sections"][number] | null {
+  const generated = liveGeneratedContentByKeys(generatedContent, [
+    natalSignContentKey(position.planet, position.sign),
+    placementContentId(position.planet, position.sign)
+  ]);
+  const generatedParagraphs = generatedContentParagraphs(generated);
+
+  if (generatedParagraphs.length > 0) {
+    return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), generatedParagraphs);
+  }
+
+  const signFrame = natalSignFallbackFrames[position.sign] ?? natalSignFallbackFrames.Aries;
+  const retrogradeParagraph = natalRetrogradePlacementNote(position);
+
+  return articleSection(
+    placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"),
+    [
+      natalPlacementSignModuleParagraph(position, signFrame),
+      retrogradeParagraph
+    ]
+  );
+}
+
+function natalPlacementHouseModule(
+  position: PlanetPosition,
+  generatedContent: GeneratedContentMap
+): YouTransitArticle["sections"][number] | null {
+  if (!position.house) {
+    return null;
+  }
+
+  const houseLabel = `${ordinalHouse(position.house)} house`;
+  const generated = liveGeneratedContent(generatedContent, natalHouseContentKey(position.planet, position.house));
+  const generatedParagraphs = generatedContentParagraphs(generated);
+
+  if (generatedParagraphs.length > 0) {
+    return articleSection(`${position.planet} in the ${houseLabel}`, generatedParagraphs);
+  }
+
+  const houseFrame = natalHouseFallbackFrames[position.house];
+
+  if (!houseFrame) {
+    return null;
+  }
+
+  return articleSection(
+    `${position.planet} in the ${houseLabel}`,
+    [natalPlacementHouseSupportParagraph(position, houseFrame, houseLabel)]
+  );
+}
+
+function natalPlacementRulerModule(
+  position: PlanetPosition,
+  natalSky: SkySnapshot | null,
+  generatedContent: GeneratedContentMap
+): YouTransitArticle["sections"][number] | null {
+  if (!position.house) {
+    return null;
+  }
+
+  const houseLabel = `${ordinalHouse(position.house)} house`;
+  const houseFrame = natalHouseFallbackFrames[position.house];
+  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, position.house) : position.sign;
+  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
+  const rulerPosition = houseRuler
+    ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
+    : null;
+  const rulerHouse = rulerPosition?.house ?? null;
+
+  if (!houseFrame || !houseRuler) {
+    return null;
+  }
+
+  const heading = rulerPosition?.house
+    ? `${houseRuler} in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house`
+    : `${cuspSign} ruled by ${houseRuler}`;
+  const generatedParagraphs = [
+    ...generatedContentParagraphs(liveGeneratedContent(generatedContent, natalRulerContentKey(houseRuler))),
+    ...(rulerPosition
+      ? generatedContentParagraphs(liveGeneratedContent(generatedContent, natalSignContentKey(houseRuler, rulerPosition.sign)))
+      : []),
+    ...(rulerPosition?.house
+      ? generatedContentParagraphs(liveGeneratedContent(generatedContent, natalHouseContentKey(houseRuler, rulerPosition.house)))
+      : [])
+  ];
+
+  if (generatedParagraphs.length > 0) {
+    return articleSection(heading, generatedParagraphs);
+  }
+
+  return articleSection(
+    heading,
+    [
+      natalRulerParagraph({
+        cuspSign,
+        houseFrame,
+        houseLabel,
+        houseRuler,
+        rulerHouse,
+        rulerPosition
+      })
+    ]
+  );
+}
+
+function natalPlacementSynthesisModule(
+  position: PlanetPosition,
+  liveWriteup: LiveGeneratedContent | null,
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+): YouTransitArticle["sections"][number] | null {
+  const isFriendOwner = ownerContext?.ownerKind !== "chart" && Boolean(ownerContext?.ownerName);
+  const liveParagraphs = generatedContentParagraphs(liveWriteup);
+  const hasLiveAuthoredBody = liveParagraphs.length > 0 && !isNatalPlacementLensWriteup(liveWriteup);
+  const approvedBody = isFriendOwner ? "" : approvedNatalPlacementBody(position);
+  const approvedParagraphs = approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
+
+  if (hasLiveAuthoredBody) {
+    return articleSection("Synthesis", liveParagraphs);
+  }
+
+  if (approvedParagraphs.length > 0) {
+    return articleSection("Synthesis", approvedParagraphs);
+  }
+
+  return null;
+}
+
+function natalPlacementModularSections({
+  generatedContent,
+  liveWriteup,
+  natalSky,
+  ownerContext,
+  position
+}: {
+  generatedContent: GeneratedContentMap;
+  liveWriteup: LiveGeneratedContent | null;
+  natalSky: SkySnapshot | null;
+  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
+  position: PlanetPosition;
+}) {
+  if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
+    const ownerBody = placementStructureBody(position, natalSky, ownerContext);
+
+    return [
+      articleSection(natalPlacementFullTitle(position), ownerBody.split(/\n\n/))
+    ].filter((section): section is YouTransitArticle["sections"][number] => Boolean(section));
+  }
+
+  return [
+    natalPlacementSignModule(position, generatedContent),
+    natalPlacementHouseModule(position, generatedContent),
+    natalPlacementRulerModule(position, natalSky, generatedContent),
+    natalPlacementSynthesisModule(position, liveWriteup, ownerContext)
+  ].filter((section): section is YouTransitArticle["sections"][number] => Boolean(section));
+}
+
 const friendHousePlacementBridges: Record<number, string> = {
   1: "In the 1st house, this becomes visible through presence: the way they enter situations, respond on instinct, and become recognizable to other people before anything is explained.",
   2: "In the 2nd house, this is closely tied to worth: money, security, desire, comfort, and the things they want to hold onto because they matter.",
@@ -10618,34 +10798,13 @@ function natalPlacementDetailArticle(
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
   ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
 ): YouTransitArticle {
-  const isFriendOwner = ownerContext?.ownerKind !== "chart" && Boolean(ownerContext?.ownerName);
-  const bodyParagraphs = generatedContentParagraphs(liveWriteup);
-  const liveBody = bodyParagraphs.join("\n\n").trim();
-  const approvedBody = isFriendOwner ? "" : approvedNatalPlacementBody(position);
-  const hasApprovedBody = Boolean(approvedBody);
-  const hasLiveAuthoredBody = Boolean(liveBody && !isNatalPlacementLensWriteup(liveWriteup));
-  const hasAuthoredBody = hasApprovedBody || hasLiveAuthoredBody;
-  const fallbackSection = hasAuthoredBody
-    ? null
-    : natalPlacementFallbackSection(position, natalSky, {
-      includeApprovedBody: true
-    });
-  const authoredBodyParagraphs = hasApprovedBody
-    ? approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
-    : hasLiveAuthoredBody
-      ? bodyParagraphs
-      : [];
-  const ownerPlacementStructureBody = !hasAuthoredBody
-    ? placementStructureBody(position, natalSky, ownerContext)
-    : "";
-  const lensBody = ownerPlacementStructureBody || fallbackSection?.body || (isNatalPlacementLensWriteup(liveWriteup) ? liveBody : "");
-  const sections = lensBody
-    ? [{
-      heading: "",
-      tldr: "",
-      body: lensBody
-    }]
-    : [];
+  const sections = natalPlacementModularSections({
+    generatedContent,
+    liveWriteup,
+    natalSky,
+    ownerContext,
+    position
+  });
   const relatedAspectRows = relatedAspectRowsForPlacement({
     aspects: natalSky?.aspects ?? [],
     generatedContent,
@@ -10662,9 +10821,9 @@ function natalPlacementDetailArticle(
     subtitle: natalPlacementDetailSubtitle(position),
     lensHint: undefined,
     compactHeader: true,
-    plainBody: authoredBodyParagraphs.length > 0,
+    plainBody: false,
     bodyBeforeSections: true,
-    body: authoredBodyParagraphs,
+    body: [],
     summary: "",
     summaryHeading: "",
     sections,
@@ -13517,7 +13676,6 @@ function ProfileView({
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
         transitArticle={transitArticle}
-        transitsDrawn={transitsDrawn}
       />
     </Suspense>
   );

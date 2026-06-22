@@ -70,6 +70,7 @@ async function readJsonBody(req: IncomingMessage) {
     knowledgeIds?: string[];
     sourceSnapshot?: unknown;
     promptVersion?: string;
+    blockType?: string | null;
     reviewerNotes?: string;
   };
 }
@@ -206,6 +207,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     facts: body.facts ?? {},
     knowledge_ids: body.knowledgeIds ?? [],
     source_snapshot: body.sourceSnapshot ?? {},
+    ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     model: "manual",
     headline: body.headline ?? "",
@@ -313,6 +315,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (typeof body.promptVersion === "string") {
     patch.prompt_version = body.promptVersion.trim() || "manual-admin";
+  }
+
+  if (body.blockType !== undefined) {
+    patch.block_type = typeof body.blockType === "string" && body.blockType.trim() ? body.blockType.trim() : null;
   }
 
   if (typeof body.reviewerNotes === "string") {
