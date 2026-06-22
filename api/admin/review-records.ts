@@ -131,6 +131,25 @@ const aspectDefinitions = [
 
 const zodiacSigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 
+const traditionalRulersBySign: Record<string, string> = {
+  aries: "Mars",
+  taurus: "Venus",
+  gemini: "Mercury",
+  cancer: "Moon",
+  leo: "Sun",
+  virgo: "Mercury",
+  libra: "Venus",
+  scorpio: "Mars",
+  sagittarius: "Jupiter",
+  capricorn: "Saturn",
+  aquarius: "Saturn",
+  pisces: "Jupiter"
+};
+
+function traditionalRulerForSign(sign: string) {
+  return traditionalRulersBySign[sign.toLowerCase().trim()] ?? "";
+}
+
 function requireEnv(name: string) {
   const value = process.env[name];
 
@@ -439,6 +458,15 @@ function mergeSaved(record: ReviewRecord, saved?: SavedContentRow): ReviewRecord
     return record;
   }
 
+  const facts = {
+    ...(record.facts ?? {}),
+    ...(saved.facts ?? {})
+  };
+  const sourceSnapshot = {
+    ...(record.sourceSnapshot ?? {}),
+    ...(saved.source_snapshot ?? {})
+  };
+
   return {
     ...record,
     source: "saved",
@@ -448,8 +476,8 @@ function mergeSaved(record: ReviewRecord, saved?: SavedContentRow): ReviewRecord
     summary: saved.summary || record.summary,
     body: saved.body || record.body,
     sections: sectionsFromSaved(saved),
-    facts: saved.facts ?? record.facts,
-    sourceSnapshot: saved.source_snapshot ?? record.sourceSnapshot,
+    facts,
+    sourceSnapshot,
     reviewerNotes: saved.reviewer_notes,
     model: saved.model,
     updatedAt: saved.updated_at
@@ -676,6 +704,8 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
   const natal = chartNeedsNatal(chart);
   const placementRecords = natal.positions.map((position) => {
     const contentKey = natalPlacementContentKey(position.planet, position.sign);
+    const ruler = traditionalRulerForSign(position.sign);
+    const rulerPosition = ruler ? natal.positions.find((candidate) => candidate.planet === ruler) : null;
     const baseRecord: ReviewRecord = {
       id: `calculated:${chart.id}:${contentKey}`,
       source: "calculated",
@@ -693,12 +723,40 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
       facts: {
         type: "natal_placement",
         planet: position.planet,
+        body: position.planet,
+        point: position.planet,
+        node: position.planet.toLowerCase().includes("node") ? position.planet : undefined,
+        placementBody: position.planet,
         sign: position.sign,
+        placementSign: position.sign,
         degree: position.degree,
         house: position.house,
-        motion: position.motion
+        placementHouse: position.house,
+        motion: position.motion,
+        retrograde: position.motion === "retrograde" && !position.planet.toLowerCase().includes("node"),
+        isRetrograde: position.motion === "retrograde" && !position.planet.toLowerCase().includes("node"),
+        ruler,
+        rulerBody: ruler,
+        houseRuler: ruler,
+        rulerSign: rulerPosition?.sign,
+        houseRulerSign: rulerPosition?.sign,
+        rulerHouse: rulerPosition?.house,
+        houseRulerHouse: rulerPosition?.house
       },
-      sourceSnapshot: null,
+      sourceSnapshot: {
+        chartId: chart.id,
+        chartName: chart.display_name,
+        houseSystem: "whole_sign",
+        positions: natal.positions.map((candidate) => ({
+          planet: candidate.planet,
+          body: candidate.planet,
+          point: candidate.planet,
+          sign: candidate.sign,
+          house: candidate.house,
+          degree: candidate.degree,
+          motion: candidate.motion
+        }))
+      },
       reviewerNotes: null,
       subjectId: chart.id,
       subjectType: "manual_chart",
