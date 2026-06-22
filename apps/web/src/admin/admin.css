@@ -1368,7 +1368,7 @@ body,
 }
 
 .admin-review-summary {
-  color: var(--admin-ink) !important;
+  color: var(--admin-ink);
   font-size: var(--type-title-size);
   font-weight: var(--weight-semibold);
 }

@@ -245,7 +245,6 @@
   --snap-degree-size: 12px;
   --snap-phase-size: 11px;
   --snap-next-title-size: 14px;
-  --snap-next-pill-padding: 3px 9px;
   --snap-next-subtitle-size: 13px;
   --sky-card-padding: var(--lunar-card-padding);
   --sky-card-min-height: var(--lunar-card-min-height);
@@ -450,6 +449,10 @@
   --nav-scrolled-shadow: var(--shadow-floating);
   --nav-blur: 22px;
   --nav-saturate: 1.5;
+  --modal-backdrop-bg: rgba(0, 0, 0, 0.28);
+  --modal-backdrop-strong-bg: rgba(15, 15, 15, 0.45);
+  --friend-avatar-secondary-bg: #e9eefb;
+  --friend-avatar-secondary-fg: #171a22;
   --floating-button-bg: var(--surface);
   --floating-button-bg-hover: #e6e8ef;
   --floating-button-border: var(--nav-border);

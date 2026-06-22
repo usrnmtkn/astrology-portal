@@ -215,7 +215,7 @@ body.modal-open {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--modal-backdrop-bg);
 }
 
 .chart-modal {

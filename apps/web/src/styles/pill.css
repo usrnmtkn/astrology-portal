@@ -60,7 +60,3 @@
   background: color-mix(in srgb, var(--status-alert) 14%, var(--surface));
   color: var(--status-alert);
 }
-
-.ui-pill.nl-until {
-  text-transform: uppercase;
-}

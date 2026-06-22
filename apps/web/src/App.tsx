@@ -7303,7 +7303,7 @@ function SkyLoadingCards({ compact = false }: { compact?: boolean }) {
 export function App() {
   if (isAdminContentPath()) {
     return (
-      <Suspense fallback={<main style={{ minHeight: "100vh", padding: 28 }}>Loading admin dashboard...</main>}>
+      <Suspense fallback={<main className="admin-loading-fallback">Loading admin dashboard...</main>}>
         <GeneratedContentAdminDashboard />
       </Suspense>
     );
@@ -11311,7 +11311,7 @@ function RetrogradeCallout({
       ...(durationLine
         ? [
             <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
-              <span className="ui-pill ui-pill--retrograde ui-pill--mixed retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
                 <DurationLabelText label={durationLine} />
               </span>
             </span>
@@ -11377,7 +11377,7 @@ function RetrogradeCallout({
           </span>
           <span className="sky-pl-range ro-sky-pl__timing">
             {row.remainingCount ? (
-              <span className="ui-pill ui-pill--retrograde ui-pill--mixed sky-pl-duration sky-pl-duration--retrograde">
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed sky-pl-duration sky-pl-duration--retrograde">
                 <DurationLabelText label={row.remainingCount} />
               </span>
             ) : null}

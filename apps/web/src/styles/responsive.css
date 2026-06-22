@@ -771,38 +771,6 @@
     padding: 16px;
   }
 
-  .mobile-sky-controls__tabs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: center;
-    min-height: calc(var(--segmented-item-height) + var(--segmented-padding) * 2);
-    border: 1px solid var(--segmented-border);
-    border-radius: var(--segmented-radius);
-    background: var(--segmented-bg);
-    box-shadow: var(--segmented-shadow);
-    gap: var(--segmented-gap);
-    padding: var(--segmented-padding);
-  }
-
-  .mobile-sky-controls__tabs button {
-    min-width: 0;
-    height: var(--segmented-item-height);
-    border: 0;
-    border-radius: var(--segmented-radius);
-    background: transparent;
-    color: var(--segmented-inactive-fg);
-    font-family: var(--font-ui);
-    font-size: var(--text-button-size);
-    font-weight: var(--weight-medium);
-    line-height: 1;
-  }
-
-  .mobile-sky-controls__tabs button.active {
-    background: var(--segmented-active-bg);
-    color: var(--segmented-active-fg);
-    font-weight: var(--weight-semibold);
-  }
-
   .date-picker {
     gap: 14px;
     width: min(330px, calc(100vw - var(--mobile-page-gutter) * 2));
@@ -1690,11 +1658,6 @@
     max-width: 100%;
   }
 
-  .segmented-control .segmented-control__item {
-    height: var(--segmented-item-height);
-    padding: 0 var(--segmented-item-px);
-    font-size: var(--text-button-size);
-  }
 }
 
 @media (max-width: 520px) {
