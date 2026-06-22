@@ -40,6 +40,8 @@
   --color-status-alert: #a8772f;
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
+  --color-moon-phase-light: #f0cf6a;
+  --color-moon-phase-shadow: #d8d7cf;
   --filter-glyph-current: none;
   --filter-glyph-neutral: brightness(0) saturate(100%);
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
@@ -134,9 +136,15 @@
     0 8px 18px -8px rgba(28, 32, 52, 0.13),
     0 28px 52px -24px rgba(28, 32, 52, 0.22);
   --elev-line: rgba(28, 32, 52, 0.06);
+  --elev-topbar-scrolled: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
+  --elev-mobile-panel:
+    0 1px 1px rgba(28, 32, 52, 0.04),
+    0 18px 48px -28px rgba(28, 32, 52, 0.28);
   --shadow-card: var(--elev-card);
   --shadow-floating: var(--elev-pill);
   --shadow-hero: var(--elev-hero);
+  --shadow-topbar-scrolled: var(--elev-topbar-scrolled);
+  --shadow-mobile-panel: var(--elev-mobile-panel);
   --shadow-overlay:
     0 24px 70px rgba(28, 32, 52, 0.12),
     0 4px 16px rgba(28, 32, 52, 0.06);
@@ -451,8 +459,14 @@
   --nav-saturate: 1.5;
   --modal-backdrop-bg: rgba(0, 0, 0, 0.28);
   --modal-backdrop-strong-bg: rgba(15, 15, 15, 0.45);
+  --modal-overlay-bg: rgba(20, 20, 20, 0.18);
+  --modal-overlay-dark-bg: rgba(0, 0, 0, 0.48);
+  --friend-compare-overlay-bg: rgba(229, 232, 238, 0.64);
+  --friend-compare-overlay-dark-bg: rgba(12, 13, 18, 0.62);
   --friend-avatar-secondary-bg: #e9eefb;
   --friend-avatar-secondary-fg: #171a22;
+  --moon-phase-light: var(--color-moon-phase-light);
+  --moon-phase-shadow: var(--color-moon-phase-shadow);
   --floating-button-bg: var(--surface);
   --floating-button-bg-hover: #e6e8ef;
   --floating-button-border: var(--nav-border);

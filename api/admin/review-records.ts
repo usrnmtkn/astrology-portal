@@ -63,6 +63,7 @@ type SavedContentRow = {
   summary: string | null;
   body: string | null;
   sections: Array<{ heading: string; body: string }> | Record<string, unknown> | null;
+  block_type: string | null;
   facts: Record<string, unknown> | null;
   source_snapshot: Record<string, unknown> | null;
   reviewer_notes: string | null;
@@ -100,6 +101,7 @@ type ReviewRecord = {
   summary: string;
   body: string;
   sections: Array<{ heading: string; body: string }>;
+  blockType?: string | null;
   facts: Record<string, unknown> | null;
   sourceSnapshot: Record<string, unknown> | null;
   reviewerNotes: string | null;
@@ -204,6 +206,53 @@ function slug(value: string) {
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function moduleContentPart(value: string | number | null | undefined) {
+  const normalized = slug(String(value ?? ""));
+
+  if (normalized === "true-node" || normalized === "north-node") {
+    return "north_node";
+  }
+
+  if (normalized === "south-node") {
+    return "south_node";
+  }
+
+  return normalized.replace(/-/g, "_");
+}
+
+const aspectBodyOrder = [
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "north_node",
+  "south_node",
+  "ascendant",
+  "descendant",
+  "midheaven",
+  "imum_coeli"
+];
+
+function canonicalAspectBodies(first: string, second: string) {
+  const firstBody = moduleContentPart(first);
+  const secondBody = moduleContentPart(second);
+  const firstIndex = aspectBodyOrder.indexOf(firstBody);
+  const secondIndex = aspectBodyOrder.indexOf(secondBody);
+
+  if (firstIndex >= 0 && secondIndex >= 0) {
+    return firstIndex <= secondIndex ? [firstBody, secondBody] : [secondBody, firstBody];
+  }
+
+  return firstBody.localeCompare(secondBody) <= 0 ? [firstBody, secondBody] : [secondBody, firstBody];
 }
 
 function dateOnly(date: Date) {
@@ -377,7 +426,7 @@ function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurfa
 
 async function savedContentRows(startDate?: string | null, endDate?: string | null) {
   const params = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,source_snapshot,reviewer_notes,model,updated_at",
+    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,model,updated_at",
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: "1000"
   });
@@ -417,6 +466,7 @@ function savedReviewRecord(row: SavedContentRow): ReviewRecord {
     summary: row.summary ?? "",
     body: row.body ?? "",
     sections: sectionsFromSaved(row),
+    blockType: row.block_type,
     facts: row.facts,
     sourceSnapshot: row.source_snapshot,
     reviewerNotes: row.reviewer_notes,
@@ -476,6 +526,7 @@ function mergeSaved(record: ReviewRecord, saved?: SavedContentRow): ReviewRecord
     summary: saved.summary || record.summary,
     body: saved.body || record.body,
     sections: sectionsFromSaved(saved),
+    blockType: saved.block_type ?? record.blockType ?? null,
     facts,
     sourceSnapshot,
     reviewerNotes: saved.reviewer_notes,
@@ -485,11 +536,27 @@ function mergeSaved(record: ReviewRecord, saved?: SavedContentRow): ReviewRecord
 }
 
 function aspectContentKey(aspect: { from: string; type: string; to: string }, targetDate: string) {
-  return `sky-aspect-${slug(aspect.from)}-${slug(aspect.type)}-${slug(aspect.to)}-${targetDate}`;
+  const [first, second] = canonicalAspectBodies(aspect.from, aspect.to);
+
+  return `sky.aspect.${first}.${moduleContentPart(aspect.type)}.${second}.${targetDate}`;
 }
 
-function transitNatalContentKey(transitPlanet: string, aspect: string, natalPoint: string, targetDate: string) {
-  return `you-transit-v3-${slug(transitPlanet)}-${slug(aspect)}-${slug(natalPoint)}-${targetDate}`;
+function transitNatalContentKey(
+  transitPlanet: string,
+  aspect: string,
+  natalPoint: string,
+  targetDate: string,
+  context?: { transitSign?: string | null; natalSign?: string | null; natalHouse?: number | null }
+) {
+  const parts = [
+    `transit.aspect.${moduleContentPart(transitPlanet)}.${moduleContentPart(aspect)}.${moduleContentPart(natalPoint)}`,
+    context?.transitSign ? moduleContentPart(context.transitSign) : "",
+    context?.natalSign ? moduleContentPart(context.natalSign) : "",
+    context?.natalHouse ? `house_${moduleContentPart(context.natalHouse)}` : "",
+    targetDate
+  ].filter(Boolean);
+
+  return parts.join(".");
 }
 
 function natalPlacementContentKey(planet: string, sign: string) {
@@ -497,11 +564,19 @@ function natalPlacementContentKey(planet: string, sign: string) {
 }
 
 function natalAspectContentKey(first: string, aspect: string, second: string) {
-  return `natal-${slug(first)}-${slug(aspect)}-${slug(second)}`;
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
+
+  return `natal.aspect.${firstBody}.${moduleContentPart(aspect)}.${secondBody}`;
 }
 
 function relationshipAspectContentKey(first: string, aspect: string, second: string, surface: "synastry" | "composite") {
-  return `${surface}-${slug(first)}-${slug(aspect)}-${slug(second)}`;
+  if (surface === "synastry") {
+    return `synastry.aspect.${moduleContentPart(first)}.${moduleContentPart(aspect)}.${moduleContentPart(second)}`;
+  }
+
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
+
+  return `composite.aspect.${firstBody}.${moduleContentPart(aspect)}.${secondBody}`;
 }
 
 function placementSummary(position: PlanetPosition, owner = "This chart") {
@@ -568,7 +643,9 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
         summary: skyAspectSummary(entry.aspect),
         body: "",
         sections: [],
+        blockType: "sky_aspect",
         facts: {
+          blockType: "sky_aspect",
           type: "upcoming_aspect",
           from: entry.aspect.from,
           fromSign: entry.aspect.fromSign,
@@ -662,7 +739,11 @@ async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow
     .sort((first, second) => first.targetDate.localeCompare(second.targetDate) || ((first.aspect?.orbValue ?? 0) - (second.aspect?.orbValue ?? 0)))
     .map((entry) => {
       const aspect = entry.aspect;
-      const contentKey = transitNatalContentKey(entry.transit.planet, aspect?.type ?? "contact", entry.natal.planet, entry.targetDate);
+      const contentKey = transitNatalContentKey(entry.transit.planet, aspect?.type ?? "contact", entry.natal.planet, entry.targetDate, {
+        transitSign: entry.transit.sign,
+        natalSign: entry.natal.sign,
+        natalHouse: entry.natal.house
+      });
       const baseRecord: ReviewRecord = {
         id: `calculated:${contentKey}`,
         source: "calculated",
@@ -677,7 +758,9 @@ async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow
         summary: `${entry.transit.planet} ${aspect?.type ?? "contacts"} ${entry.natal.planet} activates ${chart.display_name}'s ${entry.natal.planet} pattern in the selected window.`,
         body: "",
         sections: [],
+        blockType: "transit_to_natal_aspect",
         facts: {
+          blockType: "transit_to_natal_aspect",
           type: "transit_to_natal",
           transitPlanet: entry.transit.planet,
           transitSign: entry.transit.sign,
@@ -782,7 +865,9 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
       summary: aspect.meaning || aspectSummary(aspect.from, aspect.type, aspect.to),
       body: "",
       sections: [],
+      blockType: "natal_aspect",
       facts: {
+        blockType: "natal_aspect",
         type: "natal_aspect",
         from: aspect.from,
         to: aspect.to,
@@ -832,12 +917,18 @@ function relationshipRecords(charts: ManualChartRow[], savedRows: Map<string, Sa
         summary: `${firstPosition.planet} ${aspect.type} ${secondPosition.planet} describes a relationship contact between ${firstChart.display_name} and ${secondChart.display_name}.`,
         body: "",
         sections: [],
+        blockType: "synastry_aspect",
         facts: {
+          blockType: "synastry_aspect",
           type: "synastry_aspect",
           personA: firstChart.display_name,
           personB: secondChart.display_name,
           planetA: firstPosition.planet,
+          planetASign: firstPosition.sign,
+          planetAHouse: firstPosition.house,
           planetB: secondPosition.planet,
+          planetBSign: secondPosition.sign,
+          planetBHouse: secondPosition.house,
           aspect: aspect.type,
           orb: aspect.orbValue
         },
@@ -852,7 +943,7 @@ function relationshipRecords(charts: ManualChartRow[], savedRows: Map<string, Sa
       return mergeSaved(baseRecord, savedRows.get(contentKey));
     })
   )).filter((record): record is ReviewRecord => Boolean(record));
-  const compositeRecords = firstNatal.positions.map((firstPosition) => {
+  const compositePositions = firstNatal.positions.map((firstPosition) => {
     const matchingPosition = secondNatal.positions.find((position) => position.planet === firstPosition.planet);
     if (!matchingPosition) return null;
 
@@ -861,25 +952,36 @@ function relationshipRecords(charts: ManualChartRow[], savedRows: Map<string, Sa
     const directDelta = ((secondLongitude - firstLongitude + 540) % 360) - 180;
     const midpoint = (firstLongitude + directDelta / 2 + 360) % 360;
     const sign = zodiacSigns[Math.floor((midpoint % 360) / 30)] ?? firstPosition.sign;
-    const contentKey = `composite-${slug(firstPosition.planet)}-in-${slug(sign)}`;
+    const degree = midpoint % 30;
+
+    return {
+      ...firstPosition,
+      sign,
+      degree,
+      house: 0
+    };
+  }).filter((position): position is PlanetPosition => Boolean(position));
+
+  const compositeRecords = compositePositions.map((position) => {
+    const contentKey = `composite-${slug(position.planet)}-in-${slug(position.sign)}`;
     const baseRecord: ReviewRecord = {
       id: `calculated:${firstChart.id}:${secondChart.id}:${contentKey}`,
       source: "calculated",
       surface: "composite",
       status: "DRAFT",
       mode: "feed",
-      title: `Composite ${firstPosition.planet} in ${sign}`,
+      title: `Composite ${position.planet} in ${position.sign}`,
       subtitle: `${firstChart.display_name} + ${secondChart.display_name}`,
       targetDate: null,
       contentKey,
       eventType: "composite-placement",
-      summary: `Composite ${firstPosition.planet} in ${sign} describes how this relationship tends to express ${firstPosition.theme}.`,
+      summary: `Composite ${position.planet} in ${position.sign} describes how this relationship tends to express ${position.theme}.`,
       body: "",
       sections: [],
       facts: {
         type: "composite_placement",
-        planet: firstPosition.planet,
-        sign
+        planet: position.planet,
+        sign: position.sign
       },
       sourceSnapshot: null,
       reviewerNotes: null,
@@ -891,8 +993,49 @@ function relationshipRecords(charts: ManualChartRow[], savedRows: Map<string, Sa
 
     return mergeSaved(baseRecord, savedRows.get(contentKey));
   }).filter((record): record is ReviewRecord => Boolean(record));
+  const compositeAspectRecords = calculatedAspectsForPositions(compositePositions).map((aspect) => {
+    const contentKey = relationshipAspectContentKey(aspect.from, aspect.type, aspect.to, "composite");
+    const fromPosition = compositePositions.find((position) => position.planet === aspect.from);
+    const toPosition = compositePositions.find((position) => position.planet === aspect.to);
+    const baseRecord: ReviewRecord = {
+      id: `calculated:${firstChart.id}:${secondChart.id}:${contentKey}`,
+      source: "calculated",
+      surface: "composite",
+      status: "DRAFT",
+      mode: "feed",
+      title: `Composite ${aspect.from} ${aspect.type} ${aspect.to}`,
+      subtitle: `${aspect.orb.toFixed(1)}° orb · composite`,
+      targetDate: null,
+      contentKey,
+      eventType: "composite-aspect",
+      summary: `Composite ${aspect.from} ${aspect.type} ${aspect.to} describes a shared relationship pattern between ${firstChart.display_name} and ${secondChart.display_name}.`,
+      body: "",
+      sections: [],
+      blockType: "composite_aspect",
+      facts: {
+        blockType: "composite_aspect",
+        type: "composite_aspect",
+        from: aspect.from,
+        fromSign: fromPosition?.sign,
+        fromHouse: fromPosition?.house || undefined,
+        to: aspect.to,
+        toSign: toPosition?.sign,
+        toHouse: toPosition?.house || undefined,
+        aspect: aspect.type,
+        orb: aspect.orb
+      },
+      sourceSnapshot: null,
+      reviewerNotes: null,
+      subjectId: `${firstChart.id},${secondChart.id}`,
+      subjectType: "chart_pair",
+      userId: firstChart.owner_user_id,
+      updatedAt: new Date().toISOString()
+    };
 
-  return [...synastryRecords, ...compositeRecords];
+    return mergeSaved(baseRecord, savedRows.get(contentKey));
+  });
+
+  return [...synastryRecords, ...compositeRecords, ...compositeAspectRecords];
 }
 
 function counts(records: ReviewRecord[]) {

@@ -6,6 +6,13 @@ export type GeneratedContentAliasRow = {
   target_date: string | null;
 };
 
+export type AspectContentFamily =
+  | "natal_aspect"
+  | "sky_aspect"
+  | "transit_to_natal_aspect"
+  | "synastry_aspect"
+  | "composite_aspect";
+
 export function slugContentPart(value: string) {
   return value
     .toLowerCase()
@@ -61,6 +68,14 @@ function canonicalNatalAspectBodies(first: string, second: string) {
   return firstPart.localeCompare(secondPart) <= 0 ? [firstPart, secondPart] : [secondPart, firstPart];
 }
 
+function canonicalAspectBodies(first: string, second: string) {
+  return canonicalNatalAspectBodies(first, second);
+}
+
+function aspectPart(value: string) {
+  return moduleContentPart(value);
+}
+
 export function natalSignContentKey(body: string, sign: string) {
   return `natal.sign.${moduleContentPart(body)}.${moduleContentPart(sign)}`;
 }
@@ -74,9 +89,84 @@ export function natalRulerContentKey(ruler: string) {
 }
 
 export function natalAspectContentKey(first: string, aspect: string, second: string) {
-  const [firstBody, secondBody] = canonicalNatalAspectBodies(first, second);
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
 
   return `natal.aspect.${firstBody}.${moduleContentPart(aspect)}.${secondBody}`;
+}
+
+export function skyAspectContentKey(first: string, aspect: string, second: string) {
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
+
+  return `sky.aspect.${firstBody}.${aspectPart(aspect)}.${secondBody}`;
+}
+
+export function skyAspectInstanceContentKey(
+  first: string,
+  aspect: string,
+  second: string,
+  options: {
+    firstSign?: string | null;
+    secondSign?: string | null;
+    targetDate?: string | null;
+  } = {}
+) {
+  const baseKey = skyAspectContentKey(first, aspect, second);
+  const signParts = [options.firstSign, options.secondSign]
+    .map((value) => value ? aspectPart(value) : "")
+    .filter(Boolean);
+  const datePart = options.targetDate ? `.${slugContentPart(options.targetDate)}` : "";
+
+  return signParts.length === 2 ? `${baseKey}.${signParts.join(".")}${datePart}` : `${baseKey}${datePart}`;
+}
+
+export function transitToNatalAspectContentKey(transiting: string, aspect: string, natal: string) {
+  return `transit.aspect.${aspectPart(transiting)}.${aspectPart(aspect)}.${aspectPart(natal)}`;
+}
+
+export function transitToNatalAspectInstanceContentKey(
+  transiting: string,
+  aspect: string,
+  natal: string,
+  options: {
+    transitingSign?: string | null;
+    natalSign?: string | null;
+    natalHouse?: string | number | null;
+    targetDate?: string | null;
+  } = {}
+) {
+  const baseKey = transitToNatalAspectContentKey(transiting, aspect, natal);
+  const parts = [
+    options.transitingSign ? aspectPart(options.transitingSign) : "",
+    options.natalSign ? aspectPart(options.natalSign) : "",
+    options.natalHouse ? `house_${aspectPart(String(options.natalHouse))}` : "",
+    options.targetDate ? slugContentPart(options.targetDate) : ""
+  ].filter(Boolean);
+
+  return parts.length ? `${baseKey}.${parts.join(".")}` : baseKey;
+}
+
+export function synastryAspectContentKey(personA: string, aspect: string, personB: string) {
+  return `synastry.aspect.${aspectPart(personA)}.${aspectPart(aspect)}.${aspectPart(personB)}`;
+}
+
+export function compositeAspectContentKey(first: string, aspect: string, second: string) {
+  const [firstBody, secondBody] = canonicalAspectBodies(first, second);
+
+  return `composite.aspect.${firstBody}.${aspectPart(aspect)}.${secondBody}`;
+}
+
+export function aspectContentKeyForFamily(
+  family: AspectContentFamily,
+  first: string,
+  aspect: string,
+  second: string
+) {
+  if (family === "natal_aspect") return natalAspectContentKey(first, aspect, second);
+  if (family === "sky_aspect") return skyAspectContentKey(first, aspect, second);
+  if (family === "transit_to_natal_aspect") return transitToNatalAspectContentKey(first, aspect, second);
+  if (family === "synastry_aspect") return synastryAspectContentKey(first, aspect, second);
+
+  return compositeAspectContentKey(first, aspect, second);
 }
 
 function parseAspectLabel(value?: string | null) {
@@ -167,11 +257,12 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
   const directAspect = aspect ? `${aspect.first}-${aspect.aspect}-${aspect.second}` : null;
 
   if (row.surface === "sky") {
-    if (row.event_type === "current-aspect" && directAspect) {
+    if (row.event_type === "current-aspect" && aspect && directAspect) {
       addAlias(aliases, row.target_date ? `sky-aspect-${directAspect}-${row.target_date}` : null);
       addAlias(aliases, `sky-${directAspect}`);
       addAlias(aliases, row.target_date ? `sky-aspect-${reversedAspect}-${row.target_date}` : null);
       addAlias(aliases, `sky-${reversedAspect}`);
+      addAlias(aliases, skyAspectContentKey(aspect.first, aspect.aspect, aspect.second));
     }
 
     if ((row.event_type === "seasonal-current" || isLegacyCurrentSkyEvent(row.event_type, "seasonal")) && placement?.sign) {
@@ -197,6 +288,7 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
     if (row.event_type?.includes("transit") || row.content_key.startsWith("transit-natal-")) {
       addAlias(aliases, `transit-natal-${directAspect}`);
       addAlias(aliases, `transit-natal-${reversedAspect}`);
+      addAlias(aliases, transitToNatalAspectContentKey(aspect.first, aspect.aspect, aspect.second));
     }
   }
 
@@ -214,13 +306,21 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
     addAlias(aliases, natalAspectContentKey(legacyAspect.first, legacyAspect.aspect, legacyAspect.second));
   }
 
-  if ((row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") && directAspect) {
+  if ((row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") && aspect && directAspect) {
     ["relationship", "synastry", "composite"].forEach((prefix) => {
       addAlias(aliases, `${prefix}-${directAspect}`);
       addAlias(aliases, `${prefix}-${reversedAspect}`);
     });
     addAlias(aliases, directAspect);
     addAlias(aliases, reversedAspect);
+
+    if (row.surface === "synastry" || row.surface === "relationship") {
+      addAlias(aliases, synastryAspectContentKey(aspect.first, aspect.aspect, aspect.second));
+    }
+
+    if (row.surface === "composite" || row.surface === "relationship") {
+      addAlias(aliases, compositeAspectContentKey(aspect.first, aspect.aspect, aspect.second));
+    }
   }
 
   if ((row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") && placement) {

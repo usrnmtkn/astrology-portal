@@ -1322,6 +1322,88 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
   const aspectBodyA = stringValue(facts.body1) || stringValue(facts.planetA) || stringValue(facts.from);
   const aspectBodyB = stringValue(facts.body2) || stringValue(facts.planetB) || stringValue(facts.to);
   const aspectType = stringValue(facts.aspect);
+  const aspectSignA = stringValue(facts.sign1) || stringValue(facts.fromSign) || stringValue(facts.transitSign) || stringValue(facts.planetASign);
+  const aspectSignB = stringValue(facts.sign2) || stringValue(facts.toSign) || stringValue(facts.natalSign) || stringValue(facts.planetBSign);
+  const aspectHouseA = stringValue(facts.house1) || stringValue(facts.fromHouse) || stringValue(facts.planetAHouse);
+  const aspectHouseB = stringValue(facts.house2) || stringValue(facts.toHouse) || stringValue(facts.natalHouse) || stringValue(facts.planetBHouse);
+  const exactDate = stringValue(facts.exactDate) || input.targetDate || "";
+  const direction = stringValue(facts.direction);
+  const orb = stringValue(facts.orb);
+
+  if (blockType.endsWith("_aspect")) {
+    const commonRules = [
+      "ASPECT FAMILY FACT LOCK",
+      `Block type: ${blockType}.`,
+      `Body A: ${aspectBodyA || "missing"}.`,
+      `Aspect: ${aspectType || "missing"}.`,
+      `Body B: ${aspectBodyB || "missing"}.`,
+      "No em dashes."
+    ];
+
+    if (blockType === "natal_aspect") {
+      return [
+        ...commonRules,
+        "Family: natal aspect. This is evergreen natal wiring.",
+        "Inputs are pair and type only. Do not mention dates, current timing, orb, forming, separating, signs, houses, transits, or now.",
+        "Write in the warm natal voice. Keep it reusable for anyone with this aspect."
+      ].join("\n");
+    }
+
+    if (blockType === "sky_aspect") {
+      return [
+        ...commonRules,
+        "Family: sky aspect. This is current collective weather.",
+        `Current sign A: ${aspectSignA || "missing"}.`,
+        `Current sign B: ${aspectSignB || "missing"}.`,
+        `Exact/date window: ${exactDate || "missing"}.`,
+        `Orb: ${orb || "missing"}.`,
+        `Forming/separating: ${direction || "missing"}.`,
+        "Use the ephemeris facts above as source of truth. If timing, signs, or orb are missing, keep the copy generic about the pair and do not invent the missing timing.",
+        "Write in present tense, practical transit voice. It may say the full aspect with signs, such as Mercury in Cancer sextile Mars in Taurus."
+      ].join("\n");
+    }
+
+    if (blockType === "transit_to_natal_aspect") {
+      return [
+        ...commonRules,
+        "Family: transit to natal aspect. This is touching the member's chart right now.",
+        `Transiting sign: ${aspectSignA || "missing"}.`,
+        `Natal sign: ${aspectSignB || "missing"}.`,
+        `Natal house: ${aspectHouseB || "missing"}.`,
+        `Exact/date window: ${exactDate || "missing"}.`,
+        `Orb: ${orb || "missing"}.`,
+        `Forming/separating: ${direction || "missing"}.`,
+        "Preserve direction: Body A is the transiting planet, Body B is the member's natal planet.",
+        "Use personalized transit voice. Do not treat this as natal wiring."
+      ].join("\n");
+    }
+
+    if (blockType === "synastry_aspect") {
+      return [
+        ...commonRules,
+        "Family: synastry aspect. This is a directional relationship dynamic between two charts.",
+        `Person A body sign: ${aspectSignA || "missing"}.`,
+        `Person A body house: ${aspectHouseA || "missing"}.`,
+        `Person B body sign: ${aspectSignB || "missing"}.`,
+        `Person B body house: ${aspectHouseB || "missing"}.`,
+        "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning.",
+        "Relationship voice kit is not final yet, so write direct plain second-person relationship copy. No therapy-speak, no fate language, no soulmate language."
+      ].join("\n");
+    }
+
+    if (blockType === "composite_aspect") {
+      return [
+        ...commonRules,
+        "Family: composite aspect. This is the relationship's shared chart pattern.",
+        `Composite sign A: ${aspectSignA || "missing"}.`,
+        `Composite house A: ${aspectHouseA || "missing"}.`,
+        `Composite sign B: ${aspectSignB || "missing"}.`,
+        `Composite house B: ${aspectHouseB || "missing"}.`,
+        "The pair is symmetric and reusable for the relationship's shared pattern. Do not write this as either person's natal wiring.",
+        "Relationship voice kit is not final yet, so write direct plain relationship copy. No therapy-speak, no fate language, no soulmate language."
+      ].join("\n");
+    }
+  }
 
   if (input.surface === "natal" && blockType && blockType !== "essay" && blockType !== "synthesis") {
     const commonRules = [
@@ -1357,15 +1439,6 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
       ].join("\n");
     }
 
-    if (blockType === "aspect") {
-      return [
-        ...commonRules,
-        `Body A: ${aspectBodyA || "missing"}.`,
-        `Aspect: ${aspectType || "missing"}.`,
-        `Body B: ${aspectBodyB || "missing"}.`,
-        "Write only the natal aspect meaning between these bodies. Do not mention transits, dates, houses, signs, or timing."
-      ].join("\n");
-    }
   }
 
   const isNatalPlacement = input.eventType.includes("natal-placement")

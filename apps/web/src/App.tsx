@@ -98,10 +98,15 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import {
+  compositeAspectContentKey,
   natalAspectContentKey,
   natalHouseContentKey,
   natalRulerContentKey,
-  natalSignContentKey
+  natalSignContentKey,
+  skyAspectContentKey,
+  skyAspectInstanceContentKey,
+  synastryAspectContentKey,
+  transitToNatalAspectContentKey
 } from "./services/generatedContentKeys";
 import {
   createManualChart,
@@ -619,8 +624,15 @@ function skyGeneratedDateKey(generatedAt: string) {
 
 function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const dateKey = skyGeneratedDateKey(generatedAt);
+  const signedAspect = aspect as SkySnapshot["aspects"][number] & { fromSign?: string; toSign?: string };
 
   return [
+    skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
+      firstSign: signedAspect.fromSign,
+      secondSign: signedAspect.toSign,
+      targetDate: dateKey
+    }),
+    skyAspectContentKey(aspect.from, aspect.type, aspect.to),
     `sky-aspect-${normalizeContentIdPart(aspect.from)}-${normalizeContentIdPart(aspect.type)}-${normalizeContentIdPart(aspect.to)}-${dateKey}`,
     currentSkyAspectContentId(aspect.from, aspect.type, aspect.to)
   ];
@@ -5480,7 +5492,6 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
   }
 
   const area = transitLifeArea(transit, chart);
-  const contentKey = transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint);
   const content = fallbackFromHook(
     "you.transit-to-natal",
     {
@@ -5490,9 +5501,16 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
       topic: area
     }
   );
-  const generated = generatedContent ? liveGeneratedContent(generatedContent, contentKey) : null;
+  const generated = generatedContent ? liveGeneratedContentByKeys(generatedContent, transitToNatalGeneratedContentKeys(transit)) : null;
 
   return liveGeneratedSummary(generated, content.summary);
+}
+
+function transitToNatalGeneratedContentKeys(transit: TransitItem) {
+  return [
+    transitToNatalAspectContentKey(transit.transitPlanet, transit.aspect, transit.natalPoint),
+    transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint)
+  ];
 }
 
 function relationshipAspectContentKeys(firstPoint: string, aspect: string, secondPoint: string, context?: "synastry" | "composite") {
@@ -5500,6 +5518,15 @@ function relationshipAspectContentKeys(firstPoint: string, aspect: string, secon
   const reversedBaseKey = aspectContentId(secondPoint, aspect, firstPoint, "relationship");
   const prefixes = context ? [context, "relationship"] : ["relationship", "synastry", "composite"];
   const keys = new Set<string>();
+
+  if (context === "synastry") {
+    keys.add(synastryAspectContentKey(firstPoint, aspect, secondPoint));
+  } else if (context === "composite") {
+    keys.add(compositeAspectContentKey(firstPoint, aspect, secondPoint));
+  } else {
+    keys.add(synastryAspectContentKey(firstPoint, aspect, secondPoint));
+    keys.add(compositeAspectContentKey(firstPoint, aspect, secondPoint));
+  }
 
   [baseKey, reversedBaseKey].forEach((key) => {
     keys.add(key);

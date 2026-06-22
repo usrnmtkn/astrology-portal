@@ -2,7 +2,17 @@ import { supabase } from "./auth";
 import { generatedContentAliases } from "./generatedContentKeys";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
-export type GeneratedContentBlockType = "sign" | "house" | "ruler" | "aspect" | "synthesis" | "essay";
+export type GeneratedContentBlockType =
+  | "sign"
+  | "house"
+  | "ruler"
+  | "natal_aspect"
+  | "sky_aspect"
+  | "transit_to_natal_aspect"
+  | "synastry_aspect"
+  | "composite_aspect"
+  | "synthesis"
+  | "essay";
 
 export type LiveGeneratedContent = {
   id: string;
@@ -208,7 +218,7 @@ export async function loadLiveGeneratedContent(surface: string, targetDate?: str
 
   let query = supabase
     .from("generated_interpretations")
-    .select("id, content_key, surface, mode, event_type, target_date, headline, summary, body, sections, model, updated_at")
+    .select("id, content_key, surface, mode, event_type, target_date, headline, summary, body, sections, block_type, model, updated_at")
     .eq("surface", surface)
     .eq("status", "LIVE")
     .order("updated_at", { ascending: false });

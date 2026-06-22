@@ -95,8 +95,8 @@ async function listGeneratedContent(req: IncomingMessage) {
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 100);
   const params = new URLSearchParams({
     select: id
-      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at"
-      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at",
+      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at"
+      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at",
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: id ? "1" : String(limit)
   });
