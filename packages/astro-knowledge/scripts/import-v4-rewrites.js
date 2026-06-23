@@ -5,6 +5,15 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const outputRoot = path.join(root, "generated", "tldr-astro", "rewrite-corpora");
+const sourceBackedRevisionRoot = path.join(root, "generated", "tldr-astro", "source-backed-revisions");
+const sourceBackedRevisionSources = [
+  {
+    id: "tldr-astro-codex-source-backed-revisions-adjusted",
+    kind: "source-backed-revision-corpus",
+    sourceDir: "source-backed-revisions",
+    file: "tldr-astro-codex-source-backed-revisions-adjusted.csv"
+  }
+];
 
 const sourceSets = [
   {
@@ -199,6 +208,21 @@ function rewriteEntry(row) {
   });
 }
 
+function sourceBackedRevisionEntry(row) {
+  return compactRecord({
+    row_id: row.row_id,
+    id: row.id,
+    aspect: row.aspect,
+    target_field: row.target_field,
+    replacement_text: row.replacement_text,
+    source_supported_themes: row.source_supported_themes,
+    source_material_examples_to_use: row.source_material_examples_to_use,
+    codex_action: row.codex_action,
+    confidence: row.confidence,
+    avoid: row.avoid
+  });
+}
+
 function importCsvSource(sourceSet, source, logic) {
   const sourceRoot = path.join(root, "sources", sourceSet.sourceDir);
   const filePath = path.join(sourceRoot, source.file);
@@ -230,11 +254,37 @@ function importCsvSource(sourceSet, source, logic) {
   return { id: source.id, count: entries.length };
 }
 
+function importSourceBackedRevision(source) {
+  const filePath = path.join(root, "sources", source.sourceDir, source.file);
+
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  const entries = parseCsv(readIfExists(filePath)).map(sourceBackedRevisionEntry);
+  const output = compactRecord({
+    id: source.id,
+    kind: source.kind,
+    sourceFile: path.relative(root, filePath),
+    rowCount: entries.length,
+    entries
+  });
+
+  writeJson(path.join(sourceBackedRevisionRoot, `${source.id}.json`), output);
+  return { id: source.id, count: entries.length };
+}
+
 function main() {
   fs.mkdirSync(outputRoot, { recursive: true });
+  fs.mkdirSync(sourceBackedRevisionRoot, { recursive: true });
   for (const name of fs.readdirSync(outputRoot)) {
     if (name.startsWith("tldr-v4") || name.startsWith("tldr-rewrite")) {
       fs.rmSync(path.join(outputRoot, name), { recursive: true, force: true });
+    }
+  }
+  for (const name of fs.readdirSync(sourceBackedRevisionRoot)) {
+    if (name.startsWith("tldr-astro-codex-source-backed-revisions")) {
+      fs.rmSync(path.join(sourceBackedRevisionRoot, name), { recursive: true, force: true });
     }
   }
 
@@ -255,6 +305,14 @@ function main() {
     if (sourceImports.length) {
       imports.push({ label: sourceSet.label, imports: sourceImports });
     }
+  }
+
+  const sourceBackedImports = sourceBackedRevisionSources
+    .map(importSourceBackedRevision)
+    .filter(Boolean);
+
+  if (sourceBackedImports.length) {
+    imports.push({ label: "Source-backed revision sources", imports: sourceBackedImports });
   }
 
   if (!imports.length) {

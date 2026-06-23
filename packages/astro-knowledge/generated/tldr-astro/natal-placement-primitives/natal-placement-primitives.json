@@ -1,0 +1,208 @@
+{
+  "id": "natal-placement-primitives",
+  "kind": "natal-placement-primitives",
+  "sourceFiles": [
+    "/Users/mprez/Downloads/Knowledge-Base/[ePub] Tarot and the Astrology.docx"
+  ],
+  "entries": [
+    {
+      "id": "planet.venus",
+      "kind": "planet",
+      "body": "venus",
+      "title": "Venus",
+      "sourceAnchors": [
+        "Venus / The Empress",
+        "The planets in your natal chart represent different aspects of your personality: Venus as love, beauty, relationships",
+        "Venus identifies desire"
+      ],
+      "sourceNotes": [
+        "Venus shows what someone values, what they choose, what attracts them, and how desire becomes relational.",
+        "The Empress correspondence frames Venus through beauty, growth, nourishment, embodiment, and the natural cycles that shape connection.",
+        "In house material, Venus is tied to how desire is managed, how relationships begin and end, and what someone treats as worth choosing."
+      ],
+      "voiceMoves": [
+        "Write Venus through concrete choices, desire, value, taste, attachment, beauty, and what someone keeps returning to.",
+        "Name what the person is evaluating before they open, choose, invest, merge, or stay."
+      ],
+      "avoid": [
+        "Do not reduce Venus to romance only.",
+        "Do not repeat the word trust as the center of every sentence.",
+        "Do not make Venus sugary, passive, or generically feminine."
+      ]
+    },
+    {
+      "id": "planet.saturn",
+      "kind": "planet",
+      "body": "saturn",
+      "title": "Saturn",
+      "sourceAnchors": [
+        "Saturn / The World",
+        "Saturn as maturity, responsibility, the process of growing up",
+        "Saturn helps progressive ideas focus and come into form"
+      ],
+      "sourceNotes": [
+        "Saturn names the part of life that asks for responsibility, structure, consequence, time, and completion.",
+        "The World correspondence frames Saturn as the discipline that brings something into form and closes cycles when they are complete.",
+        "Saturn should not be written only as punishment. It is the pressure that asks whether something can become real."
+      ],
+      "voiceMoves": [
+        "Use Saturn for terms, limits, time, structure, responsibility, proof, pressure, and what has to be carried.",
+        "When Saturn rules a sign or house, ask what must become concrete instead of staying abstract."
+      ],
+      "avoid": [
+        "Do not write Saturn as generic hardship.",
+        "Do not make every Saturn sentence about fear."
+      ]
+    },
+    {
+      "id": "sign.capricorn",
+      "kind": "sign",
+      "sign": "capricorn",
+      "title": "Capricorn",
+      "sourceAnchors": [
+        "Capricorn / The Devil",
+        "10th House - Capricorn: The Devil",
+        "The Devil/Capricorn represents the false belief of being trapped in current circumstances",
+        "Saturn / The World"
+      ],
+      "sourceNotes": [
+        "Capricorn shows where life is organized by consequence, responsibility, public reality, ambition, and what has to be built over time.",
+        "The Devil correspondence is not just temptation. It points to the moment someone mistakes a structure, obligation, role, or fear for a permanent prison.",
+        "Capricorn can expose the terms of a situation: what is owed, what is binding, what is chosen, and what only looks unavoidable.",
+        "Because Saturn rules Capricorn, the sign asks whether desire, ambition, or attachment can survive contact with reality."
+      ],
+      "voiceMoves": [
+        "Write Capricorn as the architecture around desire: terms, proof, cost, role, consequence, timing, and what becomes real through repeated choices.",
+        "Make the tension specific: what does the person think they have to accept, carry, earn, prove, or endure?"
+      ],
+      "avoid": [
+        "Do not flatten Capricorn into loyalty, hard work, or ambition only.",
+        "Do not say 'love becomes real through consistency' unless you name what consistency is protecting or requiring.",
+        "Do not overuse duty, trust, stability, or commitment as vague center words."
+      ]
+    },
+    {
+      "id": "sign.aquarius",
+      "kind": "sign",
+      "sign": "aquarius",
+      "title": "Aquarius",
+      "sourceAnchors": [
+        "Aquarius - I innovate, I disrupt, I organize the collective",
+        "Aquarius / The Star",
+        "The Star brings strength and free flow of energy to inspire large groups of people",
+        "Saturn can help Aquarius focus progressive ideas and bring them to fruition",
+        "Uranus brings rebellion, revolution, change, risk, innovation, and boundary-breaking"
+      ],
+      "sourceNotes": [
+        "Aquarius hears the signal of the collective: the group, the platform, the future, the system, the movement, and what people are being asked to agree to.",
+        "The Star correspondence gives Aquarius a frequency image: hope, inspiration, future vision, and a current that can move through groups.",
+        "Aquarius is not difference for its own sake. It asks which ideas organize people, which ideas limit them, and which ones make room for another future."
+      ],
+      "voiceMoves": [
+        "Use the language of frequency, tuning, systems, groups, platforms, shared ideals, and agreements.",
+        "Ask what everyone is being asked to accept before they understand it."
+      ],
+      "avoid": [
+        "Do not reduce Aquarius to quirky, detached, rebellious, or humanitarian.",
+        "Do not circle the word truth. Name the agreement, system, or future being questioned."
+      ]
+    },
+    {
+      "id": "sign.scorpio",
+      "kind": "sign",
+      "sign": "scorpio",
+      "title": "Scorpio",
+      "sourceAnchors": [
+        "Scorpio / Death",
+        "Death as the cycle of birth, death, and rebirth",
+        "Scorpio as transformation, power, desire, emotional depth, shared resources, sexuality, and secrets"
+      ],
+      "sourceNotes": [
+        "Scorpio marks the places where desire, power, secrecy, shared energy, endings, and renewal cannot be kept superficial.",
+        "The Death correspondence is about the threshold where an old arrangement has to be released because the deeper reality has changed.",
+        "Scorpio asks what is hidden underneath the bond, transaction, fear, or attachment."
+      ],
+      "voiceMoves": [
+        "Use Scorpio to name the underlayer: what is shared, concealed, merged, feared, owed, desired, or ready to end.",
+        "Let the writing feel precise and unsentimental, not dramatic."
+      ],
+      "avoid": [
+        "Do not make Scorpio only intensity, jealousy, or transformation.",
+        "Do not use transformation as a vague end point. Name what changes."
+      ]
+    },
+    {
+      "id": "house.8",
+      "kind": "house",
+      "house": "8",
+      "title": "8th House",
+      "sourceAnchors": [
+        "8th House - Scorpio: Death",
+        "The eighth house is the house of other people's money, death, joint resources, sex, and secrets",
+        "The 8th house corresponds to cycles of birth, death, and rebirth",
+        "The 8th house can represent rebranding, relaunching, or transformation"
+      ],
+      "sourceNotes": [
+        "The 8th house is where a person meets what is shared, owed, merged, inherited, hidden, feared, desired, or changed by contact with another person or system.",
+        "This house is not only intimacy. It includes shared money, debts, joint resources, secrets, endings, sexuality, symbolic language, and the part of life that changes because something has been exposed.",
+        "The Death correspondence makes the 8th house a threshold: something old is released, not because it is poetic, but because the terms of life have changed."
+      ],
+      "voiceMoves": [
+        "Write the 8th house through access, exposure, shared resources, private consequences, emotional cost, debts, desire, inheritance, and what cannot stay hidden.",
+        "Ask what happens after someone or something gets access."
+      ],
+      "avoid": [
+        "Do not make every 8th-house sentence about trust.",
+        "Do not use transformation without naming what is being exchanged, exposed, ended, merged, or carried."
+      ]
+    },
+    {
+      "id": "house.9",
+      "kind": "house",
+      "house": "9",
+      "title": "9th House",
+      "sourceAnchors": [
+        "9th House - Sagittarius: Temperance",
+        "The ninth house is related to higher education, foreign travel, wisdom, philosophy, expansion, and higher thinking",
+        "Temperance guides balance between the mundane and spiritual worlds, passion and reason"
+      ],
+      "sourceNotes": [
+        "The 9th house shows how a person forms a worldview through learning, philosophy, spiritual language, travel, education, and the attempt to understand larger systems.",
+        "Temperance makes the 9th house less about collecting beliefs and more about testing how ideas combine: reason with passion, spiritual with practical, inherited teaching with lived experience.",
+        "This house asks what a person is agreeing to, studying, teaching, or trying to make meaningful."
+      ],
+      "voiceMoves": [
+        "Write the 9th house through belief systems, schools of thought, doctrine, education, spiritual language, and the meaning a person is asked to organize life around.",
+        "Be specific about what is being questioned or learned."
+      ],
+      "avoid": [
+        "Do not overuse truth, expansion, purpose, or wisdom.",
+        "Do not write the 9th house as passive studying."
+      ]
+    },
+    {
+      "id": "house.10",
+      "kind": "house",
+      "house": "10",
+      "title": "10th House",
+      "sourceAnchors": [
+        "10th House - Capricorn: The Devil",
+        "The tenth house is the house of career, reputation, public image, ambition, and how you are known in the world",
+        "The 10th house is where one stands tall, rooted in the center of their being but aspiring towards ascension"
+      ],
+      "sourceNotes": [
+        "The 10th house shows the public architecture of a life: reputation, responsibility, career, visibility, ambition, and the role someone becomes known for.",
+        "Through Capricorn and The Devil, it can also show where public success comes with terms, temptation, confinement, or the belief that a role cannot be changed.",
+        "The 10th house asks what a person is building in the world and what that public structure asks from them."
+      ],
+      "voiceMoves": [
+        "Write the 10th house through role, reputation, public consequence, visible responsibility, professional proof, and what the world recognizes.",
+        "Name the structure around ambition, not just the ambition itself."
+      ],
+      "avoid": [
+        "Do not reduce the 10th house to career only.",
+        "Do not use success language without naming the role or cost."
+      ]
+    }
+  ]
+}
