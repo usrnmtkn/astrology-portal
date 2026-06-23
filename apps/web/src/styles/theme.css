@@ -465,6 +465,11 @@
   --friend-compare-overlay-dark-bg: rgba(12, 13, 18, 0.62);
   --friend-avatar-secondary-bg: #e9eefb;
   --friend-avatar-secondary-fg: #171a22;
+  --friend-avatar-highlight: rgba(255, 255, 255, 0.16);
+  --friend-add-chart-modal-dark-border: rgba(255, 255, 255, 0.12);
+  --friend-add-chart-modal-dark-bg: color-mix(in srgb, var(--surface) 94%, var(--color-white) 6%);
+  --friend-add-chart-close-dark-border: rgba(255, 255, 255, 0.14);
+  --friend-add-chart-close-dark-bg: color-mix(in srgb, var(--surface-2) 88%, var(--color-white) 12%);
   --moon-phase-light: var(--color-moon-phase-light);
   --moon-phase-shadow: var(--color-moon-phase-shadow);
   --floating-button-bg: var(--surface);
@@ -512,11 +517,6 @@
   --modal-padding: var(--sp-4);
   --modal-width: 560px;
   --chart-size: clamp(560px, 42vw, 700px);
-  --chart-line: var(--wheel-line);
-  --chart-soft: var(--wheel-soft);
-  --chart-label: var(--wheel-label);
-  --chart-degree-label: var(--color-wheel-degree-label);
-  --chart-glyph: var(--wheel-glyph);
   --z-nav: 100;
   --z-topbar: 1000;
   --z-floating: 120;
@@ -534,8 +534,6 @@
   --air: #7fb8da;
   --water: #6476bd;
   --lavender: #f7e8fb;
-  --tracking-tight: -0.01em;
-  --tracking-normal: normal;
   --type-xs: var(--text-eyebrow);
   --type-sm: var(--text-description);
   --type-md: var(--text-body);
