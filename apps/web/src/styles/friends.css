@@ -329,7 +329,7 @@
   width: var(--id-avatar-size);
   height: var(--id-avatar-size);
   background:
-    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.16), transparent 38%),
+    radial-gradient(circle at 32% 24%, var(--friend-avatar-highlight), transparent 38%),
     var(--ink);
   box-shadow: var(--avatar-ring-shadow);
   color: var(--surface);
@@ -1814,8 +1814,8 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: color-mix(in srgb, var(--surface) 94%, #ffffff 6%);
+  border-color: var(--friend-add-chart-modal-dark-border);
+  background: var(--friend-add-chart-modal-dark-bg);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
@@ -1824,8 +1824,8 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-modal__close {
-  border-color: rgba(255, 255, 255, 0.14);
-  background: color-mix(in srgb, var(--surface-2) 88%, #ffffff 12%);
+  border-color: var(--friend-add-chart-close-dark-border);
+  background: var(--friend-add-chart-close-dark-bg);
   color: var(--ink);
 }
 

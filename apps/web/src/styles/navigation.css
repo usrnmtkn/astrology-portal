@@ -220,12 +220,6 @@ html[data-scrolled] .menu-toggle {
   -webkit-backdrop-filter: none;
 }
 
-html[data-scrolled] .floating-back-button {
-  border-color: var(--floating-button-border-hover);
-  background: var(--nav-scrolled-bg);
-  box-shadow: var(--nav-scrolled-shadow);
-}
-
 .theme-toggle:hover,
 .menu-toggle:hover {
   --floating-button-hover-lift: -1px;
