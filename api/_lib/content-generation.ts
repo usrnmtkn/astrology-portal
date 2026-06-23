@@ -158,6 +158,48 @@ type V4RewriteCorpus = {
   entries?: V4RewriteEntry[];
 };
 
+type SourceBackedRevisionEntry = {
+  row_id?: string;
+  id?: string;
+  aspect?: string;
+  target_field?: string;
+  original_claim_to_replace?: string;
+  replacement_text?: string;
+  source_supported_themes?: string;
+  source_material_examples_to_use?: string;
+  source_files?: string;
+  codex_action?: string;
+  confidence?: string;
+  avoid?: string;
+};
+
+type SourceBackedRevisionCorpus = {
+  id?: string;
+  kind?: string;
+  sourceFile?: string;
+  entries?: SourceBackedRevisionEntry[];
+};
+
+type NatalPlacementPrimitiveEntry = {
+  id?: string;
+  kind?: "planet" | "sign" | "house" | "ruler" | string;
+  body?: string;
+  sign?: string;
+  house?: string;
+  title?: string;
+  sourceAnchors?: string[];
+  sourceNotes?: string[];
+  voiceMoves?: string[];
+  avoid?: string[];
+};
+
+type NatalPlacementPrimitiveCorpus = {
+  id?: string;
+  kind?: string;
+  sourceFiles?: string[];
+  entries?: NatalPlacementPrimitiveEntry[];
+};
+
 type FrameworkSection = {
   id?: string;
   heading?: string;
@@ -897,6 +939,18 @@ function rewriteCorpusRules() {
     "bestMove, whereItHelps, closingReflection: use these for What To Do.",
     "readerFacingSummary: use this for pacing and plain-language summary style.",
     "If the examples are not an exact match, use only the style and field logic. Never import a fact that is missing from ASTROLOGY FACTS."
+  ].join("\n");
+}
+
+function natalPlacementPrimitiveRules() {
+  return [
+    "PRIMARY NATAL PLACEMENT PRIMITIVES",
+    "Use these authored planet, sign, and house building blocks before generic placement rewrite rows.",
+    "For sign blocks, prioritize the matching planet and sign notes.",
+    "For house blocks, prioritize the matching planet and house notes.",
+    "For full placement essays, synthesis, or legacy placement rows, synthesize planet + sign + house + ruler notes when available.",
+    "sourceAnchors identify where the material came from. Do not quote or name the book in reader-facing copy.",
+    "sourceNotes and voiceMoves are the preferred interpretation method. avoid lists wording and flattening patterns to stay away from."
   ].join("\n");
 }
 
@@ -1644,6 +1698,30 @@ function loadRewriteCorpora() {
   });
 }
 
+function loadSourceBackedRevisionCorpora() {
+  const corporaRoot = path.join(process.cwd(), "packages/astro-knowledge/generated/tldr-astro/source-backed-revisions");
+
+  return listJsonFiles(corporaRoot).flatMap((filePath) => {
+    try {
+      return [JSON.parse(fs.readFileSync(filePath, "utf8")) as SourceBackedRevisionCorpus];
+    } catch {
+      return [];
+    }
+  });
+}
+
+function loadNatalPlacementPrimitiveCorpora() {
+  const corporaRoot = path.join(process.cwd(), "packages/astro-knowledge/generated/tldr-astro/natal-placement-primitives");
+
+  return listJsonFiles(corporaRoot).flatMap((filePath) => {
+    try {
+      return [JSON.parse(fs.readFileSync(filePath, "utf8")) as NatalPlacementPrimitiveCorpus];
+    } catch {
+      return [];
+    }
+  });
+}
+
 function targetV4CorpusId(input: GenerateContentInput) {
   if (input.surface === "sky") {
     return "tldr-v4-sky-rewrites";
@@ -1669,8 +1747,259 @@ function factSearchText(input: GenerateContentInput) {
   ].join(" ").toLowerCase();
 }
 
+function comparableKey(value?: string) {
+  return stringValue(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 function entrySearchText(entry: V4RewriteEntry) {
   return [entry.id, entry.title, entry.itemType].filter(Boolean).join(" ").toLowerCase();
+}
+
+function sourceBackedRevisionSearchText(entry: SourceBackedRevisionEntry) {
+  return [
+    entry.row_id,
+    entry.id,
+    entry.aspect,
+    entry.target_field,
+    entry.replacement_text,
+    entry.source_supported_themes,
+    entry.source_material_examples_to_use
+  ].filter(Boolean).join(" ").toLowerCase();
+}
+
+function scoreSourceBackedRevisionEntry(
+  entry: SourceBackedRevisionEntry,
+  input: GenerateContentInput,
+  searchText: string
+) {
+  const id = comparableKey(entry.id);
+  const aspect = comparableKey(entry.aspect);
+  const contentKey = comparableKey(input.contentKey);
+  const headline = comparableKey(factualHeadlineFor(input));
+  const rowText = sourceBackedRevisionSearchText(entry);
+  let score = 0;
+
+  if (id && input.knowledgeIds?.some((knowledgeId) => comparableKey(knowledgeId) === id)) score += 90;
+  if (id && contentKey.includes(id)) score += 70;
+  if (aspect && contentKey.includes(aspect)) score += 70;
+  if (id && headline.includes(id)) score += 60;
+  if (aspect && headline.includes(aspect)) score += 60;
+  if (id && searchText.includes(id.replace(/-/g, " "))) score += 30;
+  if (aspect && searchText.includes(aspect.replace(/-/g, " "))) score += 30;
+
+  for (const token of searchText.split(/[^a-z0-9]+/).filter((part) => part.length > 3)) {
+    if (rowText.includes(token)) score += 1;
+  }
+
+  return score;
+}
+
+function compactSourceBackedRevisionEntry(entry: SourceBackedRevisionEntry) {
+  return {
+    id: entry.id,
+    aspect: entry.aspect,
+    targetField: entry.target_field,
+    replacementText: entry.replacement_text,
+    sourceSupportedThemes: entry.source_supported_themes,
+    sourceMaterialExamplesToUse: entry.source_material_examples_to_use,
+    codexAction: entry.codex_action,
+    avoid: entry.avoid,
+    confidence: entry.confidence
+  };
+}
+
+function natalFactParts(input: GenerateContentInput) {
+  const facts = input.facts;
+
+  return {
+    blockType: comparableKey(stringValue(facts.blockType)),
+    body: comparableKey(
+      stringValue(facts.placementBody)
+      || stringValue(facts.planet)
+      || stringValue(facts.body)
+      || stringValue(facts.point)
+      || stringValue(facts.node)
+    ),
+    sign: comparableKey(stringValue(facts.placementSign) || stringValue(facts.sign) || stringValue(facts.planetSign)),
+    house: comparableKey(stringValue(facts.placementHouse) || stringValue(facts.house) || stringValue(facts.houseNumber)),
+    ruler: comparableKey(stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler)),
+    rulerSign: comparableKey(stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign)),
+    rulerHouse: comparableKey(stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse))
+  };
+}
+
+function shouldLoadNatalSourceMaterial(input: GenerateContentInput) {
+  const parts = natalFactParts(input);
+  const type = stringValue(input.facts.type) || input.eventType;
+
+  return input.surface === "natal"
+    || input.surface === "you"
+    || type.includes("natal")
+    || Boolean(parts.blockType && ["sign", "house", "ruler", "essay", "synthesis"].includes(parts.blockType));
+}
+
+function scoreNatalPlacementPrimitiveEntry(entry: NatalPlacementPrimitiveEntry, input: GenerateContentInput) {
+  const parts = natalFactParts(input);
+  const kind = comparableKey(entry.kind);
+  const body = comparableKey(entry.body);
+  const sign = comparableKey(entry.sign);
+  const house = comparableKey(entry.house);
+  let score = 0;
+
+  if (kind === "planet" && body && body === parts.body) score += 90;
+  if (kind === "planet" && body && body === parts.ruler) score += parts.blockType === "ruler" ? 90 : 40;
+  if (kind === "sign" && sign && sign === parts.sign) score += 90;
+  if (kind === "sign" && sign && sign === parts.rulerSign) score += parts.blockType === "ruler" ? 70 : 30;
+  if (kind === "house" && house && house === parts.house) score += 90;
+  if (kind === "house" && house && house === parts.rulerHouse) score += parts.blockType === "ruler" ? 70 : 30;
+
+  if (parts.blockType === "sign" && kind === "house") score -= 90;
+  if (parts.blockType === "house" && kind === "sign") score -= 90;
+  if (parts.blockType === "ruler" && kind === "planet" && body === parts.body && body !== parts.ruler) score -= 30;
+
+  return score;
+}
+
+function compactNatalPlacementPrimitiveEntry(entry: NatalPlacementPrimitiveEntry) {
+  return {
+    id: entry.id,
+    kind: entry.kind,
+    body: entry.body,
+    sign: entry.sign,
+    house: entry.house,
+    title: entry.title,
+    sourceAnchors: entry.sourceAnchors,
+    sourceNotes: entry.sourceNotes,
+    voiceMoves: entry.voiceMoves,
+    avoid: entry.avoid
+  };
+}
+
+function loadNatalPlacementPrimitiveExamples(input: GenerateContentInput) {
+  if (!shouldLoadNatalSourceMaterial(input)) {
+    return [];
+  }
+
+  const entries = loadNatalPlacementPrimitiveCorpora().flatMap((corpus) => corpus.entries ?? []);
+
+  if (!entries.length) {
+    return [];
+  }
+
+  return entries
+    .map((entry, index) => ({ entry, index, score: scoreNatalPlacementPrimitiveEntry(entry, input) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, 8)
+    .map(({ entry }) => compactNatalPlacementPrimitiveEntry(entry));
+}
+
+function natalPlacementPrimitivePrompt(input: GenerateContentInput) {
+  const examples = loadNatalPlacementPrimitiveExamples(input);
+
+  if (!examples.length) {
+    return "No matching natal placement primitives are available yet.";
+  }
+
+  return JSON.stringify(examples, null, 2);
+}
+
+function loadSourceBackedRevisionExamples(input: GenerateContentInput) {
+  const entries = loadSourceBackedRevisionCorpora().flatMap((corpus) => corpus.entries ?? []);
+
+  if (!entries.length) {
+    return [];
+  }
+
+  const searchText = factSearchText(input);
+  const scored = entries
+    .map((entry, index) => ({ entry, index, score: scoreSourceBackedRevisionEntry(entry, input, searchText) }))
+    .filter(({ score }) => score >= 30)
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+
+  return scored.slice(0, 4).map(({ entry }) => compactSourceBackedRevisionEntry(entry));
+}
+
+function unsupportedClaimPatterns() {
+  return [
+    /\bThis often traces back\b/i,
+    /\blove and safety had to be earned\b/i,
+    /\bhow you were cared for when you were young\b/i,
+    /\bYou attract the distant ones\b/i,
+    /\bThe struggle was never the proof\b/i,
+    /\bEasy love is what you actually wanted\b/i,
+    /\b(childhood|when you were young|early life|caregiver|caregivers|parent|parents|mother|father|family system)\b/i,
+    /\b(trauma|traumatic|attachment wound|wounded attachment|earned love|had to earn love|had to prove you were lovable)\b/i,
+    /\byou attract (the|people|partners|someone)\b/i
+  ];
+}
+
+function containsUnsupportedClaim(value?: string) {
+  if (!value) {
+    return false;
+  }
+
+  return unsupportedClaimPatterns().some((pattern) => pattern.test(value));
+}
+
+function replaceUnsupportedClaimParagraphs(value: string, replacement: string) {
+  if (!containsUnsupportedClaim(value) || !replacement.trim()) {
+    return value;
+  }
+
+  const paragraphs = value.split(/\n{2,}/);
+
+  if (paragraphs.length <= 1) {
+    return replacement.trim();
+  }
+
+  return paragraphs
+    .map((paragraph) => containsUnsupportedClaim(paragraph) ? replacement.trim() : paragraph)
+    .join("\n\n")
+    .trim();
+}
+
+function applySourceBackedRevisionScrub(content: GeneratedContent, input: GenerateContentInput): GeneratedContent {
+  const examples = loadSourceBackedRevisionExamples(input);
+
+  if (!examples.length) {
+    return content;
+  }
+
+  return normalizeGeneratedCopyFields(examples.reduce<GeneratedContent>((draft, entry) => {
+    const replacement = entry.replacementText?.trim();
+
+    if (!replacement) {
+      return draft;
+    }
+
+    const targetField = entry.targetField?.toLowerCase();
+
+    if (targetField === "summary" || targetField === "tldr") {
+      const summary = containsUnsupportedClaim(draft.summary) ? replacement : draft.summary;
+      const tldr = containsUnsupportedClaim(draft.tldr) ? replacement : draft.tldr;
+
+      return {
+        ...draft,
+        summary,
+        tldr
+      };
+    }
+
+    if (targetField === "body") {
+      return {
+        ...draft,
+        body: replaceUnsupportedClaimParagraphs(draft.body, replacement)
+      };
+    }
+
+    return {
+      ...draft,
+      summary: containsUnsupportedClaim(draft.summary) ? replacement : draft.summary,
+      tldr: containsUnsupportedClaim(draft.tldr) ? replacement : draft.tldr,
+      body: replaceUnsupportedClaimParagraphs(draft.body, replacement)
+    };
+  }, content));
 }
 
 function scoreV4Entry(entry: V4RewriteEntry, input: GenerateContentInput, searchText: string) {
@@ -1795,6 +2124,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
+    "",
+    natalPlacementPrimitiveRules(),
+    natalPlacementPrimitivePrompt(input),
     "",
     "SOURCE-BACKED V4 REWRITE EXAMPLES",
     rewriteCorpusRules(),
@@ -2268,7 +2600,7 @@ function validateGeneratedContentForInput(content: GeneratedContent, input: Gene
 }
 
 function parseResponseJson(raw: string, lockedHeadline: string, input: GenerateContentInput): GeneratedContent {
-  const content = parseGeneratedContentJson(raw, lockedHeadline);
+  const content = applySourceBackedRevisionScrub(parseGeneratedContentJson(raw, lockedHeadline), input);
 
   validateGeneratedContentForInput(content, input);
 
@@ -2348,7 +2680,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
 
     try {
       const draft = {
-        ...parseGeneratedContentJson(outputText, lockedHeadline || ""),
+        ...applySourceBackedRevisionScrub(parseGeneratedContentJson(outputText, lockedHeadline || ""), input),
         responseId: payload.id,
         model
       };
@@ -2457,7 +2789,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
 
     try {
       const draft = {
-        ...parseGeneratedContentJson(JSON.stringify(toolInput), lockedHeadline || ""),
+        ...applySourceBackedRevisionScrub(parseGeneratedContentJson(JSON.stringify(toolInput), lockedHeadline || ""), input),
         responseId: payload.id,
         model
       };
@@ -2502,6 +2834,7 @@ export async function generateContent(input: GenerateContentInput): Promise<Stor
 export async function saveGeneratedInterpretation(input: GenerateContentInput, generated: StoredGeneratedContent) {
   const supabaseUrl = process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL");
   const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const blockType = typeof input.facts.blockType === "string" ? input.facts.blockType : null;
   const response = await fetch(`${supabaseUrl}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
@@ -2517,6 +2850,7 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
       status: "DRAFT",
       event_type: input.eventType,
       target_date: input.targetDate,
+      block_type: blockType,
       facts: input.facts,
       knowledge_ids: input.knowledgeIds ?? [],
       source_snapshot: input.sourceSnapshot ?? {},
