@@ -243,6 +243,8 @@
 .ro-screen .sky-card,
 .placement-section .sky-card,
 .aspect-section .sky-card {
+  min-height: var(--sky-card-mobile-min-height);
+  padding: var(--sky-card-mobile-padding);
   border-radius: var(--radius-sm);
   border-top-left-radius: var(--radius-sm);
   border-top-right-radius: var(--radius-sm);
@@ -301,10 +303,7 @@
   .ro-screen .sky-pl,
   .placement-section .planet-placement-row {
     align-items: start;
-    min-height: var(--sky-card-mobile-min-height);
     gap: var(--sky-placement-mobile-gap);
-    padding: var(--sky-placement-mobile-padding);
-    border-radius: var(--radius-sm);
     grid-template-columns:
       var(--sky-placement-mobile-glyph-column-size)
       minmax(0, 1fr);
@@ -313,10 +312,7 @@
   .aspect-section .aspect-row,
   .aspect-section .aspect-row-button,
   .aspect-section .aspect-row-static {
-    min-height: var(--sky-card-mobile-min-height);
     gap: var(--sky-card-mobile-grid-gap);
-    padding: var(--sky-card-mobile-padding);
-    border-radius: var(--radius-sm);
   }
 
   .ro-screen .sky-pl-glyph,
@@ -1248,8 +1244,6 @@
       minmax(0, 1fr);
     align-items: start;
     gap: var(--sky-placement-mobile-gap);
-    min-height: var(--sky-card-mobile-min-height);
-    padding: var(--sky-placement-mobile-padding);
   }
 
   .placement-section .planet-placement-row__glyph {

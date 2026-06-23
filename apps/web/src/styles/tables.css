@@ -135,7 +135,7 @@ button.placement-table-row {
   align-items: start;
   width: 100%;
   gap: 16px;
-  padding: var(--card-row-padding, 18px 20px 20px);
+  padding: var(--sky-card-padding);
   text-align: left;
 }
 
@@ -327,7 +327,7 @@ button.planet-placement-row {
 
 .planet-placement-row--friend,
 .planet-placement-row--composite {
-  padding: var(--card-row-padding);
+  padding: var(--sky-card-padding);
 }
 
 .planet-placement-row--friend .planet-placement-row__glyph,
