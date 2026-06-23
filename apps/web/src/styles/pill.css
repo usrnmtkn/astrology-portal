@@ -14,7 +14,7 @@
   font-size: var(--pill-font-size);
   font-variant-numeric: tabular-nums;
   font-weight: var(--pill-font-weight);
-  letter-spacing: var(--tracking-number);
+  letter-spacing: var(--pill-tracking);
   line-height: var(--pill-line-height);
   text-transform: none;
   vertical-align: middle;
@@ -31,7 +31,6 @@
 }
 
 .ui-pill--mixed {
-  letter-spacing: var(--tracking-number);
   text-transform: none;
 }
 

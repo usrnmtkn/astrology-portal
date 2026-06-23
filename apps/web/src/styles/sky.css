@@ -667,7 +667,6 @@
     minmax(0, 1fr);
   align-items: start;
   gap: var(--sky-placement-card-gap);
-  padding: var(--sky-card-padding);
 }
 
 .ro-screen .sky-pl-glyph {
@@ -743,10 +742,6 @@
   text-wrap: pretty;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-}
-
-.ro-sky-pl--compact {
-  padding: var(--sky-card-padding);
 }
 
 .ro-sky-pl--compact .sky-pl-title {
@@ -900,8 +895,6 @@
 .aspect-section .aspect-row,
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {
-  min-height: var(--sky-card-min-height);
-  padding: var(--sky-card-padding);
   gap: var(--sky-card-grid-gap);
 }
 
@@ -911,7 +904,6 @@
     minmax(0, 1fr);
   align-items: start;
   gap: var(--sky-placement-card-gap);
-  padding: var(--sky-card-padding);
 }
 
 .placement-section .planet-placement-row__glyph {

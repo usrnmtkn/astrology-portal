@@ -12,7 +12,7 @@
   align-items: start;
   width: 100%;
   gap: var(--aspect-row-gap, var(--card-row-gap));
-  padding: var(--aspect-row-padding, var(--card-row-padding));
+  padding: var(--aspect-row-padding);
   text-align: left;
 }
 
