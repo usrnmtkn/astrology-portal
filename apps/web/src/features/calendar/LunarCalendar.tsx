@@ -454,7 +454,6 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
   const selectedSurfacedTransit = selectedEvents.find(isTransitCardEvent);
   const selectedDayBody = selectedDay ? dayCardBody(selectedDay, selectedSurfacedTransit, zone) : [];
-  const selectedDateLabel = selectedDay ? formatSelectedDay(selectedDay, zone) : "";
   const monthTransitEvents = calendar
     ? calendar.events.filter((event) => {
         const eventDay = calendar.days.find((day) => day.dateKey === event.dateKey);
@@ -613,12 +612,6 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
 
       {calendar && status === "ready" && (
         <div className={`lunar-calendar-body is-${viewMode}`}>
-          {selectedDay && (
-            <div className="lunar-calendar-selected-readout" aria-live="polite">
-              <span>Selected:</span>
-              <strong>{selectedDateLabel}</strong>
-            </div>
-          )}
       {viewMode === "week" && selectedDay && (
         <div className="lunar-calendar-week-view">
           <section className="lunar-week-strip" aria-label="Selected week">
