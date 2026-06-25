@@ -48,6 +48,44 @@ type SkyCalculationOptions = {
   includeTransitWindows?: boolean;
 };
 
+export type LunarCalendarEventType = "lunation" | "ingress" | "aspect";
+
+export type LunarCalendarEvent = {
+  id: string;
+  type: LunarCalendarEventType;
+  title: string;
+  startsAt: string;
+  dateKey: string;
+  glyph: string;
+  primary: boolean;
+  planet?: string;
+  planets?: [string, string];
+  aspect?: string;
+  sign?: string;
+  fromSign?: string;
+  toSign?: string;
+  description: string;
+};
+
+export type LunarCalendarDay = {
+  date: string;
+  dateKey: string;
+  inMonth: boolean;
+  moonSign: string;
+  moonSignGlyph: string;
+  moonPhase: string;
+  illumination: number;
+  events: LunarCalendarEvent[];
+};
+
+export type LunarCalendarMonth = {
+  month: string;
+  timeZone: string;
+  location: LocationInput;
+  days: LunarCalendarDay[];
+  events: LunarCalendarEvent[];
+};
+
 const aspectDefinitions = [
   ["conjunction", 0],
   ["sextile", 60],
@@ -55,6 +93,8 @@ const aspectDefinitions = [
   ["trine", 120],
   ["opposition", 180]
 ] as const;
+
+const calendarAspectDefinitions = aspectDefinitions.filter(([, degrees]) => degrees <= 180);
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
 
@@ -504,6 +544,400 @@ function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
     sign: signForLongitude(moonLongitude).sign,
     occursAt: occursAt.toISOString(),
     days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000)
+  };
+}
+
+function localDateParts(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day)
+  };
+}
+
+function localDateKey(date: Date, timeZone: string) {
+  const { year, month, day } = localDateParts(date, timeZone);
+
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function monthGridRange(month: Date, timeZone: string) {
+  const monthStart = zonedDateTimeToUtc(timeZone, month.getFullYear(), month.getMonth() + 1, 1);
+  const firstWeekday = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short"
+  }).format(monthStart);
+  const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(firstWeekday);
+  const gridStart = zonedDateTimeToUtc(timeZone, month.getFullYear(), month.getMonth() + 1, 1 - Math.max(0, weekdayIndex));
+  const gridEnd = new Date(gridStart.getTime() + 42 * 86_400_000);
+
+  return { gridStart, gridEnd };
+}
+
+function eventSignDescription(sign: string) {
+  const element = elementForSign(sign);
+
+  return `${sign} brings a ${element.toLowerCase()} tone to the event.`;
+}
+
+function moonPhaseIllumination(swe: SwissEphInstance, date: Date) {
+  const phase = moonSunPhaseAngle(swe, date);
+
+  return Math.round(((1 - Math.cos((phase * Math.PI) / 180)) / 2) * 100);
+}
+
+function refinePhaseEvent(
+  swe: SwissEphInstance,
+  targetDegrees: number,
+  lowerDate: Date,
+  upperDate: Date
+) {
+  let lower = lowerDate;
+  let upper = upperDate;
+  let lowerDistance = shortestAngleDistance(moonSunPhaseAngle(swe, lower) - targetDegrees);
+
+  for (let index = 0; index < 56; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointDistance = shortestAngleDistance(moonSunPhaseAngle(swe, midpoint) - targetDegrees);
+
+    if (lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerDistance = midpointDistance;
+    }
+  }
+
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function findLunations(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const phaseTargets = [
+    { name: "New Moon", target: 0, glyph: "●", primary: true },
+    { name: "First Quarter Moon", target: 90, glyph: "◐", primary: false },
+    { name: "Full Moon", target: 180, glyph: "○", primary: true },
+    { name: "Last Quarter Moon", target: 270, glyph: "◑", primary: false }
+  ];
+  const events: LunarCalendarEvent[] = [];
+  const stepMs = 6 * 60 * 60_000;
+  const sampledPhases: Array<{ date: Date; phase: number }> = [];
+  let previousRawPhase = moonSunPhaseAngle(swe, start);
+  let phaseOffset = 0;
+
+  sampledPhases.push({ date: start, phase: previousRawPhase });
+
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const rawPhase = moonSunPhaseAngle(swe, currentDate);
+
+    if (rawPhase + phaseOffset < previousRawPhase - 120) {
+      phaseOffset += 360;
+    }
+
+    const unwrappedPhase = rawPhase + phaseOffset;
+    sampledPhases.push({ date: currentDate, phase: unwrappedPhase });
+    previousRawPhase = unwrappedPhase;
+  }
+
+  phaseTargets.forEach((phaseTarget) => {
+    for (let index = 1; index < sampledPhases.length; index += 1) {
+      const previous = sampledPhases[index - 1];
+      const current = sampledPhases[index];
+      const firstTarget = phaseTarget.target + Math.ceil((previous.phase - phaseTarget.target) / 360) * 360;
+      const targets = [firstTarget, firstTarget + 360];
+
+      targets.forEach((target) => {
+        if (target < previous.phase || target > current.phase) {
+          return;
+        }
+
+        const occursAt = refinePhaseEvent(swe, phaseTarget.target, previous.date, current.date);
+        const sign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
+        const dateKey = localDateKey(occursAt, timeZone);
+
+        if (!events.some((event) => Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 60 * 60_000 && event.title === phaseTarget.name)) {
+          events.push({
+            id: `lunation-${phaseTarget.name.toLowerCase().replace(/\s+/g, "-")}-${occursAt.toISOString()}`,
+            type: "lunation",
+            title: `${phaseTarget.name} in ${sign}`,
+            startsAt: occursAt.toISOString(),
+            dateKey,
+            glyph: phaseTarget.glyph,
+            primary: phaseTarget.primary,
+            sign,
+            description: `${phaseTarget.name} exact in ${sign}. ${eventSignDescription(sign)}`
+          });
+        }
+      });
+    }
+  });
+
+  return events;
+}
+
+function refineSignIngress(
+  swe: SwissEphInstance,
+  planetId: number,
+  fromSign: string,
+  lowerDate: Date,
+  upperDate: Date
+) {
+  let lower = lowerDate;
+  let upper = upperDate;
+
+  for (let index = 0; index < 52; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+
+    if (exactPlanetSign(swe, planetId, midpoint) === fromSign) {
+      lower = midpoint;
+    } else {
+      upper = midpoint;
+    }
+  }
+
+  return upper;
+}
+
+function findIngresses(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const planetIds = [
+    swe.SE_SUN,
+    swe.SE_MOON,
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const calendarPlanets = planets.slice(0, planetIds.length);
+  const events: LunarCalendarEvent[] = [];
+
+  calendarPlanets.forEach(([planet, glyph], index) => {
+    const planetId = planetIds[index];
+    const stepMs = planet === "Moon" ? 3 * 60 * 60_000 : 12 * 60 * 60_000;
+    let previousDate = start;
+    let previousSign = exactPlanetSign(swe, planetId, previousDate);
+
+    for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+      const currentDate = new Date(time);
+      const currentSign = exactPlanetSign(swe, planetId, currentDate);
+
+      if (currentSign !== previousSign) {
+        const occursAt = refineSignIngress(swe, planetId, previousSign, previousDate, currentDate);
+        const toSign = exactPlanetSign(swe, planetId, occursAt);
+        const dateKey = localDateKey(occursAt, timeZone);
+
+        events.push({
+          id: `ingress-${planet.toLowerCase().replace(/\s+/g, "-")}-${occursAt.toISOString()}`,
+          type: "ingress",
+          title: `${planet} enters ${toSign}`,
+          startsAt: occursAt.toISOString(),
+          dateKey,
+          glyph,
+          primary: planet !== "Moon",
+          planet,
+          fromSign: previousSign,
+          toSign,
+          sign: toSign,
+          description: `${planet} leaves ${previousSign} and enters ${toSign}. ${eventSignDescription(toSign)}`
+        });
+      }
+
+      previousDate = currentDate;
+      previousSign = currentSign;
+    }
+  });
+
+  return events;
+}
+
+function planetLongitudeAt(swe: SwissEphInstance, planetId: number, date: Date) {
+  return exactPlanetLongitude(swe, planetId, date);
+}
+
+function aspectDistanceAt(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  date: Date,
+  targetDegrees: number
+) {
+  const separation = angularSeparation(
+    planetLongitudeAt(swe, firstPlanetId, date),
+    planetLongitudeAt(swe, secondPlanetId, date)
+  );
+
+  return separation - targetDegrees;
+}
+
+function refineAspectEvent(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  lowerDate: Date,
+  upperDate: Date
+) {
+  let lower = lowerDate;
+  let upper = upperDate;
+  let lowerDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
+
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees);
+
+    if (lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerDistance = midpointDistance;
+    }
+  }
+
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function findSkyAspects(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const planetIds = [
+    swe.SE_SUN,
+    swe.SE_MOON,
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const calendarPlanets = planets.slice(0, planetIds.length);
+  const events: LunarCalendarEvent[] = [];
+  const stepMs = 12 * 60 * 60_000;
+
+  calendarPlanets.forEach(([firstPlanet, firstGlyph], firstIndex) => {
+    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet, secondGlyph], offsetIndex) => {
+      const secondIndex = firstIndex + offsetIndex + 1;
+      const firstPlanetId = planetIds[firstIndex];
+      const secondPlanetId = planetIds[secondIndex];
+
+      calendarAspectDefinitions.forEach(([aspect, degrees]) => {
+        let previousDate = start;
+        let previousDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, previousDate, degrees);
+
+        for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+          const currentDate = new Date(time);
+          const currentDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
+
+          if (Math.abs(currentDistance) < 0.03 || previousDistance === 0 || previousDistance * currentDistance < 0) {
+            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
+            const dateKey = localDateKey(occursAt, timeZone);
+            const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
+
+            if (!events.some((event) => event.title === title && Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 3 * 60 * 60_000)) {
+              events.push({
+                id: `aspect-${firstPlanet}-${aspect}-${secondPlanet}-${occursAt.toISOString()}`.toLowerCase().replace(/\s+/g, "-"),
+                type: "aspect",
+                title,
+                startsAt: occursAt.toISOString(),
+                dateKey,
+                glyph: `${firstGlyph}${secondGlyph}`,
+                primary: !firstPlanet.includes("Moon") && !secondPlanet.includes("Moon"),
+                planets: [firstPlanet, secondPlanet],
+                aspect,
+                description: skyAspectDescription(firstPlanet, secondPlanet, aspect)
+              });
+            }
+          }
+
+          previousDate = currentDate;
+          previousDistance = currentDistance;
+        }
+      });
+    });
+  });
+
+  return events;
+}
+
+function skyAspectDescription(firstPlanet: string, secondPlanet: string, aspect: string) {
+  const aspectTone: Record<string, string> = {
+    conjunction: "concentrates their themes in one place",
+    sextile: "opens a workable exchange between their themes",
+    square: "puts pressure on their themes until a clearer response is needed",
+    trine: "lets their themes move with less friction",
+    opposition: "pulls their themes into direct comparison"
+  };
+
+  return `${firstPlanet} ${aspect} ${secondPlanet} ${aspectTone[aspect] ?? "links their themes for the day"}.`;
+}
+
+export async function getLunarCalendarMonth(
+  location: LocationInput = defaultLocation,
+  month: Date = new Date()
+): Promise<LunarCalendarMonth> {
+  const swe = await getSwissEph();
+  const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const monthAnchor = new Date(month.getFullYear(), month.getMonth(), 1);
+  const { gridStart, gridEnd } = monthGridRange(monthAnchor, timeZone);
+  const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
+  const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
+  const events = [
+    ...findLunations(swe, eventStart, eventEnd, timeZone),
+    ...findIngresses(swe, eventStart, eventEnd, timeZone),
+    ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
+  ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+  const days = Array.from({ length: 42 }, (_, index) => {
+    const dayStart = new Date(gridStart.getTime() + index * 86_400_000);
+    const dateKey = localDateKey(dayStart, timeZone);
+    const noon = new Date(dayStart.getTime() + 12 * 60 * 60_000);
+    const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, noon);
+    const moonSign = signForLongitude(moonLongitude);
+    const sunLongitude = exactPlanetLongitude(swe, swe.SE_SUN, noon);
+    const localParts = localDateParts(dayStart, timeZone);
+
+    return {
+      date: dayStart.toISOString(),
+      dateKey,
+      inMonth: localParts.month === monthAnchor.getMonth() + 1 && localParts.year === monthAnchor.getFullYear(),
+      moonSign: moonSign.sign,
+      moonSignGlyph: moonSign.signGlyph,
+      moonPhase: moonPhaseName(sunLongitude, moonLongitude),
+      illumination: moonPhaseIllumination(swe, noon),
+      events: events.filter((event) => event.dateKey === dateKey)
+    };
+  });
+
+  return {
+    month: monthAnchor.toISOString(),
+    timeZone,
+    location,
+    days,
+    events: events.filter((event) => days.some((day) => day.dateKey === event.dateKey))
   };
 }
 

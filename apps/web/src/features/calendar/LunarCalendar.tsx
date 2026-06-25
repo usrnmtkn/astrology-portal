@@ -123,6 +123,10 @@ function isTransitCardEvent(event: LunarCalendarEvent) {
   return event.primary && event.type === "ingress";
 }
 
+function isDayCardSurfaceEvent(event: LunarCalendarEvent) {
+  return event.primary && (event.type === "ingress" || event.type === "aspect");
+}
+
 function monthGridEvents(events: LunarCalendarEvent[]) {
   const sortedEvents = dayEventPreview(events);
   const lunations = sortedEvents.filter((event) => event.type === "lunation");
@@ -452,7 +456,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
     : [];
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
-  const selectedSurfacedTransit = selectedEvents.find(isTransitCardEvent);
+  const selectedSurfacedTransit = selectedEvents.find(isDayCardSurfaceEvent);
   const selectedDayBody = selectedDay ? dayCardBody(selectedDay, selectedSurfacedTransit, zone) : [];
   const monthTransitEvents = calendar
     ? calendar.events.filter((event) => {
