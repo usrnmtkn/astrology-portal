@@ -72,6 +72,25 @@
   margin-bottom: 2px;
 }
 
+.lunar-calendar-header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.lunar-calendar-selected-line {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-label);
+}
+
+.lunar-calendar-selected-line strong {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+}
+
 .lunar-calendar-title-block {
   display: grid;
   gap: 6px;
