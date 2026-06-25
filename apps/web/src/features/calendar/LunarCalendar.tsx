@@ -458,6 +458,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
   const selectedSurfacedTransit = selectedEvents.find(isDayCardSurfaceEvent);
   const selectedDayBody = selectedDay ? dayCardBody(selectedDay, selectedSurfacedTransit, zone) : [];
+  const selectedDateLabel = selectedDay ? formatSelectedDay(selectedDay, zone) : "";
   const monthTransitEvents = calendar
     ? calendar.events.filter((event) => {
         const eventDay = calendar.days.find((day) => day.dateKey === event.dateKey);
@@ -591,13 +592,20 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
             )}
           </div>
         </div>
-        <SegmentedControl
-          ariaLabel="Calendar view"
-          className="lunar-calendar-segmented"
-          options={viewModeOptions}
-          value={viewMode}
-          onChange={handleViewModeChange}
-        />
+        <div className="lunar-calendar-header-actions">
+          <SegmentedControl
+            ariaLabel="Calendar view"
+            className="lunar-calendar-segmented"
+            options={viewModeOptions}
+            value={viewMode}
+            onChange={handleViewModeChange}
+          />
+          {selectedDay && status === "ready" && (
+            <div className="lunar-calendar-selected-line" aria-live="polite">
+              Selected: <strong>{selectedDateLabel}</strong>
+            </div>
+          )}
+        </div>
       </header>
 
       {status === "loading" && (
