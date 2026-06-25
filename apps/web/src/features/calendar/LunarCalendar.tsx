@@ -120,11 +120,11 @@ function dayEventPreview(events: LunarCalendarEvent[]) {
 }
 
 function isMonthGridEvent(event: LunarCalendarEvent) {
-  return event.type === "lunation";
+  return event.type === "lunation" || (event.type === "aspect" && event.primary);
 }
 
 function isTransitCardEvent(event: LunarCalendarEvent) {
-  return event.primary && event.type !== "lunation";
+  return event.primary && event.type === "ingress";
 }
 
 function compactEventLabel(event: LunarCalendarEvent) {
@@ -144,6 +144,14 @@ function compactEventLabel(event: LunarCalendarEvent) {
   }
 
   return event.title;
+}
+
+function monthCellEventLabel(event: LunarCalendarEvent) {
+  if (event.type === "aspect") {
+    return event.glyph;
+  }
+
+  return compactEventLabel(event);
 }
 
 const signElements: Record<string, string> = {
@@ -668,7 +676,8 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                 const isSelected = selectedDay?.dateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
                 const previewEvents = dayEventPreview(day.events.filter(isMonthGridEvent));
-                const dayLabel = `${formatSelectedDay(day, zone)}. Moon in ${day.moonSign}. ${previewEvents.length} calendar events.`;
+                const previewEventNames = previewEvents.map((event) => event.title).join(", ");
+                const dayLabel = `${formatSelectedDay(day, zone)}. Moon in ${day.moonSign}. ${previewEvents.length} calendar events${previewEventNames ? `: ${previewEventNames}` : ""}.`;
 
                 return (
                   <button
@@ -697,7 +706,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                           title={event.title}
                           aria-label={event.title}
                         >
-                          {compactEventLabel(event)}
+                          {monthCellEventLabel(event)}
                         </span>
                       ))}
                       {previewEvents.length > 2 && <span className="lunar-calendar-event-more">+{previewEvents.length - 2} more</span>}

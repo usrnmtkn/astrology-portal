@@ -541,6 +541,18 @@
   white-space: nowrap;
 }
 
+.lunar-calendar-event-pill.event-aspect {
+  justify-content: center;
+  width: auto;
+  min-width: 30px;
+  max-width: 44px;
+  padding: 0 7px;
+  color: color-mix(in srgb, var(--ink) 82%, var(--event-accent, var(--ink)));
+  font-family: var(--font-glyph);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
 .lunar-calendar-event-more {
   background: color-mix(in srgb, var(--surface-2) 82%, var(--ink) 8%);
   color: color-mix(in srgb, var(--ink) 82%, var(--accent));
