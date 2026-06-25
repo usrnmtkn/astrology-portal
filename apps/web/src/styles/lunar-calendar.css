@@ -516,7 +516,7 @@
   justify-content: stretch;
   justify-self: stretch;
   gap: 3px;
-  max-height: 34px;
+  max-height: 54px;
   overflow: hidden;
 }
 
@@ -541,10 +541,11 @@
   white-space: nowrap;
 }
 
-.lunar-calendar-event-pill.event-aspect {
+.lunar-calendar-event-pill.event-aspect,
+.lunar-calendar-event-pill.event-ingress {
   justify-content: center;
   width: auto;
-  min-width: 30px;
+  min-width: 26px;
   max-width: 44px;
   padding: 0 7px;
   color: color-mix(in srgb, var(--ink) 82%, var(--event-accent, var(--ink)));

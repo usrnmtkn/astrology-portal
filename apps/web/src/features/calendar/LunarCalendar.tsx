@@ -119,12 +119,17 @@ function dayEventPreview(events: LunarCalendarEvent[]) {
   });
 }
 
-function isMonthGridEvent(event: LunarCalendarEvent) {
-  return event.type === "lunation" || (event.type === "aspect" && event.primary);
-}
-
 function isTransitCardEvent(event: LunarCalendarEvent) {
   return event.primary && event.type === "ingress";
+}
+
+function monthGridEvents(events: LunarCalendarEvent[]) {
+  const sortedEvents = dayEventPreview(events);
+  const lunations = sortedEvents.filter((event) => event.type === "lunation");
+  const ingresses = sortedEvents.filter((event) => event.type === "ingress" && event.primary);
+  const surfacedAspect = sortedEvents.find((event) => event.type === "aspect" && event.primary);
+
+  return [...lunations, ...ingresses, ...(surfacedAspect ? [surfacedAspect] : [])];
 }
 
 function compactEventLabel(event: LunarCalendarEvent) {
@@ -147,7 +152,7 @@ function compactEventLabel(event: LunarCalendarEvent) {
 }
 
 function monthCellEventLabel(event: LunarCalendarEvent) {
-  if (event.type === "aspect") {
+  if (event.type === "aspect" || event.type === "ingress") {
     return event.glyph;
   }
 
@@ -675,7 +680,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               {calendar.days.map((day) => {
                 const isSelected = selectedDay?.dateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
-                const previewEvents = dayEventPreview(day.events.filter(isMonthGridEvent));
+                const previewEvents = monthGridEvents(day.events);
                 const previewEventNames = previewEvents.map((event) => event.title).join(", ");
                 const dayLabel = `${formatSelectedDay(day, zone)}. Moon in ${day.moonSign}. ${previewEvents.length} calendar events${previewEventNames ? `: ${previewEventNames}` : ""}.`;
 
@@ -699,7 +704,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                       {day.illumination}% lit
                     </span>
                     <span className="lunar-calendar-day__events">
-                      {previewEvents.slice(0, 2).map((event) => (
+                      {previewEvents.map((event) => (
                         <span
                           className={`lunar-calendar-event-pill event-${event.type}`}
                           key={event.id}
@@ -709,7 +714,6 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                           {monthCellEventLabel(event)}
                         </span>
                       ))}
-                      {previewEvents.length > 2 && <span className="lunar-calendar-event-more">+{previewEvents.length - 2} more</span>}
                     </span>
                   </button>
                 );
