@@ -682,16 +682,18 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               ))}
             </div>
             <div className="lunar-calendar-grid">
-              {calendar.days.map((day) => {
+              {calendar.days.map((day, index) => {
                 const isSelected = selectedDay?.dateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
+                const columnIndex = index % 7;
+                const tooltipClass = columnIndex >= 5 ? "is-tooltip-left" : columnIndex <= 1 ? "is-tooltip-right" : "";
                 const previewEvents = monthGridEvents(day.events);
                 const previewEventNames = previewEvents.map((event) => event.title).join(", ");
                 const dayLabel = `${formatSelectedDay(day, zone)}. Moon in ${day.moonSign}. ${previewEvents.length} calendar events${previewEventNames ? `: ${previewEventNames}` : ""}.`;
 
                 return (
                   <button
-                    className={`lunar-calendar-day ${day.inMonth ? "" : "is-outside"} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""}`}
+                    className={`lunar-calendar-day ${tooltipClass} ${day.inMonth ? "" : "is-outside"} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""}`}
                     key={day.dateKey}
                     type="button"
                     onClick={() => setSelectedDateKey(day.dateKey)}
@@ -717,9 +719,11 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                           aria-label={event.title}
                         >
                           {monthCellEventLabel(event)}
+                          <span className="lunar-calendar-event-tooltip" role="tooltip">{event.title}</span>
                         </span>
                       ))}
                     </span>
+                    <span className="lunar-calendar-day-tooltip" role="tooltip">{dayLabel}</span>
                   </button>
                 );
               })}

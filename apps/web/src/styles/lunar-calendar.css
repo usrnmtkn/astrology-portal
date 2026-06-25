@@ -36,7 +36,7 @@
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
-  overflow: hidden;
+  overflow: visible;
   animation: lunar-rows-expand 360ms cubic-bezier(.2, .8, .2, 1) both;
 }
 
@@ -400,6 +400,7 @@
 }
 
 .lunar-calendar-day {
+  position: relative;
   display: grid;
   grid-template-rows: 18px 54px 14px minmax(28px, 1fr);
   justify-items: center;
@@ -504,11 +505,12 @@
   justify-self: stretch;
   gap: 3px;
   max-height: 54px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .lunar-calendar-event-pill,
 .lunar-calendar-event-more {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: start;
@@ -526,6 +528,74 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.lunar-calendar-day-tooltip,
+.lunar-calendar-event-tooltip {
+  position: absolute;
+  z-index: 30;
+  width: max-content;
+  max-width: min(240px, calc(100vw - 32px));
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.25;
+  pointer-events: none;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.lunar-calendar-day-tooltip {
+  left: 50%;
+  bottom: calc(100% + 8px);
+}
+
+.lunar-calendar-event-tooltip {
+  left: 50%;
+  bottom: calc(100% + 6px);
+}
+
+.lunar-calendar-day:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-event-pill:hover .lunar-calendar-event-tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.lunar-calendar-day.is-tooltip-left > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-tooltip {
+  right: 0;
+  left: auto;
+  transform: translate(0, 4px);
+}
+
+.lunar-calendar-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:hover .lunar-calendar-event-tooltip {
+  transform: translate(0, 0);
+}
+
+.lunar-calendar-day.is-tooltip-right > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-tooltip {
+  right: auto;
+  left: 0;
+  transform: translate(0, 4px);
+}
+
+.lunar-calendar-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:hover .lunar-calendar-event-tooltip {
+  transform: translate(0, 0);
 }
 
 .lunar-calendar-event-pill.event-aspect,
