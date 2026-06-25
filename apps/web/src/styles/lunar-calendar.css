@@ -80,10 +80,31 @@
 
 .lunar-calendar-selected-line {
   color: var(--muted);
+  font-family: var(--font-label);
   font-size: 12px;
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-normal);
   line-height: var(--leading-label);
+}
+
+.lunar-calendar-legend,
+.lunar-calendar-weekdays span,
+.lunar-calendar-day__phase,
+.lunar-calendar-event-pill,
+.lunar-calendar-event-more,
+.lunar-calendar-detail__date,
+.lunar-calendar-upcoming__label,
+.lunar-calendar-event-card__meta,
+.lunar-week-day__weekday,
+.lunar-week-day__date,
+.lunar-week-day__marker,
+.lunar-milestones button,
+.lunar-month-transit-card__date,
+.lunar-month-transit-card__more,
+.lunar-selected-card__eyebrow,
+.lunar-selected-card__stats span,
+.lunar-selected-card__practice span {
+  font-family: var(--font-label);
 }
 
 .lunar-calendar-selected-line strong {

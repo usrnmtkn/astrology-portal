@@ -95,7 +95,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
-  --article-link: #2a55c8;
+  --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
@@ -170,10 +170,11 @@
   --glass-shadow: 0 22px 46px -30px rgba(46, 52, 62, 0.4);
 
   --font-display: var(--font-serif);
-  --font-body: var(--font-mono);
-  --font-ui: var(--font-body);
+  --font-body: var(--font-sans);
+  --font-label: var(--font-mono);
+  --font-ui: var(--font-label);
   --font-glyph: var(--font-symbol);
-  --font-brand: var(--font-body);
+  --font-brand: var(--font-label);
 
   --tracking-body: normal;
   --tracking-normal: normal;
@@ -319,7 +320,7 @@
   --text-compact-caption: var(--type-label-size);
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
-  --badge-font-family: var(--font-body);
+  --badge-font-family: var(--font-label);
   --badge-font-size: var(--type-pill-size);
   --badge-font-weight: var(--weight-semibold);
   --badge-padding: 6px 11px;
@@ -594,6 +595,7 @@
   --font-display: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
   --font-ui: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
+  --font-label: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
