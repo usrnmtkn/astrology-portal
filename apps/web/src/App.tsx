@@ -58,6 +58,7 @@ import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContex
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import { LunarCalendar } from "./features/calendar/LunarCalendar";
 import {
   SkyAspectGroup,
   SkyAspectsSection,
@@ -135,7 +136,7 @@ import {
 } from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
-type PortalMode = AccountMode | "profile" | "friends" | "account" | "settings";
+type PortalMode = AccountMode | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -1081,8 +1082,8 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "North Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
-const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "account", "settings"];
-const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
+const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
 const friendsTabs: FriendsTab[] = ["circle", "charts"];
 
 function isPortalMode(value: unknown): value is PortalMode {
@@ -1109,6 +1110,8 @@ function portalModeFromHashPath(path: string): PortalMode | null {
       return "profile";
     case "friends":
       return "friends";
+    case "calendar":
+      return "calendar";
     case "account":
       return "account";
     case "settings":
@@ -1175,6 +1178,8 @@ function portalHashForMode(mode: PortalMode) {
       return "you";
     case "friends":
       return "friends";
+    case "calendar":
+      return "calendar";
     case "account":
       return "account";
     case "settings":
@@ -1328,6 +1333,10 @@ function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
 
   if (urlMode === "settings") {
     return "settings";
+  }
+
+  if (urlMode === "calendar") {
+    return "calendar";
   }
 
   if (urlMode === "profile") {
@@ -5110,6 +5119,14 @@ function friendTimingContext(chart: ManualChart, currentSky: SkySnapshot): Frien
   });
 }
 
+function profectionHeaderLine(timing: FriendTimingContext | null) {
+  if (!timing?.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
+    return null;
+  }
+
+  return `Profection year · ${timing.profectedHouse}H ${timing.profectedSign} · Lord of the Year: ${timing.lordOfYear}`;
+}
+
 function titleCase(value: string) {
   return value
     .split(/[_\s-]+/)
@@ -7413,8 +7430,9 @@ export function App() {
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isFriendsMode = mode === "friends";
+  const isCalendarMode = mode === "calendar";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
-  const usesFullPageLayout = isProfileMode || isFriendsMode;
+  const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
 
   function navigateToFriends() {
@@ -7930,6 +7948,10 @@ export function App() {
   }, [hasLocationPreference, location]);
 
   useEffect(() => {
+    if (hasLocationPreference) {
+      return;
+    }
+
     if (!userProfile?.currentLocation && !userProfile?.currentLocationData) {
       return;
     }
@@ -7946,6 +7968,7 @@ export function App() {
     setManualLocation(nextLocation.label);
     setHasLocationPreference(true);
   }, [
+    hasLocationPreference,
     location,
     userProfile?.currentLocation,
     userProfile?.currentLocationData?.label,
@@ -8845,6 +8868,10 @@ export function App() {
                 <SkyNavIcon size={18} />
                 <span>Sky</span>
               </button>
+              <button className={mode === "calendar" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("calendar")}>
+                <CalendarDays size={18} aria-hidden="true" />
+                <span>Calendar</span>
+              </button>
               {userProfile && (
                 <>
                   <button
@@ -8977,6 +9004,19 @@ export function App() {
                 <SkyNavIcon size={20} />
                 <span>Sky</span>
               </button>
+              <button
+                className={mode === "calendar" ? "active" : ""}
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setSelectedSkyDetail(null);
+                  navigateToPortalMode("calendar");
+                  setMenuOpen(false);
+                }}
+              >
+                <CalendarDays size={20} aria-hidden="true" />
+                <span>Calendar</span>
+              </button>
               {userProfile && (
                 <>
                   <button
@@ -9051,7 +9091,7 @@ export function App() {
           <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
+          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
             {!isSignupMode && !usesFullPageLayout && !isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
@@ -9075,7 +9115,7 @@ export function App() {
               </section>
             )}
 
-            <section className="detail-panel sky-content-column chart-layout__content" aria-label="Portal details">
+            <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <section className="today-hero" aria-label="Today controls">
                   <div className="sky-intro">
@@ -9195,6 +9235,16 @@ export function App() {
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
+              {mode === "calendar" && (
+                <LunarCalendar
+                  location={location}
+                  onLocationChange={(nextLocation) => {
+                    setLocation(nextLocation);
+                    setManualLocation(nextLocation.label);
+                    setHasLocationPreference(true);
+                  }}
+                />
+              )}
               {mode === "profile" && (
                 userProfile ? (
                   <ProfileView
@@ -9212,6 +9262,7 @@ export function App() {
                     selectedTransit={selectedTransit}
                     selectedTransitId={selectedTransitId}
                     setSelectedTransitId={setSelectedTransitId}
+                    skyGeneratedAt={sky.generatedAt}
                     onCreateChart={() => openCreateChartModal()}
                     generatedContent={natalGeneratedContent}
                   />
@@ -10659,14 +10710,36 @@ function natalAspectsForPlacement(position: PlanetPosition, natalSky: SkySnapsho
 }
 
 function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapshot | null) {
-  return natalAspectsForPlacement(position, natalSky).map((aspect) => ({
-    planetA: aspect.from,
-    aspect: aspect.type,
-    planetB: aspect.to,
-    otherPoint: aspectOtherPoint(aspect, position.planet),
-    orb: wholeDegreeOrb(aspect.orb),
-    meaning: aspect.meaning
-  }));
+  const positionByPlanet = new Map((natalSky?.positions ?? []).map((candidate) => [candidate.planet, candidate]));
+
+  return natalAspectsForPlacement(position, natalSky).map((aspect) => {
+    const otherPoint = aspectOtherPoint(aspect, position.planet);
+    const fromPosition = positionByPlanet.get(aspect.from);
+    const toPosition = positionByPlanet.get(aspect.to);
+    const otherPosition = positionByPlanet.get(otherPoint);
+
+    return {
+      primaryPlanet: position.planet,
+      primarySign: position.sign,
+      primaryHouse: position.house,
+      aspectType: aspect.type,
+      aspectPlanet: otherPoint,
+      aspectPlanetSign: otherPosition?.sign ?? "",
+      aspectPlanetHouse: otherPosition?.house ?? null,
+      planetA: aspect.from,
+      aspect: aspect.type,
+      planetB: aspect.to,
+      from: aspect.from,
+      to: aspect.to,
+      fromSign: fromPosition?.sign ?? "",
+      toSign: toPosition?.sign ?? "",
+      fromHouse: fromPosition?.house ?? null,
+      toHouse: toPosition?.house ?? null,
+      otherPoint,
+      orb: wholeDegreeOrb(aspect.orb),
+      meaning: aspect.meaning
+    };
+  });
 }
 
 function natalPlacementAspectKnowledgeIds(position: PlanetPosition, natalSky: SkySnapshot | null) {
@@ -13208,6 +13281,7 @@ function ProfileView({
   transitsDrawn,
   selectedTransitId,
   setSelectedTransitId,
+  skyGeneratedAt,
   onCreateChart,
   generatedContent
 }: {
@@ -13225,6 +13299,7 @@ function ProfileView({
   selectedTransit: TransitItem;
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
+  skyGeneratedAt: string;
   onCreateChart: () => void;
   generatedContent: GeneratedContentMap;
 }) {
@@ -13254,6 +13329,15 @@ function ProfileView({
   const safeMoon = displayMoon || "your Moon";
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
+  const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
+    ? timingContextForChart({
+        birthDate: savedBirthDate,
+        currentDate: skyGeneratedAt,
+        ascendant: natalSky.ascendant,
+        natalPositions: natalTransitTargets(natalSky)
+      })
+    : null;
+  const profectionLine = profectionHeaderLine(profileTiming);
   const natalSun = natalPositions.find((position) => position.planet === "Sun");
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
   const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
@@ -13317,6 +13401,10 @@ function ProfileView({
 
       const insight = natalHouseInsightForPosition(position, natalSky);
       const placementAspects = natalPlacementAspectFacts(position, natalSky);
+      const traditionalRulerBody = traditionalSignRulers[position.sign] ?? "";
+      const traditionalRulerPosition = traditionalRulerBody
+        ? natalSky?.positions.find((candidate) => candidate.planet === traditionalRulerBody) ?? null
+        : null;
       setSeededPlacementDrafts((current) => {
         const next = new Set(current);
         next.add(contentKey);
@@ -13334,6 +13422,28 @@ function ProfileView({
         headline: natalPlacementDetailTitle(position),
         facts: {
           type: "you_natal_placement_writeup",
+          placementBody: position.planet,
+          placementSign: position.sign,
+          placementHouse: position.house,
+          degree: formatPlanetDegree(position),
+          dignity: placementDignity(position)?.label ?? null,
+          retrograde: position.motion === "retrograde",
+          ruler: traditionalRulerBody || null,
+          rulerBody: traditionalRulerBody || null,
+          traditionalRuler: traditionalRulerBody || null,
+          traditionalRulerBody: traditionalRulerBody || null,
+          rulerSign: traditionalRulerPosition?.sign ?? null,
+          rulerHouse: traditionalRulerPosition?.house ?? null,
+          traditionalRulerSign: traditionalRulerPosition?.sign ?? null,
+          traditionalRulerHouse: traditionalRulerPosition?.house ?? null,
+          rulers: traditionalRulerBody
+            ? [{
+                kind: "traditional",
+                body: traditionalRulerBody,
+                sign: traditionalRulerPosition?.sign ?? null,
+                house: traditionalRulerPosition?.house ?? null
+              }]
+            : [],
           person: {
             name: profile.name,
             bigThree: {
@@ -13367,15 +13477,34 @@ function ProfileView({
         sourceSnapshot: {
           source: "tldrastro-you-placement-detail",
           chartId: primaryChart?.id ?? null,
-          placementId: natalPlacementRouteId(position)
+          placementId: natalPlacementRouteId(position),
+          houseSystem: "whole_sign",
+          ruler: traditionalRulerBody
+            ? {
+                kind: "traditional",
+                body: traditionalRulerBody,
+                sign: traditionalRulerPosition?.sign ?? null,
+                house: traditionalRulerPosition?.house ?? null
+              }
+            : null,
+          positions: natalSky?.positions.map((candidate) => ({
+            planet: candidate.planet,
+            body: candidate.planet,
+            sign: candidate.sign,
+            house: candidate.house,
+            degree: candidate.degree,
+            motion: candidate.motion
+          })) ?? []
         },
         voiceNotes: [
           "Seed a draft for the user's natal placement detail page.",
-          "Write the main interpretation only. Do not copy or restate the lens sections as separate headings.",
+          "Use the provided project-authored natal placement source material as the primary source.",
+          "Write the primary placement interpretation in the body field, and keep it deeper than any aspect card.",
+          "If aspects are supplied, write them as shorter supporting sections that modify the primary placement instead of folding them into the main body.",
+          "Keep every aspect section anchored to the primary planet, sign, and house, then show how the other natal planet modifies that pattern.",
           "Lead with what this placement means in plain direct prose before mechanics.",
           "Use the provided house lens and ruler thread as context, but author the write-up as a coherent interpretation.",
-          "Include the strongest natal aspects to this planet as part of the interpretation, not as a separate technical dump.",
-          "Explain how those aspects modify the planet's expression in everyday life.",
+          "Do not treat natal aspects like current timing, sky weather, or a separate standalone article.",
           "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, terrain gets processed, or makes this placement.",
           "Do not mention drafts, review status, generated content, databases, backend, or knowledge base.",
           "Keep it specific, human, and around 170 to 260 words."
@@ -13694,6 +13823,7 @@ function ProfileView({
         }}
         personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
+        profectionLine={profectionLine}
         profileAvatarUrl={profile.avatarUrl}
         profileEmail={profile.email}
         profileName={profile.name}

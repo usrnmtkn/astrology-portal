@@ -48,7 +48,7 @@ type SkyCalculationOptions = {
   includeTransitWindows?: boolean;
 };
 
-export type LunarCalendarEventType = "lunation" | "ingress" | "aspect";
+export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
 
 export type LunarCalendarEvent = {
   id: string;
@@ -75,6 +75,10 @@ export type LunarCalendarDay = {
   moonSignGlyph: string;
   moonPhase: string;
   illumination: number;
+  voidOfCourse?: {
+    remainingLabel: string;
+    until?: string;
+  } | null;
   events: LunarCalendarEvent[];
 };
 
@@ -177,6 +181,18 @@ function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Dat
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
 
   return normalizeDegrees(swe.calc_ut(jd, planetId, flags)[0]);
+}
+
+function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
+  const jd = swe.julday(
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate(),
+    utcHour(date)
+  );
+  const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
+
+  return swe.calc_ut(jd, planetId, flags)[3];
 }
 
 function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -470,6 +486,10 @@ function compactHoursRemaining(start: Date, end: Date) {
   const hourLabel = `${hours}hr${hours === 1 ? "" : "s"}`;
 
   return remainingMinutes > 0 ? `${hourLabel} ${remainingMinutes}min` : hourLabel;
+}
+
+function compactCalendarVoidLabel(label: string | undefined) {
+  return (label ?? "").replace(/hrs?/g, "h").replace(/min/g, "m");
 }
 
 function moonStatusFor(swe: SwissEphInstance, date: Date): SkySnapshot["moonStatus"] {
@@ -771,6 +791,91 @@ function findIngresses(
   return events;
 }
 
+function refineStationEvent(
+  swe: SwissEphInstance,
+  planetId: number,
+  lowerDate: Date,
+  upperDate: Date
+) {
+  let lower = lowerDate;
+  let upper = upperDate;
+  let lowerSpeed = exactPlanetSpeed(swe, planetId, lower);
+
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointSpeed = exactPlanetSpeed(swe, planetId, midpoint);
+
+    if (lowerSpeed === 0 || lowerSpeed * midpointSpeed <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerSpeed = midpointSpeed;
+    }
+  }
+
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function findStations(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const planetIds = [
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const stationPlanets = planets.slice(2, 10);
+  const events: LunarCalendarEvent[] = [];
+  const stepMs = 12 * 60 * 60_000;
+
+  stationPlanets.forEach(([planet, glyph], index) => {
+    const planetId = planetIds[index];
+    let previousDate = start;
+    let previousSpeed = exactPlanetSpeed(swe, planetId, previousDate);
+
+    for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+      const currentDate = new Date(time);
+      const currentSpeed = exactPlanetSpeed(swe, planetId, currentDate);
+
+      if (previousSpeed === 0 || previousSpeed * currentSpeed < 0) {
+        const occursAt = refineStationEvent(swe, planetId, previousDate, currentDate);
+        const speedAfter = exactPlanetSpeed(swe, planetId, addDays(occursAt, 1));
+        const direction = speedAfter < 0 ? "retrograde" : "direct";
+        const dateKey = localDateKey(occursAt, timeZone);
+        const sign = exactPlanetSign(swe, planetId, occursAt);
+
+        if (!events.some((event) => event.planet === planet && Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 24 * 60 * 60_000)) {
+          events.push({
+            id: `station-${planet.toLowerCase().replace(/\s+/g, "-")}-${direction}-${occursAt.toISOString()}`,
+            type: "station",
+            title: `${planet} stations ${direction}`,
+            startsAt: occursAt.toISOString(),
+            dateKey,
+            glyph,
+            primary: true,
+            planet,
+            sign,
+            description: `${planet} stations ${direction} in ${sign}. ${eventSignDescription(sign)}`
+          });
+        }
+      }
+
+      previousDate = currentDate;
+      previousSpeed = currentSpeed;
+    }
+  });
+
+  return events;
+}
+
 function planetLongitudeAt(swe: SwissEphInstance, planetId: number, date: Date) {
   return exactPlanetLongitude(swe, planetId, date);
 }
@@ -909,6 +1014,7 @@ export async function getLunarCalendarMonth(
   const events = [
     ...findLunations(swe, eventStart, eventEnd, timeZone),
     ...findIngresses(swe, eventStart, eventEnd, timeZone),
+    ...findStations(swe, eventStart, eventEnd, timeZone),
     ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
   ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
   const days = Array.from({ length: 42 }, (_, index) => {
@@ -918,6 +1024,7 @@ export async function getLunarCalendarMonth(
     const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, noon);
     const moonSign = signForLongitude(moonLongitude);
     const sunLongitude = exactPlanetLongitude(swe, swe.SE_SUN, noon);
+    const moonStatus = moonStatusFor(swe, noon);
     const localParts = localDateParts(dayStart, timeZone);
 
     return {
@@ -928,6 +1035,10 @@ export async function getLunarCalendarMonth(
       moonSignGlyph: moonSign.signGlyph,
       moonPhase: moonPhaseName(sunLongitude, moonLongitude),
       illumination: moonPhaseIllumination(swe, noon),
+      voidOfCourse: moonStatus?.kind === "void" ? {
+        remainingLabel: compactCalendarVoidLabel(moonStatus.remainingLabel),
+        until: moonStatus.until
+      } : null,
       events: events.filter((event) => event.dateKey === dateKey)
     };
   });
