@@ -10,6 +10,14 @@ import {
   type LunarCalendarMonth as LunarCalendarMonthData
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
+import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
+import {
+  skyAspectContentKey,
+  skyAspectInstanceContentKey,
+  skyIngressContentKey,
+  skyIngressInstanceContentKey,
+  slugContentPart
+} from "../../services/generatedContentKeys";
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
 import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
 import type { LocationInput } from "../../types";
@@ -20,6 +28,7 @@ type LunarCalendarViewMode = "week" | "month";
 type LunarCalendarProps = {
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
+  generatedContent?: Map<string, LiveGeneratedContent>;
 };
 
 type ViewTransitionDocument = Document & {
@@ -33,7 +42,7 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-const calendarStorageVersion = "v3";
+const calendarStorageVersion = "v5";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 
 type StoredCalendarPayload = {
@@ -315,6 +324,12 @@ function isTransitCardEvent(event: LunarCalendarEvent) {
   return event.primary && (event.type === "ingress" || event.type === "station");
 }
 
+function isActiveRetrogradeEvent(event: LunarCalendarEvent) {
+  const title = event.title.toLowerCase();
+
+  return event.type === "station" && title.includes("retrograde") && !title.includes("stations");
+}
+
 function weekTransitCardEvents(days: LunarCalendarDay[]) {
   return days
     .flatMap((day) => {
@@ -327,6 +342,10 @@ function weekTransitCardEvents(days: LunarCalendarDay[]) {
 }
 
 function isDayCardSurfaceEvent(event: LunarCalendarEvent) {
+  if (isActiveRetrogradeEvent(event)) {
+    return true;
+  }
+
   return event.primary && (
     event.type === "ingress"
     || event.type === "station"
@@ -505,6 +524,7 @@ function transitCardGlyphParts(event: LunarCalendarEvent) {
 
 function transitCardStatusTag(event: LunarCalendarEvent) {
   if (event.type === "ingress") return "Ingress";
+  if (isActiveRetrogradeEvent(event)) return "Retrograde";
   if (event.type === "station") return "Station";
   if (event.title.toLowerCase().includes("cazimi")) return "Cazimi";
 
@@ -514,6 +534,83 @@ function transitCardStatusTag(event: LunarCalendarEvent) {
   }
 
   return "Transit";
+}
+
+function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
+  const dateKey = event.dateKey || event.startsAt.slice(0, 10);
+
+  if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
+    const sign = event.toSign ?? event.sign ?? "";
+    const planetPart = slugContentPart(event.planet);
+    const signPart = slugContentPart(sign);
+    const ingressKeys = [
+      skyIngressInstanceContentKey(event.planet, sign, { targetDate: dateKey }),
+      skyIngressContentKey(event.planet, sign),
+      `sky-ingress-${planetPart}-${signPart}-${dateKey}`,
+      `sky-ingress-${planetPart}-${signPart}`,
+      `sky-${planetPart}-enters-${signPart}`,
+      `sky-${planetPart}-in-${signPart}`
+    ];
+
+    return event.planet === "Sun"
+      ? [...ingressKeys, `sky-season-${signPart}-${dateKey}`]
+      : ingressKeys;
+  }
+
+  if (event.type === "station" && event.planet) {
+    const planetPart = slugContentPart(event.planet);
+    const motion = event.title.toLowerCase().includes("direct") ? "direct" : "retrograde";
+
+    return [
+      `sky-station-${planetPart}-${motion}-${dateKey}`,
+      `sky-station-${planetPart}-${motion}`,
+      `sky-retrograde-${planetPart}-${dateKey}`,
+      `sky-retrograde-${planetPart}`
+    ];
+  }
+
+  if (event.type === "aspect" && event.planets && event.aspect) {
+    const [first, second] = event.planets;
+    const firstPart = slugContentPart(first);
+    const aspectPart = slugContentPart(event.aspect);
+    const secondPart = slugContentPart(second);
+
+    return [
+      skyAspectInstanceContentKey(first, event.aspect, second, { targetDate: dateKey }),
+      skyAspectContentKey(first, event.aspect, second),
+      `sky-aspect-${firstPart}-${aspectPart}-${secondPart}-${dateKey}`,
+      `sky-${firstPart}-${aspectPart}-${secondPart}`
+    ];
+  }
+
+  return [];
+}
+
+function liveCalendarEventContent(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  event: LunarCalendarEvent
+) {
+  if (!generatedContent) {
+    return null;
+  }
+
+  for (const contentKey of calendarEventGeneratedContentKeys(event)) {
+    const content = generatedContent.get(contentKey);
+
+    if (content) {
+      return content;
+    }
+  }
+
+  return null;
+}
+
+function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
+  return content?.headline?.trim() || event.title;
+}
+
+function calendarEventDescription(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
+  return content?.summary?.trim() || generatedContentParagraphs(content)[0] || event.description;
 }
 
 function formatEventCount(count: number) {
@@ -671,27 +768,94 @@ function lunarDayFor(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
   return Math.max(1, Math.min(30, Math.floor((selectedTime - new Date(previousNewMoon.startsAt).getTime()) / 86_400_000) + 1));
 }
 
-function localMonthDay(day: LunarCalendarDay, timeZone: string) {
+function localCalendarDateParts(day: LunarCalendarDay, timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
+    year: "numeric",
     month: "numeric",
     day: "numeric"
   }).formatToParts(new Date(day.date));
 
   return {
+    year: Number(parts.find((part) => part.type === "year")?.value ?? new Date(day.date).getFullYear()),
     month: Number(parts.find((part) => part.type === "month")?.value ?? 1),
     day: Number(parts.find((part) => part.type === "day")?.value ?? 1)
   };
 }
 
 function seasonSignForDay(day: LunarCalendarDay, timeZone: string) {
-  const { month, day: dayNumber } = localMonthDay(day, timeZone);
+  const { month, day: dayNumber } = localCalendarDateParts(day, timeZone);
   const monthDayValue = month * 100 + dayNumber;
   const currentSeason = seasonStartDates
     .filter((season) => monthDayValue >= season.month * 100 + season.day)
     .at(-1);
 
   return currentSeason?.sign ?? "Capricorn";
+}
+
+function localDateKeyFromParts(year: number, month: number, day: number) {
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function seasonWindowForDay(day: LunarCalendarDay, timeZone: string) {
+  const parts = localCalendarDateParts(day, timeZone);
+  const monthDayValue = parts.month * 100 + parts.day;
+  let seasonIndex = -1;
+
+  for (let index = seasonStartDates.length - 1; index >= 0; index -= 1) {
+    const season = seasonStartDates[index];
+
+    if (season && monthDayValue >= season.month * 100 + season.day) {
+      seasonIndex = index;
+      break;
+    }
+  }
+
+  if (seasonIndex < 0) {
+    seasonIndex = seasonStartDates.length - 1;
+  }
+
+  const season = seasonStartDates[seasonIndex] ?? seasonStartDates[0];
+  const nextSeason = seasonStartDates[(seasonIndex + 1) % seasonStartDates.length] ?? seasonStartDates[1];
+  const startsPreviousYear = season.month === 12 && parts.month === 1;
+  const startYear = startsPreviousYear ? parts.year - 1 : parts.year;
+  const endYear = nextSeason.month < season.month || (season.month === 12 && nextSeason.month === 1)
+    ? startYear + 1
+    : startYear;
+  const startKey = localDateKeyFromParts(startYear, season.month, season.day);
+  const endKey = localDateKeyFromParts(endYear, nextSeason.month, nextSeason.day);
+  const selectedTime = dayKeyToUtcTime(day.dateKey);
+  const startTime = dayKeyToUtcTime(startKey);
+  const endTime = dayKeyToUtcTime(endKey);
+
+  return {
+    sign: season.sign,
+    startKey,
+    endKey,
+    dayNumber: Math.max(1, Math.floor((selectedTime - startTime) / 86_400_000) + 1),
+    totalDays: Math.max(1, Math.round((endTime - startTime) / 86_400_000))
+  };
+}
+
+function seasonLunarArc(day: LunarCalendarDay, events: LunarCalendarEvent[], timeZone: string) {
+  const window = seasonWindowForDay(day, timeZone);
+  const selectedTime = dayKeyToUtcTime(day.dateKey);
+  const startTime = dayKeyToUtcTime(window.startKey);
+  const endTime = dayKeyToUtcTime(window.endKey);
+  const lunations = events
+    .filter((event) => event.type === "lunation")
+    .filter((event) => {
+      const eventTime = dayKeyToUtcTime(event.dateKey);
+
+      return eventTime >= startTime && eventTime < endTime;
+    })
+    .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+
+  return {
+    ...window,
+    currentMilestone: lunations.filter((event) => dayKeyToUtcTime(event.dateKey) <= selectedTime).at(-1) ?? lunations[0] ?? null,
+    lunations
+  };
 }
 
 function isSeasonStart(day: LunarCalendarDay) {
@@ -805,7 +969,7 @@ function locationFromLabel(label: string): LocationInput {
   };
 }
 
-export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps) {
+export function LunarCalendar({ location, onLocationChange, generatedContent }: LunarCalendarProps) {
   const [visibleMonth, setVisibleMonth] = useState(() => monthStart(new Date()));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => dateKeyFromDate(new Date()));
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>("week");
@@ -1013,6 +1177,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
+  const selectedSeasonArc = selectedDay ? seasonLunarArc(selectedDay, selectedCalendar?.events ?? [], zone) : null;
   const monthTransitEvents = calendar ? monthTransitCardEvents(calendar.days) : [];
   const visibleWeekTransitEvents = weekTransitCardEvents(selectedWeekDays);
   const milestoneReferenceDate = visibleWeekAnchor ? new Date(visibleWeekAnchor.date) : selectedDate;
@@ -1035,10 +1200,10 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               {event.title.replace(/ in .+$/, "")}
               {signGlyph && <span className="lunar-milestones__sign" aria-label={`in ${event.sign}`}>{signGlyph}</span>}
             </strong>
-            <span>·</span>
-            <span>{new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" }).format(new Date(event.startsAt))}</span>
-            <span>·</span>
-            <span>{relativeDayLabel(currentDateKey, event.dateKey)}</span>
+            <span className="lunar-milestones__separator" aria-hidden="true">·</span>
+            <span className="lunar-milestones__date">{new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" }).format(new Date(event.startsAt))}</span>
+            <span className="lunar-milestones__separator" aria-hidden="true">·</span>
+            <span className="lunar-milestones__relative">{relativeDayLabel(currentDateKey, event.dateKey)}</span>
           </button>
         );
       })}
@@ -1070,6 +1235,28 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
+          {selectedSeasonArc && (
+            <section className="lunar-selected-card__arc" aria-label={`${selectedSeasonArc.sign} season lunar arc`}>
+              <div>
+                <span>Season lunar arc</span>
+                <strong>
+                  {selectedSeasonArc.sign} season
+                  <small>Day {selectedSeasonArc.dayNumber} / {selectedSeasonArc.totalDays}</small>
+                </strong>
+              </div>
+              {selectedSeasonArc.lunations.length > 0 && (
+                <ol>
+                  {selectedSeasonArc.lunations.map((event) => (
+                    <li className={event.id === selectedSeasonArc.currentMilestone?.id ? "is-current" : ""} key={event.id}>
+                      <span>{event.title.replace(/ in .+$/, "")}</span>
+                      <strong>{signGlyphs[event.sign ?? ""] ?? ""}</strong>
+                      <small>{new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" }).format(new Date(event.startsAt))}</small>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+          )}
           {selectedDayTransits.length > 0 && (
             <div className="lunar-selected-card__daily-events" aria-label="Daily transits and aspects">
               {selectedDayTransits.map((event) => (
@@ -1081,9 +1268,15 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
                 >
                   <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
                   <strong>{event.title}</strong>
-                  <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
-                  <span className="lunar-selected-card__daily-event-time">{formatEventTime(event.startsAt, zone)}</span>
-                  <span aria-hidden="true">↗</span>
+                  {isActiveRetrogradeEvent(event) ? (
+                    <span className="lunar-selected-card__daily-event-time">active</span>
+                  ) : (
+                    <>
+                      <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
+                      <span className="lunar-selected-card__daily-event-time">{formatEventTime(event.startsAt, zone)}</span>
+                      <span aria-hidden="true">↗</span>
+                    </>
+                  )}
                 </button>
               ))}
             </div>
@@ -1375,7 +1568,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               <span className="lunar-calendar-upcoming__label">This week</span>
               <div className="lunar-week-transits__list">
                 {visibleWeekTransitEvents.map((event) => (
-                  <TransitCard event={event} key={event.id} timeZone={zone} />
+                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} timeZone={zone} />
                 ))}
               </div>
             </section>
@@ -1488,7 +1681,7 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
               <span className="lunar-calendar-upcoming__label">This month</span>
               <div className="lunar-month-transits__list">
                 {monthTransitEvents.map((event) => (
-                  <TransitCard event={event} key={event.id} timeZone={zone} />
+                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} timeZone={zone} />
                 ))}
               </div>
             </section>
@@ -1501,8 +1694,19 @@ export function LunarCalendar({ location, onLocationChange }: LunarCalendarProps
   );
 }
 
-function TransitCard({ event, timeZone }: { event: LunarCalendarEvent; timeZone: string }) {
+function TransitCard({
+  event,
+  generatedContent,
+  timeZone
+}: {
+  event: LunarCalendarEvent;
+  generatedContent?: Map<string, LiveGeneratedContent>;
+  timeZone: string;
+}) {
   const glyphParts = transitCardGlyphParts(event);
+  const content = liveCalendarEventContent(generatedContent, event);
+  const title = calendarEventTitle(event, content);
+  const description = calendarEventDescription(event, content);
 
   return (
     <article className={`tx-card lunar-month-transit-card event-${event.type}`}>
@@ -1511,8 +1715,8 @@ function TransitCard({ event, timeZone }: { event: LunarCalendarEvent; timeZone:
           <span className={part.className} key={`${part.value}-${index}`}>{part.value}</span>
         ))}
       </span>
-      <h3 className="tx-title">{event.title}</h3>
-      <p className="tx-body">{event.description}</p>
+      <h3 className="tx-title">{title}</h3>
+      <p className="tx-body">{description}</p>
       <div className="tx-foot">
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
