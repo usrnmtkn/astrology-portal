@@ -11,6 +11,7 @@
 }
 
 .lunar-calendar-view {
+  --z-lunar-tooltip: 1200;
   display: grid;
   gap: 14px;
   width: min(1080px, 100%);
@@ -41,7 +42,7 @@
 }
 
 .lunar-calendar-body.is-week .lunar-week-strip {
-  overflow: hidden;
+  overflow: visible;
   animation: lunar-rows-collapse 300ms cubic-bezier(.2, .8, .2, 1) both;
 }
 
@@ -90,11 +91,9 @@
 .lunar-week-day__date,
 .lunar-week-day__marker,
 .lunar-milestones button,
-.lunar-month-transit-card__date,
-.lunar-month-transit-card__more,
 .lunar-selected-card__eyebrow,
-.lunar-selected-card__stats span,
-.lunar-selected-card__practice span {
+.lunar-selected-card__stats div > span,
+.lunar-selected-card__practice > span {
   font-family: var(--font-label);
 }
 
@@ -338,6 +337,9 @@
 }
 
 .lunar-calendar-grid-panel {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
   padding: 14px;
 }
 
@@ -403,7 +405,9 @@
 }
 
 .lunar-calendar-grid {
+  position: relative;
   gap: 5px;
+  overflow: visible;
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
@@ -475,8 +479,15 @@
 }
 
 .lunar-calendar-day:hover {
+  z-index: calc(var(--z-lunar-tooltip) - 1);
   border-color: var(--line-strong);
   background: var(--accent-bg);
+}
+
+.lunar-calendar-day:focus,
+.lunar-calendar-day:focus-visible,
+.lunar-calendar-day:focus-within {
+  z-index: calc(var(--z-lunar-tooltip) - 1);
 }
 
 .lunar-calendar-day.is-selected {
@@ -487,7 +498,6 @@
 
 .lunar-calendar-day.is-outside {
   color: var(--faint);
-  opacity: 0.68;
 }
 
 .lunar-calendar-day.is-today:not(.is-selected) {
@@ -586,15 +596,22 @@
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-normal);
   line-height: 1;
-  overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
+}
+
+.lunar-calendar-event-pill {
+  overflow: visible;
+}
+
+.lunar-calendar-event-more {
+  overflow: hidden;
 }
 
 .lunar-calendar-day-tooltip,
 .lunar-calendar-event-pill::after {
   position: absolute;
-  z-index: 30;
+  z-index: var(--z-lunar-tooltip);
   width: max-content;
   max-width: min(220px, calc(100vw - 32px));
   padding: 7px 9px;
@@ -602,7 +619,7 @@
   border-radius: 8px;
   background: var(--ink);
   color: var(--bg);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 18px 44px rgba(22, 25, 35, 0.22), var(--shadow-card);
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: var(--weight-semibold);
@@ -611,9 +628,10 @@
   pointer-events: none;
   text-align: left;
   white-space: normal;
-  opacity: 0;
+  opacity: 1;
   transform: translate(-50%, 4px);
-  transition: opacity 120ms ease, transform 120ms ease;
+  visibility: hidden;
+  transition: transform 120ms ease, visibility 120ms ease;
 }
 
 .lunar-calendar-event-pill::after {
@@ -666,6 +684,12 @@
   transform: translate(-50%, -4px);
 }
 
+.lunar-week-day.is-tooltip-below > .lunar-calendar-day-tooltip {
+  top: calc(100% + 8px);
+  bottom: auto;
+  transform: translate(-50%, -4px);
+}
+
 .lunar-calendar-day.is-tooltip-below .lunar-calendar-event-pill::after {
   top: calc(100% + 6px);
   bottom: auto;
@@ -675,14 +699,18 @@
 .lunar-calendar-day:hover > .lunar-calendar-day-tooltip,
 .lunar-calendar-day:focus > .lunar-calendar-day-tooltip,
 .lunar-calendar-day:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day:focus-visible > .lunar-calendar-day-tooltip,
 .lunar-calendar-event-pill:hover::after,
 .lunar-calendar-event-pill:focus::after,
 .lunar-calendar-event-pill:focus-visible::after {
-  opacity: 1;
   transform: translate(-50%, 0);
+  visibility: visible;
 }
 
 .lunar-calendar-day.is-tooltip-left > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill::after {
   right: 0;
   left: auto;
@@ -690,6 +718,7 @@
 }
 
 .lunar-calendar-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-left.is-tooltip-below .lunar-calendar-event-pill::after {
   transform: translate(0, -4px);
 }
@@ -697,6 +726,9 @@
 .lunar-calendar-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:hover::after,
 .lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus::after,
 .lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus-visible::after {
@@ -704,6 +736,7 @@
 }
 
 .lunar-calendar-day.is-tooltip-right > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill::after {
   right: auto;
   left: 0;
@@ -711,6 +744,7 @@
 }
 
 .lunar-calendar-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-right.is-tooltip-below .lunar-calendar-event-pill::after {
   transform: translate(0, -4px);
 }
@@ -718,6 +752,9 @@
 .lunar-calendar-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
 .lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:hover::after,
 .lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus::after,
 .lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus-visible::after {
@@ -747,6 +784,33 @@
   border-radius: 999px;
   font-family: var(--font-label);
   font-size: 10px;
+}
+
+.lunar-calendar-event-pill.event-void {
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: min(116px, 100%);
+  padding: 0 8px;
+  border: 1px dashed color-mix(in srgb, var(--muted) 58%, transparent);
+  background: color-mix(in srgb, var(--card-bg) 72%, transparent);
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  font-style: italic;
+  letter-spacing: var(--tracking-normal);
+}
+
+.lunar-calendar-event-pill.event-void span:first-child {
+  font-family: var(--font-glyph);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1;
+}
+
+.lunar-calendar-event-pill.event-void span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lunar-calendar-event-more {
@@ -891,78 +955,131 @@
   gap: 12px;
 }
 
-.lunar-month-transit-card {
+.tx-card {
+  --tx-glyph-column: 110px;
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) auto;
-  column-gap: 18px;
-  row-gap: 10px;
+  grid-template-columns: var(--tx-glyph-column) minmax(0, 1fr);
+  column-gap: 12px;
   align-items: start;
-  min-height: 0;
-  padding: 18px 22px 16px 24px;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--shadow-card);
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--elev-card);
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.lunar-month-transit-card__glyph {
-  color: var(--ink-2);
-  font-family: var(--font-glyph);
-  font-size: 25px;
-  line-height: 1;
-  align-self: start;
-  justify-self: center;
+a.tx-card.has-article {
+  cursor: pointer;
+}
+
+a.tx-card.has-article:hover {
+  border-color: color-mix(in srgb, var(--event-accent, var(--aspect-flow)) 36%, var(--line));
+  box-shadow: var(--elev-pill);
+}
+
+.tx-glyphs {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: var(--tx-glyph-column);
+  min-width: var(--tx-glyph-column);
   padding-top: 1px;
-  text-align: center;
+  color: var(--ink);
+  font-family: "Noto Sans Symbols", "Segoe UI Symbol", var(--font-glyph), serif;
+  font-size: 21px;
+  line-height: 1;
   white-space: nowrap;
 }
 
-.lunar-month-transit-card__body {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
+.tx-glyphs .tx-link,
+.tx-glyphs .tx-rx {
+  color: var(--muted);
+  font-size: 17px;
 }
 
-.lunar-month-transit-card__header {
-  display: grid;
-  gap: 5px;
+.tx-glyphs .tx-sign {
+  color: var(--wheel-glyph);
+  font-size: 17px;
 }
 
-.lunar-month-transit-card h3 {
+.tx-title {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
   margin: 0;
   color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: var(--weight-medium);
-  line-height: 1.12;
+  font-family: var(--serif);
+  font-size: clamp(18px, 2vw, 20px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.18;
+  text-wrap: balance;
 }
 
-.lunar-month-transit-card p {
-  margin: 0;
+.tx-body {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 10px 0 0;
   color: var(--ink-2);
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.lunar-month-transit-card__date {
-  color: var(--muted);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-normal);
+  font-size: 14px;
+  line-height: 1.62;
+  text-wrap: pretty;
 }
 
-.lunar-month-transit-card__more {
-  align-self: end;
-  justify-self: end;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 12px;
+.tx-foot {
+  display: flex;
+  grid-column: 2;
+  grid-row: 3;
+  align-items: center;
+  gap: 13px;
+  margin-top: 15px;
+}
+
+.tx-tag {
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-family: var(--font-label);
+  font-size: 11.5px;
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-label);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tx-date {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+}
+
+.tx-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  color: var(--event-accent, var(--aspect-flow));
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  opacity: 0.78;
   text-transform: uppercase;
+}
+
+a.tx-card.has-article:hover .tx-more {
+  opacity: 1;
 }
 
 .lunar-calendar-upcoming {
@@ -1031,8 +1148,9 @@
 }
 
 .lunar-week-day {
+  position: relative;
   display: grid;
-  grid-template-rows: 16px 24px 44px 24px 22px;
+  grid-template-rows: 16px 24px 40px 22px 14px 18px;
   justify-items: center;
   align-items: center;
   gap: 4px;
@@ -1060,7 +1178,8 @@
 }
 
 .lunar-week-day__weekday,
-.lunar-week-day__marker {
+.lunar-week-day__marker,
+.lunar-week-day__illumination {
   color: var(--muted);
   font-size: 10px;
   font-weight: var(--weight-semibold);
@@ -1091,6 +1210,12 @@
   font-family: var(--font-glyph);
   font-size: 22px;
   line-height: 1;
+}
+
+.lunar-week-day__illumination {
+  font-size: 9px;
+  letter-spacing: var(--tracking-normal);
+  text-transform: none;
 }
 
 .lunar-week-day__marker {
@@ -1168,13 +1293,16 @@
 }
 
 .lunar-milestones strong .lunar-milestones__sign {
+  display: inline-block;
   margin-left: 6px;
   color: inherit;
   font-family: inherit;
   font-size: inherit;
-  font-weight: inherit;
+  font-weight: 900;
   line-height: 1;
   opacity: 1;
+  text-shadow: 0.018em 0 currentColor, -0.018em 0 currentColor;
+  -webkit-text-stroke: 0.24px currentColor;
 }
 
 .lunar-selected-card {
@@ -1189,13 +1317,12 @@
   grid-template-columns: 50px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  grid-row: 1 / span 2;
 }
 
 .lunar-selected-card__disc {
   width: 44px;
   height: 44px;
-  margin-top: 5px;
+  margin-top: 2px;
 }
 
 .lunar-selected-card__copy {
@@ -1204,8 +1331,8 @@
 }
 
 .lunar-selected-card__eyebrow,
-.lunar-selected-card__stats span,
-.lunar-selected-card__practice span {
+.lunar-selected-card__stats div > span,
+.lunar-selected-card__practice > span {
   color: var(--muted);
   font-size: 11px;
   font-weight: var(--weight-semibold);
@@ -1258,7 +1385,8 @@
 }
 
 .lunar-selected-card__meta-separator,
-.lunar-selected-card__meta-date {
+.lunar-selected-card__meta-date,
+.lunar-selected-card__meta-time {
   color: var(--muted);
 }
 
@@ -1280,16 +1408,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 18px;
 }
 
 .lunar-selected-card__daily-event {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   max-width: 100%;
-  min-height: 42px;
-  padding: 7px 12px 7px 14px;
+  min-height: 46px;
+  padding: 8px 14px 8px 16px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--card-bg);
@@ -1304,7 +1432,7 @@
 .lunar-selected-card__daily-event-glyph {
   color: var(--ink-2);
   font-family: var(--font-glyph);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
   white-space: nowrap;
 }
@@ -1312,9 +1440,9 @@
 .lunar-selected-card__daily-event strong {
   overflow: hidden;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: var(--weight-medium);
-  line-height: 1.1;
+  line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1322,18 +1450,98 @@
 .lunar-selected-card__daily-event span:not(.lunar-selected-card__daily-event-glyph) {
   color: var(--muted);
   font-family: var(--font-label);
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__daily-event-separator {
+  margin-left: 2px;
+}
+
+.lunar-selected-card__daily-event-time {
+  letter-spacing: var(--tracking-label);
+}
+
+.lunar-selected-card__void {
+  display: grid;
+  gap: 10px;
+  max-width: 48ch;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px dashed color-mix(in srgb, var(--muted) 52%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card-bg) 86%, var(--surface-2));
+  color: var(--ink-2);
+  letter-spacing: 0;
+}
+
+.lunar-selected-card__void-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+}
+
+.lunar-selected-card__void-heading span {
+  color: var(--ink-2);
+  font-family: var(--font-glyph);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.lunar-selected-card__void-heading strong {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--weight-medium);
+  line-height: 1.1;
+}
+
+.lunar-selected-card__void p {
+  margin: 0;
+  font-size: clamp(14px, 1.05vw, 16px);
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+.lunar-selected-card__void-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-family: var(--font-label);
   font-size: 13px;
   font-weight: var(--weight-semibold);
-  white-space: nowrap;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.lunar-selected-card__void-next {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--ink-2);
+}
+
+.lunar-selected-card__void-next span {
+  font-family: var(--font-glyph);
+  font-size: 1.08em;
+  line-height: 1;
+}
+
+.lunar-selected-card__rail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-self: start;
 }
 
 .lunar-selected-card__stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  align-self: start;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  margin: 0;
 }
 
 .lunar-selected-card__stats div,
@@ -1370,7 +1578,7 @@
 }
 
 .lunar-selected-card__stats small.is-fraction {
-  margin-left: 7px;
+  margin-left: 0;
 }
 
 .lunar-selected-card__stat-dial {
@@ -1382,34 +1590,14 @@
   margin-right: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--muted) 18%, var(--surface-2));
+  background: conic-gradient(var(--ink-2) calc(var(--ip, 0) * 1%), var(--surface-2) 0);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--muted) 12%, transparent);
 }
 
-.lunar-selected-card__stat-dial::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  bottom: -1px;
-  width: var(--moon-dark, 50%);
-  background: var(--muted);
-}
-
-.lunar-selected-card__stat-dial.is-waxing::before {
-  left: -1px;
-  border-radius: 999px 0 0 999px;
-}
-
-.lunar-selected-card__stat-dial.is-waning::before {
-  right: -1px;
-  border-radius: 0 999px 999px 0;
-}
-
 .lunar-selected-card__practice {
-  grid-column: 2;
-  grid-row: 2;
   display: grid;
   gap: 12px;
+  margin-top: 0;
   padding: 14px;
 }
 
@@ -1428,24 +1616,20 @@
 
 @keyframes lunar-month-settle {
   from {
-    opacity: 0.82;
     transform: translateY(-8px);
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes lunar-week-settle {
   from {
-    opacity: 0.88;
     transform: translateY(6px);
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -1453,13 +1637,11 @@
 @keyframes lunar-rows-expand {
   from {
     max-height: 194px;
-    opacity: 0.86;
     transform: scaleY(0.96);
   }
 
   to {
     max-height: 1400px;
-    opacity: 1;
     transform: scaleY(1);
   }
 }
@@ -1467,13 +1649,11 @@
 @keyframes lunar-rows-collapse {
   from {
     max-height: 420px;
-    opacity: 0.88;
     transform: scaleY(0.98);
   }
 
   to {
     max-height: 194px;
-    opacity: 1;
     transform: scaleY(1);
   }
 }
@@ -1631,15 +1811,20 @@
     justify-content: start;
   }
 
-  .lunar-month-transit-card {
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 10px 16px;
-    padding: 16px 18px 15px;
+  .tx-card {
+    --tx-glyph-column: 88px;
+    column-gap: 11px;
+    padding: 17px 16px;
   }
 
-  .lunar-month-transit-card__more {
-    grid-column: 2;
-    justify-self: end;
+  .tx-foot {
+    flex-wrap: wrap;
+    gap: 8px 11px;
+  }
+
+  .tx-more {
+    flex-basis: 100%;
+    margin-left: 0;
   }
 }
 
@@ -1700,9 +1885,9 @@
   }
 
   .lunar-week-day {
-    grid-template-rows: 14px 22px 39px 22px 16px;
+    grid-template-rows: 14px 22px 36px 21px 12px 15px;
     gap: 3px;
-    height: 132px;
+    height: 136px;
     padding: 8px 1px 8px;
     border-radius: 13px;
   }
@@ -1732,6 +1917,10 @@
   .lunar-week-day__marker {
     max-width: 100%;
     font-size: 9px;
+  }
+
+  .lunar-week-day__illumination {
+    font-size: 8px;
   }
 
   .lunar-calendar-day,
