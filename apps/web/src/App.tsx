@@ -9237,6 +9237,7 @@ export function App() {
               )}
               {mode === "calendar" && (
                 <LunarCalendar
+                  generatedContent={skyGeneratedContent}
                   location={location}
                   onLocationChange={(nextLocation) => {
                     setLocation(nextLocation);

@@ -696,6 +696,7 @@
   .mode-friends .brand-word,
   .mode-settings .brand-word,
   .mode-account .brand-word,
+  .mode-calendar .brand-word,
   .mode-detail .brand-word {
     display: inline-flex;
     color: var(--ink);

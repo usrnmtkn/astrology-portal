@@ -1188,6 +1188,59 @@ function findStations(
   return events;
 }
 
+function findActiveRetrogrades(
+  swe: SwissEphInstance,
+  displayStart: Date,
+  displayEnd: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const planetIds = [
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const retrogradePlanets = planets.slice(2, 10);
+
+  const events: LunarCalendarEvent[] = [];
+
+  for (let time = displayStart.getTime(); time < displayEnd.getTime(); time += 86_400_000) {
+    const dayStart = new Date(time);
+    const dateKey = localDateKey(dayStart, timeZone);
+    const sampleTime = addDays(dayStart, 0.5);
+
+    retrogradePlanets.forEach(([planet, glyph], index) => {
+      const planetId = planetIds[index];
+      const speed = exactPlanetSpeed(swe, planetId, sampleTime);
+
+      if (speed >= -0.0001) {
+        return;
+      }
+
+      const sign = exactPlanetSign(swe, planetId, sampleTime);
+
+      events.push({
+        id: `retrograde-${planet.toLowerCase().replace(/\s+/g, "-")}-${dateKey}`,
+        type: "station" as const,
+        title: `${planet} retrograde`,
+        startsAt: dayStart.toISOString(),
+        dateKey,
+        glyph,
+        primary: false,
+        planet,
+        sign,
+        description: `${planet} is retrograde in ${sign}. ${eventSignDescription(sign)}`
+      });
+    });
+  }
+
+  return events;
+}
+
 function planetLongitudeAt(swe: SwissEphInstance, planetId: number, date: Date) {
   return exactPlanetLongitude(swe, planetId, date);
 }
@@ -1362,11 +1415,15 @@ function buildLunarCalendarRange(
     ? (() => {
       const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
       const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
+      const displayStart = dayCount === 7
+        ? gridStart
+        : zonedDateTimeToUtc(timeZone, monthAnchor.getFullYear(), monthAnchor.getMonth() + 1, 1);
 
       return [
         ...findLunations(swe, eventStart, eventEnd, timeZone),
         ...findIngresses(swe, eventStart, eventEnd, timeZone),
         ...findStations(swe, eventStart, eventEnd, timeZone),
+        ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
         ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
       ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
     })()
