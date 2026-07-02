@@ -7,8 +7,10 @@ import {
   compositeAspectContentKey,
   natalAspectContentKey,
   natalHouseContentKey,
+  natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
+  slugContentPart,
   skyAspectContentKey,
   synastryAspectContentKey,
   transitToNatalAspectContentKey
@@ -28,11 +30,14 @@ type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" |
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
 type AdminContentBlockFilter =
   | "all"
+  | "placement"
   | "sign"
   | "house"
   | "ruler"
   | "natal_aspect"
   | "sky_aspect"
+  | "sky_article"
+  | "lunar_calendar"
   | "transit_to_natal_aspect"
   | "synastry_aspect"
   | "composite_aspect"
@@ -154,6 +159,34 @@ type AdminReviewRecord = {
   rawPrivateRow?: AdminUserGeneratedContentRow;
 };
 
+type AdminDraftSafety = {
+  sourceBodyExcluded?: boolean;
+  astrologyBodySent?: boolean;
+  tarotNotesExcluded?: boolean;
+  businessNotesExcluded?: boolean;
+  authoredSourceGenerationAllowed?: boolean;
+};
+
+type AdminDraftResult = {
+  title?: string;
+  draftBody?: string | null;
+  appBody?: string | null;
+  editStatus?: string;
+  sourceType?: string;
+  sourceIds?: string[];
+  sourcePaths?: string[];
+  provider?: string;
+  model?: string | null;
+  providerKeyPresent?: boolean;
+  retryCount?: number | null;
+  violations?: string[];
+  softWarnings?: string[];
+  styleNotes?: string[];
+  sourceSafety?: AdminDraftSafety;
+  errorType?: string;
+  error?: string;
+};
+
 type AdminReviewMetadataEdit = {
   targetDate: string;
   surface: GeneratedContentSurface;
@@ -165,9 +198,11 @@ type AdminReviewMetadataEdit = {
   direction: string;
   body1: string;
   sign1: string;
+  house1: string;
   aspect: string;
   body2: string;
   sign2: string;
+  house2: string;
   placementSign: string;
   placementBody: string;
   placementHouse: string;
@@ -175,6 +210,18 @@ type AdminReviewMetadataEdit = {
   rulerBody: string;
   rulerSign: string;
   rulerHouse: string;
+  traditionalRulerBody: string;
+  traditionalRulerSign: string;
+  traditionalRulerHouse: string;
+  modernRulerBody: string;
+  modernRulerSign: string;
+  modernRulerHouse: string;
+  lunarArcLayer: string;
+  lunarSource: string;
+  practice: string;
+  reflect: string;
+  ritual: string;
+  callback: string;
 };
 
 type AdminReviewCounts = Record<GeneratedContentStatus, number> & {
@@ -258,19 +305,31 @@ const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: st
   { key: "Relationship", label: "Relationship" }
 ];
 
-const contentBlockFilters: Array<{ key: AdminContentBlockFilter; label: string }> = [
-  { key: "all", label: "All block types" },
-  { key: "sign", label: "Sign" },
-  { key: "house", label: "House" },
-  { key: "ruler", label: "Ruler" },
-  { key: "natal_aspect", label: "Natal aspect" },
-  { key: "sky_aspect", label: "Sky aspect" },
-  { key: "transit_to_natal_aspect", label: "Transit to natal" },
-  { key: "synastry_aspect", label: "Synastry aspect" },
-  { key: "composite_aspect", label: "Composite aspect" },
-  { key: "synthesis", label: "Synthesis" },
-  { key: "essay", label: "Legacy essay" }
+type ContentBlockFilterOption = {
+  key: AdminContentBlockFilter;
+  label: string;
+  group?: "Sky" | "You" | "Friends" | "General";
+  showInEditor?: boolean;
+};
+
+const contentBlockFilters: ContentBlockFilterOption[] = [
+  { key: "all", label: "All content types" },
+  { key: "sky_article", label: "Upcoming transit article", group: "Sky" },
+  { key: "lunar_calendar", label: "Lunar calendar entry", group: "Sky" },
+  { key: "sky_aspect", label: "Sky aspect card", group: "Sky" },
+  { key: "placement", label: "Natal placement page", group: "You" },
+  { key: "sign", label: "Natal sign block", group: "You" },
+  { key: "house", label: "Natal house block", group: "You" },
+  { key: "ruler", label: "Natal ruler block", group: "You" },
+  { key: "natal_aspect", label: "Natal chart aspect", group: "You" },
+  { key: "transit_to_natal_aspect", label: "Transit to natal update", group: "You" },
+  { key: "synastry_aspect", label: "Synastry aspect", group: "Friends" },
+  { key: "composite_aspect", label: "Composite aspect", group: "Friends" },
+  { key: "synthesis", label: "Generated chart summary", group: "You", showInEditor: false },
+  { key: "essay", label: "General article", group: "General" }
 ];
+
+const contentBlockEditorGroups: Array<NonNullable<ContentBlockFilterOption["group"]>> = ["Sky", "You", "Friends", "General"];
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const personalizedSampleReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
@@ -1076,9 +1135,9 @@ function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurfac
 
 function manualEntryEventType(category: AdminContentCategoryFilter, surface: GeneratedContentSurface) {
   if (category === "Natal Aspects") return "manual-natal-aspect";
-  if (category === "Natal Chart") return "manual-natal-chart";
+  if (category === "Natal Chart") return "natal-placement";
   if (category === "Relationship") return "manual-relationship";
-  if (surface === "sky") return "manual-sky";
+  if (surface === "sky") return "upcoming-transit-article";
   return "manual-entry";
 }
 
@@ -1089,13 +1148,14 @@ function manualEntryRecord(category: AdminContentCategoryFilter, fallbackSurface
   const targetDate = surface === "sky" ? dateInputValue(now) : null;
   const eventType = manualEntryEventType(category, surface);
   const title = "Untitled content";
+  const blockType: AdminContentBlockFilter = surface === "sky" ? "sky_article" : category === "Natal Chart" ? "placement" : "essay";
 
   return {
     id: `manual:${timestamp}`,
     source: "global",
     surface,
     status: "DRAFT",
-    mode: surface === "sky" ? "feed" : "in_depth",
+    mode: surface === "sky" ? "article" : "in_depth",
     title,
     subtitle: `Manual entry / ${generatedContentSurfaceLabels[surface]} / ${adminDateLabel(targetDate)}`,
     targetDate,
@@ -1106,12 +1166,14 @@ function manualEntryRecord(category: AdminContentCategoryFilter, fallbackSurface
     sections: [],
     facts: {
       source: "manual-entry",
+      blockType,
       category: category === "all" ? contentCategoryFilters.find((item) => item.key !== "all" && item.key === "Sky")?.label ?? "Sky" : category
     },
     sourceSnapshot: {
       source: "admin-manual-entry",
       createdAt: now.toISOString()
     },
+    blockType,
     reviewerNotes: "",
     updatedAt: now.toISOString()
   };
@@ -1163,12 +1225,22 @@ const traditionalRulersBySign: Record<string, string> = {
   pisces: "Jupiter"
 };
 
+const modernRulersBySign: Record<string, string> = {
+  scorpio: "Pluto",
+  aquarius: "Uranus",
+  pisces: "Neptune"
+};
+
 function normalizeAstroToken(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "");
 }
 
 function traditionalRulerForSign(sign: string) {
   return traditionalRulersBySign[sign.toLowerCase().trim()] ?? "";
+}
+
+function modernRulerForSign(sign: string) {
+  return modernRulersBySign[sign.toLowerCase().trim()] ?? "";
 }
 
 function isNodePlacement(body: string) {
@@ -1440,7 +1512,7 @@ function skyAspectFallbackCopy(record: AdminReviewRecord) {
   const mechanicalLine = `${capitalizeSentence(formatSkyBodyPosition(body1, sign1))} ${aspectVerb} ${formatSkyBodyPosition(body2, sign2)}, ${direction} through ${date}.`;
   const actionLine = skyAspectActionLine(body1, aspect, body2);
 
-  return `TLDR: ${toneClause}. ${mechanicalLine} ${actionLine}`;
+  return `${toneClause}. ${mechanicalLine} ${actionLine}`;
 }
 
 function shouldUseDeterministicPlaceholder(record: AdminReviewRecord) {
@@ -1583,16 +1655,32 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
   const normalizedKey = record.contentKey.toLowerCase();
   const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
 
+  if (normalizedKey.startsWith("natal.placement.") || normalizedEventType.includes("natal-placement")) return "placement";
   if (normalizedKey.startsWith("natal.sign.")) return "sign";
   if (normalizedKey.startsWith("natal.house.")) return "house";
   if (normalizedKey.startsWith("natal.ruler.")) return "ruler";
   if (normalizedKey.startsWith("natal.aspect.")) return "natal_aspect";
+  if (
+    record.surface === "sky"
+    && (
+      normalizedKey.startsWith("sky.lunar.")
+      || normalizedKey.startsWith("sky-lunar-")
+      || normalizedKey.includes("lunar")
+      || normalizedKey.includes("lunation")
+      || normalizedEventType.includes("lunar")
+      || normalizedEventType.includes("lunation")
+      || normalizedEventType.includes("new-moon")
+      || normalizedEventType.includes("full-moon")
+    )
+  ) return "lunar_calendar";
   if (normalizedKey.startsWith("sky.aspect.")) return "sky_aspect";
+  if (normalizedKey.startsWith("sky.article.") || normalizedKey.startsWith("sky-article-")) return "sky_article";
   if (normalizedKey.startsWith("transit.aspect.")) return "transit_to_natal_aspect";
   if (normalizedKey.startsWith("synastry.aspect.")) return "synastry_aspect";
   if (normalizedKey.startsWith("composite.aspect.")) return "composite_aspect";
   if (normalizedKey.startsWith("natal.synthesis.")) return "synthesis";
   if (record.surface === "sky" && normalizedEventType.includes("current-aspect")) return "sky_aspect";
+  if (record.surface === "sky" && (record.mode === "article" || normalizedEventType.includes("transit-article") || normalizedEventType.includes("sky-article"))) return "sky_article";
   if (record.surface === "you" && normalizedEventType.includes("transit-to-natal")) return "transit_to_natal_aspect";
   if ((record.surface === "synastry" || record.surface === "relationship") && normalizedEventType.includes("synastry-aspect")) return "synastry_aspect";
   if (record.surface === "composite" && normalizedEventType.includes("composite-aspect")) return "composite_aspect";
@@ -1603,7 +1691,10 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
     return "natal_aspect";
   }
 
-  return record.surface === "natal" ? "essay" : "all";
+  if (record.surface === "natal") return "essay";
+  if (record.surface === "sky") return record.mode === "article" ? "sky_article" : "sky_aspect";
+
+  return "all";
 }
 
 function contentBlockTypeLabel(record: AdminReviewRecord) {
@@ -1740,8 +1831,10 @@ function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadata
   const orb = record.facts?.orb;
   const placementSign = factStringFromSources(record, ["placementSign", "natalSign", "planetSign", "sign"]);
   const placementBody = factStringFromSources(record, ["placementBody", "planet", "body", "point", "node"]);
-  const rulerBody = factStringFromSources(record, ["ruler", "rulerBody", "houseRuler"]) || traditionalRulerForSign(placementSign);
-  const rulerPlacement = rulerPlacementForRecord(record, rulerBody);
+  const traditionalRulerBody = factStringFromSources(record, ["traditionalRulerBody", "traditionalRuler", "ruler", "rulerBody", "houseRuler"]) || traditionalRulerForSign(placementSign);
+  const modernRulerBody = factStringFromSources(record, ["modernRulerBody", "modernRuler"]) || modernRulerForSign(placementSign);
+  const traditionalRulerPlacement = rulerPlacementForRecord(record, traditionalRulerBody);
+  const modernRulerPlacement = rulerPlacementForRecord(record, modernRulerBody);
 
   return {
     targetDate: record.targetDate ?? "",
@@ -1754,16 +1847,30 @@ function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadata
     direction: recordDirectionLabel(record) === "Not set" ? "" : recordDirectionLabel(record),
     body1: factStringFromSources(record, ["body1", "planetA", "from", "transitPlanet", "planet", "point"]),
     sign1: factStringFromSources(record, ["sign1", "fromSign", "transitSign", "planetASign", "planetSign", "sign"]),
+    house1: factStringFromSources(record, ["house1", "fromHouse", "planetAHouse"]),
     aspect: factStringFromSources(record, ["aspect", "type", "aspectType"]),
     body2: factStringFromSources(record, ["body2", "planetB", "to", "natalPoint", "pointB"]),
     sign2: factStringFromSources(record, ["sign2", "toSign", "natalSign", "planetBSign", "pointSign"]),
+    house2: factStringFromSources(record, ["house2", "toHouse", "natalHouse", "planetBHouse"]),
     placementSign,
     placementBody,
     placementHouse: factStringFromSources(record, ["placementHouse", "house", "houseNumber"]),
     placementRetrograde: !isNodePlacement(placementBody) && factBooleanFromSources(record, ["retrograde", "isRetrograde"]),
-    rulerBody,
-    rulerSign: factStringFromSources(record, ["rulerSign", "houseRulerSign"]) || rulerPlacement.sign,
-    rulerHouse: factStringFromSources(record, ["rulerHouse", "houseRulerHouse"]) || rulerPlacement.house
+    rulerBody: traditionalRulerBody,
+    rulerSign: factStringFromSources(record, ["rulerSign", "houseRulerSign", "traditionalRulerSign"]) || traditionalRulerPlacement.sign,
+    rulerHouse: factStringFromSources(record, ["rulerHouse", "houseRulerHouse", "traditionalRulerHouse"]) || traditionalRulerPlacement.house,
+    traditionalRulerBody,
+    traditionalRulerSign: factStringFromSources(record, ["traditionalRulerSign"]) || traditionalRulerPlacement.sign,
+    traditionalRulerHouse: factStringFromSources(record, ["traditionalRulerHouse"]) || traditionalRulerPlacement.house,
+    modernRulerBody,
+    modernRulerSign: factStringFromSources(record, ["modernRulerSign"]) || modernRulerPlacement.sign,
+    modernRulerHouse: factStringFromSources(record, ["modernRulerHouse"]) || modernRulerPlacement.house,
+    lunarArcLayer: factStringFromSources(record, ["lunarArcLayer", "arcLayer", "moonArcLayer"]),
+    lunarSource: factStringFromSources(record, ["lunarSource", "dashboardSource", "sourceFamily"]),
+    practice: factStringFromSources(record, ["practice"]),
+    reflect: factStringFromSources(record, ["reflect", "reflection"]),
+    ritual: factStringFromSources(record, ["ritual"]),
+    callback: factStringFromSources(record, ["callback", "cycleCallback"])
   };
 }
 
@@ -1817,11 +1924,13 @@ function hasUsableFacts(value: string) {
 
 class AdminRequestError extends Error {
   status: number;
+  payload: unknown;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, payload?: unknown) {
     super(message);
     this.name = "AdminRequestError";
     this.status = status;
+    this.payload = payload;
   }
 }
 
@@ -1850,7 +1959,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     const payload = await response.json().catch(() => null) as (T & { error?: string }) | null;
 
     if (!response.ok) {
-      throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status);
+      throw new AdminRequestError(payload?.error ?? `${response.status} error from ${path.split("?")[0]}.`, response.status, payload);
     }
 
     if (!payload) {
@@ -1907,6 +2016,7 @@ export function GeneratedContentAdminDashboard() {
   const [reviewEditMetadata, setReviewEditMetadata] = useState<AdminReviewMetadataEdit | null>(null);
   const [reviewGenerationProvider, setReviewGenerationProvider] = useState<AdminGenerationProvider>("claude");
   const [isGeneratingReviewDraft, setIsGeneratingReviewDraft] = useState(false);
+  const [reviewDraftResults, setReviewDraftResults] = useState<Record<string, AdminDraftResult>>({});
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
   const [message, setMessage] = useState("Use filters or search to narrow the content library.");
   const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
@@ -1983,19 +2093,23 @@ export function GeneratedContentAdminDashboard() {
       ? reviewEditMetadata ?? reviewMetadataForRecord(selectedReviewRecord)
       : reviewMetadataForRecord(selectedReviewRecord)
     : null;
+  const selectedReviewDraftResult = selectedReviewRecord ? reviewDraftResults[selectedReviewRecord.id] ?? null : null;
   const selectedMetadataCategory = selectedReviewMetadata?.category ?? (selectedReviewRecord ? contentCategoryLabel(selectedReviewRecord) : "Sky");
-  const selectedMetadataBlockType = selectedReviewMetadata?.blockType ?? "all";
+  const selectedMetadataBlockType = selectedReviewMetadata?.blockType ?? (selectedReviewRecord ? contentBlockType(selectedReviewRecord) : "all");
   const selectedMetadataIsNatal = selectedReviewMetadata?.surface === "natal";
   const selectedMetadataIsNatalPlacement = selectedMetadataCategory === "Natal Chart";
   const selectedMetadataIsNatalAspect = selectedMetadataCategory === "Natal Aspects";
   const selectedMetadataIsModularNatalBlock = selectedMetadataIsNatal && selectedMetadataBlockType !== "all" && selectedMetadataBlockType !== "essay";
-  const selectedMetadataUsesAspectFields = selectedMetadataBlockType.endsWith("_aspect") || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect;
+  const selectedMetadataIsLunarCalendar = selectedMetadataBlockType === "lunar_calendar";
+  const selectedMetadataUsesAspectFields = !selectedMetadataIsLunarCalendar && (selectedMetadataBlockType.endsWith("_aspect") || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect);
   const selectedMetadataIsTimeBasedAspect = selectedMetadataBlockType === "sky_aspect" || selectedMetadataBlockType === "transit_to_natal_aspect";
-  const selectedMetadataUsesPlacementBody = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "house", "synthesis"].includes(selectedMetadataBlockType));
-  const selectedMetadataUsesPlacementSign = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["sign", "synthesis"].includes(selectedMetadataBlockType));
-  const selectedMetadataUsesPlacementHouse = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["house", "synthesis"].includes(selectedMetadataBlockType));
-  const selectedMetadataUsesPlacementRuler = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["ruler", "synthesis"].includes(selectedMetadataBlockType));
-  const selectedMetadataUsesFullRulerPlacement = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || selectedMetadataBlockType === "synthesis");
+  const selectedMetadataUsesAspectSigns = selectedMetadataUsesAspectFields && (selectedMetadataIsTimeBasedAspect || ["natal_aspect", "synastry_aspect", "composite_aspect"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesAspectHouses = selectedMetadataUsesAspectFields && ["natal_aspect", "synastry_aspect", "composite_aspect", "transit_to_natal_aspect"].includes(selectedMetadataBlockType);
+  const selectedMetadataUsesPlacementBody = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "sign", "house", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementSign = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "sign", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementHouse = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "house", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesPlacementRuler = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "ruler", "synthesis"].includes(selectedMetadataBlockType));
+  const selectedMetadataUsesFullRulerPlacement = selectedMetadataIsNatalPlacement && (!selectedMetadataIsModularNatalBlock || ["placement", "synthesis"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesAspectTiming = selectedMetadataUsesAspectFields && selectedMetadataIsTimeBasedAspect;
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
@@ -2363,13 +2477,28 @@ export function GeneratedContentAdminDashboard() {
       };
 
       if (updates.placementSign !== undefined) {
-        const nextRuler = traditionalRulerForSign(updates.placementSign);
+        const nextTraditionalRuler = traditionalRulerForSign(updates.placementSign);
+        const nextModernRuler = modernRulerForSign(updates.placementSign);
 
-        if (nextRuler && (!currentMetadata || base.rulerBody === traditionalRulerForSign(base.placementSign) || !base.rulerBody.trim())) {
-          const rulerPlacement = rulerPlacementForRecord(record, nextRuler);
-          next.rulerBody = nextRuler;
+        if (nextTraditionalRuler && (!currentMetadata || base.rulerBody === traditionalRulerForSign(base.placementSign) || !base.rulerBody.trim())) {
+          const rulerPlacement = rulerPlacementForRecord(record, nextTraditionalRuler);
+          next.rulerBody = nextTraditionalRuler;
           next.rulerSign = rulerPlacement.sign || next.rulerSign;
           next.rulerHouse = rulerPlacement.house || next.rulerHouse;
+          next.traditionalRulerBody = nextTraditionalRuler;
+          next.traditionalRulerSign = rulerPlacement.sign || next.traditionalRulerSign;
+          next.traditionalRulerHouse = rulerPlacement.house || next.traditionalRulerHouse;
+        }
+
+        if (nextModernRuler && (!currentMetadata || base.modernRulerBody === modernRulerForSign(base.placementSign) || !base.modernRulerBody.trim())) {
+          const modernPlacement = rulerPlacementForRecord(record, nextModernRuler);
+          next.modernRulerBody = nextModernRuler;
+          next.modernRulerSign = modernPlacement.sign || next.modernRulerSign;
+          next.modernRulerHouse = modernPlacement.house || next.modernRulerHouse;
+        } else if (!nextModernRuler) {
+          next.modernRulerBody = "";
+          next.modernRulerSign = "";
+          next.modernRulerHouse = "";
         }
       }
 
@@ -2428,9 +2557,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
     setFactAliases(metadata.body1, ["body1", "planetA", "from"]);
     setFactAliases(metadata.sign1, ["sign1", "fromSign", "transitSign", "planetASign"]);
+    setFactAliases(metadata.house1, ["house1", "fromHouse", "planetAHouse"]);
     setFactAliases(metadata.aspect, ["aspect", "type", "aspectType"]);
     setFactAliases(metadata.body2, ["body2", "planetB", "to"]);
     setFactAliases(metadata.sign2, ["sign2", "toSign", "natalSign", "planetBSign"]);
+    setFactAliases(metadata.house2, ["house2", "toHouse", "planetBHouse"]);
     setFactAliases(metadata.placementSign, ["placementSign", "planetSign", "sign"]);
     setFactAliases(metadata.placementBody, ["planet", "body", "point", "node", "placementBody"]);
     setFactAliases(metadata.placementHouse, ["house", "placementHouse"]);
@@ -2438,6 +2569,32 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setFactAliases(metadata.rulerBody, ["ruler", "rulerBody", "houseRuler"]);
     setFactAliases(metadata.rulerSign, ["rulerSign", "houseRulerSign"]);
     setFactAliases(metadata.rulerHouse, ["rulerHouse", "houseRulerHouse"]);
+    setFactAliases(metadata.traditionalRulerBody || metadata.rulerBody, ["traditionalRuler", "traditionalRulerBody"]);
+    setFactAliases(metadata.traditionalRulerSign || metadata.rulerSign, ["traditionalRulerSign"]);
+    setFactAliases(metadata.traditionalRulerHouse || metadata.rulerHouse, ["traditionalRulerHouse"]);
+    setFactAliases(metadata.modernRulerBody, ["modernRuler", "modernRulerBody"]);
+    setFactAliases(metadata.modernRulerSign, ["modernRulerSign"]);
+    setFactAliases(metadata.modernRulerHouse, ["modernRulerHouse"]);
+    setFactAliases(metadata.lunarArcLayer, ["lunarArcLayer", "arcLayer", "moonArcLayer"]);
+    setFactAliases(metadata.lunarSource, ["lunarSource", "dashboardSource", "sourceFamily"]);
+    setFactAliases(metadata.practice, ["practice"]);
+    setFactAliases(metadata.reflect, ["reflect", "reflection"]);
+    setFactAliases(metadata.ritual, ["ritual"]);
+    setFactAliases(metadata.callback, ["callback", "cycleCallback"]);
+    nextFacts.rulers = [
+      (metadata.traditionalRulerBody || metadata.rulerBody) ? {
+        system: "traditional",
+        body: metadata.traditionalRulerBody || metadata.rulerBody,
+        sign: metadata.traditionalRulerSign || metadata.rulerSign || undefined,
+        house: metadata.traditionalRulerHouse || metadata.rulerHouse || undefined
+      } : null,
+      metadata.modernRulerBody ? {
+        system: "modern",
+        body: metadata.modernRulerBody,
+        sign: metadata.modernRulerSign || undefined,
+        house: metadata.modernRulerHouse || undefined
+      } : null
+    ].filter(Boolean);
 
     return nextFacts;
   }
@@ -2459,6 +2616,88 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       facts: baseFacts,
       promptVersion: metadata.category === "Natal Chart" ? "natal-placement-v2" : undefined
     };
+
+    if (metadata.surface === "natal" && blockType === "placement" && trimmedBody && trimmedSign && trimmedHouse) {
+      return {
+        ...base,
+        contentKey: natalPlacementContentKey(trimmedBody, trimmedSign, trimmedHouse),
+        eventType: "natal-placement",
+        facts: {
+          ...baseFacts,
+          blockType,
+          type: "natal-placement",
+          body: trimmedBody,
+          planet: trimmedBody,
+          placementBody: trimmedBody,
+          sign: trimmedSign,
+          placementSign: trimmedSign,
+          house: trimmedHouse,
+          placementHouse: trimmedHouse,
+          retrograde: metadata.placementRetrograde,
+          ruler: trimmedRuler || undefined,
+          rulerBody: trimmedRuler || undefined,
+          rulerSign: metadata.rulerSign.trim() || undefined,
+          rulerHouse: metadata.rulerHouse.trim() || undefined,
+          traditionalRuler: metadata.traditionalRulerBody.trim() || trimmedRuler || undefined,
+          traditionalRulerBody: metadata.traditionalRulerBody.trim() || trimmedRuler || undefined,
+          traditionalRulerSign: metadata.traditionalRulerSign.trim() || metadata.rulerSign.trim() || undefined,
+          traditionalRulerHouse: metadata.traditionalRulerHouse.trim() || metadata.rulerHouse.trim() || undefined,
+          modernRuler: metadata.modernRulerBody.trim() || undefined,
+          modernRulerBody: metadata.modernRulerBody.trim() || undefined,
+          modernRulerSign: metadata.modernRulerSign.trim() || undefined,
+          modernRulerHouse: metadata.modernRulerHouse.trim() || undefined
+        },
+        promptVersion: "natal-placement-v2"
+      };
+    }
+
+    if (metadata.surface === "sky" && blockType === "lunar_calendar") {
+      const titleSlug = slugContentPart(record.title || record.contentKey || "lunar-calendar");
+      const dateSlug = slugContentPart(metadata.targetDate.trim() || record.targetDate || dateInputValue());
+      const arcSlug = slugContentPart(metadata.lunarArcLayer.trim() || "lunar");
+
+      return {
+        ...base,
+        contentKey: `sky.lunar.${arcSlug}.${titleSlug}.${dateSlug}`,
+        eventType: "lunar-calendar",
+        facts: {
+          ...baseFacts,
+          blockType,
+          type: "lunar-calendar",
+          title: record.title,
+          headline: record.title,
+          targetDate: metadata.targetDate.trim() || record.targetDate || undefined,
+          lunarArcLayer: metadata.lunarArcLayer.trim() || undefined,
+          lunarSource: metadata.lunarSource.trim() || undefined,
+          dashboardSource: metadata.lunarSource.trim() || undefined,
+          practice: metadata.practice.trim() || undefined,
+          reflect: metadata.reflect.trim() || undefined,
+          ritual: metadata.ritual.trim() || undefined,
+          callback: metadata.callback.trim() || undefined
+        },
+        promptVersion: "sky-lunar-calendar-v1"
+      };
+    }
+
+    if (metadata.surface === "sky" && blockType === "sky_article") {
+      const titleSlug = slugContentPart(record.title || record.contentKey || "upcoming-transit");
+      const dateSlug = slugContentPart(metadata.targetDate.trim() || record.targetDate || dateInputValue());
+
+      return {
+        ...base,
+        contentKey: `sky.article.${titleSlug}.${dateSlug}`,
+        eventType: "upcoming-transit-article",
+        facts: {
+          ...baseFacts,
+          blockType,
+          type: "upcoming-transit-article",
+          title: record.title,
+          headline: record.title,
+          targetDate: metadata.targetDate.trim() || record.targetDate || undefined
+        },
+        promptVersion: "sky-upcoming-transit-article-v1"
+      };
+    }
 
     if (blockType === "all" || blockType === "essay") {
       return base;
@@ -2515,6 +2754,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         contentKey: natalAspectContentKey(trimmedBody1, trimmedAspect, trimmedBody2),
         eventType: "natal-aspect",
         facts: {
+          ...baseFacts,
           blockType,
           body1: trimmedBody1,
           planetA: trimmedBody1,
@@ -2631,7 +2871,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           house: trimmedHouse,
           ruler: trimmedRuler || undefined,
           rulerSign: metadata.rulerSign.trim() || undefined,
-          rulerHouse: metadata.rulerHouse.trim() || undefined
+          rulerHouse: metadata.rulerHouse.trim() || undefined,
+          traditionalRuler: metadata.traditionalRulerBody.trim() || trimmedRuler || undefined,
+          traditionalRulerSign: metadata.traditionalRulerSign.trim() || metadata.rulerSign.trim() || undefined,
+          traditionalRulerHouse: metadata.traditionalRulerHouse.trim() || metadata.rulerHouse.trim() || undefined,
+          modernRuler: metadata.modernRulerBody.trim() || undefined,
+          modernRulerSign: metadata.modernRulerSign.trim() || undefined,
+          modernRulerHouse: metadata.modernRulerHouse.trim() || undefined
         },
         promptVersion: "natal-synthesis-block-v1"
       };
@@ -2775,9 +3021,27 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     }
   }
 
+  function showReviewDraftValidationError(record: AdminReviewRecord, message: string, violations: string[] = []) {
+    setReviewDraftResults((currentResults) => ({
+      ...currentResults,
+      [record.id]: {
+        editStatus: "needs_generation",
+        sourceType: "generation_failed",
+        provider: reviewGenerationProvider,
+        retryCount: 0,
+        violations,
+        softWarnings: [],
+        styleNotes: [],
+        errorType: "validation_error",
+        error: message
+      }
+    }));
+    setMessage(message);
+  }
+
   async function generateReviewDraft(record: AdminReviewRecord) {
     if (!canUseApi) {
-      setMessage("Add the content generation secret first.");
+      showReviewDraftValidationError(record, "Add the content generation secret first.");
       return;
     }
 
@@ -2787,57 +3051,69 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     const modularPayload = modularNatalReviewPayload(record, metadata);
     const nextFacts = modularPayload.facts;
 
+    const missingNatalPlacementFields = [
+      !metadata.placementBody.trim() ? "placement body" : "",
+      !metadata.placementSign.trim() ? "placement sign" : "",
+      !metadata.placementHouse.trim() ? "placement house" : "",
+      !metadata.rulerSign.trim() ? "ruler sign" : "",
+      !metadata.rulerHouse.trim() ? "ruler house" : ""
+    ].filter(Boolean);
+
     if (
       metadata.surface === "natal"
-      && (metadata.blockType === "all" || metadata.blockType === "essay")
-      && (!metadata.placementBody.trim()
-        || !metadata.placementSign.trim()
-        || !metadata.placementHouse.trim()
-        || !metadata.rulerSign.trim()
-        || !metadata.rulerHouse.trim())
+      && (metadata.blockType === "all" || metadata.blockType === "essay" || metadata.blockType === "placement")
+      && missingNatalPlacementFields.length > 0
     ) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
-      setMessage("Natal placement needs body, sign, house, and ruler sign and house before generating. The ruler placement comes from this chart, not the sign.");
+      showReviewDraftValidationError(
+        record,
+        `Missing required natal placement metadata: ${missingNatalPlacementFields.join(", ")}. The ruler placement comes from this chart, not the sign.`,
+        missingNatalPlacementFields
+      );
       return;
     }
 
     if (metadata.surface === "natal" && metadata.blockType === "sign" && (!metadata.placementBody.trim() || !metadata.placementSign.trim())) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
-      setMessage("Sign blocks need only the body and sign before generating.");
+      showReviewDraftValidationError(record, "Sign blocks need only the body and sign before generating.");
       return;
     }
 
     if (metadata.surface === "natal" && metadata.blockType === "house" && (!metadata.placementBody.trim() || !metadata.placementHouse.trim())) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
-      setMessage("House blocks need only the body and house before generating.");
+      showReviewDraftValidationError(record, "House blocks need only the body and house before generating.");
       return;
     }
 
     if (metadata.surface === "natal" && metadata.blockType === "ruler" && !metadata.rulerBody.trim()) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
-      setMessage("Ruler blocks need only the ruling body before generating.");
+      showReviewDraftValidationError(record, "Ruler blocks need only the ruling body before generating.");
       return;
     }
 
     if (metadata.blockType.endsWith("_aspect") && (!metadata.body1.trim() || !metadata.aspect.trim() || !metadata.body2.trim())) {
       beginReviewEdit(record);
       setReviewEditMetadata(metadata);
-      setMessage("Aspect blocks need body A, aspect, and body B before generating.");
+      showReviewDraftValidationError(record, "Aspect blocks need body A, aspect, and body B before generating.");
       return;
     }
 
-    const fallbackText = fallbackReaderTextForReview(record);
     setEditingReviewId(record.id);
     setReviewEditTitle(record.title);
-    setReviewEditSummary(splitLeadingTldr(fallbackText).tldr);
-    setReviewEditBody(bodyWithoutLeadingTldr(fallbackText));
+    setReviewEditSummary(reviewTldrForReview(record));
+    setReviewEditBody(readerFacingTextForReview(record));
     setReviewEditMetadata(metadata);
     setIsGeneratingReviewDraft(true);
-    setMessage("Generating a draft. The deterministic placeholder is loaded while the provider responds.");
+    setReviewDraftResults((currentResults) => {
+      const nextResults = { ...currentResults };
+      delete nextResults[record.id];
+      return nextResults;
+    });
+    setMessage("Generating an admin draft from approved natal source context.");
     try {
       const payload = await adminJsonRequest<{
         ok: boolean;
@@ -2847,10 +3123,14 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           summary?: string;
           body?: string;
           sections?: Array<{ heading: string; body: string }>;
-          model?: string;
-          qualityWarning?: string;
-        };
+        model?: string;
+        qualityWarning?: string;
+        retryCount?: number;
+        softWarnings?: string[];
+        styleNotes?: string[];
+      };
         saved?: AdminGeneratedContentRow[];
+        adminDraft?: AdminDraftResult;
       }>(
         "/api/generate-content",
         secret,
@@ -2863,7 +3143,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             eventType: modularPayload.eventType,
             headline: record.title,
             targetDate: metadata.targetDate.trim() || record.targetDate || undefined,
-            facts: nextFacts,
+            facts: {
+              ...nextFacts,
+              adminGenerationMode: "admin_draft"
+            },
             sourceSnapshot: {
               ...(record.sourceSnapshot ?? {}),
               promptVersion: modularPayload.promptVersion,
@@ -2872,7 +3155,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             },
             knowledgeIds: [],
             provider: reviewGenerationProvider,
-            save: false,
             allowQualityFallback: true,
             blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType,
             voiceNotes: voiceNotesForReviewRecord(record)
@@ -2885,18 +3167,43 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       const normalizedGeneratedCopy = normalizeGeneratedDraftCopy(generated, fallbackReaderTextForReview(record));
       const nextSummary = normalizedGeneratedCopy.summary;
       const nextBody = normalizedGeneratedCopy.body;
+      const generationResult = payload.adminDraft ?? {
+        title: nextTitle,
+        draftBody: nextBody,
+        editStatus: "needs_review",
+        sourceType: "generated_draft",
+        sourceIds: [],
+        provider: reviewGenerationProvider,
+        model: generated.model ?? null,
+        retryCount: generated.retryCount ?? null,
+        violations: [],
+        softWarnings: generated.softWarnings ?? [],
+        styleNotes: generated.styleNotes ?? []
+      };
 
       setEditingReviewId(record.id);
       setReviewEditTitle(nextTitle);
       setReviewEditSummary(nextSummary || nextBody.split(/\n+/)[0]?.trim() || nextBody);
       setReviewEditBody(nextBody);
+      setReviewDraftResults((currentResults) => ({
+        ...currentResults,
+        [record.id]: generationResult,
+        ...(savedRow ? { [savedRow.id]: generationResult } : {})
+      }));
       setReviewRecords((currentRecords) => currentRecords.map((currentRecord) => (
         currentRecord.id === record.id
           ? {
               ...currentRecord,
+              source: savedRow ? "global" : currentRecord.source,
+              status: savedRow?.status ?? "DRAFT",
               title: nextTitle,
               summary: nextSummary,
               body: nextBody,
+              contentKey: savedRow?.content_key ?? currentRecord.contentKey,
+              eventType: savedRow?.event_type ?? currentRecord.eventType,
+              targetDate: savedRow?.target_date ?? currentRecord.targetDate,
+              facts: savedRow?.facts ?? currentRecord.facts,
+              sourceSnapshot: savedRow?.source_snapshot ?? currentRecord.sourceSnapshot,
               sections: generated.sections ?? currentRecord.sections,
               model: generated.model ?? currentRecord.model,
               rawGlobalRow: savedRow ?? currentRecord.rawGlobalRow
@@ -2909,12 +3216,26 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       }
       setMessage(generated.qualityWarning
         ? `Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft with an editorial warning: ${generated.qualityWarning}`
-        : `Generated a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Save or publish when it looks right.`);
+        : `Generated and saved a ${reviewGenerationProvider === "claude" ? "Claude" : "OpenAI"} draft. Approve it when it looks right.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
-      setMessage(`${adminErrorMessage(error, "Could not generate a review draft.")} The deterministic placeholder is loaded for editing.`);
+      const payload = error instanceof AdminRequestError && error.payload && typeof error.payload === "object"
+        ? error.payload as { adminDraft?: AdminDraftResult; errorType?: string; error?: string; violations?: string[] }
+        : null;
+      setReviewDraftResults((currentResults) => ({
+        ...currentResults,
+        [record.id]: {
+          ...(payload?.adminDraft ?? {}),
+          errorType: payload?.errorType,
+          error: payload?.error ?? adminErrorMessage(error, "Could not generate a review draft."),
+          violations: payload?.adminDraft?.violations ?? payload?.violations ?? [],
+          softWarnings: payload?.adminDraft?.softWarnings ?? [],
+          styleNotes: payload?.adminDraft?.styleNotes ?? []
+        }
+      }));
+      setMessage(adminErrorMessage(error, "Could not generate a review draft."));
     } finally {
       setIsGeneratingReviewDraft(false);
     }
@@ -2986,15 +3307,37 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
   function voiceNotesForReviewRecord(record: AdminReviewRecord) {
     const baseNotes = voiceNotesFor(record.surface, record.eventType, record.reviewerNotes ?? "");
 
+    if (record.surface === "natal") {
+      return [
+        baseNotes,
+        "Write this as natal birth-chart interpretation, not current sky, transit, horoscope, or timing content.",
+        "Use the selected natal placement facts and authored astrology source material as the anchor. Keep the copy traceable to the planet, sign, house, ruler, and natal aspects when present.",
+        "Do not use visible scaffold labels or section headings inside the reader-facing body, including TLDR, Planetary meaning, How it may show up, How to work with it, Timing, Reflection, or Integration.",
+        "Do not write seasonal or active-timing language such as right now, today, this week, current season, next few weeks, this window, strongest around, or during this transit.",
+        "For natal placement pages, write in continuous paragraphs. The copy should describe the enduring pattern in the chart and how it can show up in lived experience.",
+        "Do not mention schemas, source records, APIs, dashboards, generation process, or backend details."
+      ].filter(Boolean).join("\n\n");
+    }
+
+    if (record.surface === "sky" && contentBlockType(record) === "lunar_calendar") {
+      return [
+        baseNotes,
+        "Write this as lunar calendar content for the Sky area, not as a generic transit article.",
+        "Use authored lunation, season, and sign material as the source family when available.",
+        "If an arc layer is provided, honor it: season, New Moon seed, current checkpoint, or Full Moon culmination.",
+        "The editor may provide practice, reflect, ritual, and callback fields. Use them as optional editorial material, but do not force a ritual or reflection section when the field is empty.",
+        "Write continuous reader-facing paragraphs. Do not expose backend field names, schemas, or dashboard labels inside the copy."
+      ].filter(Boolean).join("\n\n");
+    }
+
     if (record.mode === "article") {
       return [
         baseNotes,
-        "Write a full transit article in Marie Satori's voice.",
+        "Write a full upcoming transit article in Marie Satori's voice.",
         "Use longer, continuous paragraphs where one full thought deepens as it goes. Do not use punchy fragment stacks, bullets, or markdown headings inside the body.",
-        "Open with one landing line only, then build restrained validation, the astrology, the shadow, permission and integration, and the collective close.",
-        "The close must include three sentences beginning 'Not one of us...', then one collective metaphor, then one sentence beginning 'May we each...'.",
+        "Do not use visible scaffold labels or section headings inside the reader-facing body, including TLDR, The Astrology, The Shadow, Permission, Integration, Collective Close, What You May Notice, What To Do, Home And Family, or Timing.",
+        "Open with a clear human situation, then connect the transit to specific behavior, decisions, pressure points, and what changes in ordinary life.",
         "Name specific behavior rather than stacking emotional language.",
-        "Use explicit permission with 'You're allowed to...' or 'You don't have to...' only after naming the pattern honestly.",
         "Do not use em dashes.",
         "Do not use: this transit invites you to, everything happens for a reason, gentle reminder, the universe is asking you to, hold space, sacred container, divine timing, trust the process, love and light, high vibes only, just be grateful, sit with that, honor your journey, step into your power.",
         "Do not use perform, performance, performing, shrink, or shrinking. Name the actual behavior instead.",
@@ -3005,8 +3348,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     return [
       baseNotes,
       "Write a daily astrology transit interpretation in the TLDR Astro voice.",
-      "Use this structure in clear paragraphs, not bullets: TLDR, Planetary meaning, How it may show up, How to work with it, Timing.",
-      "The body text shown to the editor must start with 'TLDR:' and then use visible labels before each following paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
+      "Write clear continuous paragraphs, not bullets and not a visible template.",
+      "Do not start the body with TLDR:, Planetary meaning:, How it may show up:, How to work with it:, Timing:, What You May Notice, What To Do, Reflection, Integration, or any similar scaffold label.",
       "In the TLDR paragraph, start with one plain-language situation the reader may notice. Mention the aspect and date only after the human situation is clear.",
       "Keep the factual astrology headline unchanged, but keep the first reader-facing sentence useful without astrology knowledge.",
       "Explain each planet in everyday terms, then explain what this aspect does to that pairing.",
@@ -3111,7 +3454,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setContentStatusFilter("DRAFT");
     setActivePage("content");
     setAreGenerationInputsOpen(true);
-    setMessage("Manual entry ready. Add a title and body, then save or publish.");
+    setMessage("New content entry ready. Choose its content type, then write or generate a draft.");
   }
 
   async function createDraft() {
@@ -3944,13 +4287,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <p>{cmsStatusCounts.all} entries across generated, authored, global, and personal content.</p>
               </div>
               <div className="admin-new-actions" aria-label="New content">
-                <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading || !canUseApi}>
+                <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading}>
                   <Sparkles size={16} aria-hidden="true" />
-                  Add Sky Drafts
+                  Add Sky Aspect Drafts
                 </button>
-                <button type="button" onClick={() => void startNewContent()} disabled={isLoading || !canUseApi}>
+                <button type="button" onClick={() => void startNewContent()} disabled={isLoading}>
                   <Plus size={16} aria-hidden="true" />
-                  Manual Entry
+                  New Content
                 </button>
               </div>
             </section>
@@ -3991,8 +4334,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <label>
                   <span>Block type</span>
                   <select value={contentBlockFilter} onChange={(event) => setContentBlockFilter(event.target.value as AdminContentBlockFilter)}>
-                    {contentBlockFilters.map((filter) => (
-                      <option key={filter.key} value={filter.key}>{filter.label}</option>
+                    <option value="all">All content types</option>
+                    {contentBlockEditorGroups.map((group) => (
+                      <optgroup key={group} label={group}>
+                        {contentBlockFilters.filter((filter) => filter.group === group).map((filter) => (
+                          <option key={filter.key} value={filter.key}>{filter.label}</option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </label>
@@ -4131,6 +4479,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           <Flag size={16} aria-hidden="true" />
                           Needs Review
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            void saveReviewEdit(selectedReviewRecord, "REVIEWED");
+                          }}
+                          disabled={!canEditSelectedReviewRecord || isLoading || selectedReviewRecord.status === "REVIEWED"}
+                          title="Approve this draft for review. This does not publish it live."
+                        >
+                          <Check size={16} aria-hidden="true" />
+                          Approve Draft
+                        </button>
                         {isEditingReviewRecord ? (
                           <>
                             <button type="button" onClick={cancelReviewEdit} disabled={isLoading}>
@@ -4188,6 +4547,51 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           {isGeneratingReviewDraft ? "Generating..." : "Generate Draft"}
                         </button>
                       </div>
+
+                      {selectedReviewDraftResult && (
+                        <div className={`admin-generation-diagnostics ${selectedReviewDraftResult.errorType ? "has-error" : ""}`}>
+                          <div>
+                            <span>Draft status</span>
+                            <strong>{selectedReviewDraftResult.errorType ? "Generation failed" : selectedReviewDraftResult.editStatus ?? "needs_review"}</strong>
+                          </div>
+                          <div>
+                            <span>Provider</span>
+                            <strong>{selectedReviewDraftResult.provider ?? reviewGenerationProvider}{selectedReviewDraftResult.model ? ` · ${selectedReviewDraftResult.model}` : ""}</strong>
+                          </div>
+                          <div>
+                            <span>Retry count</span>
+                            <strong>{selectedReviewDraftResult.retryCount ?? 0}</strong>
+                          </div>
+                          <div>
+                            <span>Sources</span>
+                            <strong>{selectedReviewDraftResult.sourceIds?.length ? selectedReviewDraftResult.sourceIds.join(", ") : "No authored source IDs returned"}</strong>
+                          </div>
+                          <div>
+                            <span>Safety checks</span>
+                            <ul>
+                              <li className={selectedReviewDraftResult.sourceSafety?.sourceBodyExcluded ? "pass" : "fail"}>sourceBody excluded</li>
+                              <li className={selectedReviewDraftResult.sourceSafety?.astrologyBodySent ? "pass" : "fail"}>astrologyBody sent</li>
+                              <li className={selectedReviewDraftResult.sourceSafety?.tarotNotesExcluded ? "pass" : "fail"}>tarotNotes excluded</li>
+                              <li className={selectedReviewDraftResult.sourceSafety?.businessNotesExcluded ? "pass" : "fail"}>businessNotes excluded</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <span>Hard violations</span>
+                            <strong>{selectedReviewDraftResult.violations?.length ? selectedReviewDraftResult.violations.join(", ") : "None"}</strong>
+                          </div>
+                          <div>
+                            <span>Soft warnings</span>
+                            <strong>{selectedReviewDraftResult.softWarnings?.length ? selectedReviewDraftResult.softWarnings.join(", ") : "None"}</strong>
+                          </div>
+                          <div>
+                            <span>Style notes</span>
+                            <strong>{selectedReviewDraftResult.styleNotes?.length ? selectedReviewDraftResult.styleNotes.join(", ") : "None"}</strong>
+                          </div>
+                          {selectedReviewDraftResult.error && (
+                            <p>{selectedReviewDraftResult.error}</p>
+                          )}
+                        </div>
+                      )}
 
                       <label className="admin-review-tldr-editor">
                         <span>TLDR</span>
@@ -4275,7 +4679,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                               const nextCategory = event.target.value as Exclude<AdminContentCategoryFilter, "all">;
                               updateReviewMetadata(selectedReviewRecord, {
                                 category: nextCategory,
-                                surface: surfaceForContentCategory(nextCategory)
+                                surface: surfaceForContentCategory(nextCategory),
+                                ...(nextCategory === "Sky" ? { blockType: "sky_article" as AdminContentBlockFilter, mode: "article" as GeneratedContentMode } : {}),
+                                ...(nextCategory === "Natal Chart" ? { blockType: "placement" as AdminContentBlockFilter } : {})
                               });
                             }}
                           >
@@ -4288,11 +4694,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <label className="admin-metadata-field">
                           <span>Block type</span>
                           <select
-                            value={selectedReviewMetadata?.blockType ?? "essay"}
+                            value={selectedReviewMetadata?.blockType ?? contentBlockType(selectedReviewRecord)}
                             onChange={(event) => updateReviewMetadata(selectedReviewRecord, { blockType: event.target.value as AdminContentBlockFilter })}
                           >
-                            {contentBlockFilters.filter((filter) => filter.key !== "all").map((filter) => (
-                              <option key={filter.key} value={filter.key}>{filter.label}</option>
+                            {contentBlockEditorGroups.map((group) => (
+                              <optgroup key={group} label={group}>
+                                {contentBlockFilters
+                                  .filter((filter) => filter.group === group && filter.showInEditor !== false)
+                                  .map((filter) => (
+                                    <option key={filter.key} value={filter.key}>{filter.label}</option>
+                                  ))}
+                              </optgroup>
                             ))}
                           </select>
                         </label>
@@ -4307,6 +4719,67 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <option value="article">Article</option>
                           </select>
                         </label>
+                        {selectedMetadataIsLunarCalendar && (
+                          <>
+                            <label className="admin-metadata-field">
+                              <span>Arc layer</span>
+                              <select
+                                value={selectedReviewMetadata?.lunarArcLayer ?? ""}
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { lunarArcLayer: event.target.value })}
+                              >
+                                <option value="">Not set</option>
+                                <option value="season">Season</option>
+                                <option value="new_moon_seed">New Moon seed</option>
+                                <option value="current_checkpoint">Current checkpoint</option>
+                                <option value="full_moon_culmination">Full Moon culmination</option>
+                              </select>
+                            </label>
+                            <label className="admin-metadata-field">
+                              <span>Dashboard source</span>
+                              <select
+                                value={selectedReviewMetadata?.lunarSource ?? ""}
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { lunarSource: event.target.value })}
+                              >
+                                <option value="">Not set</option>
+                                <option value="authored_lunation">Authored lunation</option>
+                                <option value="authored_season">Authored season</option>
+                                <option value="authored_sign">Authored sign</option>
+                              </select>
+                            </label>
+                            <label className="admin-metadata-field">
+                              <span>Practice</span>
+                              <textarea
+                                value={selectedReviewMetadata?.practice ?? ""}
+                                placeholder="Optional practice prompt."
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { practice: event.target.value })}
+                              />
+                            </label>
+                            <label className="admin-metadata-field">
+                              <span>Reflect</span>
+                              <textarea
+                                value={selectedReviewMetadata?.reflect ?? ""}
+                                placeholder="Optional reflection prompt."
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { reflect: event.target.value })}
+                              />
+                            </label>
+                            <label className="admin-metadata-field">
+                              <span>Ritual</span>
+                              <textarea
+                                value={selectedReviewMetadata?.ritual ?? ""}
+                                placeholder="Optional ritual notes."
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { ritual: event.target.value })}
+                              />
+                            </label>
+                            <label className="admin-metadata-field">
+                              <span>Callback</span>
+                              <textarea
+                                value={selectedReviewMetadata?.callback ?? ""}
+                                placeholder="Optional callback to an earlier or later lunation."
+                                onChange={(event) => updateReviewMetadata(selectedReviewRecord, { callback: event.target.value })}
+                              />
+                            </label>
+                          </>
+                        )}
                         {selectedMetadataUsesAspectFields && (
                           <>
                             {selectedMetadataUsesAspectTiming && (
@@ -4341,13 +4814,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                 onChange={(event) => updateReviewMetadata(selectedReviewRecord, { body1: event.target.value })}
                               />
                             </label>
-                            {selectedMetadataUsesAspectTiming && (
+                            {selectedMetadataUsesAspectSigns && (
                               <label className="admin-metadata-field">
                                 <span>Sign A</span>
                                 <input
                                   value={selectedReviewMetadata?.sign1 ?? ""}
                                   placeholder="Cancer"
                                   onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign1: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesAspectHouses && (
+                              <label className="admin-metadata-field">
+                                <span>House A</span>
+                                <input
+                                  value={selectedReviewMetadata?.house1 ?? ""}
+                                  placeholder="3"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { house1: event.target.value })}
                                 />
                               </label>
                             )}
@@ -4367,13 +4850,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                 onChange={(event) => updateReviewMetadata(selectedReviewRecord, { body2: event.target.value })}
                               />
                             </label>
-                            {selectedMetadataUsesAspectTiming && (
+                            {selectedMetadataUsesAspectSigns && (
                               <label className="admin-metadata-field">
                                 <span>Sign B</span>
                                 <input
                                   value={selectedReviewMetadata?.sign2 ?? ""}
                                   placeholder="Taurus"
                                   onChange={(event) => updateReviewMetadata(selectedReviewRecord, { sign2: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesAspectHouses && (
+                              <label className="admin-metadata-field">
+                                <span>House B</span>
+                                <input
+                                  value={selectedReviewMetadata?.house2 ?? ""}
+                                  placeholder="10"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { house2: event.target.value })}
                                 />
                               </label>
                             )}
@@ -4432,11 +4925,14 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             )}
                             {selectedMetadataUsesPlacementRuler && (
                               <label className="admin-metadata-field">
-                                <span>Ruler body</span>
+                                <span>Traditional ruler</span>
                                 <input
                                   value={selectedReviewMetadata?.rulerBody ?? ""}
                                   placeholder="Saturn"
-                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerBody: event.target.value })}
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, {
+                                    rulerBody: event.target.value,
+                                    traditionalRulerBody: event.target.value
+                                  })}
                                 />
                               </label>
                             )}
@@ -4447,7 +4943,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                   <input
                                     value={selectedReviewMetadata?.rulerSign ?? ""}
                                     placeholder="Virgo"
-                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerSign: event.target.value })}
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, {
+                                      rulerSign: event.target.value,
+                                      traditionalRulerSign: event.target.value
+                                    })}
                                   />
                                 </label>
                                 <label className="admin-metadata-field">
@@ -4456,7 +4955,41 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                     value={selectedReviewMetadata?.rulerHouse ?? ""}
                                     inputMode="numeric"
                                     placeholder="4"
-                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { rulerHouse: event.target.value })}
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, {
+                                      rulerHouse: event.target.value,
+                                      traditionalRulerHouse: event.target.value
+                                    })}
+                                  />
+                                </label>
+                              </>
+                            )}
+                            {selectedMetadataUsesPlacementRuler && (
+                              <label className="admin-metadata-field">
+                                <span>Modern ruler</span>
+                                <input
+                                  value={selectedReviewMetadata?.modernRulerBody ?? ""}
+                                  placeholder="Uranus"
+                                  onChange={(event) => updateReviewMetadata(selectedReviewRecord, { modernRulerBody: event.target.value })}
+                                />
+                              </label>
+                            )}
+                            {selectedMetadataUsesFullRulerPlacement && Boolean(selectedReviewMetadata?.modernRulerBody?.trim()) && (
+                              <>
+                                <label className="admin-metadata-field">
+                                  <span>Modern ruler sign</span>
+                                  <input
+                                    value={selectedReviewMetadata?.modernRulerSign ?? ""}
+                                    placeholder="Scorpio"
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { modernRulerSign: event.target.value })}
+                                  />
+                                </label>
+                                <label className="admin-metadata-field">
+                                  <span>Modern ruler house</span>
+                                  <input
+                                    value={selectedReviewMetadata?.modernRulerHouse ?? ""}
+                                    inputMode="numeric"
+                                    placeholder="6"
+                                    onChange={(event) => updateReviewMetadata(selectedReviewRecord, { modernRulerHouse: event.target.value })}
                                   />
                                 </label>
                               </>
