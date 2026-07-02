@@ -17,7 +17,6 @@ export type PlanetPosition = {
   degree: number;
   house: number;
   motion: "direct" | "retrograde";
-  theme: string;
   transitStart?: string | null;
   transitEnd?: string | null;
   transitRemainingLabel?: string | null;

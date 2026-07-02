@@ -78,7 +78,7 @@ import {
   solarPhaseStatusFor,
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
-import { defaultLocation, getCurrentSky } from "./services/ephemerisFallback";
+import { defaultLocation } from "./services/ephemeris";
 import {
   getAuthAccount,
   isAuthConfigured,
@@ -915,7 +915,7 @@ type ProfilePersistencePayload = {
   updatedAt: string;
 };
 
-type SkyLoadStatus = "loading" | "ready" | "fallback";
+type SkyLoadStatus = "loading" | "ready" | "error";
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -1858,13 +1858,11 @@ function zodiacLongitude(position?: PlanetPosition) {
 function positionFromLongitude({
   planet,
   glyph,
-  longitude,
-  theme
+  longitude
 }: {
   planet: string;
   glyph: string;
   longitude: number;
-  theme: string;
 }): PlanetPosition {
   const normalizedLongitude = normalizedAngle(longitude);
   const sign = zodiacSignForLongitude(normalizedLongitude);
@@ -1876,8 +1874,7 @@ function positionFromLongitude({
     signGlyph: zodiacGlyphText(sign),
     degree: normalizedLongitude % 30,
     house: 0,
-    motion: "direct",
-    theme
+    motion: "direct"
   };
 }
 
@@ -2325,8 +2322,7 @@ function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot):
     signGlyph: zodiacGlyphText(row.sign),
     degree: row.degree,
     house: row.house ?? 1,
-    motion: "direct",
-    theme: "presence"
+    motion: "direct"
   };
 }
 
@@ -3692,14 +3688,7 @@ function aspectHousePhrase(point: string, positions?: PlanetPosition[]) {
 }
 
 function aspectTimingNudge(context?: AspectCopyContext) {
-  if (context?.direction === "applying") {
-    return "This may be building now.";
-  }
-
-  if (context?.direction === "separating") {
-    return "This may be easing now, or helping you understand what was just stirred up.";
-  }
-
+  void context;
   return "";
 }
 
@@ -3707,174 +3696,12 @@ function comparableText(value: string) {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function aspectSpecificCopy(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
-  const points = new Set([firstPoint, secondPoint]);
-  const titleAspect = aspect === "opposition" ? "opposite" : aspect;
-  const title = `${firstPoint} ${titleAspect} ${secondPoint}`;
-  const moonHouse = points.has("Moon") ? aspectHousePhrase("Moon", context?.positions) : "";
-  const timingNudge = aspectTimingNudge(context);
-
-  if (aspect === "sextile" && points.has("Jupiter") && points.has("Moon")) {
-    const focus = moonHouse || "comfort, generosity, support, or an honest emotional response";
-
-    return `${title} may make it easier to ask for what you need. This can help with ${focus}, as long as you do not treat a good feeling like a final answer.${timingNudge ? ` ${timingNudge}` : ""}`;
-  }
-
-  if (aspect === "square" && points.has("Jupiter") && points.has("Chiron")) {
-    return `${title} can make confidence and old hurt rub against each other. A bigger opportunity may bring up an old fear of not being ready, not being chosen, or not knowing enough.`;
-  }
-
-  if (aspect === "sextile" && points.has("Mars") && points.has("Mercury")) {
-    return `${title} can help you say what needs to be said and act on a decision more quickly. It is useful for direct conversations, problem-solving, and turning an idea into a next step.`;
-  }
-
-  if (aspect === "opposition" && points.has("Venus") && points.has("Pluto")) {
-    return `${title} can make relationships, money, or desire feel more charged than usual. Watch for control, jealousy, obsession, or the need to know where you stand before the situation is actually clear.`;
-  }
-
-  if (aspect === "sextile" && points.has("Chiron") && (points.has("North Node") || points.has("True Node"))) {
-    return `${title} can make an old sensitivity easier to understand without letting it decide the whole story. A small repair, honest conversation, or different choice may point you toward what needs to grow next.`;
-  }
-
-  if (aspect === "trine" && points.has("Moon") && points.has("Mars")) {
-    const focus = moonHouse || "what you feel and what you do next";
-
-    return `${title} can help your reaction and your next move line up more naturally. This can be useful for ${focus}, especially if you act before the feeling gets stale.`;
-  }
-
-  if (aspect === "sextile" && points.has("Moon") && points.has("Mercury")) {
-    const focus = moonHouse || "what you need";
-
-    return `${title} can make it easier to put a feeling into words. A message, decision, or conversation may help clarify ${focus}.`;
-  }
-
-  return undefined;
-}
-
-function aspectPlainTheme(point: string) {
-  const themes: Record<string, string> = {
-    Sun: "confidence and direction",
-    Moon: "mood, comfort, and what you need",
-    Mercury: "thinking, language, and decisions",
-    Venus: "relationships, pleasure, and what feels worth choosing",
-    Mars: "action, anger, and momentum",
-    Jupiter: "confidence, opportunity, and belief",
-    Saturn: "responsibility, limits, and commitment",
-    Uranus: "freedom, surprise, and disruption",
-    Neptune: "longing, uncertainty, and imagination",
-    Pluto: "control, pressure, and what is hard to ignore",
-    Chiron: "old hurt, insecurity, and feeling exposed",
-    "North Node": "future direction and the next step",
-    "True Node": "future direction and the next step",
-    "South Node": "old patterns and what is familiar",
-    Ascendant: "presence, body, and first response",
-    Midheaven: "work, visibility, and direction"
-  };
-
-  return themes[point] ?? point.toLowerCase();
-}
-
-function aspectLivedExample(firstPoint: string, secondPoint: string, tone: "support" | "pressure" | "focus" | "pushPull") {
-  const pair = new Set([firstPoint, secondPoint]);
-
-  if (pair.has("Mercury") && pair.has("Mars")) {
-    return tone === "pressure"
-      ? "Words can come out fast, so pause before a direct point turns into a fight."
-      : "This is useful for direct conversations, quick decisions, and turning an idea into a next step.";
-  }
-
-  if (pair.has("Venus") && pair.has("Pluto")) {
-    return tone === "support"
-      ? "It can be easier to name what you want without pretending the stakes are lower than they are."
-      : "Watch for control, jealousy, obsession, or the need to know where you stand before the situation is actually clear.";
-  }
-
-  if (pair.has("Jupiter") && pair.has("Moon")) {
-    return tone === "pressure"
-      ? "A bigger want can press against what actually feels safe, comfortable, or emotionally honest."
-      : "There may be more room for comfort, generosity, support, or an honest emotional response.";
-  }
-
-  if (pair.has("Jupiter") && pair.has("Chiron")) {
-    return "A bigger opportunity may bring up an old fear of not being ready, not being chosen, or not knowing enough.";
-  }
-
-  if (pair.has("Saturn") && pair.has("Moon")) {
-    return tone === "pressure"
-      ? "A feeling may need to be taken seriously instead of managed around."
-      : "It can be easier to make a steady choice, keep a promise, or say the serious thing plainly.";
-  }
-
-  if (pair.has("Uranus")) {
-    return tone === "pressure"
-      ? "A sudden change may make it harder to keep doing things the usual way."
-      : "A small change, unexpected message, or different choice can open more room than expected.";
-  }
-
-  if (pair.has("Neptune")) {
-    return tone === "pressure"
-      ? "It may be harder to tell what is real, wished for, or being avoided."
-      : "Imagination, softness, or a less rigid answer may be easier to access.";
-  }
-
-  if (pair.has("Pluto")) {
-    return tone === "pressure"
-      ? "A buried feeling, power dynamic, or need for control may be harder to ignore."
-      : "It can be easier to be honest about what has weight instead of treating it like a small thing.";
-  }
-
-  if (pair.has("Chiron")) {
-    return "An old sensitivity may show you what still needs honesty, repair, or more care than usual.";
-  }
-
-  if (tone === "pressure") {
-    return "A choice, conversation, or reaction may show where adjustment is needed.";
-  }
-
-  if (tone === "pushPull") {
-    return "You may need more perspective before deciding which side deserves more weight.";
-  }
-
-  if (tone === "focus") {
-    return "The pattern may be louder than usual, making it easier to see what needs attention.";
-  }
-
-  return "A useful opening may be available if you choose to act on it.";
-}
-
 function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
-  const specificCopy = aspectSpecificCopy(firstPoint, aspect, secondPoint, context);
-
-  if (specificCopy) {
-    return specificCopy;
-  }
-
-  const firstTheme = aspectPlainTheme(firstPoint);
-  const secondTheme = aspectPlainTheme(secondPoint);
-  const titleAspect = aspect === "opposition" ? "opposite" : aspect;
-  const title = `${firstPoint} ${titleAspect} ${secondPoint}`;
-
-  if (aspect === "sextile") {
-    return `${title} can make it easier to move between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "support")}`;
-  }
-
-  if (aspect === "trine") {
-    return `${title} can help ${firstTheme} and ${secondTheme} move with less resistance. ${aspectLivedExample(firstPoint, secondPoint, "support")}`;
-  }
-
-  if (aspect === "conjunction") {
-    return `${title} puts ${firstTheme} and ${secondTheme} in the same room. ${aspectLivedExample(firstPoint, secondPoint, "focus")}`;
-  }
-
-  if (aspect === "square") {
-    return `${title} can put pressure on the relationship between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "pressure")}`;
-  }
-
-  if (aspect === "opposition") {
-    return `${title} can pull attention between ${firstTheme} and ${secondTheme}. ${aspectLivedExample(firstPoint, secondPoint, "pushPull")}`;
-  }
-
-  return `${title} may make the connection between ${firstTheme} and ${secondTheme} easier to notice in real life.`;
+  void firstPoint;
+  void aspect;
+  void secondPoint;
+  void context;
+  return "";
 }
 
 function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string) {
@@ -5304,14 +5131,12 @@ function natalTransitTargets(natalSky: SkySnapshot) {
     positionFromLongitude({
       planet: "Ascendant",
       glyph: pointGlyph("Ascendant"),
-      longitude: natalSky.ascendantLongitude,
-      theme: "Presence, horizon, and first contact"
+      longitude: natalSky.ascendantLongitude
     }),
     positionFromLongitude({
       planet: "Descendant",
       glyph: pointGlyph("Descendant"),
-      longitude: natalSky.ascendantLongitude + 180,
-      theme: "Partnership, encounter, and the setting horizon"
+      longitude: natalSky.ascendantLongitude + 180
     })
   ];
 }
@@ -5480,7 +5305,7 @@ function skyPositionLifeAreaFocusScore(position: PlanetPosition, focusAreas: Lif
     const astrology = lifeAreaFocusAstrology[area];
     const houseScore = astrology.houses.includes(position.house) ? 8 : 0;
     const planetScore = astrology.planets.includes(position.planet) ? 3 : 0;
-    const keywordScore = lifeAreaFocusScore(`${position.planet} ${position.sign} ${position.theme} ${houseLifeAreas[position.house] ?? ""}`, [area]);
+    const keywordScore = lifeAreaFocusScore(`${position.planet} ${position.sign} ${houseLifeAreas[position.house] ?? ""}`, [area]);
 
     return score + houseScore + planetScore + keywordScore;
   }, 0);
@@ -5531,7 +5356,7 @@ function skyAspectLifeAreaScore(aspect: SkySnapshot["aspects"][number], position
   const houseScore = [firstPosition?.house, secondPosition?.house].filter((house) => house && astrology.houses.includes(house)).length * 8;
   const planetScore = [aspect.from, aspect.to].filter((planet) => astrology.planets.includes(planet)).length * 3;
   const aspectScore = astrology.aspects?.includes(aspect.type) ? 1 : 0;
-  const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.theme ?? ""} ${secondPosition?.theme ?? ""}`, [area]);
+  const keywordScore = lifeAreaFocusScore(`${aspect.from} ${aspect.type} ${aspect.to} ${firstPosition?.sign ?? ""} ${secondPosition?.sign ?? ""}`, [area]);
 
   return houseScore + planetScore + aspectScore + keywordScore;
 }
@@ -6319,65 +6144,23 @@ function synastryAspectPlainVerb(aspect: string) {
 }
 
 function synastryAspectMeaning(aspect: string) {
-  const meanings: Record<string, string> = {
-    conjunction: "This contact is hard to miss because the two parts of the chart keep showing up together.",
-    opposition: "This contact can feel magnetic and exposing because each person may carry one side of the pattern.",
-    square: "This contact can put pressure on the connection. It can bring momentum, but it needs honesty before it turns into irritation.",
-    trine: "This contact tends to feel natural. It can make the connection easier to trust because less translation is needed.",
-    sextile: "This contact gives the relationship an opening. It works best when both people actually use it."
-  };
-
-  return meanings[aspect] ?? "This contact is one of the repeating patterns between the two charts.";
+  void aspect;
+  return "";
 }
 
 function synastryContactAdvice(aspect: string) {
-  if (["square", "opposition"].includes(aspect)) {
-    return "Do not rush to decide who is right. Slow the conversation down and separate the feeling from the assumption.";
-  }
-
-  if (["trine", "sextile"].includes(aspect)) {
-    return "Use the ease instead of leaving it vague. Say what you appreciate, make the plan, or let the support become visible.";
-  }
-
-  return "Give the chemistry time to show its shape before making the whole relationship about this one contact.";
+  void aspect;
+  return "";
 }
 
 function synastryActionLine(aspect: string) {
-  if (["square", "opposition"].includes(aspect)) {
-    return "Slow the reaction down and name what each person is protecting, wanting, or assuming.";
-  }
-
-  if (["trine", "sextile"].includes(aspect)) {
-    return "Use the ease on purpose. Say the supportive thing, make the simple plan, or let the trust become an action.";
-  }
-
-  return "Give the contact room without letting it take over the whole relationship.";
+  void aspect;
+  return "";
 }
 
 function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect: string) {
-  const pair = [firstPoint, secondPoint].sort().join("-");
-  const titles: Record<string, string> = {
-    "Moon-Sun": "Feeling Seen",
-    "Sun-Venus": "Easy Affection",
-    "Mars-Venus": "Chemistry And Timing",
-    "Moon-Venus": "Softness And Care",
-    "Mars-Moon": "Fast Reactions",
-    "Moon-Saturn": "Care With Conditions",
-    "Saturn-Venus": "Love Gets Serious",
-    "Pluto-Venus": "Intense Attachment",
-    "Moon-Pluto": "Deep Emotional Pull",
-    "Mercury-Moon": "Reading The Tone",
-    "Mercury-Neptune": "Mixed Signals",
-    "Mercury-Saturn": "Hard Conversations",
-    "Jupiter-Moon": "Big Feelings",
-    "Jupiter-Venus": "Generosity And Excess",
-    "Sun-Neptune": "Idealization",
-    "Mars-Saturn": "Pressure And Restraint",
-    "Ascendant-Venus": "Immediate Warmth",
-    "Ascendant-Mars": "Instant Charge",
-    "Ascendant-Sun": "Strong Recognition",
-    "Ascendant-Moon": "Familiar Presence"
-  };
+  void firstPoint;
+  void secondPoint;
   const fallbackTitles: Record<string, string> = {
     conjunction: "You Amplify Each Other",
     opposition: "You Mirror Each Other",
@@ -6386,7 +6169,7 @@ function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect:
     sextile: "You Open Doors for Each Other"
   };
 
-  return titles[pair] ?? fallbackTitles[aspect] ?? "You Affect Each Other";
+  return fallbackTitles[aspect] ?? "You Affect Each Other";
 }
 
 function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: string, comparisonPossessive: string, secondPoint: string) {
@@ -7525,11 +7308,7 @@ export function App() {
   const lastRemoteProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
-  const [sky, setSky] = useState<SkySnapshot>(() => {
-    const initialLocation = withTimeZone(initialLocationState.location);
-
-    return initialCachedSky ?? getCurrentSky(initialLocation, skyDateTimeFromInput(dateInputValue(), initialLocation));
-  });
+  const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "ready" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -7996,10 +7775,10 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Swiss Ephemeris sky calculation failed; using static sky snapshot.", error);
+        console.warn("Swiss Ephemeris sky calculation failed; no fallback sky snapshot will be fabricated.", error);
         if (!cancelled) {
-          setSky(getCurrentSky(skyLocation, selectedDateTime));
-          setSkyStatus("fallback");
+          setSky((currentSky) => currentSky ?? null);
+          setSkyStatus("error");
         }
       });
 
