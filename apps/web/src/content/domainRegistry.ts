@@ -1,4 +1,8 @@
 import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
+import {
+  interpolateKnowledgeParagraphs,
+  interpolateKnowledgeText
+} from "./templateInterpolation";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -421,95 +425,6 @@ function approvedKnowledgeStatus(value: KnowledgeItem["status"] | undefined) {
   return value === "APPROVED" || value === "SOURCE_BACKED" || value === "LIVE";
 }
 
-function skyAspectHeadline(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function skyAspectNotice(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function skyAspectWhy(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function skyAspectMove(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function skyAspectTiming(planetA: string, planetB: string) {
-  void planetA;
-  void planetB;
-  return "";
-}
-
-function skyAspectAdvice(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function skyAspectDetailParagraphs(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return [];
-}
-
-function natalAspectAdvice(planetA: string, aspect: string, planetB: string) {
-  void planetA;
-  void aspect;
-  void planetB;
-  return "";
-}
-
-function transitNatalSummary(transiting: string, aspect: string, natal: string) {
-  void transiting;
-  void aspect;
-  void natal;
-  return "";
-}
-
-function transitNatalAdvice(transiting: string, aspect: string, natal: string) {
-  void transiting;
-  void aspect;
-  void natal;
-  return "";
-}
-
-function placementSummary(planet: string, sign: string, mode: "sky" | "natal") {
-  void planet;
-  void sign;
-  void mode;
-  return "";
-}
-
-function placementAdvice(planet: string, sign: string, mode: "sky" | "natal") {
-  void planet;
-  void sign;
-  void mode;
-  return "";
-}
-
-function skyPlacementDetailParagraphs(planet: string, sign: string) {
-  void planet;
-  void sign;
-  return [];
-}
-
 export function createDomainRegistry(bundleInput: unknown) {
   const bundle = bundleInput as KnowledgeBundle;
   const registryMode: "sky" | "natal" = (bundle.transits?.length ?? 0) > 0 ? "sky" : "natal";
@@ -600,8 +515,8 @@ export function createDomainRegistry(bundleInput: unknown) {
       continue;
     }
 
-    const body = skyAspectAdvice(transit.transiting, transit.aspect, transit.other);
-    const summary = skyAspectHeadline(transit.transiting, transit.aspect, transit.other);
+    const sourceSummary = cleanText(transit.tldr) || cleanText(transit.modern) || cleanText(transit.base);
+    const sourceBody = cleanText(transit.modern) || cleanText(transit.base) || cleanText(transit.tldr);
 
     const knowledgeItem: KnowledgeItem = {
       id: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
@@ -615,10 +530,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       priority: skyAspectPriority(transit.transiting, transit.aspect, transit.other),
       intensity: hardAspects.has(transit.aspect) ? 4 : softAspects.has(transit.aspect) ? 3 : 2,
       interpretation: {
-        coreTheme: summary,
-        displaySummary: summary,
-        detailParagraphs: skyAspectDetailParagraphs(transit.transiting, transit.aspect, transit.other),
-        livedExperience: body,
+        coreTheme: sourceSummary,
+        displaySummary: sourceSummary,
+        detailParagraphs: cleanParagraphs([sourceBody]),
+        livedExperience: sourceBody,
         gift: cleanText(transit.business),
         challenge: cleanText(transit.shadow)
       },
@@ -636,8 +551,6 @@ export function createDomainRegistry(bundleInput: unknown) {
 
     const id = transitNatalContentId(transit.transiting, transit.aspect, transit.natal);
     const sourceSummary = cleanText(transit.plainTranslation);
-    const generatedSummary = transitNatalSummary(transit.transiting, transit.aspect, transit.natal);
-    const body = transitNatalAdvice(transit.transiting, transit.aspect, transit.natal);
     const sourceDetail = sourceSummary && !/\b(days?|weeks?|months?|years?)\.$/i.test(sourceSummary)
       ? sourceSummary
       : undefined;
@@ -654,10 +567,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       priority: transitNatalPriority(transit.transiting, transit.aspect, transit.natal),
       intensity: hardAspects.has(transit.aspect) ? 4 : softAspects.has(transit.aspect) ? 3 : 2,
       interpretation: {
-        coreTheme: generatedSummary,
-        displaySummary: generatedSummary,
+        coreTheme: sourceSummary,
+        displaySummary: sourceSummary,
         detailParagraphs: cleanParagraphs([sourceDetail, transit.policy]),
-        livedExperience: body,
+        livedExperience: sourceSummary,
         gift: "",
         challenge: ""
       },
@@ -670,11 +583,9 @@ export function createDomainRegistry(bundleInput: unknown) {
     const planet = placement.planet ?? placement.point;
     const sign = placement.sign ?? (placement.kind === "sign" && typeof placement.key === "string" ? placement.key : undefined);
     const mode = registryMode;
-    const generatedSummary = planet && sign ? placementSummary(planet, sign, mode) : "";
-    const generatedBody = planet && sign ? placementAdvice(planet, sign, mode) : "";
-    const generatedDetailParagraphs = planet && sign && mode === "sky"
-      ? skyPlacementDetailParagraphs(planet, sign)
-      : cleanParagraphs([placement.gift, placement.challenge, placement.note]);
+    const sourceSummary = cleanText(placement.tldr);
+    const sourceBody = cleanText(placement.body);
+    const sourceDetailParagraphs = cleanParagraphs([sourceBody, placement.gift, placement.challenge, placement.note]);
 
     const knowledgeItem: KnowledgeItem = {
       id: placement.id,
@@ -691,10 +602,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       priority: placementPriority(planet, sign, mode),
       intensity: placementPriority(planet, sign, mode) >= 50 ? 4 : 2,
       interpretation: {
-        coreTheme: cleanText(placement.tldr) || generatedSummary || placement.id,
-        displaySummary: generatedSummary || cleanText(placement.tldr) || cleanText(placement.body),
-        detailParagraphs: generatedDetailParagraphs,
-        livedExperience: generatedBody || cleanText(placement.body) || cleanText(placement.tldr) || placement.id,
+        coreTheme: sourceSummary || placement.id,
+        displaySummary: sourceSummary || sourceBody,
+        detailParagraphs: sourceDetailParagraphs,
+        livedExperience: sourceBody || sourceSummary,
         gift: cleanText(placement.gift),
         challenge: cleanText(placement.challenge)
       },
@@ -733,10 +644,10 @@ export function createDomainRegistry(bundleInput: unknown) {
       priority: placementPriority(angle.point, angle.sign, "natal"),
       intensity: 4,
       interpretation: {
-        coreTheme: cleanText(angle.tldr) || placementSummary(angle.point, angle.sign, "natal"),
-        displaySummary: cleanText(angle.tldr) || placementSummary(angle.point, angle.sign, "natal"),
+        coreTheme: cleanText(angle.tldr) || id,
+        displaySummary: cleanText(angle.tldr),
         detailParagraphs: cleanParagraphs([angle.body, angle.approach, angle.shadow, angle.note]),
-        livedExperience: cleanText(angle.body) || placementAdvice(angle.point, angle.sign, "natal"),
+        livedExperience: cleanText(angle.body),
         gift: cleanText(angle.approach),
         challenge: cleanText(angle.shadow)
       },
@@ -934,11 +845,18 @@ export function createDomainRegistry(bundleInput: unknown) {
     const bundle = getContentBundle(id, voiceId);
 
     if (bundle.status === "READY" && bundle.voice) {
+      const summary = interpolateKnowledgeText(id, "voice.summary", bundle.voice.summary, bundle.knowledge);
+      const body = interpolateKnowledgeText(id, "voice.body", bundle.voice.body, bundle.knowledge);
+      const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "voice.detailParagraphs", [
+        bundle.voice.body,
+        ...(bundle.knowledge?.interpretation.detailParagraphs ?? [])
+      ], bundle.knowledge);
+
       return {
         bundle,
-        summary: cleanText(bundle.voice.summary),
-        body: cleanText(bundle.voice.body),
-        detailParagraphs: cleanParagraphs([bundle.voice.body, ...(bundle.knowledge?.interpretation.detailParagraphs ?? [])])
+        summary: cleanText(summary),
+        body: cleanText(body),
+        detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
       };
     }
 
@@ -947,12 +865,21 @@ export function createDomainRegistry(bundleInput: unknown) {
       const fallbackDetailParagraphs = knowledgeDetailParagraphs.length > 0
         ? knowledgeDetailParagraphs
         : cleanParagraphs([bundle.knowledge.interpretation.livedExperience]);
+      const summary = cleanText(
+        interpolateKnowledgeText(id, "knowledge.displaySummary", bundle.knowledge.interpretation.displaySummary, bundle.knowledge)
+      ) || cleanText(
+        interpolateKnowledgeText(id, "knowledge.coreTheme", bundle.knowledge.interpretation.coreTheme, bundle.knowledge)
+      );
+      const body = cleanText(
+        interpolateKnowledgeText(id, "knowledge.livedExperience", bundle.knowledge.interpretation.livedExperience, bundle.knowledge)
+      );
+      const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "knowledge.detailParagraphs", fallbackDetailParagraphs, bundle.knowledge);
 
       return {
         bundle,
-        summary: cleanText(bundle.knowledge.interpretation.displaySummary) || cleanText(bundle.knowledge.interpretation.coreTheme),
-        body: cleanText(bundle.knowledge.interpretation.livedExperience),
-        detailParagraphs: fallbackDetailParagraphs
+        summary,
+        body,
+        detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
       };
     }
 
