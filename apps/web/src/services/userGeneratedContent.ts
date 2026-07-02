@@ -43,7 +43,29 @@ export type GenerateUserContentRequest = {
   knowledgeIds?: string[];
   sourceSnapshot?: Record<string, unknown>;
   voiceNotes?: string;
+  allowQualityFallback?: boolean;
 };
+
+export type GenerateUserContentErrorPayload = {
+  ok?: false;
+  error?: string;
+  errorType?: string;
+  [key: string]: unknown;
+};
+
+export class GenerateUserContentError extends Error {
+  readonly status: number;
+  readonly errorType: string | null;
+  readonly payload: GenerateUserContentErrorPayload | null;
+
+  constructor(status: number, payload: GenerateUserContentErrorPayload | null) {
+    super(payload?.error ?? `Personalized generation failed with ${status}.`);
+    this.name = "GenerateUserContentError";
+    this.status = status;
+    this.errorType = payload?.errorType ?? null;
+    this.payload = payload;
+  }
+}
 
 function fromRow(row: UserGeneratedContentRow): LiveGeneratedContent {
   return {
@@ -123,10 +145,11 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     generated?: LiveGeneratedContent;
     saved?: UserGeneratedContentRow[];
     error?: string;
+    errorType?: string;
   } | null;
 
   if (!response.ok) {
-    throw new Error(payload?.error ?? `Personalized generation failed with ${response.status}.`);
+    throw new GenerateUserContentError(response.status, payload);
   }
 
   const saved = payload?.saved?.[0];
