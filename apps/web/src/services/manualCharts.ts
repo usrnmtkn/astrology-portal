@@ -1,4 +1,4 @@
-import { supabase } from "./auth";
+import { getSupabaseClient } from "./auth";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -229,6 +229,8 @@ function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart)
 }
 
 async function hasRemoteUser(userId: string) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return false;
   }
@@ -239,7 +241,7 @@ async function hasRemoteUser(userId: string) {
 }
 
 async function insertRemoteManualChart(userId: string, input: ManualChartInput): Promise<ManualChart> {
-  const client = supabase;
+  const client = await getSupabaseClient();
 
   if (!client) {
     throw new Error("Supabase auth is not configured.");
@@ -283,7 +285,7 @@ export async function listManualCharts(userId: string): Promise<ManualChart[]> {
     return readLocalManualCharts(userId);
   }
 
-  const client = supabase;
+  const client = await getSupabaseClient();
 
   if (!client) {
     return readLocalManualCharts(userId);
@@ -307,7 +309,7 @@ export async function createManualChart(userId: string, input: ManualChartInput)
     return createLocalManualChart(userId, input);
   }
 
-  const client = supabase;
+  const client = await getSupabaseClient();
 
   if (!client) {
     return createLocalManualChart(userId, input);
@@ -357,7 +359,7 @@ export async function updateManualChart(userId: string, chartId: string, input: 
     return updateLocalManualChart(userId, chartId, input);
   }
 
-  const client = supabase;
+  const client = await getSupabaseClient();
 
   if (!client) {
     return updateLocalManualChart(userId, chartId, input);
@@ -390,7 +392,7 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
     return;
   }
 
-  const client = supabase;
+  const client = await getSupabaseClient();
 
   if (!client) {
     deleteLocalManualChart(userId, chartId);

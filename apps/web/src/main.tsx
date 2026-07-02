@@ -7,9 +7,11 @@ function isAdminContentPath() {
 
 async function startApp() {
   if (!isAdminContentPath()) {
-    await import("./styles.css");
-    await import("./styles/responsive.css");
-    await import("./styles/card-systems.css");
+    await Promise.all([
+      import("./styles.css"),
+      import("./styles/responsive.css"),
+      import("./styles/card-systems.css")
+    ]);
   }
 
   const { App } = await import("./App");

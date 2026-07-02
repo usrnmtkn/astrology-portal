@@ -1,5 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-import type { User } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 export type AuthProvider = "google";
 
@@ -22,9 +21,19 @@ const authRedirectUrl = import.meta.env.VITE_AUTH_REDIRECT_URL as string | undef
 
 export const isAuthConfigured = Boolean(supabaseUrl && supabasePublishableKey);
 
-export const supabase = isAuthConfigured
-  ? createClient(supabaseUrl as string, supabasePublishableKey as string)
-  : null;
+let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
+
+export async function getSupabaseClient() {
+  if (!isAuthConfigured) {
+    return null;
+  }
+
+  supabaseClientPromise ??= import("@supabase/supabase-js").then(({ createClient }) => (
+    createClient(supabaseUrl as string, supabasePublishableKey as string)
+  ));
+
+  return supabaseClientPromise;
+}
 
 function redirectTo() {
   return authRedirectUrl || window.location.origin;
@@ -47,6 +56,8 @@ function authAccountFromUser(user: User): AuthAccount {
 }
 
 export async function getAuthAccount() {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return null;
   }
@@ -61,18 +72,33 @@ export async function getAuthAccount() {
 }
 
 export function onAuthAccountChange(callback: (account: AuthAccount | null) => void) {
-  if (!supabase) {
-    return () => undefined;
-  }
+  let unsubscribe: (() => void) | null = null;
+  let cancelled = false;
 
-  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-    callback(session?.user ? authAccountFromUser(session.user) : null);
+  void getSupabaseClient().then((supabase) => {
+    if (!supabase || cancelled) {
+      return;
+    }
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      callback(session?.user ? authAccountFromUser(session.user) : null);
+    });
+    unsubscribe = () => data.subscription.unsubscribe();
+
+    if (cancelled) {
+      unsubscribe();
+    }
   });
 
-  return () => data.subscription.unsubscribe();
+  return () => {
+    cancelled = true;
+    unsubscribe?.();
+  };
 }
 
 export async function loadPersistedProfile(userId: string): Promise<PersistedProfileData | null> {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return null;
   }
@@ -91,6 +117,8 @@ export async function loadPersistedProfile(userId: string): Promise<PersistedPro
 }
 
 export async function upsertPersistedProfile(userId: string, data: PersistedProfileData) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return;
   }
@@ -109,6 +137,8 @@ export async function upsertPersistedProfile(userId: string, data: PersistedProf
 }
 
 export async function signInWithProvider(provider: AuthProvider) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     throw new Error("Supabase auth is not configured.");
   }
@@ -134,6 +164,8 @@ export async function signUpWithEmail({
   password: string;
   fullName: string;
 }) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     throw new Error("Supabase auth is not configured.");
   }
@@ -163,6 +195,8 @@ export async function signInWithEmail({
   email: string;
   password: string;
 }) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     throw new Error("Supabase auth is not configured.");
   }
@@ -180,6 +214,8 @@ export async function signInWithEmail({
 }
 
 export async function signOutAuth() {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return;
   }
