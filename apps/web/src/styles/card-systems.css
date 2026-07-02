@@ -1,0 +1,190 @@
+/*
+  Two shared card systems:
+  - Natal cards: placement-style rows across Sky, You, and Friends.
+  - Aspect cards: aspect-style rows and calendar transit cards.
+*/
+
+.app-shell.mode-guest,
+.app-shell.mode-member,
+.app-shell.mode-calendar {
+  --natal-card-padding: var(--sky-card-padding);
+  --natal-card-gap: var(--sky-card-grid-gap);
+  --natal-card-min-height: var(--sky-card-min-height);
+  --aspect-card-padding: var(--sky-card-padding);
+  --aspect-card-gap: var(--sky-card-grid-gap);
+  --aspect-card-min-height: var(--sky-card-min-height);
+}
+
+.placement-table-row,
+.planet-placement-row,
+.sky-pl,
+.synastry-placement-row,
+.ro-screen .sky-pl,
+.placement-section .planet-placement-row,
+.friend-placement-row .placement-table-row,
+.friend-placement-row .planet-placement-row,
+.synastry-placement-table .planet-placement-row,
+.synastry-placement-column-inner .synastry-placement-row,
+.friend-chart-page .friend-placement-row-compact .placement-table-row,
+.friend-chart-page .friend-placement-row-compact .planet-placement-row,
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
+  min-height: var(--natal-card-min-height);
+  padding: var(--natal-card-padding);
+  border: 1px solid var(--natal-card-border);
+  border-radius: var(--natal-card-radius);
+  background: var(--natal-card-bg);
+  box-shadow: var(--natal-card-shadow);
+  gap: var(--natal-card-gap);
+}
+
+.placement-table-row__title,
+.planet-placement-row__title,
+.sky-pl-title,
+.synastry-placement-sign,
+.ro-screen .sky-pl-title,
+.placement-section .planet-placement-row__title,
+.synastry-placement-column-inner .synastry-placement-sign {
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--natal-card-title-size);
+  font-weight: var(--natal-card-title-weight);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--natal-card-title-line);
+}
+
+.placement-table-row__description,
+.planet-placement-row__description,
+.sky-pl-copy {
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--natal-card-body-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--natal-card-body-line);
+}
+
+.placement-table-row__meta,
+.planet-placement-row__meta,
+.planet-placement-row__degree,
+.sky-pl-degree,
+.sky-pl-range,
+.synastry-placement-meta,
+.synastry-placement-degree,
+.synastry-placement-house,
+.ro-screen .sky-pl-degree,
+.ro-screen .sky-pl-range,
+.placement-section .planet-placement-row__degree,
+.placement-section .planet-placement-row__meta,
+.synastry-placement-column-inner .synastry-placement-meta,
+.synastry-placement-column-inner .synastry-placement-degree,
+.synastry-placement-column-inner .synastry-placement-house {
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--natal-card-meta-size);
+  font-weight: var(--natal-card-meta-weight);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--natal-card-meta-line);
+}
+
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.aspect-card,
+.tx-card,
+.aspect-section .aspect-row,
+.aspect-section .aspect-row-button,
+.aspect-section .aspect-row-static,
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static {
+  min-height: var(--aspect-card-min-height);
+  padding: var(--aspect-card-padding);
+  border: 1px solid var(--aspect-card-border);
+  border-radius: var(--aspect-card-radius);
+  background: var(--aspect-card-bg);
+  box-shadow: var(--aspect-card-shadow);
+  gap: var(--aspect-card-gap);
+}
+
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.aspect-section .aspect-row,
+.aspect-section .aspect-row-button,
+.aspect-section .aspect-row-static,
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static {
+  --aspect-row-padding: var(--aspect-card-padding);
+  --aspect-row-gap: var(--aspect-card-gap);
+  --aspect-row-copy-size: var(--aspect-card-body-size);
+  --aspect-row-copy-line: var(--aspect-card-body-line);
+  --aspect-row-meta-size: var(--aspect-card-meta-size);
+}
+
+.aspect-row-copy strong,
+.aspect-row-copy h3,
+.tx-title,
+.aspect-section .aspect-row-copy strong,
+.aspect-section .aspect-row-copy h3,
+.friend-chart-page .aspect-row-copy strong,
+.friend-chart-page .aspect-row-copy h3 {
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--aspect-card-title-size);
+  font-weight: var(--aspect-card-title-weight);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--aspect-card-title-line);
+}
+
+.aspect-row-copy p,
+.tx-body,
+.aspect-section .aspect-row-copy p,
+.friend-chart-page .aspect-row-copy p {
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--aspect-card-body-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--aspect-card-body-line);
+}
+
+.aspect-row-timing,
+.aspect-row-meta,
+.tx-date,
+.aspect-section .aspect-row-timing,
+.aspect-section .aspect-row-meta,
+.friend-chart-page .aspect-row-timing,
+.friend-chart-page .aspect-row-meta {
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--aspect-card-meta-size);
+  font-weight: var(--aspect-card-meta-weight);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--aspect-card-meta-line);
+}
+
+.tx-tag {
+  padding: var(--pill-padding);
+  border-radius: var(--pill-radius);
+  background: var(--duration-badge-bg);
+  color: var(--duration-badge-fg);
+  font-family: var(--pill-font-family);
+  font-size: var(--pill-font-size);
+  font-weight: var(--pill-font-weight);
+  letter-spacing: var(--pill-tracking);
+  line-height: var(--pill-line-height);
+}
+
+@media (max-width: 720px) {
+  .app-shell.mode-guest,
+  .app-shell.mode-member,
+  .app-shell.mode-calendar {
+    --natal-card-padding: var(--sky-card-mobile-padding);
+    --natal-card-gap: var(--sky-card-mobile-grid-gap);
+    --natal-card-min-height: var(--sky-card-mobile-min-height);
+    --aspect-card-padding: var(--sky-card-mobile-padding);
+    --aspect-card-gap: var(--sky-card-mobile-grid-gap);
+    --aspect-card-min-height: var(--sky-card-mobile-min-height);
+  }
+}

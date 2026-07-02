@@ -31,8 +31,9 @@
   "scripts": {
     "validate": "node scripts/validate.js",
     "import:v4-rewrites": "node scripts/import-v4-rewrites.js",
-    "build": "node scripts/import-v4-rewrites.js && node scripts/build.js",
-    "test:timing": "node scripts/test-timing-engine.js"
+    "build": "node scripts/import-v4-rewrites.js && node scripts/import-authored-placements.js && node scripts/build.js",
+    "test:timing": "node scripts/test-timing-engine.js",
+    "import:authored-placements": "node scripts/import-authored-placements.js"
   },
   "license": "UNLICENSED",
   "private": true

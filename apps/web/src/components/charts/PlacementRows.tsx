@@ -1,4 +1,5 @@
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { SKY_BODY_ORDER } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import {
   aspectGlyph,
@@ -44,20 +45,7 @@ export type PlacementHouseInsight = {
   rulerBody?: string;
 };
 
-export const placementPlanetOrder = [
-  "Sun",
-  "Moon",
-  "Mercury",
-  "Venus",
-  "Mars",
-  "Jupiter",
-  "Saturn",
-  "Uranus",
-  "Neptune",
-  "Pluto",
-  "Chiron",
-  "Lilith"
-];
+export const placementPlanetOrder = [...SKY_BODY_ORDER];
 const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith"];
 
 const natalSignatureDescriptions: Record<string, string> = {
@@ -154,7 +142,9 @@ const dignityDescriptions: Record<EssentialDignity, string> = {
   fall: "Fall: the planet is opposite its exaltation, so its topics can feel less supported and may need extra care or adjustment."
 };
 
-const planetDignities: Record<string, Partial<Record<string, EssentialDignity>>> = {
+type EssentialDignityValue = EssentialDignity | EssentialDignity[];
+
+const planetDignities: Record<string, Partial<Record<string, EssentialDignityValue>>> = {
   Sun: {
     Leo: "domicile",
     Aries: "exaltation",
@@ -169,9 +159,9 @@ const planetDignities: Record<string, Partial<Record<string, EssentialDignity>>>
   },
   Mercury: {
     Gemini: "domicile",
-    Virgo: "domicile",
+    Virgo: ["domicile", "exaltation"],
     Sagittarius: "detriment",
-    Pisces: "fall"
+    Pisces: ["detriment", "fall"]
   },
   Venus: {
     Taurus: "domicile",
@@ -270,13 +260,7 @@ export function socialPlacementDegree(degree: number) {
   return `${rounded === 30 ? 0 : rounded}°`;
 }
 
-export function dignityFor(planet: string, sign: string): PlacementDignity | null {
-  const dignity = planetDignities[planet]?.[sign] ?? null;
-
-  if (!dignity) {
-    return null;
-  }
-
+function placementDignityFromValue(dignity: EssentialDignity): PlacementDignity {
   const labelParts = dignityLabelParts[dignity];
 
   return {
@@ -285,6 +269,20 @@ export function dignityFor(planet: string, sign: string): PlacementDignity | nul
     tone: labelParts.tone,
     description: dignityDescriptions[dignity]
   };
+}
+
+export function dignitiesFor(planet: string, sign: string): PlacementDignity[] {
+  const dignity = planetDignities[planet]?.[sign] ?? null;
+
+  if (!dignity) {
+    return [];
+  }
+
+  return (Array.isArray(dignity) ? dignity : [dignity]).map(placementDignityFromValue);
+}
+
+export function dignityFor(planet: string, sign: string): PlacementDignity | null {
+  return dignitiesFor(planet, sign)[0] ?? null;
 }
 
 export function placementDignity(position: PlanetPosition) {
@@ -314,15 +312,14 @@ export function natalPlacementDescription(planet: string, context: PlacementDesc
 export function InlineGlyphIcon({
   fallback,
   href,
-  label,
-  preferTextGlyph = false
+  label
 }: {
   fallback: string;
   href: string | null;
   label: string;
   preferTextGlyph?: boolean;
 }) {
-  if (!href || preferTextGlyph) {
+  if (!href) {
     return (
       <span className="inline-glyph-icon inline-glyph-icon--fallback" aria-label={label}>
         {fallback}
@@ -390,21 +387,30 @@ function statusPillClassName(tone: PlacementRowStatus["tone"]) {
   return ["ui-pill", variantClass, "spl-status-item", `spl-status-${tone}`].join(" ");
 }
 
-export function DignityBadge({ dignity, uppercase = false }: { dignity: PlacementDignity | null; uppercase?: boolean }) {
-  if (!dignity) {
+export function DignityBadge({ dignity, uppercase = false }: { dignity: PlacementDignity | PlacementDignity[] | null; uppercase?: boolean }) {
+  const dignities = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
+
+  if (dignities.length === 0) {
     return null;
   }
 
-  const label = uppercase ? uppercaseDignityLabel(dignity) : dignity.label;
-
   return (
-    <FloatingTooltip
-      ariaLabel={`${label}. ${dignity.description}`}
-      className={dignityPillClassName(dignity.tone)}
-      content={dignity.description}
-    >
-      {label}
-    </FloatingTooltip>
+    <>
+      {dignities.map((item) => {
+        const label = uppercase ? uppercaseDignityLabel(item) : item.label;
+
+        return (
+          <FloatingTooltip
+            ariaLabel={`${label}. ${item.description}`}
+            className={dignityPillClassName(item.tone)}
+            content={item.description}
+            key={item.dignity}
+          >
+            {label}
+          </FloatingTooltip>
+        );
+      })}
+    </>
   );
 }
 
@@ -426,8 +432,7 @@ export function PlacementGlyphIcon({
   className,
   fallback,
   pointName,
-  retrograde = false,
-  preferTextGlyph = false
+  retrograde = false
 }: {
   className: string;
   fallback: string;
@@ -436,9 +441,7 @@ export function PlacementGlyphIcon({
   preferTextGlyph?: boolean;
 }) {
   const retrogradeFileName = pointName && retrograde ? pointRetrogradeIconFiles[pointName] : undefined;
-  const fileName = pointName
-    ? retrogradeFileName ?? (preferTextGlyph ? undefined : pointIconFiles[pointName])
-    : undefined;
+  const fileName = pointName ? retrogradeFileName ?? pointIconFiles[pointName] : undefined;
   const href = zodiacAssetHref(fileName);
   const useTextGlyph = !href;
   const glyphClassName = [
@@ -471,7 +474,7 @@ export function PlacementTableRow({
   asButton?: boolean;
   degree?: string | null;
   description?: string | null;
-  dignity?: PlacementDignity | null;
+  dignity?: PlacementDignity | PlacementDignity[] | null;
   glyph: string;
   house?: number | null;
   onClick?: () => void;
@@ -481,7 +484,8 @@ export function PlacementTableRow({
   variant?: "natal" | "friend" | "composite";
 }) {
   const meta = placementTableMeta(house, degree);
-  const hasDignity = Boolean(dignity);
+  const dignityItems = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
+  const hasDignity = dignityItems.length > 0;
   const className = [
     "placement-table-row",
     `placement-table-row--${variant}`,
@@ -507,7 +511,7 @@ export function PlacementTableRow({
         {description ? <span className="placement-table-row__description">{description}</span> : null}
         {hasDignity ? (
           <span className="placement-table-row__status" aria-label={`${title} status`}>
-            <DignityBadge dignity={dignity ?? null} />
+            <DignityBadge dignity={dignityItems} />
           </span>
         ) : null}
       </span>
@@ -569,7 +573,7 @@ export function PlanetPlacementRow({
   ariaLabel?: string;
   degree: string;
   description?: string | null;
-  dignity?: PlacementDignity | null;
+  dignity?: PlacementDignity | PlacementDignity[] | null;
   durationLabel?: string | null;
   glyph: string;
   house?: number | null;
@@ -714,7 +718,7 @@ export function FriendPlacementTable({
       {showTitle ? <h3 className="friend-placement-column-title">{title}</h3> : null}
       <div className="friend-placement-table">
         {rows.map((row) => {
-          const dignity = dignityFor(row.label, row.sign);
+          const dignity = dignitiesFor(row.label, row.sign);
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
@@ -783,13 +787,13 @@ export function SynastryPlacementsComparison({
       <div className="synastry-placement-columns">
         <SynastryPlacementColumn
           title={outerName}
-          ringLabel="Outer ring"
+          ringLabel={`${outerName}'s houses`}
           placements={relationshipPlacementPreview(outerSky)}
           variant="outer"
         />
         <SynastryPlacementColumn
           title={innerTitle}
-          ringLabel="Inner ring"
+          ringLabel={innerIsSelf ? "Your houses" : `${innerName}'s houses`}
           placements={relationshipPlacementPreview(innerSky)}
           variant="inner"
         />
@@ -817,17 +821,28 @@ function SynastryPlacementColumn({
       </div>
       {placements.length > 0 ? (
         <div className="synastry-placement-table">
-          {placements.map((position) => (
-            <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${ringLabel}-${position.planet}`}>
-              <SynastryPlacementLead position={position} />
-              <span className="synastry-placement-sign">{position.sign}</span>
-              <span className="synastry-placement-meta">
-                <span>{formatPlacementDegree(position)}</span>
-                <span aria-hidden="true">·</span>
-                <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
-              </span>
-            </div>
-          ))}
+          {placements.map((position) => {
+            const dignities = dignitiesFor(position.planet, position.sign);
+
+            return (
+              <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${ringLabel}-${position.planet}`}>
+                <SynastryPlacementLead position={position} />
+                <span className="synastry-placement-copy">
+                  <span className="synastry-placement-sign">{position.sign}</span>
+                  {dignities.length > 0 ? (
+                    <span className="synastry-placement-status">
+                      <DignityBadge dignity={dignities} />
+                    </span>
+                  ) : null}
+                </span>
+                <span className="synastry-placement-meta">
+                  <span>{formatPlacementDegree(position)}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
+                </span>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>

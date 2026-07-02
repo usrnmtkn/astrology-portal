@@ -9,6 +9,7 @@ async function startApp() {
   if (!isAdminContentPath()) {
     await import("./styles.css");
     await import("./styles/responsive.css");
+    await import("./styles/card-systems.css");
   }
 
   const { App } = await import("./App");

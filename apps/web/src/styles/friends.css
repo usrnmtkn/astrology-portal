@@ -339,8 +339,8 @@
 }
 
 .manual-chart-avatar {
-  width: 82px;
-  height: 82px;
+  width: 58px;
+  height: 58px;
   font-size: var(--text-button-size);
 }
 
@@ -813,11 +813,18 @@
 }
 
 .friend-hero-copy p,
+.you-profection-line,
 .you-signature-row {
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
+}
+
+.you-profection-line {
+  display: block;
+  min-width: 0;
+  letter-spacing: var(--tracking-number);
 }
 
 .you-signature-row {
@@ -1020,39 +1027,11 @@
   padding: var(--friend-composite-row-padding);
 }
 
-.you-signatures-card,
-.friend-signature-card {
+.you-signatures-card {
   overflow: hidden;
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
-}
-
-.friend-chart-page .friend-signature-card {
-  border-color: var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-}
-
-.friend-chart-page .friend-signature-card .you-signatures-main {
-  padding: 28px 32px;
-}
-
-.friend-chart-page .friend-signature-card .you-signatures-main h3 {
-  font-size: var(--text-card-title);
-  line-height: var(--leading-h1);
-}
-
-.friend-chart-page .friend-signature-card .you-signatures-main p {
-  margin-top: 0;
-  color: var(--card-body-color);
-  font-size: var(--text-description);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
-}
-
-.friend-chart-page .friend-signature-card .elemental-balance {
-  padding: 14px 32px 18px;
 }
 
 .you-signatures-main {
@@ -1208,12 +1187,6 @@
 
 .synastry-placement-column-header h3 {
   margin: 0;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
 }
 
 .synastry-placement-panel-title {
@@ -1353,10 +1326,11 @@
 .synastry-placement-chip b {
   display: block;
   color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--text-button-size);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
   font-weight: var(--weight-medium);
-  line-height: var(--leading-h1);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
 }
 
 .synastry-placement-column-inner .synastry-placement-glyph,
@@ -1637,10 +1611,6 @@
   --aspect-row-padding: 18px 22px;
   --aspect-row-glyph-width: 82px;
   --aspect-row-glyph-size: 22px;
-  --aspect-row-title-size: var(--friend-row-title-size);
-  --aspect-row-title-weight: var(--weight-semibold);
-  --aspect-row-title-line: var(--friend-card-title-line);
-  --aspect-row-title-tracking: -0.015em;
   --aspect-row-copy-margin: 4px;
   --aspect-row-copy-color: var(--card-body-color);
   --aspect-row-copy-size: var(--friend-row-description-size);
@@ -1648,8 +1618,6 @@
   --aspect-row-meta-width: 30px;
   --aspect-row-meta-size: var(--text-meta-size);
   --aspect-row-meta-weight: var(--weight-bold);
-  --aspect-row-subtitle-size: 12px;
-  --aspect-row-subtitle-tracking: 0.08em;
   --aspect-row-action-margin: 8px;
   --aspect-row-action-color: var(--app-text);
   border-color: var(--card-border);
