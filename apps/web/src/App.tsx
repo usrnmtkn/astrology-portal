@@ -7159,9 +7159,9 @@ const YouPage = lazy(() =>
   }))
 );
 
-const LunarCalendar = lazy(() =>
-  import("./features/calendar/LunarCalendar").then((module) => ({
-    default: module.LunarCalendar
+const CalendarRoute = lazy(() =>
+  import("./routes/CalendarRoute").then((module) => ({
+    default: module.CalendarRoute
   }))
 );
 
@@ -9225,17 +9225,16 @@ export function App() {
                 />
               )}
               {mode === "calendar" && (
-                <Suspense fallback={<FeatureLoadingFallback />}>
-                  <LunarCalendar
-                    generatedContent={skyGeneratedContent}
-                    location={location}
-                    onLocationChange={(nextLocation) => {
-                      setLocation(nextLocation);
-                      setManualLocation(nextLocation.label);
-                      setHasLocationPreference(true);
-                    }}
-                  />
-                </Suspense>
+                <CalendarRoute
+                  fallback={<FeatureLoadingFallback />}
+                  generatedContent={skyGeneratedContent}
+                  location={location}
+                  onLocationChange={(nextLocation) => {
+                    setLocation(nextLocation);
+                    setManualLocation(nextLocation.label);
+                    setHasLocationPreference(true);
+                  }}
+                />
               )}
               {mode === "profile" && (
                 userProfile ? (
