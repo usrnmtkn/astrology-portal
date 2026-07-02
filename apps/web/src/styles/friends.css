@@ -1197,15 +1197,6 @@
   text-transform: uppercase;
 }
 
-.synastry-placement-panel-ring {
-  color: var(--muted);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
 .synastry-placement-table {
   display: grid;
   position: relative;
@@ -1309,9 +1300,14 @@
 }
 
 .synastry-placement-sign {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  line-height: 1;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
   white-space: nowrap;
 }
 
@@ -1321,7 +1317,6 @@
   justify-items: start;
 }
 
-.synastry-placement-sign,
 .synastry-placement-planet,
 .synastry-placement-chip b {
   display: block;
@@ -1331,6 +1326,17 @@
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
   line-height: var(--leading-title);
+}
+
+.synastry-placement-sign-svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.synastry-placement-sign {
+  color: var(--ink);
 }
 
 .synastry-placement-column-inner .synastry-placement-glyph,

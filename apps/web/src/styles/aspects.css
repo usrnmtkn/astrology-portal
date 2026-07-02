@@ -138,6 +138,17 @@
   line-height: var(--leading-meta);
 }
 
+.aspect-row .aspect-row-subtitle,
+.aspect-row-button .aspect-row-subtitle,
+.aspect-row-static .aspect-row-subtitle,
+.aspect-row-copy .ui-pill {
+  place-self: start;
+  justify-self: start;
+  width: max-content;
+  inline-size: max-content;
+  max-width: 100%;
+}
+
 .aspect-row-timing > span:not(.planet-placement-row__duration) {
   min-width: 0;
   overflow: hidden;

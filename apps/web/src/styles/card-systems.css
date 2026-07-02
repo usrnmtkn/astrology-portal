@@ -40,10 +40,9 @@
 .placement-table-row__title,
 .planet-placement-row__title,
 .sky-pl-title,
-.synastry-placement-sign,
 .ro-screen .sky-pl-title,
 .placement-section .planet-placement-row__title,
-.synastry-placement-column-inner .synastry-placement-sign {
+.synastry-placement-column-inner .synastry-placement-planet {
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--natal-card-title-size);
@@ -104,6 +103,10 @@
   background: var(--aspect-card-bg);
   box-shadow: var(--aspect-card-shadow);
   gap: var(--aspect-card-gap);
+}
+
+.tx-card {
+  row-gap: var(--space-1);
 }
 
 .aspect-row,

@@ -47,6 +47,8 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
 const calendarStorageVersion = "v6";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
+const enableCalendarApi = import.meta.env.PROD
+  || String(import.meta.env.VITE_USE_LUNAR_CALENDAR_API ?? "false").toLowerCase() === "true";
 
 type StoredCalendarPayload = {
   savedAt: number;
@@ -157,11 +159,15 @@ async function loadCalendarData(
   anchor: Date,
   detail: "basic" | "full"
 ) {
+  const loadCalendar = mode === "week" ? getLunarCalendarWeek : getLunarCalendarMonth;
+
+  if (!enableCalendarApi) {
+    return loadCalendar(location, anchor, { detail });
+  }
+
   try {
     return await getLunarCalendarFromApi(location, mode, anchor, detail);
   } catch {
-    const loadCalendar = mode === "week" ? getLunarCalendarWeek : getLunarCalendarMonth;
-
     return loadCalendar(location, anchor, { detail });
   }
 }
