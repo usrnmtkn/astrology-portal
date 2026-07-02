@@ -9233,7 +9233,7 @@ export function App() {
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
-            {!isSignupMode && !usesFullPageLayout && !isSkyLoading && (
+            {!isSignupMode && !usesFullPageLayout && !isSkyLoading && sky && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
@@ -9255,7 +9255,6 @@ export function App() {
                 <SkyLoadingWheel />
               </section>
             )}
-
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <section className="today-hero" aria-label="Today controls">
@@ -9330,7 +9329,7 @@ export function App() {
                 <section className="today-summary-cards" aria-label="Sky summary">
                   {isSkyLoading ? (
                     <SkyLoadingCards compact />
-                  ) : (
+                  ) : sky ? (
                     <SkyCards
                       sky={sky}
                       dateLabel={formatSkyFullChartDate(skyDate)}
@@ -9342,13 +9341,17 @@ export function App() {
                         setSkyFullChartOpen(true);
                       }}
                     />
+                  ) : (
+                    <div className="sky-card sky-card--empty" aria-live="polite">
+                      <p>Current sky data could not load.</p>
+                    </div>
                   )}
                 </section>
               )}
               {isSkyLoading && (
                 <SkyLoadingCards />
               )}
-              {!isSkyLoading && (mode === "guest" || mode === "member") && (
+              {!isSkyLoading && sky && (mode === "guest" || mode === "member") && (
                 <RetrogradeCallout
                   positions={sky.positions}
                   generatedAt={sky.generatedAt}
@@ -9356,7 +9359,7 @@ export function App() {
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
-              {!isSkyLoading && mode === "guest" && (
+              {!isSkyLoading && sky && mode === "guest" && (
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
@@ -9366,7 +9369,7 @@ export function App() {
                   onOpenDetail={setSelectedSkyDetail}
                 />
               )}
-              {!isSkyLoading && mode === "member" && (
+              {!isSkyLoading && sky && mode === "member" && (
                 <TodayView
                   positions={sky.positions}
                   aspects={sky.aspects}
@@ -9406,7 +9409,7 @@ export function App() {
                     selectedTransit={selectedTransit}
                     selectedTransitId={selectedTransitId}
                     setSelectedTransitId={setSelectedTransitId}
-                    skyGeneratedAt={sky.generatedAt}
+                    skyGeneratedAt={sky?.generatedAt ?? ""}
                     onCreateChart={() => openCreateChartModal()}
                     generatedContent={natalGeneratedContent}
                   />
@@ -9424,7 +9427,7 @@ export function App() {
                   />
                 )
               )}
-              {mode === "friends" && userProfile && (
+              {mode === "friends" && userProfile && sky && (
                 <ManualChartsPanel
                   profile={userProfile}
                   currentSky={sky}
@@ -9492,7 +9495,7 @@ export function App() {
             </button>
           )}
 
-          {skyFullChartOpen && (
+          {skyFullChartOpen && sky && (
             <ModalPortal
               className="sky-full-chart-modal-root"
               panelClassName="sky-full-chart-panel"
