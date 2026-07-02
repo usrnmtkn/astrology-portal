@@ -8268,55 +8268,65 @@ export function App() {
           }
 
           const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
-          const generated = await generateUserContent({
-            subjectType: "you_transit",
-            subjectId,
-            contentKey,
-            surface: "you",
-            mode: "in_depth",
-            eventType: "you-transit-to-natal",
-            headline: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
-            targetDate: skyDate,
-            facts: {
-              type: "you_transit_to_natal_description",
+          let generated: LiveGeneratedContent | null = null;
+
+          try {
+            generated = await generateUserContent({
+              subjectType: "you_transit",
+              subjectId,
+              contentKey,
+              surface: "you",
+              mode: "in_depth",
+              eventType: "you-transit-to-natal",
+              headline: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
               targetDate: skyDate,
-              person: {
-                name: profile.name,
-                bigThree: {
-                  sun: profile.sun,
-                  moon: profile.moon,
-                  rising: profile.rising
+              facts: {
+                type: "you_transit_to_natal_description",
+                targetDate: skyDate,
+                person: {
+                  name: profile.name,
+                  bigThree: {
+                    sun: profile.sun,
+                    moon: profile.moon,
+                    rising: profile.rising
+                  }
+                },
+                transit: compactTransitItemFact(transit, skyDate),
+                timing: {
+                  durationLabel: timing.durationLabel,
+                  rangeLabel: timing.rangeLabel,
+                  label: timing.label
                 }
               },
-              transit: compactTransitItemFact(transit, skyDate),
-              timing: {
-                durationLabel: timing.durationLabel,
-                rangeLabel: timing.rangeLabel,
-                label: timing.label
-              }
-            },
-            knowledgeIds: [transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint)],
-            sourceSnapshot: {
-              source: "tldrastro-local-transits",
-              targetDate: skyDate,
-              chartId: subjectId,
-              transitId: transit.id
-            },
-            voiceNotes: [
-              "Write this as a personalized explanation for one transit-to-natal aspect card.",
-              `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
-              "Make the summary one concrete sentence for the collapsed card, without a visible TLDR label.",
-              "Return 2 to 3 sections in grounded, specific language. Do not start section bodies with TLDR or any other visible scaffold label.",
-              "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
-              "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
-              "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
-              "Prefer: 'You may feel a quiet pressure today, even if you cannot explain exactly why. Notice where it shows up in your body before trying to solve it. Naming it honestly may be enough for now.'",
-              "Do not write like: 'There can be a low hum of pressure today that is hard to name out loud. It tends to live in the body before it becomes a thought.'",
-              "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
-              "Keep it practical. Avoid generic fortune-telling.",
-              "Do not mention databases, generated content, source-backed content, or knowledge base."
-            ].join("\n")
-          });
+              knowledgeIds: [transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint)],
+              sourceSnapshot: {
+                source: "tldrastro-local-transits",
+                targetDate: skyDate,
+                chartId: subjectId,
+                transitId: transit.id
+              },
+              voiceNotes: [
+                "Write this as a personalized explanation for one transit-to-natal aspect card.",
+                `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
+                "Make the summary one concrete sentence for the collapsed card, without a visible TLDR label.",
+                "Return 2 to 3 sections in grounded, specific language. Do not start section bodies with TLDR or any other visible scaffold label.",
+                "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
+                "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
+                "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
+                "Prefer: 'You may feel a quiet pressure today, even if you cannot explain exactly why. Notice where it shows up in your body before trying to solve it. Naming it honestly may be enough for now.'",
+                "Do not write like: 'There can be a low hum of pressure today that is hard to name out loud. It tends to live in the body before it becomes a thought.'",
+                "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
+                "Keep it practical. Avoid generic fortune-telling.",
+                "Do not mention databases, generated content, source-backed content, or knowledge base."
+              ].join("\n")
+            });
+          } catch (error) {
+            console.warn("Personalized transit generation failed for one transit; continuing batch.", {
+              contentKey,
+              error
+            });
+            continue;
+          }
 
           if (cancelled) {
             return;
@@ -13370,11 +13380,6 @@ function ProfileView({
       const traditionalRulerPosition = traditionalRulerBody
         ? natalSky?.positions.find((candidate) => candidate.planet === traditionalRulerBody) ?? null
         : null;
-      setSeededPlacementDrafts((current) => {
-        const next = new Set(current);
-        next.add(contentKey);
-        return next;
-      });
 
       await generateUserContent({
         subjectType: "natal_placement",
@@ -13474,6 +13479,11 @@ function ProfileView({
           "Do not mention drafts, review status, generated content, databases, backend, or knowledge base.",
           "Keep it specific, human, and around 170 to 260 words."
         ].join("\n")
+      });
+      setSeededPlacementDrafts((current) => {
+        const next = new Set(current);
+        next.add(contentKey);
+        return next;
       });
     } catch (error) {
       console.warn("Natal placement write-up draft seeding failed.", error);
