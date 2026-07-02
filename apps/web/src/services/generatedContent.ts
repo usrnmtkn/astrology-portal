@@ -1,4 +1,4 @@
-import { supabase } from "./auth";
+import { getSupabaseClient } from "./auth";
 import { generatedContentAliases } from "./generatedContentKeys";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
@@ -212,6 +212,8 @@ export function generatedContentDrilldown(content?: LiveGeneratedContent | null)
 }
 
 export async function loadLiveGeneratedContent(surface: string, targetDate?: string) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return new Map<string, LiveGeneratedContent>();
   }

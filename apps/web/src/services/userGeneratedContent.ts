@@ -1,4 +1,4 @@
-import { supabase } from "./auth";
+import { getSupabaseClient } from "./auth";
 import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedContent";
 
 export type UserGeneratedSubjectType =
@@ -96,6 +96,8 @@ export async function loadUserGeneratedInterpretation({
   contentKey: string;
   targetDate?: string;
 }) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     return null;
   }
@@ -123,6 +125,8 @@ export async function loadUserGeneratedInterpretation({
 }
 
 export async function generateUserContent(request: GenerateUserContentRequest) {
+  const supabase = await getSupabaseClient();
+
   if (!supabase) {
     throw new Error("Sign in before generating personalized content.");
   }

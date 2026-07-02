@@ -136,7 +136,7 @@ import {
 } from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 
-type PortalMode = AccountMode | "profile" | "friends" | "calendar" | "account" | "settings";
+type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -1419,6 +1419,37 @@ function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
   }
 
   return currentMode;
+}
+
+function hasStoredSupabaseSession() {
+  try {
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index) ?? "";
+
+      if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+}
+
+function shouldBootstrapAuth(currentMode: PortalMode) {
+  if (!isAuthConfigured) {
+    return false;
+  }
+
+  if (hasStoredSupabaseSession()) {
+    return true;
+  }
+
+  const urlMode = portalModeFromUrl();
+  const authDependentModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+
+  return authDependentModes.includes(urlMode ?? currentMode);
 }
 
 const defaultTransitForm: TransitForm = {
@@ -7312,6 +7343,7 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
+  const authBootstrapStartedRef = useRef(false);
   const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -7417,6 +7449,14 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const shouldLoadSkyGenerated = mode === "guest" || mode === "member";
+
+    if (!shouldLoadSkyGenerated) {
+      setSkyGeneratedContent(new Map());
+      return () => {
+        cancelled = true;
+      };
+    }
 
     loadLiveGeneratedContent("sky", skyDate)
       .then((content) => {
@@ -7434,7 +7474,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [skyDate]);
+  }, [mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -8366,6 +8406,16 @@ export function App() {
   ]);
 
   useEffect(() => {
+    if (!shouldBootstrapAuth(mode)) {
+      setAuthAccountChecked(true);
+      return;
+    }
+
+    if (authBootstrapStartedRef.current) {
+      return;
+    }
+
+    authBootstrapStartedRef.current = true;
     let cancelled = false;
 
     async function applyAuthAccount(account: AuthAccount | null) {
@@ -8485,7 +8535,7 @@ export function App() {
       cancelled = true;
       unsubscribe();
     };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
