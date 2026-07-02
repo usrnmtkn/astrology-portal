@@ -7159,6 +7159,12 @@ const YouPage = lazy(() =>
   }))
 );
 
+const YouRoute = lazy(() =>
+  import("./routes/YouRoute").then((module) => ({
+    default: module.YouRoute
+  }))
+);
+
 const CalendarRoute = lazy(() =>
   import("./routes/CalendarRoute").then((module) => ({
     default: module.CalendarRoute
@@ -9237,39 +9243,41 @@ export function App() {
                 />
               )}
               {mode === "profile" && (
-                userProfile ? (
-                  <ProfileView
-                    profile={userProfile}
-                    onUpdateProfile={setUserProfile}
-                    transitForm={transitForm}
-                    transitItems={activeTransits}
-                    natalSky={profileNatalSky}
-                    personalTiming={personalTiming}
-                    personalTimingGenerated={personalTimingGenerated}
-                    personalTimingGeneratedStatus={personalTimingGeneratedStatus}
-                    personalTimingStatus={personalTimingStatus}
-                    personalTransitGeneratedContent={personalTransitGeneratedContent}
-                    transitsDrawn={transitsDrawn}
-                    selectedTransit={selectedTransit}
-                    selectedTransitId={selectedTransitId}
-                    setSelectedTransitId={setSelectedTransitId}
-                    skyGeneratedAt={sky?.generatedAt ?? ""}
-                    onCreateChart={() => openCreateChartModal()}
-                    generatedContent={natalGeneratedContent}
-                  />
-                ) : (
-                  <SignupView
-                    initialMode={accountIntent}
-                    onClose={() => {
-                      setAccountIntent("create");
-                      navigateToPortalMode(userProfile ? "profile" : "guest");
-                    }}
-                    onCreateProfile={(nextProfile) => {
-                      setUserProfile(nextProfile);
-                      navigateToPortalMode("profile");
-                    }}
-                  />
-                )
+                <YouRoute>
+                  {userProfile ? (
+                    <ProfileView
+                      profile={userProfile}
+                      onUpdateProfile={setUserProfile}
+                      transitForm={transitForm}
+                      transitItems={activeTransits}
+                      natalSky={profileNatalSky}
+                      personalTiming={personalTiming}
+                      personalTimingGenerated={personalTimingGenerated}
+                      personalTimingGeneratedStatus={personalTimingGeneratedStatus}
+                      personalTimingStatus={personalTimingStatus}
+                      personalTransitGeneratedContent={personalTransitGeneratedContent}
+                      transitsDrawn={transitsDrawn}
+                      selectedTransit={selectedTransit}
+                      selectedTransitId={selectedTransitId}
+                      setSelectedTransitId={setSelectedTransitId}
+                      skyGeneratedAt={sky?.generatedAt ?? ""}
+                      onCreateChart={() => openCreateChartModal()}
+                      generatedContent={natalGeneratedContent}
+                    />
+                  ) : (
+                    <SignupView
+                      initialMode={accountIntent}
+                      onClose={() => {
+                        setAccountIntent("create");
+                        navigateToPortalMode(userProfile ? "profile" : "guest");
+                      }}
+                      onCreateProfile={(nextProfile) => {
+                        setUserProfile(nextProfile);
+                        navigateToPortalMode("profile");
+                      }}
+                    />
+                  )}
+                </YouRoute>
               )}
               {mode === "friends" && userProfile && sky && (
                 <ManualChartsPanel
