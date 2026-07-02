@@ -64,15 +64,38 @@ function addMonths(date: Date, amount: number) {
 }
 
 function scheduleIdleTask(callback: () => void, timeout = 1_500) {
-  if (typeof window.requestIdleCallback === "function") {
-    const task = window.requestIdleCallback(callback, { timeout });
+  let cancelled = false;
+  let cleanup = () => {};
+  let firstFrame = 0;
+  let secondFrame = 0;
 
-    return () => window.cancelIdleCallback(task);
+  const runWhenIdle = () => {
+    if (cancelled) return;
+
+    if (typeof window.requestIdleCallback === "function") {
+      const task = window.requestIdleCallback(callback, { timeout });
+      cleanup = () => window.cancelIdleCallback(task);
+      return;
+    }
+
+    const task = window.setTimeout(callback, 600);
+    cleanup = () => window.clearTimeout(task);
+  };
+
+  if (typeof window.requestAnimationFrame === "function") {
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(runWhenIdle);
+    });
+  } else {
+    runWhenIdle();
   }
 
-  const task = window.setTimeout(callback, 300);
-
-  return () => window.clearTimeout(task);
+  return () => {
+    cancelled = true;
+    if (firstFrame) window.cancelAnimationFrame(firstFrame);
+    if (secondFrame) window.cancelAnimationFrame(secondFrame);
+    cleanup();
+  };
 }
 
 function dateKeyFromDate(date: Date) {
@@ -676,7 +699,7 @@ function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedCon
 }
 
 function calendarEventDescription(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
-  return content?.summary?.trim() || generatedContentParagraphs(content)[0] || event.description;
+  return content?.summary?.trim() || generatedContentParagraphs(content)[0] || "";
 }
 
 function textParagraphs(value?: string | null) {
@@ -2026,7 +2049,7 @@ function TransitCard({
         ))}
       </span>
       <h3 className="tx-title">{title}</h3>
-      <p className="tx-body">{description}</p>
+      {description ? <p className="tx-body">{description}</p> : null}
       <div className="tx-foot">
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>

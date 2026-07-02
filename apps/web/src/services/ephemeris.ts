@@ -67,7 +67,6 @@ export type LunarCalendarEvent = {
   fromSign?: string;
   toSign?: string;
   eclipseType?: LunarCalendarEclipseType;
-  description: string;
 };
 
 export type LunarCalendarDay = {
@@ -916,12 +915,6 @@ function monthGridRange(month: Date, timeZone: string) {
   return { gridStart, gridEnd };
 }
 
-function eventSignDescription(sign: string) {
-  const element = elementForSign(sign);
-
-  return `${sign} brings a ${element.toLowerCase()} tone to the event.`;
-}
-
 function moonPhaseIllumination(swe: SwissEphInstance, date: Date) {
   return illuminationFromPhaseAngle(moonSunPhaseAngle(swe, date));
 }
@@ -1016,8 +1009,7 @@ function findLunations(
             glyph: phaseTarget.glyph,
             primary: phaseTarget.primary,
             sign,
-            eclipseType: eclipseType ?? undefined,
-            description: `${title} exact. ${eventSignDescription(sign)}`
+            eclipseType: eclipseType ?? undefined
           });
         }
       });
@@ -1126,8 +1118,7 @@ function findIngresses(
           planet,
           fromSign: previousSign,
           toSign,
-          sign: toSign,
-          description: `${planet} leaves ${previousSign} and enters ${toSign}. ${eventSignDescription(toSign)}`
+          sign: toSign
         });
       }
 
@@ -1210,8 +1201,7 @@ function findStations(
             glyph,
             primary: true,
             planet,
-            sign,
-            description: `${planet} stations ${direction} in ${sign}. ${eventSignDescription(sign)}`
+            sign
           });
         }
       }
@@ -1299,8 +1289,7 @@ function findActiveRetrogrades(
         glyph,
         primary: false,
         planet,
-        sign,
-        description: `${planet} is retrograde in ${sign}. ${eventSignDescription(sign)}`
+        sign
       });
     });
   }
@@ -1405,8 +1394,7 @@ function findSkyAspects(
                 glyph: `${firstGlyph}${secondGlyph}`,
                 primary: !firstPlanet.includes("Moon") && !secondPlanet.includes("Moon"),
                 planets: [firstPlanet, secondPlanet],
-                aspect,
-                description: skyAspectDescription(firstPlanet, secondPlanet, aspect)
+                aspect
               });
             }
           }
@@ -1419,18 +1407,6 @@ function findSkyAspects(
   });
 
   return events;
-}
-
-function skyAspectDescription(firstPlanet: string, secondPlanet: string, aspect: string) {
-  const aspectTone: Record<string, string> = {
-    conjunction: "concentrates their themes in one place",
-    sextile: "opens a workable exchange between their themes",
-    square: "puts pressure on their themes until a clearer response is needed",
-    trine: "lets their themes move with less friction",
-    opposition: "pulls their themes into direct comparison"
-  };
-
-  return `${firstPlanet} ${aspect} ${secondPlanet} ${aspectTone[aspect] ?? "links their themes for the day"}.`;
 }
 
 const lunarCalendarMonthCache = new Map<string, Promise<LunarCalendarMonth>>();
@@ -1685,18 +1661,6 @@ function aspectForSeparation(separation: number) {
     .sort((a, b) => a.orb - b.orb)[0];
 }
 
-function aspectMeaning(from: CalculatedPlanet, to: CalculatedPlanet, type: string) {
-  const tone: Record<string, string> = {
-    conjunction: "are speaking in the same room.",
-    sextile: "can cooperate with a little invitation.",
-    square: "create friction that wants a cleaner choice.",
-    trine: "move with unusual ease today.",
-    opposition: "pull attention across two poles."
-  };
-
-  return `${from.theme[0].toUpperCase()}${from.theme.slice(1)} and ${to.theme} ${tone[type] ?? "are in conversation."}`;
-}
-
 function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"] {
   const aspects: SkySnapshot["aspects"] = [];
 
@@ -1709,8 +1673,7 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
           from: from.planet,
           to: to.planet,
           type: aspect.type,
-          orb: Number(aspect.orb.toFixed(1)),
-          meaning: aspectMeaning(from, to, aspect.type)
+          orb: Number(aspect.orb.toFixed(1))
         });
       }
     });
@@ -1813,74 +1776,5 @@ export async function getAstrodienstSky(
     dominantElement: elementForSign(sun.sign),
     positions: positions.map(({ longitude, speed, ...position }) => position),
     aspects: calculateAspects(positions)
-  };
-}
-
-export function getCurrentSky(location: LocationInput = defaultLocation, date: Date = new Date()): SkySnapshot {
-  const daySeed = Math.floor(date.getTime() / 86_400_000);
-  const locationSeed = Math.round((location.latitude + 90) * 10 + (location.longitude + 180) * 10);
-
-  const basePositions: PlanetPosition[] = planets.map(([planet, glyph, theme], index) => {
-    const raw = daySeed * (index + 3) + locationSeed + index * 47;
-    const signIndex = Math.abs(raw) % signs.length;
-    const [sign, signGlyph] = signs[signIndex];
-    const motion: PlanetPosition["motion"] = index > 1 && raw % 5 === 0 ? "retrograde" : "direct";
-
-    return {
-      planet,
-      glyph,
-      sign,
-      signGlyph,
-      degree: Math.abs(raw * 7) % 30,
-      house: 1,
-      motion,
-      theme
-    };
-  });
-  const ascendant = basePositions[7].sign;
-  const positions: PlanetPosition[] = basePositions.map((position) => ({
-    ...position,
-    house: wholeSignHouse(position.sign, ascendant)
-  }));
-
-  return {
-    location,
-    generatedAt: date.toISOString(),
-    ascendant,
-    ascendantLongitude: signs.findIndex(([name]) => name === ascendant) * 30,
-    midheaven: positions[4].sign,
-    midheavenLongitude: signs.findIndex(([name]) => name === positions[4].sign) * 30,
-    moonPhase: "Waxing Crescent",
-    moonStatus: {
-      kind: "sign",
-      label: positions[1]?.sign ?? "Moon",
-      sign: positions[1]?.sign ?? "Moon"
-    },
-    moonSignTransition: null,
-    dominantElement: ["Fire", "Earth", "Air", "Water"][Math.abs(locationSeed + daySeed) % 4] as SkySnapshot["dominantElement"],
-    positions,
-    aspects: [
-      {
-        from: "Moon",
-        to: "Venus",
-        type: "trine",
-        orb: 2.1,
-        meaning: "Emotional tone and appetite for ease are cooperating."
-      },
-      {
-        from: "Mercury",
-        to: "Saturn",
-        type: "square",
-        orb: 3.4,
-        meaning: "Plans may need cleaner commitments before they move."
-      },
-      {
-        from: "Mars",
-        to: "Jupiter",
-        type: "sextile",
-        orb: 1.8,
-        meaning: "Effort can grow quickly when it has a specific target."
-      }
-    ]
   };
 }

@@ -68,7 +68,6 @@ export type SkySnapshot = {
     to: string;
     type: string;
     orb: number;
-    meaning: string;
   }>;
 };
 
