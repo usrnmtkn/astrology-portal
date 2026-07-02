@@ -7,6 +7,8 @@ sources/*
 !sources/tldr-astrology-rewrite-csvs/**
 !sources/tldr-astrology-tarot-rewrites-v4/
 !sources/tldr-astrology-tarot-rewrites-v4/**
+!sources/authored/
+!sources/authored/**
 !sources/source-backed-revisions/
 !sources/source-backed-revisions/tldr-astro-codex-source-backed-revisions-adjusted.csv
 .DS_Store

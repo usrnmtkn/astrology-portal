@@ -47,8 +47,8 @@
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: none;
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
-  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(58%) sepia(88%) saturate(1263%) hue-rotate(342deg) brightness(99%) contrast(91%);
-  --synastry-inner-glyph: #f28a3d;
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(39%) sepia(76%) saturate(1842%) hue-rotate(217deg) brightness(92%) contrast(91%);
+  --synastry-inner-glyph: #4169e1;
   --color-dig-good: #3f7a3a;
   --color-dig-good-bg: rgba(63, 122, 58, 0.13);
   --color-aspect-hard: rgba(176, 112, 63, 0.62);
@@ -56,12 +56,12 @@
   --color-aspect-adjust: #8fa873;
   --color-aspect-union: #8d8982;
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
-  --color-synastry-accent: #c8915f;
+  --color-synastry-accent: #4169e1;
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
-  --symbols: "Noto Sans Symbols", "Segoe UI Symbol", serif;
+  --symbols: "Apple Symbols", "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol", Symbola, serif;
   --font-serif: var(--serif);
   --font-sans: var(--sans);
   --font-mono: var(--mono);
@@ -95,7 +95,7 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
-  --article-link: #2a55c8;
+  --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
@@ -170,10 +170,11 @@
   --glass-shadow: 0 22px 46px -30px rgba(46, 52, 62, 0.4);
 
   --font-display: var(--font-serif);
-  --font-body: var(--font-mono);
-  --font-ui: var(--font-body);
+  --font-body: var(--font-sans);
+  --font-label: var(--font-mono);
+  --font-ui: var(--font-label);
   --font-glyph: var(--font-symbol);
-  --font-brand: var(--font-body);
+  --font-brand: var(--font-label);
 
   --tracking-body: normal;
   --tracking-normal: normal;
@@ -319,7 +320,7 @@
   --text-compact-caption: var(--type-label-size);
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
-  --badge-font-family: var(--font-body);
+  --badge-font-family: var(--font-label);
   --badge-font-size: var(--type-pill-size);
   --badge-font-weight: var(--weight-semibold);
   --badge-padding: 6px 11px;
@@ -419,6 +420,36 @@
   --card-padding-lg: var(--sp-4);
   --card-section-padding: var(--sp-3);
   --card-header-gap: var(--sp-1);
+  --natal-card-bg: var(--card-bg);
+  --natal-card-border: var(--card-border);
+  --natal-card-radius: var(--card-radius);
+  --natal-card-shadow: var(--card-shadow);
+  --natal-card-padding: var(--card-row-padding);
+  --natal-card-gap: var(--sp-2);
+  --natal-card-min-height: 0px;
+  --natal-card-title-size: var(--text-card-title);
+  --natal-card-title-weight: var(--weight-medium);
+  --natal-card-title-line: var(--leading-title);
+  --natal-card-body-size: var(--text-description);
+  --natal-card-body-line: var(--leading-description);
+  --natal-card-meta-size: var(--type-meta-size);
+  --natal-card-meta-weight: var(--weight-regular);
+  --natal-card-meta-line: var(--leading-meta);
+  --aspect-card-bg: var(--card-bg);
+  --aspect-card-border: var(--card-border);
+  --aspect-card-radius: var(--card-radius);
+  --aspect-card-shadow: var(--card-shadow);
+  --aspect-card-padding: var(--card-row-padding-comfortable);
+  --aspect-card-gap: 14px;
+  --aspect-card-min-height: 0px;
+  --aspect-card-title-size: var(--text-card-title);
+  --aspect-card-title-weight: var(--weight-medium);
+  --aspect-card-title-line: var(--leading-title);
+  --aspect-card-body-size: var(--text-description);
+  --aspect-card-body-line: var(--leading-description);
+  --aspect-card-meta-size: var(--type-meta-size);
+  --aspect-card-meta-weight: var(--weight-regular);
+  --aspect-card-meta-line: var(--leading-meta);
   --table-bg: var(--card-bg);
   --table-border: var(--card-border);
   --table-radius: var(--card-radius);
@@ -594,6 +625,7 @@
   --font-display: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
   --font-ui: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
+  --font-label: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
@@ -670,8 +702,8 @@
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
-  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(70%) sepia(82%) saturate(873%) hue-rotate(340deg) brightness(101%) contrast(98%);
-  --synastry-inner-glyph: #ffad66;
+  --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(39%) sepia(76%) saturate(1842%) hue-rotate(217deg) brightness(92%) contrast(91%);
+  --synastry-inner-glyph: #4169e1;
   --color-dig-good: #84c57c;
   --color-dig-good-bg: rgba(110, 180, 100, 0.16);
   --color-aspect-hard: rgba(231, 171, 112, 0.88);

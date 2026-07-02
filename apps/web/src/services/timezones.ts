@@ -1,4 +1,4 @@
-import type { LocationInput } from "../types";
+import type { LocationInput } from "../types.js";
 
 const stateTimeZones: Record<string, string> = {
   AL: "America/Chicago",
