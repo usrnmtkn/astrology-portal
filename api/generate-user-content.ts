@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   ContentGenerationHardEditorialError,
+  ContentGenerationQualityError,
   generateContent,
   hardEditorialFailureResponse,
   type GenerateContentInput,
@@ -217,7 +218,8 @@ function generationInput(input: UserContentRequest): GenerateContentInput {
     facts: input.facts,
     knowledgeIds: input.knowledgeIds,
     sourceSnapshot: input.sourceSnapshot,
-    voiceNotes: input.voiceNotes
+    voiceNotes: input.voiceNotes,
+    allowQualityFallback: input.allowQualityFallback
   };
 }
 
@@ -260,6 +262,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         errorType: "hard_editorial_violation",
         error: error.message,
         ...hardEditorialFailureResponse(error)
+      });
+      return;
+    }
+
+    if (error instanceof ContentGenerationQualityError) {
+      sendJson(res, 422, {
+        ok: false,
+        errorType: "quality_gate",
+        error: error.message
       });
       return;
     }
