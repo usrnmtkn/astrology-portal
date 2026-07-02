@@ -2014,7 +2014,7 @@ export function GeneratedContentAdminDashboard() {
   const [reviewEditSummary, setReviewEditSummary] = useState("");
   const [reviewEditBody, setReviewEditBody] = useState("");
   const [reviewEditMetadata, setReviewEditMetadata] = useState<AdminReviewMetadataEdit | null>(null);
-  const [reviewGenerationProvider, setReviewGenerationProvider] = useState<AdminGenerationProvider>("claude");
+  const [reviewGenerationProvider, setReviewGenerationProvider] = useState<AdminGenerationProvider>("openai");
   const [isGeneratingReviewDraft, setIsGeneratingReviewDraft] = useState(false);
   const [reviewDraftResults, setReviewDraftResults] = useState<Record<string, AdminDraftResult>>({});
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
@@ -4533,8 +4533,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <label>
                           <span>Provider</span>
                           <select value={reviewGenerationProvider} onChange={(event) => setReviewGenerationProvider(event.target.value as AdminGenerationProvider)} disabled={isGeneratingReviewDraft || isSelectedReviewPublished}>
-                            <option value="claude">Claude</option>
                             <option value="openai">OpenAI</option>
+                            <option value="claude">Claude</option>
                           </select>
                         </label>
                         <button

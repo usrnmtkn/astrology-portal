@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { contentGenerationProvider } from "./provider-config";
 
 type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
@@ -41,12 +42,26 @@ export type StoredGeneratedContent = GeneratedContent & {
   responseId?: string;
   model: string;
   qualityWarning?: string;
+  retryCount?: number;
+  softWarnings?: string[];
+  styleNotes?: string[];
 };
 
 export class ContentGenerationQualityError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ContentGenerationQualityError";
+  }
+}
+
+export class ContentGenerationHardEditorialError extends ContentGenerationQualityError {
+  readonly reason = "hard_editorial_violation";
+  readonly violations: string[];
+
+  constructor(violations: string[], message?: string) {
+    super(message ?? `Generated content used hard editorial violation: ${violations.join(", ")}`);
+    this.name = "ContentGenerationHardEditorialError";
+    this.violations = violations;
   }
 }
 
@@ -180,6 +195,36 @@ type SourceBackedRevisionCorpus = {
   entries?: SourceBackedRevisionEntry[];
 };
 
+type AuthoredPlacementEntry = {
+  id?: string;
+  matchType?: string;
+  planet?: string;
+  sign?: string;
+  house?: string;
+  title?: string;
+  body?: string;
+  sourceBody?: string;
+  astrologyBody?: string;
+  tarotNotes?: string;
+  businessNotes?: string;
+  appBody?: string;
+  draftBody?: string;
+  editStatus?: string;
+  sourceDocument?: string;
+  sourcePath?: string;
+  sourceLineRange?: string;
+  sourceType?: string;
+  directUseAllowed?: boolean;
+  usage?: string;
+};
+
+type AuthoredPlacementCorpus = {
+  id?: string;
+  kind?: string;
+  sourceFiles?: string[];
+  entries?: AuthoredPlacementEntry[];
+};
+
 type NatalPlacementPrimitiveEntry = {
   id?: string;
   kind?: "planet" | "sign" | "house" | "ruler" | string;
@@ -198,6 +243,38 @@ type NatalPlacementPrimitiveCorpus = {
   kind?: string;
   sourceFiles?: string[];
   entries?: NatalPlacementPrimitiveEntry[];
+};
+
+type ProjectAuthoredNatalSource = {
+  role: string;
+  sourcePath: string;
+  id?: string;
+  title?: string;
+  excerpts: string[];
+};
+
+export type NatalPlacementGenerationSafetySummary = {
+  isPrimaryNatalPlacement: boolean;
+  sourceIds: string[];
+  sourcePaths: string[];
+  sourceSafety: {
+    sourceBodyExcluded: boolean;
+    astrologyBodySent: boolean;
+    tarotNotesExcluded: boolean;
+    businessNotesExcluded: boolean;
+    authoredSourceGenerationAllowed: boolean;
+  };
+};
+
+type PlacementAspectCardFacts = {
+  primaryPlanet: string;
+  primarySign: string;
+  primaryHouse: string;
+  aspectType: string;
+  aspectPlanet: string;
+  aspectPlanetSign: string;
+  aspectPlanetHouse: string;
+  orb: string;
 };
 
 type FrameworkSection = {
@@ -351,13 +428,191 @@ const bannedUserFacingPhrases = [
   "unlock"
 ];
 
+const natalPlacementHardBannedPhrases = [
+  "magnetic value system",
+  "visible abundance",
+  "this tension invites",
+  "deep emotional world",
+  "supportive aspect",
+  "flow naturally",
+  "uplift your work and reputation",
+  "gain authority",
+  "adds a layer",
+  "emotional context",
+  "mental development",
+  "public life and reputation",
+  "private currents",
+  "larger framework",
+  "laced",
+  "links"
+];
+
+const natalPlacementSoftWarningPhrases = [
+  "hold space",
+  "realm",
+  "themes",
+  "activates",
+  "energy",
+  "broadening horizons",
+  "higher learning",
+  "future-oriented",
+  "future orientation",
+  "strong future orientation",
+  "collective",
+  "wider collective",
+  "expansive",
+  "expansive approach",
+  "natural expansion",
+  "progressive ideas",
+  "arena",
+  "orbit"
+];
+
+const natalPlacementTarotReferencePhrases = [
+  "the star",
+  "the devil",
+  "the chariot",
+  "the hermit",
+  "the lovers",
+  "the magician",
+  "the empress",
+  "major arcana",
+  "tarot",
+  "corresponds to",
+  "jugs",
+  "woman pouring water"
+];
+
+const natalPlacementTransitLanguagePhrases = [
+  "right now",
+  "today",
+  "this week",
+  "currently",
+  "during this transit",
+  "while this is active",
+  "this period",
+  "this moment",
+  "use this window",
+  "current season",
+  "this season",
+  "this month",
+  "this window",
+  "next few weeks",
+  "next few days",
+  "window to",
+  "builds through",
+  "strongest around"
+];
+
+const natalPlacementVisibleScaffoldPhrases = [
+  "planetary meaning",
+  "how it may show up",
+  "how to work with it",
+  "what you may notice",
+  "what to do",
+  "timing",
+  "reflection",
+  "integration"
+];
+
+const conditionalChartLanguagePhrases = [
+  "if this connects",
+  "depending on your chart",
+  "when houses are available",
+  "wherever this lands"
+];
+
+function bannedPhrasePattern(phrase: string) {
+  const escaped = phrase.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\ /g, "\\s+");
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i");
+}
+
+function hasBannedPhrase(text: string, phrase: string) {
+  return bannedPhrasePattern(phrase).test(text);
+}
+
+function hardEditorialViolation(violations: string[], message?: string): never {
+  throw new ContentGenerationHardEditorialError(violations, message);
+}
+
+function isHardEditorialViolation(error: Error | null): error is ContentGenerationHardEditorialError {
+  return error instanceof ContentGenerationHardEditorialError;
+}
+
+function isAdminDraftGeneration(input: GenerateContentInput) {
+  return stringValue(input.facts?.adminGenerationMode) === "admin_draft";
+}
+
+function softVoiceWarningFailures(content: GeneratedContent, input: GenerateContentInput) {
+  if (!isAdminDraftGeneration(input) || !isPrimaryNatalPlacementGeneration(input)) {
+    return [];
+  }
+
+  const text = normalizeText([
+    content.headline,
+    content.tldr,
+    content.summary,
+    content.body,
+    content.action,
+    content.timing,
+    ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].filter(Boolean).join("\n"));
+
+  return natalPlacementSoftWarningPhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+}
+
+function styleNotesForGeneratedContent(content: GeneratedContent, input: GenerateContentInput) {
+  if (!isAdminDraftGeneration(input) || !isPrimaryNatalPlacementGeneration(input)) {
+    return [];
+  }
+
+  const notes: string[] = [];
+  const body = normalizeText(content.body);
+
+  if (body.includes("may ") || body.includes("can ")) {
+    notes.push("could be sharper");
+  }
+
+  if (/\b(experience|process|pattern|meaning)\b/i.test(content.body)) {
+    notes.push("slightly generic");
+  }
+
+  return [...new Set(notes)];
+}
+
+function generationQualityDiagnostics(content: GeneratedContent, input: GenerateContentInput) {
+  return {
+    softWarnings: softVoiceWarningFailures(content, input),
+    styleNotes: styleNotesForGeneratedContent(content, input)
+  };
+}
+
+function withGenerationQualityDiagnostics<T extends StoredGeneratedContent>(content: T, input: GenerateContentInput): T {
+  const diagnostics = generationQualityDiagnostics(content, input);
+
+  return {
+    ...content,
+    softWarnings: diagnostics.softWarnings,
+    styleNotes: diagnostics.styleNotes
+  };
+}
+
+export function hardEditorialFailureResponse(error: ContentGenerationHardEditorialError) {
+  return {
+    status: "generation_failed",
+    reason: error.reason,
+    violations: error.violations,
+    draftBody: null,
+    appBody: null,
+    editStatus: "needs_generation"
+  };
+}
+
 const requiredHeadingsByMode: Record<ContentMode, string[]> = {
-  feed: ["TLDR", "What You May Notice", "What To Do", "Timing"],
-  in_depth: ["TLDR", "What You May Notice", "What To Do", "Timing", "Reflection"],
-  article: ["What You May Notice", "What To Do", "Timing", "Closing"]
+  feed: ["TLDR"],
+  in_depth: ["TLDR"],
+  article: []
 };
-const dailySkyAspectHeadings = ["TLDR", "Planetary Meaning", "How It May Show Up", "How To Work With It", "Timing"];
-const transitArticleHeadings = ["Opening", "Validation", "The Astrology", "The Shadow", "Permission & Integration", "Collective Close"];
 
 const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
 export const editorialBannedPhrases = [
@@ -648,6 +903,17 @@ function requireEnv(name: string) {
   return value;
 }
 
+function envFlagEnabled(name: string) {
+  return ["1", "true", "yes", "on", "enabled"].includes(comparableKey(process.env[name]));
+}
+
+function allowsPrivateSourceModelGeneration() {
+  return (
+    envFlagEnabled("ALLOW_PRIVATE_SOURCE_MODEL_GENERATION") ||
+    envFlagEnabled("ALLOW_AUTHORED_SOURCE_MODEL_GENERATION")
+  );
+}
+
 function readTextFile(relativePath: string) {
   try {
     return fs.readFileSync(path.join(process.cwd(), relativePath), "utf8");
@@ -687,10 +953,169 @@ function modeRules(mode: ContentMode) {
   ].join("\n");
 }
 
+function modeRulesForInput(input: GenerateContentInput) {
+  if (isPersonalizedNatalPlacementAspectCard(input)) {
+    return [
+      "Natal Placement Aspect Card Mode: evergreen birth-chart support copy attached to a primary placement.",
+      "Length: one to three developed paragraphs.",
+      "Structure: begin with the primary placement, then explain what the aspect planet changes, pressures, or supports, then connect both houses as one lived pattern.",
+      "Tone: warm natal voice, direct, specific, and useful without sounding like a current transit, a glossary, or a standalone aspect article."
+    ].join("\n");
+  }
+
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    return [
+      "Natal Placement Page Mode: evergreen birth-chart placement interpretation.",
+      "Length: two developed paragraphs, roughly 170 to 260 words in the body.",
+      "Structure: treat the primary placement as the main interpretation. Explain the planet or point, sign, house, and supplied ruler thread as one lived pattern.",
+      "Tone: warm natal voice, direct, specific, and useful without sounding like a glossary, a generic sign description, or a current transit."
+    ].join("\n");
+  }
+
+  if (isNatalAspectGenerationContext(input)) {
+    return [
+      "Natal Aspect Mode: evergreen birth-chart interpretation.",
+      "Length: two to four developed paragraphs.",
+      "Structure: explain the permanent chart pattern through the supplied planets, signs, houses, and aspect.",
+      "Tone: warm natal voice, direct, specific, and useful without sounding like a current transit or daily update."
+    ].join("\n");
+  }
+
+  return modeRules(input.mode);
+}
+
+
 function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   const exactHeadline = lockedHeadline
     ? `Use this exact headline: ${JSON.stringify(lockedHeadline)}.`
     : "Use a factual astrology headline, not a poetic title.";
+
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    const hasAspects = asArray<Record<string, unknown>>(input.facts.aspects).length > 0;
+
+    return [
+      "OUTPUT SHAPE FOR NATAL PLACEMENT PAGE",
+      exactHeadline,
+      "Write the primary natal placement as the main interpretation.",
+      "This is not current astrology, not a daily update, not a transit, and not sky weather.",
+      "Return JSON only and fill every schema field.",
+      "",
+      "JSON field mapping:",
+      "headline: factual placement title only.",
+      "tldr: one direct sentence naming the core placement pattern.",
+      "summary: one or two plain sentences that preview the placement without flattening it into keywords.",
+      "body: the primaryPlacement.body. Write two natural paragraphs, roughly 170 to 260 words total. This is the in-depth main placement interpretation. Do not use visible labels inside the body.",
+      hasAspects
+        ? "sections: use sections as aspectCards. Each section heading should be a short aspect-card title such as 'Square Saturn in Aries in the 10th house'. Each section body should be a shorter supporting card, roughly 90 to 150 words, explaining what that aspect adds to the primary placement."
+        : "sections: return an empty array. Do not invent aspect cards, review sections, fallback sections, or source logic sections when no aspects are supplied.",
+      "action: one grounded sentence about what becomes easier to recognize or work with across life. Do not write a command list.",
+      "timing: write 'Natal chart pattern.' only because the response schema requires a timing field. Do not write seasonal, weekly, current, exact-date, window, or timing guidance.",
+      "astrologyDrilldown: briefly explain the factual chart mechanics with title 'Why this?'.",
+      "",
+      "Primary placement rules:",
+      "The body must be larger and more in-depth than the aspect card sections.",
+      "Use ASTROLOGY SOURCE MATERIAL as the primary interpretive source layer.",
+      "Do not use TAROT / SYMBOLIC NOTES in natal placement copy unless the request is explicitly for a tarot or correspondence layer.",
+      "Do not use BUSINESS NOTES unless the request is explicitly business or career mode.",
+      "Explain what the planet or point represents, how the sign shapes it, how the house shows where it expresses, and how those facts combine into a lived pattern.",
+      "Use supplied traditional and modern ruler placements only when they are present in the facts. Do not invent missing ruler sign or house.",
+      "Do not write a keyword list. Do not define planet, sign, and house in a fixed textbook sequence.",
+      "",
+      "Aspect card rules:",
+      "If aspects are supplied, each aspect section must keep the primary placement as the anchor and explain what the aspect planet adds to it.",
+      "Do not re-explain the whole placement inside each aspect card.",
+      "Do not treat natal aspects as standalone full articles.",
+      "Do not use visible scaffolding such as 'The square connects these two' or 'The aspect links the houses.'",
+      "",
+      "Guardrails:",
+      "Do not use visible labels such as Planetary meaning, How it may show up, How to work with it, What you may notice, or Timing.",
+      "Do not include Timing, Reflection, Integration, What You May Notice, How It May Show Up, How To Work With It, or Planetary Meaning as section headings.",
+      "No em dashes.",
+      "No dash punctuation.",
+      "No bullets or numbered lists.",
+      "No current-weather language.",
+      "No clipped command-list cadence.",
+      "Do not use the words energy, perform, integration, activates, life area, or themes.",
+      "Do not mention The Star, The Devil, The Chariot, The Hermit, The Lovers, The Magician, The Empress, Major Arcana, tarot cards, card illustrations, jugs, or a woman pouring water."
+    ].join("\n");
+  }
+
+  if (isNatalAspectGenerationContext(input)) {
+    if (isPersonalizedNatalPlacementAspectCard(input)) {
+      return [
+        "OUTPUT SHAPE FOR NATAL PLACEMENT ASPECT CARD",
+        exactHeadline,
+        "Write an evergreen birth-chart aspect card attached to the primary placement the user is already reading.",
+        "This card explains what the aspect planet adds to, presses on, complicates, or supports inside the primary natal placement.",
+        "This is not current astrology, not a daily update, not a transit, not sky weather, and not a standalone aspect article.",
+        "Return JSON only and fill every schema field.",
+        "",
+        "JSON field mapping:",
+        "headline: factual natal aspect title only.",
+        "tldr: one direct sentence that names what this aspect adds to the primary placement.",
+        "summary: one or two plain sentences that preview the placement-card pattern without flattening it into keywords.",
+        "body: complete natural paragraphs. Start from the primary placement, then show how the aspect planet changes the way that placement works. Use the signs and houses as known chart facts, not possibilities. Do not use visible labels inside the body.",
+        "Do not write a planet-by-planet report. Do not give equal weight to both planets as if this were a standalone aspect article. The primary placement is the home base.",
+        "Connect the primary house and the aspect planet house as one lived pattern. Do not merely list two house topics.",
+        "action: one grounded sentence about what becomes easier to recognize or work with across life. Do not write a command list.",
+        "timing: write 'Natal chart pattern.'",
+        "sections: include two or three review sections only. Use headings from this set when they fit: What This Adds, Where It Lives, What Becomes Easier To Name. Do not use Reflection, Integration, Timing, or What You May Notice.",
+        "astrologyDrilldown: briefly explain the factual chart mechanics with title 'Why this?'.",
+        "",
+        "Source hierarchy:",
+        "Use ASTROLOGY SOURCE MATERIAL as the primary interpretive source layer.",
+        "Use natal placement primitives as backup support.",
+        "Use source-backed aspect rows only for base aspect accuracy and claim safety.",
+        "Do not imitate generic astrology reference prose. Do not write a glossary.",
+        "",
+        "Guardrails:",
+        "No em dashes.",
+        "No dash punctuation.",
+        "No bullets or numbered lists.",
+        "No current-weather language.",
+        "No clipped command-list cadence.",
+        "Do not use the words energy, perform, integration, activates, life area, or themes.",
+        "Do not use report phrases like positions itself, stands in for, adds a layer, the realm of, arena of, this exact pairing, unlike a similar aspect, or the way these signs and houses position the planets.",
+        "Do not open with textbook constructions like 'Planet in sign in house shapes,' 'Planet in sign in house brings,' or 'Planet in sign in house loves.' Open from the lived pattern instead, while naming the chart fact naturally.",
+        "Do not use scaffolding phrases like 'the square between these two,' 'the opposition between these two,' 'the trine between these two,' 'the trine between Moon and Jupiter,' or 'the aspect links the houses.' Make the house connection human instead.",
+        "Do not start sentences with 'The square/opposition/trine between...' or 'In this square/opposition/trine...' because that turns the card into an aspect report. Start from the person living the primary placement.",
+        "Do not write conditional chart language when signs and houses are supplied."
+      ].join("\n");
+    }
+
+    return [
+      "OUTPUT SHAPE FOR NATAL ASPECT",
+      exactHeadline,
+      "Write an evergreen birth-chart aspect interpretation in the TLDR Astro warm natal voice.",
+      "This is a permanent natal chart pattern, not current astrology, not a daily update, not a transit, and not sky weather.",
+      "Return JSON only and fill every schema field.",
+      "",
+      "JSON field mapping:",
+      "headline: factual natal aspect title only.",
+      "tldr: one direct sentence that names the core natal pattern without sounding like advice for today.",
+      "summary: one or two plain sentences that preview the chart pattern without flattening it into keywords.",
+      "body: complete natural paragraphs. Explain the planets, aspect, signs, and houses as one chart-specific birth-chart pattern. Do not use visible labels inside the body.",
+      "Do not produce a planet-by-planet report. Do not write one sentence for planet A, one sentence for planet B, and one sentence explaining the aspect. Weave the chart facts into a natural interpretation that sounds written after understanding the whole aspect.",
+      "action: one grounded sentence about how this pattern becomes easier to recognize or work with across life. Do not write a command list.",
+      "timing: write 'Natal chart pattern.'",
+      "sections: include two or three review sections only. Use headings from this set when they fit: How This Works, Where It Lives, What Becomes Easier To Name. Do not use Reflection, Integration, Timing, or What You May Notice.",
+      "astrologyDrilldown: briefly explain the factual chart mechanics with title 'Why this?'.",
+      "",
+      "Guardrails:",
+      "No em dashes.",
+      "No dash punctuation.",
+      "No bullets or numbered lists.",
+      "No current-weather language.",
+      "No clipped command-list cadence.",
+      "Do not use the words energy, perform, integration, activates, life area, or themes.",
+      "Do not use report phrases like positions itself, stands in for, adds a layer, the realm of, arena of, this exact pairing, unlike a similar aspect, or the way these signs and houses position the planets.",
+      "Do not open with textbook constructions like 'Planet in sign in house shapes,' 'Planet in sign in house brings,' or 'Planet in sign in house loves.' Open from the lived pattern instead, while naming the chart fact naturally.",
+      "Do not use scaffolding phrases like 'the square between these two,' 'the opposition between these two,' 'the trine between these two,' or 'the aspect links the houses.' Make the house connection human instead.",
+      "Good natal-aspect openings sound like: 'With Mercury in Cancer in your 3rd house, words are not separate from memory.' Or: 'With Venus in Leo in your 2nd house, being wanted and being valued can get tangled together.' Or: 'With the Moon in Scorpio in your 6th house, daily life is rarely just daily life.'",
+      "End by naming what becomes easier to say, recognize, choose, or stop carrying. Do not end with a generalized summary about a unique shape, a wider presence, a larger framework, or inner and outer life.",
+      "Do not write conditional chart language when signs and houses are supplied."
+    ].join("\n");
+  }
 
   if (isDailySkyFeedAspect(input)) {
     return [
@@ -701,24 +1126,22 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
       "Do not invent personalization, natal placements, houses, or private reader circumstances.",
       "Return JSON only and fill every schema field.",
       "",
-      "The reader-facing write-up must follow this structure:",
-      "1. TLDR: Start with one plain-language situation the reader may notice today. The first sentence must make sense without astrology knowledge. Mention the aspect and date or timing only after that human situation is clear. Make the transit feel useful and specific. End with a clear reason to use the energy while it is active.",
-      "2. Planetary Meaning: Explain what each planet represents in everyday terms. Keep this concise and grounded. Describe what happens when the two planets work together or create tension through the aspect.",
-      "3. How It May Show Up: Give 2-3 concrete life examples. They should feel recognizable, not like a checklist. Use conversations, decisions, responsibilities, energy, emotions, relationships, work, money, boundaries, or timing.",
-      "4. How To Work With It: Give practical guidance tied directly to the planets and aspect. The advice should feel like insight, not productivity coaching.",
-      "5. Timing: End with one short sentence about when the transit is exact and when the window fades.",
+      "The reader-facing write-up must read as a continuous article, not a labeled template.",
+      "Start with one plain-language situation the reader may notice today. The first sentence must make sense without astrology knowledge. Mention the aspect and date or timing only after that human situation is clear. Make the transit feel useful and specific.",
+      "Then explain what each planet represents in everyday terms and what happens when the two planets work together or create tension through the aspect.",
+      "Use 2-3 concrete life examples inside the prose. They should feel recognizable, not like a checklist. Use conversations, decisions, responsibilities, emotions, relationships, work, money, boundaries, or timing.",
+      "Give practical guidance tied directly to the planets and aspect. The advice should feel like insight, not productivity coaching.",
       "",
       "JSON field mapping:",
       "headline: factual aspect title only.",
       "tldr: the TLDR section as 3-4 natural sentences.",
       "summary: 1-2 concise sentences that name one ordinary-life scene and the useful core dynamic without sounding mechanical.",
-      "body: the polished write-up in clear paragraphs, not bullets. Keep the five-part order and include visible labels in the body text. The first reader-facing sentence must not begin with the aspect, planet names, or astrology mechanics.",
-      "The body must start with a line beginning 'TLDR:' followed by the TLDR paragraph.",
-      "Then include these visible labels as plain text before each paragraph: Planetary meaning:, How it may show up:, How to work with it:, Timing:.",
+      "body: the polished write-up in clear paragraphs, not bullets. Do not include visible labels in the body text. The first reader-facing sentence must not begin with the aspect, planet names, or astrology mechanics.",
+      "Do not start the body with TLDR:, Planetary meaning:, How it may show up:, How to work with it:, Timing:, What You May Notice, What To Do, Reflection, Integration, or similar scaffold labels.",
       "Do not use markdown bullets or numbered lists.",
       "action: one specific, grounded move tied to the aspect.",
       "timing: one clean timing sentence.",
-      `sections: include exactly these section headings in order: ${dailySkyAspectHeadings.join(", ")}.`,
+      "sections: return an empty array unless the schema requires it. If sections are required, do not use visible scaffold headings such as TLDR, Planetary Meaning, How It May Show Up, How To Work With It, What You May Notice, What To Do, or Timing.",
       "astrologyDrilldown: keep the astrology explanation short, plain, and tied only to the provided facts.",
       "",
       "Voice rules:",
@@ -749,13 +1172,13 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
       "The voice should feel like the smartest, most honest friend in the room: someone who notices what the reader is doing before they have admitted it to themselves, and tells them plainly.",
       "Closer to a sharp essay than a horoscope. If a line could be read aloud in a quiet room and still feel true, keep it. If it sounds like a card from a gift shop, cut it.",
       "",
-      "Body structure:",
-      "1. Opening: Pick one opening type and write one line only. Let it land before moving on.",
-      "2. Validation: Build specific, restrained validation. Name behavior, not just feeling. One or two specifics is enough.",
-      "3. The Astrology: State the transit plainly: planet, sign, aspect when present, date or active range when available. Translate immediately into observable life.",
-      "4. The Shadow: Name what goes wrong with this transit. Name the lie or coping pattern it can make easy to believe.",
-      "5. Permission & Integration: Use 'You're allowed to...' or 'You don't have to...' only after the honest read. Say what becomes available in grounded language.",
-      "6. Collective Close: End with the signature close: three 'Not one of us...' sentences, then a collective metaphor, then one 'May we each...' line.",
+      "Body development:",
+      "Open with one specific human pattern or pressure point. Let it land before moving on.",
+      "Build specific, restrained validation. Name behavior, not just feeling. One or two specifics is enough.",
+      "State the transit plainly: planet, sign, aspect when present, date or active range when available. Translate immediately into observable life.",
+      "Name what goes wrong with this transit and the coping pattern it can make easy to believe.",
+      "Include grounded permission or action language only after the honest read.",
+      "Close with a collective image only if it feels natural. Do not force a fixed ending structure.",
       "",
       "Opening options. Pick ONE:",
       "- No one knows {specific internal effort} it has taken just to {specific action}.",
@@ -776,16 +1199,14 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
       "tldr: one direct sentence that names the core human pattern in the article.",
       "summary: two or three sentences max. It should preview the article without flattening it into keywords.",
       "body: the full polished article from the opening line through the collective close. Do not use markdown headings inside body. Do not use bullets or numbered lists.",
-      "action: one grounded permission or action from the Permission & Integration section.",
+      "action: one grounded permission or action from the article.",
       "timing: one clean timing sentence from the provided facts.",
-      `sections: include exactly these section headings in order for review only: ${transitArticleHeadings.join(", ")}.`,
+      "sections: return an empty array unless a content-specific supporting section is necessary for review. Do not use fixed template headings.",
       "astrologyDrilldown: explain the factual transit mechanics briefly, with title 'Why this?'.",
       "",
-      "Collective close rules:",
-      "The close must contain three sentences beginning 'Not one of us...'. Each one should negate a lie exposed by the transit.",
-      "Then use one collective metaphor, such as a chorus, constellation, orchestra, garden, ecosystem, or gallery.",
-      "End with one sentence beginning 'May we each...'.",
-      "Optionally sign off with '[Transit] blessings, Marie' only if the piece naturally calls for it.",
+      "Close rules:",
+      "Do not use a fixed close, sign-off, or repeated sentence frame.",
+      "End in plain language that follows from the article.",
       "",
       "Guardrails:",
       "No em dashes.",
@@ -821,21 +1242,15 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     "The headline stays astrology-only. The human hook belongs in tldr, summary, body, action, and timing.",
     "tldr: one direct sentence of guidance. It must read without astrology knowledge.",
     "summary: one or two plain sentences that name the one ordinary-life scene. Do not summarize the astrology mechanically.",
-    "body: write complete paragraphs in this order:",
-    "1. What may be noticeable in real life today, this season, or during this transit.",
-    "2. The pressure or tension inside that one scene, without naming astrology mechanics.",
-    "3. What to do with it, using concrete action language.",
-    "4. Timing in plain language, only when the facts support it.",
+    "body: write complete paragraphs as a continuous article, not a labeled template.",
+    "Start with what may be noticeable in real life today, this season, or during this transit.",
+    "Then name the pressure or tension inside that one scene, without overloading the reader with astrology mechanics.",
+    "Then give concrete action language and timing only when the facts support it.",
     "action: one specific useful move.",
     "timing: one plain timing sentence.",
     "sections: use section objects for main-card clarity and review.",
-    "Use these section headings when they fit the mode and keep the same language in heading names:",
-    "- TLDR",
-    "- What You May Notice",
-    "- What To Do",
-    "- Timing",
-    "Optional for in-depth/article: Reflection, Integration, or Closing Statement.",
-    "Do not use labels inside body unless the mode is article. Body should still read like natural prose.",
+    "Do not use visible scaffold headings such as TLDR, What You May Notice, What To Do, Timing, Reflection, Integration, Planetary Meaning, How It May Show Up, or How To Work With It.",
+    "Do not use labels inside body. Body should read like natural prose.",
     "Do not write backend disclaimers, source notes, permanent-trait caveats, or process notes.",
     "Do not put technical astrology in summary, body, action, timing, or main sections. Put it only in astrologyDrilldown.",
     "Main copy must not say: time lord, profection, natal Moon, natal Venus, Mars opposite Moon, Venus-ruled year, house activation, transit to natal, aspect pattern.",
@@ -933,10 +1348,10 @@ function rewriteCorpusRules() {
   return [
     "REWRITE CORPUS FIELD MAP",
     "Use the rewrite examples as a translation guide, not as current facts.",
-    "observableExperience, observableTendency, observableCurrentActivation: use these for What You May Notice.",
-    "baseMeaningRewrite, symbolicStory, tldr: use these for Why This Is Happening.",
+    "observableExperience, observableTendency, observableCurrentActivation: use these for lived effects and reader-facing observations.",
+    "baseMeaningRewrite, symbolicStory, tldr: use these for the core astrology logic and plain-language summary.",
     "shadowPattern, pressurePoint, whereItCanBecomeDifficult: use these for what can get messy or where the friction lives.",
-    "bestMove, whereItHelps, closingReflection: use these for What To Do.",
+    "bestMove, whereItHelps, closingReflection: use these for grounded action language without visible labels.",
     "readerFacingSummary: use this for pacing and plain-language summary style.",
     "If the examples are not an exact match, use only the style and field logic. Never import a fact that is missing from ASTROLOGY FACTS."
   ].join("\n");
@@ -971,6 +1386,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function stringValue(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+
   return typeof value === "string" && value.trim() ? value.trim() : "";
 }
 
@@ -1158,6 +1577,385 @@ function unsupportedExternalSceneInMainCopy(draft: GeneratedAstrologyDraft, fact
   };
 }
 
+function isNatalAspectGenerationContext(input: Pick<GenerateContentInput, "surface" | "eventType"> & { facts?: Record<string, unknown> }) {
+  return [
+    stringValue(input.facts?.blockType),
+    stringValue(input.facts?.type),
+    stringValue(input.eventType)
+  ].some((value) => value === "natal_aspect" || comparableKey(value) === "natal-aspect");
+}
+
+function hasPersonalizedNatalAspectFacts(facts?: Record<string, unknown>) {
+  const signA = stringValue(facts?.primarySign) || stringValue(facts?.placementSign) || stringValue(facts?.sign1) || stringValue(facts?.fromSign) || stringValue(facts?.planetASign);
+  const signB = stringValue(facts?.aspectPlanetSign) || stringValue(facts?.otherSign) || stringValue(facts?.sign2) || stringValue(facts?.toSign) || stringValue(facts?.planetBSign);
+  const houseA = stringValue(facts?.primaryHouse) || stringValue(facts?.placementHouse) || stringValue(facts?.house1) || stringValue(facts?.fromHouse) || stringValue(facts?.planetAHouse);
+  const houseB = stringValue(facts?.aspectPlanetHouse) || stringValue(facts?.otherHouse) || stringValue(facts?.house2) || stringValue(facts?.toHouse) || stringValue(facts?.planetBHouse);
+
+  return Boolean((signA && signB) || (houseA && houseB));
+}
+
+function clippedCommandListCadence(text: string) {
+  const imperativeVerbs = new Set([
+    "ask", "call", "choose", "clarify", "define", "decide", "do", "get", "listen", "make", "move", "name", "notice", "organize", "say", "send", "set", "speak", "start", "use", "write"
+  ]);
+  let consecutive = 0;
+
+  for (const sentence of sentencesFrom(text)) {
+    const words = sentence.replace(/^[^a-z]+/i, "").split(/\s+/).filter(Boolean);
+    const firstWord = comparableKey(words[0]);
+    const isShortCommand = words.length > 0 && words.length <= 8 && imperativeVerbs.has(firstWord);
+
+    consecutive = isShortCommand ? consecutive + 1 : 0;
+
+    if (consecutive >= 3) {
+      return sentence;
+    }
+  }
+
+  return "";
+}
+
+function natalAspectConditionalChartLanguage(text: string) {
+  return sentencesFrom(text).find((sentence) => /\b(if this connects|if this is in|depending on your chart|when houses are available|wherever this lands|this may fall in|if your planet is|when present|when available|whichever house|could fall in|may fall in|if this moves through)\b/i.test(sentence)) ?? "";
+}
+
+function natalAspectTransitLanguage(text: string) {
+  return sentencesFrom(text).find((sentence) => /\b(right now|today|this week|during this transit|while this is active|the next few days|use this window|currently|at this time|for now|this period|this moment|current weather|transit|transiting|forming|separating|sky window|date window|during this window)\b/i.test(sentence)) ?? "";
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+type PersonalizedNatalAspectFacts = {
+  signA: string;
+  signB: string;
+  houseA: string;
+  houseB: string;
+};
+
+function personalizedNatalAspectFacts(facts?: Record<string, unknown>): PersonalizedNatalAspectFacts {
+  return {
+    signA: stringValue(facts?.primarySign) || stringValue(facts?.placementSign) || stringValue(facts?.sign1) || stringValue(facts?.fromSign) || stringValue(facts?.planetASign),
+    signB: stringValue(facts?.aspectPlanetSign) || stringValue(facts?.otherSign) || stringValue(facts?.sign2) || stringValue(facts?.toSign) || stringValue(facts?.planetBSign),
+    houseA: stringValue(facts?.primaryHouse) || stringValue(facts?.placementHouse) || stringValue(facts?.house1) || stringValue(facts?.fromHouse) || stringValue(facts?.planetAHouse),
+    houseB: stringValue(facts?.aspectPlanetHouse) || stringValue(facts?.otherHouse) || stringValue(facts?.house2) || stringValue(facts?.toHouse) || stringValue(facts?.planetBHouse)
+  };
+}
+
+function ordinalHouseWord(value: string) {
+  const number = Number.parseInt(value, 10);
+
+  return [
+    "",
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "eleventh",
+    "twelfth"
+  ][number] ?? "";
+}
+
+function ordinalHouseNumber(value: string) {
+  const number = Number.parseInt(value, 10);
+
+  if (!Number.isFinite(number)) return "";
+
+  const suffix = number % 100 >= 11 && number % 100 <= 13
+    ? "th"
+    : number % 10 === 1
+      ? "st"
+      : number % 10 === 2
+        ? "nd"
+        : number % 10 === 3
+          ? "rd"
+          : "th";
+
+  return String(number) + suffix;
+}
+
+function signMentioned(text: string, sign: string) {
+  return Boolean(sign && new RegExp("\\b" + escapeRegex(sign) + "\\b", "i").test(text));
+}
+
+function houseMentioned(text: string, house: string) {
+  const numeric = ordinalHouseNumber(house);
+  const word = ordinalHouseWord(house);
+  const patterns = [
+    numeric ? escapeRegex(numeric) + "\\s+house" : "",
+    word ? escapeRegex(word) + "\\s+house" : "",
+    "house\\s+" + escapeRegex(house)
+  ].filter(Boolean);
+
+  return patterns.some((pattern) => new RegExp("\\b" + pattern + "\\b", "i").test(text));
+}
+
+function hasHouseConnectionLanguage(text: string) {
+  return /\b(tied to|connected to|connects|carries into|carry into|shows up through|becomes linked with|linked with|affects how|turns into pressure around|moves between|between|does not stay separate from|runs through|feeds into|has consequences for|becomes part of|spills into|interacts with|interplay between|pulls .* into|brings .* into)\b/i.test(text);
+}
+
+function housesConnectedInChartStory(text: string, firstHouse: string, secondHouse: string) {
+  if (!firstHouse || !secondHouse) return true;
+
+  const paragraphs = text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const sentences = sentencesFrom(text);
+  const sentenceWindows = sentences.map((sentence, index) => [sentence, sentences[index + 1], sentences[index + 2]].filter(Boolean).join(" "));
+  const candidates = [...paragraphs, ...sentenceWindows];
+
+  return candidates.some((candidate) => (
+    houseMentioned(candidate, firstHouse)
+    && houseMentioned(candidate, secondHouse)
+    && hasHouseConnectionLanguage(candidate)
+  ));
+}
+
+function personalizedNatalAspectFactUsageFailure(text: string, facts?: Record<string, unknown>) {
+  const personalizedFacts = personalizedNatalAspectFacts(facts);
+
+  if (personalizedFacts.signA && !signMentioned(text, personalizedFacts.signA)) {
+    return "missing planet A sign '" + personalizedFacts.signA + "' in body";
+  }
+
+  if (personalizedFacts.signB && !signMentioned(text, personalizedFacts.signB)) {
+    return "missing planet B sign '" + personalizedFacts.signB + "' in body";
+  }
+
+  if (personalizedFacts.houseA && !houseMentioned(text, personalizedFacts.houseA)) {
+    return "missing planet A house '" + personalizedFacts.houseA + "' in body";
+  }
+
+  if (personalizedFacts.houseB && !houseMentioned(text, personalizedFacts.houseB)) {
+    return "missing planet B house '" + personalizedFacts.houseB + "' in body";
+  }
+
+  if (personalizedFacts.houseA && personalizedFacts.houseB && !housesConnectedInChartStory(text, personalizedFacts.houseA, personalizedFacts.houseB)) {
+    return "houses " + personalizedFacts.houseA + " and " + personalizedFacts.houseB + " are not connected into one chart story";
+  }
+
+  return "";
+}
+
+function natalAspectVagueFiller(text: string) {
+  return sentencesFrom(text).find((sentence) => /\b(you may notice|you might notice|notice how|a natural ease|natural ease|gentle expansion|subtle pressure|real movement forward|this pattern plays out steadily|the influence you feel|emotional needs with a sense of optimism|feel roomier|important conversations and choices throughout life|in response to any specific event or moment|everyday feelings feel roomier|try making|notice one way|mind tuned|private currents|wider presence|long-term success|expansive possibility|natural expansion|sense of faith|public standing|lived rhythm|neither flaw nor gift|larger framework|wider framework|unique shape|inner and outer life|vision into the world|not just inward|contributes to a wider)\b/i.test(sentence)) ?? "";
+}
+
+function natalAspectReportPhrase(text: string) {
+  const reportPhrases = [
+    "positions itself",
+    "stands in for",
+    "adds a layer",
+    "the realm of",
+    "arena of",
+    "public role and long-term goals",
+    "emotional transformation",
+    "expansive ideals",
+    "this exact pairing",
+    "this exact trine shapes a pattern",
+    "unlike a similar aspect",
+    "the visible expression of one's values",
+    "the visible expression of one’s values",
+    "the way these signs and houses position the planets",
+    "personal assets or pleasure",
+    "shared transformation",
+    "deep emotional connections",
+    "larger emotional or financial webs",
+    "visible achievement",
+    "external results",
+    "internal emotional process",
+    "shapes your communication",
+    "brings an emotional life",
+    "loves to show affection",
+    "the opposition between",
+    "the square between",
+    "the trine between",
+    "the trine connects these two",
+    "the opposition links",
+    "the aspect links",
+    "makes a bridge",
+    "together, this pattern"
+  ];
+
+  return sentencesFrom(text).find((sentence) => {
+    const normalizedSentence = normalizeText(sentence);
+    return reportPhrases.some((phrase) => normalizedSentence.includes(normalizeText(phrase)));
+  }) ?? "";
+}
+
+function natalAspectTextbookOpening(text: string) {
+  const firstSentence = sentencesFrom(text)[0] ?? "";
+  if (!firstSentence) {
+    return "";
+  }
+
+  const bodies = "(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north node|south node)";
+  const signs = "(aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)";
+  const ordinal = "\\d+(?:st|nd|rd|th)";
+  const textbookVerbs = "(shapes|brings|expresses|carries|adds|positions|stands|loves|pulls)";
+  const pattern = new RegExp(
+    "^\\s*(with\\s+)?"
+    + bodies
+    + "\\s+in\\s+"
+    + signs
+    + "\\s+in\\s+(your\\s+)?"
+    + ordinal
+    + "\\s+house\\s+"
+    + textbookVerbs
+    + "\\b",
+    "i"
+  );
+
+  return pattern.test(firstSentence) ? firstSentence : "";
+}
+
+function qualityRetryInstruction(input: GenerateContentInput) {
+  const facts = personalizedNatalAspectFacts(input.facts);
+
+  if (isPersonalizedNatalPlacementAspectCard(input)) {
+    const cardFacts = placementAspectCardFacts(input);
+
+    return [
+      "Regenerate the entire draft as an evergreen natal placement aspect card.",
+      `The primary placement is ${displayAstroName(cardFacts.primaryPlanet)} in ${displayAstroName(cardFacts.primarySign)} in the ${ordinalHouseNumber(cardFacts.primaryHouse)} house.`,
+      `The aspect card is ${comparableKey(cardFacts.aspectType)} ${displayAstroName(cardFacts.aspectPlanet)} in ${displayAstroName(cardFacts.aspectPlanetSign)} in the ${ordinalHouseNumber(cardFacts.aspectPlanetHouse)} house.`,
+      "The body must explain what the aspect planet adds to the primary placement the user is reading.",
+      "Use the project-authored placement-card source material first, then natal placement primitives, then source-backed aspect rows only for base aspect accuracy.",
+      "Do not write a standalone aspect article, planet-by-planet report, current transit, daily update, conditional chart language, vague AI filler, clipped command-list cadence, or report-style phrases.",
+      "Do not use banned self-help phrases such as step into, lean into, honor, release, unlock, cosmic, divine, or healing journey."
+    ].join(" ");
+  }
+
+  if (isNatalAspectGenerationContext(input) && hasPersonalizedNatalAspectFacts(input.facts)) {
+    const bodyA = stringValue(input.facts?.body1) || stringValue(input.facts?.from) || stringValue(input.facts?.planetA) || "body A";
+    const bodyB = stringValue(input.facts?.body2) || stringValue(input.facts?.to) || stringValue(input.facts?.planetB) || "body B";
+
+    return [
+      "Regenerate the entire draft as evergreen natal copy.",
+      `The body must explicitly include ${bodyA} in ${facts.signA} and ${bodyB} in ${facts.signB}.`,
+      `The body must explicitly include the ${ordinalHouseNumber(facts.houseA)} house and the ${ordinalHouseNumber(facts.houseB)} house, and connect those houses in one chart story.`,
+      "Do not use transit timing, current-sky language, conditional chart language, vague AI filler, clipped command-list cadence, or report-style phrases.",
+      "Do not write a planet-by-planet report. Start from the lived pattern and weave the chart facts into one interpretation.",
+      "Do not open with 'Planet in sign in house expresses/brings/shapes.' Do not use 'the aspect between these two' scaffolding."
+    ].join(" ");
+  }
+
+  return "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only.";
+}
+
+function sentenceContainingViolation(text: string, violation: string) {
+  return sentencesFrom(text).find((sentence) => hasBannedPhrase(sentence, violation))
+    || sentencesFrom(text).find((sentence) => normalizeText(sentence).includes(normalizeText(violation)))
+    || "";
+}
+
+function hardViolationReplacementDirection(violation: string, input: GenerateContentInput) {
+  const phrase = normalizeText(violation);
+  const facts = natalPlacementSourceFacts(input);
+  const placement = [
+    displayAstroName(facts.body),
+    displayAstroName(facts.sign),
+    facts.house ? `${ordinalHouseNumber(facts.house)} house` : ""
+  ].filter(Boolean).join(" in ");
+  const traditionalRuler = [
+    displayAstroName(facts.traditionalRulerBody),
+    displayAstroName(facts.traditionalRulerSign),
+    facts.traditionalRulerHouse ? `${ordinalHouseNumber(facts.traditionalRulerHouse)} house` : ""
+  ].filter(Boolean).join(" in ");
+
+  if (phrase === "realm" || phrase === "arena" || phrase === "orbit") {
+    return [
+      "Replace the abstract container word with the specific life material from the chart.",
+      "Do not use area, domain, sphere, field, zone, realm, arena, orbit, or similar container language.",
+      "Use concrete wording such as study, beliefs, teaching, publishing, travel, home, family, daily routines, work, health, responsibility, role, money, relationships, body, or what the person is expected to handle.",
+      placement ? `For this chart, name what ${placement} is doing in concrete life language.` : "",
+      traditionalRuler ? `If the ruler thread is used, make ${traditionalRuler} concrete instead of abstract.` : ""
+    ].filter(Boolean).join(" ");
+  }
+
+  if (phrase === "adds a layer") {
+    return [
+      "Do not use 'adds a layer' or any synonym that stacks astrology as an extra coating.",
+      "Replace it with the actual chart behavior.",
+      traditionalRuler
+        ? `${traditionalRuler} should bring the idea back to the concrete topics of that ruler placement, not appear as an abstract addition.`
+        : "Name what the second chart factor changes, pressures, supports, or makes harder in concrete life."
+    ].join(" ");
+  }
+
+  if (phrase === "people with") {
+    return "Do not write about people generally. Rewrite directly to the reader using you, your, or this placement in your chart.";
+  }
+
+  if (phrase === "future-oriented mindset" || phrase === "strong future orientation" || phrase === "progressive ideas") {
+    return [
+      "Do not use generic Aquarius filler.",
+      "Translate the idea into behavior: questioning inherited beliefs, noticing group assumptions, testing ideas against real life, or seeing what people are agreeing to before they understand it."
+    ].join(" ");
+  }
+
+  if (phrase === "links") {
+    return [
+      "Do not use 'links' as generic report scaffolding.",
+      "Write the actual consequence in human language: what gets carried from one part of life into another, what becomes harder to ignore, or what has to be said, chosen, built, or stopped."
+    ].join(" ");
+  }
+
+  if (phrase === "laced") {
+    return "Do not use laced. Rewrite the sentence plainly without decorative texture language.";
+  }
+
+  if (phrase === "energy") {
+    return [
+      "Do not use energy as a placeholder.",
+      "Name the actual function instead: confidence, attention, drive, pressure, stamina, desire, responsibility, curiosity, need, or the part of life being described."
+    ].join(" ");
+  }
+
+  return [
+    "Remove the violation completely.",
+    "Do not swap in a synonym that keeps the same report-style problem.",
+    "Rewrite the sentence in plain, concrete language tied to the supplied chart facts."
+  ].join(" ");
+}
+
+function hardEditorialRetryInstruction(error: ContentGenerationHardEditorialError, failedDraft: GeneratedContent, input: GenerateContentInput) {
+  const text = mainCopyText(failedDraft);
+  const failures = error.violations.map((violation) => {
+    const sentence = sentenceContainingViolation(text, violation);
+
+    return [
+      `Violation: ${JSON.stringify(violation)}.`,
+      sentence ? `Failed sentence: ${JSON.stringify(sentence)}.` : "Failed sentence: not available from parsed draft.",
+      `Correction: ${hardViolationReplacementDirection(violation, input)}`
+    ].join("\n");
+  });
+
+  return [
+    "HARD EDITORIAL VIOLATION RETRY",
+    "The previous draft failed a hard editorial gate. Regenerate the entire JSON draft, but make a surgical repair for each violation below.",
+    "Remove each banned phrase completely.",
+    "Do not use a synonym that creates the same abstract, report-style, generic, or non-TLDR Astro problem.",
+    "Rewrite the failed sentence in plain, concrete language using the supplied chart facts and authored astrology source material.",
+    ...failures,
+    "Approved replacement directions: use concrete life language such as work, beliefs, study, teaching, publishing, home, family, daily routines, health, money, relationships, body, responsibility, role, what the reader says, what they agree to, what they question, what they build, and what they stop carrying.",
+    qualityRetryInstruction(input)
+  ].join("\n");
+}
+
+function retryInstructionForError(error: Error, failedDraft: StoredGeneratedContent | null, input: GenerateContentInput) {
+  if (error instanceof ContentGenerationHardEditorialError && failedDraft) {
+    return hardEditorialRetryInstruction(error, failedDraft, input);
+  }
+
+  return qualityRetryInstruction(input);
+}
+
 function addEditorialFailure(failures: EditorialFailure[], code: string, message: string, severity: EditorialFailure["severity"] = "fail") {
   if (!failures.some((failure) => failure.code === code && failure.message === message)) {
     failures.push({ code, message, severity });
@@ -1179,7 +1977,7 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     failedCodes.has("NO_DOMINANT_STORYLINE") ? "Choose one main story. Do not give equal weight to every possible interpretation." : "",
     failedCodes.has("ASTROLOGY_OVERLOAD") ? "Lead with the plain situation. Use astrology facts only as support, not as the main language." : "",
     failedCodes.has("TEXTBOOK_PHRASE") ? "Remove textbook astrology phrasing. Rewrite the sentence in plain language." : "",
-    failedCodes.has("GENERIC_ADVICE") ? "Give the user one specific thing to do today. Make it direct, not therapeutic or vague." : "",
+    failedCodes.has("GENERIC_ADVICE") ? "Give the user one specific, concrete next step. Make it direct, not therapeutic or vague." : "",
     failedCodes.has("RELATIONSHIP_COPY_TOO_ABSTRACT") ? "Rewrite relationship copy so it sounds normal and concrete. Avoid technical labels and soft self-help phrasing." : "",
     failures.some((failure) => failure.code === "SELF_HELP_TONE") ? "Make the tone more direct and less self-help or new-age." : ""
   ].filter(Boolean);
@@ -1205,6 +2003,10 @@ function isDailySkyFeedAspect(input: Pick<GenerateContentInput, "surface" | "mod
 }
 
 function isTransitArticle(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
+  if (isNatalAspectGenerationContext(input)) {
+    return false;
+  }
+
   const factType = stringValue(input.facts?.type);
   const contentType = stringValue(input.facts?.contentType);
   const eventType = normalizeText(input.eventType);
@@ -1223,12 +2025,20 @@ function isTransitArticle(input: Pick<GenerateContentInput, "surface" | "mode" |
 }
 
 function requiredSectionHeadingsForInput(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    return [];
+  }
+
+  if (isNatalAspectGenerationContext(input)) {
+    return [];
+  }
+
   if (isDailySkyFeedAspect(input)) {
-    return dailySkyAspectHeadings;
+    return [];
   }
 
   if (isTransitArticle(input)) {
-    return transitArticleHeadings;
+    return [];
   }
 
   return requiredHeadingsByMode[input.mode] ?? [];
@@ -1363,23 +2173,32 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
   const facts = input.facts;
   const type = stringValue(facts.type) || input.eventType;
   const blockType = stringValue(facts.blockType);
-  const placementBody = stringValue(facts.placementBody)
-    || stringValue(facts.planet)
-    || stringValue(facts.body)
-    || stringValue(facts.point)
-    || stringValue(facts.node);
-  const placementSign = stringValue(facts.placementSign) || stringValue(facts.sign) || stringValue(facts.planetSign);
-  const placementHouse = stringValue(facts.placementHouse) || stringValue(facts.house) || stringValue(facts.houseNumber);
+  const placementSourceFacts = natalPlacementSourceFacts(input);
+  const placementBody = placementSourceFacts.body;
+  const placementSign = placementSourceFacts.sign;
+  const placementHouse = placementSourceFacts.house;
   const rulerBody = stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler);
   const rulerSign = stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign);
   const rulerHouse = stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse);
+  const traditionalRulerBody = placementSourceFacts.traditionalRulerBody || rulerBody;
+  const traditionalRulerSign = placementSourceFacts.traditionalRulerSign || rulerSign;
+  const traditionalRulerHouse = placementSourceFacts.traditionalRulerHouse || rulerHouse;
+  const modernRulerBody = placementSourceFacts.modernRulerBody;
+  const modernRulerSign = placementSourceFacts.modernRulerSign;
+  const modernRulerHouse = placementSourceFacts.modernRulerHouse;
   const aspectBodyA = stringValue(facts.body1) || stringValue(facts.planetA) || stringValue(facts.from);
   const aspectBodyB = stringValue(facts.body2) || stringValue(facts.planetB) || stringValue(facts.to);
   const aspectType = stringValue(facts.aspect);
-  const aspectSignA = stringValue(facts.sign1) || stringValue(facts.fromSign) || stringValue(facts.transitSign) || stringValue(facts.planetASign);
-  const aspectSignB = stringValue(facts.sign2) || stringValue(facts.toSign) || stringValue(facts.natalSign) || stringValue(facts.planetBSign);
+  const aspectSignA = blockType === "natal_aspect"
+    ? stringValue(facts.sign1) || stringValue(facts.fromSign) || stringValue(facts.planetASign)
+    : stringValue(facts.sign1) || stringValue(facts.fromSign) || stringValue(facts.transitSign) || stringValue(facts.planetASign);
+  const aspectSignB = blockType === "natal_aspect"
+    ? stringValue(facts.sign2) || stringValue(facts.toSign) || stringValue(facts.planetBSign)
+    : stringValue(facts.sign2) || stringValue(facts.toSign) || stringValue(facts.natalSign) || stringValue(facts.planetBSign);
   const aspectHouseA = stringValue(facts.house1) || stringValue(facts.fromHouse) || stringValue(facts.planetAHouse);
-  const aspectHouseB = stringValue(facts.house2) || stringValue(facts.toHouse) || stringValue(facts.natalHouse) || stringValue(facts.planetBHouse);
+  const aspectHouseB = blockType === "natal_aspect"
+    ? stringValue(facts.house2) || stringValue(facts.toHouse) || stringValue(facts.planetBHouse)
+    : stringValue(facts.house2) || stringValue(facts.toHouse) || stringValue(facts.natalHouse) || stringValue(facts.planetBHouse);
   const exactDate = stringValue(facts.exactDate) || input.targetDate || "";
   const direction = stringValue(facts.direction);
   const orb = stringValue(facts.orb);
@@ -1395,9 +2214,52 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
     ];
 
     if (blockType === "natal_aspect") {
+      const hasSigns = Boolean(aspectSignA && aspectSignB);
+      const hasHouses = Boolean(aspectHouseA && aspectHouseB);
+      const personalizedRules = [
+        "Family: natal aspect. This is evergreen natal wiring, not sky weather or a transit.",
+        "Natal sign A: " + (aspectSignA || "missing") + ".",
+        "Natal house A: " + (aspectHouseA || "missing") + ".",
+        "Natal sign B: " + (aspectSignB || "missing") + ".",
+        "Natal house B: " + (aspectHouseB || "missing") + ".",
+        "Orb/strength: " + (orb || "missing") + ".",
+        "Use the signs and houses as known chart facts when they are supplied. Do not write conditional chart language such as 'if this connects to your 3rd house' or 'depending on your chart'.",
+        "Do not use current-weather language such as right now, today, this week, currently, transit, forming, or separating.",
+        "You must use the supplied signs and houses in the body. Do not treat them as optional. Do not write generic planet-pair copy when chart facts are supplied.",
+        `The body must explicitly name "${aspectBodyA} in ${aspectSignA || "the supplied sign"}" and "${aspectBodyB} in ${aspectSignB || "the supplied sign"}" when signs are supplied.`,
+        hasHouses
+          ? `The body must explicitly name both the ${ordinalHouseNumber(aspectHouseA)} house and the ${ordinalHouseNumber(aspectHouseB)} house, then connect those two houses in one chart story.`
+          : "Do not invent house language when houses are missing.",
+        hasHouses
+          ? `Include one natural sentence that names both the ${ordinalHouseNumber(aspectHouseA)} house and the ${ordinalHouseNumber(aspectHouseB)} house and uses a connection verb such as connects, ties, carries, pulls, or brings.`
+          : "",
+        "Let the signs change how the planets behave and let the houses change where the pattern is lived. Do not compare this to the same aspect in other signs or houses.",
+        "Write the planets, aspect type, signs, and houses as one chart-specific natal interpretation. The signs and houses should change the meaning, not sit beside it as labels.",
+        "Do not produce a planet-by-planet report. Do not write one sentence for planet A, one sentence for planet B, and one sentence explaining the aspect. Weave the chart facts into a natural interpretation.",
+        "Do not open with a textbook construction such as 'Mercury in Cancer in the 3rd house shapes,' 'Venus in Leo in the 2nd house loves,' or 'Moon in Scorpio in the 6th house brings.' Open from the lived pattern while naming the chart facts naturally.",
+        "Use concrete life language instead of stiff abstractions. Prefer money, value, desire, affection, trust, debt, intimacy, family patterns, work, reputation, authority, responsibility, daily conversations, routines, health, pressure, and what other people expect.",
+        "Do not use report phrases such as positions itself, stands in for, adds a layer, the realm of, arena of, public role and long-term goals, emotional transformation, expansive ideals, this exact pairing, unlike a similar aspect, or the way these signs and houses position the planets.",
+        "Do not write 'the square between these two,' 'the opposition between these two,' 'the trine between these two,' 'the aspect links,' or similar scaffolding. Make the connection human: what the reader says, wants, owes, carries, hides, earns, shares, protects, or is expected to handle.",
+        "Good openings sound like: 'With Mercury in Cancer in your 3rd house, words are not separate from memory.' Or: 'With Venus in Leo in your 2nd house, being wanted and being valued can get tangled together.' Or: 'With the Moon in Scorpio in your 6th house, daily life is rarely just daily life.' Use these as voice examples, not as templates.",
+        "End by naming what becomes easier to say, recognize, choose, or stop carrying. Do not end with a generalized summary about a unique shape, a wider presence, a larger framework, or inner and outer life.",
+        "Avoid vague AI astrology filler such as 'You may notice,' 'You might notice,' 'Notice how,' 'natural ease,' 'gentle expansion,' 'subtle pressure,' 'real movement forward,' 'This pattern plays out steadily,' and 'the influence you feel.' Open with specific chart language instead.",
+        "Do not use the words energy, perform, or integration. Do not use dash punctuation. Use commas, periods, or semicolons instead. Do not give today advice. Do not write 'try making,' 'notice one way,' 'notice how,' or any instruction that sounds like a current transit prompt."
+      ];
+
+      if (hasSigns || hasHouses) {
+        return [
+          ...commonRules,
+          ...personalizedRules,
+          hasHouses
+            ? "Connect the houses directly as the life areas where this natal wiring is lived."
+            : "Houses are not fully supplied, so do not mention houses or imply missing house data.",
+          "Write in the warm natal voice. Keep it natal and chart-specific."
+        ].join("\n");
+      }
+
       return [
         ...commonRules,
-        "Family: natal aspect. This is evergreen natal wiring.",
+        "Family: base natal aspect. This is evergreen natal wiring.",
         "Inputs are pair and type only. Do not mention dates, current timing, orb, forming, separating, signs, houses, transits, or now.",
         "Write in the warm natal voice. Keep it reusable for anyone with this aspect."
       ].join("\n");
@@ -1513,13 +2375,17 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
     `Placement body: ${placementBody || "missing"}.`,
     `Placement sign: ${placementSign || "missing"}.`,
     `Placement house: ${placementHouse || "missing"}.`,
-    `Placement ruler: ${rulerBody || "missing"}.`,
-    `Ruler sign in this chart: ${rulerSign || "missing"}.`,
-    `Ruler house in this chart: ${rulerHouse || "missing"}.`,
+    `Traditional ruler: ${traditionalRulerBody || "missing"}.`,
+    `Traditional ruler sign in this chart: ${traditionalRulerSign || "missing"}.`,
+    `Traditional ruler house in this chart: ${traditionalRulerHouse || "missing"}.`,
+    `Modern ruler: ${modernRulerBody || "none"}.`,
+    `Modern ruler sign in this chart: ${modernRulerSign || "missing"}.`,
+    `Modern ruler house in this chart: ${modernRulerHouse || "missing"}.`,
     `Retrograde: ${isNode ? "not applicable for nodes" : isRetrograde ? "yes" : "no"}.`,
     "Write the placement as the body or node in its sign, expressed through its house.",
-    "Use the ruler placement as chart-specific context: the ruler's sign and house show where this placement develops, routes, or becomes easier to recognize in lived experience.",
-    "Do not skip the house. Do not skip the ruler placement when ruler sign and ruler house are provided.",
+    "Use the traditional ruler placement as the main chart-specific route: its sign and house show where this placement develops, routes, or becomes easier to recognize in lived experience.",
+    "If a modern ruler is provided, use it as an additional modern/outer-planet layer, not a replacement for the traditional ruler.",
+    "Do not skip the house. Do not skip available ruler placements when ruler sign and ruler house are provided.",
     "For North Node and South Node, never mention retrograde. Treat them as valid placements with sign, house, and sign ruler."
   ].join("\n");
 }
@@ -1612,6 +2478,13 @@ function dailySkyHeadline(facts: Record<string, unknown>) {
 }
 
 function factualHeadlineFor(input: GenerateContentInput) {
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    const natalTitle = natalPlacementTitleFromFacts(natalPlacementSourceFacts(input));
+    if (natalTitle) {
+      return natalTitle;
+    }
+  }
+
   const supplied = stringValue(input.headline);
 
   if (supplied) {
@@ -1722,6 +2595,18 @@ function loadNatalPlacementPrimitiveCorpora() {
   });
 }
 
+function loadAuthoredPlacementCorpora() {
+  const corporaRoot = path.join(process.cwd(), "packages/astro-knowledge/generated/tldr-astro/authored-placements");
+
+  return listJsonFiles(corporaRoot).flatMap((filePath) => {
+    try {
+      return [JSON.parse(fs.readFileSync(filePath, "utf8")) as AuthoredPlacementCorpus];
+    } catch {
+      return [];
+    }
+  });
+}
+
 function targetV4CorpusId(input: GenerateContentInput) {
   if (input.surface === "sky") {
     return "tldr-v4-sky-rewrites";
@@ -1751,6 +2636,993 @@ function comparableKey(value?: string) {
   return stringValue(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function displayAstroName(value?: string) {
+  const key = comparableKey(value);
+
+  if (!key) return "";
+
+  return key.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+}
+
+function repoSourcePath(relativePath: string) {
+  return `packages/astro-knowledge/data/${relativePath}`;
+}
+
+function readProjectJson(relativePath: string): Record<string, unknown> | null {
+  const filePath = path.join(process.cwd(), repoSourcePath(relativePath));
+
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8")) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function sourceExcerpt(value: unknown) {
+  const text = stringValue(value).trim();
+
+  return text.length > 900 ? `${text.slice(0, 900).trim()}...` : text;
+}
+
+function pushProjectSource(
+  sources: ProjectAuthoredNatalSource[],
+  role: string,
+  relativePath: string,
+  data: Record<string, unknown> | null,
+  excerpts: unknown[]
+) {
+  const cleanExcerpts = excerpts.map(sourceExcerpt).filter(Boolean);
+
+  if (!data || !cleanExcerpts.length) {
+    return;
+  }
+
+  sources.push({
+    role,
+    sourcePath: repoSourcePath(relativePath),
+    id: stringValue(data.id),
+    title: stringValue(data.title) || stringValue(data.label) || stringValue(data.name),
+    excerpts: cleanExcerpts
+  });
+}
+
+function arrayRecordValue(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === "object" && !Array.isArray(entry))
+    : [];
+}
+
+function recordValue(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
+function primitiveEntry(relativePath: string, id: string) {
+  const data = readProjectJson(relativePath);
+  const entries = arrayRecordValue(data?.entries);
+  const key = comparableKey(id);
+
+  return entries.find((entry) => comparableKey(stringValue(entry.id) || stringValue(entry.label) || stringValue(entry.name)) === key) ?? null;
+}
+
+function ordinalHouseKey(value?: string) {
+  const key = comparableKey(value);
+  const match = key.match(/\d+/);
+
+  return match ? match[0] : "";
+}
+
+function houseLabel(value?: string) {
+  const ordinal = ordinalHouseNumber(ordinalHouseKey(value));
+
+  return ordinal ? `${ordinal} house` : "";
+}
+
+function natalPlacementTitleFromFacts(facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  const body = displayAstroName(facts.body);
+  const sign = displayAstroName(facts.sign);
+  const house = houseLabel(facts.house);
+
+  return [body, sign, house].every(Boolean)
+    ? `${body} in ${sign} in the ${house}`
+    : "";
+}
+
+function authoredPlacementEntries() {
+  return loadAuthoredPlacementCorpora().flatMap((corpus) => arrayRecordValue(corpus.entries) as AuthoredPlacementEntry[]);
+}
+
+function authoredPlacementHouseId(value?: string) {
+  const ordinal = ordinalHouseNumber(ordinalHouseKey(value));
+
+  return ordinal ? ordinal + "-house" : "";
+}
+
+function authoredPlacementMatchId(matchType: string, facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  const type = comparableKey(matchType).replace(/-/g, "_");
+  const body = comparableKey(facts.body);
+  const sign = comparableKey(facts.sign);
+  const house = authoredPlacementHouseId(facts.house);
+
+  if (type === "planet_sign_house") return [body, sign, house].filter(Boolean).join("-");
+  if (type === "planet_sign") return [body, sign].filter(Boolean).join("-");
+  if (type === "sign_house") return [sign, house].filter(Boolean).join("-");
+  if (type === "planet_house") return [body, house].filter(Boolean).join("-");
+  if (type === "planet") return body;
+  if (type === "sign") return sign;
+  if (type === "house") return house;
+
+  return "";
+}
+
+function authoredPlacementEntryMatches(entry: AuthoredPlacementEntry, matchType: string, facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  const expectedId = authoredPlacementMatchId(matchType, facts);
+  const entryId = comparableKey(entry.id);
+
+  if (expectedId && entryId === expectedId) {
+    return true;
+  }
+
+  const type = comparableKey(entry.matchType).replace(/-/g, "_");
+
+  if (type !== matchType) {
+    return false;
+  }
+
+  const body = comparableKey(facts.body);
+  const sign = comparableKey(facts.sign);
+  const house = ordinalHouseKey(facts.house);
+
+  if (matchType.includes("planet") && comparableKey(entry.planet) !== body) return false;
+  if (matchType.includes("sign") && comparableKey(entry.sign) !== sign) return false;
+  if (matchType.includes("house") && ordinalHouseKey(entry.house) !== house) return false;
+
+  return true;
+}
+
+function authoredNatalPlacementMatches(facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  const entries = authoredPlacementEntries();
+  const priority = [
+    "planet_sign_house",
+    "planet_sign",
+    "sign_house",
+    "planet_house",
+    "planet",
+    "sign",
+    "house"
+  ];
+
+  return priority.flatMap((matchType) => {
+    const entry = entries.find((candidate) => authoredPlacementEntryMatches(candidate, matchType, facts));
+
+    return entry ? [{ matchType, entry }] : [];
+  });
+}
+
+function authoredPlacementAppBody(entry: AuthoredPlacementEntry) {
+  const status = comparableKey(entry.editStatus);
+
+  if (!["approved", "published", "live"].includes(status)) {
+    return "";
+  }
+
+  return stringValue(entry.appBody) || stringValue(entry.body);
+}
+
+function authoredPlacementParagraphs(entry: AuthoredPlacementEntry) {
+  return authoredPlacementAppBody(entry)
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+function compositeAuthoredNatalPlacementBody(matches: Array<{ matchType: string; entry: AuthoredPlacementEntry }>) {
+  const paragraphs = matches.map((match) => authoredPlacementParagraphs(match.entry));
+  const firstParagraph = paragraphs.map((parts) => parts[0]).filter(Boolean).join(" ");
+  const secondParagraph = paragraphs.map((parts) => parts.slice(1).join(" ")).filter(Boolean).join(" ");
+
+  return [firstParagraph, secondParagraph].filter(Boolean).join("\n\n");
+}
+
+function authoredNatalPlacementBody(facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  const matches = authoredNatalPlacementMatches(facts);
+  const exact = matches.find((match) => match.matchType === "planet_sign_house" && authoredPlacementAppBody(match.entry));
+
+  if (exact) {
+    return {
+      sourceType: "exact-authored",
+      matches: [exact],
+      body: authoredPlacementAppBody(exact.entry)
+    };
+  }
+
+  const composite = matches.filter((match) => authoredPlacementAppBody(match.entry));
+
+  if (composite.length) {
+    return {
+      sourceType: "composite-authored",
+      matches: composite,
+      body: compositeAuthoredNatalPlacementBody(composite)
+    };
+  }
+
+  return {
+    sourceType: "deterministic-fallback",
+    matches: [],
+    body: ""
+  };
+}
+
+function aspectDisplayLabel(value?: string) {
+  const aspect = canonicalAspectKey(value);
+
+  if (aspect === "opposition") return "Opposite";
+  if (aspect === "conjunction") return "Conjunct";
+  if (aspect === "square") return "Square";
+  if (aspect === "trine") return "Trine";
+  if (aspect === "sextile") return "Sextile";
+
+  return displayAstroName(aspect);
+}
+
+function lowerAspectDisplayLabel(value?: string) {
+  const label = aspectDisplayLabel(value);
+
+  return label ? label.toLowerCase() : "aspect";
+}
+
+function deterministicPlanetFunction(planet: string) {
+  const key = comparableKey(planet);
+  const byPlanet: Record<string, string> = {
+    sun: "identity, confidence, vitality, and direction",
+    moon: "response, memory, protection, need, and the body signals that keep asking for attention",
+    mercury: "noticing, thinking, speaking, deciding, and making sense of what is happening",
+    venus: "value, affection, taste, loyalty, giving, receiving, and what feels worth keeping",
+    mars: "action, defense, pursuit, desire, anger, and the way a choice becomes movement",
+    jupiter: "belief, confidence, learning, judgment, and the desire to make meaning from experience",
+    saturn: "pressure, responsibility, limits, timing, discipline, and what has to become solid",
+    uranus: "disruption, distance, invention, refusal, and the need to break a pattern that has stopped working",
+    neptune: "longing, imagination, sensitivity, idealization, and the pull toward what cannot be fully proven",
+    pluto: "power, control, exposure, survival, and the places where something cannot stay buried",
+    chiron: "the sore point that keeps teaching you what needs care, skill, and language",
+    "north-node": "growth, appetite, risk, and the unfamiliar direction that keeps pulling you forward",
+    "south-node": "habit, memory, old skill, and the familiar pattern that can become too automatic"
+  };
+
+  return byPlanet[key] ?? "attention, choice, and the way this part of the chart works";
+}
+
+function planetSubjectName(planet: string) {
+  const name = displayAstroName(planet);
+  const key = comparableKey(planet);
+
+  return ["sun", "moon"].includes(key) ? `the ${name}` : name;
+}
+
+function deterministicSignExpression(sign: string) {
+  const key = comparableKey(sign);
+  const bySign: Record<string, string> = {
+    aries: "directness, urgency, courage, and the need to act before everything is settled",
+    taurus: "steadiness, appetite, repetition, patience, and the need for something that can hold",
+    gemini: "language, movement, comparison, curiosity, and the need to keep the mind in motion",
+    cancer: "memory, protection, family patterning, and what feels personal enough to name",
+    leo: "warmth, pride, loyalty, style, and the desire to be seen clearly",
+    virgo: "precision, repair, usefulness, discernment, and the need to make the details work",
+    libra: "comparison, fairness, beauty, agreement, and the pressure of relationship",
+    scorpio: "intensity, privacy, focus, control, and the need to understand what is happening underneath",
+    sagittarius: "belief, distance, humor, study, risk, and the need to test a bigger meaning",
+    capricorn: "structure, consequence, ambition, restraint, and the need to build something real",
+    aquarius: "questions, pattern recognition, refusal, distance, and the ability to notice what a group is agreeing to before it understands the cost",
+    pisces: "porosity, imagination, surrender, compassion, and the difficulty of keeping a clean edge"
+  };
+
+  return bySign[key] ?? "the sign's pattern, pace, and way of responding";
+}
+
+function deterministicPlanetSentence(planet: string, sign: string) {
+  const planetKey = comparableKey(planet);
+  const signKey = comparableKey(sign);
+  const byPlanet: Record<string, string> = {
+    sun: "Your sense of self needs a direction that can hold up in real life, not only in private thought.",
+    moon: "Your needs may register before you have words for them, which makes the body and daily response important to read carefully.",
+    mercury: "Your mind may pick up what is unsaid before a conversation has a clean explanation.",
+    venus: "Feeling valued is not a small thing here, because affection, effort, beauty, and loyalty all need to be recognized in a real way.",
+    mars: "Desire moves through the body quickly here, so action often begins before the whole situation has been explained.",
+    jupiter: "Belief grows through experience here, especially when an idea has to become something you can actually live by.",
+    saturn: "Pressure tends to show where a stronger structure is needed, especially around the part of life this placement keeps testing.",
+    uranus: "You may notice the pattern that everyone else has learned to accept, and that can make ordinary agreement feel too small.",
+    neptune: "Longing can blur the edge between what is possible and what is being projected, so clarity has to be earned slowly.",
+    pluto: "This placement tends to notice where control is hiding, especially when something polite is covering a stronger need.",
+    chiron: "The sore point here is not random; it keeps returning to show where skill, language, and care have to develop.",
+    "north-node": "This placement pulls you toward a less familiar way of living, even when the old pattern would be easier to repeat.",
+    "south-node": "This placement carries an old skill, but it can become too automatic when life asks for a different response."
+  };
+
+  if (planetKey === "sun" && signKey === "aquarius") {
+    return "You may notice what people are agreeing to before they understand what that agreement asks from them.";
+  }
+
+  if (planetKey === "venus" && signKey === "leo") {
+    return "Feeling valued is not a small thing here, because love, effort, taste, loyalty, and generosity need to be seen in a real way.";
+  }
+
+  if (planetKey === "mercury" && signKey === "cancer") {
+    return "Your mind may pick up what is unsaid before a conversation has a clean explanation, so words often carry memory, protection, and personal history with them.";
+  }
+
+  if (planetKey === "moon" && signKey === "scorpio") {
+    return "Your needs may register intensely and privately, which can make small daily pressures feel larger when something underneath has not been named.";
+  }
+
+  return byPlanet[planetKey] ?? "This placement needs to be understood through what it repeatedly notices, chooses, protects, or refuses.";
+}
+
+function deterministicHouseTopics(house: string) {
+  const key = ordinalHouseKey(house);
+  const byHouse: Record<string, string> = {
+    "1": "presence, identity, body, and the first impression you make without trying",
+    "2": "money, possessions, appetite, self-worth, and what you are willing to keep or build",
+    "3": "speech, writing, siblings, neighbors, daily decisions, and the messages that move through ordinary life",
+    "4": "home, family, roots, privacy, and the emotional ground you return to",
+    "5": "pleasure, creativity, romance, children, risk, and the desire to make something that feels alive",
+    "6": "work habits, health, skill, maintenance, and the daily systems that either support or wear down the body",
+    "7": "partnership, conflict, negotiation, attraction, and the people who meet you directly",
+    "8": "shared money, debt, intimacy, trust, inheritance, and what becomes complicated once another person is involved",
+    "9": "study, belief, travel, teaching, publishing, religion, law, and the ideas that organize how you understand the world",
+    "10": "work, visibility, leadership, reputation, responsibility, and what other people can recognize about your direction",
+    "11": "friendship, audience, community, networks, hopes, and the groups or systems you move through",
+    "12": "privacy, retreat, dreams, grief, hidden patterns, and what is hard to explain in public"
+  };
+
+  return byHouse[key] ?? "the part of life named by this house";
+}
+
+function deterministicShortPlanetAction(planet: string) {
+  const key = comparableKey(planet);
+  const byPlanet: Record<string, string> = {
+    sun: "identity and direction",
+    moon: "need and response",
+    mercury: "thought, speech, and decisions",
+    venus: "value, affection, and worth",
+    mars: "action, anger, and pursuit",
+    jupiter: "belief, confidence, and meaning",
+    saturn: "pressure, limits, and responsibility",
+    uranus: "disruption and refusal",
+    neptune: "longing and imagination",
+    pluto: "power and control",
+    chiron: "the sore point that needs language",
+    "north-node": "growth and appetite",
+    "south-node": "habit and memory"
+  };
+
+  return byPlanet[key] ?? "attention and choice";
+}
+
+function deterministicShortSignStyle(sign: string) {
+  const key = comparableKey(sign);
+  const bySign: Record<string, string> = {
+    aries: "direct and urgent",
+    taurus: "steady and practical",
+    gemini: "curious and verbal",
+    cancer: "protective and personal",
+    leo: "warm and proud",
+    virgo: "precise and useful",
+    libra: "relational and fair-minded",
+    scorpio: "private and intense",
+    sagittarius: "restless and meaning-seeking",
+    capricorn: "structured and consequence-aware",
+    aquarius: "questioning and pattern-aware",
+    pisces: "sensitive and imaginal"
+  };
+
+  return bySign[key] ?? "specific";
+}
+
+function deterministicShortHouseTopics(house: string) {
+  const key = ordinalHouseKey(house);
+  const byHouse: Record<string, string> = {
+    "1": "body and identity",
+    "2": "money, possessions, and self-worth",
+    "3": "speech, messages, siblings, and daily decisions",
+    "4": "home, family, and privacy",
+    "5": "pleasure, creativity, and risk",
+    "6": "work habits, health, and maintenance",
+    "7": "partnership and conflict",
+    "8": "shared money, debt, intimacy, and trust",
+    "9": "study, belief, travel, and teaching",
+    "10": "work, visibility, leadership, and responsibility",
+    "11": "friends, audience, community, and networks",
+    "12": "privacy, retreat, dreams, and hidden patterns"
+  };
+
+  return byHouse[key] ?? "this part of life";
+}
+
+function deterministicAspectEffect(value?: string) {
+  const aspect = canonicalAspectKey(value);
+
+  if (aspect === "square") return "presses on";
+  if (aspect === "opposition") return "pulls against";
+  if (aspect === "trine") return "works with";
+  if (aspect === "sextile") return "opens a path for";
+  if (aspect === "conjunction") return "intensifies";
+
+  return "changes";
+}
+
+function deterministicAspectPattern(value?: string) {
+  const aspect = canonicalAspectKey(value);
+
+  if (aspect === "square") return "The pattern can make the primary placement feel tested by consequence, timing, or resistance.";
+  if (aspect === "opposition") return "The pattern can make the primary placement meet itself through another person, demand, or exchange.";
+  if (aspect === "trine") return "The pattern can give the primary placement an easier channel, but it still needs to be used deliberately.";
+  if (aspect === "sextile") return "The pattern can make the primary placement more usable when attention turns into a concrete choice.";
+  if (aspect === "conjunction") return "The pattern can make the primary placement louder, more concentrated, and harder to ignore.";
+
+  return "The pattern changes how the primary placement moves through the chart.";
+}
+
+function deterministicNatalAspectTitle(aspect: Record<string, unknown>) {
+  const type = stringValue(aspect.aspect) || stringValue(aspect.aspectType) || stringValue(aspect.type);
+  const planet = stringValue(aspect.otherPoint) || stringValue(aspect.aspectPlanet) || stringValue(aspect.planetB) || stringValue(aspect.to);
+  const sign = stringValue(aspect.otherSign) || stringValue(aspect.aspectPlanetSign) || stringValue(aspect.planetBSign) || stringValue(aspect.toSign);
+  const house = stringValue(aspect.otherHouse) || stringValue(aspect.aspectPlanetHouse) || stringValue(aspect.planetBHouse) || stringValue(aspect.toHouse);
+  const parts = [
+    aspectDisplayLabel(type),
+    displayAstroName(planet),
+    "in",
+    displayAstroName(sign),
+    "in the",
+    houseLabel(house)
+  ].filter(Boolean);
+
+  return parts.join(" ");
+}
+
+function deterministicNatalPlacementBody(facts: ReturnType<typeof natalPlacementSourceFacts>) {
+  void facts;
+  return "";
+}
+
+function deterministicNatalAspectBody(
+  placementFacts: ReturnType<typeof natalPlacementSourceFacts>,
+  aspect: Record<string, unknown>
+) {
+  void placementFacts;
+  void aspect;
+  return "";
+}
+
+function natalPlacementBannedPhraseFailures(content: GeneratedContent) {
+  const text = normalizeText([
+    content.headline,
+    content.tldr,
+    content.summary,
+    content.body,
+    ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].filter(Boolean).join("\n"));
+
+  return natalPlacementHardBannedPhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+}
+
+function natalPlacementTarotReferenceFailures(content: GeneratedContent) {
+  const text = normalizeText(mainCopyText(content));
+  return natalPlacementTarotReferencePhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+}
+
+function natalPlacementTransitLanguageFailures(content: GeneratedContent) {
+  const text = normalizeText(mainCopyText(content));
+  return natalPlacementTransitLanguagePhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+}
+
+function natalPlacementVisibleScaffoldFailures(content: GeneratedContent) {
+  const headings = (content.sections ?? [])
+    .map((section) => normalizeText(stringValue(section.heading)).replace(/[:.]+$/g, "").trim())
+    .filter(Boolean);
+  const visibleLines = mainCopyText(content)
+    .split(/\r?\n/)
+    .map((line) => normalizeText(line).replace(/[:.]+$/g, "").trim())
+    .filter(Boolean);
+
+  return natalPlacementVisibleScaffoldPhrases.filter((phrase) => {
+    const normalizedPhrase = normalizeText(phrase);
+    return headings.some((heading) => heading === normalizedPhrase)
+      || visibleLines.some((line) => line === normalizedPhrase || line.startsWith(`${normalizedPhrase}:`));
+  });
+}
+
+function conditionalChartLanguageFailures(content: GeneratedContent) {
+  const text = normalizeText(mainCopyText(content));
+  return conditionalChartLanguagePhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+}
+
+function deterministicNatalPlacementDraft(input: GenerateContentInput): StoredGeneratedContent {
+  const facts = natalPlacementSourceFacts(input);
+  const headline = natalPlacementTitleFromFacts(facts) || factualHeadlineFor(input) || stringValue(input.headline);
+  const authored = authoredNatalPlacementBody(facts);
+  const body = authored.body;
+
+  if (!body) {
+    throw new ContentGenerationQualityError(
+      `No approved appBody exists for ${headline}. Refusing to display sourceBody or deterministic natal placement filler.`
+    );
+  }
+
+  const sections: StoredGeneratedContent["sections"] = [];
+  const tldr = firstSentence(body);
+  const content: StoredGeneratedContent = {
+    headline,
+    tldr,
+    summary: tldr,
+    body,
+    sections,
+    astrologyDrilldown: {
+      title: "Why this?",
+      summary: tldr,
+      factors: [
+        {
+          label: `${displayAstroName(facts.body)} in ${displayAstroName(facts.sign)}`,
+          technicalFact: `${displayAstroName(facts.body)} in ${displayAstroName(facts.sign)}`,
+          plainMeaning: `${deterministicPlanetFunction(facts.body)} through ${deterministicSignExpression(facts.sign)}.`
+        },
+        {
+          label: `The ${houseLabel(facts.house)}`,
+          technicalFact: `${displayAstroName(facts.body)} in the ${houseLabel(facts.house)}`,
+          plainMeaning: deterministicHouseTopics(facts.house)
+        }
+      ],
+      whyThisScene: authored.matches.length
+        ? "This page is assembled from authored natal placement source entries: " + authored.matches.map((match) => stringValue(match.entry.id)).join(", ") + "."
+        : "This page is assembled from the natal placement facts for " + headline + "."
+    },
+    model: authored.sourceType === "deterministic-fallback" ? "deterministic-natal-placement-v1" : "authored-natal-placement-" + authored.sourceType + "-v1"
+  };
+
+  const banned = natalPlacementBannedPhraseFailures(content);
+  if (banned.length) {
+    throw new ContentGenerationQualityError(`Deterministic natal placement copy used banned phrase: ${banned.join(", ")}`);
+  }
+
+  validateGeneratedContentForInput(content, input);
+
+  return content;
+}
+
+function natalPlacementSourceFacts(input: { facts?: Record<string, unknown> }) {
+  const facts = input.facts ?? {};
+  const placement = recordValue(facts.placement);
+  const rulers = arrayRecordValue(facts.rulers);
+  const traditionalRuler = recordValue(facts.traditionalRuler);
+  const modernRuler = recordValue(facts.modernRuler);
+  const traditionalRulerFromList = rulers.find((entry) => comparableKey(stringValue(entry.system)) === "traditional") ?? {};
+  const modernRulerFromList = rulers.find((entry) => comparableKey(stringValue(entry.system)) === "modern") ?? {};
+  const body = stringValue(facts.placementBody)
+    || stringValue(facts.planet)
+    || stringValue(facts.body)
+    || stringValue(facts.point)
+    || stringValue(facts.node)
+    || stringValue(placement.planet)
+    || stringValue(placement.body)
+    || stringValue(placement.point)
+    || stringValue(placement.node);
+  const sign = stringValue(facts.placementSign)
+    || stringValue(facts.sign)
+    || stringValue(facts.planetSign)
+    || stringValue(placement.sign);
+  const house = stringValue(facts.placementHouse)
+    || stringValue(facts.house)
+    || stringValue(facts.houseNumber)
+    || stringValue(placement.house);
+  const traditionalRulerBody = stringValue(facts.traditionalRulerBody)
+    || stringValue(facts.traditionalRuler)
+    || stringValue(facts.rulerBody)
+    || stringValue(facts.ruler)
+    || stringValue(facts.houseRuler)
+    || stringValue(traditionalRuler.body)
+    || stringValue(traditionalRulerFromList.body);
+  const traditionalRulerSign = stringValue(facts.traditionalRulerSign)
+    || stringValue(facts.rulerSign)
+    || stringValue(facts.houseRulerSign)
+    || stringValue(traditionalRuler.sign)
+    || stringValue(traditionalRulerFromList.sign);
+  const traditionalRulerHouse = stringValue(facts.traditionalRulerHouse)
+    || stringValue(facts.rulerHouse)
+    || stringValue(facts.houseRulerHouse)
+    || stringValue(traditionalRuler.house)
+    || stringValue(traditionalRulerFromList.house);
+  const modernRulerBody = stringValue(facts.modernRulerBody)
+    || stringValue(facts.modernRuler)
+    || stringValue(modernRuler.body)
+    || stringValue(modernRulerFromList.body);
+  const modernRulerSign = stringValue(facts.modernRulerSign)
+    || stringValue(modernRuler.sign)
+    || stringValue(modernRulerFromList.sign);
+  const modernRulerHouse = stringValue(facts.modernRulerHouse)
+    || stringValue(modernRuler.house)
+    || stringValue(modernRulerFromList.house);
+
+  return {
+    body,
+    sign,
+    house,
+    traditionalRulerBody,
+    traditionalRulerSign,
+    traditionalRulerHouse,
+    modernRulerBody,
+    modernRulerSign,
+    modernRulerHouse
+  };
+}
+
+function isPrimaryNatalPlacementGeneration(input: Pick<GenerateContentInput, "eventType"> & { facts?: Record<string, unknown> }) {
+  const type = comparableKey(stringValue(input.facts?.type) || input.eventType);
+  const blockType = comparableKey(stringValue(input.facts?.blockType));
+  const placement = natalPlacementSourceFacts(input);
+
+  if (blockType && !["essay", "placement", "natal-placement"].includes(blockType)) {
+    return false;
+  }
+
+  return Boolean(
+    placement.body &&
+    placement.sign &&
+    placement.house &&
+    (type.includes("natal-placement") || type.includes("natal-placement-writeup") || type === "natal-placement" || type === "you-natal-placement")
+  );
+}
+
+function placementAspectCardFacts(input: GenerateContentInput): PlacementAspectCardFacts {
+  const facts = input.facts;
+  const primaryPlanet = stringValue(facts.primaryPlanet)
+    || stringValue(facts.placementBody)
+    || stringValue(facts.body1)
+    || stringValue(facts.from)
+    || stringValue(facts.planetA)
+    || stringValue(facts.body)
+    || stringValue(facts.planet);
+  const primarySign = stringValue(facts.primarySign)
+    || stringValue(facts.placementSign)
+    || stringValue(facts.sign1)
+    || stringValue(facts.fromSign)
+    || stringValue(facts.planetASign)
+    || stringValue(facts.sign);
+  const primaryHouse = stringValue(facts.primaryHouse)
+    || stringValue(facts.placementHouse)
+    || stringValue(facts.house1)
+    || stringValue(facts.fromHouse)
+    || stringValue(facts.planetAHouse)
+    || stringValue(facts.house);
+  const aspectPlanet = stringValue(facts.aspectPlanet)
+    || stringValue(facts.otherPlanet)
+    || stringValue(facts.body2)
+    || stringValue(facts.to)
+    || stringValue(facts.planetB);
+  const aspectPlanetSign = stringValue(facts.aspectPlanetSign)
+    || stringValue(facts.otherSign)
+    || stringValue(facts.sign2)
+    || stringValue(facts.toSign)
+    || stringValue(facts.planetBSign);
+  const aspectPlanetHouse = stringValue(facts.aspectPlanetHouse)
+    || stringValue(facts.otherHouse)
+    || stringValue(facts.house2)
+    || stringValue(facts.toHouse)
+    || stringValue(facts.planetBHouse);
+  const aspectType = stringValue(facts.aspectType) || stringValue(facts.aspect) || stringValue(facts.type);
+  const orb = stringValue(facts.orb);
+
+  return {
+    primaryPlanet,
+    primarySign,
+    primaryHouse,
+    aspectType,
+    aspectPlanet,
+    aspectPlanetSign,
+    aspectPlanetHouse,
+    orb
+  };
+}
+
+function isPersonalizedNatalPlacementAspectCard(input: GenerateContentInput) {
+  const facts = placementAspectCardFacts(input);
+
+  return isNatalAspectGenerationContext(input)
+    && Boolean(facts.primaryPlanet && facts.primarySign && facts.primaryHouse && facts.aspectPlanet && facts.aspectPlanetSign && facts.aspectPlanetHouse);
+}
+
+function projectAuthoredNatalAspectCardSources(input: GenerateContentInput) {
+  if (!isPersonalizedNatalPlacementAspectCard(input)) {
+    return [];
+  }
+
+  const facts = placementAspectCardFacts(input);
+  const primaryPlanet = comparableKey(facts.primaryPlanet);
+  const primarySign = comparableKey(facts.primarySign);
+  const primaryHouse = ordinalHouseKey(facts.primaryHouse);
+  const aspectPlanet = comparableKey(facts.aspectPlanet);
+  const aspectSign = comparableKey(facts.aspectPlanetSign);
+  const aspectHouse = ordinalHouseKey(facts.aspectPlanetHouse);
+  const aspectType = canonicalAspectKey(facts.aspectType);
+  const sources: ProjectAuthoredNatalSource[] = [];
+
+  const primaryPlacementPath = `placements/sign/${primaryPlanet}-${primarySign}.json`;
+  const primaryPlacement = readProjectJson(primaryPlacementPath);
+  pushProjectSource(sources, "primary planet in sign", primaryPlacementPath, primaryPlacement, [
+    primaryPlacement?.tldr,
+    primaryPlacement?.body,
+    primaryPlacement?.note
+  ]);
+
+  const aspectPlacementPath = `placements/sign/${aspectPlanet}-${aspectSign}.json`;
+  const aspectPlacement = readProjectJson(aspectPlacementPath);
+  pushProjectSource(sources, "aspect planet in sign", aspectPlacementPath, aspectPlacement, [
+    aspectPlacement?.tldr,
+    aspectPlacement?.body,
+    aspectPlacement?.note
+  ]);
+
+  for (const [role, planet, sign] of [
+    ["primary planet support", primaryPlanet, primarySign],
+    ["aspect planet support", aspectPlanet, aspectSign]
+  ] as const) {
+    const planetPath = `planetary/${planet}.json`;
+    const planetData = readProjectJson(planetPath);
+    const signEntries = arrayRecordValue(planetData?.signs);
+    const signEntry = signEntries.find((entry) => comparableKey(stringValue(entry.sign)) === sign);
+
+    pushProjectSource(sources, role, planetPath, planetData, [
+      planetData?.overview,
+      planetData?.cycle,
+      signEntry ? `${stringValue(signEntry.sign)}: ${stringValue(signEntry.body)}` : ""
+    ]);
+  }
+
+  for (const [role, planet] of [
+    ["primary planet primitive", primaryPlanet],
+    ["aspect planet primitive", aspectPlanet]
+  ] as const) {
+    const entry = primitiveEntry("primitives/planets.json", planet);
+
+    pushProjectSource(sources, role, "primitives/planets.json", entry, [
+      entry ? `${stringValue(entry.label)} governs ${stringValue(entry.governs)}.` : "",
+      entry ? `Verb: ${stringValue(entry.verb)}. Tempo: ${stringValue(entry.tempo)}. Shadow: ${stringValue(entry.shadow)}.` : ""
+    ]);
+  }
+
+  for (const [role, sign] of [
+    ["primary sign primitive", primarySign],
+    ["aspect sign primitive", aspectSign]
+  ] as const) {
+    const entry = primitiveEntry("primitives/signs.json", sign);
+
+    pushProjectSource(sources, role, "primitives/signs.json", entry, [
+      entry ? `${stringValue(entry.label)} is ${stringValue(entry.element)} and ${stringValue(entry.mode)}.` : "",
+      entry ? `Rulers: ${Array.isArray(entry.rulers) ? entry.rulers.map(stringValue).join(", ") : stringValue(entry.rulers)}.` : "",
+      entry ? `Keywords: ${Array.isArray(entry.keywords) ? entry.keywords.map(stringValue).join(", ") : stringValue(entry.keywords)}.` : ""
+    ]);
+  }
+
+  for (const [role, house] of [
+    ["primary house primitive", primaryHouse],
+    ["aspect house primitive", aspectHouse]
+  ] as const) {
+    const entry = primitiveEntry("primitives/houses.json", house);
+
+    pushProjectSource(sources, role, "primitives/houses.json", entry, [
+      entry ? `${stringValue(entry.label)}: ${stringValue(entry.plainTranslation)}` : ""
+    ]);
+  }
+
+  const aspectEntry = primitiveEntry("primitives/aspects.json", aspectType);
+  pushProjectSource(sources, "aspect relationship primitive", "primitives/aspects.json", aspectEntry, [
+    aspectEntry ? `${stringValue(aspectEntry.label)}: ${stringValue(aspectEntry.traditionalMeaning)}` : "",
+    aspectEntry ? `Cyclic meaning: ${stringValue(aspectEntry.cyclicMeaning)}` : ""
+  ]);
+
+  return sources;
+}
+
+function projectAuthoredNatalPlacementSources(input: GenerateContentInput) {
+  if (!isPrimaryNatalPlacementGeneration(input)) {
+    return [];
+  }
+
+  const facts = natalPlacementSourceFacts(input);
+  const body = comparableKey(facts.body);
+  const sign = comparableKey(facts.sign);
+  const house = ordinalHouseKey(facts.house);
+  const traditionalRuler = comparableKey(facts.traditionalRulerBody);
+  const traditionalRulerSign = comparableKey(facts.traditionalRulerSign);
+  const traditionalRulerHouse = ordinalHouseKey(facts.traditionalRulerHouse);
+  const modernRuler = comparableKey(facts.modernRulerBody);
+  const modernRulerSign = comparableKey(facts.modernRulerSign);
+  const modernRulerHouse = ordinalHouseKey(facts.modernRulerHouse);
+  const sources: ProjectAuthoredNatalSource[] = [];
+
+  for (const match of authoredNatalPlacementMatches(facts)) {
+    const entry = match.entry;
+    const astrologyExcerpt = sourceExcerpt(entry.astrologyBody);
+
+    if (astrologyExcerpt) {
+      sources.push({
+        role: "ASTROLOGY SOURCE MATERIAL - authored placement " + match.matchType,
+        sourcePath: entry.sourcePath ? "packages/astro-knowledge/" + entry.sourcePath : "packages/astro-knowledge/generated/tldr-astro/authored-placements/authored-placements.json",
+        id: stringValue(entry.id),
+        title: stringValue(entry.title),
+        excerpts: [astrologyExcerpt]
+      });
+    }
+  }
+
+  const placementPath = `placements/sign/${body}-${sign}.json`;
+  const placement = readProjectJson(placementPath);
+  pushProjectSource(sources, "primary planet in sign", placementPath, placement, [
+    placement?.tldr,
+    placement?.body,
+    placement?.gift,
+    placement?.challenge,
+    placement?.note
+  ]);
+
+  const planetPath = `planetary/${body}.json`;
+  const planetData = readProjectJson(planetPath);
+  const planetSignEntry = arrayRecordValue(planetData?.signs)
+    .find((entry) => comparableKey(stringValue(entry.sign)) === sign);
+  pushProjectSource(sources, "primary planet meaning", planetPath, planetData, [
+    planetData?.overview,
+    planetData?.cycle,
+    planetSignEntry ? `${stringValue(planetSignEntry.sign)}: ${stringValue(planetSignEntry.body)}` : ""
+  ]);
+
+  const planetPrimitive = primitiveEntry("primitives/planets.json", body);
+  pushProjectSource(sources, "primary planet primitive", "primitives/planets.json", planetPrimitive, [
+    planetPrimitive ? `${stringValue(planetPrimitive.label)} governs ${stringValue(planetPrimitive.governs)}.` : "",
+    planetPrimitive ? `Verb: ${stringValue(planetPrimitive.verb)}. Tempo: ${stringValue(planetPrimitive.tempo)}. Shadow: ${stringValue(planetPrimitive.shadow)}.` : ""
+  ]);
+
+  const signPrimitive = primitiveEntry("primitives/signs.json", sign);
+  pushProjectSource(sources, "primary sign primitive", "primitives/signs.json", signPrimitive, [
+    signPrimitive ? `${stringValue(signPrimitive.label)} is ${stringValue(signPrimitive.element)} and ${stringValue(signPrimitive.mode)}.` : "",
+    signPrimitive ? `Traditional ruler: ${stringValue(signPrimitive.traditionalRuler)}. Modern ruler: ${stringValue(signPrimitive.modernRuler)}.` : "",
+    signPrimitive ? `Keywords: ${Array.isArray(signPrimitive.keywords) ? signPrimitive.keywords.map(stringValue).join(", ") : stringValue(signPrimitive.keywords)}.` : ""
+  ]);
+
+  const housePrimitive = primitiveEntry("primitives/houses.json", house);
+  pushProjectSource(sources, "primary house primitive", "primitives/houses.json", housePrimitive, [
+    housePrimitive ? `${stringValue(housePrimitive.label)}: ${stringValue(housePrimitive.plainTranslation)}` : ""
+  ]);
+
+  for (const [role, ruler, rulerSign, rulerHouse] of [
+    ["traditional ruler support", traditionalRuler, traditionalRulerSign, traditionalRulerHouse],
+    ["modern ruler support", modernRuler, modernRulerSign, modernRulerHouse]
+  ] as const) {
+    if (!ruler) continue;
+
+    const rulerPlanetPath = `planetary/${ruler}.json`;
+    const rulerPlanetData = readProjectJson(rulerPlanetPath);
+    const rulerSignEntry = arrayRecordValue(rulerPlanetData?.signs)
+      .find((entry) => comparableKey(stringValue(entry.sign)) === rulerSign);
+    pushProjectSource(sources, role, rulerPlanetPath, rulerPlanetData, [
+      rulerPlanetData?.overview,
+      rulerSignEntry ? `${stringValue(rulerSignEntry.sign)}: ${stringValue(rulerSignEntry.body)}` : ""
+    ]);
+
+    if (rulerHouse) {
+      const chartRulerHousePath = `chart-rulers/chart-ruler-house-${rulerHouse}.json`;
+      const chartRulerHouse = readProjectJson(chartRulerHousePath);
+      pushProjectSource(sources, `${role} house thread`, chartRulerHousePath, chartRulerHouse, [
+        chartRulerHouse?.tldr,
+        chartRulerHouse?.meaning,
+        chartRulerHouse?.shadow
+      ]);
+    }
+  }
+
+  for (const aspect of arrayRecordValue(input.facts.aspects).slice(0, 4)) {
+    const aspectType = canonicalAspectKey(stringValue(aspect.aspect));
+    const aspectPlanet = comparableKey(stringValue(aspect.otherPoint) || stringValue(aspect.planetB) || stringValue(aspect.to));
+    const aspectSign = comparableKey(stringValue(aspect.otherSign) || stringValue(aspect.planetBSign) || stringValue(aspect.toSign));
+    const aspectHouse = ordinalHouseKey(stringValue(aspect.otherHouse) || stringValue(aspect.planetBHouse) || stringValue(aspect.toHouse));
+    const aspectPlanetPath = aspectPlanet ? `planetary/${aspectPlanet}.json` : "";
+    const aspectPlanetData = aspectPlanetPath ? readProjectJson(aspectPlanetPath) : null;
+    const aspectSignEntry = arrayRecordValue(aspectPlanetData?.signs)
+      .find((entry) => comparableKey(stringValue(entry.sign)) === aspectSign);
+
+    pushProjectSource(sources, `aspect card planet support: ${aspectType} ${displayAstroName(aspectPlanet)}`, aspectPlanetPath, aspectPlanetData, [
+      aspectPlanetData?.overview,
+      aspectSignEntry ? `${stringValue(aspectSignEntry.sign)}: ${stringValue(aspectSignEntry.body)}` : ""
+    ]);
+
+    const aspectEntry = primitiveEntry("primitives/aspects.json", aspectType);
+    pushProjectSource(sources, `aspect card relationship support: ${aspectType}`, "primitives/aspects.json", aspectEntry, [
+      aspectEntry ? `${stringValue(aspectEntry.label)}: ${stringValue(aspectEntry.traditionalMeaning)}` : "",
+      aspectEntry ? `Cyclic meaning: ${stringValue(aspectEntry.cyclicMeaning)}` : ""
+    ]);
+
+    if (aspectHouse) {
+      const aspectHouseEntry = primitiveEntry("primitives/houses.json", aspectHouse);
+      pushProjectSource(sources, `aspect card house support: ${ordinalHouseNumber(aspectHouse)}`, "primitives/houses.json", aspectHouseEntry, [
+        aspectHouseEntry ? `${stringValue(aspectHouseEntry.label)}: ${stringValue(aspectHouseEntry.plainTranslation)}` : ""
+      ]);
+    }
+  }
+
+  return sources;
+}
+
+export function natalPlacementGenerationSafetySummary(input: GenerateContentInput): NatalPlacementGenerationSafetySummary {
+  const isPrimaryNatalPlacement = isPrimaryNatalPlacementGeneration(input);
+  const authoredSources = isPrimaryNatalPlacement ? projectAuthoredNatalPlacementSources(input) : [];
+  const authoredPlacementSources = authoredSources.filter((source) => source.role.startsWith("ASTROLOGY SOURCE MATERIAL - authored placement"));
+
+  return {
+    isPrimaryNatalPlacement,
+    sourceIds: authoredPlacementSources.map((source) => source.id).filter((id): id is string => Boolean(id)),
+    sourcePaths: Array.from(new Set(authoredPlacementSources.map((source) => source.sourcePath).filter(Boolean))),
+    sourceSafety: {
+      sourceBodyExcluded: true,
+      astrologyBodySent: authoredPlacementSources.some((source) => source.excerpts.some((excerpt) => excerpt.trim().length > 0)),
+      tarotNotesExcluded: true,
+      businessNotesExcluded: true,
+      authoredSourceGenerationAllowed: allowsPrivateSourceModelGeneration()
+    }
+  };
+}
+
+function projectAuthoredNatalAspectCardPrompt(input: GenerateContentInput) {
+  if (!isPersonalizedNatalPlacementAspectCard(input)) {
+    return "No placement-card authored source material requested.";
+  }
+
+  const facts = placementAspectCardFacts(input);
+  const sources = projectAuthoredNatalAspectCardSources(input);
+
+  return JSON.stringify({
+    placementCardFacts: {
+      blockType: "natal_aspect",
+      surface: "natal_placement_aspect_card",
+      primaryPlanet: displayAstroName(facts.primaryPlanet),
+      primarySign: displayAstroName(facts.primarySign),
+      primaryHouse: ordinalHouseNumber(facts.primaryHouse),
+      aspectType: comparableKey(facts.aspectType),
+      aspectPlanet: displayAstroName(facts.aspectPlanet),
+      aspectPlanetSign: displayAstroName(facts.aspectPlanetSign),
+      aspectPlanetHouse: ordinalHouseNumber(facts.aspectPlanetHouse),
+      orb: facts.orb
+    },
+    authoredSources: sources
+  }, null, 2);
+}
+
+function projectAuthoredNatalPlacementPrompt(input: GenerateContentInput) {
+  if (!isPrimaryNatalPlacementGeneration(input)) {
+    return "No primary natal placement authored source material requested.";
+  }
+
+  const facts = natalPlacementSourceFacts(input);
+
+  return JSON.stringify({
+    primaryPlacement: {
+      title: `${displayAstroName(facts.body)} in ${displayAstroName(facts.sign)} in the ${ordinalHouseNumber(facts.house)} house`,
+      planet: displayAstroName(facts.body),
+      sign: displayAstroName(facts.sign),
+      house: ordinalHouseNumber(facts.house),
+      traditionalRuler: displayAstroName(facts.traditionalRulerBody),
+      traditionalRulerSign: displayAstroName(facts.traditionalRulerSign),
+      traditionalRulerHouse: ordinalHouseNumber(facts.traditionalRulerHouse),
+      modernRuler: displayAstroName(facts.modernRulerBody),
+      modernRulerSign: displayAstroName(facts.modernRulerSign),
+      modernRulerHouse: ordinalHouseNumber(facts.modernRulerHouse)
+    },
+    aspectCards: arrayRecordValue(input.facts.aspects).slice(0, 4),
+    authoredSources: projectAuthoredNatalPlacementSources(input)
+  }, null, 2);
+}
+
 function entrySearchText(entry: V4RewriteEntry) {
   return [entry.id, entry.title, entry.itemType].filter(Boolean).join(" ").toLowerCase();
 }
@@ -1767,6 +3639,74 @@ function sourceBackedRevisionSearchText(entry: SourceBackedRevisionEntry) {
   ].filter(Boolean).join(" ").toLowerCase();
 }
 
+const aspectTypeNames = ["conjunction", "opposition", "square", "trine", "sextile"];
+
+function canonicalAspectKey(value?: string) {
+  const aspect = comparableKey(value);
+
+  if (aspect === "opposite" || aspect === "opposes") return "opposition";
+  if (aspect === "conjunct") return "conjunction";
+
+  return aspect;
+}
+
+function aspectFamily(value: string) {
+  const aspect = canonicalAspectKey(value);
+
+  if (["square", "opposition"].includes(aspect)) return "hard";
+  if (["trine", "sextile"].includes(aspect)) return "flow";
+  if (aspect === "conjunction") return "conjunction";
+
+  return aspect;
+}
+
+function aspectPartsFromKey(value?: string) {
+  const key = comparableKey(value);
+
+  if (!key) return null;
+
+  for (const aspect of aspectTypeNames) {
+    const token = "-" + aspect + "-";
+    const index = key.indexOf(token);
+
+    if (index === -1) continue;
+
+    const first = key.slice(0, index);
+    const second = key.slice(index + token.length);
+
+    if (first && second) {
+      return { first, aspect, second };
+    }
+  }
+
+  return null;
+}
+
+function aspectPartsFromFacts(input: GenerateContentInput) {
+  const facts = input.facts;
+  const first = comparableKey(stringValue(facts.primaryPlanet) || stringValue(facts.placementBody) || stringValue(facts.body1) || stringValue(facts.planetA) || stringValue(facts.from));
+  const second = comparableKey(stringValue(facts.aspectPlanet) || stringValue(facts.otherPlanet) || stringValue(facts.body2) || stringValue(facts.planetB) || stringValue(facts.to));
+  const aspect = canonicalAspectKey(stringValue(facts.aspect) || stringValue(facts.aspectType) || stringValue(facts.type));
+
+  if (!first || !second || !aspect || !aspectTypeNames.includes(aspect)) return null;
+
+  return { first, aspect, second };
+}
+
+function sourceBackedAspectParts(entry: SourceBackedRevisionEntry) {
+  return aspectPartsFromKey(entry.id)
+    || aspectPartsFromKey(entry.aspect)
+    || aspectPartsFromKey(entry.row_id);
+}
+
+function hasSameUnorderedAspectPair(
+  first: { first: string; second: string },
+  second: { first: string; second: string }
+) {
+  return (first.first === second.first && first.second === second.second)
+    || (first.first === second.second && first.second === second.first);
+}
+
 function scoreSourceBackedRevisionEntry(
   entry: SourceBackedRevisionEntry,
   input: GenerateContentInput,
@@ -1777,7 +3717,21 @@ function scoreSourceBackedRevisionEntry(
   const contentKey = comparableKey(input.contentKey);
   const headline = comparableKey(factualHeadlineFor(input));
   const rowText = sourceBackedRevisionSearchText(entry);
+  const inputAspect = aspectPartsFromFacts(input);
+  const entryAspect = sourceBackedAspectParts(entry);
   let score = 0;
+
+  if (inputAspect && entryAspect) {
+    if (hasSameUnorderedAspectPair(inputAspect, entryAspect) && inputAspect.aspect === entryAspect.aspect) {
+      score += 220;
+    } else if (hasSameUnorderedAspectPair(inputAspect, entryAspect) && aspectFamily(inputAspect.aspect) === aspectFamily(entryAspect.aspect)) {
+      score += 150;
+    } else if (hasSameUnorderedAspectPair(inputAspect, entryAspect)) {
+      score += 100;
+    } else if (inputAspect.aspect === entryAspect.aspect) {
+      score += 35;
+    }
+  }
 
   if (id && input.knowledgeIds?.some((knowledgeId) => comparableKey(knowledgeId) === id)) score += 90;
   if (id && contentKey.includes(id)) score += 70;
@@ -1808,6 +3762,16 @@ function compactSourceBackedRevisionEntry(entry: SourceBackedRevisionEntry) {
   };
 }
 
+function compactSourceBackedRevisionSupportEntry(entry: ReturnType<typeof compactSourceBackedRevisionEntry>) {
+  return {
+    id: entry.id,
+    aspect: entry.aspect,
+    sourceSupportedThemes: entry.sourceSupportedThemes,
+    avoid: entry.avoid,
+    confidence: entry.confidence
+  };
+}
+
 function natalFactParts(input: GenerateContentInput) {
   const facts = input.facts;
 
@@ -1822,9 +3786,12 @@ function natalFactParts(input: GenerateContentInput) {
     ),
     sign: comparableKey(stringValue(facts.placementSign) || stringValue(facts.sign) || stringValue(facts.planetSign)),
     house: comparableKey(stringValue(facts.placementHouse) || stringValue(facts.house) || stringValue(facts.houseNumber)),
-    ruler: comparableKey(stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler)),
-    rulerSign: comparableKey(stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign)),
-    rulerHouse: comparableKey(stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse))
+    ruler: comparableKey(stringValue(facts.traditionalRulerBody) || stringValue(facts.traditionalRuler) || stringValue(facts.rulerBody) || stringValue(facts.ruler) || stringValue(facts.houseRuler)),
+    rulerSign: comparableKey(stringValue(facts.traditionalRulerSign) || stringValue(facts.rulerSign) || stringValue(facts.houseRulerSign)),
+    rulerHouse: comparableKey(stringValue(facts.traditionalRulerHouse) || stringValue(facts.rulerHouse) || stringValue(facts.houseRulerHouse)),
+    modernRuler: comparableKey(stringValue(facts.modernRulerBody) || stringValue(facts.modernRuler)),
+    modernRulerSign: comparableKey(stringValue(facts.modernRulerSign)),
+    modernRulerHouse: comparableKey(stringValue(facts.modernRulerHouse))
   };
 }
 
@@ -1848,10 +3815,13 @@ function scoreNatalPlacementPrimitiveEntry(entry: NatalPlacementPrimitiveEntry, 
 
   if (kind === "planet" && body && body === parts.body) score += 90;
   if (kind === "planet" && body && body === parts.ruler) score += parts.blockType === "ruler" ? 90 : 40;
+  if (kind === "planet" && body && body === parts.modernRuler) score += parts.blockType === "ruler" ? 70 : 30;
   if (kind === "sign" && sign && sign === parts.sign) score += 90;
   if (kind === "sign" && sign && sign === parts.rulerSign) score += parts.blockType === "ruler" ? 70 : 30;
+  if (kind === "sign" && sign && sign === parts.modernRulerSign) score += parts.blockType === "ruler" ? 60 : 20;
   if (kind === "house" && house && house === parts.house) score += 90;
   if (kind === "house" && house && house === parts.rulerHouse) score += parts.blockType === "ruler" ? 70 : 30;
+  if (kind === "house" && house && house === parts.modernRulerHouse) score += parts.blockType === "ruler" ? 60 : 20;
 
   if (parts.blockType === "sign" && kind === "house") score -= 90;
   if (parts.blockType === "house" && kind === "sign") score -= 90;
@@ -1911,6 +3881,39 @@ function loadSourceBackedRevisionExamples(input: GenerateContentInput) {
     return [];
   }
 
+  if (isPersonalizedNatalPlacementAspectCard(input)) {
+    const inputAspect = aspectPartsFromFacts(input);
+
+    if (!inputAspect) {
+      return [];
+    }
+
+    const seen = new Set<string>();
+
+    return entries
+      .filter((entry) => {
+        const entryAspect = sourceBackedAspectParts(entry);
+
+        return Boolean(
+          entryAspect
+          && inputAspect.aspect === entryAspect.aspect
+          && hasSameUnorderedAspectPair(inputAspect, entryAspect)
+        );
+      })
+      .filter((entry) => {
+        const key = stringValue(entry.id) || [entry.aspect, entry.target_field].map((value) => stringValue(value)).join("|");
+
+        if (seen.has(key)) {
+          return false;
+        }
+
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 4)
+      .map((entry) => compactSourceBackedRevisionEntry(entry));
+  }
+
   const searchText = factSearchText(input);
   const scored = entries
     .map((entry, index) => ({ entry, index, score: scoreSourceBackedRevisionEntry(entry, input, searchText) }))
@@ -1918,6 +3921,24 @@ function loadSourceBackedRevisionExamples(input: GenerateContentInput) {
     .sort((a, b) => b.score - a.score || a.index - b.index);
 
   return scored.slice(0, 4).map(({ entry }) => compactSourceBackedRevisionEntry(entry));
+}
+
+function sourceBackedRevisionPrompt(input: GenerateContentInput) {
+  if (!aspectPartsFromFacts(input)) {
+    return "No matching source-backed aspect revision rows are available for this task.";
+  }
+
+  const examples = loadSourceBackedRevisionExamples(input);
+
+  if (!examples.length) {
+    return "No matching source-backed aspect revision rows are available for this task.";
+  }
+
+  const promptExamples = isPersonalizedNatalPlacementAspectCard(input)
+    ? examples.map(compactSourceBackedRevisionSupportEntry)
+    : examples;
+
+  return JSON.stringify(promptExamples, null, 2);
 }
 
 function unsupportedClaimPatterns() {
@@ -2105,7 +4126,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     sourceMethodRules(),
     "",
     "CONTENT MODE",
-    modeRules(input.mode),
+    modeRulesForInput(input),
     "",
     "SURFACE",
     input.surface,
@@ -2125,8 +4146,24 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
     "",
+    "ASTROLOGY SOURCE MATERIAL",
+    "Use this repo-safe astrology material as the primary interpretive source layer for natal placement pages and personalized natal placement aspect cards. For primary placement pages, treat the placement as the main interpretation. For aspect cards, treat the primary placement as the home base and the aspect planet as a modifier to that placement. Use house material to connect where the primary placement lives with where aspect or ruler material presses, supports, or complicates it. Do not imitate generic astrology reference prose.",
+    projectAuthoredNatalPlacementPrompt(input),
+    projectAuthoredNatalAspectCardPrompt(input),
+    "TAROT / SYMBOLIC NOTES - DO NOT USE IN NATAL PLACEMENT COPY",
+    "Any source packet marked as tarot, symbolic, correspondence, card, or archetype material is preserved for review only. Do not include it in natal placement page copy.",
+    "BUSINESS NOTES - USE ONLY IN BUSINESS MODE",
+    "Any source packet marked as business material is preserved for business/career-specific generation only. Do not include it in ordinary natal placement page copy.",
+    "TECHNICAL ASPECT NOTES",
+    "Use technical aspect notes only to preserve aspect accuracy and to keep aspect cards attached to the primary natal placement.",
+    "",
+    "VOICE RULES",
     natalPlacementPrimitiveRules(),
     natalPlacementPrimitivePrompt(input),
+    "",
+    "SOURCE-BACKED ASPECT REFERENCES",
+    "Use these source-backed rows only as base aspect accuracy and claim-safety support after ASTROLOGY SOURCE MATERIAL and natal placement primitives. For personalized natal placement aspect cards, they are not prose examples; use only their themes to respect and claims to avoid. Do not let these rows override supplied signs, houses, or project-authored placement material. Do not imitate their prose style, sentence structure, or generic aspect-article openings.",
+    sourceBackedRevisionPrompt(input),
     "",
     "SOURCE-BACKED V4 REWRITE EXAMPLES",
     rewriteCorpusRules(),
@@ -2251,15 +4288,63 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
     throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
   }
 
+  const softWarnings = softVoiceWarningFailures(content, input);
+
   for (const phrase of bannedUserFacingPhrases) {
-    if (normalized.includes(phrase)) {
-      throw new Error(`Generated content used banned phrase: ${phrase}`);
+    if (softWarnings.includes(phrase)) {
+      continue;
+    }
+
+    if (hasBannedPhrase(normalized, phrase)) {
+      hardEditorialViolation([phrase], `Generated content used banned phrase: ${phrase}`);
     }
   }
 
   for (const signature of bannedOutputSignatures) {
     if (normalized.includes(signature)) {
-      throw new Error(`Generated content included disallowed phrase: ${signature}`);
+      hardEditorialViolation([signature], `Generated content included disallowed phrase: ${signature}`);
+    }
+  }
+
+  if (isNatalAspectGenerationContext(input)) {
+    const natalAspectText = mainCopyText(content);
+    const natalAspectBody = content.body.trim();
+    const clippedCommand = clippedCommandListCadence(natalAspectText);
+    const transitSentence = natalAspectTransitLanguage(natalAspectText);
+    const conditionalSentence = natalAspectConditionalChartLanguage(natalAspectText);
+    const vagueFillerSentence = natalAspectVagueFiller(natalAspectBody);
+    const reportPhraseSentence = natalAspectReportPhrase(natalAspectBody);
+    const textbookOpeningSentence = natalAspectTextbookOpening(natalAspectBody);
+    const factUsageFailure = hasPersonalizedNatalAspectFacts(input.facts)
+      ? personalizedNatalAspectFactUsageFailure(natalAspectBody, input.facts)
+      : "";
+
+    if (clippedCommand) {
+      hardEditorialViolation(["clipped command-list cadence"], `Generated natal aspect copy used clipped command-list cadence: ${clippedCommand}`);
+    }
+
+    if (transitSentence) {
+      hardEditorialViolation(["transit/current-sky language"], `Generated natal aspect copy used transit/current-weather language: ${transitSentence}`);
+    }
+
+    if (hasPersonalizedNatalAspectFacts(input.facts) && conditionalSentence) {
+      hardEditorialViolation(["conditional chart language"], `Generated personalized natal aspect copy used conditional chart language: ${conditionalSentence}`);
+    }
+
+    if (vagueFillerSentence) {
+      hardEditorialViolation(["vague AI astrology filler"], `Generated natal aspect copy used vague AI astrology filler: ${vagueFillerSentence}`);
+    }
+
+    if (reportPhraseSentence) {
+      hardEditorialViolation(["report-style phrasing"], `Generated natal aspect copy used report-style phrasing: ${reportPhraseSentence}`);
+    }
+
+    if (textbookOpeningSentence) {
+      throw new Error(`Generated natal aspect copy used a textbook opening: ${textbookOpeningSentence}`);
+    }
+
+    if (factUsageFailure) {
+      throw new Error(`Generated personalized natal aspect copy ignored supplied chart facts: ${factUsageFailure}`);
     }
   }
 
@@ -2269,6 +4354,53 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
 
   if (content.body.trim().length < 180) {
     throw new Error("Generated body is too thin for editorial review.");
+  }
+
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    const hasAspectInputs = arrayRecordValue(input.facts.aspects).length > 0;
+    const natalBanned = natalPlacementBannedPhraseFailures(content);
+    const tarotReferences = natalPlacementTarotReferenceFailures(content);
+    const natalTransitLanguage = natalPlacementTransitLanguageFailures(content);
+    const visibleScaffold = natalPlacementVisibleScaffoldFailures(content);
+    const conditionalChartLanguage = conditionalChartLanguageFailures(content);
+    const aspectCardSections = (content.sections ?? [])
+      .filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 60);
+
+    if (natalBanned.length) {
+      hardEditorialViolation(natalBanned, `Generated natal placement copy used banned phrase: ${natalBanned.join(", ")}`);
+    }
+
+    if (tarotReferences.length) {
+      hardEditorialViolation(tarotReferences, `Generated natal placement copy used tarot references: ${tarotReferences.join(", ")}`);
+    }
+
+    if (natalTransitLanguage.length) {
+      hardEditorialViolation(natalTransitLanguage, `Generated natal placement copy used transit/current-sky language: ${natalTransitLanguage.join(", ")}`);
+    }
+
+    if (visibleScaffold.length) {
+      hardEditorialViolation(visibleScaffold, `Generated natal placement copy used visible article scaffolding: ${visibleScaffold.join(", ")}`);
+    }
+
+    if (conditionalChartLanguage.length) {
+      hardEditorialViolation(conditionalChartLanguage, `Generated natal placement copy used conditional chart language: ${conditionalChartLanguage.join(", ")}`);
+    }
+
+    if (!hasAspectInputs && (content.sections ?? []).length > 0) {
+      hardEditorialViolation(["pseudo sections"], "Generated natal placement page included pseudo-sections even though no aspects were supplied.");
+    }
+
+    if (hasAspectInputs && aspectCardSections.length < 1) {
+      throw new Error("Generated natal placement page did not include a usable aspect card section.");
+    }
+
+    for (const section of aspectCardSections) {
+      if (section.body.trim().length >= content.body.trim().length) {
+        throw new Error("Generated natal placement aspect card was not shorter than the primary placement body.");
+      }
+    }
+
+    return;
   }
 
   if (!hasEnoughSectionContent(content.sections ?? [])) {
@@ -2338,6 +4470,7 @@ export function evaluateEditorialCoherence(
 ): EditorialGateResult {
   const failures: EditorialFailure[] = [];
   const isTransitArticleContext = isTransitArticle(context);
+  const isNatalAspectContext = isNatalAspectGenerationContext(context);
   const summary = stringValue(draft.summary);
   const body = stringValue(draft.body);
   const firstSummarySentence = isTransitArticleContext ? firstSentence(body || summary) : firstSentence(summary || body);
@@ -2393,7 +4526,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (!isDailySkyAspect && !isTransitArticleContext && technicalMainCopy.hasTechnicalAstrology) {
+  if (!isDailySkyAspect && !isTransitArticleContext && !isNatalAspectContext && technicalMainCopy.hasTechnicalAstrology) {
     addEditorialFailure(
       failures,
       "TECHNICAL_ASTROLOGY_IN_MAIN_COPY",
@@ -2448,7 +4581,7 @@ export function evaluateEditorialCoherence(
     );
   }
 
-  if (!isDailySkyAspect && !isTransitArticleContext && (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText))) {
+  if (!isDailySkyAspect && !isTransitArticleContext && !isNatalAspectContext && (astrologyTermCount >= 5 || /\b(activates|activation|venusian|plutonian|8th house|eighth house)\b/i.test(reviewText))) {
     addEditorialFailure(
       failures,
       "ASTROLOGY_OVERLOAD",
@@ -2586,6 +4719,14 @@ function validateGeneratedContentForInput(content: GeneratedContent, input: Gene
   validateGeneratedContentQuality(content, input);
   validateAstrologyDrilldownQuality(content);
 
+  if (isNatalAspectGenerationContext(input)) {
+    return;
+  }
+
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    return;
+  }
+
   const editorialResult = evaluateEditorialCoherence(content, {
     contentKey: input.contentKey,
     eventType: input.eventType,
@@ -2628,6 +4769,10 @@ function responseOutputText(payload: {
 }
 
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
+    return deterministicNatalPlacementDraft(input);
+  }
+
   const apiKey = requireEnv("OPENAI_API_KEY");
   const model = process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const lockedHeadline = factualHeadlineFor(input);
@@ -2682,27 +4827,36 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       const draft = {
         ...applySourceBackedRevisionScrub(parseGeneratedContentJson(outputText, lockedHeadline || ""), input),
         responseId: payload.id,
-        model
+        model,
+        retryCount: attempt
       };
 
       lastDraft = draft;
       validateGeneratedContentForInput(draft, input);
 
-      return draft;
+      return withGenerationQualityDiagnostics(draft, input);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
       qualityFeedback = [
         lastError.message,
-        "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
+        retryInstructionForError(lastError, lastDraft, input)
       ].join("\n");
     }
   }
 
   if (input.allowQualityFallback && lastDraft) {
+    if (isHardEditorialViolation(lastError)) {
+      throw lastError;
+    }
+
     return {
-      ...lastDraft,
+      ...withGenerationQualityDiagnostics(lastDraft, input),
       qualityWarning: lastError?.message ?? "Generated content failed quality gates."
     };
+  }
+
+  if (isHardEditorialViolation(lastError)) {
+    throw lastError;
   }
 
   throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
@@ -2723,6 +4877,10 @@ function claudeToolInput(payload: {
 }
 
 export async function generateWithClaude(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
+    return deterministicNatalPlacementDraft(input);
+  }
+
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   const lockedHeadline = factualHeadlineFor(input);
@@ -2791,36 +4949,53 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
       const draft = {
         ...applySourceBackedRevisionScrub(parseGeneratedContentJson(JSON.stringify(toolInput), lockedHeadline || ""), input),
         responseId: payload.id,
-        model
+        model,
+        retryCount: attempt
       };
 
       lastDraft = draft;
       validateGeneratedContentForInput(draft, input);
 
-      return draft;
+      return withGenerationQualityDiagnostics(draft, input);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
       qualityFeedback = [
         lastError.message,
-        "Regenerate the entire draft. Keep the factual headline. Write one direct human situation first. Use astrology as explanation only."
+        retryInstructionForError(lastError, lastDraft, input)
       ].join("\n");
     }
   }
 
   if (input.allowQualityFallback && lastDraft) {
+    if (isHardEditorialViolation(lastError)) {
+      throw lastError;
+    }
+
     return {
-      ...lastDraft,
+      ...withGenerationQualityDiagnostics(lastDraft, input),
       qualityWarning: lastError?.message ?? "Generated content failed quality gates."
     };
+  }
+
+  if (isHardEditorialViolation(lastError)) {
+    throw lastError;
   }
 
   throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
 }
 
 export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
-  const provider = input.provider?.toLowerCase() ?? process.env.CONTENT_GENERATION_PROVIDER?.toLowerCase() ?? "openai";
+  if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
+    return deterministicNatalPlacementDraft(input);
+  }
 
-  if (provider === "claude" || provider === "anthropic") {
+  const provider = contentGenerationProvider({
+    requestedProvider: input.provider,
+    blockType: typeof input.facts.blockType === "string" ? input.facts.blockType : null,
+    contentType: typeof input.facts.contentType === "string" ? input.facts.contentType : null
+  });
+
+  if (provider === "claude") {
     return generateWithClaude(input);
   }
 

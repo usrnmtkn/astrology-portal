@@ -37,6 +37,7 @@ import {
   PlacementGlyphIcon,
   PlacementTableRow,
   SynastryPlacementsComparison,
+  dignitiesFor,
   placementPlanetOrder,
   placementDignity,
   socialPlacementRows
@@ -58,6 +59,7 @@ import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContex
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import { LunarCalendar } from "./features/calendar/LunarCalendar";
 import {
   SkyAspectGroup,
@@ -311,6 +313,7 @@ type SignupDateParts = {
 
 type AuthMode = "create" | "login";
 type SkyDetail = {
+  routePath?: string;
   glyph: string;
   kicker: string;
   title: string;
@@ -610,8 +613,8 @@ function liveGeneratedContentByKeys(generatedContent: GeneratedContentMap, conte
 
 function generatedDetailSections(generated: LiveGeneratedContent | null) {
   return generatedContentSections(generated).map((section) => ({
-    heading: section.heading,
-    body: section.body
+    heading: cleanGeneratedSectionHeading(section.heading),
+    body: cleanGeneratedSectionBody(section.body)
   }));
 }
 
@@ -807,6 +810,16 @@ function stripTldrPrefix(value: string) {
   return value.replace(/^TLDR:\s*/i, "").trim();
 }
 
+function cleanGeneratedSectionHeading(heading: string) {
+  const cleaned = heading.replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
+
+  return isLegacySkyArticleScaffoldHeading(cleaned) ? "" : cleaned;
+}
+
+function cleanGeneratedSectionBody(body: string) {
+  return stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(body));
+}
+
 function normalizedArticleCopy(value: ReactNode) {
   return typeof value === "string"
     ? stripTldrPrefix(value).replace(/\s+/g, " ").trim().toLowerCase()
@@ -815,12 +828,12 @@ function normalizedArticleCopy(value: ReactNode) {
 
 function articleSectionFromText(heading: string, text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
-  const body = stripTldrPrefix(normalized);
+  const body = cleanGeneratedSectionBody(normalized);
   const sentenceEnd = body.search(/[.!?](\s|$)/);
   const tldr = sentenceEnd > 30 ? body.slice(0, sentenceEnd + 1).trim() : body;
 
   return {
-    heading,
+    heading: cleanGeneratedSectionHeading(heading),
     tldr,
     body
   };
@@ -849,7 +862,7 @@ function normalizeGeneratedDailyCopy(value: string) {
 function splitGeneratedDailyBody(value: string) {
   return value
     .split(/\n{2,}/)
-    .map((paragraph) => stripTldrPrefix(paragraph.trim()))
+    .map((paragraph) => cleanGeneratedSectionBody(paragraph.trim()))
     .filter(Boolean);
 }
 
@@ -863,7 +876,7 @@ function generatedDailyWriteupSections(generated: LiveGeneratedContent | null, s
 
   const sections = generatedContentSections(generated)
     .map((section) => ({
-      heading: section.heading,
+      heading: cleanGeneratedSectionHeading(section.heading),
       body: splitGeneratedDailyBody(section.body).filter(keepParagraph)
     }))
     .filter((section) => section.body.length > 0);
@@ -1117,6 +1130,10 @@ function portalModeFromHashPath(path: string): PortalMode | null {
     case "settings":
       return "settings";
     default:
+      if (path.startsWith("sky/")) {
+        return "member";
+      }
+
       if (path.startsWith("you/placement/")) {
         return "profile";
       }
@@ -1236,6 +1253,51 @@ function updatePlacementRouteUrl(placementId: string, mode: "push" | "replace" =
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
   } catch {
     // URL state is an enhancement; keep navigation usable if history is unavailable.
+  }
+}
+
+function skyDetailRoutePathFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const { path } = friendsHashParts(url.hash);
+
+    return path.startsWith("sky/") ? path : null;
+  } catch {
+    return null;
+  }
+}
+
+function skyPlacementRoutePath(position: Pick<PlanetPosition, "planet">) {
+  return `sky/placement/${encodeURIComponent(normalizeContentIdPart(position.planet))}`;
+}
+
+function skyRetrogradeRoutePath(position: Pick<PlanetPosition, "planet">) {
+  return `sky/retrograde/${encodeURIComponent(normalizeContentIdPart(position.planet))}`;
+}
+
+function skyAspectRoutePath(aspect: Pick<SkySnapshot["aspects"][number], "from" | "type" | "to">) {
+  return [
+    "sky",
+    "aspect",
+    normalizeContentIdPart(aspect.from),
+    normalizeContentIdPart(aspect.type),
+    normalizeContentIdPart(aspect.to)
+  ].map(encodeURIComponent).join("/");
+}
+
+function updateSkyDetailRouteUrl(routePath: string, mode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      url.pathname = "/";
+    }
+
+    url.searchParams.delete("tab");
+    url.hash = routePath;
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep the detail view usable if history is unavailable.
   }
 }
 
@@ -3082,8 +3144,8 @@ function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], ge
 
 function fastestSkyAspectPlanet(aspect: SkySnapshot["aspects"][number]) {
   return [aspect.from, aspect.to]
-    .map((planet) => ({ planet, order: placementPlanetOrder.indexOf(planet) }))
-    .filter((item) => item.order >= 0)
+    .map((planet) => ({ planet, order: skyBodyOrderIndex(planet) }))
+    .filter((item) => item.order < SKY_BODY_ORDER.length)
     .sort((first, second) => first.order - second.order)[0]?.planet ?? null;
 }
 
@@ -3192,6 +3254,32 @@ function isSuppressedSkyDetailSectionHeading(heading: string) {
   return normalized === "logic" || normalized === "large scale" || normalized === "large-scale";
 }
 
+function isLegacySkyArticleScaffoldHeading(heading: string) {
+  const normalized = heading.trim().toLowerCase().replace(/:+$/u, "");
+
+  return [
+    "tldr",
+    "what you may notice",
+    "what to do",
+    "timing",
+    "reflection",
+    "integration",
+    "closing",
+    "closing statement",
+    "planetary meaning",
+    "how it may show up",
+    "how to work with it",
+    "home and family"
+  ].includes(normalized);
+}
+
+function stripLegacySkyArticleScaffoldPrefix(text: string) {
+  return text.replace(
+    /^(?:TLDR|What You May Notice|What To Do|Timing|Reflection|Integration|Closing|Closing Statement|Planetary Meaning|How It May Show Up|How To Work With It|Home And Family)\s*:\s*/iu,
+    ""
+  ).trim();
+}
+
 function isRetrogradeTimelineNode(node: ReactNode) {
   if (!isValidElement<{ className?: string }>(node)) {
     return false;
@@ -3219,7 +3307,11 @@ function SkyDetailArticle({
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
-    heading: section.heading.replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim()
+    heading: cleanGeneratedSectionHeading(section.heading)
+  })).map((section) => ({
+    ...section,
+    heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
+    body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
   }));
   const drilldown = detail.astrologyDrilldown;
   const [lede] = paragraphs;
@@ -3309,7 +3401,7 @@ function SkyDetailArticle({
                   ) : null}
                   {generatedSections.map((section, index) => {
                     const bodyParagraphs = typeof section.body === "string"
-                      ? section.body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+                      ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
 
                     return (
@@ -3319,7 +3411,7 @@ function SkyDetailArticle({
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
                             <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
                           ))
-                          : <p>{section.body}</p>}
+                          : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
                       </section>
                     );
                   })}
@@ -3872,6 +3964,7 @@ function currentSkyAspectDetailArticle(
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
 
   return {
+    routePath: skyAspectRoutePath(aspect),
     glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
     kicker: "",
     title: generated?.headline ?? title,
@@ -4005,8 +4098,10 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   const isSunHorizonContact = transitPosition.planet === "Sun"
     && ["Ascendant", "Descendant"].includes(natalPosition.planet)
     && ["conjunction", "opposition"].includes(definition.type);
+  const configuredOrb = transitToNatalOrbLimit(transitPosition.planet);
+  const baseOrb = configuredOrb > 0 ? Math.min(definition.orb, configuredOrb) : definition.orb;
 
-  return isSunHorizonContact ? definition.orb + sunriseOrb : definition.orb;
+  return isSunHorizonContact ? baseOrb + sunriseOrb : baseOrb;
 }
 
 function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES): TransitItem[] {
@@ -5392,7 +5487,7 @@ function skyPositionLifeAreaFocusScore(position: PlanetPosition, focusAreas: Lif
   }, 0);
 }
 
-const skyPlacementPlanetOrder = [...placementPlanetOrder, "North Node", "South Node"];
+const skyPlacementPlanetOrder = [...SKY_BODY_ORDER];
 
 function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas: LifeAreaFocus[]) {
   if (focusAreas.length === 0) {
@@ -5407,7 +5502,7 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
       return secondScore - firstScore;
     }
 
-    return skyPlacementPlanetOrder.indexOf(first.planet) - skyPlacementPlanetOrder.indexOf(second.planet);
+    return skyBodyOrderIndex(first.planet) - skyBodyOrderIndex(second.planet);
   });
 }
 
@@ -5426,7 +5521,7 @@ function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
     const firstFastestPlanet = fastestSkyAspectPlanet(first);
     const secondFastestPlanet = fastestSkyAspectPlanet(second);
 
-    return placementPlanetOrder.indexOf(firstFastestPlanet ?? "") - placementPlanetOrder.indexOf(secondFastestPlanet ?? "");
+    return skyBodyOrderIndex(firstFastestPlanet ?? "") - skyBodyOrderIndex(secondFastestPlanet ?? "");
   });
 }
 
@@ -7435,6 +7530,19 @@ export function App() {
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
 
+  function openSkyDetail(detail: SkyDetail) {
+    setSelectedSkyDetail(detail);
+
+    if (detail.routePath) {
+      updateSkyDetailRouteUrl(detail.routePath);
+    }
+  }
+
+  function closeSkyDetail() {
+    setSelectedSkyDetail(null);
+    updatePortalModeUrl(userProfile ? "member" : "guest", "push");
+  }
+
   function navigateToFriends() {
     const nextTab = initialFriendsTab();
 
@@ -7464,6 +7572,12 @@ export function App() {
       const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
 
       storePortalMode(nextMode);
+      if (skyDetailRoutePathFromUrl()) {
+        storePortalMode(nextMode);
+        setMode(nextMode);
+        return;
+      }
+
       setSelectedSkyDetail(null);
       setMode(nextMode);
 
@@ -8243,8 +8357,8 @@ export function App() {
           voiceNotes: [
             "Write this as the user's personal daily horoscope for the Updates page.",
             "Summarize the most important information from all of today's aspects, transits, and timing signals.",
-            "Start the summary with 'TLDR:' followed by the plainest useful takeaway.",
-            "Use the summary field for the TLDR only.",
+            "Start the summary with the plainest useful takeaway. Do not add a visible TLDR label.",
+            "Use the summary field for the short takeaway only.",
             "Use the body or sections field for a separate daily write-up of 2 short paragraphs.",
             "Do not repeat the TLDR sentence in the body.",
             "The body should expand the practical read for today in 120 to 180 words.",
@@ -8381,8 +8495,8 @@ export function App() {
             voiceNotes: [
               "Write this as a personalized explanation for one transit-to-natal aspect card.",
               `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
-              "Start the summary with 'TLDR:' and make it one concrete sentence for the collapsed card.",
-              "Return 2 to 3 sections. Each section body must start with 'TLDR:' and then explain the point in grounded, specific language.",
+              "Make the summary one concrete sentence for the collapsed card, without a visible TLDR label.",
+              "Return 2 to 3 sections in grounded, specific language. Do not start section bodies with TLDR or any other visible scaffold label.",
               "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
               "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
               "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
@@ -9621,6 +9735,37 @@ function retrogradePreviewCopy(
     content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || "",
     3
   );
+}
+
+function retrogradeArticleTldr(
+  position: PlanetPosition,
+  generated: LiveGeneratedContent | null,
+  content: ContentFallback
+) {
+  const generatedSectionTldr = generatedContentSections(generated)
+    .find((section) => section.heading.trim().toLowerCase() === "tldr" || /^TLDR:\s*/i.test(section.body))
+    ?.body;
+
+  if (generatedSectionTldr) {
+    return stripTldrPrefix(generatedSectionTldr);
+  }
+
+  const generatedTldr = retrogradeGeneratedBodyParagraphs(position, generated)
+    .find((paragraph) => /^TLDR:\s*/i.test(paragraph));
+
+  if (generatedTldr) {
+    return stripTldrPrefix(generatedTldr);
+  }
+
+  const generatedSummary = generated?.summary?.trim() ?? "";
+  const safeGeneratedSummary = /^Here['’]s a version\b/i.test(generatedSummary) ? "" : generatedSummary;
+  const fallback = safeGeneratedSummary
+    || content.summary
+    || content.body
+    || content.detailParagraphs.find((paragraph) => paragraph.trim())
+    || "";
+
+  return stripTldrPrefix(fallback);
 }
 
 function ordinalHouse(house: number) {
@@ -10973,8 +11118,8 @@ function natalPlacementSkyDetail(
     retrograde: position.motion === "retrograde",
     body: (article.body ?? []).map(ownerAwareCopy),
     sections: article.sections.map((section) => ({
-      heading: section.heading,
-      body: ownerAwareCopy(section.body)
+      heading: cleanGeneratedSectionHeading(section.heading),
+      body: ownerAwareCopy(typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body)
     })),
     relatedAspects: article.relatedAspects
   };
@@ -11557,7 +11702,7 @@ function RetrogradeCallout({
       ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
       : null;
     const timelineLines = retrogradeTimelineLines(retrogradeWindow);
-    const tldr = generated?.summary?.trim() || content.summary || "";
+    const tldr = retrogradeArticleTldr(position, generated, content);
     const fallbackDetailParagraphs = [
       content.body,
       ...content.detailParagraphs
@@ -11584,6 +11729,7 @@ function RetrogradeCallout({
       blurb: retrogradePreviewCopy(position, generated, content),
       count: formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
       detail: {
+        routePath: skyRetrogradeRoutePath(position),
         glyph: `${position.glyph} ℞`,
         kicker: retrogradeDetailKicker(position),
         title: retrogradePlacementTitle(position),
@@ -12107,6 +12253,7 @@ function PlacementTable({
             positions
           });
           const openDetail = () => onOpenDetail({
+            routePath: skyPlacementRoutePath(position),
             glyph: detailGlyphForPlacement(position),
             kicker: placementDetailKicker(position, activeAspects),
             title,
@@ -12114,7 +12261,7 @@ function PlacementTable({
             duration: transitRangeLabel,
             retrograde: position.motion === "retrograde",
             body,
-            sections: generatedDetailSections(generated),
+            sections: [],
             relatedAspects: relatedAspectRows.length > 0
               ? {
                   heading: `Aspects to ${position.planet} today`,
@@ -13983,10 +14130,6 @@ function ManualChartsPanel({
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
-  const selectedFriendElementalBalance = natalElementBalance(selectedChart?.natalChart?.positions ?? []);
-  const selectedFriendElementalSummary = elementalBalanceSummary(selectedFriendElementalBalance);
-  const selectedFriendSun = selectedChart?.natalChart?.positions.find((position) => position.planet === "Sun");
-  const selectedFriendMoon = selectedChart?.natalChart?.positions.find((position) => position.planet === "Moon");
   const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
   const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
   const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
@@ -14052,8 +14195,8 @@ function ManualChartsPanel({
       plainBody: article.plainBody,
       body: article.body ?? [],
       sections: article.sections.map((section) => ({
-        heading: section.heading,
-        body: section.body
+        heading: cleanGeneratedSectionHeading(section.heading),
+        body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
       })),
       relatedAspects: article.relatedAspects
     });
@@ -14104,21 +14247,11 @@ function ManualChartsPanel({
       bodyBeforeSections: article.bodyBeforeSections,
       body: article.body ?? [],
       sections: article.sections.map((section) => ({
-        heading: section.heading,
-        body: section.body
+        heading: cleanGeneratedSectionHeading(section.heading),
+        body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
       }))
     });
   };
-  const selectedFriendSignatureTitle = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
-    ? `A ${selectedFriendElementalSummary.leadElement.toLowerCase()}-led chart`
-    : selectedFriendSun
-      ? natalPlacementTitle(selectedFriendSun)
-      : "Chart signature needs birth details";
-  const selectedFriendSignatureBody = selectedFriendElementalSummary.hasClearLead && selectedFriendElementalSummary.leadElement
-    ? `${selectedChart?.displayName ?? "This chart"} has a strong ${selectedFriendElementalSummary.leadElement.toLowerCase()} emphasis. That element is the first language of the chart and colors how the rest of the placements come through.`
-    : selectedFriendSun
-      ? `${natalPlacementTitle(selectedFriendSun)} sets the main signature, while the elements stay more evenly distributed.`
-    : "Add complete birth details to read the chart's elemental balance, angles, and strongest signatures.";
   const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
     ? null
     : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
@@ -14795,20 +14928,6 @@ function ManualChartsPanel({
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
               <div className="friend-profile-copy-column">
-                <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event chart signature" : `${selectedChart.displayName}'s signatures`}</span>
-                <section className="you-signatures-card friend-signature-card" aria-label={`${selectedChart.displayName} chart signature`}>
-                  <div className="you-signatures-main">
-                    <h3>{selectedFriendSignatureTitle}</h3>
-                    <p>{selectedFriendSignatureBody}</p>
-                  </div>
-                  <div className="elemental-balance" aria-label={`${selectedChart.displayName} elemental balance`}>
-                    <div className="elemental-balance-head">
-                      <span className="eyebrow section-label">Elemental balance</span>
-                      <span>{selectedFriendElementalSummary.label}</span>
-                    </div>
-                    <p>{selectedFriendElementalSummary.sentence}</p>
-                  </div>
-                </section>
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {selectedFriendBigThreeDisplayRows.map((row) => {
@@ -14827,6 +14946,7 @@ function ManualChartsPanel({
                     return (
                       <PlacementTableRow
                         description={body}
+                        dignity={dignitiesFor(row.label, row.sign)}
                         glyph={row.glyph}
                         key={row.id}
                         onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}
@@ -14988,7 +15108,7 @@ function ManualChartsPanel({
                         </span>
                         <span className="aspect-row-copy">
                           <h3>{title}</h3>
-                          <span className="aspect-row-subtitle">{subtitle}</span>
+                          <span className="aspect-row-subtitle ui-pill ui-pill--muted">{subtitle}</span>
                           {description ? <p className="synastry-contact-description">{description}</p> : null}
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
@@ -15051,7 +15171,7 @@ function ManualChartsPanel({
                         <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                         <span className="aspect-row-copy">
                           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                          <span className="aspect-row-subtitle">{relationshipThemeTitle(aspect.from, aspect.to, aspect.type)}</span>
+                          <span className="aspect-row-subtitle ui-pill ui-pill--muted">{relationshipThemeTitle(aspect.from, aspect.to, aspect.type)}</span>
                           <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent)}</p>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>

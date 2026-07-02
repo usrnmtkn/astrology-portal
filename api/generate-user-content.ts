@@ -1,9 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
+  ContentGenerationHardEditorialError,
   generateContent,
+  hardEditorialFailureResponse,
   type GenerateContentInput,
   type StoredGeneratedContent
 } from "./_lib/content-generation.js";
+import { contentGenerationProvider } from "./_lib/provider-config.js";
 
 type UserContentSubjectType =
   | "you_update"
@@ -61,7 +64,7 @@ function supabaseAnonKey() {
 }
 
 function contentProvider() {
-  return process.env.CONTENT_GENERATION_PROVIDER?.toLowerCase() ?? "openai";
+  return contentGenerationProvider();
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -251,6 +254,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saved
     });
   } catch (error) {
+    if (error instanceof ContentGenerationHardEditorialError) {
+      sendJson(res, 422, {
+        ok: false,
+        errorType: "hard_editorial_violation",
+        error: error.message,
+        ...hardEditorialFailureResponse(error)
+      });
+      return;
+    }
+
     console.error("generate-user-content failed", error);
     sendJson(res, 500, {
       ok: false,

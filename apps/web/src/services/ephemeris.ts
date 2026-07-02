@@ -1,5 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
-import { debugInfoForZonedDateTime } from "./timezones";
+import { debugInfoForZonedDateTime } from "./timezones.js";
 
 const signs = [
   ["Aries", "♈"],
@@ -49,12 +49,14 @@ type SkyCalculationOptions = {
 };
 
 export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
+export type LunarCalendarEclipseType = "solar" | "lunar";
 
 export type LunarCalendarEvent = {
   id: string;
   type: LunarCalendarEventType;
   title: string;
   startsAt: string;
+  endsAt?: string;
   dateKey: string;
   glyph: string;
   primary: boolean;
@@ -64,6 +66,7 @@ export type LunarCalendarEvent = {
   sign?: string;
   fromSign?: string;
   toSign?: string;
+  eclipseType?: LunarCalendarEclipseType;
   description: string;
 };
 
@@ -1000,18 +1003,21 @@ function findLunations(
         const occursAt = refinePhaseEvent(swe, phaseTarget.target, previous.date, current.date);
         const sign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
         const dateKey = localDateKey(occursAt, timeZone);
+        const eclipseType = eclipseTypeForLunation(swe, occursAt, phaseTarget.target);
+        const title = lunationTitle(phaseTarget.name, sign, eclipseType);
 
-        if (!events.some((event) => Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 60 * 60_000 && event.title === phaseTarget.name)) {
+        if (!events.some((event) => Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 60 * 60_000 && event.title.startsWith(phaseTarget.name))) {
           events.push({
             id: `lunation-${phaseTarget.name.toLowerCase().replace(/\s+/g, "-")}-${occursAt.toISOString()}`,
             type: "lunation",
-            title: `${phaseTarget.name} in ${sign}`,
+            title,
             startsAt: occursAt.toISOString(),
             dateKey,
             glyph: phaseTarget.glyph,
             primary: phaseTarget.primary,
             sign,
-            description: `${phaseTarget.name} exact in ${sign}. ${eventSignDescription(sign)}`
+            eclipseType: eclipseType ?? undefined,
+            description: `${title} exact. ${eventSignDescription(sign)}`
           });
         }
       });
@@ -1019,6 +1025,36 @@ function findLunations(
   });
 
   return events;
+}
+
+function eclipseTypeForLunation(
+  swe: SwissEphInstance,
+  date: Date,
+  targetPhase: number
+): LunarCalendarEclipseType | null {
+  if (targetPhase !== 0 && targetPhase !== 180) {
+    return null;
+  }
+
+  const nodeLongitude = exactPlanetLongitude(swe, swe.SE_TRUE_NODE, date);
+  const lunationLongitude = exactPlanetLongitude(
+    swe,
+    targetPhase === 0 ? swe.SE_SUN : swe.SE_MOON,
+    date
+  );
+  const nearestNodeDistance = Math.min(
+    angularSeparation(lunationLongitude, nodeLongitude),
+    angularSeparation(lunationLongitude, normalizeDegrees(nodeLongitude + 180))
+  );
+
+  return nearestNodeDistance <= 17.5 ? targetPhase === 0 ? "solar" : "lunar" : null;
+}
+
+function lunationTitle(name: string, sign: string, eclipseType: LunarCalendarEclipseType | null) {
+  if (eclipseType === "solar") return `${name} Solar Eclipse in ${sign}`;
+  if (eclipseType === "lunar") return `${name} Lunar Eclipse in ${sign}`;
+
+  return `${name} in ${sign}`;
 }
 
 function refineSignIngress(
@@ -1207,6 +1243,35 @@ function findActiveRetrogrades(
   const retrogradePlanets = planets.slice(2, 10);
 
   const events: LunarCalendarEvent[] = [];
+  const directStationCache = new Map<string, Date | null>();
+
+  function nextDirectStation(planetId: number, planet: string, fromDate: Date) {
+    if (directStationCache.has(planet)) {
+      return directStationCache.get(planet) ?? null;
+    }
+
+    const stepMs = 12 * 60 * 60_000;
+    let previousDate = fromDate;
+    let previousSpeed = exactPlanetSpeed(swe, planetId, previousDate);
+    let directStation: Date | null = null;
+
+    for (let time = fromDate.getTime() + stepMs; time <= fromDate.getTime() + 240 * 86_400_000; time += stepMs) {
+      const currentDate = new Date(time);
+      const currentSpeed = exactPlanetSpeed(swe, planetId, currentDate);
+
+      if (previousSpeed < 0 && currentSpeed >= 0) {
+        directStation = refineStationEvent(swe, planetId, previousDate, currentDate);
+        break;
+      }
+
+      previousDate = currentDate;
+      previousSpeed = currentSpeed;
+    }
+
+    directStationCache.set(planet, directStation);
+
+    return directStation;
+  }
 
   for (let time = displayStart.getTime(); time < displayEnd.getTime(); time += 86_400_000) {
     const dayStart = new Date(time);
@@ -1222,12 +1287,14 @@ function findActiveRetrogrades(
       }
 
       const sign = exactPlanetSign(swe, planetId, sampleTime);
+      const endsAt = nextDirectStation(planetId, planet, sampleTime);
 
       events.push({
         id: `retrograde-${planet.toLowerCase().replace(/\s+/g, "-")}-${dateKey}`,
         type: "station" as const,
         title: `${planet} retrograde`,
         startsAt: dayStart.toISOString(),
+        endsAt: endsAt?.toISOString(),
         dateKey,
         glyph,
         primary: false,

@@ -23,6 +23,14 @@ export type PlanetPosition = {
   transitRemainingLabel?: string | null;
 };
 
+export type SolarDaylight = {
+  sunrise: string | null;
+  sunset: string | null;
+  dayLengthMinutes: number | null;
+  sunriseRisingSign?: string | null;
+  sunsetSettingSign?: string | null;
+};
+
 export type SkySnapshot = {
   location: LocationInput;
   generatedAt: string;
@@ -36,7 +44,9 @@ export type SkySnapshot = {
     label: string;
     sign: string;
     nextSign?: string;
+    startsAt?: string;
     until?: string;
+    durationLabel?: string;
     remainingLabel?: string;
   } | null;
   moonSignTransition?: {
@@ -50,6 +60,7 @@ export type SkySnapshot = {
     occursAt: string;
     days: number;
   };
+  solarDaylight?: SolarDaylight;
   dominantElement: "Fire" | "Earth" | "Air" | "Water";
   positions: PlanetPosition[];
   aspects: Array<{
