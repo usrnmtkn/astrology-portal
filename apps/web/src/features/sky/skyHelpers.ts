@@ -42,13 +42,11 @@ function zodiacLongitude(position?: PlanetPosition) {
 function positionFromLongitude({
   planet,
   glyph,
-  longitude,
-  theme
+  longitude
 }: {
   planet: string;
   glyph: string;
   longitude: number;
-  theme: string;
 }): PlanetPosition {
   const normalizedLongitude = normalizedAngle(longitude);
   const sign = zodiacSignForLongitude(normalizedLongitude);
@@ -60,8 +58,7 @@ function positionFromLongitude({
     signGlyph: signGlyph(sign),
     degree: normalizedLongitude % 30,
     house: 0,
-    motion: "direct",
-    theme
+    motion: "direct"
   };
 }
 
@@ -85,8 +82,7 @@ export function skyNodeDisplayPositions(positions: PlanetPosition[]) {
   const southNodeBase = positionFromLongitude({
     planet: "South Node",
     glyph: "☋",
-    longitude: zodiacLongitude(northNodeSource) + 180,
-    theme: "release"
+    longitude: zodiacLongitude(northNodeSource) + 180
   });
   const southNode: PlanetPosition = {
     ...southNodeBase,

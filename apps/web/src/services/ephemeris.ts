@@ -17,19 +17,19 @@ const signs = [
 ] as const;
 
 const planets = [
-  ["Sun", "☉", "identity"],
-  ["Moon", "☽", "mood"],
-  ["Mercury", "☿", "language"],
-  ["Venus", "♀", "desire"],
-  ["Mars", "♂", "momentum"],
-  ["Jupiter", "♃", "growth"],
-  ["Saturn", "♄", "structure"],
-  ["Uranus", "♅", "change"],
-  ["Neptune", "♆", "imagination"],
-  ["Pluto", "♇", "depth"],
-  ["Chiron", "⚷", "repair"],
-  ["Lilith", "⚸", "shadow"],
-  ["North Node", "☊", "direction"]
+  ["Sun", "☉"],
+  ["Moon", "☽"],
+  ["Mercury", "☿"],
+  ["Venus", "♀"],
+  ["Mars", "♂"],
+  ["Jupiter", "♃"],
+  ["Saturn", "♄"],
+  ["Uranus", "♅"],
+  ["Neptune", "♆"],
+  ["Pluto", "♇"],
+  ["Chiron", "⚷"],
+  ["Lilith", "⚸"],
+  ["North Node", "☊"]
 ] as const;
 
 const SE_CHIRON = 15;
@@ -1736,7 +1736,7 @@ export async function getAstrodienstSky(
     SE_MEAN_BLACK_MOON_LILITH,
     swe.SE_MEAN_NODE
   ];
-  const positions: CalculatedPlanet[] = planets.map(([planet, glyph, theme], index) => {
+  const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
     const result = swe.calc_ut(jd, planetIds[index], flags);
     const longitude = normalizeDegrees(result[0]);
     const { sign, signGlyph, degree } = signForLongitude(longitude);
@@ -1752,7 +1752,6 @@ export async function getAstrodienstSky(
       degree,
       house: wholeSignHouse(sign, ascendant),
       motion: result[3] < -0.0001 ? "retrograde" : "direct",
-      theme,
       ...transitWindow,
       longitude,
       speed: result[3]
