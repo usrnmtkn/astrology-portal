@@ -21,6 +21,39 @@ def test_ready():
     assert response.json()["ephemeris"]["available"] is True
 
 
+def test_meta_status():
+    response = client.get("/meta/status")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is True
+    assert body["service"] == "tldrastro-api"
+    assert body["version"]
+    assert body["ephemeris"]["available"] is True
+    assert "timing.personal" in [feature["id"] for feature in body["features"]]
+    assert "allowedOrigins" in body["cors"]
+
+
+def test_validation_error_contract():
+    response = client.post("/chart/natal", json={})
+
+    assert response.status_code == 422
+    body = response.json()
+    assert body["ok"] is False
+    assert body["code"] == "VALIDATION_ERROR"
+    assert body["message"] == "Request validation failed."
+    assert len(body["details"]["errors"]) > 0
+
+
+def test_not_found_error_contract():
+    response = client.get("/does-not-exist")
+
+    assert response.status_code == 404
+    body = response.json()
+    assert body["ok"] is False
+    assert body["code"] == "NOT_FOUND"
+
+
 def test_reference_config():
     response = client.get("/reference/config")
 
