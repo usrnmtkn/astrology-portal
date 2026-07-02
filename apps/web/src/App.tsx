@@ -7171,6 +7171,12 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
+const FriendsRoute = lazy(() =>
+  import("./routes/FriendsRoute").then((module) => ({
+    default: module.FriendsRoute
+  }))
+);
+
 const FriendCircleFeed = lazy(() =>
   import("./features/friends/FriendCircleFeed").then((module) => ({
     default: module.FriendCircleFeed
@@ -9280,19 +9286,21 @@ export function App() {
                 </YouRoute>
               )}
               {mode === "friends" && userProfile && sky && (
-                <ManualChartsPanel
-                  profile={userProfile}
-                  currentSky={sky}
-                  profileNatalSky={profileNatalSky}
-                  profileTransits={activeTransits}
-                  natalGeneratedContent={natalGeneratedContent}
-                  relationshipGeneratedContent={relationshipGeneratedContent}
-                  landingKey={friendsLandingKey}
-                  sunriseOrbDegrees={activeSunriseOrbDegrees}
-                  chartOwnerUserId={remoteAccountId ?? userProfile.id}
-                  chartsReady={authAccountChecked && (!remoteAccountId || remoteProfileReady)}
-                  onOpenDetail={setSelectedSkyDetail}
-                />
+                <FriendsRoute>
+                  <ManualChartsPanel
+                    profile={userProfile}
+                    currentSky={sky}
+                    profileNatalSky={profileNatalSky}
+                    profileTransits={activeTransits}
+                    natalGeneratedContent={natalGeneratedContent}
+                    relationshipGeneratedContent={relationshipGeneratedContent}
+                    landingKey={friendsLandingKey}
+                    sunriseOrbDegrees={activeSunriseOrbDegrees}
+                    chartOwnerUserId={remoteAccountId ?? userProfile.id}
+                    chartsReady={authAccountChecked && (!remoteAccountId || remoteProfileReady)}
+                    onOpenDetail={setSelectedSkyDetail}
+                  />
+                </FriendsRoute>
               )}
               {mode === "account" && userProfile && (
                 <AccountView
