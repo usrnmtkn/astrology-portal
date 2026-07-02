@@ -9,10 +9,6 @@ import type {
   SurfaceSelectionOptions,
   VoiceContentItem
 } from "./types";
-import {
-  interpolateKnowledgeParagraphs,
-  interpolateKnowledgeText
-} from "./templateInterpolation";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -677,12 +673,84 @@ const pointAliases: Record<string, string> = {
   "north-node": "true-node"
 };
 
+const rowThemeByPlanet: Record<string, string> = {
+  ascendant: "presence",
+  jupiter: "growth",
+  mars: "momentum",
+  mercury: "thinking",
+  moon: "mood",
+  neptune: "imagination",
+  pluto: "depth",
+  saturn: "structure",
+  sun: "identity",
+  "true-node": "direction",
+  uranus: "change",
+  venus: "desire"
+};
+
+const rowPhraseByAspect: Record<string, string> = {
+  conjunction: "blend into one field today.",
+  opposition: "pull into clearer awareness through contrast.",
+  sextile: "can cooperate with a little invitation.",
+  square: "create friction that wants a cleaner choice.",
+  trine: "move with unusual ease today."
+};
+
+const detailPhraseByAspect: Record<string, string> = {
+  conjunction: "These two parts of the day are close together, so they may feel harder to separate. What usually runs in the background can become more obvious.",
+  opposition: "These two parts of the day may pull in different directions. The tension can make each side easier to see.",
+  sextile: "These two parts of the day can support each other, but the opening may be subtle. A small choice or conversation can make the connection easier to use.",
+  square: "These two parts of the day can rub against each other. The friction may point to an adjustment that has been waiting for attention.",
+  trine: "These two parts of the day can move together with less resistance. The ease may be quiet, but it can make the day feel more coherent."
+};
+
+function generatedAspectDisplaySummary(planetAId: string, aspectId: string, planetBId: string, planetAThemes: string[], planetBThemes: string[]) {
+  const planetATheme = rowThemeByPlanet[planetAId] ?? planetAThemes[0] ?? titleizePrimitive(planetAId).toLowerCase();
+  const planetBTheme = rowThemeByPlanet[planetBId] ?? planetBThemes[0] ?? titleizePrimitive(planetBId).toLowerCase();
+  const phrase = rowPhraseByAspect[aspectId] ?? "ask to be read together today.";
+
+  return `${sentenceStart(planetATheme)} and ${planetBTheme} ${phrase}`;
+}
+
+function generatedAspectDetailParagraphs(planetAName: string, aspectId: string, planetBName: string) {
+  return [
+    `${planetAName} and ${planetBName} are moving through a ${aspectId} today, so what each planet describes may show up at the same time.`,
+    detailPhraseByAspect[aspectId] ?? detailPhraseByAspect.conjunction
+  ];
+}
+
+function generatedPlacementDisplaySummary(planetName: string, signName: string, planetThemes: string[], signThemes: string[]) {
+  const planetTheme = rowThemeByPlanet[normalizeIdPart(planetName)] ?? planetThemes[0] ?? planetName.toLowerCase();
+  const signTheme = signThemes[0] ?? signName.toLowerCase();
+
+  return `${sentenceStart(planetTheme)} moves through ${signName}'s ${signTheme} style.`;
+}
+
+function generatedPlacementDetailParagraphs(planetName: string, signName: string, element: string, modality: string) {
+  return [
+    `${planetName} is moving through ${signName} in the current sky.`,
+    `${signName} gives this planet its style: ${element.toLowerCase()} element, ${modality.toLowerCase()} modality, and the way this sign tends to move through experience.`,
+    "The planet names the topic. The sign describes how that topic is expressing itself right now."
+  ];
+}
+
 function displayPlanetName(id: string) {
   return planetPrimitiveMap[id]?.name ?? titleizePrimitive(id);
 }
 
 function displaySignName(id: string) {
   return signPrimitiveMap[id]?.name ?? titleizePrimitive(id);
+}
+
+function currentSkyPlacementBody(placement: CanonicalPlacement, planetId: string, signId: string) {
+  const planetName = displayPlanetName(planetId);
+  const signName = displaySignName(signId);
+  const process = currentSkyPlanetProcess[planetId] ?? currentSkyPlanetTopic[planetId] ?? `what ${planetName} tends to describe`;
+  const quality = currentSkySignQuality[signId] ?? currentSkySignStyle[signId] ?? `${signName}'s style`;
+  const observation = currentSkySignObservation[signId] ?? `${signName} gives the moment a distinct style`;
+  const outcome = currentSkyPlanetOutcome[planetId] ?? `${process} may become easier to notice`;
+
+  return `As ${planetName} moves through ${signName}, ${process} takes on ${quality}. ${observation}, so ${outcome}.`;
 }
 
 function currentSkyPlacementToKnowledgeItem(placement: CanonicalPlacement): KnowledgeItem | null {
@@ -697,6 +765,8 @@ function currentSkyPlacementToKnowledgeItem(placement: CanonicalPlacement): Know
   if (!planet || !sign) {
     return null;
   }
+
+  const body = currentSkyPlacementBody(placement, planet, sign);
 
   return {
     id: placementContentId(planet, sign),
@@ -718,9 +788,9 @@ function currentSkyPlacementToKnowledgeItem(placement: CanonicalPlacement): Know
     },
     interpretation: {
       coreTheme: `${displayPlanetName(planet)} in ${displaySignName(sign)}`,
-      displaySummary: "",
+      displaySummary: body,
       detailParagraphs: [],
-      livedExperience: "",
+      livedExperience: body,
       gift: "",
       challenge: ""
     },
@@ -738,7 +808,13 @@ function knowledgeDetailParagraphs(item: KnowledgeItem) {
     return explicitParagraphs;
   }
 
-  return [];
+  const { planetA, aspect, planetB } = item.sourceFactors;
+
+  if (!planetA || !aspect || !planetB) {
+    return [];
+  }
+
+  return generatedAspectDetailParagraphs(displayPlanetName(planetA), aspect, displayPlanetName(planetB));
 }
 
 const contentAreasByPlanet: Record<string, ContentArea[]> = {
@@ -965,40 +1041,26 @@ export function approvedVoiceOrKnowledgeFallback(id: string, voiceId = defaultVo
   const detailParagraphs = bundle.knowledge ? knowledgeDetailParagraphs(bundle.knowledge) : [];
 
   if (bundle.status === "READY" && bundle.voice) {
-    const summary = interpolateKnowledgeText(id, "voice.summary", bundle.voice.summary, bundle.knowledge);
-    const body = interpolateKnowledgeText(id, "voice.body", bundle.voice.body, bundle.knowledge);
-    const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "voice.detailParagraphs", [
-      bundle.voice.body,
-      ...detailParagraphs
-    ], bundle.knowledge);
-
     return {
       bundle,
-      summary: cleanDisplayText(summary),
-      body: cleanDisplayText(body),
-      detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
+      summary: cleanDisplayText(bundle.voice.summary),
+      body: cleanDisplayText(bundle.voice.body),
+      detailParagraphs: cleanParagraphs([bundle.voice.body, ...detailParagraphs])
     };
   }
 
   if (bundle.knowledge) {
-    const summary = cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.displaySummary", bundle.knowledge.interpretation.displaySummary, bundle.knowledge)
-    ) || cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.coreTheme", bundle.knowledge.interpretation.coreTheme, bundle.knowledge)
-    );
-    const body = cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.livedExperience", bundle.knowledge.interpretation.livedExperience, bundle.knowledge)
-    );
-    const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "knowledge.detailParagraphs", [
-      body,
-      ...detailParagraphs
-    ], bundle.knowledge);
+    const summary = cleanDisplayText(bundle.knowledge.interpretation.displaySummary) || cleanDisplayText(bundle.knowledge.interpretation.coreTheme);
+    const body = cleanDisplayText(bundle.knowledge.interpretation.livedExperience);
 
     return {
       bundle,
       summary,
       body,
-      detailParagraphs: cleanParagraphs(renderedDetailParagraphs)
+      detailParagraphs: cleanParagraphs([
+        body,
+        ...detailParagraphs
+      ])
     };
   }
 
