@@ -1366,6 +1366,8 @@
     align-self: start;
     grid-area: auto;
     justify-content: flex-start;
+    width: var(--aspect-row-glyph-width);
+    min-width: var(--aspect-row-glyph-width);
   }
 
   .mode-guest .aspect-section .aspect-row-copy,

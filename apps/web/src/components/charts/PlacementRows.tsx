@@ -8,7 +8,8 @@ import {
   pointGlyph,
   pointIconFiles,
   pointRetrogradeIconFiles,
-  zodiacAssetHref
+  zodiacAssetHref,
+  zodiacSignIconFiles
 } from "./chartAssets";
 
 export type SocialPlacementRow = {
@@ -787,13 +788,11 @@ export function SynastryPlacementsComparison({
       <div className="synastry-placement-columns">
         <SynastryPlacementColumn
           title={outerName}
-          ringLabel={`${outerName}'s houses`}
           placements={relationshipPlacementPreview(outerSky)}
           variant="outer"
         />
         <SynastryPlacementColumn
           title={innerTitle}
-          ringLabel={innerIsSelf ? "Your houses" : `${innerName}'s houses`}
           placements={relationshipPlacementPreview(innerSky)}
           variant="inner"
         />
@@ -804,12 +803,10 @@ export function SynastryPlacementsComparison({
 
 function SynastryPlacementColumn({
   title,
-  ringLabel,
   placements,
   variant
 }: {
   title: string;
-  ringLabel: string;
   placements: PlanetPosition[];
   variant: "outer" | "inner";
 }) {
@@ -817,37 +814,42 @@ function SynastryPlacementColumn({
     <section className={`synastry-placement-column synastry-placement-column-${variant}`}>
       <div className="synastry-placement-column-header">
         <h3>{title}</h3>
-        <strong className="synastry-placement-panel-ring">{ringLabel}</strong>
       </div>
       {placements.length > 0 ? (
         <div className="synastry-placement-table">
-          {placements.map((position) => {
-            const dignities = dignitiesFor(position.planet, position.sign);
-
-            return (
-              <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${ringLabel}-${position.planet}`}>
-                <SynastryPlacementLead position={position} />
-                <span className="synastry-placement-copy">
-                  <span className="synastry-placement-sign">{position.sign}</span>
-                  {dignities.length > 0 ? (
-                    <span className="synastry-placement-status">
-                      <DignityBadge dignity={dignities} />
-                    </span>
-                  ) : null}
-                </span>
-                <span className="synastry-placement-meta">
-                  <span>{formatPlacementDegree(position)}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
-                </span>
-              </div>
-            );
-          })}
+          {placements.map((position) => (
+            <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${variant}-${position.planet}`}>
+              <SynastryPlacementLead position={position} />
+              <span className="synastry-placement-copy">
+                <SynastryPlacementSign sign={position.sign} />
+              </span>
+              <span className="synastry-placement-meta">
+                <span>{formatPlacementDegree(position)}</span>
+                <span aria-hidden="true">·</span>
+                <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
+              </span>
+            </div>
+          ))}
         </div>
       ) : (
         <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
       )}
     </section>
+  );
+}
+
+function SynastryPlacementSign({ sign }: { sign: string }) {
+  const signKey = Object.keys(zodiacSignIconFiles).find((key) => key.toLowerCase() === sign.toLowerCase());
+  const iconHref = zodiacAssetHref(signKey ? zodiacSignIconFiles[signKey] : undefined);
+
+  return (
+    <span className="synastry-placement-sign" aria-label={sign}>
+      {iconHref ? (
+        <img className="synastry-placement-sign-svg" src={iconHref} alt="" aria-hidden="true" />
+      ) : (
+        sign
+      )}
+    </span>
   );
 }
 

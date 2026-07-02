@@ -66,10 +66,7 @@
     .manual-chart-row,
     .retro-list .retro,
     .planet-placement-row,
-    .placement-table-row,
-    .aspect-row,
-    .aspect-row-button,
-    .aspect-row-static
+    .placement-table-row
   ) {
     content-visibility: auto;
     contain-intrinsic-size: auto 136px;
