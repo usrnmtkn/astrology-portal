@@ -1,5 +1,5 @@
 import type { PlanetPosition, SkySnapshot } from "../../types";
-import { SKY_BODY_ORDER } from "../../astrologyConfig";
+import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
 import {
   aspectGlyph,
@@ -46,7 +46,7 @@ export type PlacementHouseInsight = {
 };
 
 export const placementPlanetOrder = [...SKY_BODY_ORDER];
-const socialPlacementOrder = ["Sun", "Moon", "Ascendant", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith"];
+const socialPlacementOrder = ["Sun", "Moon", "Ascendant", ...SKY_BODY_ORDER.slice(2)];
 
 const natalSignatureDescriptions: Record<string, string> = {
   Sun: "Your core self and vitality",
@@ -222,7 +222,7 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
     return [];
   }
 
-  const positionMap = new Map(sky.positions.map((position) => [position.planet, position]));
+  const positionMap = new Map(sky.positions.map((position) => [normalizeSkyBodyName(position.planet), position]));
 
   return socialPlacementOrder.flatMap((point) => {
     if (point === "Ascendant") {
@@ -244,9 +244,9 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
     }
 
     return [{
-      id: point,
+      id: normalizeSkyBodyName(position.planet),
       glyph: position.glyph || pointGlyph(point),
-      label: point,
+      label: normalizeSkyBodyName(position.planet),
       sign: position.sign,
       degree: position.degree,
       house: position.house || null,
@@ -742,7 +742,7 @@ export function FriendPlacementTable({
   );
 }
 
-const relationshipPlacementOrder = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "True Node"];
+const relationshipPlacementOrder = [...SKY_BODY_ORDER];
 
 function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   if (!sky) {
@@ -750,7 +750,7 @@ function relationshipPlacementPreview(sky: SkySnapshot | null | undefined) {
   }
 
   return relationshipPlacementOrder
-    .map((planet) => sky.positions.find((position) => position.planet === planet))
+    .map((planet) => sky.positions.find((position) => normalizeSkyBodyName(position.planet) === planet))
     .filter((position): position is PlanetPosition => Boolean(position))
     .slice(0, 8);
 }
