@@ -78,7 +78,6 @@ import {
   solarPhaseStatusFor,
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
-import { defaultLocation } from "./services/ephemeris";
 import {
   getAuthAccount,
   isAuthConfigured,
@@ -142,6 +141,13 @@ type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
 type SignupProvider = "email" | "google";
+
+const defaultLocation: LocationInput = {
+  label: "New York City, NY",
+  latitude: 40.7128,
+  longitude: -74.006,
+  timeZone: "America/New_York"
+};
 
 type UserChart = {
   id: string;
