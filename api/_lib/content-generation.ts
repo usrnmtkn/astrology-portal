@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { contentGenerationProvider } from "./provider-config";
+import { contentGenerationProvider } from "./provider-config.js";
 
 type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";

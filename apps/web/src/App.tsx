@@ -60,7 +60,6 @@ import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
-import { LunarCalendar } from "./features/calendar/LunarCalendar";
 import {
   SkyAspectGroup,
   SkyAspectsSection,
@@ -79,7 +78,7 @@ import {
   solarPhaseStatusFor,
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
-import { defaultLocation, getAstrodienstSky, getCurrentSky } from "./services/ephemeris";
+import { defaultLocation, getCurrentSky } from "./services/ephemerisFallback";
 import {
   getAuthAccount,
   isAuthConfigured,
@@ -6379,9 +6378,15 @@ function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect:
     "Ascendant-Sun": "Strong Recognition",
     "Ascendant-Moon": "Familiar Presence"
   };
-  const fallbackTone = ["square", "opposition"].includes(aspect) ? "A Pressure Point" : aspect === "conjunction" ? "A Strong Contact" : "An Easy Opening";
+  const fallbackTitles: Record<string, string> = {
+    conjunction: "You Amplify Each Other",
+    opposition: "You Mirror Each Other",
+    square: "You Challenge Each Other",
+    trine: "You Get Each Other",
+    sextile: "You Open Doors for Each Other"
+  };
 
-  return titles[pair] ?? fallbackTone;
+  return titles[pair] ?? fallbackTitles[aspect] ?? "You Affect Each Other";
 }
 
 function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: string, comparisonPossessive: string, secondPoint: string) {
@@ -7334,6 +7339,12 @@ const YouPage = lazy(() =>
   }))
 );
 
+const LunarCalendar = lazy(() =>
+  import("./features/calendar/LunarCalendar").then((module) => ({
+    default: module.LunarCalendar
+  }))
+);
+
 const FriendCircleFeed = lazy(() =>
   import("./features/friends/FriendCircleFeed").then((module) => ({
     default: module.FriendCircleFeed
@@ -7369,6 +7380,14 @@ const RelationshipComparePicker = lazy(() =>
     default: module.RelationshipComparePicker
   }))
 );
+
+async function getAstrodienstSky(
+  ...args: Parameters<typeof import("./services/ephemeris").getAstrodienstSky>
+) {
+  const { getAstrodienstSky: calculateSky } = await import("./services/ephemeris");
+
+  return calculateSky(...args);
+}
 
 function FeatureLoadingFallback() {
   return <div className="feature-loading-fallback" aria-hidden="true" />;
@@ -7951,6 +7970,10 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    if (mode === "friends") {
+      return;
+    }
+
     let cancelled = false;
     const skyLocation = withTimeZone(location);
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
@@ -7983,7 +8006,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [location, skyDate, skyRefreshKey]);
+  }, [location, mode, skyDate, skyRefreshKey]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -8172,7 +8195,9 @@ export function App() {
         }
 
         const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
-        const nextTransits = rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees);
+        const nextTransits = sky
+          ? rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees)
+          : [];
 
         setProfileNatalSky(natalSky);
         setProfileTransits(nextTransits);
@@ -8229,7 +8254,7 @@ export function App() {
     userProfile?.charts[0]?.birthCity,
     userProfile?.charts[0]?.birthLocation?.label,
     userProfile?.charts[0]?.birthLocation?.timeZone,
-    sky.generatedAt,
+    sky?.generatedAt,
     activeSunriseOrbDegrees
   ]);
 
@@ -8896,7 +8921,9 @@ export function App() {
         );
         const natalSky = await getAstrodienstSky(birthLocation, birthDateTime);
         const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
-        const nextTransits = rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees);
+        const nextTransits = sky
+          ? rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees)
+          : [];
 
         nextSun = natalBigThree.sun;
         nextMoon = natalBigThree.moon;
@@ -9350,15 +9377,17 @@ export function App() {
                 />
               )}
               {mode === "calendar" && (
-                <LunarCalendar
-                  generatedContent={skyGeneratedContent}
-                  location={location}
-                  onLocationChange={(nextLocation) => {
-                    setLocation(nextLocation);
-                    setManualLocation(nextLocation.label);
-                    setHasLocationPreference(true);
-                  }}
-                />
+                <Suspense fallback={<FeatureLoadingFallback />}>
+                  <LunarCalendar
+                    generatedContent={skyGeneratedContent}
+                    location={location}
+                    onLocationChange={(nextLocation) => {
+                      setLocation(nextLocation);
+                      setManualLocation(nextLocation.label);
+                      setHasLocationPreference(true);
+                    }}
+                  />
+                </Suspense>
               )}
               {mode === "profile" && (
                 userProfile ? (
@@ -10883,7 +10912,7 @@ function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapsh
       toHouse: toPosition?.house ?? null,
       otherPoint,
       orb: wholeDegreeOrb(aspect.orb),
-      meaning: aspect.meaning
+      meaning: (aspect as typeof aspect & { meaning?: string }).meaning ?? ""
     };
   });
 }
