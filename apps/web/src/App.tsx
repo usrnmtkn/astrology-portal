@@ -7177,6 +7177,12 @@ const FriendsRoute = lazy(() =>
   }))
 );
 
+const SettingsRoute = lazy(() =>
+  import("./routes/SettingsRoute").then((module) => ({
+    default: module.SettingsRoute
+  }))
+);
+
 const FriendCircleFeed = lazy(() =>
   import("./features/friends/FriendCircleFeed").then((module) => ({
     default: module.FriendCircleFeed
@@ -9314,31 +9320,33 @@ export function App() {
                 />
               )}
               {mode === "settings" && (
-                userProfile ? (
-                  <SettingsView
-                    profile={userProfile}
-                    onUpdateProfile={setUserProfile}
-                    theme={theme}
-                    sunriseOrbEnabled={sunriseOrbEnabled}
-                    onThemeChange={setTheme}
-                    onSunriseOrbChange={setSunriseOrbEnabled}
-                    dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                    onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                    onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
-                  />
-                ) : (
-                  <GuestSettingsView
-                    theme={theme}
-                    location={location}
-                    sunriseOrbEnabled={sunriseOrbEnabled}
-                    onThemeChange={setTheme}
-                    onSunriseOrbChange={setSunriseOrbEnabled}
-                    dyslexiaFriendlyFont={dyslexiaFriendlyFont}
-                    onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                    houseSignLabelStyle={guestHouseSignLabelStyle}
-                    onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
-                  />
-                )
+                <SettingsRoute>
+                  {userProfile ? (
+                    <SettingsView
+                      profile={userProfile}
+                      onUpdateProfile={setUserProfile}
+                      theme={theme}
+                      sunriseOrbEnabled={sunriseOrbEnabled}
+                      onThemeChange={setTheme}
+                      onSunriseOrbChange={setSunriseOrbEnabled}
+                      dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                      onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                      onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
+                    />
+                  ) : (
+                    <GuestSettingsView
+                      theme={theme}
+                      location={location}
+                      sunriseOrbEnabled={sunriseOrbEnabled}
+                      onThemeChange={setTheme}
+                      onSunriseOrbChange={setSunriseOrbEnabled}
+                      dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                      onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                      houseSignLabelStyle={guestHouseSignLabelStyle}
+                      onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
+                    />
+                  )}
+                </SettingsRoute>
               )}
             </section>
           </section>
