@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
+import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
 
 type ReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -18,7 +19,11 @@ type PlanetPosition = {
 
 type SkyAspect = {
   from: string;
+  fromSign?: string;
+  fromHouse?: number;
   to: string;
+  toSign?: string;
+  toHouse?: number;
   type: string;
   orb: number;
   meaning?: string;
@@ -116,8 +121,10 @@ type ReviewRecord = {
 type CalculatedAspect = {
   from: string;
   fromSign: string;
+  fromHouse?: number;
   to: string;
   toSign: string;
+  toHouse?: number;
   type: string;
   orb: number;
   meaning: string;
@@ -148,8 +155,18 @@ const traditionalRulersBySign: Record<string, string> = {
   pisces: "Jupiter"
 };
 
+const modernRulersBySign: Record<string, string> = {
+  scorpio: "Pluto",
+  aquarius: "Uranus",
+  pisces: "Neptune"
+};
+
 function traditionalRulerForSign(sign: string) {
   return traditionalRulersBySign[sign.toLowerCase().trim()] ?? "";
+}
+
+function modernRulerForSign(sign: string) {
+  return modernRulersBySign[sign.toLowerCase().trim()] ?? "";
 }
 
 function requireEnv(name: string) {
@@ -349,7 +366,7 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
         return null;
       }
 
-      return {
+      const calculatedAspect: CalculatedAspect = {
         from: from.planet,
         fromSign: from.sign,
         to: to.planet,
@@ -358,6 +375,16 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
         orb: Number(aspect.orbValue.toFixed(2)),
         meaning: `${from.planet} ${aspect.type} ${to.planet} is active in the selected sky window.`
       };
+
+      if (from.house > 0) {
+        calculatedAspect.fromHouse = from.house;
+      }
+
+      if (to.house > 0) {
+        calculatedAspect.toHouse = to.house;
+      }
+
+      return calculatedAspect;
     })
   )).filter((aspect): aspect is CalculatedAspect => Boolean(aspect));
 }
@@ -720,6 +747,8 @@ async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow
 
         if (!aspect) return;
 
+        if (aspect.orbValue > transitToNatalOrbLimit(transitPosition.planet)) return;
+
         const key = [transitPosition.planet, aspect.type, natalPosition.planet].map(slug).join("-");
         const existing = byTransit.get(key);
 
@@ -787,8 +816,24 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
   const natal = chartNeedsNatal(chart);
   const placementRecords = natal.positions.map((position) => {
     const contentKey = natalPlacementContentKey(position.planet, position.sign);
-    const ruler = traditionalRulerForSign(position.sign);
-    const rulerPosition = ruler ? natal.positions.find((candidate) => candidate.planet === ruler) : null;
+    const traditionalRuler = traditionalRulerForSign(position.sign);
+    const modernRuler = modernRulerForSign(position.sign);
+    const traditionalRulerPosition = traditionalRuler ? natal.positions.find((candidate) => candidate.planet === traditionalRuler) : null;
+    const modernRulerPosition = modernRuler ? natal.positions.find((candidate) => candidate.planet === modernRuler) : null;
+    const rulers = [
+      traditionalRuler ? {
+        system: "traditional",
+        body: traditionalRuler,
+        sign: traditionalRulerPosition?.sign,
+        house: traditionalRulerPosition?.house
+      } : null,
+      modernRuler ? {
+        system: "modern",
+        body: modernRuler,
+        sign: modernRulerPosition?.sign,
+        house: modernRulerPosition?.house
+      } : null
+    ].filter(Boolean);
     const baseRecord: ReviewRecord = {
       id: `calculated:${chart.id}:${contentKey}`,
       source: "calculated",
@@ -818,18 +863,39 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
         motion: position.motion,
         retrograde: position.motion === "retrograde" && !position.planet.toLowerCase().includes("node"),
         isRetrograde: position.motion === "retrograde" && !position.planet.toLowerCase().includes("node"),
-        ruler,
-        rulerBody: ruler,
-        houseRuler: ruler,
-        rulerSign: rulerPosition?.sign,
-        houseRulerSign: rulerPosition?.sign,
-        rulerHouse: rulerPosition?.house,
-        houseRulerHouse: rulerPosition?.house
+        ruler: traditionalRuler,
+        rulerBody: traditionalRuler,
+        houseRuler: traditionalRuler,
+        traditionalRuler,
+        traditionalRulerBody: traditionalRuler,
+        traditionalRulerSign: traditionalRulerPosition?.sign,
+        traditionalRulerHouse: traditionalRulerPosition?.house,
+        modernRuler,
+        modernRulerBody: modernRuler,
+        modernRulerSign: modernRulerPosition?.sign,
+        modernRulerHouse: modernRulerPosition?.house,
+        rulers,
+        rulerSign: traditionalRulerPosition?.sign,
+        houseRulerSign: traditionalRulerPosition?.sign,
+        rulerHouse: traditionalRulerPosition?.house,
+        houseRulerHouse: traditionalRulerPosition?.house
       },
       sourceSnapshot: {
         chartId: chart.id,
         chartName: chart.display_name,
         houseSystem: "whole_sign",
+        rulers: {
+          traditional: traditionalRuler ? {
+            body: traditionalRuler,
+            sign: traditionalRulerPosition?.sign,
+            house: traditionalRulerPosition?.house
+          } : null,
+          modern: modernRuler ? {
+            body: modernRuler,
+            sign: modernRulerPosition?.sign,
+            house: modernRulerPosition?.house
+          } : null
+        },
         positions: natal.positions.map((candidate) => ({
           planet: candidate.planet,
           body: candidate.planet,
@@ -851,6 +917,44 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
   });
   const aspectRecords = natal.aspects.map((aspect) => {
     const contentKey = natalAspectContentKey(aspect.from, aspect.type, aspect.to);
+    const facts: Record<string, unknown> = {
+      blockType: "natal_aspect",
+      type: "natal_aspect",
+      from: aspect.from,
+      body1: aspect.from,
+      planetA: aspect.from,
+      fromSign: aspect.fromSign,
+      sign1: aspect.fromSign,
+      planetASign: aspect.fromSign,
+      to: aspect.to,
+      body2: aspect.to,
+      planetB: aspect.to,
+      toSign: aspect.toSign,
+      sign2: aspect.toSign,
+      planetBSign: aspect.toSign,
+      primaryPlanet: aspect.from,
+      primarySign: aspect.fromSign,
+      aspectPlanet: aspect.to,
+      aspectPlanetSign: aspect.toSign,
+      aspect: aspect.type,
+      aspectType: aspect.type,
+      orb: aspect.orb
+    };
+
+    if (aspect.fromHouse) {
+      facts.fromHouse = aspect.fromHouse;
+      facts.house1 = aspect.fromHouse;
+      facts.planetAHouse = aspect.fromHouse;
+      facts.primaryHouse = aspect.fromHouse;
+    }
+
+    if (aspect.toHouse) {
+      facts.toHouse = aspect.toHouse;
+      facts.house2 = aspect.toHouse;
+      facts.planetBHouse = aspect.toHouse;
+      facts.aspectPlanetHouse = aspect.toHouse;
+    }
+
     const baseRecord: ReviewRecord = {
       id: `calculated:${chart.id}:${contentKey}`,
       source: "calculated",
@@ -866,14 +970,7 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
       body: "",
       sections: [],
       blockType: "natal_aspect",
-      facts: {
-        blockType: "natal_aspect",
-        type: "natal_aspect",
-        from: aspect.from,
-        to: aspect.to,
-        aspect: aspect.type,
-        orb: aspect.orb
-      },
+      facts,
       sourceSnapshot: null,
       reviewerNotes: null,
       subjectId: chart.id,

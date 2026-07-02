@@ -141,6 +141,7 @@ export const wheelAngleIconFiles: Record<string, string> = {
 
 export const aspectIconFiles: Record<string, string> = {
   conjunction: "conjunction.svg",
+  opposition: "opposition.svg",
   square: "square.svg",
   trine: "trine.svg",
   sextile: "sextile.svg"
@@ -190,7 +191,7 @@ export const pointRetrogradeIconFiles: Record<string, string> = {
 };
 
 const zodiacAssetPath = "/zodiac/";
-const zodiacAssetVersion = "card-glyph-20260619";
+const zodiacAssetVersion = "card-glyph-20260630";
 
 export function zodiacAssetHref(fileName?: string) {
   return fileName ? `${zodiacAssetPath}${fileName}?v=${zodiacAssetVersion}` : null;

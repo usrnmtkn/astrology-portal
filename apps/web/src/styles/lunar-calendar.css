@@ -1,0 +1,2459 @@
+.mode-calendar {
+  padding-top: var(--chart-page-top);
+  scroll-padding-top: calc(var(--top-control-top) + var(--top-control-height) + 36px);
+}
+
+.mode-calendar .portal-grid.full-page-layout.calendar-layout {
+  width: min(1160px, 100%);
+}
+
+.mode-calendar .detail-panel.calendar-content-column {
+  gap: 0;
+}
+
+.lunar-calendar-view {
+  --z-lunar-tooltip: 1200;
+  --lunar-calendar-title-size: var(--text-page-title-size);
+  --lunar-card-radius: 18px;
+  --lunar-control-radius: 14px;
+  --lunar-element-air: #6ea8d8;
+  --lunar-element-earth: #6f9467;
+  --lunar-element-fire: #d18a54;
+  --lunar-element-water: #4f78b9;
+  --lunar-moon-dark: #171923;
+  --lunar-moon-dark-edge: #0e1118;
+  --lunar-moon-dark-soft: #242735;
+  display: grid;
+  gap: 14px;
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  scroll-margin-top: calc(var(--top-control-top) + var(--top-control-height) + 36px);
+}
+
+.lunar-calendar-body {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  transform-origin: top center;
+}
+
+.lunar-calendar-body.is-week {
+  animation: lunar-week-settle 260ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.lunar-calendar-body.is-month {
+  animation: lunar-month-settle 320ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-grid-panel {
+  overflow: visible;
+  animation: lunar-rows-expand 360ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.lunar-calendar-body.is-week .lunar-week-strip {
+  overflow: visible;
+  animation: lunar-rows-collapse 300ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@supports (view-transition-name: none) {
+  .lunar-calendar-body {
+    view-transition-name: lunar-calendar-body;
+  }
+
+  ::view-transition-old(lunar-calendar-body),
+  ::view-transition-new(lunar-calendar-body) {
+    animation-duration: 340ms;
+    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+    mix-blend-mode: normal;
+  }
+}
+
+.calendar-content-column {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.lunar-calendar-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 2px;
+}
+
+.lunar-calendar-header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.lunar-calendar-legend,
+.lunar-calendar-weekdays span,
+.lunar-calendar-day__phase,
+.lunar-calendar-event-pill,
+.lunar-calendar-event-more,
+.lunar-calendar-detail__date,
+.lunar-calendar-upcoming__label,
+.lunar-calendar-event-card__meta,
+.lunar-week-day__weekday,
+.lunar-week-day__date,
+.lunar-week-day__marker,
+.lunar-milestones button,
+.lunar-selected-card__eyebrow,
+.lunar-selected-card__stats div > span,
+.lunar-selected-card__practice > span {
+  font-family: var(--font-label);
+}
+
+.lunar-calendar-title-block {
+  display: grid;
+  gap: 6px;
+}
+
+.lunar-calendar-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+
+.lunar-calendar-header h1 {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--lunar-calendar-title-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
+  white-space: nowrap;
+}
+
+.lunar-calendar-header h1 em {
+  color: color-mix(in srgb, var(--muted) 68%, transparent);
+  font-style: normal;
+  font-weight: var(--weight-regular);
+}
+
+.lunar-calendar-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--ink);
+}
+
+.lunar-calendar-location {
+  position: relative;
+  width: fit-content;
+  max-width: min(520px, 100%);
+}
+
+.lunar-calendar-location > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: var(--leading-body);
+  text-align: left;
+}
+
+.lunar-calendar-location > button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-calendar-location > button:hover {
+  color: var(--ink);
+}
+
+.lunar-location-picker {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 48px));
+  padding: 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--lunar-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.lunar-location-picker label {
+  display: grid;
+  gap: 7px;
+}
+
+.lunar-location-picker label > span:first-child {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.lunar-location-picker__input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-bg) 92%, var(--surface-2));
+  color: var(--muted);
+}
+
+.lunar-location-picker__input input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+.lunar-location-picker__results {
+  display: grid;
+  gap: 6px;
+}
+
+.lunar-location-picker__results > span {
+  padding: 10px 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.lunar-location-picker__results button {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: var(--lunar-control-radius);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.lunar-location-picker__results button:hover,
+.lunar-location-picker__results button.is-selected {
+  border-color: var(--line);
+  background: var(--accent-bg);
+}
+
+.lunar-location-picker__results button.is-selected {
+  color: var(--ink);
+}
+
+.lunar-location-picker__results strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.lunar-location-picker__results button span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.lunar-location-picker__actions {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.lunar-location-picker__actions button {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-label);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-location-picker__actions button[type="submit"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.lunar-location-picker__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.lunar-calendar-controls button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+
+.lunar-calendar-controls button:hover {
+  background: var(--accent-bg);
+}
+
+.lunar-calendar-segmented.segmented-control {
+  min-height: 46px;
+  --segmented-padding: 5px;
+  --segmented-gap: 4px;
+  --segmented-item-height: 34px;
+  --segmented-item-px: 24px;
+  --segmented-active-bg: var(--card-bg);
+  --segmented-active-shadow: var(--shadow-card);
+  --segmented-bg: color-mix(in srgb, var(--surface-2) 86%, var(--card-bg));
+  --segmented-border: var(--line);
+}
+
+.lunar-calendar-segmented .segmented-control__item {
+  min-width: 82px;
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-calendar-layout {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.lunar-calendar-grid-panel,
+.lunar-calendar-detail {
+  max-width: 100%;
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--lunar-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.lunar-calendar-grid-panel {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  padding: 14px;
+}
+
+.lunar-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 4px 0 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.lunar-calendar-legend__title {
+  display: inline-flex;
+}
+
+.lunar-calendar-legend__items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.lunar-calendar-legend__items span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lunar-calendar-legend__items span span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--event-accent, var(--line-strong));
+}
+
+.lunar-calendar-weekdays,
+.lunar-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.lunar-calendar-weekdays {
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.lunar-calendar-weekdays span {
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lunar-calendar-grid {
+  position: relative;
+  gap: 5px;
+  overflow: visible;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-grid-panel {
+  padding: 24px 20px 20px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-weekdays,
+.lunar-calendar-body.is-month .lunar-calendar-grid {
+  column-gap: 8px;
+  row-gap: 14px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-weekdays {
+  margin-bottom: 10px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day {
+  grid-template-rows: 20px 64px 12px 36px;
+  gap: 6px;
+  height: 160px;
+  padding: 10px 8px 9px;
+  border-radius: var(--lunar-card-radius);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day__number {
+  font-size: 16px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-selected .lunar-calendar-day__number {
+  width: 28px;
+  height: 28px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day__lunar .lunar-moon-disc {
+  width: 36px;
+  height: 36px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day__moon {
+  font-size: 25px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day__phase {
+  font-size: 9px;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-event-pill,
+.lunar-calendar-body.is-month .lunar-calendar-event-more {
+  height: 18px;
+  padding: 0 6px;
+  font-size: 12px;
+}
+
+.lunar-calendar-day {
+  position: relative;
+  display: grid;
+  grid-template-rows: 18px 54px 14px minmax(28px, 1fr);
+  justify-items: center;
+  gap: 3px;
+  height: 122px;
+  min-height: 0;
+  padding: 8px 5px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--lunar-card-radius);
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.lunar-calendar-day:hover {
+  z-index: calc(var(--z-lunar-tooltip) - 1);
+  border-color: var(--line-strong);
+  background: var(--accent-bg);
+}
+
+.lunar-calendar-day:focus,
+.lunar-calendar-day:focus-visible,
+.lunar-calendar-day:focus-within {
+  z-index: calc(var(--z-lunar-tooltip) - 1);
+}
+
+.lunar-calendar-day.is-selected {
+  border-color: var(--ink-2);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--surface-2));
+  color: var(--ink);
+}
+
+.lunar-calendar-day.is-outside {
+  color: var(--faint);
+}
+
+.lunar-calendar-day.is-today:not(.is-selected) {
+  border-color: var(--line-strong);
+}
+
+.lunar-calendar-day__top,
+.lunar-calendar-day__phase,
+.lunar-calendar-day__events {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.lunar-calendar-day__number {
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.lunar-calendar-day.is-selected .lunar-calendar-day__number {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.lunar-calendar-day__moon,
+.lunar-calendar-event-dot {
+  font-family: var(--font-glyph);
+  letter-spacing: var(--tracking-normal);
+}
+
+.lunar-calendar-day__moon {
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1;
+}
+
+.lunar-calendar-day__lunar {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+}
+
+.lunar-calendar-day__lunar .lunar-moon-disc {
+  width: 28px;
+  height: 28px;
+}
+
+.lunar-calendar-day__phase {
+  max-width: 100%;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-calendar-day__events {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  align-items: center;
+  justify-content: center;
+  justify-self: stretch;
+  gap: 4px;
+  min-height: 0;
+  max-height: 100%;
+  overflow: visible;
+}
+
+.lunar-calendar-event-pill,
+.lunar-calendar-event-more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: start;
+  min-width: 18px;
+  max-width: 42px;
+  height: 15px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--event-accent, var(--surface-2)) 26%, var(--surface-2));
+  color: var(--ink);
+  font-size: 8.5px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.lunar-calendar-event-pill {
+  overflow: visible;
+}
+
+.lunar-calendar-event-more {
+  overflow: hidden;
+}
+
+.lunar-calendar-day-tooltip,
+.lunar-calendar-event-pill::after {
+  position: absolute;
+  z-index: var(--z-lunar-tooltip);
+  width: max-content;
+  max-width: min(220px, calc(100vw - 32px));
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 18px 44px rgba(22, 25, 35, 0.22), var(--shadow-card);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.25;
+  pointer-events: none;
+  text-align: left;
+  white-space: normal;
+  opacity: 1;
+  transform: translate(-50%, 4px);
+  visibility: hidden;
+  transition: transform 120ms ease, visibility 120ms ease;
+}
+
+.lunar-calendar-event-pill::after {
+  content: attr(aria-label);
+}
+
+.lunar-calendar-day-tooltip {
+  display: none;
+  gap: 4px;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  min-width: 150px;
+}
+
+.lunar-calendar-day-tooltip__phase {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.15;
+}
+
+.lunar-calendar-day-tooltip__sign,
+.lunar-calendar-day-tooltip__event,
+.lunar-calendar-day-tooltip__void {
+  display: block;
+  color: color-mix(in srgb, var(--bg) 78%, var(--muted));
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  line-height: 1.25;
+}
+
+.lunar-calendar-day-tooltip__events {
+  display: grid;
+  gap: 2px;
+  margin-top: 2px;
+  padding-top: 5px;
+  border-top: 1px solid color-mix(in srgb, var(--bg) 18%, transparent);
+}
+
+.lunar-calendar-event-pill::after {
+  left: 50%;
+  bottom: calc(100% + 6px);
+}
+
+.lunar-calendar-day.is-tooltip-below > .lunar-calendar-day-tooltip {
+  top: calc(100% + 8px);
+  bottom: auto;
+  transform: translate(-50%, -4px);
+}
+
+.lunar-week-day.is-tooltip-below > .lunar-calendar-day-tooltip {
+  top: calc(100% + 8px);
+  bottom: auto;
+  transform: translate(-50%, -4px);
+}
+
+.lunar-calendar-day.is-tooltip-below .lunar-calendar-event-pill::after {
+  top: calc(100% + 6px);
+  bottom: auto;
+  transform: translate(-50%, -4px);
+}
+
+.lunar-calendar-day:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day:focus > .lunar-calendar-day-tooltip,
+.lunar-calendar-day:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-event-pill:hover::after,
+.lunar-calendar-event-pill:focus::after,
+.lunar-calendar-event-pill:focus-visible::after {
+  display: grid;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.lunar-calendar-day.is-tooltip-left > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill::after {
+  right: 0;
+  left: auto;
+  transform: translate(0, 4px);
+}
+
+.lunar-calendar-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left.is-tooltip-below .lunar-calendar-event-pill::after {
+  transform: translate(0, -4px);
+}
+
+.lunar-calendar-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:hover::after,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus::after,
+.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+.lunar-calendar-day.is-tooltip-right > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill::after {
+  right: auto;
+  left: 0;
+  transform: translate(0, 4px);
+}
+
+.lunar-calendar-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right.is-tooltip-below .lunar-calendar-event-pill::after {
+  transform: translate(0, -4px);
+}
+
+.lunar-calendar-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
+.lunar-week-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:hover::after,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus::after,
+.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+.lunar-calendar-event-pill.event-aspect,
+.lunar-calendar-event-pill.event-ingress,
+.lunar-calendar-event-pill.event-station,
+.lunar-calendar-event-pill.event-lunation {
+  justify-content: center;
+  width: auto;
+  min-width: 26px;
+  max-width: 42px;
+  padding: 0 7px;
+  color: color-mix(in srgb, var(--ink) 82%, var(--event-accent, var(--ink)));
+  font-family: var(--font-glyph);
+  font-size: 13px;
+  letter-spacing: 0;
+  overflow: visible;
+}
+
+.lunar-calendar-event-pill.event-lunation {
+  min-width: 28px;
+  max-width: 42px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-family: var(--font-label);
+  font-size: 10px;
+}
+
+.lunar-calendar-event-pill.event-void {
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: min(116px, 100%);
+  padding: 0 8px;
+  border: 1px dashed color-mix(in srgb, var(--muted) 58%, transparent);
+  background: color-mix(in srgb, var(--card-bg) 72%, transparent);
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  font-style: italic;
+  letter-spacing: var(--tracking-normal);
+}
+
+.lunar-calendar-event-pill.event-void span:first-child {
+  font-family: var(--font-glyph);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1;
+}
+
+.lunar-calendar-event-pill.event-void span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lunar-calendar-event-more {
+  background: color-mix(in srgb, var(--surface-2) 82%, var(--ink) 8%);
+  color: color-mix(in srgb, var(--ink) 82%, var(--accent));
+}
+
+.event-lunation {
+  --event-accent: var(--color-moon-phase-light);
+}
+
+.event-ingress {
+  --event-accent: var(--aspect-flow);
+}
+
+.event-station {
+  --event-accent: var(--aspect-hard);
+}
+
+.event-aspect {
+  --event-accent: var(--aspect-hard);
+}
+
+.lunar-calendar-detail {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.lunar-calendar-detail__head {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 6px 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lunar-calendar-detail__disc {
+  width: 36px;
+  height: 36px;
+  margin-top: 3px;
+}
+
+.lunar-calendar-detail__date,
+.lunar-calendar-upcoming__label,
+.lunar-calendar-event-card__meta {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.lunar-calendar-detail h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-h2);
+}
+
+.lunar-calendar-detail h2 span {
+  font-family: var(--font-glyph);
+}
+
+.lunar-calendar-detail p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: var(--leading-body);
+}
+
+.lunar-calendar-events-list {
+  display: grid;
+  gap: 7px;
+}
+
+.lunar-calendar-transit-stack {
+  display: grid;
+  gap: 7px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.lunar-calendar-event-card {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--event-accent, var(--line-strong));
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--card-bg) 92%, var(--surface-2));
+}
+
+.lunar-calendar-event-card--transit {
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--card-bg) 96%, var(--surface-2));
+}
+
+.lunar-calendar-event-card__icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--button-radius);
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+
+.lunar-calendar-event-card__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lunar-calendar-event-card strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-body);
+}
+
+.lunar-calendar-event-card__body > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: var(--leading-body);
+}
+
+.lunar-week-transits,
+.lunar-month-transits {
+  display: grid;
+  gap: 10px;
+}
+
+.lunar-week-transits > .lunar-calendar-upcoming__label,
+.lunar-month-transits > .lunar-calendar-upcoming__label {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.lunar-week-transits__list,
+.lunar-month-transits__list {
+  display: grid;
+  gap: 12px;
+}
+
+.tx-card {
+  --tx-glyph-column: var(--sky-card-glyph-column-size);
+  display: grid;
+  grid-template-columns: var(--tx-glyph-column) minmax(0, 1fr);
+  column-gap: var(--aspect-card-gap);
+  row-gap: var(--sp-1);
+  align-items: start;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  max-width: 100%;
+  min-width: 0;
+}
+
+a.tx-card.has-article {
+  cursor: pointer;
+}
+
+a.tx-card.has-article:hover {
+  border-color: color-mix(in srgb, var(--event-accent, var(--aspect-flow)) 36%, var(--line));
+  box-shadow: var(--elev-pill);
+}
+
+.tx-glyphs {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: var(--tx-glyph-column);
+  min-width: var(--tx-glyph-column);
+  padding-top: 1px;
+  color: var(--ink);
+  font-family: "Noto Sans Symbols", "Segoe UI Symbol", var(--font-glyph), serif;
+  font-size: 21px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tx-glyphs .tx-link,
+.tx-glyphs .tx-rx {
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.tx-glyphs .tx-sign {
+  color: var(--wheel-glyph);
+  font-size: 17px;
+}
+
+.tx-title {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  min-width: 0;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.tx-body {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.tx-foot {
+  display: flex;
+  grid-column: 2;
+  grid-row: 3;
+  align-items: center;
+  gap: var(--sp-1) 10px;
+  margin-top: 0;
+}
+
+.tx-tag {
+  white-space: nowrap;
+}
+
+.tx-date {
+  min-width: 0;
+}
+
+.tx-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  color: var(--event-accent, var(--aspect-flow));
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  opacity: 0.78;
+  text-transform: uppercase;
+}
+
+a.tx-card.has-article:hover .tx-more {
+  opacity: 1;
+}
+
+.lunar-calendar-upcoming {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.lunar-calendar-upcoming button {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.lunar-calendar-upcoming button span:first-child {
+  font-family: var(--font-glyph);
+}
+
+.lunar-calendar-upcoming time {
+  color: var(--muted);
+  font-size: var(--type-label-size);
+}
+
+.lunar-calendar-loading,
+.lunar-calendar-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--lunar-card-radius);
+  background: var(--card-bg);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.lunar-calendar-loading svg {
+  animation: lunar-calendar-spin 900ms linear infinite;
+}
+
+.lunar-calendar-week-view {
+  display: grid;
+  gap: 14px;
+}
+
+.lunar-week-strip,
+.lunar-selected-card {
+  border: 1px solid var(--card-border);
+  border-radius: var(--lunar-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.lunar-week-strip {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.lunar-week-day {
+  position: relative;
+  display: grid;
+  grid-template-rows: 16px 24px 40px 22px 14px 18px 20px;
+  justify-items: center;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  height: 184px;
+  padding: 8px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--lunar-card-radius);
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.lunar-week-day:hover {
+  border-color: var(--line);
+  background: var(--accent-bg);
+}
+
+.lunar-week-day.is-selected {
+  border-color: var(--ink-2);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--surface-2));
+}
+
+.lunar-week-day__weekday,
+.lunar-week-day__marker,
+.lunar-week-day__illumination {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.lunar-week-day__date {
+  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.lunar-week-day.is-selected .lunar-week-day__date {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.lunar-week-day__sign {
+  color: var(--muted);
+  font-family: var(--font-glyph);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.lunar-moon-sign-glyph.is-earth {
+  color: var(--lunar-element-earth);
+}
+
+.lunar-moon-sign-glyph.is-air {
+  color: var(--lunar-element-air);
+}
+
+.lunar-moon-sign-glyph.is-water {
+  color: var(--lunar-element-water);
+}
+
+.lunar-moon-sign-glyph.is-fire {
+  color: var(--lunar-element-fire);
+}
+
+.lunar-week-day__illumination {
+  font-size: 9px;
+  letter-spacing: var(--tracking-normal);
+  text-transform: none;
+}
+
+.lunar-week-day__marker {
+  max-width: 100%;
+  min-height: 12px;
+  overflow-wrap: anywhere;
+}
+
+.lunar-week-day__events {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  height: 18px;
+  padding: 0 6px;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill::after {
+  content: none;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill > span {
+  display: inline-block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill.event-void {
+  gap: 3px;
+  padding: 0 5px;
+  font-size: 9px;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill.event-void span:first-child {
+  font-size: 10px;
+}
+
+.lunar-week-day__events .lunar-calendar-event-pill.event-void span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.lunar-moon-disc {
+  --moon-shadow-edge: color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.48), transparent 12%),
+    radial-gradient(circle at 58% 58%, rgba(96, 72, 25, 0.18), transparent 16%),
+    radial-gradient(circle at 39% 68%, rgba(77, 59, 24, 0.14), transparent 13%),
+    radial-gradient(circle at 66% 36%, rgba(89, 69, 28, 0.12), transparent 10%),
+    radial-gradient(circle at 48% 54%, var(--color-moon-phase-light), #b79c57 74%);
+  box-shadow:
+    inset -9px -7px 16px rgba(63, 50, 18, 0.28),
+    inset 8px 6px 12px rgba(255, 255, 255, 0.26),
+    0 2px 8px rgba(28, 32, 52, 0.12);
+}
+
+.lunar-moon-disc::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: var(--moon-dark, 50%);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 44%),
+    var(--moon-shadow-edge);
+  box-shadow: 0 0 10px rgba(12, 14, 22, 0.42);
+}
+
+.lunar-moon-disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 36% 38%, rgba(72, 57, 26, 0.16), transparent 8%),
+    radial-gradient(circle at 58% 58%, rgba(72, 57, 26, 0.12), transparent 10%),
+    radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.12), transparent 10%);
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.lunar-moon-disc.is-waxing::before {
+  left: -1px;
+  border-radius: 999px 0 0 999px;
+}
+
+.lunar-moon-disc.is-waning::before {
+  right: -1px;
+  border-radius: 0 999px 999px 0;
+}
+
+.lunar-moon-disc.is-full::before {
+  opacity: 0;
+}
+
+.lunar-moon-disc.is-new {
+  background:
+    radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.05), transparent 17%),
+    radial-gradient(circle at 58% 58%, rgba(255, 255, 255, 0.035), transparent 18%),
+    var(--lunar-moon-dark);
+  box-shadow:
+    inset -7px -6px 14px rgba(0, 0, 0, 0.22),
+    inset 5px 4px 11px rgba(255, 255, 255, 0.035),
+    0 2px 8px rgba(28, 32, 52, 0.12);
+}
+
+.lunar-moon-disc.is-new::before {
+  opacity: 0;
+}
+
+.lunar-milestones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lunar-milestones button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 6px 14px 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+  font-size: 14px;
+}
+
+.lunar-milestones .lunar-moon-disc {
+  width: 28px;
+  height: 28px;
+}
+
+.lunar-milestones span {
+  color: var(--muted);
+}
+
+.lunar-milestones__separator {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+}
+
+.lunar-milestones__date,
+.lunar-milestones__relative {
+  flex: 0 0 auto;
+}
+
+.lunar-milestones strong .lunar-milestones__sign {
+  display: inline-block;
+  margin-left: 6px;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 1;
+  text-shadow: 0.018em 0 currentColor, -0.018em 0 currentColor;
+  -webkit-text-stroke: 0.24px currentColor;
+}
+
+.lunar-selected-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  grid-template-areas: "main rail";
+  align-items: start;
+  gap: clamp(24px, 4vw, 44px);
+  max-width: 100%;
+  min-width: 0;
+  padding: clamp(24px, 3.8vw, 44px);
+  scroll-margin-top: calc(var(--top-control-top) + var(--top-control-height) + 36px);
+}
+
+.lunar-selected-card__main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+  align-self: start;
+}
+
+.lunar-selected-card__copy {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  justify-items: start;
+  text-align: left;
+}
+
+.lunar-selected-card__eyebrow,
+.lunar-selected-card__stats div > span,
+.lunar-selected-card__practice > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
+.lunar-selected-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 2.8vw, 38px);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+}
+
+.lunar-selected-card h2 span {
+  font-family: var(--font-glyph);
+}
+
+.lunar-selected-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.lunar-selected-card__phase-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--lunation) 36%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lunation) 16%, var(--card-bg));
+  color: var(--ink-2);
+}
+
+.lunar-selected-card__phase-chip .lunar-moon-disc {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.lunar-selected-card__meta em {
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+}
+
+.lunar-selected-card__meta-element {
+  --lunar-element-accent: var(--muted);
+  padding: 4px 12px;
+  border: 1px solid color-mix(in srgb, var(--lunar-element-accent) 42%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lunar-element-accent) 12%, var(--card-bg));
+  color: color-mix(in srgb, var(--lunar-element-accent) 78%, var(--ink));
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__meta-element.is-earth {
+  --lunar-element-accent: var(--lunar-element-earth);
+}
+
+.lunar-selected-card__meta-element.is-air {
+  --lunar-element-accent: var(--lunar-element-air);
+}
+
+.lunar-selected-card__meta-element.is-water {
+  --lunar-element-accent: var(--lunar-element-water);
+}
+
+.lunar-selected-card__meta-element.is-fire {
+  --lunar-element-accent: var(--lunar-element-fire);
+}
+
+.lunar-selected-card__meta-separator,
+.lunar-selected-card__meta-date,
+.lunar-selected-card__meta-time {
+  color: var(--muted);
+}
+
+.lunar-selected-card__body {
+  display: grid;
+  gap: 10px;
+  max-width: 62ch;
+  min-width: 0;
+  margin: 18px 0 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  font-weight: var(--weight-regular);
+  line-height: 1.6;
+}
+
+.lunar-selected-card__body p {
+  margin: 0;
+}
+
+.lunar-selected-card__arc {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: none;
+  margin-top: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--surface-2) 38%, var(--card-bg));
+}
+
+.lunar-selected-card__arc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lunar-selected-card__arc-head > span {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__arc-head > span {
+  white-space: nowrap;
+}
+
+.lunar-selected-card__arc-head small {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.lunar-selected-card__arc ol {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lunar-selected-card__arc li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 28px;
+  padding: 0;
+  color: var(--ink-2);
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-selected-card__arc li.is-current {
+  color: var(--ink);
+}
+
+.lunar-selected-card__arc li .lunar-moon-disc {
+  width: 18px;
+  height: 18px;
+}
+
+.lunar-selected-card__arc li strong {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: 12px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__arc li strong span {
+  font-family: var(--font-glyph);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.lunar-selected-card__arc li small {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__daily-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.lunar-selected-card__after {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  align-self: start;
+}
+
+.lunar-selected-card__after .lunar-selected-card__daily-events {
+  margin-top: 0;
+}
+
+.lunar-selected-card__daily-event {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 14px 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1;
+  text-align: left;
+}
+
+.lunar-selected-card__daily-event-glyph {
+  color: var(--ink-2);
+  font-family: var(--font-glyph);
+  font-size: 20px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__daily-event strong {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__daily-event span:not(.lunar-selected-card__daily-event-glyph) {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__daily-event-separator {
+  margin-left: 2px;
+}
+
+.lunar-selected-card__daily-event-time {
+  letter-spacing: var(--tracking-label);
+}
+
+.lunar-selected-card__transit-notes {
+  display: grid;
+  gap: 12px;
+  max-width: 62ch;
+}
+
+.lunar-selected-card__transit-notes section {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--surface-2));
+}
+
+.lunar-selected-card__transit-notes span {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__transit-notes p {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.lunar-selected-card__void {
+  display: grid;
+  gap: 10px;
+  max-width: 62ch;
+  justify-self: start;
+  margin-top: 0;
+  padding: 16px 18px;
+  border: 1px dashed color-mix(in srgb, var(--muted) 52%, transparent);
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--card-bg) 86%, var(--surface-2));
+  color: var(--ink-2);
+  letter-spacing: 0;
+  text-align: left;
+}
+
+.lunar-selected-card__void-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+}
+
+.lunar-selected-card__void-heading span {
+  color: var(--ink-2);
+  font-family: var(--font-glyph);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.lunar-selected-card__void-heading strong {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--weight-medium);
+  line-height: 1.1;
+}
+
+.lunar-selected-card__void p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.lunar-selected-card__void p.lunar-selected-card__void-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12.5px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.4;
+}
+
+.lunar-selected-card__void-next {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--ink-2);
+}
+
+.lunar-selected-card__void-next span {
+  font-family: var(--font-glyph);
+  font-size: 1.08em;
+  line-height: 1;
+}
+
+.lunar-selected-card__rail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-self: start;
+}
+
+.lunar-selected-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.lunar-selected-card__stats-note {
+  margin: -6px 0 0;
+  color: var(--ink-2);
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: var(--weight-regular);
+  line-height: 1.45;
+}
+
+.lunar-selected-card__stats div,
+.lunar-selected-card__practice {
+  border: 1px solid var(--line);
+  border-radius: var(--lunar-card-radius);
+  background: color-mix(in srgb, var(--card-bg) 90%, var(--surface-2));
+}
+
+.lunar-selected-card__stats div {
+  display: grid;
+  gap: 9px;
+  padding: 12px 14px;
+}
+
+.lunar-selected-card__stats strong {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lunar-selected-card__stats small {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: var(--weight-regular);
+}
+
+.lunar-selected-card__stats small.is-percent {
+  margin-left: 1px;
+}
+
+.lunar-selected-card__stats small.is-fraction {
+  margin-left: 0;
+}
+
+.lunar-selected-card__stat-dial {
+  position: relative;
+  display: inline-block;
+  align-self: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: conic-gradient(var(--ink-2) calc(var(--ip, 0) * 1%), var(--surface-2) 0);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--muted) 12%, transparent);
+}
+
+.lunar-selected-card__practice {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
+  padding: 14px;
+}
+
+.lunar-selected-card__practice p {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+
+@keyframes lunar-calendar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes lunar-month-settle {
+  from {
+    transform: translateY(-8px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lunar-week-settle {
+  from {
+    transform: translateY(6px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lunar-rows-expand {
+  from {
+    max-height: 194px;
+    transform: scaleY(0.96);
+  }
+
+  to {
+    max-height: 1400px;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes lunar-rows-collapse {
+  from {
+    max-height: 420px;
+    transform: scaleY(0.98);
+  }
+
+  to {
+    max-height: 194px;
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lunar-calendar-body,
+  .lunar-calendar-grid-panel,
+  .lunar-week-strip,
+  ::view-transition-old(lunar-calendar-body),
+  ::view-transition-new(lunar-calendar-body) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .lunar-calendar-header,
+  .lunar-calendar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lunar-calendar-header {
+    display: grid;
+  }
+
+  .lunar-calendar-controls {
+    justify-self: start;
+  }
+
+  .lunar-calendar-layout {
+    display: grid;
+  }
+
+  .lunar-calendar-detail {
+    position: static;
+  }
+
+  .lunar-week-strip {
+    overflow: hidden;
+  }
+
+  .lunar-selected-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "rail";
+  }
+
+  .lunar-selected-card__practice {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .lunar-calendar-view {
+    --lunar-calendar-title-size: clamp(32px, 8vw, 38px);
+    gap: 18px;
+  }
+
+  .lunar-calendar-grid-panel {
+    padding: 14px 10px 10px;
+  }
+
+  .lunar-calendar-legend {
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+
+  .lunar-calendar-legend__items {
+    gap: 8px;
+  }
+
+  .lunar-calendar-weekdays {
+    gap: 4px;
+  }
+
+  .lunar-calendar-grid {
+    gap: 4px;
+  }
+
+  .lunar-calendar-day {
+    height: 126px;
+    min-height: 0;
+    padding: 8px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day {
+    grid-template-rows: 18px 58px 12px 32px;
+    height: 142px;
+    padding: 8px 5px;
+  }
+
+  .lunar-calendar-day__phase {
+    font-size: 10px;
+  }
+
+  .lunar-calendar-day__moon {
+    font-size: 20px;
+  }
+
+  .lunar-calendar-event-pill,
+  .lunar-calendar-event-more {
+    height: 18px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+
+  .lunar-calendar-title-row {
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lunar-calendar-segmented.segmented-control {
+    width: 100%;
+  }
+
+  .lunar-calendar-segmented .segmented-control__item {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lunar-week-strip {
+    padding: 12px;
+  }
+
+  .lunar-week-day {
+    min-height: 178px;
+  }
+
+  .lunar-selected-card {
+    padding: 28px 20px;
+  }
+
+  .lunar-selected-card__main {
+    grid-template-columns: 1fr;
+    grid-row: auto;
+  }
+
+  .lunar-selected-card__meta-separator {
+    display: none;
+  }
+
+  .lunar-selected-card__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .lunar-selected-card__stats div {
+    padding: 11px 12px;
+  }
+
+  .lunar-selected-card__daily-event {
+    width: 100%;
+    justify-content: start;
+  }
+
+  .tx-card {
+    --tx-glyph-column: var(--sky-card-mobile-glyph-column-size);
+  }
+
+  .tx-foot {
+    flex-wrap: wrap;
+    gap: 8px 11px;
+  }
+
+  .tx-more {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .mode-calendar {
+    overflow-x: hidden;
+  }
+
+  .mode-calendar .portal-grid.full-page-layout.calendar-layout,
+  .mode-calendar .detail-panel.calendar-content-column,
+  .lunar-calendar-view,
+  .lunar-calendar-body,
+  .lunar-calendar-week-view,
+  .lunar-week-strip,
+  .lunar-calendar-grid-panel,
+  .lunar-selected-card,
+  .lunar-week-transits,
+  .lunar-month-transits,
+  .tx-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .mode-calendar .portal-grid.full-page-layout.calendar-layout {
+    overflow-x: clip;
+  }
+
+  .lunar-calendar-header {
+    gap: 12px;
+  }
+
+  .lunar-calendar-title-row {
+    gap: 10px;
+  }
+
+  .lunar-calendar-controls button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
+    padding: 18px 10px 16px;
+    overflow: hidden;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays,
+  .lunar-calendar-body.is-month .lunar-calendar-grid {
+    column-gap: 3px;
+    row-gap: 10px;
+  }
+
+  .lunar-calendar-weekdays span {
+    padding-inline: 0;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day {
+    grid-template-rows: 17px 50px 12px 29px;
+    height: 128px;
+    padding: 7px 1px 6px;
+    border-radius: var(--lunar-card-radius);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__number {
+    font-size: 15px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected .lunar-calendar-day__number {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__lunar .lunar-moon-disc {
+    width: 30px;
+    height: 30px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__moon {
+    font-size: 20px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__phase {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .lunar-calendar-day__events {
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-event-pill,
+  .lunar-calendar-body.is-month .lunar-calendar-event-more {
+    max-width: 34px;
+    height: 16px;
+    padding: 0 5px;
+    font-size: 10px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-event-pill.event-void {
+    max-width: 38px;
+    padding: 0 4px;
+    font-size: 9px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-event-pill.event-void span:first-child {
+    font-size: 10px;
+  }
+
+  .lunar-week-strip {
+    gap: 5px;
+    padding: 10px 8px 12px;
+  }
+
+  .lunar-week-day {
+    height: 166px;
+    min-height: 0;
+    padding: 8px 2px 10px;
+  }
+
+  .lunar-week-day__marker {
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+
+  .lunar-milestones {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .lunar-milestones button {
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lunar-milestones strong,
+  .lunar-milestones__date,
+  .lunar-milestones__relative {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lunar-milestones__separator {
+    min-width: auto;
+    overflow: visible;
+  }
+
+  .lunar-selected-card {
+    overflow: hidden;
+    border-radius: var(--lunar-card-radius);
+  }
+
+  .lunar-selected-card h2 {
+    overflow-wrap: anywhere;
+    font-size: clamp(26px, 8.5vw, 34px);
+    line-height: 1.05;
+  }
+
+  .lunar-selected-card__meta {
+    gap: 8px;
+  }
+
+  .lunar-selected-card__body,
+  .lunar-selected-card__practice p {
+    overflow-wrap: anywhere;
+  }
+
+  .lunar-selected-card__daily-event {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    border-radius: var(--radius-pill);
+  }
+
+  .lunar-selected-card__daily-event strong {
+    font-size: 18px;
+  }
+
+  .lunar-selected-card__daily-event-time {
+    font-size: 12px;
+  }
+
+  .tx-card {
+    --tx-glyph-column: var(--sky-card-mobile-glyph-column-size);
+  }
+
+  .tx-glyphs {
+    gap: 5px;
+    width: var(--tx-glyph-column);
+    min-width: var(--tx-glyph-column);
+    font-size: 18px;
+  }
+
+  .tx-glyphs .tx-link,
+  .tx-glyphs .tx-rx,
+  .tx-glyphs .tx-sign {
+    font-size: 15px;
+  }
+
+  .tx-foot {
+    align-items: flex-start;
+  }
+
+  .tx-date {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 480px) {
+  .lunar-calendar-view {
+    width: 100%;
+  }
+
+  .lunar-week-strip {
+    gap: 3px;
+    padding: 10px 7px 12px;
+  }
+
+  .lunar-week-day {
+    grid-template-rows: 14px 22px 36px 21px 12px 15px 17px;
+    gap: 3px;
+    height: 158px;
+    padding: 8px 1px 8px;
+    border-radius: var(--lunar-card-radius);
+  }
+
+  .lunar-week-day .lunar-moon-disc {
+    width: 33px;
+    height: 33px;
+  }
+
+  .lunar-week-day__weekday {
+    font-size: 10.5px;
+  }
+
+  .lunar-week-day__date {
+    font-size: 14px;
+  }
+
+  .lunar-week-day.is-selected .lunar-week-day__date {
+    width: 23px;
+    height: 23px;
+  }
+
+  .lunar-week-day__sign {
+    font-size: 20px;
+  }
+
+  .lunar-week-day__marker {
+    max-width: 100%;
+    font-size: 9px;
+  }
+
+  .lunar-week-day__illumination {
+    font-size: 8px;
+  }
+
+  .lunar-week-day__events {
+    gap: 2px;
+  }
+
+  .lunar-week-day__events .lunar-calendar-event-pill {
+    max-width: 34px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+
+  .lunar-week-day__events .lunar-calendar-event-pill.event-void {
+    max-width: 42px;
+    padding: 0 3px;
+    font-size: 8px;
+  }
+
+  .lunar-calendar-day,
+  .lunar-calendar-event-pill,
+  .lunar-calendar-event-more {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .lunar-calendar-legend {
+    gap: 6px;
+    font-size: 9px;
+  }
+
+  .lunar-calendar-legend__items {
+    gap: 7px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
+    padding: 16px 8px 14px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays,
+  .lunar-calendar-body.is-month .lunar-calendar-grid {
+    column-gap: 2px;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day {
+    height: 124px;
+  }
+
+  .lunar-selected-card {
+    padding: 24px 16px;
+  }
+
+  .lunar-selected-card__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lunar-selected-card__stats div {
+    padding: 10px;
+  }
+
+  .tx-card {
+    --tx-glyph-column: var(--sky-card-mobile-glyph-column-size);
+  }
+}

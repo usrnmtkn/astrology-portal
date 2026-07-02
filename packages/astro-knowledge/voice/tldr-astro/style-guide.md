@@ -34,7 +34,7 @@ Route by surface and block type. Never blend. A natal page is never the transit 
 - Describe tendencies, not fixed traits. The reader always has agency.
 - Name the actual subject. Never use a vague placeholder like "the thing," "the tender thing," or "the careful thing" to stand in for something you could name. If you cannot name it, you have not interpreted it yet.
 - Never use the word "leak" or "leaks" for emotion or expression. Use surfaces, shows, comes out, spills.
-- Cadence is full sentences with rhythm, not clipped fragments. Avoid strings of two and three word imperatives ("Say it plainly. Then move."). Directness comes from clear sentences, not from chopping them short.
+- Cadence is full sentences with rhythm, not clipped fragments. Avoid strings of stacked imperatives or command-list sentences ("Send the message, define the terms, organize the facts"). Directness comes from complete thoughts with a subject, context, and consequence, not from chopping the line into instructions.
 
 ---
 

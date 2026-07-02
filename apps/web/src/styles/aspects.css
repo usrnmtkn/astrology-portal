@@ -91,10 +91,10 @@
   min-height: 25px;
   overflow-wrap: normal;
   word-break: normal;
-  font-size: var(--aspect-row-title-size, var(--text-row-title-size));
-  font-weight: var(--aspect-row-title-weight, var(--weight-medium));
-  line-height: var(--aspect-row-title-line, var(--leading-title));
-  letter-spacing: var(--aspect-row-title-tracking, var(--tracking-title));
+  font-size: var(--text-table-title-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-title);
 }
 
 .aspect-row-copy > span:not(.ui-pill),
@@ -106,7 +106,7 @@
   line-height: var(--aspect-row-copy-line, var(--leading-description));
 }
 
-.aspect-row-copy .aspect-row-subtitle {
+.aspect-row-copy .aspect-row-subtitle:not(.ui-pill) {
   margin-top: var(--aspect-row-subtitle-margin, 4px);
   color: var(--aspect-row-subtitle-color, var(--card-meta-color));
   font-family: var(--font-body);
@@ -136,6 +136,17 @@
   color: var(--card-meta-color);
   font-size: var(--type-meta-size);
   line-height: var(--leading-meta);
+}
+
+.aspect-row .aspect-row-subtitle,
+.aspect-row-button .aspect-row-subtitle,
+.aspect-row-static .aspect-row-subtitle,
+.aspect-row-copy .ui-pill {
+  place-self: start;
+  justify-self: start;
+  width: max-content;
+  inline-size: max-content;
+  max-width: 100%;
 }
 
 .aspect-row-timing > span:not(.planet-placement-row__duration) {

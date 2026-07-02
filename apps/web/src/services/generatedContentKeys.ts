@@ -84,6 +84,10 @@ export function natalHouseContentKey(body: string, house: string | number) {
   return `natal.house.${moduleContentPart(body)}.${moduleContentPart(house)}`;
 }
 
+export function natalPlacementContentKey(body: string, sign: string, house: string | number) {
+  return `natal.placement.${moduleContentPart(body)}.${moduleContentPart(sign)}.house_${moduleContentPart(house)}`;
+}
+
 export function natalRulerContentKey(ruler: string) {
   return `natal.ruler.${moduleContentPart(ruler)}`;
 }
@@ -98,6 +102,22 @@ export function skyAspectContentKey(first: string, aspect: string, second: strin
   const [firstBody, secondBody] = canonicalAspectBodies(first, second);
 
   return `sky.aspect.${firstBody}.${aspectPart(aspect)}.${secondBody}`;
+}
+
+export function skyIngressContentKey(planet: string, sign: string) {
+  return `sky.ingress.${moduleContentPart(planet)}.${moduleContentPart(sign)}`;
+}
+
+export function skyIngressInstanceContentKey(
+  planet: string,
+  sign: string,
+  options: {
+    targetDate?: string | null;
+  } = {}
+) {
+  const datePart = options.targetDate ? `.${slugContentPart(options.targetDate)}` : "";
+
+  return `${skyIngressContentKey(planet, sign)}${datePart}`;
 }
 
 export function skyAspectInstanceContentKey(
@@ -196,6 +216,19 @@ function parsePlacementLabel(value?: string | null) {
   };
 }
 
+function parseIngressLabel(value?: string | null) {
+  const match = value?.match(/^(.+?)\s+enters\s+(.+?)$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    planet: slugContentPart(match[1]),
+    sign: slugContentPart(match[2])
+  };
+}
+
 function parseRetrogradeLabel(value?: string | null) {
   const match = value?.match(/^(.+?)\s+retrograde(?:\s+in\s+(.+?))?$/i);
 
@@ -250,6 +283,7 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
   const aliases = new Set<string>();
   const aspect = parseAspectLabel(row.headline);
   const placement = parsePlacementLabel(row.headline);
+  const ingress = parseIngressLabel(row.headline);
   const retrograde = parseRetrogradeLabel(row.headline);
   const legacyPlacement = parseLegacyNatalPlacementKey(row.content_key);
   const legacyAspect = parseLegacyNatalAspectKey(row.content_key);
@@ -263,6 +297,15 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
       addAlias(aliases, row.target_date ? `sky-aspect-${reversedAspect}-${row.target_date}` : null);
       addAlias(aliases, `sky-${reversedAspect}`);
       addAlias(aliases, skyAspectContentKey(aspect.first, aspect.aspect, aspect.second));
+    }
+
+    if (ingress?.planet && ingress.sign) {
+      addAlias(aliases, row.target_date ? `sky-ingress-${ingress.planet}-${ingress.sign}-${row.target_date}` : null);
+      addAlias(aliases, `sky-ingress-${ingress.planet}-${ingress.sign}`);
+      addAlias(aliases, row.target_date ? skyIngressInstanceContentKey(ingress.planet, ingress.sign, { targetDate: row.target_date }) : null);
+      addAlias(aliases, skyIngressContentKey(ingress.planet, ingress.sign));
+      addAlias(aliases, `sky-${ingress.planet}-enters-${ingress.sign}`);
+      addAlias(aliases, `sky-${ingress.planet}-in-${ingress.sign}`);
     }
 
     if ((row.event_type === "seasonal-current" || isLegacyCurrentSkyEvent(row.event_type, "seasonal")) && placement?.sign) {
