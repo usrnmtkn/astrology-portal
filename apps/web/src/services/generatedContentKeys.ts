@@ -275,6 +275,74 @@ function addAlias(aliases: Set<string>, alias?: string | null) {
   }
 }
 
+const domainRegistrySkyAspectAliases: Record<string, { first: string; aspect: string; second: string }> = {
+  "domain-registry/sky-aspect/mercury-neptune": {
+    first: "mercury",
+    aspect: "square",
+    second: "neptune"
+  },
+  "domain-registry/sky-aspect/moon-uranus": {
+    first: "moon",
+    aspect: "trine",
+    second: "uranus"
+  },
+  "domain-registry/sky-aspect/sun-saturn": {
+    first: "sun",
+    aspect: "sextile",
+    second: "saturn"
+  },
+  "domain-registry/sky-aspect/venus-saturn": {
+    first: "venus",
+    aspect: "square",
+    second: "saturn"
+  },
+  "domain-registry/sky-aspect/mars-saturn": {
+    first: "mars",
+    aspect: "square",
+    second: "saturn"
+  },
+  "domain-registry/sky-aspect/moon-venus": {
+    first: "moon",
+    aspect: "sextile",
+    second: "venus"
+  },
+  "domain-registry/sky-aspect/mercury-saturn": {
+    first: "mercury",
+    aspect: "sextile",
+    second: "saturn"
+  },
+  "domain-registry/sky-aspect/venus-mars": {
+    first: "venus",
+    aspect: "square",
+    second: "mars"
+  },
+  "domain-registry/sky-aspect/sun-neptune": {
+    first: "sun",
+    aspect: "square",
+    second: "neptune"
+  },
+  "domain-registry/sky-aspect/moon-pluto": {
+    first: "moon",
+    aspect: "conjunction",
+    second: "pluto"
+  }
+};
+
+function addSkyAspectScopedAliases(
+  aliases: Set<string>,
+  first: string,
+  aspect: string,
+  second: string
+) {
+  const firstPart = aspectPart(first);
+  const secondPart = aspectPart(second);
+  const aspectSlug = aspectPart(aspect);
+
+  addAlias(aliases, skyAspectContentKey(first, aspect, second));
+  addAlias(aliases, `sky-${firstPart}-${aspectSlug}-${secondPart}`);
+  addAlias(aliases, `sky-${secondPart}-${aspectSlug}-${firstPart}`);
+}
+
 function isLegacyCurrentSkyEvent(eventType: string | null, prefix: "seasonal" | "lunar") {
   return eventType === `${prefix}-${["weath", "er"].join("")}`;
 }
@@ -291,6 +359,17 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
   const directAspect = aspect ? `${aspect.first}-${aspect.aspect}-${aspect.second}` : null;
 
   if (row.surface === "sky") {
+    const domainRegistrySkyAspect = domainRegistrySkyAspectAliases[row.content_key];
+
+    if (domainRegistrySkyAspect) {
+      addSkyAspectScopedAliases(
+        aliases,
+        domainRegistrySkyAspect.first,
+        domainRegistrySkyAspect.aspect,
+        domainRegistrySkyAspect.second
+      );
+    }
+
     if (row.event_type === "current-aspect" && aspect && directAspect) {
       addAlias(aliases, row.target_date ? `sky-aspect-${directAspect}-${row.target_date}` : null);
       addAlias(aliases, `sky-${directAspect}`);
