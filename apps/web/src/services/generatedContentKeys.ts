@@ -1,3 +1,5 @@
+import { equivalentAstroContentKeys } from "../content/keyAliases";
+
 export type GeneratedContentAliasRow = {
   content_key: string;
   event_type: string | null;
@@ -357,6 +359,8 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
   const legacyAspect = parseLegacyNatalAspectKey(row.content_key);
   const reversedAspect = aspect ? `${aspect.second}-${aspect.aspect}-${aspect.first}` : null;
   const directAspect = aspect ? `${aspect.first}-${aspect.aspect}-${aspect.second}` : null;
+
+  equivalentAstroContentKeys(row.content_key).forEach((alias) => addAlias(aliases, alias));
 
   if (row.surface === "sky") {
     const domainRegistrySkyAspect = domainRegistrySkyAspectAliases[row.content_key];

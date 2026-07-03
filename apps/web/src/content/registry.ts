@@ -9,6 +9,7 @@ import type {
   SurfaceSelectionOptions,
   VoiceContentItem
 } from "./types";
+import { equivalentAstroContentKeys } from "./keyAliases";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -926,7 +927,15 @@ export function placementContentId(planet: string, sign: string) {
 }
 
 export function getKnowledgeItem(id: string) {
-  return knowledgeById.get(id) ?? null;
+  for (const alias of equivalentAstroContentKeys(id)) {
+    const knowledge = knowledgeById.get(alias);
+
+    if (knowledge) {
+      return knowledge;
+    }
+  }
+
+  return null;
 }
 
 export function getVoiceContentItem(id: string, voiceId = defaultVoiceId) {
