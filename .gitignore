@@ -9,3 +9,4 @@ npm-debug.log*
 ephemeris/
 test-results/
 playwright-report/
+artifacts/
