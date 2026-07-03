@@ -73,31 +73,35 @@ export type GeneratedContentDrilldown = {
 
 function interpolateOptionalString(
   value: string | null,
-  context: TemplateSlotValues
+  context: TemplateSlotValues,
+  options: { contentKey: string; field: string }
 ) {
   if (value === null) {
     return null;
   }
 
-  return interpolateTemplateString(value, context);
+  return interpolateTemplateString(value, context, options);
 }
 
-function interpolateSections(value: unknown, context: TemplateSlotValues): unknown | null {
+function interpolateSections(
+  value: unknown,
+  context: TemplateSlotValues,
+  contentKey: string,
+  fieldPath = "sections"
+): unknown {
   if (typeof value === "string") {
-    return interpolateTemplateString(value, context);
+    return interpolateTemplateString(value, context, { contentKey, field: fieldPath });
   }
 
   if (Array.isArray(value)) {
-    const rendered = value.map((item) => interpolateSections(item, context));
-
-    return rendered.some((item) => item === null) ? null : rendered;
+    return value.map((item, index) => interpolateSections(item, context, contentKey, `${fieldPath}.${index}`));
   }
 
   if (value && typeof value === "object") {
-    const rendered = Object.entries(value as Record<string, unknown>)
-      .map(([key, item]) => [key, interpolateSections(item, context)] as const);
-
-    return rendered.some(([, item]) => item === null) ? null : Object.fromEntries(rendered);
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .map(([key, item]) => [key, interpolateSections(item, context, contentKey, `${fieldPath}.${key}`)] as const)
+    );
   }
 
   return value;
@@ -140,14 +144,19 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
-  const headline = interpolateOptionalString(content.headline, slots);
-  const summary = interpolateOptionalString(content.summary, slots);
-  const body = interpolateTemplateString(content.body, slots);
-  const sections = interpolateSections(content.sections ?? {}, slots);
-
-  if (headline === null || summary === null || body === null || sections === null) {
-    return null;
-  }
+  const headline = interpolateOptionalString(content.headline, slots, {
+    contentKey: content.contentKey,
+    field: "headline"
+  });
+  const summary = interpolateOptionalString(content.summary, slots, {
+    contentKey: content.contentKey,
+    field: "summary"
+  });
+  const body = interpolateTemplateString(content.body, slots, {
+    contentKey: content.contentKey,
+    field: "body"
+  });
+  const sections = interpolateSections(content.sections ?? {}, slots, content.contentKey);
 
   return {
     ...content,
