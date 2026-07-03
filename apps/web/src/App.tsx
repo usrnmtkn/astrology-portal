@@ -779,6 +779,38 @@ function houseOverlayTemplateSlots(
   };
 }
 
+function compositePlacementTemplateSlots(position: { planet: string; sign: string; house?: number | null }): TemplateSlotValues {
+  return {
+    planet: position.planet,
+    planetTopic: planetTopicSlot(position.planet),
+    sign: position.sign,
+    signStyle: signStyleSlot(position.sign),
+    house: position.house ? ordinalHouse(position.house) : ""
+  };
+}
+
+function relationshipTimingTemplateSlots(person: string, transit: TransitItem): TemplateSlotValues {
+  return {
+    person,
+    transitPlanet: transit.transitPlanet,
+    transitPlanetTopic: planetTopicSlot(transit.transitPlanet),
+    aspect: titleCase(transit.aspect).toLowerCase(),
+    natalPoint: transit.natalPoint,
+    natalPointTopic: planetTopicSlot(transit.natalPoint)
+  };
+}
+
+function circleFeedTemplateSlots(topic: string): TemplateSlotValues {
+  return { topic };
+}
+
+function lifeAreaFocusTemplateSlots(option: { label: string; description: string }): TemplateSlotValues {
+  return {
+    lifeArea: option.label,
+    lifeAreaDescription: option.description.toLowerCase()
+  };
+}
+
 function skyPlacementGeneratedContentKeys(position: PlanetPosition, generatedAt: string) {
   const dateKey = skyGeneratedDateKey(generatedAt);
   const keys = new Set<string>();
@@ -6962,7 +6994,65 @@ function compositeAspectSummary(
   return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, hookFallback.summary), chartName, comparisonName, comparisonIsSelf);
 }
 
-function relationshipTiming(profileTransits: TransitItem[], friendTransits: TransitItem[], chart: ManualChart) {
+function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedContentMap): SocialPlacementRow[] {
+  return socialPlacementRows(sky).map((row) => {
+    if (!generatedContent) {
+      return row;
+    }
+
+    const generated = liveGeneratedContentByKeys(
+      generatedContent,
+      relationshipPlacementContentKeys(row.label, row.sign, "composite", row.house),
+      {
+        contentKey: templateFallbackContentKeys.friendsCompositePlacement,
+        slots: compositePlacementTemplateSlots({
+          planet: row.label,
+          sign: row.sign,
+          house: row.house
+        })
+      }
+    );
+    const description = relationshipGeneratedCopyForPerspective(
+      liveGeneratedSummary(generated, row.description ?? ""),
+      "the relationship",
+      "you",
+      true
+    );
+
+    return description ? { ...row, description } : row;
+  });
+}
+
+function relationshipTimingSummary(
+  transit: TransitItem,
+  person: string,
+  generatedContent?: GeneratedContentMap,
+  fallback = ""
+) {
+  const generated = generatedContent
+    ? liveGeneratedContentByKeys(
+        generatedContent,
+        [
+          `relationship-timing-${normalizeContentIdPart(person)}-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}`,
+          `relationship-timing-${normalizeContentIdPart(transit.transitPlanet)}-${normalizeContentIdPart(transit.aspect)}-${normalizeContentIdPart(transit.natalPoint)}`,
+          ...transitToNatalGeneratedContentKeys(transit)
+        ],
+        {
+          contentKey: templateFallbackContentKeys.friendsRelationshipTiming,
+          slots: relationshipTimingTemplateSlots(person, transit)
+        }
+      )
+    : null;
+
+  return liveGeneratedSummary(generated, fallback);
+}
+
+function relationshipTiming(
+  profileTransits: TransitItem[],
+  friendTransits: TransitItem[],
+  chart: ManualChart,
+  generatedContent?: GeneratedContentMap
+) {
   const sharedPlanets = profileTransits.flatMap((yourTransit) => (
     friendTransits
       .filter((friendTransit) => friendTransit.transitPlanet === yourTransit.transitPlanet)
@@ -6972,27 +7062,27 @@ function relationshipTiming(profileTransits: TransitItem[], friendTransits: Tran
   if (sharedPlanets.length > 0) {
     return sharedPlanets.slice(0, 3).map(({ yourTransit, friendTransit }) => ({
       title: `Both charts are feeling ${yourTransit.transitPlanet}`,
-      body: fallbackFromHook(
+      body: relationshipTimingSummary(yourTransit, "you", generatedContent, fallbackFromHook(
         "friends.relationship-timing",
         {
           transitPlanet: yourTransit.transitPlanet,
           aspect: yourTransit.aspect,
           natalPoint: yourTransit.natalPoint
         }
-      ).summary ?? ""
+      ).summary ?? "")
     }));
   }
 
   return friendTransits.slice(0, 2).map((transit) => ({
     title: `${chart.displayName} may be feeling ${transit.transitPlanet}`,
-    body: fallbackFromHook(
+    body: relationshipTimingSummary(transit, chart.displayName, generatedContent, fallbackFromHook(
       "friends.relationship-timing",
       {
         transitPlanet: transit.transitPlanet,
         aspect: transit.aspect,
         natalPoint: transit.natalPoint
       }
-    ).summary ?? ""
+    ).summary ?? "")
   }));
 }
 
@@ -7296,15 +7386,40 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
   return [...profectionCards, ...lordCards, ...planetCards, ...houseCards].slice(0, 3);
 }
 
-function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], generatedContent?: GeneratedContentMap, focusAreas: LifeAreaFocus[] = [], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
+function circleFeedPreviewCards(
+  currentSky: SkySnapshot,
+  charts: ManualChart[],
+  generatedContent?: GeneratedContentMap,
+  focusAreas: LifeAreaFocus[] = [],
+  sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES,
+  profileTransits: TransitItem[] = []
+) {
   const personCharts = charts.filter((chart) => chart.chartType !== "event");
   const calculatedCharts = personCharts.filter((chart) => chart.natalChart);
   const circleCards = circleActivationCards(currentSky, personCharts, focusAreas, sunriseOrb);
+  const circleGeneratedSummary = (topic: string, fallback: string) => {
+    const generated = generatedContent
+      ? liveGeneratedContentByKeys(
+          generatedContent,
+          [
+            `friends-circle-feed-${normalizeContentIdPart(topic)}`,
+            `circle-feed-${normalizeContentIdPart(topic)}`
+          ],
+          {
+            contentKey: templateFallbackContentKeys.friendsCircleFeed,
+            slots: circleFeedTemplateSlots(topic)
+          }
+        )
+      : null;
+
+    return liveGeneratedSummary(generated, fallback);
+  };
 
   if (circleCards.length > 0) {
     return circleCards.map((card) => ({
       ...card,
-      label: "Circle pattern"
+      label: "Circle pattern",
+      body: circleGeneratedSummary(card.title, card.body)
     }));
   }
 
@@ -7327,7 +7442,8 @@ function circleFeedPreviewCards(currentSky: SkySnapshot, charts: ManualChart[], 
       {
       label: "Relationship timing",
         title: "What each person is carrying",
-        body: "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing."
+        body: relationshipTiming(profileTransits, rankedFriendTransits(currentSky, chart, sunriseOrb), chart, generatedContent)[0]?.body
+          ?? "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing."
       }
     ];
   }
@@ -7587,6 +7703,7 @@ export function App() {
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
@@ -7776,6 +7893,34 @@ export function App() {
       cancelled = true;
     };
   }, [mode, skyDate, userProfile]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (mode !== "settings") {
+      setSettingsGeneratedContent(new Map());
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadLiveGeneratedContent("settings", skyDate)
+      .then((content) => {
+        if (!cancelled) {
+          setSettingsGeneratedContent(content);
+        }
+      })
+      .catch((error) => {
+        console.warn("Live settings interpretations failed to load; unpublished content will remain hidden.", error);
+        if (!cancelled) {
+          setSettingsGeneratedContent(new Map());
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -9548,6 +9693,7 @@ export function App() {
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                      generatedContent={settingsGeneratedContent}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
                       onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                     />
@@ -13143,6 +13289,7 @@ function SettingsView({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  generatedContent,
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
@@ -13153,6 +13300,7 @@ function SettingsView({
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  generatedContent: GeneratedContentMap;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
@@ -13163,6 +13311,7 @@ function SettingsView({
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
   const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
   const chartSettings = normalizeChartSettings(profile.settings);
+  const selectedLifeAreaFocus = new Set(chartSettings.lifeAreaFocus);
 
   function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
     onHouseSignLabelStyleChange(houseSignLabelStyle);
@@ -13171,6 +13320,20 @@ function SettingsView({
       settings: {
         ...chartSettings,
         houseSignLabelStyle
+      }
+    });
+  }
+
+  function updateLifeAreaFocus(area: LifeAreaFocus, enabled: boolean) {
+    const nextFocus = enabled
+      ? [...chartSettings.lifeAreaFocus, area]
+      : chartSettings.lifeAreaFocus.filter((currentArea) => currentArea !== area);
+
+    onUpdateProfile({
+      ...profile,
+      settings: {
+        ...chartSettings,
+        lifeAreaFocus: Array.from(new Set(nextFocus))
       }
     });
   }
@@ -13302,6 +13465,35 @@ function SettingsView({
                   onChange={updateHouseSignLabelStyle}
                 />
               </div>
+              {lifeAreaFocusOptions.map((option) => {
+                const generated = liveGeneratedContentByKeys(
+                  generatedContent,
+                  [
+                    `settings-life-area-focus-${normalizeContentIdPart(option.value)}`,
+                    `life-area-focus-${normalizeContentIdPart(option.value)}`
+                  ],
+                  {
+                    contentKey: templateFallbackContentKeys.settingsLifeAreaFocus,
+                    slots: lifeAreaFocusTemplateSlots(option)
+                  }
+                );
+                const title = liveGeneratedHeadline(generated, option.label);
+                const description = liveGeneratedSummary(generated, option.description);
+
+                return (
+                  <div className="settings-row settings-row-control" key={option.value}>
+                    <div className="settings-row-copy">
+                      <span className="settings-row-title">{title}</span>
+                      <small className="settings-row-description">{description}</small>
+                    </div>
+                    <SwitchControl
+                      checked={selectedLifeAreaFocus.has(option.value)}
+                      label={`Toggle ${option.label} focus`}
+                      onChange={(enabled) => updateLifeAreaFocus(option.value, enabled)}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -14557,8 +14749,15 @@ function ManualChartsPanel({
     profile.charts[0]?.birthLocation?.timeZone
   ]);
   const circleCards = useMemo(
-    () => circleFeedPreviewCards(currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees),
-    [currentSky, charts, natalGeneratedContent, lifeAreaFocus, sunriseOrbDegrees]
+    () => circleFeedPreviewCards(
+      currentSky,
+      charts,
+      mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent),
+      lifeAreaFocus,
+      sunriseOrbDegrees,
+      profileTransits
+    ),
+    [currentSky, charts, natalGeneratedContent, relationshipGeneratedContent, lifeAreaFocus, sunriseOrbDegrees, profileTransits]
   );
   const selectableCircleCards = useMemo(
     () => circleCards.map((card) => {
@@ -15341,7 +15540,7 @@ function ManualChartsPanel({
                     <span className="eyebrow section-label friend-section-label">Composite placements</span>
                     <FriendPlacementTable
                       title="Composite placements"
-                      rows={socialPlacementRows(selectedCompositeSky)}
+                      rows={compositePlacementRows(selectedCompositeSky, relationshipGeneratedContent)}
                       compact
                       descriptionContext="composite"
                       generatedContent={relationshipGeneratedContent}
