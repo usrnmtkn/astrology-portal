@@ -117,6 +117,15 @@
   text-transform: uppercase;
 }
 
+.aspect-row-copy .aspect-row-subtitle.ui-pill.ui-pill--muted {
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--aspect-card-meta-size);
+  font-weight: var(--aspect-card-meta-weight);
+  letter-spacing: var(--tracking-number);
+  line-height: var(--aspect-card-meta-line);
+}
+
 .aspect-row-timing {
   display: inline-flex;
   align-items: center;
@@ -171,8 +180,8 @@
   font-family: var(--font-body);
   font-size: var(--aspect-row-meta-size, var(--text-meta-size));
   font-variant-numeric: tabular-nums;
-  font-weight: var(--weight-regular);
-  line-height: 1;
+  font-weight: var(--aspect-row-meta-weight, var(--aspect-card-meta-weight));
+  line-height: var(--aspect-card-meta-line);
   text-align: center;
   white-space: nowrap;
 }

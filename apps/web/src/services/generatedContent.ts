@@ -50,7 +50,6 @@ type GeneratedContentRow = {
   body: string;
   sections: unknown | null;
   block_type?: GeneratedContentBlockType | null;
-  provider: string | null;
   model: string | null;
   updated_at: string;
 };
@@ -151,7 +150,6 @@ function fromRow(
     body,
     sections: row.sections ?? {},
     blockType: row.block_type ?? null,
-    provider: row.provider ?? null,
     sourceSnapshot: row.source_snapshot ?? null,
     model: row.model,
     updatedAt: row.updated_at
@@ -298,7 +296,7 @@ export async function loadLiveGeneratedContent(
 
   let query = supabase
     .from("generated_interpretations")
-    .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, provider, model, updated_at")
+    .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, model, updated_at")
     .eq("surface", surface)
     .eq("status", "LIVE")
     .order("updated_at", { ascending: false });
