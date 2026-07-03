@@ -1,8 +1,8 @@
 import { getSupabaseClient } from "./auth";
 import {
   interpolateTemplateString,
-  type TemplateInterpolationContext
-} from "../content/templateInterpolation";
+  type TemplateSlotValues
+} from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
@@ -71,73 +71,41 @@ export type GeneratedContentDrilldown = {
   timingNote?: string;
 };
 
-export type GeneratedContentTemplateContexts =
-  | Map<string, TemplateInterpolationContext>
-  | Record<string, TemplateInterpolationContext>;
-
-function primitiveContext(record: Record<string, unknown> | null | undefined): TemplateInterpolationContext {
-  if (!record) {
-    return {};
+function interpolateOptionalString(
+  value: string | null,
+  context: TemplateSlotValues
+) {
+  if (value === null) {
+    return null;
   }
 
-  return Object.fromEntries(
-    Object.entries(record).filter((entry): entry is [string, string | number | null | undefined] => {
-      const value = entry[1];
-
-      return typeof value === "string" || typeof value === "number" || value === null || value === undefined;
-    })
-  );
+  return interpolateTemplateString(value, context);
 }
 
-function explicitTemplateContext(
-  row: GeneratedContentRow,
-  templateContexts?: GeneratedContentTemplateContexts
-): TemplateInterpolationContext {
-  if (!templateContexts) {
-    return {};
+function interpolateSections(value: unknown, context: TemplateSlotValues): unknown | null {
+  if (typeof value === "string") {
+    return interpolateTemplateString(value, context);
   }
 
-  if (templateContexts instanceof Map) {
-    return templateContexts.get(row.content_key) ?? {};
+  if (Array.isArray(value)) {
+    const rendered = value.map((item) => interpolateSections(item, context));
+
+    return rendered.some((item) => item === null) ? null : rendered;
   }
 
-  return templateContexts[row.content_key] ?? {};
-}
+  if (value && typeof value === "object") {
+    const rendered = Object.entries(value as Record<string, unknown>)
+      .map(([key, item]) => [key, interpolateSections(item, context)] as const);
 
-function templateContextFromRow(
-  row: GeneratedContentRow,
-  templateContexts?: GeneratedContentTemplateContexts
-): TemplateInterpolationContext {
-  const sourceContext = row.source_snapshot?.context;
+    return rendered.some(([, item]) => item === null) ? null : Object.fromEntries(rendered);
+  }
 
-  return {
-    ...primitiveContext(row.facts),
-    ...primitiveContext(sourceContext && typeof sourceContext === "object" && !Array.isArray(sourceContext)
-      ? sourceContext as Record<string, unknown>
-      : null),
-    ...explicitTemplateContext(row, templateContexts)
-  };
-}
-
-function isTemplateRow(row: GeneratedContentRow) {
-  return row.source_snapshot?.contentType === "template";
+  return value;
 }
 
 function fromRow(
-  row: GeneratedContentRow,
-  templateContexts?: GeneratedContentTemplateContexts
+  row: GeneratedContentRow
 ): LiveGeneratedContent {
-  const templateContext = isTemplateRow(row) ? templateContextFromRow(row, templateContexts) : null;
-  const headline = templateContext
-    ? interpolateTemplateString(row.headline, templateContext, { contentId: row.content_key, fieldName: "headline" }) || null
-    : row.headline;
-  const summary = templateContext
-    ? interpolateTemplateString(row.summary, templateContext, { contentId: row.content_key, fieldName: "summary" }) || null
-    : row.summary;
-  const body = templateContext
-    ? interpolateTemplateString(row.body, templateContext, { contentId: row.content_key, fieldName: "body" })
-    : row.body;
-
   return {
     id: row.id,
     contentKey: row.content_key,
@@ -145,14 +113,48 @@ function fromRow(
     mode: row.mode,
     eventType: row.event_type,
     targetDate: row.target_date,
-    headline,
-    summary,
-    body,
+    headline: row.headline,
+    summary: row.summary,
+    body: row.body,
     sections: row.sections ?? {},
     blockType: row.block_type ?? null,
     sourceSnapshot: row.source_snapshot ?? null,
     model: row.model,
     updatedAt: row.updated_at
+  };
+}
+
+export function renderGeneratedContentTemplate(
+  content: LiveGeneratedContent | null | undefined,
+  slots?: TemplateSlotValues
+): LiveGeneratedContent | null {
+  if (!content) {
+    return null;
+  }
+
+  if (content.sourceSnapshot?.contentType !== "template") {
+    return content;
+  }
+
+  if (!slots) {
+    return null;
+  }
+
+  const headline = interpolateOptionalString(content.headline, slots);
+  const summary = interpolateOptionalString(content.summary, slots);
+  const body = interpolateTemplateString(content.body, slots);
+  const sections = interpolateSections(content.sections ?? {}, slots);
+
+  if (headline === null || summary === null || body === null || sections === null) {
+    return null;
+  }
+
+  return {
+    ...content,
+    headline,
+    summary,
+    body,
+    sections
   };
 }
 
@@ -285,8 +287,7 @@ export function generatedContentDrilldown(content?: LiveGeneratedContent | null)
 
 export async function loadLiveGeneratedContent(
   surface: string,
-  targetDate?: string,
-  templateContexts?: GeneratedContentTemplateContexts
+  targetDate?: string
 ) {
   const supabase = await getSupabaseClient();
 
@@ -315,7 +316,7 @@ export async function loadLiveGeneratedContent(
   const byKey = new Map<string, LiveGeneratedContent>();
 
   for (const row of data ?? []) {
-    const content = fromRow(row, templateContexts);
+    const content = fromRow(row);
 
     if (!byKey.has(row.content_key)) {
       byKey.set(row.content_key, content);

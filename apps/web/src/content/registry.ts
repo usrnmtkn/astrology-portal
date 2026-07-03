@@ -9,10 +9,6 @@ import type {
   SurfaceSelectionOptions,
   VoiceContentItem
 } from "./types";
-import {
-  interpolateKnowledgeParagraphs,
-  interpolateKnowledgeText
-} from "./templateInterpolation";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -965,12 +961,12 @@ export function approvedVoiceOrKnowledgeFallback(id: string, voiceId = defaultVo
   const detailParagraphs = bundle.knowledge ? knowledgeDetailParagraphs(bundle.knowledge) : [];
 
   if (bundle.status === "READY" && bundle.voice) {
-    const summary = interpolateKnowledgeText(id, "voice.summary", bundle.voice.summary, bundle.knowledge);
-    const body = interpolateKnowledgeText(id, "voice.body", bundle.voice.body, bundle.knowledge);
-    const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "voice.detailParagraphs", [
+    const summary = bundle.voice.summary;
+    const body = bundle.voice.body;
+    const renderedDetailParagraphs = [
       bundle.voice.body,
       ...detailParagraphs
-    ], bundle.knowledge);
+    ];
 
     return {
       bundle,
@@ -982,17 +978,17 @@ export function approvedVoiceOrKnowledgeFallback(id: string, voiceId = defaultVo
 
   if (bundle.knowledge) {
     const summary = cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.displaySummary", bundle.knowledge.interpretation.displaySummary, bundle.knowledge)
+      bundle.knowledge.interpretation.displaySummary
     ) || cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.coreTheme", bundle.knowledge.interpretation.coreTheme, bundle.knowledge)
+      bundle.knowledge.interpretation.coreTheme
     );
     const body = cleanDisplayText(
-      interpolateKnowledgeText(id, "knowledge.livedExperience", bundle.knowledge.interpretation.livedExperience, bundle.knowledge)
+      bundle.knowledge.interpretation.livedExperience
     );
-    const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "knowledge.detailParagraphs", [
+    const renderedDetailParagraphs = [
       body,
       ...detailParagraphs
-    ], bundle.knowledge);
+    ];
 
     return {
       bundle,
