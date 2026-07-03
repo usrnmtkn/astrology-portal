@@ -1,8 +1,4 @@
 import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
-import {
-  interpolateKnowledgeParagraphs,
-  interpolateKnowledgeText
-} from "./templateInterpolation";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -845,12 +841,12 @@ export function createDomainRegistry(bundleInput: unknown) {
     const bundle = getContentBundle(id, voiceId);
 
     if (bundle.status === "READY" && bundle.voice) {
-      const summary = interpolateKnowledgeText(id, "voice.summary", bundle.voice.summary, bundle.knowledge);
-      const body = interpolateKnowledgeText(id, "voice.body", bundle.voice.body, bundle.knowledge);
-      const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "voice.detailParagraphs", [
+      const summary = bundle.voice.summary;
+      const body = bundle.voice.body;
+      const renderedDetailParagraphs = [
         bundle.voice.body,
         ...(bundle.knowledge?.interpretation.detailParagraphs ?? [])
-      ], bundle.knowledge);
+      ];
 
       return {
         bundle,
@@ -866,14 +862,14 @@ export function createDomainRegistry(bundleInput: unknown) {
         ? knowledgeDetailParagraphs
         : cleanParagraphs([bundle.knowledge.interpretation.livedExperience]);
       const summary = cleanText(
-        interpolateKnowledgeText(id, "knowledge.displaySummary", bundle.knowledge.interpretation.displaySummary, bundle.knowledge)
+        bundle.knowledge.interpretation.displaySummary
       ) || cleanText(
-        interpolateKnowledgeText(id, "knowledge.coreTheme", bundle.knowledge.interpretation.coreTheme, bundle.knowledge)
+        bundle.knowledge.interpretation.coreTheme
       );
       const body = cleanText(
-        interpolateKnowledgeText(id, "knowledge.livedExperience", bundle.knowledge.interpretation.livedExperience, bundle.knowledge)
+        bundle.knowledge.interpretation.livedExperience
       );
-      const renderedDetailParagraphs = interpolateKnowledgeParagraphs(id, "knowledge.detailParagraphs", fallbackDetailParagraphs, bundle.knowledge);
+      const renderedDetailParagraphs = fallbackDetailParagraphs;
 
       return {
         bundle,
