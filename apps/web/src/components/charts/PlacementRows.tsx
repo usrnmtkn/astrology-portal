@@ -20,6 +20,7 @@ export type SocialPlacementRow = {
   degree: number;
   house: number | null;
   retrograde: boolean;
+  description?: string;
 };
 
 type EssentialDignity = "domicile" | "exaltation" | "detriment" | "fall";
@@ -725,7 +726,7 @@ export function FriendPlacementTable({
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
               <PlanetPlacementRow
                 degree={socialPlacementDegree(row.degree)}
-                description={natalPlacementDescription(row.label, generatedContext === "composite" ? "composite" : descriptionContext, ownerName)}
+                description={row.description ?? natalPlacementDescription(row.label, generatedContext === "composite" ? "composite" : descriptionContext, ownerName)}
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
