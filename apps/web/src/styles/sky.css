@@ -1581,7 +1581,7 @@
   overflow: hidden;
   color: var(--card-meta-color);
   font-family: var(--font-ui);
-  font-size: var(--snap-next-subtitle-size);
+  font-size: var(--text-meta-size);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-regular);
   line-height: var(--leading-meta);
