@@ -7904,7 +7904,7 @@ export function App() {
       };
     }
 
-    loadLiveGeneratedContent("settings", skyDate)
+    loadLiveGeneratedContent("you", skyDate)
       .then((content) => {
         if (!cancelled) {
           setSettingsGeneratedContent(content);
