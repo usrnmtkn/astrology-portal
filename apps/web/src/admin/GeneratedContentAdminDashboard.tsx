@@ -22,7 +22,7 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "settings" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "settings" | "vocabulary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
@@ -129,6 +129,18 @@ type AdminGeneratedContentDraft = {
   sourceSnapshotJson: string;
   knowledgeIds: string;
   reviewerNotes: string;
+};
+
+type AdminVocabularyDraft = {
+  headline: string;
+  natal: string;
+  sky: string;
+};
+
+type AdminTemplateDraft = {
+  headline: string;
+  summary: string;
+  body: string;
 };
 
 type AdminReviewRecord = {
@@ -397,12 +409,16 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
   if (activePage === "settings") return "Settings";
+  if (activePage === "vocabulary") return "Vocabulary";
+  if (activePage === "knowledge") return "Templates";
   return "Content";
 }
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
   if (activePage === "settings") return "Admin / Settings";
+  if (activePage === "vocabulary") return "Admin / Vocabulary";
+  if (activePage === "knowledge") return "Admin / Templates";
   return "Admin / Content";
 }
 
@@ -415,7 +431,55 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Manage generation templates, voice guidance, access, calculation API status, and app content hooks.";
   }
 
+  if (activePage === "vocabulary") {
+    return "Manage dashboard-authored vocabulary rows that feed interpolation slots in app copy.";
+  }
+
+  if (activePage === "knowledge") {
+    return "Review and edit fallback template rows that fill content hooks when specific authored copy is missing.";
+  }
+
   return "Manage every generated or authored astrology entry from one filtered CMS list.";
+}
+
+function objectValue(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function stringValue(value: unknown) {
+  return typeof value === "string" ? value : "";
+}
+
+function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyDraft {
+  const sections = objectValue(row.sections);
+  const topic = objectValue(sections?.topic);
+
+  return {
+    headline: row.headline ?? "",
+    natal: stringValue(topic?.natal) || row.body || "",
+    sky: stringValue(topic?.sky) || stringValue(topic?.natal) || row.body || ""
+  };
+}
+
+function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft {
+  return {
+    headline: row.headline ?? "",
+    summary: row.summary ?? "",
+    body: row.body ?? ""
+  };
+}
+
+function draftMapForVocabularyRows(rows: AdminGeneratedContentRow[]) {
+  return Object.fromEntries(rows.map((row) => [row.id, vocabularyDraftFromRow(row)]));
+}
+
+function draftMapForTemplateRows(rows: AdminGeneratedContentRow[]) {
+  return Object.fromEntries(rows.map((row) => [row.id, templateDraftFromRow(row)]));
+}
+
+function contentTypeBadge(row: AdminGeneratedContentRow) {
+  const sourceSnapshot = objectValue(row.source_snapshot);
+  return stringValue(sourceSnapshot?.contentType);
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -1830,6 +1894,10 @@ export function GeneratedContentAdminDashboard() {
   const [dateEnd, setDateEnd] = useState(() => dateInputValue(addDays(new Date(), 30)));
   const [personQuery, setPersonQuery] = useState("");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [vocabularyRows, setVocabularyRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [templateContentRows, setTemplateContentRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
+  const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
   const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
@@ -2063,6 +2131,75 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadVocabularyRows() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        status: "all",
+        promptVersion: "vocab-v1",
+        contentKeyPrefix: "vocab/",
+        limit: "200"
+      });
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?${params}`,
+        secret
+      );
+      const nextRows = (payload.rows ?? []).sort((first, second) => first.content_key.localeCompare(second.content_key));
+
+      setVocabularyRows(nextRows);
+      setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
+      setAccessStatus("valid");
+      setMessage(`Loaded ${nextRows.length} vocabulary rows.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load vocabulary rows."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function loadTemplateContentRows() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        status: "all",
+        contentKeyPrefix: "fallback-hook/",
+        limit: "200"
+      });
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?${params}`,
+        secret
+      );
+      const nextRows = (payload.rows ?? [])
+        .filter((row) => row.content_key.startsWith("fallback-hook/"))
+        .sort((first, second) => first.content_key.localeCompare(second.content_key));
+
+      setTemplateContentRows(nextRows);
+      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setAccessStatus("valid");
+      setMessage(`Loaded ${nextRows.length} fallback template rows.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load fallback template rows."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function loadPrivateRows(nextReviewSurface = reviewSurface) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -2112,6 +2249,16 @@ export function GeneratedContentAdminDashboard() {
       void loadReviewWorkspace();
     }
   }, [secret]);
+
+  useEffect(() => {
+    if (activePage === "vocabulary" && canUseApi) {
+      void loadVocabularyRows();
+    }
+
+    if (activePage === "knowledge" && canUseApi) {
+      void loadTemplateContentRows();
+    }
+  }, [activePage, canUseApi]);
 
   useEffect(() => {
     void checkTldrAstroApiStatus();
@@ -2278,6 +2425,99 @@ export function GeneratedContentAdminDashboard() {
     setSelectedId(row.id);
     setDraft(adminDraftFromRow(row));
     void loadRowDetails(row.id);
+  }
+
+  function updateVocabularyDraft(id: string, patch: Partial<AdminVocabularyDraft>) {
+    setVocabularyDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [id]: {
+        ...(currentDrafts[id] ?? { headline: "", natal: "", sky: "" }),
+        ...patch
+      }
+    }));
+  }
+
+  function updateTemplateContentDraft(id: string, patch: Partial<AdminTemplateDraft>) {
+    setTemplateContentDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [id]: {
+        ...(currentDrafts[id] ?? { headline: "", summary: "", body: "" }),
+        ...patch
+      }
+    }));
+  }
+
+  async function saveVocabularyRow(row: AdminGeneratedContentRow) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+    setIsLoading(true);
+    try {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: row.id,
+            headline: draftValue.headline,
+            body: draftValue.natal,
+            sections: {
+              topic: {
+                natal: draftValue.natal,
+                sky: draftValue.sky
+              }
+            }
+          })
+        }
+      );
+      await loadVocabularyRows();
+      setMessage(`Saved and re-read ${row.content_key}.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save vocabulary row."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveTemplateContentRow(row: AdminGeneratedContentRow) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const draftValue = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+    setIsLoading(true);
+    try {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: row.id,
+            headline: draftValue.headline,
+            summary: draftValue.summary,
+            body: draftValue.body
+          })
+        }
+      );
+      await loadTemplateContentRows();
+      setMessage(`Saved and re-read ${row.content_key}.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save fallback template row."));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function beginReviewEdit(record: AdminReviewRecord) {
@@ -3576,6 +3816,24 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             Settings
           </button>
           <button
+            className={activePage === "vocabulary" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("vocabulary")}
+            aria-current={activePage === "vocabulary" ? "page" : undefined}
+          >
+            <Database size={18} aria-hidden="true" />
+            Vocabulary
+          </button>
+          <button
+            className={activePage === "knowledge" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("knowledge")}
+            aria-current={activePage === "knowledge" ? "page" : undefined}
+          >
+            <BookOpenText size={18} aria-hidden="true" />
+            Templates
+          </button>
+          <button
             className={activePage === "releaseNotes" ? "active" : ""}
             type="button"
             onClick={() => setActivePage("releaseNotes")}
@@ -3871,6 +4129,159 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 })}
               </div>
             </section>
+          </section>
+        ) : activePage === "vocabulary" ? (
+          <section className="admin-template-panel admin-vocabulary-page" aria-label="Vocabulary content rows">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Prompt version vocab-v1</p>
+                <h2>Planet Topic Vocabulary</h2>
+                <p>Edit the row-managed topic phrases used by template interpolation. Saves keep sections shaped as topic.natal and topic.sky.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Vocabulary row count">
+                <article>
+                  <span>Rows</span>
+                  <strong>{vocabularyRows.length}</strong>
+                </article>
+                <article>
+                  <span>Prefix</span>
+                  <strong>vocab/</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-managed-row-list">
+              {vocabularyRows.map((row) => {
+                const rowDraft = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+
+                return (
+                  <article className="admin-managed-row-card" data-vocab-row={row.content_key} key={row.id}>
+                    <header>
+                      <div>
+                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {row.surface}</p>
+                        <label className="admin-managed-title">
+                          <span>Headline</span>
+                          <input
+                            value={rowDraft.headline}
+                            onChange={(event) => updateVocabularyDraft(row.id, { headline: event.target.value })}
+                          />
+                        </label>
+                      </div>
+                      <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                    </header>
+
+                    <code className="admin-managed-key">{row.content_key}</code>
+
+                    <div className="admin-managed-two-column">
+                      <label className="admin-field-wide">
+                        <span>Natal topic</span>
+                        <textarea
+                          value={rowDraft.natal}
+                          onChange={(event) => updateVocabularyDraft(row.id, { natal: event.target.value })}
+                          rows={3}
+                        />
+                      </label>
+                      <label className="admin-field-wide">
+                        <span>Sky topic</span>
+                        <textarea
+                          value={rowDraft.sky}
+                          onChange={(event) => updateVocabularyDraft(row.id, { sky: event.target.value })}
+                          rows={3}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="admin-template-actions">
+                      <button type="button" onClick={() => void saveVocabularyRow(row)} disabled={isLoading}>
+                        <Save size={16} aria-hidden="true" />
+                        Save Row
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+              {vocabularyRows.length === 0 && (
+                <p className="admin-empty">No vocab-v1 rows were found.</p>
+              )}
+            </div>
+          </section>
+        ) : activePage === "knowledge" ? (
+          <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback template content rows">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Fallback hooks</p>
+                <h2>Template Knowledge Rows</h2>
+                <p>Edit the dashboard-managed fallback-hook rows that the app can use after specific generated content misses.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Template row count">
+                <article>
+                  <span>Rows</span>
+                  <strong>{templateContentRows.length}</strong>
+                </article>
+                <article>
+                  <span>Prefix</span>
+                  <strong>fallback-hook/</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-managed-row-list">
+              {templateContentRows.map((row) => {
+                const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+                const badge = contentTypeBadge(row);
+
+                return (
+                  <article className="admin-managed-row-card admin-template-content-card" data-template-row={row.content_key} key={row.id}>
+                    <header>
+                      <div>
+                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {row.surface}</p>
+                        <label className="admin-managed-title">
+                          <span>Headline</span>
+                          <input
+                            value={rowDraft.headline}
+                            onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
+                          />
+                        </label>
+                      </div>
+                      <div className="admin-managed-badges">
+                        {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
+                        <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                      </div>
+                    </header>
+
+                    <code className="admin-managed-key">{row.content_key}</code>
+
+                    <label className="admin-field-wide">
+                      <span>Summary</span>
+                      <textarea
+                        value={rowDraft.summary}
+                        onChange={(event) => updateTemplateContentDraft(row.id, { summary: event.target.value })}
+                        rows={3}
+                      />
+                    </label>
+
+                    <label className="admin-field-wide">
+                      <span>Body</span>
+                      <textarea
+                        value={rowDraft.body}
+                        onChange={(event) => updateTemplateContentDraft(row.id, { body: event.target.value })}
+                        rows={6}
+                      />
+                    </label>
+
+                    <div className="admin-template-actions">
+                      <button type="button" onClick={() => void saveTemplateContentRow(row)} disabled={isLoading}>
+                        <Save size={16} aria-hidden="true" />
+                        Save Row
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+              {templateContentRows.length === 0 && (
+                <p className="admin-empty">No fallback-hook template rows were found.</p>
+              )}
+            </div>
           </section>
         ) : activePage === "privateRows" ? (
           <section className="admin-template-panel admin-private-page" aria-label="Personal generated content rows">
