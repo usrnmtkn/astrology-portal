@@ -127,11 +127,19 @@ def _fact_id(fact: ContentFactPacket) -> str:
     return f"{fact.surface}:{fact.eventType}:{fact.headline}".lower().replace(" ", "-")
 
 
+def _ordinal_house(house: int) -> str:
+    if 10 < house % 100 < 14:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(house % 10, "th")
+    return f"{house}{suffix}"
+
+
 def _app_contract(profections, boosted, facts: List[ContentFactPacket]) -> AppResponseContract:
     top_boost = boosted[0] if boosted else None
     headline = f"{profections.annual.sign} {profections.annual.house}H year"
     summary = (
-        f"Annual profection activates the {profections.annual.house} house, "
+        f"Annual profection activates the {_ordinal_house(profections.annual.house)} house, "
         f"{profections.annual.sign}, and {profections.annual.ruler}."
     )
     key_factors = [
