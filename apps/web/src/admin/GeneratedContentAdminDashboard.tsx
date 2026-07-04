@@ -32,7 +32,7 @@ type AdminDashboardPage = "content" | "settings" | "vocabulary" | "knowledge" | 
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
-type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE";
+type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
 type AdminContentBlockFilter =
   | "all"
@@ -358,7 +358,8 @@ const contentStatusFilters: Array<{ key: AdminContentStatusFilter; label: string
   { key: "DRAFT", label: "Draft" },
   { key: "NEEDS_REVIEW", label: "Needs Review" },
   { key: "SCHEDULED", label: "Scheduled" },
-  { key: "LIVE", label: "Published" }
+  { key: "LIVE", label: "Published" },
+  { key: "ARCHIVED", label: "Archived" }
 ];
 
 const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }> = [
@@ -1969,23 +1970,31 @@ function isDraftWithCopy(record: AdminReviewRecord) {
   return record.status === "DRAFT" && (record.source === "saved" || record.source === "global" || Boolean(record.body.trim() || record.summary.trim()));
 }
 
+function isArchivedRecord(record: AdminReviewRecord) {
+  return record.status === "ARCHIVED";
+}
+
 function recordMatchesContentStatus(record: AdminReviewRecord, filter: AdminContentStatusFilter) {
-  if (filter === "all") return true;
+  if (filter === "all") return !isArchivedRecord(record);
   if (filter === "DRAFT") return isDraftWithCopy(record);
   if (filter === "NEEDS_REVIEW") return record.status === "ERROR" || (record.status === "DRAFT" && !isDraftWithCopy(record));
   if (filter === "SCHEDULED") return record.status === "REVIEWED";
   if (filter === "LIVE") return record.status === "LIVE";
+  if (filter === "ARCHIVED") return isArchivedRecord(record);
 
   return true;
 }
 
 function contentStatusCounts(records: AdminReviewRecord[]) {
+  const activeRecords = records.filter((record) => !isArchivedRecord(record));
+
   return {
-    all: records.length,
+    all: activeRecords.length,
     DRAFT: records.filter((record) => recordMatchesContentStatus(record, "DRAFT")).length,
     NEEDS_REVIEW: records.filter((record) => recordMatchesContentStatus(record, "NEEDS_REVIEW")).length,
     SCHEDULED: records.filter((record) => recordMatchesContentStatus(record, "SCHEDULED")).length,
-    LIVE: records.filter((record) => recordMatchesContentStatus(record, "LIVE")).length
+    LIVE: records.filter((record) => recordMatchesContentStatus(record, "LIVE")).length,
+    ARCHIVED: records.filter((record) => recordMatchesContentStatus(record, "ARCHIVED")).length
   } satisfies Record<AdminContentStatusFilter, number>;
 }
 
@@ -4283,7 +4292,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
     setActivePage("content");
     setStatus(nextStatus);
-    setContentStatusFilter(nextStatus === "LIVE" ? "LIVE" : nextStatus === "REVIEWED" ? "SCHEDULED" : nextStatus === "DRAFT" ? "DRAFT" : "all");
+    setContentStatusFilter(
+      nextStatus === "LIVE"
+        ? "LIVE"
+        : nextStatus === "REVIEWED"
+          ? "SCHEDULED"
+          : nextStatus === "DRAFT"
+            ? "DRAFT"
+            : nextStatus === "ARCHIVED"
+              ? "ARCHIVED"
+              : "all"
+    );
     setSurface(nextSurface);
     setSelectedId(null);
     setDraft(createAdminDraft(nextSurface));
