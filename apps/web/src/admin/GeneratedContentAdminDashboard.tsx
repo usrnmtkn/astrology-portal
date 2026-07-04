@@ -2728,10 +2728,6 @@ export function GeneratedContentAdminDashboard() {
       void loadTemplateContentRows();
     }
 
-    if (activePage === "settings" && canUseApi) {
-      void loadVocabularyRows();
-      void loadTemplateContentRows();
-    }
   }, [activePage, canUseApi]);
 
   useEffect(() => {
