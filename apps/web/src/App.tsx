@@ -554,18 +554,27 @@ function emptyContentFallback(id: string): ContentFallback {
 function fallbackFromHook(
   hookKey: string,
   context: FallbackHookContext = {},
-  _localFallback: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> = {},
+  localFallback: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> = {},
   options: { allowKnowledgeOnly?: boolean } = {}
 ): ContentFallback {
   const hook = fallbackHookByKey(hookKey);
   const knowledgeIds = knowledgeIdsForFallbackHook(hookKey, context);
+  const allowKnowledgeOnly = options.allowKnowledgeOnly ?? true;
 
   for (const knowledgeId of knowledgeIds) {
-    const fallback = approvedVoiceOrKnowledgeFallback(knowledgeId, hook?.domain ?? "natal", options.allowKnowledgeOnly);
+    const fallback = approvedVoiceOrKnowledgeFallback(knowledgeId, hook?.domain ?? "natal", allowKnowledgeOnly);
 
     if (fallback.summary || fallback.body || fallback.detailParagraphs.length > 0) {
       return fallback;
     }
+  }
+
+  if (hasContentFallback(localFallback)) {
+    return {
+      ...emptyContentFallback(hookKey),
+      ...localFallback,
+      detailParagraphs: localFallback.detailParagraphs ?? []
+    };
   }
 
   return emptyContentFallback(hookKey);
