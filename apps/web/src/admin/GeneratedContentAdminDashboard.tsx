@@ -2028,6 +2028,16 @@ function reviewSurfacesForCategory(category: AdminContentCategoryFilter) {
   return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
 }
 
+function categoryUsesGlobalSynastryRows(category: AdminContentCategoryFilter) {
+  return category === "all" || category === "Relationship";
+}
+
+function reviewRecordMergeKey(record: AdminReviewRecord) {
+  const source = record.source === "global" || record.source === "saved" ? "global" : record.source;
+
+  return `${source}:${record.surface}:${record.contentKey}:${record.targetDate ?? ""}:${record.subjectId ?? ""}`;
+}
+
 function recordOrbLabel(record: AdminReviewRecord) {
   const orb = record.facts?.orb;
 
@@ -2487,6 +2497,21 @@ export function GeneratedContentAdminDashboard() {
     return (payload.rows ?? [])
       .filter((row) => row.content_key.startsWith("fallback-hook/"))
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
+  }
+
+  async function fetchGlobalSynastryRowsForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      surface: "synastry",
+      promptVersion: "synastry-kb-v1",
+      limit: "1000"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return payload.rows ?? [];
   }
 
   function contentScopeFilename(scope: AdminContentScope) {
@@ -3023,10 +3048,17 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/user-generated-content?${privateParams}`,
         secret
       );
+      const globalSynastryRows = categoryUsesGlobalSynastryRows(categoryFilter)
+        ? await fetchGlobalSynastryRowsForAdmin()
+        : [];
       const mergedRecords = new Map<string, AdminReviewRecord>();
 
       payloads.flatMap((payload) => payload.rows ?? []).forEach((record) => {
-        const mergeKey = `${record.source}:${record.surface}:${record.contentKey}:${record.targetDate ?? ""}:${record.subjectId ?? ""}`;
+        const mergeKey = reviewRecordMergeKey(record);
+        mergedRecords.set(mergeKey, preferredReviewRecord(mergedRecords.get(mergeKey), record));
+      });
+      globalSynastryRows.map(globalReviewRecord).forEach((record) => {
+        const mergeKey = reviewRecordMergeKey(record);
         mergedRecords.set(mergeKey, preferredReviewRecord(mergedRecords.get(mergeKey), record));
       });
       (privatePayload.rows ?? []).map(privateReviewRecord).forEach((record) => {
@@ -3048,7 +3080,11 @@ export function GeneratedContentAdminDashboard() {
       setAccessStatus("valid");
       const prompts = payloads.map((payload) => payload.prompt).filter(Boolean);
 
-      setMessage(prompts[0] ?? `Loaded ${nextRecords.length} content rows.`);
+      setMessage(
+        prompts[0] && globalSynastryRows.length > 0
+          ? `Loaded ${nextRecords.length} content rows, including ${globalSynastryRows.length} global synastry rows. ${prompts[0]}`
+          : prompts[0] ?? `Loaded ${nextRecords.length} content rows.`
+      );
     } catch (error) {
       setReviewRecords([]);
       setReviewCounts({

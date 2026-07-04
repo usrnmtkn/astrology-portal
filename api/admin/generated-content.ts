@@ -147,7 +147,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
-  const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 250);
+  const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
   const params = new URLSearchParams({
     select: id
       ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at"
