@@ -18,6 +18,7 @@ type UserGeneratedContentRow = {
   content_key: string;
   surface: string;
   mode: GeneratedContentMode;
+  status?: "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
   event_type: string | null;
   target_date: string | null;
   headline: string | null;
@@ -169,5 +170,9 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
 
   const saved = payload?.saved?.[0];
 
-  return saved ? fromRow(saved) : payload?.generated ?? null;
+  if (saved) {
+    return saved.status === "LIVE" ? fromRow(saved) : null;
+  }
+
+  return payload?.generated ?? null;
 }
