@@ -627,6 +627,7 @@ const templateFallbackContentKeys = {
   youNatalPlacement: "fallback-hook/you.natal-placement",
   youNatalAspect: "fallback-hook/you.natal-aspect",
   youTransitToNatal: "fallback-hook/you.transit-to-natal",
+  youDailyTiming: "fallback-hook/you.daily-timing",
   friendsSynastryContact: "fallback-hook/friends.synastry-contact",
   friendsHouseOverlay: "fallback-hook/friends.house-overlay",
   friendsCompositeAspect: "fallback-hook/friends.composite-aspect",
@@ -952,6 +953,53 @@ function compactTransitItemFact(transit: TransitItem, targetDate: string) {
     significance: transit.significance,
     timingBonuses: transit.timingBonuses ?? [],
     note: transit.note
+  };
+}
+
+function timingField(record: Record<string, unknown> | null | undefined, keys: string[]) {
+  if (!record) {
+    return "";
+  }
+
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return String(value);
+    }
+  }
+
+  return "";
+}
+
+function dailyTimingTemplateSlots(personalTiming: PersonalTimingResponse): TemplateSlotValues {
+  const boostedHit = personalTiming.timingBoostedTransits[0]?.hit ?? null;
+  const topTransit = personalTiming.topTransits[0] ?? null;
+  const activeTransit = boostedHit || topTransit;
+  const transitPlanet = timingField(activeTransit, ["transitPlanet", "planet", "body", "from"]) || "the current sky";
+  const aspect = timingField(activeTransit, ["aspect", "aspectType", "type"]) || "activating";
+  const natalPoint = timingField(activeTransit, ["natalPoint", "point", "to", "body2"]) || personalTiming.activatedNatalPlanets[0] || "your chart";
+  const orb = timingField(activeTransit, ["orb", "orbDegrees", "orbDegree"]) || "within range";
+  const window = timingField(activeTransit, ["window", "windowLabel", "rangeLabel", "durationLabel", "timeSensitivity"])
+    || personalTiming.app.timingTags[0]
+    || "today";
+
+  return {
+    transitPlanet,
+    transitPlanetTopic: planetTopicPhrase(transitPlanet, "sky"),
+    aspect,
+    natalPoint,
+    natalPointTopic: planetTopicPhrase(natalPoint, "natal"),
+    orb,
+    window,
+    activeTransit: `${transitPlanet} ${aspect} ${natalPoint}`.trim(),
+    activatedHouse: personalTiming.activatedHouse ? ordinalHouse(personalTiming.activatedHouse) : "",
+    activatedSign: personalTiming.activatedSign,
+    activatedRuler: personalTiming.activatedRuler
   };
 }
 
@@ -14390,10 +14438,21 @@ function ProfileView({
       </button>
     );
   });
-  const generatedDailyHeadline = personalTimingGenerated?.headline?.trim();
-  const generatedDailySummary = liveGeneratedSummaryIfPresent(personalTimingGenerated);
+  const dailyTimingTemplate = personalTiming
+    ? liveGeneratedContentByKeys(
+        generatedContent,
+        [],
+        {
+          contentKey: templateFallbackContentKeys.youDailyTiming,
+          slots: dailyTimingTemplateSlots(personalTiming)
+        }
+      )
+    : null;
+  const dailyTimingContent = personalTimingGenerated ?? dailyTimingTemplate;
+  const generatedDailyHeadline = dailyTimingContent?.headline?.trim();
+  const generatedDailySummary = liveGeneratedSummaryIfPresent(dailyTimingContent);
   const generatedDailyWriteup = generatedDailySummary
-    ? generatedDailyWriteupSections(personalTimingGenerated, generatedDailySummary)
+    ? generatedDailyWriteupSections(dailyTimingContent, generatedDailySummary)
     : [];
   const dailyUpdateSummary = generatedDailyHeadline && generatedDailySummary
     ? {
@@ -14403,7 +14462,7 @@ function ProfileView({
         keyFactors: [],
         status: "ready" as const
       }
-    : personalTiming || personalTimingStatus === "loading" || personalTimingGeneratedStatus === "loading"
+    : personalTimingStatus === "loading" || personalTimingGeneratedStatus === "loading"
       ? {
           headline: "Reading the sky",
           summary: "Checking today’s transits against your chart.",

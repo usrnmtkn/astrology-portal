@@ -91,6 +91,17 @@ function bearerToken(req: IncomingMessage) {
   return match?.[1] ?? "";
 }
 
+function isAdminRequest(req: IncomingMessage) {
+  const secret = process.env.CONTENT_GENERATION_SECRET;
+  const suppliedSecret = req.headers["x-content-generation-secret"];
+
+  if (!secret) {
+    return process.env.NODE_ENV !== "production";
+  }
+
+  return suppliedSecret === secret;
+}
+
 async function requireAuthenticatedUser(req: IncomingMessage) {
   const token = bearerToken(req);
 
@@ -164,9 +175,9 @@ async function existingUserGeneratedInterpretation(userId: string, input: UserCo
 async function saveUserGeneratedInterpretation(
   userId: string,
   input: UserContentRequest,
-  generated: StoredGeneratedContent
+  generated: StoredGeneratedContent,
+  status: "DRAFT" | "LIVE"
 ) {
-  const status = input.status === "DRAFT" ? "DRAFT" : "LIVE";
   const response = await fetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?on_conflict=user_id,subject_type,subject_id,content_key,target_date,mode`, {
     method: "POST",
     headers: {
@@ -232,7 +243,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
-    const requestedStatus = input.status === "DRAFT" ? "DRAFT" : "LIVE";
+    const requestedStatus = input.status === "LIVE" && isAdminRequest(req) ? "LIVE" : "DRAFT";
     const existing = await existingUserGeneratedInterpretation(userId, input);
 
     if (requestedStatus === "DRAFT" && existing && (existing.status === "REVIEWED" || existing.status === "LIVE")) {
@@ -247,7 +258,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     const generated = await generateContent(generationInput(input));
-    const saved = await saveUserGeneratedInterpretation(userId, input, generated);
+    const saved = await saveUserGeneratedInterpretation(userId, input, generated, requestedStatus);
 
     sendJson(res, 200, {
       ok: true,

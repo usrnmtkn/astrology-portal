@@ -122,6 +122,17 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "you.daily-timing",
+    label: "You > Daily Timing",
+    surface: "you",
+    domain: "natal",
+    mode: "feed",
+    description: "Daily personal timing summary assembled from the strongest current transit against the natal chart.",
+    knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{natalPoint}", "{transitPlanet}-{aspect}-{natalPoint}", "{natalPoint}"],
+    requiredFacts: ["transitPlanet", "aspect", "natalPoint", "orb", "window"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "friends.synastry-contact",
     label: "Friends > Synastry Contact",
     surface: "friends",
