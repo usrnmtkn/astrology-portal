@@ -99,6 +99,7 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
+import { loadPlanetTopicVocabulary, planetTopicPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
@@ -687,14 +688,14 @@ function signStyleSlot(sign: string) {
   return natalSignFallbackFrames[sign]?.quality ?? "";
 }
 
-function planetTopicSlot(planet: string) {
-  return natalPlanetCoreFunction(planet);
+function planetTopicSlot(planet: string, variant: PlanetTopicVariant = "natal") {
+  return planetTopicPhrase(planet, variant);
 }
 
 function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
   return {
     planet: position.planet,
-    planetTopic: planetTopicSlot(position.planet),
+    planetTopic: planetTopicSlot(position.planet, "sky"),
     sign: position.sign,
     signStyle: signStyleSlot(position.sign)
   };
@@ -716,18 +717,23 @@ function skyPlacementTemplateFallbackKey(position: PlanetPosition) {
   return templateFallbackContentKeys.skyPlanetaryPlacement;
 }
 
-function aspectTemplateSlots(firstPoint: string, aspect: string, secondPoint: string): TemplateSlotValues {
+function aspectTemplateSlots(
+  firstPoint: string,
+  aspect: string,
+  secondPoint: string,
+  variant: PlanetTopicVariant = "natal"
+): TemplateSlotValues {
   return {
     aspect: titleCase(aspect).toLowerCase(),
     planetA: firstPoint,
-    planetATopic: planetTopicSlot(firstPoint),
+    planetATopic: planetTopicSlot(firstPoint, variant),
     planetB: secondPoint,
-    planetBTopic: planetTopicSlot(secondPoint)
+    planetBTopic: planetTopicSlot(secondPoint, variant)
   };
 }
 
 function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number]): TemplateSlotValues {
-  return aspectTemplateSlots(aspect.from, aspect.type, aspect.to);
+  return aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "sky");
 }
 
 function natalPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
@@ -743,7 +749,7 @@ function natalPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValu
 function transitToNatalTemplateSlots(transit: TransitItem): TemplateSlotValues {
   return {
     transitPlanet: transit.transitPlanet,
-    transitPlanetTopic: planetTopicSlot(transit.transitPlanet),
+    transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
     natalPoint: transit.natalPoint,
     natalPointTopic: planetTopicSlot(transit.natalPoint)
@@ -798,7 +804,7 @@ function relationshipTimingTemplateSlots(person: string, transit: TransitItem): 
   return {
     person,
     transitPlanet: transit.transitPlanet,
-    transitPlanetTopic: planetTopicSlot(transit.transitPlanet),
+    transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
     natalPoint: transit.natalPoint,
     natalPointTopic: planetTopicSlot(transit.natalPoint)
@@ -7736,6 +7742,7 @@ export function App() {
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
@@ -7831,6 +7838,24 @@ export function App() {
   useEffect(() => subscribeContentRegistry(() => {
     setContentRegistryVersion((version) => version + 1);
   }), []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadPlanetTopicVocabulary()
+      .then(() => {
+        if (!cancelled) {
+          setPlanetTopicVocabularyVersion((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Planet topic vocabulary failed to initialize; code fallbacks will be used.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
