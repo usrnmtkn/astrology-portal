@@ -928,6 +928,19 @@
   gap: var(--sp-1) 10px;
 }
 
+.placement-section .planet-placement-row__description {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--aspect-card-body-size);
+  line-height: var(--aspect-card-body-line);
+  text-wrap: pretty;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .aspect-section .aspect-row,
 .aspect-section .aspect-row-button,
 .aspect-section .aspect-row-static {

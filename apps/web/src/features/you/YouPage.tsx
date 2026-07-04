@@ -63,7 +63,6 @@ export type YouPageProps = {
   onCloseTransitArticle?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
-  profectionLine?: string | null;
   profileAvatarUrl?: string;
   profileEmail: string;
   profileName: string;
@@ -111,7 +110,6 @@ function YouProfileSummary({
   displayRising,
   displaySun,
   onEditProfile,
-  profectionLine,
   profileAvatarUrl,
   profileEmail,
   profileName,
@@ -121,7 +119,6 @@ function YouProfileSummary({
   displayRising: string;
   displaySun: string;
   onEditProfile: () => void;
-  profectionLine?: string | null;
   profileAvatarUrl?: string;
   profileEmail: string;
   profileName: string;
@@ -171,7 +168,6 @@ function YouProfileSummary({
       />
       <div className="you-profile-copy">
         <h1>{profileName}</h1>
-        {profectionLine ? <span className="you-profection-line">{profectionLine}</span> : null}
         {signaturesReady ? (
           <div className="you-signature-row" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
@@ -621,7 +617,6 @@ export function YouPage({
   onCloseTransitArticle,
   personalTimingSummary,
   planetRows,
-  profectionLine,
   profileAvatarUrl,
   profileEmail,
   profileName,
@@ -653,7 +648,6 @@ export function YouPage({
             displayRising={displayRising}
             displaySun={displaySun}
             onEditProfile={onCreateChart}
-            profectionLine={profectionLine}
             profileAvatarUrl={profileAvatarUrl}
             profileEmail={profileEmail}
             profileName={profileName}

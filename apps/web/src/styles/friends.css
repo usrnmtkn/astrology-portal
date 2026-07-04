@@ -813,18 +813,11 @@
 }
 
 .friend-hero-copy p,
-.you-profection-line,
 .you-signature-row {
   color: var(--card-meta-color);
   font-size: var(--id-signature-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
-}
-
-.you-profection-line {
-  display: block;
-  min-width: 0;
-  letter-spacing: var(--tracking-number);
 }
 
 .you-signature-row {
