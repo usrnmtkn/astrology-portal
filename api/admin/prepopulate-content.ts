@@ -1,6 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
+
+loadLocalWebEnv();
 
 type ContentMode = "feed" | "in_depth" | "article";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";

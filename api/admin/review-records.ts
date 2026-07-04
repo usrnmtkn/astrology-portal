@@ -1,6 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
+import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
+
+loadLocalWebEnv();
 
 type ReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
