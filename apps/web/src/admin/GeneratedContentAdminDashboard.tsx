@@ -1,6 +1,6 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
 import {
@@ -58,6 +58,30 @@ type VoiceTemplateConfig = {
   bannedWords: string;
   phraseBank: string;
 };
+
+type AdminContentExportFormat = "csv" | "json";
+
+type AdminContentExchangeBundle = {
+  schema: "tldrastro-admin-content-v1";
+  exportedAt: string;
+  settings: Record<VoiceTemplateSurface, VoiceTemplateConfig>;
+  vocabularyRows: Array<{
+    id?: string;
+    contentKey: string;
+    headline: string;
+    natal: string;
+    sky: string;
+  }>;
+  templateRows: Array<{
+    id?: string;
+    contentKey: string;
+    headline: string;
+    summary: string;
+    body: string;
+  }>;
+};
+
+type AdminContentCsvRow = Record<string, string>;
 
 type AdminApiStatusState = {
   state: "idle" | "checking" | "online" | "offline" | "notConfigured";
@@ -450,12 +474,28 @@ function stringValue(value: unknown) {
   return typeof value === "string" ? value : "";
 }
 
+function titleFromVocabularyContentKey(contentKey: string) {
+  const slug = contentKey.split("/").pop() ?? contentKey;
+
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function vocabularyHeadline(row: AdminGeneratedContentRow) {
+  const headline = row.headline?.trim().replace(/\s+Topic$/i, "");
+
+  return headline || titleFromVocabularyContentKey(row.content_key);
+}
+
 function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyDraft {
   const sections = objectValue(row.sections);
   const topic = objectValue(sections?.topic);
 
   return {
-    headline: row.headline ?? "",
+    headline: vocabularyHeadline(row),
     natal: stringValue(topic?.natal) || row.body || "",
     sky: stringValue(topic?.sky) || stringValue(topic?.natal) || row.body || ""
   };
@@ -475,6 +515,191 @@ function draftMapForVocabularyRows(rows: AdminGeneratedContentRow[]) {
 
 function draftMapForTemplateRows(rows: AdminGeneratedContentRow[]) {
   return Object.fromEntries(rows.map((row) => [row.id, templateDraftFromRow(row)]));
+}
+
+function csvEscape(value: unknown) {
+  const text = value === null || value === undefined ? "" : String(value);
+
+  return /[",\n\r]/.test(text) ? `"${text.replaceAll("\"", "\"\"")}"` : text;
+}
+
+function csvFromRows(rows: AdminContentCsvRow[]) {
+  const columns = [
+    "collection",
+    "surfaceKey",
+    "id",
+    "contentKey",
+    "headline",
+    "summary",
+    "body",
+    "natal",
+    "sky",
+    "template",
+    "generationGuide",
+    "bannedWords",
+    "phraseBank"
+  ];
+
+  return [
+    columns.join(","),
+    ...rows.map((row) => columns.map((column) => csvEscape(row[column] ?? "")).join(","))
+  ].join("\n");
+}
+
+function parseCsv(text: string) {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = "";
+  let isQuoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const nextChar = text[index + 1];
+
+    if (isQuoted) {
+      if (char === "\"" && nextChar === "\"") {
+        cell += "\"";
+        index += 1;
+      } else if (char === "\"") {
+        isQuoted = false;
+      } else {
+        cell += char;
+      }
+      continue;
+    }
+
+    if (char === "\"") {
+      isQuoted = true;
+    } else if (char === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (char === "\n") {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else if (char !== "\r") {
+      cell += char;
+    }
+  }
+
+  row.push(cell);
+  rows.push(row);
+
+  const [headers, ...dataRows] = rows.filter((candidate) => candidate.some((value) => value.trim()));
+
+  if (!headers) {
+    return [];
+  }
+
+  return dataRows.map((dataRow) => Object.fromEntries(
+    headers.map((header, index) => [header, dataRow[index] ?? ""])
+  ) as AdminContentCsvRow);
+}
+
+function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminContentCsvRow[] {
+  const settingsRows = (Object.keys(bundle.settings) as VoiceTemplateSurface[]).map((surfaceKey) => ({
+    collection: "settings",
+    surfaceKey,
+    template: bundle.settings[surfaceKey]?.template ?? "",
+    generationGuide: bundle.settings[surfaceKey]?.generationGuide ?? "",
+    bannedWords: bundle.settings[surfaceKey]?.bannedWords ?? "",
+    phraseBank: bundle.settings[surfaceKey]?.phraseBank ?? ""
+  }));
+  const vocabularyCsvRows = bundle.vocabularyRows.map((row) => ({
+    collection: "vocabulary",
+    id: row.id ?? "",
+    contentKey: row.contentKey,
+    headline: row.headline,
+    natal: row.natal,
+    sky: row.sky
+  }));
+  const templateCsvRows = bundle.templateRows.map((row) => ({
+    collection: "templates",
+    id: row.id ?? "",
+    contentKey: row.contentKey,
+    headline: row.headline,
+    summary: row.summary,
+    body: row.body
+  }));
+
+  return [...settingsRows, ...vocabularyCsvRows, ...templateCsvRows];
+}
+
+function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
+  const csvRows = parseCsv(text);
+  const settings = { ...defaultVoiceTemplates };
+  const vocabularyRows: AdminContentExchangeBundle["vocabularyRows"] = [];
+  const templateRows: AdminContentExchangeBundle["templateRows"] = [];
+
+  for (const row of csvRows) {
+    if (row.collection === "settings" && row.surfaceKey in defaultVoiceTemplates) {
+      const surfaceKey = row.surfaceKey as VoiceTemplateSurface;
+      settings[surfaceKey] = {
+        template: row.template ?? "",
+        generationGuide: row.generationGuide ?? "",
+        bannedWords: row.bannedWords ?? "",
+        phraseBank: row.phraseBank ?? ""
+      };
+    }
+
+    if (row.collection === "vocabulary" && row.contentKey) {
+      vocabularyRows.push({
+        id: row.id || undefined,
+        contentKey: row.contentKey,
+        headline: row.headline ?? "",
+        natal: row.natal ?? "",
+        sky: row.sky ?? ""
+      });
+    }
+
+    if (row.collection === "templates" && row.contentKey) {
+      templateRows.push({
+        id: row.id || undefined,
+        contentKey: row.contentKey,
+        headline: row.headline ?? "",
+        summary: row.summary ?? "",
+        body: row.body ?? ""
+      });
+    }
+  }
+
+  return {
+    schema: "tldrastro-admin-content-v1",
+    exportedAt: new Date().toISOString(),
+    settings,
+    vocabularyRows,
+    templateRows
+  };
+}
+
+function contentBundleFromJson(text: string): AdminContentExchangeBundle {
+  const parsed = JSON.parse(text) as Partial<AdminContentExchangeBundle>;
+
+  if (parsed.schema !== "tldrastro-admin-content-v1") {
+    throw new Error("Import file must use the tldrastro-admin-content-v1 schema.");
+  }
+
+  return {
+    schema: "tldrastro-admin-content-v1",
+    exportedAt: parsed.exportedAt ?? new Date().toISOString(),
+    settings: {
+      ...defaultVoiceTemplates,
+      ...(parsed.settings ?? {})
+    },
+    vocabularyRows: parsed.vocabularyRows ?? [],
+    templateRows: parsed.templateRows ?? []
+  };
+}
+
+function downloadTextFile(filename: string, text: string, type: string) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function contentTypeBadge(row: AdminGeneratedContentRow) {
@@ -1935,6 +2160,7 @@ export function GeneratedContentAdminDashboard() {
   const [voiceTemplates, setVoiceTemplates] = useState<Record<VoiceTemplateSurface, VoiceTemplateConfig>>(() => loadVoiceTemplates());
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [activePage, setActivePage] = useState<AdminDashboardPage>("content");
+  const contentImportInputRef = useRef<HTMLInputElement | null>(null);
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -2015,6 +2241,239 @@ export function GeneratedContentAdminDashboard() {
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
+
+  function buildContentExchangeBundle(
+    nextVocabularyRows = vocabularyRows,
+    nextTemplateRows = templateContentRows
+  ): AdminContentExchangeBundle {
+    return {
+      schema: "tldrastro-admin-content-v1",
+      exportedAt: new Date().toISOString(),
+      settings: voiceTemplates,
+      vocabularyRows: nextVocabularyRows.map((row) => {
+        const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+
+        return {
+          id: row.id,
+          contentKey: row.content_key,
+          headline: draftValue.headline,
+          natal: draftValue.natal,
+          sky: draftValue.sky
+        };
+      }),
+      templateRows: nextTemplateRows.map((row) => {
+        const draftValue = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+
+        return {
+          id: row.id,
+          contentKey: row.content_key,
+          headline: draftValue.headline,
+          summary: draftValue.summary,
+          body: draftValue.body
+        };
+      })
+    };
+  }
+
+  async function fetchVocabularyRowsForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      promptVersion: "vocab-v1",
+      contentKeyPrefix: "vocab/",
+      limit: "200"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return (payload.rows ?? []).sort((first, second) => first.content_key.localeCompare(second.content_key));
+  }
+
+  async function fetchTemplateRowsForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      contentKeyPrefix: "fallback-hook/",
+      limit: "200"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return (payload.rows ?? [])
+      .filter((row) => row.content_key.startsWith("fallback-hook/"))
+      .sort((first, second) => first.content_key.localeCompare(second.content_key));
+  }
+
+  async function downloadManagedContent(format: AdminContentExportFormat) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const [nextVocabularyRows, nextTemplateRows] = await Promise.all([
+        fetchVocabularyRowsForAdmin(),
+        fetchTemplateRowsForAdmin()
+      ]);
+
+      setVocabularyRows(nextVocabularyRows);
+      setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+      setTemplateContentRows(nextTemplateRows);
+      setTemplateContentDrafts(draftMapForTemplateRows(nextTemplateRows));
+
+      const bundle = buildContentExchangeBundle(nextVocabularyRows, nextTemplateRows);
+      const timestamp = new Date().toISOString().slice(0, 10);
+
+      if (format === "json") {
+        downloadTextFile(
+          `tldrastro-admin-content-${timestamp}.json`,
+          JSON.stringify(bundle, null, 2),
+          "application/json"
+        );
+        setMessage(`Exported ${bundle.vocabularyRows.length} vocabulary rows, ${bundle.templateRows.length} template rows, and settings as JSON.`);
+        return;
+      }
+
+      downloadTextFile(
+        `tldrastro-admin-content-${timestamp}.csv`,
+        csvFromRows(csvRowsFromContentBundle(bundle)),
+        "text/csv"
+      );
+      setMessage(`Exported ${bundle.vocabularyRows.length} vocabulary rows, ${bundle.templateRows.length} template rows, and settings as CSV.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not export dashboard content."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function patchGeneratedContentByImportKey(
+    importedRow: { id?: string; contentKey: string },
+    patch: Record<string, unknown>,
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+
+    if (!matchedRow) {
+      throw new Error(`No existing dashboard row matched ${importedRow.contentKey}.`);
+    }
+
+    await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          id: matchedRow.id,
+          ...patch
+        })
+      }
+    );
+  }
+
+  async function importManagedContentBundle(bundle: AdminContentExchangeBundle) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      setVoiceTemplates(bundle.settings);
+      window.localStorage.setItem(adminVoiceTemplateStorageKey, JSON.stringify(bundle.settings));
+
+      const vocabularyParams = new URLSearchParams({
+        status: "all",
+        promptVersion: "vocab-v1",
+        contentKeyPrefix: "vocab/",
+        limit: "200"
+      });
+      const templateParams = new URLSearchParams({
+        status: "all",
+        contentKeyPrefix: "fallback-hook/",
+        limit: "200"
+      });
+      const [vocabularyPayload, templatePayload] = await Promise.all([
+        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          `/api/admin/generated-content?${vocabularyParams}`,
+          secret
+        ),
+        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          `/api/admin/generated-content?${templateParams}`,
+          secret
+        )
+      ]);
+
+      for (const row of bundle.vocabularyRows) {
+        await patchGeneratedContentByImportKey(
+          row,
+          {
+            headline: row.headline,
+            body: row.natal,
+            sections: {
+              topic: {
+                natal: row.natal,
+                sky: row.sky
+              }
+            }
+          },
+          vocabularyPayload.rows ?? []
+        );
+      }
+
+      for (const row of bundle.templateRows) {
+        await patchGeneratedContentByImportKey(
+          row,
+          {
+            headline: row.headline,
+            summary: row.summary,
+            body: row.body
+          },
+          templatePayload.rows ?? []
+        );
+      }
+
+      await Promise.all([
+        loadVocabularyRows(),
+        loadTemplateContentRows()
+      ]);
+      setAccessStatus("valid");
+      setMessage(`Imported settings, ${bundle.vocabularyRows.length} vocabulary rows, and ${bundle.templateRows.length} template rows.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not import dashboard content."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function importManagedContentFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const bundle = file.name.toLowerCase().endsWith(".csv")
+        ? contentBundleFromCsv(text)
+        : contentBundleFromJson(text);
+
+      await importManagedContentBundle(bundle);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not read import file.");
+    }
+  }
 
   async function checkTldrAstroApiStatus() {
     if (!isTldrAstroApiConfigured) {
@@ -2256,6 +2715,11 @@ export function GeneratedContentAdminDashboard() {
     }
 
     if (activePage === "knowledge" && canUseApi) {
+      void loadTemplateContentRows();
+    }
+
+    if (activePage === "settings" && canUseApi) {
+      void loadVocabularyRows();
       void loadTemplateContentRows();
     }
   }, [activePage, canUseApi]);
@@ -4016,6 +4480,51 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </section>
             </section>
 
+            <section className="admin-template-panel" aria-label="Dashboard content import and export">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Portable content</p>
+                  <h2>Import / Export Dashboard Rows</h2>
+                  <p>Download or restore the editable settings, vocabulary rows, and fallback template rows.</p>
+                </div>
+                <div className="admin-release-summary" aria-label="Managed content export coverage">
+                  <article>
+                    <span>Vocabulary</span>
+                    <strong>{vocabularyRows.length}</strong>
+                  </article>
+                  <article>
+                    <span>Templates</span>
+                    <strong>{templateContentRows.length}</strong>
+                  </article>
+                </div>
+              </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={() => downloadManagedContent("json")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download JSON
+                </button>
+                <button type="button" onClick={() => downloadManagedContent("csv")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={() => contentImportInputRef.current?.click()}
+                  disabled={isLoading || !canUseApi}
+                >
+                  <Upload size={16} aria-hidden="true" />
+                  Import CSV or JSON
+                </button>
+                <input
+                  ref={contentImportInputRef}
+                  type="file"
+                  accept=".csv,.json,application/json,text/csv"
+                  onChange={(event) => void importManagedContentFile(event)}
+                  hidden
+                />
+              </div>
+            </section>
+
             <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
               <div className="admin-template-header">
                 <div>
@@ -4135,8 +4644,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <div className="admin-template-header">
               <div>
                 <p className="admin-eyebrow">Prompt version vocab-v1</p>
-                <h2>Planet Topic Vocabulary</h2>
-                <p>Edit the row-managed topic phrases used by template interpolation. Saves keep sections shaped as topic.natal and topic.sky.</p>
+                <h2>Planet Vocabulary</h2>
+                <p>Edit the row-managed phrases used by template interpolation. Saves keep the correct internal JSON shape.</p>
               </div>
               <div className="admin-release-summary" aria-label="Vocabulary row count">
                 <article>
@@ -4174,7 +4683,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
                     <div className="admin-managed-two-column">
                       <label className="admin-field-wide">
-                        <span>Natal topic</span>
+                        <span>Natal phrase</span>
                         <textarea
                           value={rowDraft.natal}
                           onChange={(event) => updateVocabularyDraft(row.id, { natal: event.target.value })}
@@ -4182,7 +4691,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         />
                       </label>
                       <label className="admin-field-wide">
-                        <span>Sky topic</span>
+                        <span>Sky phrase</span>
                         <textarea
                           value={rowDraft.sky}
                           onChange={(event) => updateVocabularyDraft(row.id, { sky: event.target.value })}
