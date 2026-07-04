@@ -102,9 +102,20 @@ export async function loadUserGeneratedInterpretation({
     return null;
   }
 
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user.id;
+
+  if (sessionError || !userId) {
+    if (sessionError) {
+      console.warn("Personalized generated content could not confirm the signed-in user.", sessionError);
+    }
+    return null;
+  }
+
   let query = supabase
     .from("user_generated_interpretations")
     .select("id, content_key, surface, mode, event_type, target_date, headline, summary, body, sections, provider, model, updated_at")
+    .eq("user_id", userId)
     .eq("subject_type", subjectType)
     .eq("subject_id", subjectId)
     .eq("content_key", contentKey)
