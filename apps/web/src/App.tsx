@@ -11363,7 +11363,7 @@ function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapsh
       toHouse: toPosition?.house ?? null,
       otherPoint,
       orb: wholeDegreeOrb(aspect.orb),
-      meaning: (aspect as typeof aspect & { meaning?: string }).meaning ?? ""
+      meaning: ""
     };
   });
 }

@@ -617,8 +617,8 @@ function aspectSummary(first: string, aspect: string, second: string) {
   return `${first} ${aspect} ${second} shows how these two chart factors interact.`;
 }
 
-function skyAspectSummary(aspect: { from: string; type: string; to: string; meaning?: string }) {
-  return aspect.meaning || `${aspect.from} ${aspect.type} ${aspect.to} is active in the selected sky window.`;
+function skyAspectSummary(aspect: { from: string; type: string; to: string }) {
+  return `${aspect.from} ${aspect.type} ${aspect.to} is active in the selected sky window.`;
 }
 
 async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<string, SavedContentRow>) {
@@ -969,7 +969,7 @@ function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedCo
       targetDate: null,
       contentKey,
       eventType: "natal-aspect",
-      summary: aspect.meaning || aspectSummary(aspect.from, aspect.type, aspect.to),
+      summary: aspectSummary(aspect.from, aspect.type, aspect.to),
       body: "",
       sections: [],
       blockType: "natal_aspect",
