@@ -409,6 +409,7 @@ type ContentFallback = {
 const loadedContentRegistries: Partial<Record<ContentDomain, LazyContentRegistry>> = {};
 const loadingContentRegistries: Partial<Record<ContentDomain, Promise<LazyContentRegistry | null>>> = {};
 const contentRegistryListeners = new Set<() => void>();
+let contentRegistryRevision = 0;
 
 function subscribeContentRegistry(listener: () => void) {
   contentRegistryListeners.add(listener);
@@ -419,7 +420,22 @@ function subscribeContentRegistry(listener: () => void) {
 }
 
 function notifyContentRegistryListeners() {
+  contentRegistryRevision += 1;
   contentRegistryListeners.forEach((listener) => listener());
+}
+
+function useContentRegistryRevision() {
+  const [version, setVersion] = useState(contentRegistryRevision);
+
+  useEffect(() => {
+    setVersion(contentRegistryRevision);
+
+    return subscribeContentRegistry(() => {
+      setVersion(contentRegistryRevision);
+    });
+  }, []);
+
+  return version;
 }
 
 function normalizeContentIdPart(value: string) {
@@ -630,6 +646,16 @@ function hasContentFallback(content?: Partial<Pick<ContentFallback, "summary" | 
   return Boolean(content?.summary || content?.body || (content?.detailParagraphs?.length ?? 0) > 0);
 }
 
+function templateFallbackDomain(contentKey: string): ContentDomain {
+  const hook = fallbackHookByKey(contentKey.replace(/^fallback-hook\//, ""));
+
+  return hook?.domain ?? "natal";
+}
+
+function templateFallbackRegistryReady(templateFallback: TemplateFallbackOptions) {
+  return Boolean(contentRegistryFor(templateFallbackDomain(templateFallback.contentKey)));
+}
+
 function mergeGeneratedContentMaps(...maps: GeneratedContentMap[]) {
   const merged: GeneratedContentMap = new Map();
 
@@ -657,7 +683,12 @@ function liveGeneratedContentByKeys(
     }
   }
 
-  return templateFallback && !hasContentFallback(templateFallback.afterContentFallback)
+  const registryReady = templateFallback ? templateFallbackRegistryReady(templateFallback) : false;
+  const hasFallback = hasContentFallback(templateFallback?.afterContentFallback);
+
+  return templateFallback
+    && registryReady
+    && !hasFallback
     ? liveGeneratedContent(generatedContent, templateFallback.contentKey, templateFallback.slots)
     : null;
 }
@@ -13905,6 +13936,7 @@ function ProfileView({
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [placementWriteups, setPlacementWriteups] = useState<GeneratedContentMap>(() => new Map());
   const [seededPlacementDrafts, setSeededPlacementDrafts] = useState<Set<string>>(() => new Set());
+  useContentRegistryRevision();
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
   const savedBirthTime = primaryChart?.birthTime && primaryChart.birthTime !== "Birth time needed"

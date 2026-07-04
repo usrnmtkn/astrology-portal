@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, "..");
 const dataRoot = path.join(root, "data");
 const voiceRoot = path.join(root, "voice");
 const schemaRoot = path.join(root, "schema");
-const VALID_STATUSES = new Set(["TODO", "DRAFT", "REVIEWED", "LIVE"]);
+const VALID_STATUSES = new Set(["TODO", "DRAFT", "REVIEWED", "SOURCE_BACKED", "LIVE"]);
 
 const primitiveShapes = {
   planet: {
@@ -254,7 +254,7 @@ function validateObject(filePath, object, shape, errors, prefix = "") {
   }
 
   if (!VALID_STATUSES.has(object.status)) {
-    errors.push(`${rel(filePath)}: field ${prefix}status must be TODO, DRAFT, REVIEWED, or LIVE`);
+    errors.push(`${rel(filePath)}: field ${prefix}status must be TODO, DRAFT, REVIEWED, SOURCE_BACKED, or LIVE`);
   }
 
   for (const [field, values] of Object.entries(shape.enums || {})) {

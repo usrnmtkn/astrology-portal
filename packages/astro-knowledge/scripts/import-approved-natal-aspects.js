@@ -53,7 +53,10 @@ function assertInsightCard(card) {
 
 function insightCardFromApproved(card) {
   assertInsightCard(card);
-  return Object.fromEntries(fields.map((field) => [field, card[field]]));
+  return {
+    ...Object.fromEntries(fields.map((field) => [field, card[field]])),
+    status: "SOURCE_BACKED"
+  };
 }
 
 function writeJsonIfChanged(filePath, value) {

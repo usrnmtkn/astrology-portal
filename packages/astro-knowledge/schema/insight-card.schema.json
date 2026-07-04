@@ -99,6 +99,6 @@
       }
     },
     "voiceNeutral": { "const": true },
-    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+    "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "SOURCE_BACKED", "LIVE"] }
   }
 }
