@@ -4497,40 +4497,32 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </section>
             </section>
 
-            <section className="admin-template-panel" aria-label="Dashboard content import and export">
+            <section className="admin-template-panel" aria-label="Settings import and export">
               <div className="admin-template-header">
                 <div>
-                  <p className="admin-eyebrow">Portable content</p>
-                  <h2>Import / Export Dashboard Rows</h2>
-                  <p>Download or restore the editable settings, vocabulary rows, and fallback template rows.</p>
+                  <p className="admin-eyebrow">Portable settings</p>
+                  <h2>Import / Export Settings</h2>
+                  <p>Download or restore the voice templates and generation guidance for this dashboard.</p>
                 </div>
-                <div className="admin-release-summary" aria-label="Managed content export coverage">
+                <div className="admin-release-summary" aria-label="Settings export coverage">
                   <article>
-                    <span>Vocabulary</span>
-                    <strong>{vocabularyRows.length}</strong>
+                    <span>Surfaces</span>
+                    <strong>{Object.keys(voiceTemplates).length}</strong>
                   </article>
                   <article>
-                    <span>Templates</span>
-                    <strong>{templateContentRows.length}</strong>
+                    <span>Format</span>
+                    <strong>CSV / JSON</strong>
                   </article>
                 </div>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => downloadManagedContent("json", "settings")} disabled={isLoading}>
+                <button type="button" onClick={() => void downloadManagedContent("json", "settings")} disabled={isLoading}>
                   <Download size={16} aria-hidden="true" />
-                  Settings JSON
+                  Download JSON
                 </button>
-                <button type="button" onClick={() => downloadManagedContent("csv", "settings")} disabled={isLoading}>
+                <button type="button" onClick={() => void downloadManagedContent("csv", "settings")} disabled={isLoading}>
                   <Download size={16} aria-hidden="true" />
-                  Settings CSV
-                </button>
-                <button type="button" onClick={() => downloadManagedContent("json", "vocabulary")} disabled={isLoading || !canUseApi}>
-                  <Download size={16} aria-hidden="true" />
-                  Vocabulary JSON
-                </button>
-                <button type="button" onClick={() => downloadManagedContent("json", "templates")} disabled={isLoading || !canUseApi}>
-                  <Download size={16} aria-hidden="true" />
-                  Templates JSON
+                  Download CSV
                 </button>
                 <button
                   type="button"
@@ -4539,22 +4531,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 >
                   <Upload size={16} aria-hidden="true" />
                   Import Settings
-                </button>
-                <button
-                  type="button"
-                  onClick={() => triggerContentImport("vocabulary")}
-                  disabled={isLoading || !canUseApi}
-                >
-                  <Upload size={16} aria-hidden="true" />
-                  Import Vocabulary
-                </button>
-                <button
-                  type="button"
-                  onClick={() => triggerContentImport("templates")}
-                  disabled={isLoading || !canUseApi}
-                >
-                  <Upload size={16} aria-hidden="true" />
-                  Import Templates
                 </button>
               </div>
             </section>
@@ -4691,6 +4667,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <strong>vocab/</strong>
                 </article>
               </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={() => void downloadManagedContent("json", "vocabulary")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download JSON
+                </button>
+                <button type="button" onClick={() => void downloadManagedContent("csv", "vocabulary")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download CSV
+                </button>
+                <button type="button" onClick={() => triggerContentImport("vocabulary")} disabled={isLoading || !canUseApi}>
+                  <Upload size={16} aria-hidden="true" />
+                  Import
+                </button>
+              </div>
             </div>
 
             <div className="admin-managed-row-list">
@@ -4765,6 +4755,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <span>Prefix</span>
                   <strong>fallback-hook/</strong>
                 </article>
+              </div>
+              <div className="admin-template-actions">
+                <button type="button" onClick={() => void downloadManagedContent("json", "templates")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download JSON
+                </button>
+                <button type="button" onClick={() => void downloadManagedContent("csv", "templates")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Download CSV
+                </button>
+                <button type="button" onClick={() => triggerContentImport("templates")} disabled={isLoading || !canUseApi}>
+                  <Upload size={16} aria-hidden="true" />
+                  Import
+                </button>
               </div>
             </div>
 
