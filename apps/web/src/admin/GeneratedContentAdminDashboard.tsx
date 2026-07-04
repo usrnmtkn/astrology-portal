@@ -60,11 +60,12 @@ type VoiceTemplateConfig = {
 };
 
 type AdminContentExportFormat = "csv" | "json";
+type AdminContentScope = "settings" | "vocabulary" | "templates";
 
 type AdminContentExchangeBundle = {
   schema: "tldrastro-admin-content-v1";
   exportedAt: string;
-  settings: Record<VoiceTemplateSurface, VoiceTemplateConfig>;
+  settings: Partial<Record<VoiceTemplateSurface, VoiceTemplateConfig>>;
   vocabularyRows: Array<{
     id?: string;
     contentKey: string;
@@ -628,7 +629,7 @@ function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminCont
 
 function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
   const csvRows = parseCsv(text);
-  const settings = { ...defaultVoiceTemplates };
+  const settings: Partial<Record<VoiceTemplateSurface, VoiceTemplateConfig>> = {};
   const vocabularyRows: AdminContentExchangeBundle["vocabularyRows"] = [];
   const templateRows: AdminContentExchangeBundle["templateRows"] = [];
 
@@ -683,10 +684,7 @@ function contentBundleFromJson(text: string): AdminContentExchangeBundle {
   return {
     schema: "tldrastro-admin-content-v1",
     exportedAt: parsed.exportedAt ?? new Date().toISOString(),
-    settings: {
-      ...defaultVoiceTemplates,
-      ...(parsed.settings ?? {})
-    },
+    settings: parsed.settings ?? {},
     vocabularyRows: parsed.vocabularyRows ?? [],
     templateRows: parsed.templateRows ?? []
   };
@@ -2161,6 +2159,7 @@ export function GeneratedContentAdminDashboard() {
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [activePage, setActivePage] = useState<AdminDashboardPage>("content");
   const contentImportInputRef = useRef<HTMLInputElement | null>(null);
+  const [contentImportScope, setContentImportScope] = useState<AdminContentScope>("settings");
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -2243,14 +2242,15 @@ export function GeneratedContentAdminDashboard() {
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
 
   function buildContentExchangeBundle(
+    scope: AdminContentScope,
     nextVocabularyRows = vocabularyRows,
     nextTemplateRows = templateContentRows
   ): AdminContentExchangeBundle {
     return {
       schema: "tldrastro-admin-content-v1",
       exportedAt: new Date().toISOString(),
-      settings: voiceTemplates,
-      vocabularyRows: nextVocabularyRows.map((row) => {
+      settings: scope === "settings" ? voiceTemplates : {},
+      vocabularyRows: scope === "vocabulary" ? nextVocabularyRows.map((row) => {
         const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
 
         return {
@@ -2260,8 +2260,8 @@ export function GeneratedContentAdminDashboard() {
           natal: draftValue.natal,
           sky: draftValue.sky
         };
-      }),
-      templateRows: nextTemplateRows.map((row) => {
+      }) : [],
+      templateRows: scope === "templates" ? nextTemplateRows.map((row) => {
         const draftValue = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
 
         return {
@@ -2271,7 +2271,7 @@ export function GeneratedContentAdminDashboard() {
           summary: draftValue.summary,
           body: draftValue.body
         };
-      })
+      }) : []
     };
   }
 
@@ -2306,43 +2306,58 @@ export function GeneratedContentAdminDashboard() {
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
   }
 
-  async function downloadManagedContent(format: AdminContentExportFormat) {
-    if (!canUseApi) {
+  function contentScopeFilename(scope: AdminContentScope) {
+    if (scope === "settings") return "settings";
+    if (scope === "vocabulary") return "vocabulary";
+    return "templates";
+  }
+
+  function triggerContentImport(scope: AdminContentScope) {
+    setContentImportScope(scope);
+    contentImportInputRef.current?.click();
+  }
+
+  async function downloadManagedContent(format: AdminContentExportFormat, scope: AdminContentScope) {
+    if (scope !== "settings" && !canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
 
     setIsLoading(true);
     try {
-      const [nextVocabularyRows, nextTemplateRows] = await Promise.all([
-        fetchVocabularyRowsForAdmin(),
-        fetchTemplateRowsForAdmin()
-      ]);
+      const nextVocabularyRows = scope === "vocabulary" ? await fetchVocabularyRowsForAdmin() : vocabularyRows;
+      const nextTemplateRows = scope === "templates" ? await fetchTemplateRowsForAdmin() : templateContentRows;
 
-      setVocabularyRows(nextVocabularyRows);
-      setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
-      setTemplateContentRows(nextTemplateRows);
-      setTemplateContentDrafts(draftMapForTemplateRows(nextTemplateRows));
+      if (scope === "vocabulary") {
+        setVocabularyRows(nextVocabularyRows);
+        setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+      }
 
-      const bundle = buildContentExchangeBundle(nextVocabularyRows, nextTemplateRows);
+      if (scope === "templates") {
+        setTemplateContentRows(nextTemplateRows);
+        setTemplateContentDrafts(draftMapForTemplateRows(nextTemplateRows));
+      }
+
+      const bundle = buildContentExchangeBundle(scope, nextVocabularyRows, nextTemplateRows);
       const timestamp = new Date().toISOString().slice(0, 10);
+      const filenameScope = contentScopeFilename(scope);
 
       if (format === "json") {
         downloadTextFile(
-          `tldrastro-admin-content-${timestamp}.json`,
+          `tldrastro-${filenameScope}-${timestamp}.json`,
           JSON.stringify(bundle, null, 2),
           "application/json"
         );
-        setMessage(`Exported ${bundle.vocabularyRows.length} vocabulary rows, ${bundle.templateRows.length} template rows, and settings as JSON.`);
+        setMessage(`Exported ${filenameScope} as JSON.`);
         return;
       }
 
       downloadTextFile(
-        `tldrastro-admin-content-${timestamp}.csv`,
+        `tldrastro-${filenameScope}-${timestamp}.csv`,
         csvFromRows(csvRowsFromContentBundle(bundle)),
         "text/csv"
       );
-      setMessage(`Exported ${bundle.vocabularyRows.length} vocabulary rows, ${bundle.templateRows.length} template rows, and settings as CSV.`);
+      setMessage(`Exported ${filenameScope} as CSV.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -2377,55 +2392,53 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
-  async function importManagedContentBundle(bundle: AdminContentExchangeBundle) {
-    if (!canUseApi) {
+  async function importManagedContentBundle(bundle: AdminContentExchangeBundle, scope: AdminContentScope) {
+    if (scope !== "settings" && !canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
 
     setIsLoading(true);
     try {
-      setVoiceTemplates(bundle.settings);
-      window.localStorage.setItem(adminVoiceTemplateStorageKey, JSON.stringify(bundle.settings));
+      if (scope === "settings") {
+        const nextTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> = {
+          ...voiceTemplates,
+          ...bundle.settings
+        };
 
-      const vocabularyParams = new URLSearchParams({
-        status: "all",
-        promptVersion: "vocab-v1",
-        contentKeyPrefix: "vocab/",
-        limit: "200"
-      });
-      const templateParams = new URLSearchParams({
-        status: "all",
-        contentKeyPrefix: "fallback-hook/",
-        limit: "200"
-      });
-      const [vocabularyPayload, templatePayload] = await Promise.all([
-        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-          `/api/admin/generated-content?${vocabularyParams}`,
-          secret
-        ),
-        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-          `/api/admin/generated-content?${templateParams}`,
-          secret
-        )
-      ]);
-
-      for (const row of bundle.vocabularyRows) {
-        await patchGeneratedContentByImportKey(
-          row,
-          {
-            headline: row.headline,
-            body: row.natal,
-            sections: {
-              topic: {
-                natal: row.natal,
-                sky: row.sky
-              }
-            }
-          },
-          vocabularyPayload.rows ?? []
-        );
+        setVoiceTemplates(nextTemplates);
+        window.localStorage.setItem(adminVoiceTemplateStorageKey, JSON.stringify(nextTemplates));
+        setMessage(`Imported ${Object.keys(bundle.settings).length} settings surfaces.`);
+        return;
       }
+
+      if (scope === "vocabulary") {
+        const availableRows = await fetchVocabularyRowsForAdmin();
+
+        for (const row of bundle.vocabularyRows) {
+          await patchGeneratedContentByImportKey(
+            row,
+            {
+              headline: row.headline,
+              body: row.natal,
+              sections: {
+                topic: {
+                  natal: row.natal,
+                  sky: row.sky
+                }
+              }
+            },
+            availableRows
+          );
+        }
+
+        await loadVocabularyRows();
+        setAccessStatus("valid");
+        setMessage(`Imported ${bundle.vocabularyRows.length} vocabulary rows.`);
+        return;
+      }
+
+      const availableRows = await fetchTemplateRowsForAdmin();
 
       for (const row of bundle.templateRows) {
         await patchGeneratedContentByImportKey(
@@ -2435,16 +2448,13 @@ export function GeneratedContentAdminDashboard() {
             summary: row.summary,
             body: row.body
           },
-          templatePayload.rows ?? []
+          availableRows
         );
       }
 
-      await Promise.all([
-        loadVocabularyRows(),
-        loadTemplateContentRows()
-      ]);
+      await loadTemplateContentRows();
       setAccessStatus("valid");
-      setMessage(`Imported settings, ${bundle.vocabularyRows.length} vocabulary rows, and ${bundle.templateRows.length} template rows.`);
+      setMessage(`Imported ${bundle.templateRows.length} template rows.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -2469,7 +2479,7 @@ export function GeneratedContentAdminDashboard() {
         ? contentBundleFromCsv(text)
         : contentBundleFromJson(text);
 
-      await importManagedContentBundle(bundle);
+      await importManagedContentBundle(bundle, contentImportScope);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not read import file.");
     }
@@ -4349,6 +4359,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
         </section>
+        <input
+          ref={contentImportInputRef}
+          type="file"
+          accept=".csv,.json,application/json,text/csv"
+          onChange={(event) => void importManagedContentFile(event)}
+          hidden
+        />
 
         {activePage === "releaseNotes" ? (
           <section id="release-notes" className="admin-template-panel admin-release-page" aria-label="Release notes">
@@ -4499,29 +4516,46 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </div>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => downloadManagedContent("json")} disabled={isLoading || !canUseApi}>
+                <button type="button" onClick={() => downloadManagedContent("json", "settings")} disabled={isLoading}>
                   <Download size={16} aria-hidden="true" />
-                  Download JSON
+                  Settings JSON
                 </button>
-                <button type="button" onClick={() => downloadManagedContent("csv")} disabled={isLoading || !canUseApi}>
+                <button type="button" onClick={() => downloadManagedContent("csv", "settings")} disabled={isLoading}>
                   <Download size={16} aria-hidden="true" />
-                  Download CSV
+                  Settings CSV
+                </button>
+                <button type="button" onClick={() => downloadManagedContent("json", "vocabulary")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Vocabulary JSON
+                </button>
+                <button type="button" onClick={() => downloadManagedContent("json", "templates")} disabled={isLoading || !canUseApi}>
+                  <Download size={16} aria-hidden="true" />
+                  Templates JSON
                 </button>
                 <button
                   type="button"
-                  onClick={() => contentImportInputRef.current?.click()}
+                  onClick={() => triggerContentImport("settings")}
+                  disabled={isLoading}
+                >
+                  <Upload size={16} aria-hidden="true" />
+                  Import Settings
+                </button>
+                <button
+                  type="button"
+                  onClick={() => triggerContentImport("vocabulary")}
                   disabled={isLoading || !canUseApi}
                 >
                   <Upload size={16} aria-hidden="true" />
-                  Import CSV or JSON
+                  Import Vocabulary
                 </button>
-                <input
-                  ref={contentImportInputRef}
-                  type="file"
-                  accept=".csv,.json,application/json,text/csv"
-                  onChange={(event) => void importManagedContentFile(event)}
-                  hidden
-                />
+                <button
+                  type="button"
+                  onClick={() => triggerContentImport("templates")}
+                  disabled={isLoading || !canUseApi}
+                >
+                  <Upload size={16} aria-hidden="true" />
+                  Import Templates
+                </button>
               </div>
             </section>
 
