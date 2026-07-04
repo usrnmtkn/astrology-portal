@@ -613,7 +613,12 @@ const templateFallbackContentKeys = {
 type TemplateFallbackOptions = {
   contentKey: string;
   slots: TemplateSlotValues;
+  afterContentFallback?: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> | null;
 };
+
+function hasContentFallback(content?: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> | null) {
+  return Boolean(content?.summary || content?.body || (content?.detailParagraphs?.length ?? 0) > 0);
+}
 
 function mergeGeneratedContentMaps(...maps: GeneratedContentMap[]) {
   const merged: GeneratedContentMap = new Map();
@@ -642,7 +647,7 @@ function liveGeneratedContentByKeys(
     }
   }
 
-  return templateFallback
+  return templateFallback && !hasContentFallback(templateFallback.afterContentFallback)
     ? liveGeneratedContent(generatedContent, templateFallback.contentKey, templateFallback.slots)
     : null;
 }
@@ -3930,7 +3935,8 @@ function natalAspectDetailArticle(
     [contentKey],
     {
       contentKey: templateFallbackContentKeys.youNatalAspect,
-      slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to)
+      slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+      afterContentFallback: content
     }
   );
   const body = liveGeneratedBody(
@@ -3987,7 +3993,8 @@ function currentSkyAspectDetailArticle(
     skyAspectGeneratedContentKeys(aspect, generatedAt),
     {
       contentKey: templateFallbackContentKeys.skyAspectDetail,
-      slots: skyAspectTemplateSlots(aspect)
+      slots: skyAspectTemplateSlots(aspect),
+      afterContentFallback: content
     }
   );
   const fallbackSummary = aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content);
@@ -4048,22 +4055,6 @@ function relatedAspectRowsForPlacement({
     .map((aspect) => {
       const otherPoint = aspectOtherPoint(aspect, pointName);
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
-      const generated = mode === "sky" && generatedAt
-        ? liveGeneratedContentByKeys(
-            generatedContent,
-            skyAspectGeneratedContentKeys(aspect, generatedAt),
-            {
-              contentKey: templateFallbackContentKeys.skyAspectDetail,
-              slots: skyAspectTemplateSlots(aspect)
-            }
-          )
-        : liveGeneratedContentByKeys(generatedContent, [
-            natalAspectContentKey(aspect.from, aspect.type, aspect.to),
-            aspectContentId(aspect.from, aspect.type, aspect.to)
-          ], {
-            contentKey: templateFallbackContentKeys.youNatalAspect,
-            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to)
-          });
       const fallback = mode === "sky"
         ? fallbackFromHook(
             "sky.aspect-detail",
@@ -4075,6 +4066,24 @@ function relatedAspectRowsForPlacement({
             { planetA: aspect.from, aspect: aspect.type, planetB: aspect.to },
             approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to))
           );
+      const generated = mode === "sky" && generatedAt
+        ? liveGeneratedContentByKeys(
+            generatedContent,
+            skyAspectGeneratedContentKeys(aspect, generatedAt),
+            {
+              contentKey: templateFallbackContentKeys.skyAspectDetail,
+              slots: skyAspectTemplateSlots(aspect),
+              afterContentFallback: fallback
+            }
+          )
+        : liveGeneratedContentByKeys(generatedContent, [
+            natalAspectContentKey(aspect.from, aspect.type, aspect.to),
+            aspectContentId(aspect.from, aspect.type, aspect.to)
+          ], {
+            contentKey: templateFallbackContentKeys.youNatalAspect,
+            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+            afterContentFallback: fallback
+          });
       const rowSummary = liveGeneratedSummary(
         generated,
         mode === "sky"
@@ -5668,7 +5677,8 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
         transitToNatalGeneratedContentKeys(transit),
         {
           contentKey: templateFallbackContentKeys.youTransitToNatal,
-          slots: transitToNatalTemplateSlots(transit)
+          slots: transitToNatalTemplateSlots(transit),
+          afterContentFallback: content
         }
       )
     : null;
@@ -6213,7 +6223,8 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
               topHit.aspect.type,
               "You",
               topHit.yourPosition.planet
-            )
+            ),
+            afterContentFallback: hookFallback
           }
         )
       : null;
@@ -6644,7 +6655,15 @@ function synastryContactSummary(
         contact.contentKeys,
         {
           contentKey: templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name)
+          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name),
+          afterContentFallback: fallbackFromHook(
+            "friends.synastry-contact",
+            {
+              planetA: contact.friendPoint.name,
+              aspect: contact.aspect,
+              planetB: contact.yourPoint.name
+            }
+          )
         }
       )
     : null;
@@ -6701,13 +6720,22 @@ function synastryContacts(
 }
 
 function synastryDetailCopy(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
+  const hookFallback = fallbackFromHook(
+    "friends.synastry-contact",
+    {
+      planetA: contact.friendPoint.name,
+      aspect: contact.aspect,
+      planetB: contact.yourPoint.name
+    }
+  );
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
         contact.contentKeys,
         {
           contentKey: templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name)
+          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name),
+          afterContentFallback: hookFallback
         }
       )
     : null;
@@ -6717,7 +6745,7 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
     return generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf));
   }
 
-  return liveGeneratedBody(generated, []).map((paragraph) => (
+  return liveGeneratedBody(generated, hookFallback.detailParagraphs).map((paragraph) => (
     relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
   ));
 }
@@ -6769,17 +6797,6 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
         `relationship-${normalizeContentIdPart(position.planet)}-in-${house}-house`,
         ...relationshipPlacementContentKeys(position.planet, position.sign, "synastry")
       ];
-      const generated = generatedContent
-        ? liveGeneratedContentByKeys(
-            generatedContent,
-            contentKeys,
-            {
-              contentKey: templateFallbackContentKeys.friendsHouseOverlay,
-              slots: houseOverlayTemplateSlots(ownerName, position.planet, targetName, house)
-            }
-          )
-        : null;
-      const generatedParagraphs = generatedContentParagraphs(generated);
       const hookFallback = fallbackFromHook(
         "friends.house-overlay",
         {
@@ -6787,6 +6804,18 @@ function synastryHouseOverlays(profileNatalSky: SkySnapshot | null, chart: Manua
           house
         }
       );
+      const generated = generatedContent
+        ? liveGeneratedContentByKeys(
+            generatedContent,
+            contentKeys,
+            {
+              contentKey: templateFallbackContentKeys.friendsHouseOverlay,
+              slots: houseOverlayTemplateSlots(ownerName, position.planet, targetName, house),
+              afterContentFallback: hookFallback
+            }
+          )
+        : null;
+      const generatedParagraphs = generatedContentParagraphs(generated);
       const detailParagraphs = generatedParagraphs.length > 0
         ? generatedParagraphs
         : hookFallback.detailParagraphs.length > 0
@@ -6967,21 +6996,6 @@ function compositeAspectSummary(
     return "No single aspect is dominating the relationship chart. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.";
   }
 
-  const generated = generatedContent
-    ? liveGeneratedContentByKeys(
-        generatedContent,
-        relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite"),
-        {
-          contentKey: templateFallbackContentKeys.friendsCompositeAspect,
-          slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to)
-        }
-      )
-    : null;
-
-  if (generated) {
-    return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf);
-  }
-
   const hookFallback = fallbackFromHook(
     "friends.composite-aspect",
     {
@@ -6990,6 +7004,21 @@ function compositeAspectSummary(
       planetB: aspect.to
     }
   );
+  const generated = generatedContent
+    ? liveGeneratedContentByKeys(
+        generatedContent,
+        relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite"),
+        {
+          contentKey: templateFallbackContentKeys.friendsCompositeAspect,
+          slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+          afterContentFallback: hookFallback
+        }
+      )
+    : null;
+
+  if (generated) {
+    return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf);
+  }
 
   return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, hookFallback.summary), chartName, comparisonName, comparisonIsSelf);
 }
@@ -7009,7 +7038,8 @@ function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedCo
           planet: row.label,
           sign: row.sign,
           house: row.house
-        })
+        }),
+        afterContentFallback: { summary: row.description }
       }
     );
     const description = relationshipGeneratedCopyForPerspective(
@@ -7039,7 +7069,8 @@ function relationshipTimingSummary(
         ],
         {
           contentKey: templateFallbackContentKeys.friendsRelationshipTiming,
-          slots: relationshipTimingTemplateSlots(person, transit)
+          slots: relationshipTimingTemplateSlots(person, transit),
+          afterContentFallback: { summary: fallback }
         }
       )
     : null;
@@ -7407,7 +7438,8 @@ function circleFeedPreviewCards(
           ],
           {
             contentKey: templateFallbackContentKeys.friendsCircleFeed,
-            slots: circleFeedTemplateSlots(topic)
+            slots: circleFeedTemplateSlots(topic),
+            afterContentFallback: { summary: fallback }
           }
         )
       : null;
@@ -10628,17 +10660,37 @@ function natalPlacementSignModule(
   position: PlanetPosition,
   generatedContent: GeneratedContentMap
 ): YouTransitArticle["sections"][number] | null {
+  const content = fallbackFromHook(
+    "you.natal-placement",
+    {
+      planet: position.planet,
+      sign: position.sign,
+      house: position.house
+    },
+    {
+      summary: natalPlacementDescription(position.planet)
+    }
+  );
   const generated = liveGeneratedContentByKeys(generatedContent, [
     natalSignContentKey(position.planet, position.sign),
     placementContentId(position.planet, position.sign)
   ], {
     contentKey: templateFallbackContentKeys.youNatalPlacement,
-    slots: natalPlacementTemplateSlots(position)
+    slots: natalPlacementTemplateSlots(position),
+    afterContentFallback: content
   });
   const generatedParagraphs = generatedContentParagraphs(generated);
 
   if (generatedParagraphs.length > 0) {
     return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), generatedParagraphs);
+  }
+
+  if (content.detailParagraphs.length > 0) {
+    return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), content.detailParagraphs);
+  }
+
+  if (content.summary) {
+    return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), [content.summary]);
   }
 
   const signFrame = natalSignFallbackFrames[position.sign] ?? natalSignFallbackFrames.Aries;
@@ -11260,7 +11312,8 @@ function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedConte
         [placementContentId(position.planet, position.sign)],
         {
           contentKey: templateFallbackContentKeys.youNatalPlacement,
-          slots: natalPlacementTemplateSlots(position)
+          slots: natalPlacementTemplateSlots(position),
+          afterContentFallback: content
         }
       )
     : null;
@@ -11415,7 +11468,8 @@ function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: Gene
             sign: risingSign,
             signStyle: signStyleSlot(risingSign),
             house: "1st"
-          }
+          },
+          afterContentFallback: content
         }
       )
     : null;
@@ -11991,7 +12045,8 @@ function RetrogradeCallout({
       skyPlacementGeneratedContentKeys(position, generatedAt),
       {
         contentKey: skyPlacementTemplateFallbackKey(position),
-        slots: skyPlacementTemplateSlots(position)
+        slots: skyPlacementTemplateSlots(position),
+        afterContentFallback: content
       }
     );
     const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
@@ -12425,7 +12480,8 @@ function ActiveAspects({
               skyAspectGeneratedContentKeys(aspect, generatedAt),
               {
                 contentKey: templateFallbackContentKeys.skyAspectDetail,
-                slots: skyAspectTemplateSlots(aspect)
+                slots: skyAspectTemplateSlots(aspect),
+                afterContentFallback: content
               }
             );
             const rowSummary = liveGeneratedSummary(
@@ -12550,7 +12606,8 @@ function PlacementTable({
             skyPlacementGeneratedContentKeys(position, generatedAt),
             {
               contentKey: skyPlacementTemplateFallbackKey(position),
-              slots: skyPlacementTemplateSlots(position)
+              slots: skyPlacementTemplateSlots(position),
+              afterContentFallback: content
             }
           );
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
@@ -13474,7 +13531,8 @@ function SettingsView({
                   ],
                   {
                     contentKey: templateFallbackContentKeys.settingsLifeAreaFocus,
-                    slots: lifeAreaFocusTemplateSlots(option)
+                    slots: lifeAreaFocusTemplateSlots(option),
+                    afterContentFallback: { summary: option.description }
                   }
                 );
                 const title = liveGeneratedHeadline(generated, option.label);
@@ -14160,7 +14218,8 @@ function ProfileView({
       [contentKey],
       {
         contentKey: templateFallbackContentKeys.youNatalAspect,
-        slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to)
+        slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+        afterContentFallback: content
       }
     );
     const rowSummary = liveGeneratedSummary(
@@ -14206,7 +14265,8 @@ function ProfileView({
       [contentKey],
       {
         contentKey: templateFallbackContentKeys.youTransitToNatal,
-        slots: transitToNatalTemplateSlots(transit)
+        slots: transitToNatalTemplateSlots(transit),
+        afterContentFallback: content
       }
     );
     const rowSummary = liveGeneratedSummary(
@@ -15401,7 +15461,8 @@ function ManualChartsPanel({
                           [contentKey],
                           {
                             contentKey: templateFallbackContentKeys.youNatalAspect,
-                            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to)
+                            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+                            afterContentFallback: content
                           }
                         );
                         const rawSummary = liveGeneratedSummary(generated, content.summary);
