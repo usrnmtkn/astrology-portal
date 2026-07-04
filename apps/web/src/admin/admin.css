@@ -1943,6 +1943,76 @@ body,
   margin: 0;
 }
 
+.admin-managed-row-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-managed-row-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 12px;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.admin-managed-row-card header {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.admin-managed-title {
+  display: grid;
+  gap: 8px;
+  min-width: min(560px, 70vw);
+}
+
+.admin-managed-key {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  color: var(--admin-muted);
+  display: block;
+  font-size: var(--type-hint-size);
+  overflow-wrap: anywhere;
+  padding: 9px 10px;
+}
+
+.admin-managed-two-column {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-managed-row-card textarea {
+  min-height: 108px;
+}
+
+.admin-template-content-card textarea {
+  min-height: 128px;
+}
+
+.admin-template-content-card label:last-of-type textarea {
+  min-height: 220px;
+}
+
+.admin-managed-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-template-badge {
+  background: rgba(125, 129, 255, 0.16);
+  border-color: rgba(125, 129, 255, 0.34);
+  color: var(--admin-ink);
+  text-transform: uppercase;
+}
+
 .admin-private-row-list {
   display: grid;
   gap: 12px;
