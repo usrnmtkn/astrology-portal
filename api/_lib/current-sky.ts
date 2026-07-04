@@ -172,7 +172,7 @@ function normalizeAspect(aspect: Partial<SkyAspect>): SkyAspect | null {
     to: aspect.to,
     type: aspect.type,
     orb: Number(aspect.orb ?? 0),
-    meaning: aspect.meaning ?? `${aspect.from} ${aspect.type} ${aspect.to} is active now.`
+    meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`
   };
 }
 
