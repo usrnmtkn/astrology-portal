@@ -4512,13 +4512,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </div>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => void downloadManagedContent("json", "settings")} disabled={isLoading}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "settings")} disabled={isLoading} aria-label="Download settings as JSON">
                   <Download size={16} aria-hidden="true" />
-                  Download JSON
+                  JSON
                 </button>
-                <button type="button" onClick={() => void downloadManagedContent("csv", "settings")} disabled={isLoading}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "settings")} disabled={isLoading} aria-label="Download settings as CSV">
                   <Download size={16} aria-hidden="true" />
-                  Download CSV
+                  CSV
                 </button>
                 <button
                   type="button"
@@ -4664,13 +4664,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </article>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => void downloadManagedContent("json", "vocabulary")} disabled={isLoading || !canUseApi}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "vocabulary")} disabled={isLoading || !canUseApi} aria-label="Download vocabulary as JSON">
                   <Download size={16} aria-hidden="true" />
-                  Download JSON
+                  JSON
                 </button>
-                <button type="button" onClick={() => void downloadManagedContent("csv", "vocabulary")} disabled={isLoading || !canUseApi}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "vocabulary")} disabled={isLoading || !canUseApi} aria-label="Download vocabulary as CSV">
                   <Download size={16} aria-hidden="true" />
-                  Download CSV
+                  CSV
                 </button>
                 <button type="button" onClick={() => triggerContentImport("vocabulary")} disabled={isLoading || !canUseApi}>
                   <Upload size={16} aria-hidden="true" />
@@ -4753,13 +4753,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </article>
               </div>
               <div className="admin-template-actions">
-                <button type="button" onClick={() => void downloadManagedContent("json", "templates")} disabled={isLoading || !canUseApi}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "templates")} disabled={isLoading || !canUseApi} aria-label="Download templates as JSON">
                   <Download size={16} aria-hidden="true" />
-                  Download JSON
+                  JSON
                 </button>
-                <button type="button" onClick={() => void downloadManagedContent("csv", "templates")} disabled={isLoading || !canUseApi}>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "templates")} disabled={isLoading || !canUseApi} aria-label="Download templates as CSV">
                   <Download size={16} aria-hidden="true" />
-                  Download CSV
+                  CSV
                 </button>
                 <button type="button" onClick={() => triggerContentImport("templates")} disabled={isLoading || !canUseApi}>
                   <Upload size={16} aria-hidden="true" />

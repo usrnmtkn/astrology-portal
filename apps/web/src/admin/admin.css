@@ -442,6 +442,11 @@ body,
   justify-content: flex-end;
 }
 
+.admin-template-actions .admin-format-button {
+  min-width: 78px;
+  padding: 0 12px;
+}
+
 .admin-template-tabs {
   border-top: 1px solid var(--admin-line);
   padding-top: 16px;
