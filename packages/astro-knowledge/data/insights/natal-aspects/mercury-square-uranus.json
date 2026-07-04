@@ -1,21 +1,21 @@
 {
   "id": "mercury-square-uranus",
   "kind": "natal-aspect",
-  "displayTitle": "Brilliant Or Abrupt",
-  "summary": "Your mind moves in jumps. You may see the pattern quickly, then lose patience with everyone still reading the instructions.",
-  "body": "Mercury square Uranus describes a quick, original, disruptive mind. You may think in flashes, challenge assumptions, and make unusual connections without needing permission. This can make you inventive and ahead of the room, but it can also make communication sharp, scattered, or impatient. The gift is mental independence. The growth is learning to translate the spark so other people can use it too.",
-  "gift": "Original thinking, rapid insight, technical curiosity, and the courage to question stale ideas.",
-  "shadow": "Nervous overload, contrarian reflexes, interrupting, and changing direction before the thought has landed.",
+  "displayTitle": "Restless Or Untamed",
+  "summary": "Your mind races against itself. Ideas fire faster than you can sort them, so you blurt, you provoke, you change your position mid-sentence. Brilliant and scattered live in the same head.",
+  "body": "Your mind races against itself. Ideas fire faster than you can sort them, so you blurt, you provoke, you change your position mid-sentence. Brilliant and scattered live in the same head. You may argue for the thrill of it, or get attached to being right for the wrong reasons. That friction is the engine you run on; it makes you quick, inventive, hard to fool. The work is grounding the lightning, giving the ideas a structure before you fire them off.",
+  "gift": "At your best: quick, inventive, impossible to fool.",
+  "shadow": "The trap: blurting, provoking, and being right for the wrong reasons.",
   "integration": "Let your mind move fast, then give the idea a second pass. Translation is not dilution; it is how the insight becomes useful.",
   "do": [
-    "Write down flashes before debating them",
-    "Ask whether you want to clarify or provoke",
-    "Build pauses into fast conversations"
+    "Ground the idea before you fire it",
+    "Argue to find truth, not to win",
+    "Give the lightning a structure"
   ],
   "dont": [
-    "Treat boredom as proof that someone is wrong",
-    "Interrupt before the other person finishes",
-    "Discard structure just because it is familiar"
+    "Blurt to provoke",
+    "Change positions to stay clever",
+    "Mistake fast for right"
   ],
   "lifeAreas": [
     "communication",
