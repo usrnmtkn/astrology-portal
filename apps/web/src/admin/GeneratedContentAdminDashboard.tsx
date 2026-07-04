@@ -796,6 +796,20 @@ function contentTypeBadge(row: AdminGeneratedContentRow) {
 const releaseNotes: ReleaseNote[] = [
   {
     date: "July 4, 2026",
+    time: "4:59 PM EDT",
+    title: "Vocabulary taglines and dashboard import/export",
+    summary: "Content Ops now manages natal chart card taglines alongside vocabulary phrases, with contextual import/export controls and a Cloud Run console link in Settings.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Cleaned up the admin dashboard shell with smaller type, flatter panels, denser tables, and Cloud Console-inspired navigation states.",
+      "Combined natal phrase, sky phrase, and natal card tagline editing into the Vocabulary tab so planet-card copy can be reviewed in one place.",
+      "Added contextual JSON and CSV export/import controls to Settings, Vocabulary, and Templates using compact icon-only download buttons.",
+      "Connected natal chart card taglines to dashboard-authored rows while keeping fallback copy for unsaved rows.",
+      "Added a Settings Infrastructure block linking directly to the tldrastro-api Cloud Run revisions page for CORS and environment variable checks."
+    ]
+  },
+  {
+    date: "July 4, 2026",
     time: "3:05 PM EST",
     title: "Per-user review gate and timing-template coverage",
     summary: "Content Ops now keeps per-user generated rows in review while the app renders approved template copy for daily timing.",

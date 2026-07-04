@@ -2744,3 +2744,537 @@ body,
     width: 100vw;
   }
 }
+
+/* Console density pass: keep Content Ops compact, flat, and table-first. */
+.admin-dashboard {
+  --admin-bg: #111315;
+  --admin-sidebar: #242932;
+  --admin-panel: #151719;
+  --admin-panel-2: #1d2024;
+  --admin-ink: #e7eaee;
+  --admin-muted: #a9b0ba;
+  --admin-line: rgba(231, 234, 238, 0.14);
+  --admin-accent: #7da7ff;
+  --admin-accent-2: #9bbcff;
+  background: var(--admin-bg);
+  color: var(--admin-ink);
+  grid-template-columns: 248px minmax(0, 1fr);
+  letter-spacing: 0;
+}
+
+.admin-dashboard *,
+.admin-dashboard *::before,
+.admin-dashboard *::after {
+  letter-spacing: 0;
+}
+
+.admin-sidebar {
+  background: var(--admin-sidebar);
+  border-right-color: rgba(231, 234, 238, 0.1);
+  gap: 22px;
+  padding: 24px 14px 18px;
+}
+
+.admin-brand {
+  padding: 0 12px;
+}
+
+.admin-brand-mark {
+  background: transparent;
+  border: 0;
+  color: #e7eaee;
+  font-size: 18px;
+  height: 28px;
+  width: 28px;
+}
+
+.admin-brand strong {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.admin-brand small {
+  color: rgba(231, 234, 238, 0.62);
+  font-size: 12px;
+}
+
+.admin-nav {
+  gap: 2px;
+}
+
+.admin-nav button,
+.admin-public-link {
+  border-radius: 0 18px 18px 0;
+  color: rgba(231, 234, 238, 0.78);
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 38px;
+  padding: 0 10px 0 24px;
+}
+
+.admin-nav button.active,
+.admin-nav button:hover:not(:disabled),
+.admin-public-link:hover {
+  background: #334d73;
+  box-shadow: inset 3px 0 0 #8ab4f8;
+  color: #f7faff;
+}
+
+.admin-public-link {
+  margin-top: auto;
+}
+
+.admin-main {
+  gap: 14px;
+  max-width: none;
+  padding: 20px 24px 36px;
+}
+
+.admin-dashboard-header {
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-dashboard-header h1 {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.18;
+  margin: 4px 0 6px;
+}
+
+.admin-dashboard-header p {
+  color: rgba(231, 234, 238, 0.68);
+  font-size: 14px;
+  line-height: 1.42;
+}
+
+.admin-breadcrumb,
+.admin-eyebrow,
+.admin-dashboard label span,
+.admin-metrics span,
+.admin-generation-diagnostics span,
+.admin-review-tldr-editor span,
+.admin-review-copy-editor span,
+.admin-review-generation-bar span,
+.admin-metadata-field span,
+.admin-sidebar-section-title {
+  color: rgba(231, 234, 238, 0.62);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.admin-api-indicator {
+  background: #1b1f24;
+  border-color: rgba(231, 234, 238, 0.14);
+  border-radius: 18px;
+  font-size: 12px;
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.admin-message-card,
+.admin-content-toolbar,
+.admin-content-filters,
+.admin-list-panel,
+.admin-template-panel,
+.admin-secret-panel,
+.admin-api-status-card,
+.admin-review-filters,
+.admin-review-tabs button,
+.admin-review-context-strip,
+.admin-review-copy-workspace,
+.admin-review-empty-detail,
+.admin-metadata-sidebar,
+.admin-generation-diagnostics,
+.admin-managed-row-card,
+.admin-private-row-card,
+.admin-hook-card,
+.admin-hook-guidance {
+  background: var(--admin-panel);
+  border-color: var(--admin-line);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.admin-template-panel,
+.admin-content-toolbar,
+.admin-content-filters,
+.admin-review-filters {
+  padding: 14px 16px;
+}
+
+.admin-message-card {
+  min-height: 40px;
+  padding: 10px 12px;
+}
+
+.admin-content-toolbar {
+  min-height: auto;
+}
+
+.admin-content-toolbar h2,
+.admin-template-header h2,
+.admin-panel-header h2,
+.admin-editor-toolbar h2,
+.admin-review-filters h2,
+.admin-api-status-main h2,
+.admin-release-page .admin-template-header h2,
+.admin-template-page .admin-template-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.24;
+  margin: 2px 0 5px;
+}
+
+.admin-content-toolbar p:not(.admin-eyebrow),
+.admin-template-header p:not(.admin-eyebrow),
+.admin-template-note,
+.admin-review-filters p:not(.admin-eyebrow),
+.admin-api-status-main p:not(.admin-eyebrow) {
+  color: rgba(231, 234, 238, 0.66);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.admin-release-summary article,
+.admin-metrics article,
+.admin-api-status-grid article,
+.admin-template-guidance article,
+.admin-private-meta div {
+  background: var(--admin-panel-2);
+  border-color: var(--admin-line);
+  border-radius: 6px;
+  min-height: 64px;
+  padding: 10px 12px;
+}
+
+.admin-release-summary strong,
+.admin-metrics strong,
+.admin-template-guidance strong {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.admin-content-filters,
+.admin-controls {
+  gap: 10px;
+}
+
+.admin-dashboard input,
+.admin-dashboard select,
+.admin-dashboard textarea {
+  background: #0f1113;
+  border-color: rgba(231, 234, 238, 0.16);
+  border-radius: 4px;
+  color: var(--admin-ink);
+  font-size: 13px;
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
+.admin-dashboard button {
+  background: #20242a;
+  border-color: rgba(231, 234, 238, 0.16);
+  border-radius: 4px;
+  color: var(--admin-ink);
+  font-size: 13px;
+  font-weight: 500;
+  min-height: 36px;
+  padding: 0 11px;
+}
+
+.admin-dashboard button:hover:not(:disabled) {
+  background: #2b3138;
+}
+
+.admin-dashboard .admin-primary-button,
+.admin-dashboard .admin-live-button {
+  background: #8ab4f8;
+  border-color: #8ab4f8;
+  color: #0f1113;
+}
+
+.admin-status-pills {
+  gap: 6px;
+}
+
+.admin-status-pills button {
+  background: #20242a;
+  border-radius: 4px;
+  font-size: 13px;
+  min-height: 36px;
+  min-width: 110px;
+  padding: 0 10px;
+}
+
+.admin-status-pills button.active {
+  background: #334d73;
+  color: #f7faff;
+}
+
+.admin-status-pills strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-content-table {
+  min-width: 1080px;
+}
+
+.admin-content-table-head {
+  background: #20242a;
+  color: rgba(231, 234, 238, 0.74);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.admin-content-table-head th {
+  border-bottom-color: rgba(231, 234, 238, 0.13);
+  height: 36px;
+  padding: 0 12px;
+}
+
+.admin-content-table-head th:first-child,
+.admin-content-row td:first-child {
+  padding-left: 16px;
+}
+
+.admin-content-table-head th:last-child,
+.admin-content-row td:last-child {
+  padding-right: 16px;
+}
+
+.admin-content-row td {
+  border-bottom-color: rgba(231, 234, 238, 0.1);
+  padding: 10px 12px;
+}
+
+.admin-content-row:hover,
+.admin-content-row.selected {
+  background: #202938;
+}
+
+.admin-content-row.selected {
+  box-shadow: inset 3px 0 0 #8ab4f8;
+}
+
+.admin-content-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.32;
+}
+
+.admin-content-row-subtitle,
+.admin-content-row-meta,
+.admin-content-row-date,
+.admin-content-row-section,
+.admin-content-location small,
+.admin-content-location strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.admin-content-location strong,
+.admin-content-row-date,
+.admin-content-row-section {
+  font-weight: 500;
+}
+
+.admin-status,
+.admin-restriction-pill,
+.admin-provider-meta span,
+.admin-template-badge,
+.admin-review-copy-state,
+.admin-release-tag {
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  min-height: 22px;
+  padding: 3px 8px;
+  text-transform: none;
+}
+
+.admin-workbench {
+  gap: 12px;
+  grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+}
+
+.admin-review-workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-review-workspace .admin-list-panel {
+  width: 100%;
+}
+
+.admin-list-panel {
+  max-height: calc(100vh - 270px);
+}
+
+.admin-review-filter-grid {
+  grid-template-columns: minmax(132px, 0.68fr) minmax(132px, 0.68fr) minmax(145px, 0.86fr) minmax(155px, 0.96fr) minmax(220px, 1.25fr) minmax(118px, auto);
+}
+
+.admin-review-filter-grid button {
+  white-space: nowrap;
+}
+
+.admin-panel-header,
+.admin-editor-toolbar {
+  padding: 12px 14px;
+}
+
+.admin-row-list {
+  gap: 6px;
+  padding: 8px;
+}
+
+.admin-row-card {
+  border-radius: 4px;
+  gap: 6px;
+  padding: 10px;
+}
+
+.admin-row-card strong,
+.admin-review-tabs span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-title-field input {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.admin-editor-drawer {
+  background: var(--admin-panel);
+  max-width: 980px;
+  width: min(64vw, 980px);
+}
+
+.admin-review-copy-workspace,
+.admin-metadata-sidebar,
+.admin-review-context-strip {
+  margin: 14px;
+  padding: 12px;
+}
+
+.admin-metadata-sidebar {
+  margin-left: 0;
+}
+
+.admin-review-copy-heading h3,
+.admin-metadata-sidebar h3,
+.admin-private-row-card h3,
+.admin-hook-card h3,
+.admin-release-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.28;
+  margin: 0 0 6px;
+}
+
+.admin-review-tldr-editor textarea,
+.admin-review-copy-editor textarea,
+.admin-template-panel textarea,
+.admin-managed-row-card textarea {
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.admin-review-copy-editor textarea {
+  min-height: 360px;
+}
+
+.admin-template-page,
+.admin-release-page {
+  gap: 16px;
+  min-height: calc(100vh - 180px);
+  padding: 16px;
+}
+
+.admin-release-note {
+  gap: 16px;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
+  padding: 18px 0;
+}
+
+.admin-release-date time {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.admin-release-card {
+  gap: 10px;
+}
+
+.admin-release-card p,
+.admin-private-row-card p,
+.admin-hook-card > p {
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.admin-release-card ul {
+  gap: 6px;
+}
+
+.admin-release-card li {
+  font-size: 13px;
+  line-height: 1.42;
+  padding-left: 16px;
+}
+
+.admin-release-card li::before {
+  height: 4px;
+  top: 0.58em;
+  width: 4px;
+}
+
+.admin-managed-row-list,
+.admin-private-row-list,
+.admin-hooks-page,
+.admin-hooks-grid {
+  gap: 10px;
+}
+
+.admin-managed-row-card,
+.admin-private-row-card {
+  gap: 10px;
+  padding: 12px;
+}
+
+.admin-managed-key {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 7px 8px;
+}
+
+@media (max-width: 1180px) {
+  .admin-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    padding: 18px;
+  }
+
+  .admin-nav button,
+  .admin-public-link {
+    border-radius: 4px;
+    padding-left: 12px;
+  }
+
+  .admin-dashboard-header,
+  .admin-workbench {
+    grid-template-columns: 1fr;
+  }
+}
