@@ -2281,7 +2281,7 @@ export function GeneratedContentAdminDashboard() {
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const dedupedContentRecords = useMemo(() => dedupeContentLibraryRecords(reviewRecords), [reviewRecords]);
-  const allContentRecords = useMemo(() => {
+  const filteredContentRecords = useMemo(() => {
     const normalizedPersonQuery = personQuery.trim().toLowerCase();
 
     return dedupedContentRecords
@@ -2296,9 +2296,12 @@ export function GeneratedContentAdminDashboard() {
           record.title
         ].some((value) => value?.toLowerCase().includes(normalizedPersonQuery));
       })
-      .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
       .filter((record) => categoryFilter === "all" || contentCategoryLabel(record) === categoryFilter)
-      .filter((record) => contentBlockFilter === "all" || contentBlockType(record) === contentBlockFilter)
+      .filter((record) => contentBlockFilter === "all" || contentBlockType(record) === contentBlockFilter);
+  }, [categoryFilter, contentBlockFilter, personQuery, dedupedContentRecords]);
+  const allContentRecords = useMemo(() => {
+    return filteredContentRecords
+      .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
       .sort((first, second) => {
         const firstDate = first.targetDate ?? "";
         const secondDate = second.targetDate ?? "";
@@ -2309,8 +2312,8 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [categoryFilter, contentBlockFilter, contentStatusFilter, personQuery, dedupedContentRecords]);
-  const cmsStatusCounts = useMemo(() => contentStatusCounts(dedupedContentRecords), [dedupedContentRecords]);
+  }, [contentStatusFilter, filteredContentRecords]);
+  const cmsStatusCounts = useMemo(() => contentStatusCounts(filteredContentRecords), [filteredContentRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
