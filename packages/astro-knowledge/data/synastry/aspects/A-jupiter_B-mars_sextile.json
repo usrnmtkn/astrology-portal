@@ -6,13 +6,12 @@
   "aspect": "sextile",
   "plainTranslation": "A's growth meets B's drive. The sextile supports them, if you act on it.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Imported from project-authored synastry matrix material. Source file was not copied into the repository.",
+  "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,
   "status": "DRAFT",
-  "summaryShort": "This connection gives you a push. This person can make you feel braver, more willing to take a chance, and more ready to go after what you want. They remind you that waiting forever is not a strategy.",
   "summaryDeep": "This connection gives you a push. This person can make you feel braver, more willing to take a chance, more ready to go after what you want. They believe in your potential. They encourage the risk. They remind you that waiting forever is not a strategy.\n\nYou help each other get moving in a way that builds on itself. When one person takes a step, the other tends to add confidence, encouragement, or momentum, making it easier to keep going. Ideas do not sit around for long. Together, you are more likely to act on a plan than just talk about it.\n\nThe challenge is laziness. You can both see what is possible and still do nothing about it. You can talk about the dream, believe in the dream, and never take the step that makes it real.\n\nThis connection becomes powerful when someone is willing to take the first step.",
   "tension": "The challenge is laziness. You can both see what is possible and still do nothing about it. You can talk about the dream, believe in the dream, and never take the step that makes it real.",
   "advice": "This connection becomes powerful when someone is willing to take the first step.",
   "weight": 4,
-  "authoringStatus": "locked"
+  "authoringStatus": "draft"
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -12,6 +12,10 @@ const promptVersion = "synastry-kb-v1";
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function writeJson(path, value) {
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 function jsonFiles(path) {
@@ -44,10 +48,8 @@ function stringOrNull(value) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function nonEmptyStrings(values) {
-  return values
-    .map(stringOrNull)
-    .filter((value) => value !== null);
+function sanitizeAuthoredText(value) {
+  return value?.replace(/\bwoven into\b/gi, "already present in") ?? value;
 }
 
 function numberedHouse(value) {
@@ -55,6 +57,109 @@ function numberedHouse(value) {
   const number = raw.match(/\d+/)?.[0] ?? raw;
 
   return number;
+}
+
+function sourceText(entry, camelName, snakeName) {
+  if (camelName in entry) {
+    return sanitizeAuthoredText(stringOrNull(entry[camelName]));
+  }
+
+  return sanitizeAuthoredText(stringOrNull(entry[snakeName]));
+}
+
+function sourceSlots(entry) {
+  return [
+    ...(Array.isArray(entry.slot_ids) ? entry.slot_ids : []),
+    ...(Array.isArray(entry.slot_mirror) ? entry.slot_mirror : [])
+  ].filter((slot) => typeof slot === "string" && slot.trim());
+}
+
+function setOptionalString(target, key, value) {
+  if (value) {
+    target[key] = value;
+  } else {
+    delete target[key];
+  }
+}
+
+function syncFromAuthoredBundle(sourcePath) {
+  const source = readJson(sourcePath);
+  const sourceName = basename(sourcePath);
+  const entries = Array.isArray(source.entries) ? source.entries : [];
+  const stats = {
+    sourcePath,
+    sourceEntries: entries.length,
+    aspectSlotsUpdated: 0,
+    aspectSlotsMissing: 0,
+    sourceEntriesWithSummaryShort: 0,
+    sourceEntriesWithoutSummaryShort: 0,
+    aspectSlotsWithSummaryShort: 0,
+    aspectSlotsWithoutSummaryShort: 0,
+    missingSlots: [],
+    overlayEntriesUpdated: 0
+  };
+
+  for (const entry of entries) {
+    const slots = sourceSlots(entry);
+
+    if (!slots.length) {
+      continue;
+    }
+
+    const summaryShort = sourceText(entry, "summaryShort", "summary_short");
+    const summaryDeep = sourceText(entry, "summaryDeep", "summary_deep");
+    const tension = sourceText(entry, "tension", "tension");
+    const advice = sourceText(entry, "advice", "advice");
+    const hasSummaryShort = summaryShort !== null;
+
+    if (hasSummaryShort) {
+      stats.sourceEntriesWithSummaryShort += 1;
+    } else {
+      stats.sourceEntriesWithoutSummaryShort += 1;
+    }
+
+    for (const slot of slots) {
+      const aspectPath = join(aspectsDir, `${slot}.json`);
+
+      if (!existsSync(aspectPath)) {
+        stats.aspectSlotsMissing += 1;
+        stats.missingSlots.push(slot);
+        continue;
+      }
+
+      const target = readJson(aspectPath);
+
+      setOptionalString(target, "summaryShort", summaryShort);
+      setOptionalString(target, "summaryDeep", summaryDeep);
+      setOptionalString(target, "tension", tension);
+      setOptionalString(target, "advice", advice);
+
+      if (typeof entry.weight === "number") {
+        target.weight = entry.weight;
+      } else {
+        delete target.weight;
+      }
+
+      if (Array.isArray(entry._pending) && entry._pending.length) {
+        target.authoringStatus = "draft";
+      } else {
+        target.authoringStatus = "locked";
+      }
+
+      target.note = `Synced from authored synastry bundle ${sourceName}.`;
+      writeJson(aspectPath, target);
+
+      stats.aspectSlotsUpdated += 1;
+
+      if (hasSummaryShort) {
+        stats.aspectSlotsWithSummaryShort += 1;
+      } else {
+        stats.aspectSlotsWithoutSummaryShort += 1;
+      }
+    }
+  }
+
+  return stats;
 }
 
 function ordinalHouse(value) {
@@ -350,6 +455,20 @@ function report(rows) {
 
 const args = new Set(process.argv.slice(2));
 const outIndex = process.argv.indexOf("--out");
+const syncFromIndex = process.argv.indexOf("--sync-from");
+
+if (syncFromIndex !== -1) {
+  const sourcePath = process.argv[syncFromIndex + 1];
+
+  if (!sourcePath) {
+    throw new Error("--sync-from requires a path");
+  }
+
+  const stats = syncFromAuthoredBundle(resolve(process.cwd(), sourcePath));
+  process.stdout.write(`${JSON.stringify(stats, null, 2)}\n`);
+  process.exit(0);
+}
+
 const rows = buildRows();
 
 if (args.has("--report")) {
