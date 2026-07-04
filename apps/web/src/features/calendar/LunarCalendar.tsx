@@ -385,6 +385,37 @@ function activeRetrogradeUntilLabel(event: LunarCalendarEvent, timeZone: string)
   return `until ${formatEventDateMonthDay(event.endsAt, timeZone)}`;
 }
 
+function isExactDayEvent(event: LunarCalendarEvent, day: LunarCalendarDay) {
+  return event.dateKey === day.dateKey && !isActiveRetrogradeEvent(event);
+}
+
+function selectedDayTransitEvents(
+  day: LunarCalendarDay,
+  lunarDay: ReturnType<typeof resolveLunarDay> | null,
+  selectedEvents: LunarCalendarEvent[]
+) {
+  const transits = lunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
+    ?? selectedEvents.filter(isDayCardSurfaceEvent);
+
+  return [...transits].sort((first, second) => {
+    const firstIsExact = isExactDayEvent(first, day);
+    const secondIsExact = isExactDayEvent(second, day);
+
+    if (firstIsExact !== secondIsExact) {
+      return firstIsExact ? -1 : 1;
+    }
+
+    const firstTime = new Date(first.startsAt).getTime();
+    const secondTime = new Date(second.startsAt).getTime();
+
+    if (firstIsExact && secondIsExact) {
+      return secondTime - firstTime;
+    }
+
+    return firstTime - secondTime;
+  });
+}
+
 function weekTransitCardEvents(days: LunarCalendarDay[]) {
   return days
     .flatMap((day) => {
@@ -1409,8 +1440,9 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
   ), [arcEvents, generatedContent, location, selectedDay, zone]);
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
   const selectedSurfacedTransit = selectedEvents.find(isDayCardSurfaceEvent);
-  const selectedDayTransits = selectedLunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
-    ?? selectedEvents.filter(isDayCardSurfaceEvent);
+  const selectedDayTransits = selectedDay
+    ? selectedDayTransitEvents(selectedDay, selectedLunarDay, selectedEvents)
+    : [];
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedIsEclipse = selectedLunarDay?.arc?.checkpoint.role === "eclipse";
   const selectedEditorialBody = selectedLunarDay
