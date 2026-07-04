@@ -794,6 +794,19 @@ function contentTypeBadge(row: AdminGeneratedContentRow) {
 
 const releaseNotes: ReleaseNote[] = [
   {
+    date: "July 4, 2026",
+    time: "3:05 PM EST",
+    title: "Per-user review gate and timing-template coverage",
+    summary: "Content Ops now keeps per-user generated rows in review while the app renders approved template copy for daily timing.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Changed per-user generation so new rows default to Draft unless an authenticated admin explicitly publishes them Live.",
+      "Kept per-user Draft rows visible in review records so admins can review personalized daily timing and transit output before publication.",
+      "Added the daily timing template fallback and cleaned its timing slots so cards show reader-facing windows and formatted orbs.",
+      "Removed stale stored manual-chart aspect meaning reads after the manual_charts cleanup migration."
+    ]
+  },
+  {
     date: "June 6, 2026",
     time: "9:30 PM EST",
     title: "Release notes added to Content Ops",
