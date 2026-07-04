@@ -977,6 +977,52 @@ function timingField(record: Record<string, unknown> | null | undefined, keys: s
   return "";
 }
 
+function timingNumberField(record: Record<string, unknown> | null | undefined, keys: string[]) {
+  if (!record) {
+    return null;
+  }
+
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string" && value.trim() && Number.isFinite(Number(value))) {
+      return Number(value);
+    }
+  }
+
+  return null;
+}
+
+function timingOrbLabel(record: Record<string, unknown> | null | undefined) {
+  const numericOrb = timingNumberField(record, ["orbDegrees", "orbDegree", "orb"]);
+
+  if (numericOrb !== null) {
+    const degrees = Math.floor(Math.abs(numericOrb));
+    const totalMinutes = Math.round((Math.abs(numericOrb) - degrees) * 60);
+    const adjustedDegrees = totalMinutes === 60 ? degrees + 1 : degrees;
+    const minutes = totalMinutes === 60 ? 0 : totalMinutes;
+
+    return minutes > 0 ? `${adjustedDegrees}°${String(minutes).padStart(2, "0")}'` : `${adjustedDegrees}°`;
+  }
+
+  const textOrb = timingField(record, ["orb"]);
+  return textOrb || "within range";
+}
+
+function timingWindowLabel(record: Record<string, unknown> | null | undefined) {
+  const window = timingField(record, ["window", "windowLabel", "rangeLabel", "durationLabel"]);
+
+  if (window && !/^[a-z]+(?:-[a-z]+)+$/.test(window)) {
+    return window;
+  }
+
+  return "today";
+}
+
 function dailyTimingTemplateSlots(personalTiming: PersonalTimingResponse): TemplateSlotValues {
   const boostedHit = personalTiming.timingBoostedTransits[0]?.hit ?? null;
   const topTransit = personalTiming.topTransits[0] ?? null;
@@ -984,10 +1030,8 @@ function dailyTimingTemplateSlots(personalTiming: PersonalTimingResponse): Templ
   const transitPlanet = timingField(activeTransit, ["transitPlanet", "planet", "body", "from"]) || "the current sky";
   const aspect = timingField(activeTransit, ["aspect", "aspectType", "type"]) || "activating";
   const natalPoint = timingField(activeTransit, ["natalPoint", "point", "to", "body2"]) || personalTiming.activatedNatalPlanets[0] || "your chart";
-  const orb = timingField(activeTransit, ["orb", "orbDegrees", "orbDegree"]) || "within range";
-  const window = timingField(activeTransit, ["window", "windowLabel", "rangeLabel", "durationLabel", "timeSensitivity"])
-    || personalTiming.app.timingTags[0]
-    || "today";
+  const orb = timingOrbLabel(activeTransit);
+  const window = timingWindowLabel(activeTransit);
 
   return {
     transitPlanet,

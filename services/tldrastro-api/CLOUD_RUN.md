@@ -76,7 +76,7 @@ From the repo root:
 ```bash
 gcloud builds submit . \
   --config services/tldrastro-api/cloudbuild.yaml \
-  --substitutions _REGION="$REGION",_REPOSITORY="$REPOSITORY",_SERVICE="$SERVICE",_EPHEMERIS_BUCKET="$EPHEMERIS_BUCKET",_ALLOWED_ORIGINS="https://tldrastro.vercel.app,https://www.tldrastro.com",_MIN_INSTANCES="1",_MAX_INSTANCES="20",_CONCURRENCY="20"
+  --substitutions _REGION="$REGION",_REPOSITORY="$REPOSITORY",_SERVICE="$SERVICE",_EPHEMERIS_BUCKET="$EPHEMERIS_BUCKET",_ALLOWED_ORIGINS="https://tldrastro.vercel.app,https://www.tldrastro.com,https://tldrastro.com",_MIN_INSTANCES="1",_MAX_INSTANCES="20",_CONCURRENCY="20"
 ```
 
 The build will:
