@@ -1,6 +1,7 @@
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
+import { natalCardTagline } from "../../services/natalPlacementTaglines";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -49,22 +50,6 @@ export type PlacementHouseInsight = {
 
 export const placementPlanetOrder = [...SKY_BODY_ORDER];
 const socialPlacementOrder = ["Sun", "Moon", "Ascendant", ...SKY_BODY_ORDER.slice(2)];
-
-const natalSignatureDescriptions: Record<string, string> = {
-  Sun: "Your core self and vitality",
-  Moon: "Your inner world and what you need to feel safe",
-  Ascendant: "How you meet the world and come across",
-  Mercury: "How you think and communicate",
-  Venus: "What you value and who you're drawn to",
-  Mars: "How you direct your energy and act",
-  Jupiter: "Where you grow and reach for more",
-  Saturn: "What you commit to and build",
-  Uranus: "Where you break the pattern",
-  Neptune: "Where you dream and idealize",
-  Pluto: "Where you transform and reclaim power",
-  Chiron: "Where old tenderness asks for care",
-  Lilith: "Where the untamed part of you refuses to be managed"
-};
 
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
 
@@ -308,7 +293,7 @@ export function natalPlacementDescription(planet: string, context: PlacementDesc
     return compositePlacementDescriptions[planet] ?? "";
   }
 
-  return natalSignatureDescriptions[planet] ?? "";
+  return natalCardTagline(planet);
 }
 
 export function InlineGlyphIcon({

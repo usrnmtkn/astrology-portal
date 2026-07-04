@@ -939,6 +939,17 @@ body,
   grid-template-columns: minmax(260px, 0.8fr) minmax(360px, 1.2fr);
 }
 
+.admin-infrastructure-panel a {
+  color: var(--admin-ink);
+  font-weight: 700;
+  text-decoration-color: rgba(244, 241, 234, 0.42);
+  text-underline-offset: 4px;
+}
+
+.admin-infrastructure-panel a:hover {
+  text-decoration-color: currentColor;
+}
+
 .admin-workbench {
   display: grid;
   gap: 18px;

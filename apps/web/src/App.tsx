@@ -99,6 +99,7 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
+import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
@@ -7831,6 +7832,7 @@ export function App() {
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [, setPlanetTopicVocabularyVersion] = useState(0);
+  const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [, setContentRegistryVersion] = useState(0);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
@@ -7938,6 +7940,24 @@ export function App() {
       })
       .catch((error) => {
         console.warn("Planet topic vocabulary failed to initialize; code fallbacks will be used.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadNatalCardTaglines()
+      .then(() => {
+        if (!cancelled) {
+          setNatalCardTaglineVersion((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Natal card taglines failed to initialize; code fallbacks will be used.", error);
       });
 
     return () => {
@@ -10193,22 +10213,6 @@ function ordinalHouse(house: number) {
   return `${house}${suffixes[house % 10] ?? "th"}`;
 }
 
-const natalSignatureDescriptions: Record<string, string> = {
-  Sun: "Your core self and vitality",
-  Moon: "Your inner world and what you need to feel safe",
-  Ascendant: "How you meet the world and come across",
-  Mercury: "How you think and communicate",
-  Venus: "What you value and who you're drawn to",
-  Mars: "How you direct your energy and act",
-  Jupiter: "Where you grow and reach for more",
-  Saturn: "What you commit to and build",
-  Uranus: "Where you break the pattern",
-  Neptune: "Where you dream and idealize",
-  Pluto: "Where you transform and reclaim power",
-  Chiron: "Where old tenderness asks for care",
-  Lilith: "Where the untamed part of you refuses to be managed"
-};
-
 function readableHouseTopic(house: number) {
   return houseLifeAreas[house] ?? "this house";
 }
@@ -11404,7 +11408,7 @@ function natalPlacementMeta(position: PlanetPosition) {
 }
 
 function natalPlacementDescription(planet: string) {
-  return natalSignatureDescriptions[planet] ?? "";
+  return natalCardTagline(planet);
 }
 
 function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedContent?: GeneratedContentMap) {
@@ -14248,7 +14252,7 @@ function ProfileView({
   const bigThreeRows = [
     <PlacementTableRow
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
-      description={natalSignatureDescriptions.Sun}
+      description={natalCardTagline("Sun")}
       dignity={natalSun ? placementDignity(natalSun) : null}
       glyph="☉"
       house={natalSun?.house ?? null}
@@ -14261,7 +14265,7 @@ function ProfileView({
     />,
     <PlacementTableRow
       degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
-      description={natalSignatureDescriptions.Moon}
+      description={natalCardTagline("Moon")}
       dignity={natalMoon ? placementDignity(natalMoon) : null}
       glyph="☽"
       house={natalMoon?.house ?? null}
@@ -14276,7 +14280,7 @@ function ProfileView({
       glyph="↑"
       pointName="Ascendant"
       title={displayRising && displayRising !== "Rising pending" ? `Ascendant in ${displayRising}` : displayRising || "Rising calculating"}
-      description={natalSignatureDescriptions.Ascendant}
+      description={natalCardTagline("Ascendant")}
       variant="natal"
       key="ascendant"
     />

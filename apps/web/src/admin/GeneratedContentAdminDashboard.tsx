@@ -15,6 +15,12 @@ import {
   synastryAspectContentKey,
   transitToNatalAspectContentKey
 } from "../services/generatedContentKeys";
+import {
+  fallbackNatalCardTaglines,
+  natalCardTaglineContentKey,
+  natalCardTaglinePoints,
+  normalizedNatalCardTaglinePoint
+} from "../services/natalPlacementTaglines";
 import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
 import "./admin.css";
 
@@ -72,6 +78,13 @@ type AdminContentExchangeBundle = {
     headline: string;
     natal: string;
     sky: string;
+  }>;
+  taglineRows: Array<{
+    id?: string;
+    contentKey: string;
+    point: string;
+    headline: string;
+    tagline: string;
   }>;
   templateRows: Array<{
     id?: string;
@@ -160,6 +173,20 @@ type AdminVocabularyDraft = {
   headline: string;
   natal: string;
   sky: string;
+};
+
+type AdminNatalTaglineDraft = {
+  id?: string;
+  point: string;
+  headline: string;
+  tagline: string;
+};
+
+type AdminVocabularyCardItem = {
+  contentKey: string;
+  point: string;
+  row?: AdminGeneratedContentRow;
+  taglineContentKey?: string;
 };
 
 type AdminTemplateDraft = {
@@ -510,12 +537,49 @@ function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft
   };
 }
 
+function taglineValueFromRow(row: AdminGeneratedContentRow) {
+  const sections = objectValue(row.sections);
+  const tagline = objectValue(sections?.tagline);
+
+  return stringValue(tagline?.natal) || stringValue(tagline?.text) || row.body || "";
+}
+
+function pointFromTaglineContentKey(contentKey: string) {
+  const slug = contentKey.split("/").pop() ?? contentKey;
+  const matchedPoint = natalCardTaglinePoints.find((point) => normalizedNatalCardTaglinePoint(point) === slug);
+
+  return matchedPoint ?? titleFromVocabularyContentKey(contentKey);
+}
+
+function taglineDraftFromRow(row: AdminGeneratedContentRow): AdminNatalTaglineDraft {
+  const point = pointFromTaglineContentKey(row.content_key);
+
+  return {
+    id: row.id,
+    point,
+    headline: row.headline ?? `${point} Card Tagline`,
+    tagline: taglineValueFromRow(row) || fallbackNatalCardTaglines[point] || ""
+  };
+}
+
+function fallbackTaglineDraft(point: string): AdminNatalTaglineDraft {
+  return {
+    point,
+    headline: `${point} Card Tagline`,
+    tagline: fallbackNatalCardTaglines[point] ?? ""
+  };
+}
+
 function draftMapForVocabularyRows(rows: AdminGeneratedContentRow[]) {
   return Object.fromEntries(rows.map((row) => [row.id, vocabularyDraftFromRow(row)]));
 }
 
 function draftMapForTemplateRows(rows: AdminGeneratedContentRow[]) {
   return Object.fromEntries(rows.map((row) => [row.id, templateDraftFromRow(row)]));
+}
+
+function draftMapForTaglineRows(rows: AdminGeneratedContentRow[]) {
+  return Object.fromEntries(rows.map((row) => [row.content_key, taglineDraftFromRow(row)]));
 }
 
 function csvEscape(value: unknown) {
@@ -530,11 +594,13 @@ function csvFromRows(rows: AdminContentCsvRow[]) {
     "surfaceKey",
     "id",
     "contentKey",
+    "point",
     "headline",
     "summary",
     "body",
     "natal",
     "sky",
+    "tagline",
     "template",
     "generationGuide",
     "bannedWords",
@@ -615,6 +681,14 @@ function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminCont
     natal: row.natal,
     sky: row.sky
   }));
+  const taglineCsvRows = bundle.taglineRows.map((row) => ({
+    collection: "taglines",
+    id: row.id ?? "",
+    contentKey: row.contentKey,
+    point: row.point,
+    headline: row.headline,
+    tagline: row.tagline
+  }));
   const templateCsvRows = bundle.templateRows.map((row) => ({
     collection: "templates",
     id: row.id ?? "",
@@ -624,13 +698,14 @@ function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminCont
     body: row.body
   }));
 
-  return [...settingsRows, ...vocabularyCsvRows, ...templateCsvRows];
+  return [...settingsRows, ...vocabularyCsvRows, ...taglineCsvRows, ...templateCsvRows];
 }
 
 function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
   const csvRows = parseCsv(text);
   const settings: Partial<Record<VoiceTemplateSurface, VoiceTemplateConfig>> = {};
   const vocabularyRows: AdminContentExchangeBundle["vocabularyRows"] = [];
+  const taglineRows: AdminContentExchangeBundle["taglineRows"] = [];
   const templateRows: AdminContentExchangeBundle["templateRows"] = [];
 
   for (const row of csvRows) {
@@ -654,6 +729,16 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
       });
     }
 
+    if (row.collection === "taglines" && row.contentKey) {
+      taglineRows.push({
+        id: row.id || undefined,
+        contentKey: row.contentKey,
+        point: row.point || titleFromVocabularyContentKey(row.contentKey),
+        headline: row.headline ?? "",
+        tagline: row.tagline ?? ""
+      });
+    }
+
     if (row.collection === "templates" && row.contentKey) {
       templateRows.push({
         id: row.id || undefined,
@@ -670,6 +755,7 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
     exportedAt: new Date().toISOString(),
     settings,
     vocabularyRows,
+    taglineRows,
     templateRows
   };
 }
@@ -686,6 +772,7 @@ function contentBundleFromJson(text: string): AdminContentExchangeBundle {
     exportedAt: parsed.exportedAt ?? new Date().toISOString(),
     settings: parsed.settings ?? {},
     vocabularyRows: parsed.vocabularyRows ?? [],
+    taglineRows: parsed.taglineRows ?? [],
     templateRows: parsed.templateRows ?? []
   };
 }
@@ -2118,8 +2205,10 @@ export function GeneratedContentAdminDashboard() {
   const [personQuery, setPersonQuery] = useState("");
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [vocabularyRows, setVocabularyRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [taglineRows, setTaglineRows] = useState<AdminGeneratedContentRow[]>([]);
   const [templateContentRows, setTemplateContentRows] = useState<AdminGeneratedContentRow[]>([]);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
+  const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
@@ -2240,10 +2329,37 @@ export function GeneratedContentAdminDashboard() {
   const isSelectedReviewPublished = false;
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
+  const vocabularyCardItems = useMemo<AdminVocabularyCardItem[]>(() => {
+    const items: AdminVocabularyCardItem[] = vocabularyRows.map((row) => {
+      const point = pointFromTaglineContentKey(row.content_key);
+      const supportsTagline = natalCardTaglinePoints.some((taglinePoint) => normalizedNatalCardTaglinePoint(taglinePoint) === normalizedNatalCardTaglinePoint(point));
+
+      return {
+        contentKey: row.content_key,
+        point,
+        row,
+        taglineContentKey: supportsTagline ? natalCardTaglineContentKey(point) : undefined
+      };
+    });
+    const existingPointIds = new Set(items.map((item) => normalizedNatalCardTaglinePoint(item.point)));
+
+    for (const point of natalCardTaglinePoints) {
+      if (!existingPointIds.has(normalizedNatalCardTaglinePoint(point))) {
+        items.push({
+          contentKey: natalCardTaglineContentKey(point),
+          point,
+          taglineContentKey: natalCardTaglineContentKey(point)
+        });
+      }
+    }
+
+    return items;
+  }, [vocabularyRows]);
 
   function buildContentExchangeBundle(
     scope: AdminContentScope,
     nextVocabularyRows = vocabularyRows,
+    nextTaglineRows = taglineRows,
     nextTemplateRows = templateContentRows
   ): AdminContentExchangeBundle {
     return {
@@ -2259,6 +2375,19 @@ export function GeneratedContentAdminDashboard() {
           headline: draftValue.headline,
           natal: draftValue.natal,
           sky: draftValue.sky
+        };
+      }) : [],
+      taglineRows: scope === "vocabulary" ? natalCardTaglinePoints.map((point) => {
+        const contentKey = natalCardTaglineContentKey(point);
+        const matchedRow = nextTaglineRows.find((row) => row.content_key === contentKey);
+        const draftValue = taglineDrafts[contentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
+
+        return {
+          id: matchedRow?.id ?? draftValue.id,
+          contentKey,
+          point,
+          headline: draftValue.headline,
+          tagline: draftValue.tagline
         };
       }) : [],
       templateRows: scope === "templates" ? nextTemplateRows.map((row) => {
@@ -2280,6 +2409,21 @@ export function GeneratedContentAdminDashboard() {
       status: "all",
       promptVersion: "vocab-v1",
       contentKeyPrefix: "vocab/",
+      limit: "200"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return (payload.rows ?? []).sort((first, second) => first.content_key.localeCompare(second.content_key));
+  }
+
+  async function fetchTaglineRowsForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      promptVersion: "tagline-v1",
+      contentKeyPrefix: "vocab/natal-card-tagline/",
       limit: "200"
     });
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
@@ -2325,12 +2469,16 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const nextVocabularyRows = scope === "vocabulary" ? await fetchVocabularyRowsForAdmin() : vocabularyRows;
+      const [nextVocabularyRows, nextTaglineRows] = scope === "vocabulary"
+        ? await Promise.all([fetchVocabularyRowsForAdmin(), fetchTaglineRowsForAdmin()])
+        : [vocabularyRows, taglineRows];
       const nextTemplateRows = scope === "templates" ? await fetchTemplateRowsForAdmin() : templateContentRows;
 
       if (scope === "vocabulary") {
         setVocabularyRows(nextVocabularyRows);
         setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+        setTaglineRows(nextTaglineRows);
+        setTaglineDrafts(draftMapForTaglineRows(nextTaglineRows));
       }
 
       if (scope === "templates") {
@@ -2338,7 +2486,7 @@ export function GeneratedContentAdminDashboard() {
         setTemplateContentDrafts(draftMapForTemplateRows(nextTemplateRows));
       }
 
-      const bundle = buildContentExchangeBundle(scope, nextVocabularyRows, nextTemplateRows);
+      const bundle = buildContentExchangeBundle(scope, nextVocabularyRows, nextTaglineRows, nextTemplateRows);
       const timestamp = new Date().toISOString().slice(0, 10);
       const filenameScope = contentScopeFilename(scope);
 
@@ -2392,6 +2540,54 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  async function upsertTaglineImportRow(
+    importedRow: AdminContentExchangeBundle["taglineRows"][number],
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const patch = {
+      headline: importedRow.headline,
+      body: importedRow.tagline,
+      sections: {
+        tagline: {
+          natal: importedRow.tagline
+        }
+      }
+    };
+
+    if (matchedRow) {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: matchedRow.id,
+            ...patch
+          })
+        }
+      );
+      return;
+    }
+
+    await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          contentKey: importedRow.contentKey,
+          surface: "sky",
+          mode: "feed",
+          eventType: "tagline",
+          status: "LIVE",
+          promptVersion: "tagline-v1",
+          ...patch
+        })
+      }
+    );
+  }
+
   async function importManagedContentBundle(bundle: AdminContentExchangeBundle, scope: AdminContentScope) {
     if (scope !== "settings" && !canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -2414,6 +2610,7 @@ export function GeneratedContentAdminDashboard() {
 
       if (scope === "vocabulary") {
         const availableRows = await fetchVocabularyRowsForAdmin();
+        const availableTaglineRows = await fetchTaglineRowsForAdmin();
 
         for (const row of bundle.vocabularyRows) {
           await patchGeneratedContentByImportKey(
@@ -2432,9 +2629,13 @@ export function GeneratedContentAdminDashboard() {
           );
         }
 
+        for (const row of bundle.taglineRows) {
+          await upsertTaglineImportRow(row, availableTaglineRows);
+        }
+
         await loadVocabularyRows();
         setAccessStatus("valid");
-        setMessage(`Imported ${bundle.vocabularyRows.length} vocabulary rows.`);
+        setMessage(`Imported ${bundle.vocabularyRows.length} vocabulary rows and ${bundle.taglineRows.length} tagline rows.`);
         return;
       }
 
@@ -2608,22 +2809,17 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({
-        status: "all",
-        promptVersion: "vocab-v1",
-        contentKeyPrefix: "vocab/",
-        limit: "200"
-      });
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?${params}`,
-        secret
-      );
-      const nextRows = (payload.rows ?? []).sort((first, second) => first.content_key.localeCompare(second.content_key));
+      const [nextRows, nextTaglineRows] = await Promise.all([
+        fetchVocabularyRowsForAdmin(),
+        fetchTaglineRowsForAdmin()
+      ]);
 
       setVocabularyRows(nextRows);
       setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
+      setTaglineRows(nextTaglineRows);
+      setTaglineDrafts(draftMapForTaglineRows(nextTaglineRows));
       setAccessStatus("valid");
-      setMessage(`Loaded ${nextRows.length} vocabulary rows.`);
+      setMessage(`Loaded ${nextRows.length} vocabulary rows and ${nextTaglineRows.length} tagline rows.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -2907,6 +3103,18 @@ export function GeneratedContentAdminDashboard() {
     }));
   }
 
+  function updateTaglineDraft(contentKey: string, patch: Partial<AdminNatalTaglineDraft>) {
+    const point = pointFromTaglineContentKey(contentKey);
+
+    setTaglineDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [contentKey]: {
+        ...(currentDrafts[contentKey] ?? fallbackTaglineDraft(point)),
+        ...patch
+      }
+    }));
+  }
+
   function updateTemplateContentDraft(id: string, patch: Partial<AdminTemplateDraft>) {
     setTemplateContentDrafts((currentDrafts) => ({
       ...currentDrafts,
@@ -2951,6 +3159,159 @@ export function GeneratedContentAdminDashboard() {
         setAccessStatus("invalid");
       }
       setMessage(adminErrorMessage(error, "Could not save vocabulary row."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveTaglineRow(contentKey: string) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const point = pointFromTaglineContentKey(contentKey);
+    const matchedRow = taglineRows.find((row) => row.content_key === contentKey);
+    const draftValue = taglineDrafts[contentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
+    const payloadBody = {
+      headline: draftValue.headline,
+      body: draftValue.tagline,
+      sections: {
+        tagline: {
+          natal: draftValue.tagline
+        }
+      }
+    };
+
+    setIsLoading(true);
+    try {
+      if (matchedRow) {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: matchedRow.id,
+              ...payloadBody
+            })
+          }
+        );
+      } else {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              contentKey,
+              surface: "sky",
+              mode: "feed",
+              eventType: "tagline",
+              status: "LIVE",
+              promptVersion: "tagline-v1",
+              ...payloadBody
+            })
+          }
+        );
+      }
+
+      await loadVocabularyRows();
+      setMessage(`Saved and re-read ${contentKey}.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save natal card tagline."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveVocabularyCard(item: AdminVocabularyCardItem) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (item.row) {
+        const draftValue = vocabularyDrafts[item.row.id] ?? vocabularyDraftFromRow(item.row);
+
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: item.row.id,
+              headline: draftValue.headline,
+              body: draftValue.natal,
+              sections: {
+                topic: {
+                  natal: draftValue.natal,
+                  sky: draftValue.sky
+                }
+              }
+            })
+          }
+        );
+      }
+
+      if (item.taglineContentKey) {
+        const point = pointFromTaglineContentKey(item.taglineContentKey);
+        const matchedRow = taglineRows.find((row) => row.content_key === item.taglineContentKey);
+        const draftValue = taglineDrafts[item.taglineContentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
+        const payloadBody = {
+          headline: draftValue.headline,
+          body: draftValue.tagline,
+          sections: {
+            tagline: {
+              natal: draftValue.tagline
+            }
+          }
+        };
+
+        if (matchedRow) {
+          await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+            "/api/admin/generated-content",
+            secret,
+            {
+              method: "PATCH",
+              body: JSON.stringify({
+                id: matchedRow.id,
+                ...payloadBody
+              })
+            }
+          );
+        } else {
+          await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+            "/api/admin/generated-content",
+            secret,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                contentKey: item.taglineContentKey,
+                surface: "sky",
+                mode: "feed",
+                eventType: "tagline",
+                status: "LIVE",
+                promptVersion: "tagline-v1",
+                ...payloadBody
+              })
+            }
+          );
+        }
+      }
+
+      await loadVocabularyRows();
+      setMessage(`Saved and re-read ${item.point}.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save vocabulary card."));
     } finally {
       setIsLoading(false);
     }
@@ -4493,6 +4854,25 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </section>
             </section>
 
+            <section className="admin-template-panel admin-infrastructure-panel" aria-label="Infrastructure links">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Infrastructure</p>
+                  <h2>Deploy Console</h2>
+                  <p>
+                    <a
+                      href="https://console.cloud.google.com/run/detail/us-central1/tldrastro-api/revisions?project=tldrastro-prod"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Cloud Run: tldrastro-api (CORS / env vars)
+                    </a>
+                  </p>
+                  <p className="admin-template-note">Deployed under the hello@goldeneclipse Google account (project tldrastro-prod).</p>
+                </div>
+              </div>
+            </section>
+
             <section className="admin-template-panel" aria-label="Settings import and export">
               <div className="admin-template-header">
                 <div>
@@ -4651,16 +5031,16 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Prompt version vocab-v1</p>
                 <h2>Planet Vocabulary</h2>
-                <p>Edit the row-managed phrases used by template interpolation. Saves keep the correct internal JSON shape.</p>
+                <p>Edit the phrases used by template interpolation and the taglines shown on natal chart cards.</p>
               </div>
               <div className="admin-release-summary" aria-label="Vocabulary row count">
                 <article>
-                  <span>Rows</span>
-                  <strong>{vocabularyRows.length}</strong>
+                  <span>Cards</span>
+                  <strong>{vocabularyCardItems.length}</strong>
                 </article>
                 <article>
-                  <span>Prefix</span>
-                  <strong>vocab/</strong>
+                  <span>Taglines</span>
+                  <strong>{taglineRows.length}</strong>
                 </article>
               </div>
               <div className="admin-template-actions">
@@ -4680,48 +5060,79 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </div>
 
             <div className="admin-managed-row-list">
-              {vocabularyRows.map((row) => {
-                const rowDraft = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+              {vocabularyCardItems.map((item) => {
+                const topicRow = item.row;
+                const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
+                const matchedTaglineRow = item.taglineContentKey
+                  ? taglineRows.find((row) => row.content_key === item.taglineContentKey)
+                  : undefined;
+                const taglineDraft = item.taglineContentKey
+                  ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
+                  : null;
 
                 return (
-                  <article className="admin-managed-row-card" data-vocab-row={row.content_key} key={row.id}>
+                  <article className="admin-managed-row-card" data-vocab-row={item.contentKey} key={item.contentKey}>
                     <header>
                       <div>
-                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {row.surface}</p>
-                        <label className="admin-managed-title">
-                          <span>Headline</span>
-                          <input
-                            value={rowDraft.headline}
-                            onChange={(event) => updateVocabularyDraft(row.id, { headline: event.target.value })}
+                        <p className="admin-eyebrow">{topicRow?.prompt_version ?? "tagline-v1"} / {topicRow?.surface ?? "natal card"}</p>
+                        {rowDraft && topicRow ? (
+                          <label className="admin-managed-title">
+                            <span>Headline</span>
+                            <input
+                              value={rowDraft.headline}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { headline: event.target.value })}
+                            />
+                          </label>
+                        ) : (
+                          <h3>{item.point}</h3>
+                        )}
+                      </div>
+                      <div className="admin-managed-badges">
+                        {topicRow && <span className={`ui-pill admin-status status-${topicRow.status.toLowerCase()}`}>{topicRow.status}</span>}
+                        {item.taglineContentKey && (
+                          <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
+                            Tagline {matchedTaglineRow?.status ?? "not saved"}
+                          </span>
+                        )}
+                      </div>
+                    </header>
+
+                    <code className="admin-managed-key">{topicRow?.content_key ?? item.contentKey}</code>
+
+                    {rowDraft && topicRow && (
+                      <div className="admin-managed-two-column">
+                        <label className="admin-field-wide">
+                          <span>Natal phrase</span>
+                          <textarea
+                            value={rowDraft.natal}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
+                            rows={3}
+                          />
+                        </label>
+                        <label className="admin-field-wide">
+                          <span>Sky phrase</span>
+                          <textarea
+                            value={rowDraft.sky}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, { sky: event.target.value })}
+                            rows={3}
                           />
                         </label>
                       </div>
-                      <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
-                    </header>
+                    )}
 
-                    <code className="admin-managed-key">{row.content_key}</code>
-
-                    <div className="admin-managed-two-column">
+                    {item.taglineContentKey && taglineDraft && (
                       <label className="admin-field-wide">
-                        <span>Natal phrase</span>
+                        <span>Natal card tagline</span>
                         <textarea
-                          value={rowDraft.natal}
-                          onChange={(event) => updateVocabularyDraft(row.id, { natal: event.target.value })}
-                          rows={3}
+                          value={taglineDraft.tagline}
+                          onChange={(event) => updateTaglineDraft(item.taglineContentKey ?? "", { tagline: event.target.value })}
+                          rows={2}
                         />
                       </label>
-                      <label className="admin-field-wide">
-                        <span>Sky phrase</span>
-                        <textarea
-                          value={rowDraft.sky}
-                          onChange={(event) => updateVocabularyDraft(row.id, { sky: event.target.value })}
-                          rows={3}
-                        />
-                      </label>
-                    </div>
+                    )}
 
                     <div className="admin-template-actions">
-                      <button type="button" onClick={() => void saveVocabularyRow(row)} disabled={isLoading}>
+                      <button type="button" onClick={() => void saveVocabularyCard(item)} disabled={isLoading}>
                         <Save size={16} aria-hidden="true" />
                         Save Row
                       </button>
@@ -4729,8 +5140,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   </article>
                 );
               })}
-              {vocabularyRows.length === 0 && (
-                <p className="admin-empty">No vocab-v1 rows were found.</p>
+              {vocabularyCardItems.length === 0 && (
+                <p className="admin-empty">No vocabulary rows were found.</p>
               )}
             </div>
           </section>
