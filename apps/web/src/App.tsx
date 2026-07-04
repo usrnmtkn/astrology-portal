@@ -5413,14 +5413,6 @@ function friendTimingContext(chart: ManualChart, currentSky: SkySnapshot): Frien
   });
 }
 
-function profectionHeaderLine(timing: FriendTimingContext | null) {
-  if (!timing?.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
-    return null;
-  }
-
-  return `Profection year · ${timing.profectedHouse}H ${timing.profectedSign} · Lord of the Year: ${timing.lordOfYear}`;
-}
-
 function titleCase(value: string) {
   return value
     .split(/[_\s-]+/)
@@ -12303,6 +12295,9 @@ function RetrogradeCallout({
             ) : null}
             <span>{row.range}</span>
           </span>
+          {!compact && row.blurb ? (
+            <span className="ro-sky-pl__blurb">{row.blurb}</span>
+          ) : null}
         </span>
       </button>
     );
@@ -12771,6 +12766,7 @@ function PlacementTable({
               afterContentFallback: content
             }
           );
+          const rowSummary = liveGeneratedSummary(generated, fallbackPreviewText(content));
           const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
           const body = detailParagraphs;
           const relatedAspectRows = relatedAspectRowsForPlacement({
@@ -12807,6 +12803,7 @@ function PlacementTable({
               <PlanetPlacementRow
                 ariaLabel={`Read more about ${title}`}
                 degree={formatPlanetDegree(position)}
+                description={rowSummary}
                 dignity={dignity}
                 durationLabel={durationLabel}
                 glyph={position.glyph}
@@ -14063,7 +14060,6 @@ function ProfileView({
         natalPositions: natalTransitTargets(natalSky)
       })
     : null;
-  const profectionLine = profectionHeaderLine(profileTiming);
   const natalSun = natalPositions.find((position) => position.planet === "Sun");
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
   const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
@@ -14576,7 +14572,6 @@ function ProfileView({
         }}
         personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
-        profectionLine={profectionLine}
         profileAvatarUrl={profile.avatarUrl}
         profileEmail={profile.email}
         profileName={profile.name}

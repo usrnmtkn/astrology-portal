@@ -653,6 +653,9 @@ export function PlanetPlacementRow({
             <DignityBadge dignity={dignity ?? null} uppercase={variant === "sky"} />
           </span>
         )}
+        {description ? (
+          <span className="planet-placement-row__description">{description}</span>
+        ) : null}
       </span>
     </>
   );
