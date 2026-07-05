@@ -100,7 +100,7 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
-import { loadPlanetTopicVocabulary, planetTopicPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
+import { loadPlanetTopicVocabulary, planetTopicPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
@@ -624,6 +624,7 @@ const templateFallbackContentKeys = {
   skyLunarCycle: "fallback-hook/sky.lunar-cycle",
   skyPlanetaryPlacement: "fallback-hook/sky.planetary-placement",
   skyAspectDetail: "fallback-hook/sky.aspect-detail",
+  skyAspectSignContext: "fallback-hook/sky.aspect-sign-context",
   skyRetrograde: "fallback-hook/sky.retrograde",
   youNatalPlacement: "fallback-hook/you.natal-placement",
   youNatalAspect: "fallback-hook/you.natal-aspect",
@@ -637,6 +638,8 @@ const templateFallbackContentKeys = {
   friendsCircleFeed: "fallback-hook/friends.circle-feed",
   settingsLifeAreaFocus: "fallback-hook/settings.life-area-focus"
 } as const;
+
+const signContextAspectCardsSettingKey = "app-setting/sign-context-on-aspect-cards";
 
 type TemplateFallbackOptions = {
   contentKey: string;
@@ -710,14 +713,16 @@ function skyGeneratedDateKey(generatedAt: string) {
   return generatedAt.slice(0, 10);
 }
 
-function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], generatedAt: string, positions?: PlanetPosition[]) {
   const dateKey = skyGeneratedDateKey(generatedAt);
   const signedAspect = aspect as SkySnapshot["aspects"][number] & { fromSign?: string; toSign?: string };
+  const fromSign = signedAspect.fromSign || skyAspectPosition(aspect.from, positions)?.sign;
+  const toSign = signedAspect.toSign || skyAspectPosition(aspect.to, positions)?.sign;
 
   return [
     skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
-      firstSign: signedAspect.fromSign,
-      secondSign: signedAspect.toSign,
+      firstSign: fromSign,
+      secondSign: toSign,
       targetDate: dateKey
     }),
     skyAspectContentKey(aspect.from, aspect.type, aspect.to),
@@ -727,7 +732,7 @@ function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], g
 }
 
 function signStyleSlot(sign: string) {
-  return natalSignFallbackFrames[sign]?.quality ?? "";
+  return signStylePhrase(sign) || natalSignFallbackFrames[sign]?.quality || "";
 }
 
 function planetTopicSlot(planet: string, variant: PlanetTopicVariant = "natal") {
@@ -774,8 +779,33 @@ function aspectTemplateSlots(
   };
 }
 
-function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number]): TemplateSlotValues {
-  return aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "sky");
+function skyAspectSign(aspect: SkySnapshot["aspects"][number], point: string, positions?: PlanetPosition[]) {
+  const signedAspect = aspect as SkySnapshot["aspects"][number] & { fromSign?: string; toSign?: string };
+
+  if (point === aspect.from && signedAspect.fromSign) {
+    return signedAspect.fromSign;
+  }
+
+  if (point === aspect.to && signedAspect.toSign) {
+    return signedAspect.toSign;
+  }
+
+  return skyAspectPosition(point, positions)?.sign ?? "";
+}
+
+function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number], positions?: PlanetPosition[]): TemplateSlotValues {
+  const signA = skyAspectSign(aspect, aspect.from, positions);
+  const signB = skyAspectSign(aspect, aspect.to, positions);
+
+  return {
+    ...aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "sky"),
+    signA,
+    signAStyle: signA ? signStyleSlot(signA) : "",
+    signAStyleShort: signA ? signStyleShortPhrase(signA) : "",
+    signB,
+    signBStyle: signB ? signStyleSlot(signB) : "",
+    signBStyleShort: signB ? signStyleShortPhrase(signB) : ""
+  };
 }
 
 function natalPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
@@ -887,11 +917,13 @@ function skyPlacementGeneratedContentKeys(position: PlanetPosition, generatedAt:
 }
 
 function liveGeneratedSummary(generated: LiveGeneratedContent | null, fallback: string | null) {
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallback || interpretationInReviewSummary;
+  return stripTldrPrefix(generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallback || interpretationInReviewSummary);
 }
 
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  const summary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+
+  return summary ? stripTldrPrefix(summary) : "";
 }
 
 function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
@@ -906,6 +938,64 @@ function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParag
 
 function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback: string) {
   return generated?.headline?.trim() || fallback;
+}
+
+function generatedSettingEnabled(
+  generatedContent: GeneratedContentMap,
+  contentKey: string,
+  defaultValue = true
+) {
+  const setting = generatedContent.get(contentKey);
+  const sections = setting?.sections;
+  const enabled = sections && typeof sections === "object" && !Array.isArray(sections)
+    ? (sections as Record<string, unknown>).enabled
+    : undefined;
+
+  if (typeof enabled === "boolean") {
+    return enabled;
+  }
+
+  if (typeof setting?.body === "string") {
+    const normalizedBody = setting.body.trim().toLowerCase();
+
+    if (["off", "false", "disabled", "0"].includes(normalizedBody)) {
+      return false;
+    }
+
+    if (["on", "true", "enabled", "1"].includes(normalizedBody)) {
+      return true;
+    }
+  }
+
+  return defaultValue;
+}
+
+function skyAspectSignContextEnabled(generatedContent: GeneratedContentMap) {
+  return generatedSettingEnabled(generatedContent, signContextAspectCardsSettingKey, true);
+}
+
+function skyAspectSignContextLine(
+  aspect: SkySnapshot["aspects"][number],
+  generatedContent: GeneratedContentMap,
+  positions?: PlanetPosition[]
+) {
+  if (!skyAspectSignContextEnabled(generatedContent)) {
+    return "";
+  }
+
+  const slots = skyAspectTemplateSlots(aspect, positions);
+
+  if (!slots.signA || !slots.signB) {
+    return "";
+  }
+
+  const generated = liveGeneratedContent(
+    generatedContent,
+    templateFallbackContentKeys.skyAspectSignContext,
+    slots
+  );
+
+  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
@@ -1120,7 +1210,7 @@ function fallbackPreviewText(fallback: ContentFallback) {
 }
 
 function stripTldrPrefix(value: string) {
-  return value.replace(/^TLDR:\s*/i, "").trim();
+  return value.replace(/^(?:\*\*)?(?:TLDR|TDLR)(?:\*\*)?\s*:\s*/i, "").trim();
 }
 
 function cleanGeneratedSectionHeading(heading: string) {
@@ -4129,10 +4219,10 @@ function currentSkyAspectDetailArticle(
   );
   const generated = liveGeneratedContentByKeys(
     generatedContent,
-    skyAspectGeneratedContentKeys(aspect, generatedAt),
+    skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
     {
       contentKey: templateFallbackContentKeys.skyAspectDetail,
-      slots: skyAspectTemplateSlots(aspect),
+      slots: skyAspectTemplateSlots(aspect, positions),
       afterContentFallback: content
     }
   );
@@ -4148,6 +4238,7 @@ function currentSkyAspectDetailArticle(
 
     return comparableText(stripTldrPrefix(paragraph)) !== normalizedSubtitle;
   });
+  const signContextLine = skyAspectSignContextLine(aspect, generatedContent, positions);
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
 
   return {
@@ -4159,7 +4250,7 @@ function currentSkyAspectDetailArticle(
     duration: timing,
     subtitle,
     content: content.bundle,
-    body,
+    body: signContextLine ? [...body, signContextLine] : body,
     sections: generatedDetailSections(generated),
     astrologyDrilldown: generatedAstrologyDrilldown(generated)
   };
@@ -4208,10 +4299,10 @@ function relatedAspectRowsForPlacement({
       const generated = mode === "sky" && generatedAt
         ? liveGeneratedContentByKeys(
             generatedContent,
-            skyAspectGeneratedContentKeys(aspect, generatedAt),
+            skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
             {
               contentKey: templateFallbackContentKeys.skyAspectDetail,
-              slots: skyAspectTemplateSlots(aspect),
+              slots: skyAspectTemplateSlots(aspect, positions),
               afterContentFallback: fallback
             }
           )
@@ -10193,11 +10284,11 @@ function retrogradePreviewCopy(
   const sourceText = generatedParagraphs.join(" ").trim() || generated?.summary?.trim();
 
   if (sourceText) {
-    return firstSentences(sourceText, 3);
+    return firstSentences(stripTldrPrefix(sourceText), 3);
   }
 
   return firstSentences(
-    content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || "",
+    stripTldrPrefix(content.summary || content.body || content.detailParagraphs.find((paragraph) => paragraph.trim()) || ""),
     3
   );
 }
@@ -12633,10 +12724,10 @@ function ActiveAspects({
             );
             const generated = liveGeneratedContentByKeys(
               generatedContent,
-              skyAspectGeneratedContentKeys(aspect, generatedAt),
+              skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
               {
                 contentKey: templateFallbackContentKeys.skyAspectDetail,
-                slots: skyAspectTemplateSlots(aspect),
+                slots: skyAspectTemplateSlots(aspect, positions),
                 afterContentFallback: content
               }
             );
@@ -12644,6 +12735,8 @@ function ActiveAspects({
               generated,
               aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content)
             );
+            const signContextLine = skyAspectSignContextLine(aspect, generatedContent, positions);
+            const displaySummary = signContextLine ? `${rowSummary} ${signContextLine}` : rowSummary;
 
                 return (
                   <button
@@ -12656,7 +12749,7 @@ function ActiveAspects({
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <div className="aspect-row-copy">
                       <h3>{title}</h3>
-                      {rowSummary ? <p>{rowSummary}</p> : null}
+                      {displaySummary ? <p>{displaySummary}</p> : null}
                       <span className="aspect-row-timing" aria-label={timing.label}>
                         <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
                           <DurationLabelText label={timing.durationLabel} />

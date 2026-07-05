@@ -7,12 +7,20 @@ type PlanetTopicPhrases = {
   sky?: string;
 };
 
+type SignStylePhrases = {
+  phrase: string;
+  short?: string;
+};
+
 type PlanetTopicVocabularyRow = {
   content_key: string;
+  headline: string | null;
+  body: string | null;
   sections: unknown;
 };
 
 export type PlanetTopicVocabulary = Map<string, PlanetTopicPhrases>;
+export type SignStyleVocabulary = Map<string, SignStylePhrases>;
 
 const fallbackNatalTopics: Record<string, string> = {
   ascendant: "how you meet the world and come across",
@@ -48,7 +56,23 @@ const fallbackSkyTopics: Record<string, string> = {
   venus: "connection, pleasure, money, and desire"
 };
 
+const fallbackSignStyles: Record<string, SignStylePhrases> = {
+  aries: { phrase: "direct and initiating", short: "direct initiation" },
+  taurus: { phrase: "steady and embodied", short: "steady embodiment" },
+  gemini: { phrase: "curious and responsive", short: "curious responsiveness" },
+  cancer: { phrase: "protective and intuitive", short: "protective intuition" },
+  leo: { phrase: "expressive and visible", short: "expressive visibility" },
+  virgo: { phrase: "practical and observant", short: "practical observation" },
+  libra: { phrase: "relational and balancing", short: "relational balance" },
+  scorpio: { phrase: "private and intense", short: "private intensity" },
+  sagittarius: { phrase: "expansive and searching", short: "expansive searching" },
+  capricorn: { phrase: "disciplined and consequential", short: "disciplined consequence" },
+  aquarius: { phrase: "unconventional and future-minded", short: "future-minded change" },
+  pisces: { phrase: "sensitive and imaginative", short: "sensitive imagination" }
+};
+
 let cachedVocabulary: PlanetTopicVocabulary | null = null;
+let cachedSignStyles: SignStyleVocabulary | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
 
@@ -66,6 +90,14 @@ function normalizedPlanetId(planet: string) {
   }
 
   return normalized;
+}
+
+function normalizedSignId(sign: string) {
+  return sign
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function stringField(record: Record<string, unknown>, key: string) {
@@ -93,6 +125,28 @@ function topicFromSections(sections: unknown): PlanetTopicPhrases | null {
   return sky && sky !== natal ? { natal, sky } : { natal };
 }
 
+function signStyleFromRow(row: PlanetTopicVocabularyRow): SignStylePhrases | null {
+  const sections = row.sections;
+
+  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+    const body = row.body?.trim() ?? "";
+    return body ? { phrase: body } : null;
+  }
+
+  const record = sections as Record<string, unknown>;
+  const style = record.style && typeof record.style === "object" && !Array.isArray(record.style)
+    ? record.style as Record<string, unknown>
+    : record;
+  const phrase = stringField(style, "phrase") || stringField(style, "style") || row.body?.trim() || "";
+  const short = stringField(style, "short") || stringField(style, "summary");
+
+  if (!phrase) {
+    return null;
+  }
+
+  return short && short !== phrase ? { phrase, short } : { phrase };
+}
+
 function warnFallback(planet: string, variant: PlanetTopicVariant, reason: string) {
   const warningKey = `${variant}:${normalizedPlanetId(planet)}:${reason}`;
 
@@ -100,6 +154,17 @@ function warnFallback(planet: string, variant: PlanetTopicVariant, reason: strin
     warnedFallbacks.add(warningKey);
     console.warn(
       `Planet topic vocabulary missing ${reason} for "${planet}" (${variant}); using code fallback.`
+    );
+  }
+}
+
+function warnSignFallback(sign: string, reason: string) {
+  const warningKey = `sign:${normalizedSignId(sign)}:${reason}`;
+
+  if (!warnedFallbacks.has(warningKey)) {
+    warnedFallbacks.add(warningKey);
+    console.warn(
+      `Sign style vocabulary missing ${reason} for "${sign}"; using code fallback.`
     );
   }
 }
@@ -112,8 +177,16 @@ function fallbackPlanetTopicPhrase(planet: string, variant: PlanetTopicVariant) 
     : fallbackNatalTopics[planetId] ?? "how this part of you becomes active";
 }
 
+function fallbackSignStyle(sign: string) {
+  return fallbackSignStyles[normalizedSignId(sign)] ?? { phrase: "the sign's current style", short: "the sign's style" };
+}
+
 export function planetTopicContentKey(planet: string) {
   return `vocab/planet-topic/${normalizedPlanetId(planet)}`;
+}
+
+export function signStyleContentKey(sign: string) {
+  return `vocab/sign-style/${normalizedSignId(sign)}`;
 }
 
 export function planetTopicVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
@@ -125,6 +198,25 @@ export function planetTopicVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) 
 
     if (planet && topic) {
       vocabulary.set(planet, topic);
+    }
+  }
+
+  return vocabulary;
+}
+
+export function signStyleVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
+  const vocabulary: SignStyleVocabulary = new Map();
+
+  for (const row of rows) {
+    if (!row.content_key.startsWith("vocab/sign-style/")) {
+      continue;
+    }
+
+    const sign = row.content_key.replace(/^vocab\/sign-style\//, "");
+    const style = signStyleFromRow(row);
+
+    if (sign && style) {
+      vocabulary.set(sign, style);
     }
   }
 
@@ -151,6 +243,33 @@ export function planetTopicPhraseFromVocabulary(
   return fallbackPlanetTopicPhrase(planet, variant);
 }
 
+export function signStylePhrase(sign: string) {
+  const signId = normalizedSignId(sign);
+  const style = cachedSignStyles?.get(signId);
+
+  if (style?.phrase) {
+    return style.phrase;
+  }
+
+  warnSignFallback(sign, style ? "field" : "row");
+
+  return fallbackSignStyle(sign).phrase;
+}
+
+export function signStyleShortPhrase(sign: string) {
+  const signId = normalizedSignId(sign);
+  const style = cachedSignStyles?.get(signId);
+
+  if (style?.short || style?.phrase) {
+    return style.short || style.phrase;
+  }
+
+  warnSignFallback(sign, "row");
+
+  const fallback = fallbackSignStyle(sign);
+  return fallback.short || fallback.phrase;
+}
+
 export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = "natal") {
   if (!cachedVocabulary) {
     return fallbackPlanetTopicPhrase(planet, variant);
@@ -173,24 +292,27 @@ export async function loadPlanetTopicVocabulary() {
 
     if (!supabase) {
       cachedVocabulary = new Map();
+      cachedSignStyles = new Map();
       return cachedVocabulary;
     }
 
     const { data, error } = await supabase
       .from("generated_interpretations")
-      .select("content_key, sections")
+      .select("content_key, headline, body, sections")
       .eq("status", "LIVE")
       .eq("prompt_version", "vocab-v1")
-      .like("content_key", "vocab/planet-topic/%")
+      .like("content_key", "vocab/%")
       .returns<PlanetTopicVocabularyRow[]>();
 
     if (error) {
       console.warn("Planet topic vocabulary failed to load; code fallbacks will be used.", error);
       cachedVocabulary = new Map();
+      cachedSignStyles = new Map();
       return cachedVocabulary;
     }
 
     cachedVocabulary = planetTopicVocabularyFromRows(data ?? []);
+    cachedSignStyles = signStyleVocabularyFromRows(data ?? []);
     return cachedVocabulary;
   })();
 
