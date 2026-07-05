@@ -1,5 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import {
+  hasTemplateSlots,
   interpolateTemplateString,
   type TemplateSlotValues
 } from "./templateInterpolation";
@@ -107,6 +108,21 @@ function interpolateSections(
   return value;
 }
 
+function shouldInterpolateGeneratedContent(content: LiveGeneratedContent) {
+  const contentType = content.sourceSnapshot?.contentType;
+
+  return contentType === "template" || contentType === "synastry-kb-seed";
+}
+
+function hasGeneratedContentTemplateSlots(content: LiveGeneratedContent) {
+  return Boolean(
+    (content.headline && hasTemplateSlots(content.headline))
+    || (content.summary && hasTemplateSlots(content.summary))
+    || hasTemplateSlots(content.body)
+    || hasTemplateSlots(JSON.stringify(content.sections ?? {}))
+  );
+}
+
 function fromRow(
   row: GeneratedContentRow
 ): LiveGeneratedContent {
@@ -136,11 +152,15 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
-  if (content.sourceSnapshot?.contentType !== "template") {
+  if (!shouldInterpolateGeneratedContent(content)) {
     return content;
   }
 
   if (!slots) {
+    if (content.sourceSnapshot?.contentType === "synastry-kb-seed" && !hasGeneratedContentTemplateSlots(content)) {
+      return content;
+    }
+
     return null;
   }
 
@@ -157,6 +177,14 @@ export function renderGeneratedContentTemplate(
     field: "body"
   });
   const sections = interpolateSections(content.sections ?? {}, slots, content.contentKey);
+
+  if (
+    content.sourceSnapshot?.contentType === "synastry-kb-seed"
+    && hasGeneratedContentTemplateSlots(content)
+    && (!body || (content.summary && hasTemplateSlots(content.summary) && !summary))
+  ) {
+    return null;
+  }
 
   return {
     ...content,
