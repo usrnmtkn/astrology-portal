@@ -1163,7 +1163,7 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
     return [
       "OUTPUT SHAPE FOR TRANSIT ARTICLE",
       exactHeadline,
-      "Write a transit article in Marie Satori's voice about the supplied transit, aspect, retrograde, ingress, lunation, or sky event.",
+      "Write a transit article in the longform voice about the supplied transit, aspect, retrograde, ingress, lunation, or sky event.",
       "This is a full article, not a feed card. The body should move in longer, continuous paragraphs where a full thought deepens as it goes.",
       "Return JSON only and fill every schema field.",
       "",

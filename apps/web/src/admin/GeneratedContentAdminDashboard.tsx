@@ -33,9 +33,10 @@ type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
-type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship";
+type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Fallback Templates";
 type AdminContentBlockFilter =
   | "all"
+  | "fallback_template"
   | "placement"
   | "sign"
   | "house"
@@ -386,18 +387,20 @@ const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: st
   { key: "Sky", label: "Sky" },
   { key: "Natal Aspects", label: "Natal Aspects" },
   { key: "Natal Chart", label: "Natal Chart" },
-  { key: "Relationship", label: "Relationship" }
+  { key: "Relationship", label: "Relationship" },
+  { key: "Fallback Templates", label: "Fallback Templates" }
 ];
 
 type ContentBlockFilterOption = {
   key: AdminContentBlockFilter;
   label: string;
-  group?: "Sky" | "You" | "Friends" | "General";
+  group?: "Fallbacks" | "Sky" | "You" | "Friends" | "General";
   showInEditor?: boolean;
 };
 
 const contentBlockFilters: ContentBlockFilterOption[] = [
   { key: "all", label: "All content types" },
+  { key: "fallback_template", label: "Fallback template", group: "Fallbacks" },
   { key: "sky_article", label: "Upcoming transit article", group: "Sky" },
   { key: "lunar_calendar", label: "Lunar calendar entry", group: "Sky" },
   { key: "sky_aspect", label: "Sky aspect card", group: "Sky" },
@@ -413,7 +416,7 @@ const contentBlockFilters: ContentBlockFilterOption[] = [
   { key: "essay", label: "General article", group: "General" }
 ];
 
-const contentBlockEditorGroups: Array<NonNullable<ContentBlockFilterOption["group"]>> = ["Sky", "You", "Friends", "General"];
+const contentBlockEditorGroups: Array<NonNullable<ContentBlockFilterOption["group"]>> = ["Fallbacks", "Sky", "You", "Friends", "General"];
 
 const personalizedContentSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const personalizedSampleReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
@@ -482,7 +485,8 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
   if (activePage === "settings") return "Settings";
   if (activePage === "vocabulary") return "Vocabulary";
-  if (activePage === "knowledge") return "Templates";
+  if (activePage === "knowledge") return "Fallback Rows";
+  if (activePage === "hooks") return "Hook Catalog";
   return "Content";
 }
 
@@ -490,7 +494,8 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
   if (activePage === "settings") return "Admin / Settings";
   if (activePage === "vocabulary") return "Admin / Vocabulary";
-  if (activePage === "knowledge") return "Admin / Templates";
+  if (activePage === "knowledge") return "Admin / Fallback rows";
+  if (activePage === "hooks") return "Admin / Hook catalog";
   return "Admin / Content";
 }
 
@@ -508,7 +513,11 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "knowledge") {
-    return "Review and edit fallback template rows that fill content hooks when specific authored copy is missing.";
+    return "Review and edit the slot-based fallback rows that fill app cards after specific authored copy and knowledge-base content miss.";
+  }
+
+  if (activePage === "hooks") {
+    return "See where each fallback row is used, what facts it expects, and which knowledge IDs it tries before template copy is rendered.";
   }
 
   return "Manage every generated or authored astrology entry from one filtered CMS list.";
@@ -1653,6 +1662,10 @@ function contentLibraryDedupeKey(record: AdminReviewRecord) {
   const title = normalizedRecordTitle(record.title || record.contentKey);
   const subject = record.subjectId ?? "";
 
+  if (isFallbackTemplateRecord(record)) {
+    return `${record.source}:${record.surface}:${record.contentKey}:${subject}`;
+  }
+
   if (isSkyRetrogradeRecord(record)) {
     return `${record.source}:${record.surface}:retrograde:${title}:${subject}`;
   }
@@ -1676,6 +1689,7 @@ function manualEntrySurface(category: AdminContentCategoryFilter, fallbackSurfac
   if (category === "Sky") return "sky";
   if (category === "Natal Aspects" || category === "Natal Chart") return "natal";
   if (category === "Relationship") return "relationship";
+  if (category === "Fallback Templates") return "sky";
   return fallbackSurface === "all" ? "sky" : fallbackSurface;
 }
 
@@ -1980,6 +1994,10 @@ function normalizeGeneratedDraftCopy(
   );
 }
 
+function stopEditorKeyPropagation(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  event.stopPropagation();
+}
+
 function readerFacingTextForReview(record: AdminReviewRecord) {
   return bodyWithoutLeadingTldr(record.body.trim() || fallbackReaderTextForReview(record));
 }
@@ -2000,9 +2018,18 @@ function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "
   return "draft";
 }
 
+function isFallbackTemplateRecord(record: Pick<AdminReviewRecord, "contentKey" | "eventType">) {
+  return record.contentKey.toLowerCase().startsWith("fallback-hook/")
+    || (record.eventType ?? "").toLowerCase().replaceAll("_", "-") === "fallback-hook";
+}
+
 function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCategoryFilter, "all"> {
   const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
   const normalizedContentKey = record.contentKey.toLowerCase();
+
+  if (isFallbackTemplateRecord(record)) {
+    return "Fallback Templates";
+  }
 
   if (record.surface === "sky") {
     return "Sky";
@@ -2025,14 +2052,18 @@ function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCa
 }
 
 function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
+  const normalizedKey = record.contentKey.toLowerCase();
+  const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
+
+  if (isFallbackTemplateRecord(record)) {
+    return "fallback_template";
+  }
+
   const savedType = record.rawGlobalRow?.block_type ?? record.blockType;
 
   if (savedType && savedType !== "all") {
     return savedType;
   }
-
-  const normalizedKey = record.contentKey.toLowerCase();
-  const normalizedEventType = (record.eventType ?? "").toLowerCase().replaceAll("_", "-");
 
   if (normalizedKey.startsWith("natal.placement.") || normalizedEventType.includes("natal-placement")) return "placement";
   if (normalizedKey.startsWith("natal.sign.")) return "sign";
@@ -2168,12 +2199,13 @@ function reviewSurfacesForCategory(category: AdminContentCategoryFilter) {
   if (category === "Sky") return ["upcomingAspects"] as AdminReviewSurface[];
   if (category === "Relationship") return ["relationshipLayer"] as AdminReviewSurface[];
   if (category === "Natal Aspects" || category === "Natal Chart") return ["transitNatal", "natalChart"] as AdminReviewSurface[];
+  if (category === "Fallback Templates") return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
 
   return Object.keys(reviewSurfaceLabels) as AdminReviewSurface[];
 }
 
 function categoryUsesGlobalSynastryRows(category: AdminContentCategoryFilter) {
-  return category === "all" || category === "Relationship";
+  return category === "all" || category === "Relationship" || category === "Fallback Templates";
 }
 
 function reviewRecordMergeKey(record: AdminReviewRecord) {
@@ -2274,6 +2306,7 @@ function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadata
 function surfaceForContentCategory(category: Exclude<AdminContentCategoryFilter, "all">): GeneratedContentSurface {
   if (category === "Sky") return "sky";
   if (category === "Relationship") return "relationship";
+  if (category === "Fallback Templates") return "sky";
 
   return "natal";
 }
@@ -3211,8 +3244,8 @@ export function GeneratedContentAdminDashboard() {
     void checkTldrAstroApiStatus();
   }, []);
 
-  async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status) {
-    const surfaces = reviewSurfacesForCategory(categoryFilter);
+  async function loadReviewWorkspace(nextReviewSurface = reviewSurface, nextStatus = status, nextCategory = categoryFilter) {
+    const surfaces = reviewSurfacesForCategory(nextCategory);
     setSelectedId(null);
     setSelectedReviewId(null);
     setDraft(createAdminDraft(surface));
@@ -3229,7 +3262,7 @@ export function GeneratedContentAdminDashboard() {
           surface: reviewSurfaceKey,
           status: "all"
         });
-        const shouldUseDateWindow = reviewSurfaceUsesDateFilter(reviewSurfaceKey);
+        const shouldUseDateWindow = categoryUsesDateFilter(nextCategory) && reviewSurfaceUsesDateFilter(reviewSurfaceKey);
 
         if (shouldUseDateWindow && dateStart) {
           params.set("startDate", dateStart);
@@ -3253,11 +3286,11 @@ export function GeneratedContentAdminDashboard() {
         limit: "100"
       });
 
-      if (categoryFilter === "Sky" && dateStart) {
+      if (nextCategory === "Sky" && dateStart) {
         privateParams.set("startDate", dateStart);
       }
 
-      if (categoryFilter === "Sky" && dateEnd) {
+      if (nextCategory === "Sky" && dateEnd) {
         privateParams.set("endDate", dateEnd);
       }
 
@@ -3265,7 +3298,7 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/user-generated-content?${privateParams}`,
         secret
       );
-      const globalSynastryRows = categoryUsesGlobalSynastryRows(categoryFilter)
+      const globalSynastryRows = categoryUsesGlobalSynastryRows(nextCategory)
         ? await fetchGlobalSynastryRowsForAdmin()
         : [];
       const mergedRecords = new Map<string, AdminReviewRecord>();
@@ -4541,7 +4574,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     if (record.mode === "article") {
       return [
         baseNotes,
-        "Write a full upcoming transit article in Marie Satori's voice.",
+        "Write a full upcoming transit article in the longform voice.",
         "Use longer, continuous paragraphs where one full thought deepens as it goes. Do not use punchy fragment stacks, bullets, or markdown headings inside the body.",
         "Do not use visible scaffold labels or section headings inside the reader-facing body, including TLDR, The Astrology, The Shadow, Permission, Integration, Collective Close, What You May Notice, What To Do, Home And Family, or Timing.",
         "Open with a clear human situation, then connect the transit to specific behavior, decisions, pressure points, and what changes in ordinary life.",
@@ -4976,7 +5009,16 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "knowledge" ? "page" : undefined}
           >
             <BookOpenText size={18} aria-hidden="true" />
-            Templates
+            Fallback Rows
+          </button>
+          <button
+            className={activePage === "hooks" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("hooks")}
+            aria-current={activePage === "hooks" ? "page" : undefined}
+          >
+            <LayoutDashboard size={18} aria-hidden="true" />
+            Hook Catalog
           </button>
           <button
             className={activePage === "releaseNotes" ? "active" : ""}
@@ -5477,9 +5519,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback template content rows">
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Fallback hooks</p>
-                <h2>Template Knowledge Rows</h2>
-                <p>Edit the dashboard-managed fallback-hook rows that the app can use after specific generated content misses.</p>
+                <p className="admin-eyebrow">Slot-based app copy</p>
+                <h2>Fallback Rows</h2>
+                <p>Edit the `fallback-hook/` rows that hold reusable template copy for app cards such as sky aspects, sign seasons, synastry contacts, and house overlays.</p>
               </div>
               <div className="admin-release-summary" aria-label="Template row count">
                 <article>
@@ -5507,6 +5549,25 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </div>
 
+            <div className="admin-fallback-usage" aria-label="How fallback rows are used">
+              <article>
+                <span>Where They Live</span>
+                <p>These rows are stored in generated content with keys that begin `fallback-hook/`. They are global rows, not per-user generated rows.</p>
+              </article>
+              <article>
+                <span>When They Render</span>
+                <p>The app tries a published specific row first, then approved knowledge-base content, then these fallback rows. If all three miss, the card stays blank.</p>
+              </article>
+              <article>
+                <span>How Slots Work</span>
+                <p>Values like <code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{personA}}"}</code>, and <code>{"{{house}}"}</code> are filled from the calculated sky, natal, or relationship context at render time.</p>
+              </article>
+              <article>
+                <span>Review Surface</span>
+                <p>Use this section for the reusable fallback wording. Use Content for dated or specific generated rows, and Hook Catalog to see every app surface that can call a fallback row.</p>
+              </article>
+            </div>
+
             <div className="admin-managed-row-list">
               {templateContentRows.map((row) => {
                 const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
@@ -5519,9 +5580,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {row.surface}</p>
                         <label className="admin-managed-title">
                           <span>Headline</span>
-                          <input
+                          <textarea
                             value={rowDraft.headline}
                             onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
+                            rows={2}
                           />
                         </label>
                       </div>
@@ -5863,7 +5925,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </label>
                 <label>
                   <span>Category</span>
-                  <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
+                  <select
+                    value={categoryFilter}
+                    onChange={(event) => {
+                      const nextCategory = event.target.value as AdminContentCategoryFilter;
+                      setCategoryFilter(nextCategory);
+
+                      if (nextCategory === "Fallback Templates") {
+                        setContentBlockFilter("fallback_template");
+                        void loadReviewWorkspace(reviewSurface, status, nextCategory);
+                      } else if (contentBlockFilter === "fallback_template") {
+                        setContentBlockFilter("all");
+                      }
+                    }}
+                  >
                     {contentCategoryFilters.map((category) => (
                       <option key={category.key} value={category.key}>{category.label}</option>
                     ))}
@@ -6227,7 +6302,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                                 category: nextCategory,
                                 surface: surfaceForContentCategory(nextCategory),
                                 ...(nextCategory === "Sky" ? { blockType: "sky_article" as AdminContentBlockFilter, mode: "article" as GeneratedContentMode } : {}),
-                                ...(nextCategory === "Natal Chart" ? { blockType: "placement" as AdminContentBlockFilter } : {})
+                                ...(nextCategory === "Natal Chart" ? { blockType: "placement" as AdminContentBlockFilter } : {}),
+                                ...(nextCategory === "Fallback Templates" ? { blockType: "fallback_template" as AdminContentBlockFilter, mode: "feed" as GeneratedContentMode } : {})
                               });
                             }}
                           >
@@ -6235,6 +6311,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <option value="Natal Aspects">Natal Aspects</option>
                             <option value="Natal Chart">Natal Chart</option>
                             <option value="Relationship">Relationship</option>
+                            <option value="Fallback Templates">Fallback Templates</option>
                           </select>
                         </label>
                         <label className="admin-metadata-field">

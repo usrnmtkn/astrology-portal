@@ -528,6 +528,36 @@ body,
   line-height: var(--leading-title);
 }
 
+.admin-fallback-usage {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-fallback-usage article {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.admin-fallback-usage span {
+  color: var(--admin-muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.admin-fallback-usage p {
+  color: var(--admin-ink);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
 .admin-metrics {
   display: grid;
   gap: 12px;
@@ -2011,8 +2041,31 @@ body,
   min-height: 128px;
 }
 
-.admin-template-content-card label:last-of-type textarea {
+.admin-template-content-card header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-template-content-card header > div:first-child,
+.admin-template-content-card .admin-managed-title {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-template-content-card .admin-managed-title textarea {
+  line-height: 1.35;
+  min-height: 54px;
+  overflow: hidden;
+  resize: vertical;
+}
+
+.admin-template-content-card > label:last-of-type textarea {
   min-height: 220px;
+}
+
+.admin-template-content-card .admin-managed-title textarea {
+  height: 54px;
+  min-height: 54px;
 }
 
 .admin-managed-badges {
@@ -2153,6 +2206,7 @@ body,
   .admin-private-meta,
   .admin-release-note,
   .admin-release-summary,
+  .admin-fallback-usage,
   .admin-settings-grid,
   .admin-template-guidance,
   .admin-template-two-column,
