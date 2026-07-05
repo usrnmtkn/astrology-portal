@@ -458,7 +458,7 @@ async function savedContentRows(startDate?: string | null, endDate?: string | nu
   const params = new URLSearchParams({
     select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,model,updated_at",
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
-    limit: "1000"
+    limit: "5000"
   });
 
   if (startDate && endDate) {
@@ -478,7 +478,29 @@ async function savedContentRows(startDate?: string | null, endDate?: string | nu
     throw new Error(`Supabase generated content list failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
-  return (payload ?? []) as SavedContentRow[];
+  const rows = (payload ?? []) as SavedContentRow[];
+  const fallbackParams = new URLSearchParams({
+    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,model,updated_at",
+    content_key: "like.fallback-hook/*",
+    order: "content_key.asc",
+    limit: "500"
+  });
+  const fallbackResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${fallbackParams}`, {
+    headers: adminHeaders()
+  });
+  const fallbackPayload = await fallbackResponse.json().catch(() => null);
+
+  if (!fallbackResponse.ok) {
+    throw new Error(`Supabase fallback template list failed with ${fallbackResponse.status}: ${JSON.stringify(fallbackPayload)}`);
+  }
+
+  const byId = new Map(rows.map((row) => [row.id, row]));
+
+  for (const row of (fallbackPayload ?? []) as SavedContentRow[]) {
+    byId.set(row.id, row);
+  }
+
+  return Array.from(byId.values());
 }
 
 function savedReviewRecord(row: SavedContentRow): ReviewRecord {
