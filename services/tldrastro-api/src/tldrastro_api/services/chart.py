@@ -5,7 +5,15 @@ from zoneinfo import ZoneInfo
 import swisseph as swe
 
 from tldrastro_api.config import get_settings
-from tldrastro_api.models import Aspect, ChartSettings, ChartSubject, HouseSystem, Position, Zodiac
+from tldrastro_api.models import (
+    Aspect,
+    AspectConditions,
+    ChartSettings,
+    ChartSubject,
+    HouseSystem,
+    Position,
+    Zodiac,
+)
 
 SIGNS: List[Tuple[str, str]] = [
     ("Aries", "♈"),
@@ -37,6 +45,18 @@ BODIES: List[Tuple[str, str, str, int]] = [
     ("Chiron", "⚷", "integration", swe.CHIRON),
     ("Lilith", "⚸", "shadow", swe.MEAN_APOG),
 ]
+
+BODY_IDS: Dict[str, int] = {point: body_id for point, _, _, body_id in BODIES}
+
+TRADITIONAL_PLANETS = {"Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"}
+
+COMBUSTION_ORB_DEGREES = 8.0
+
+FAVOR_CASES = {
+    ("Mercury", "Pisces", "Venus", "Pisces"),
+    ("Venus", "Virgo", "Mercury", "Virgo"),
+    ("Saturn", "Aries", "Sun", "Aries"),
+}
 
 HOUSE_SYSTEM_CODES: Dict[HouseSystem, bytes] = {
     HouseSystem.whole_sign: b"W",
@@ -112,6 +132,18 @@ def angular_separation(first: float, second: float) -> float:
 def shortest_signed_delta(first: float, second: float) -> float:
     delta = normalize_degrees(first - second)
     return delta - 360.0 if delta > 180.0 else delta
+
+
+def aspect_delta(first: float, second: float, exact_angle: float) -> float:
+    difference = normalize_degrees(first - second)
+    targets = [exact_angle]
+    reverse = normalize_degrees(360.0 - exact_angle)
+    if reverse not in targets:
+        targets.append(reverse)
+    return min(
+        (shortest_signed_delta(difference, target) for target in targets),
+        key=abs,
+    )
 
 
 def resolve_datetime(subject: ChartSubject, warnings: List[str], unknown_time_message: str) -> datetime:
@@ -284,15 +316,427 @@ def aspect_orbs(settings: ChartSettings) -> Dict[str, float]:
 def applying_phase(first: Position, second: Position, exact_angle: float) -> Optional[str]:
     if first.speed is None or second.speed is None:
         return None
-    delta = shortest_signed_delta(first.longitude - second.longitude, exact_angle)
+    delta = aspect_delta(first.longitude, second.longitude, exact_angle)
     relative_speed = first.speed - second.speed
     if relative_speed == 0:
         return None
-    next_delta = delta + relative_speed
+    next_delta = aspect_delta(
+        normalize_degrees(first.longitude + first.speed),
+        normalize_degrees(second.longitude + second.speed),
+        exact_angle,
+    )
     return "applying" if abs(next_delta) < abs(delta) else "separating"
 
 
-def calculate_aspects(positions: List[Position], settings: ChartSettings) -> List[Aspect]:
+def _faster_participant(first: Position, second: Position) -> Tuple[Optional[Position], Optional[Position]]:
+    if first.speed is None or second.speed is None:
+        return None, None
+    if abs(first.speed) == abs(second.speed):
+        return None, None
+    return (first, second) if abs(first.speed) > abs(second.speed) else (second, first)
+
+
+def _point_position(positions: List[Position], point: str) -> Optional[Position]:
+    return next((position for position in positions if position.point == point), None)
+
+
+def _ephemeris_position(
+    julian_day: float,
+    point: str,
+    fallback: Position,
+    settings: ChartSettings,
+) -> Position:
+    body_id = BODY_IDS.get(point)
+    if body_id is None:
+        return fallback
+    result, _ = swe.calc_ut(julian_day, body_id, configured_flags(settings))
+    _, sign, sign_glyph, degree_decimal, degree, minute = sign_for_longitude(result[0])
+    return Position(
+        point=fallback.point,
+        planet=fallback.planet,
+        glyph=fallback.glyph,
+        longitude=round(normalize_degrees(result[0]), 6),
+        sign=sign,
+        signGlyph=sign_glyph,
+        degree=degree,
+        minute=minute,
+        degreeDecimal=round(degree_decimal, 6),
+        house=fallback.house,
+        retrograde=result[3] < 0,
+        motion="retrograde" if result[3] < 0 else "direct",
+        speed=round(result[3], 8),
+        declination=fallback.declination,
+        theme=fallback.theme,
+    )
+
+
+def _aspect_orb(first: Position, second: Position, exact_angle: float) -> float:
+    return abs(aspect_delta(first.longitude, second.longitude, exact_angle))
+
+
+def _aspect_delta_for_positions(
+    julian_day: float,
+    first: Position,
+    second: Position,
+    exact_angle: float,
+    settings: ChartSettings,
+    move_first: bool,
+    move_second: bool,
+) -> float:
+    current_first = _ephemeris_position(julian_day, first.point, first, settings) if move_first else first
+    current_second = _ephemeris_position(julian_day, second.point, second, settings) if move_second else second
+    return aspect_delta(current_first.longitude, current_second.longitude, exact_angle)
+
+
+def _bisect_aspect_exact(
+    lower_julian_day: float,
+    upper_julian_day: float,
+    first: Position,
+    second: Position,
+    exact_angle: float,
+    settings: ChartSettings,
+    move_first: bool,
+    move_second: bool,
+) -> Optional[float]:
+    lower_delta = _aspect_delta_for_positions(
+        lower_julian_day,
+        first,
+        second,
+        exact_angle,
+        settings,
+        move_first,
+        move_second,
+    )
+    upper_delta = _aspect_delta_for_positions(
+        upper_julian_day,
+        first,
+        second,
+        exact_angle,
+        settings,
+        move_first,
+        move_second,
+    )
+    if abs(lower_delta) <= 0.0001:
+        return lower_julian_day
+    if abs(upper_delta) <= 0.0001:
+        return upper_julian_day
+    if lower_delta * upper_delta > 0:
+        return None
+
+    lower = lower_julian_day
+    upper = upper_julian_day
+    for _ in range(64):
+        midpoint = (lower + upper) / 2
+        midpoint_delta = _aspect_delta_for_positions(
+            midpoint,
+            first,
+            second,
+            exact_angle,
+            settings,
+            move_first,
+            move_second,
+        )
+        if abs(midpoint_delta) <= 0.0001:
+            return midpoint
+        if lower_delta * midpoint_delta <= 0:
+            upper = midpoint
+            upper_delta = midpoint_delta
+        else:
+            lower = midpoint
+            lower_delta = midpoint_delta
+
+    return (lower + upper) / 2
+
+
+def _estimated_days_to_exact(
+    first: Position,
+    second: Position,
+    exact_angle: float,
+    julian_day: float,
+    settings: ChartSettings,
+    move_first: bool = True,
+    move_second: bool = True,
+) -> Optional[float]:
+    current_delta = aspect_delta(first.longitude, second.longitude, exact_angle)
+    if abs(current_delta) <= 0.02:
+        return 0.0
+
+    first_speed = first.speed if move_first and first.speed is not None else 0.0
+    second_speed = second.speed if move_second and second.speed is not None else 0.0
+    relative_speed = first_speed - second_speed
+    if relative_speed == 0:
+        return None
+
+    estimated_days = -current_delta / relative_speed
+    if estimated_days <= 0:
+        estimated_days = abs(current_delta) / abs(relative_speed)
+    if estimated_days <= 0 or estimated_days > 4000:
+        return None
+
+    lower = julian_day
+    upper = julian_day + max(estimated_days * 1.5, 1 / 24)
+    max_upper = julian_day + min(max(estimated_days * 8, 1), 4000)
+    while upper <= max_upper:
+        exact_julian_day = _bisect_aspect_exact(
+            lower,
+            upper,
+            first,
+            second,
+            exact_angle,
+            settings,
+            move_first,
+            move_second,
+        )
+        if exact_julian_day is not None:
+            return exact_julian_day - julian_day
+        upper = julian_day + (upper - julian_day) * 2
+
+    return None
+
+
+def _receiver_leaves_sign_before(
+    receiver: Position,
+    julian_day: float,
+    exact_julian_day: float,
+    settings: ChartSettings,
+    receiver_moves: bool = True,
+) -> bool:
+    if not receiver_moves:
+        return False
+
+    body_id = BODY_IDS.get(receiver.point)
+    if body_id is None:
+        return False
+
+    start_sign = receiver.sign
+    lower = julian_day
+    duration = exact_julian_day - julian_day
+    step_days = max(1 / 1440, min(0.05, duration / 128 if duration > 0 else 1 / 1440))
+    upper = min(exact_julian_day, lower + step_days)
+    while upper <= exact_julian_day:
+        if _ephemeris_position(upper, receiver.point, receiver, settings).sign != start_sign:
+            for _ in range(64):
+                midpoint = (lower + upper) / 2
+                if _ephemeris_position(midpoint, receiver.point, receiver, settings).sign == start_sign:
+                    lower = midpoint
+                else:
+                    upper = midpoint
+            return upper < exact_julian_day
+        lower = upper
+        upper = min(exact_julian_day, upper + step_days)
+        if upper == lower:
+            break
+
+    return False
+
+
+def _stations_retrograde_before(
+    applying: Position,
+    julian_day: float,
+    exact_julian_day: float,
+    settings: ChartSettings,
+) -> bool:
+    body_id = BODY_IDS.get(applying.point)
+    if body_id is None or applying.speed is None or applying.speed < 0:
+        return False
+
+    lower = julian_day
+    duration = exact_julian_day - julian_day
+    step_days = max(1 / 1440, min(0.25, duration / 128 if duration > 0 else 1 / 1440))
+    previous_speed = applying.speed
+    upper = min(exact_julian_day, lower + step_days)
+    while upper <= exact_julian_day:
+        position = _ephemeris_position(upper, applying.point, applying, settings)
+        current_speed = position.speed if position.speed is not None else previous_speed
+        if previous_speed >= 0 and current_speed < 0:
+            for _ in range(64):
+                midpoint = (lower + upper) / 2
+                midpoint_position = _ephemeris_position(midpoint, applying.point, applying, settings)
+                midpoint_speed = midpoint_position.speed if midpoint_position.speed is not None else current_speed
+                if midpoint_speed >= 0:
+                    lower = midpoint
+                else:
+                    upper = midpoint
+            return upper < exact_julian_day
+        previous_speed = current_speed
+        lower = upper
+        upper = min(exact_julian_day, upper + step_days)
+        if upper == lower:
+            break
+
+    return False
+
+
+def _perfects_before_limits(
+    first: Position,
+    second: Position,
+    receiver: Position,
+    applying: Position,
+    exact_angle: float,
+    phase: Optional[str],
+    julian_day: Optional[float],
+    settings: ChartSettings,
+    move_first: bool = True,
+    move_second: bool = True,
+    receiver_moves: bool = True,
+) -> bool:
+    if phase != "applying" or julian_day is None:
+        return False
+
+    days_to_exact = _estimated_days_to_exact(
+        first,
+        second,
+        exact_angle,
+        julian_day,
+        settings,
+        move_first,
+        move_second,
+    )
+    if days_to_exact is None:
+        return False
+
+    exact_julian_day = julian_day + days_to_exact
+    exact_first = _ephemeris_position(exact_julian_day, first.point, first, settings) if move_first else first
+    exact_second = _ephemeris_position(exact_julian_day, second.point, second, settings) if move_second else second
+    if _aspect_orb(exact_first, exact_second, exact_angle) > 0.1:
+        return False
+
+    if _receiver_leaves_sign_before(
+        receiver,
+        julian_day,
+        exact_julian_day,
+        settings,
+        receiver_moves,
+    ):
+        return False
+
+    return not _stations_retrograde_before(applying, julian_day, exact_julian_day, settings)
+
+
+def aspect_conditions(
+    first: Position,
+    second: Position,
+    exact_angle: float,
+    phase: Optional[str],
+    positions: List[Position],
+    settings: ChartSettings,
+    julian_day: Optional[float] = None,
+) -> AspectConditions:
+    applying_planet, receiver = _faster_participant(first, second)
+    if applying_planet is None or receiver is None:
+        return AspectConditions(applying=phase == "applying")
+
+    sun = _point_position(positions, "Sun")
+    receiver_is_traditional = receiver.point in TRADITIONAL_PLANETS
+    applying_is_traditional = applying_planet.point in TRADITIONAL_PLANETS
+    receiver_combust = (
+        receiver_is_traditional
+        and receiver.point != "Sun"
+        and sun is not None
+        and angular_separation(receiver.longitude, sun.longitude) <= COMBUSTION_ORB_DEGREES
+    )
+    reception = (
+        phase == "applying"
+        and applying_is_traditional
+        and receiver_is_traditional
+        and SIGN_RULERS.get(applying_planet.sign) == receiver.point
+    )
+    favor_eligible = (
+        receiver_is_traditional
+        and applying_is_traditional
+        and (
+            receiver.point,
+            receiver.sign,
+            applying_planet.point,
+            applying_planet.sign,
+        )
+        in FAVOR_CASES
+    )
+
+    return AspectConditions(
+        applying=phase == "applying",
+        perfects=_perfects_before_limits(
+            first,
+            second,
+            receiver,
+            applying_planet,
+            exact_angle,
+            phase,
+            julian_day,
+            settings,
+        ),
+        receiverRetrograde=receiver.retrograde,
+        receiverCombust=receiver_combust,
+        reception=reception,
+        favorEligible=favor_eligible,
+    )
+
+
+def transit_aspect_conditions(
+    transit_position: Position,
+    natal_position: Position,
+    exact_angle: float,
+    phase: Optional[str],
+    transit_positions: List[Position],
+    natal_positions: List[Position],
+    settings: ChartSettings,
+    julian_day: Optional[float] = None,
+) -> AspectConditions:
+    receiver = natal_position
+    sun = _point_position(natal_positions, "Sun")
+    receiver_is_traditional = receiver.point in TRADITIONAL_PLANETS
+    applying_is_traditional = transit_position.point in TRADITIONAL_PLANETS
+    receiver_combust = (
+        receiver_is_traditional
+        and receiver.point != "Sun"
+        and sun is not None
+        and angular_separation(receiver.longitude, sun.longitude) <= COMBUSTION_ORB_DEGREES
+    )
+    reception = (
+        phase == "applying"
+        and applying_is_traditional
+        and receiver_is_traditional
+        and SIGN_RULERS.get(transit_position.sign) == receiver.point
+    )
+    favor_eligible = (
+        receiver_is_traditional
+        and applying_is_traditional
+        and (
+            receiver.point,
+            receiver.sign,
+            transit_position.point,
+            transit_position.sign,
+        )
+        in FAVOR_CASES
+    )
+
+    return AspectConditions(
+        applying=phase == "applying",
+        perfects=_perfects_before_limits(
+            transit_position,
+            natal_position,
+            receiver,
+            transit_position,
+            exact_angle,
+            phase,
+            julian_day,
+            settings,
+            move_first=True,
+            move_second=False,
+            receiver_moves=False,
+        ),
+        receiverRetrograde=receiver.retrograde,
+        receiverCombust=receiver_combust,
+        reception=reception,
+        favorEligible=favor_eligible,
+    )
+
+
+def calculate_aspects(
+    positions: List[Position],
+    settings: ChartSettings,
+    julian_day: Optional[float] = None,
+) -> List[Aspect]:
     orbs = aspect_orbs(settings)
     aspects: List[Aspect] = []
     for first_index, first in enumerate(positions):
@@ -303,6 +747,15 @@ def calculate_aspects(positions: List[Position], settings: ChartSettings) -> Lis
                 max_orb = orbs[aspect_type]
                 if orb <= max_orb:
                     phase = applying_phase(first, second, exact)
+                    conditions = aspect_conditions(
+                        first,
+                        second,
+                        exact,
+                        phase,
+                        positions,
+                        settings,
+                        julian_day,
+                    )
                     aspects.append(
                         Aspect(
                             **{
@@ -320,6 +773,7 @@ def calculate_aspects(positions: List[Position], settings: ChartSettings) -> Lis
                                     f"{aspect_type}-"
                                     f"{second.point.lower().replace(' ', '-')}"
                                 ],
+                                "conditions": conditions,
                             }
                         )
                     )

@@ -25,6 +25,16 @@ export type SkyAspect = {
   type: string;
   orb: number;
   meaning: string;
+  conditions?: AspectConditions;
+};
+
+export type AspectConditions = {
+  applying: boolean;
+  perfects: boolean;
+  receiverRetrograde: boolean;
+  receiverCombust: boolean;
+  reception: boolean;
+  favorEligible: boolean;
 };
 
 export type SkySnapshot = {
@@ -172,7 +182,8 @@ function normalizeAspect(aspect: Partial<SkyAspect>): SkyAspect | null {
     to: aspect.to,
     type: aspect.type,
     orb: Number(aspect.orb ?? 0),
-    meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`
+    meaning: `${aspect.from} ${aspect.type} ${aspect.to} is active now.`,
+    conditions: aspect.conditions
   };
 }
 

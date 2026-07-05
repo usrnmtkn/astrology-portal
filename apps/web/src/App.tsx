@@ -251,7 +251,7 @@ type TransitItem = {
   natalSign: string;
   natalHouse?: number;
   orb: string;
-  direction: TransitDirection;
+  direction?: TransitDirection;
   arc: number[];
   note: string;
   score?: number;
@@ -4422,7 +4422,6 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         natalSign: natalPosition.sign,
         natalHouse: natalPosition.house,
         orb: formatOrb(aspect.orbValue),
-        direction: aspect.orbValue <= 1 ? "applying" : "separating",
         arc: [aspect.orbValue + 1.8, aspect.orbValue + 1.1, aspect.orbValue + 0.4, aspect.orbValue, aspect.orbValue + 0.5, aspect.orbValue + 1.2],
         note: transitNote(transitPosition.planet, aspect.type, natalPosition.planet),
         isSlowGeneralWeather: slowChapterPlanets.has(transitPosition.planet) && !elevatedSlowTransit
@@ -6124,9 +6123,15 @@ function aspectWithArticle(aspect: string) {
   return `${/^[aeiou]/i.test(aspect) ? "an" : "a"} ${aspect}`;
 }
 
+function transitDirectionPhrase(direction?: TransitDirection) {
+  if (direction === "applying") return "forming";
+  if (direction === "separating") return "separating from";
+  return "in";
+}
+
 function circleTransitParagraph(chart: ManualChart, transit: TransitItem, currentSky: SkySnapshot, timing: FriendTimingContext) {
   const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
-  const direction = transit.direction === "applying" ? "forming" : "separating from";
+  const direction = transitDirectionPhrase(transit.direction);
   const relevance = transit.natalPoint === timing.lordOfYear
     ? `Since ${transit.natalPoint} is the lord of the year, this ties directly into the main story.`
     : ["Ascendant", "Descendant"].includes(transit.natalPoint)
@@ -6259,7 +6264,7 @@ function circlePlanetDetailBody(chart: ManualChart, planet: string, currentSky: 
 
   const timing = friendTimingContext(chart, currentSky);
   const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
-  const direction = transit.direction === "applying" ? "forming" : "separating from";
+  const direction = transitDirectionPhrase(transit.direction);
   const natalHouse = transit.natalHouse ?? chart.natalChart?.positions.find((position) => position.planet === transit.natalPoint)?.house ?? null;
   const housePhrase = natalHouse ? ` in their ${ordinalHouse(natalHouse)} house, the part of life connected to ${groupHouseThemes(natalHouse)}` : "";
   const annualTiming = transit.natalPoint === timing.lordOfYear && timing.lordOfYear
@@ -6313,7 +6318,7 @@ function circleHouseDetailBody(chart: ManualChart, house: number, currentSky: Sk
   }
 
   const timingLabel = transitItemTimingDisplay(transit, currentSky.generatedAt).label;
-  const direction = transit.direction === "applying" ? "forming" : "separating from";
+  const direction = transitDirectionPhrase(transit.direction);
 
   return [
     `${chart.displayName}'s ${ordinalHouse(house)} house is active through transiting ${transit.transitPlanet} ${direction} ${aspectWithArticle(transit.aspect)} to their ${transit.natalPoint} (${timingLabel}). This brings ${comparisonPointRole(transit.transitPlanet)} into ${groupHouseThemes(house)}.`,
@@ -13231,7 +13236,7 @@ function TransitList({
             <strong>{transit.natalPoint}</strong>
           </span>
           <span className="orb">{transit.orb}</span>
-          {transit.direction === "applying" ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
+          {transit.direction === "applying" ? <ArrowUpRight size={18} /> : transit.direction === "separating" ? <ArrowDownRight size={18} /> : null}
         </button>
       ))}
     </section>

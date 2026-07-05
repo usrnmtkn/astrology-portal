@@ -248,7 +248,7 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
         location=subject.location,
         generatedAt=utc_datetime.isoformat(),
         positions=positions,
-        aspects=calculate_aspects(positions, subject.settings),
+        aspects=calculate_aspects(positions, subject.settings, julian_day),
         angles=angles,
         houseCusps=[round(cusp, 6) for cusp in cusps],
         ascendant=ascendant.sign if ascendant else "",
