@@ -6740,6 +6740,44 @@ function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: 
   return `${possessiveLabel(ownerName)} ${firstPoint} ${aspect} ${comparisonPossessive} ${secondPoint}`;
 }
 
+const synastryAnglePoints = new Set(["Ascendant", "Midheaven"]);
+
+function isSynastryAnglePoint(point: string) {
+  return synastryAnglePoints.has(point);
+}
+
+function isDirectionalPlanetToAngleSynastry(firstPoint: string, secondPoint: string) {
+  return !isSynastryAnglePoint(firstPoint) && isSynastryAnglePoint(secondPoint);
+}
+
+function shouldSkipDirectionalAngleSynastryKeys(firstPoint: string, secondPoint: string) {
+  return (isSynastryAnglePoint(firstPoint) || isSynastryAnglePoint(secondPoint))
+    && !isDirectionalPlanetToAngleSynastry(firstPoint, secondPoint);
+}
+
+function synastryContactContentKeys(firstPoint: string, aspect: string, secondPoint: string) {
+  if (shouldSkipDirectionalAngleSynastryKeys(firstPoint, secondPoint)) {
+    return [];
+  }
+
+  return relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
+}
+
+function synastryContactFallback(firstPoint: string, aspect: string, secondPoint: string) {
+  if (shouldSkipDirectionalAngleSynastryKeys(firstPoint, secondPoint)) {
+    return emptyContentFallback("friends.synastry-contact");
+  }
+
+  return fallbackFromHook(
+    "friends.synastry-contact",
+    {
+      planetA: firstPoint,
+      aspect,
+      planetB: secondPoint
+    }
+  );
+}
+
 function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
   if (!sky) {
     return [];
@@ -6955,6 +6993,7 @@ function synastryContactSummary(
   contact: Omit<SynastryContact, "summary">,
   generatedContent?: GeneratedContentMap
 ) {
+  const afterContentFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
@@ -6962,14 +7001,7 @@ function synastryContactSummary(
         {
           contentKey: templateFallbackContentKeys.friendsSynastryContact,
           slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name),
-          afterContentFallback: fallbackFromHook(
-            "friends.synastry-contact",
-            {
-              planetA: contact.friendPoint.name,
-              aspect: contact.aspect,
-              planetB: contact.yourPoint.name
-            }
-          )
+          afterContentFallback
         }
       )
     : null;
@@ -7013,7 +7045,7 @@ function synastryContacts(
         orb: aspect.orbValue,
         score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
         tone: synastryTone(aspect.type),
-        contentKeys: relationshipAspectContentKeys(friendPoint.name, aspect.type, yourPoint.name, "synastry")
+        contentKeys: synastryContactContentKeys(friendPoint.name, aspect.type, yourPoint.name)
       };
 
       return [{
@@ -7026,14 +7058,7 @@ function synastryContacts(
 }
 
 function synastryDetailCopy(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
-  const hookFallback = fallbackFromHook(
-    "friends.synastry-contact",
-    {
-      planetA: contact.friendPoint.name,
-      aspect: contact.aspect,
-      planetB: contact.yourPoint.name
-    }
-  );
+  const hookFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
