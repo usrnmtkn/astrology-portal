@@ -219,6 +219,7 @@ type AdminReviewRecord = {
   subjectType?: string;
   provider?: string | null;
   model?: string | null;
+  promptVersion?: string | null;
   updatedAt: string;
   rawGlobalRow?: AdminGeneratedContentRow;
   rawPrivateRow?: AdminUserGeneratedContentRow;
@@ -1429,6 +1430,7 @@ function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
     sourceSnapshot: row.source_snapshot,
     reviewerNotes: row.reviewer_notes,
     model: row.model,
+    promptVersion: row.prompt_version,
     updatedAt: row.updated_at,
     rawGlobalRow: row
   };
@@ -1446,6 +1448,10 @@ function savedGlobalRowId(record: AdminReviewRecord) {
 
 function knowledgeIdsForReviewRecord(record: AdminReviewRecord) {
   return record.rawGlobalRow?.knowledge_ids ?? record.knowledgeIds ?? [];
+}
+
+function promptVersionForReviewSave(record: AdminReviewRecord, fallbackPromptVersion?: string) {
+  return record.rawGlobalRow?.prompt_version ?? record.promptVersion ?? fallbackPromptVersion;
 }
 
 function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewRecord {
@@ -3908,6 +3914,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       const nextTitle = (isActiveEdit ? reviewEditTitle : record.title).trim() || record.title;
       const existingGlobalRowId = savedGlobalRowId(record);
       const nextKnowledgeIds = knowledgeIdsForReviewRecord(record);
+      const nextContentKey = existingGlobalRowId ? record.contentKey : modularPayload.contentKey;
+      const nextPromptVersion = promptVersionForReviewSave(record, modularPayload.promptVersion);
 
       if (record.source === "private" && record.rawPrivateRow) {
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
@@ -3951,7 +3959,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           method: existingGlobalRowId ? "PATCH" : "POST",
           body: JSON.stringify({
             id: existingGlobalRowId || undefined,
-            contentKey: modularPayload.contentKey,
+            contentKey: nextContentKey,
             surface: nextSurface,
             mode: nextMode,
             status: nextStatus,
@@ -3969,7 +3977,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             },
             knowledgeIds: nextKnowledgeIds,
             reviewerNotes: record.reviewerNotes ?? "",
-            promptVersion: modularPayload.promptVersion,
+            promptVersion: nextPromptVersion,
             blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType
           })
         }
@@ -3990,7 +3998,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               mode: nextMode,
               status: nextStatus,
               eventType: nextEventType,
-              contentKey: modularPayload.contentKey,
+              contentKey: nextContentKey,
               title: nextTitle,
               targetDate: nextTargetDate,
               summary: nextSummary,
@@ -3998,6 +4006,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               facts: nextFacts,
               knowledgeIds: row?.knowledge_ids ?? nextKnowledgeIds,
               sourceSnapshot: row?.source_snapshot ?? currentRecord.sourceSnapshot,
+              promptVersion: row?.prompt_version ?? nextPromptVersion ?? currentRecord.promptVersion,
               rawGlobalRow: row ?? currentRecord.rawGlobalRow
             }
           : currentRecord
@@ -4102,6 +4111,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setReviewEditMetadata(metadata);
     setIsGeneratingReviewDraft(true);
     const nextKnowledgeIds = knowledgeIdsForReviewRecord(record);
+    const existingGlobalRowId = savedGlobalRowId(record);
+    const nextContentKey = existingGlobalRowId ? record.contentKey : modularPayload.contentKey;
+    const nextPromptVersion = promptVersionForReviewSave(record, modularPayload.promptVersion);
     setReviewDraftResults((currentResults) => {
       const nextResults = { ...currentResults };
       delete nextResults[record.id];
@@ -4131,7 +4143,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         {
           method: "POST",
           body: JSON.stringify({
-            contentKey: modularPayload.contentKey,
+            contentKey: nextContentKey,
             surface: metadata.surface,
             mode: metadata.mode,
             eventType: modularPayload.eventType,
@@ -4143,7 +4155,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             },
             sourceSnapshot: {
               ...(record.sourceSnapshot ?? {}),
-              promptVersion: modularPayload.promptVersion,
+              promptVersion: nextPromptVersion,
               adminReviewSource: record.source,
               generatedFromReviewRecordId: record.id
             },
@@ -4201,6 +4213,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               sourceSnapshot: savedRow?.source_snapshot ?? currentRecord.sourceSnapshot,
               sections: generated.sections ?? currentRecord.sections,
               model: generated.model ?? currentRecord.model,
+              promptVersion: savedRow?.prompt_version ?? nextPromptVersion ?? currentRecord.promptVersion,
               rawGlobalRow: savedRow ?? currentRecord.rawGlobalRow
             }
           : currentRecord
