@@ -1046,16 +1046,21 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
     template: [
       "Use for two-chart relationship contacts, compatibility, friend charts, and Bonds pages.",
       "Write about what happens between the two people, not two separate natal descriptions.",
-      "Name the shared feeling, the friction, what each person may expect, and the practical thing they need to understand.",
+      "Follow this shape for synastry aspects:",
+      "Around them, [emotional/relational experience becomes easier or harder to notice]. They may [specific behavior], which can make it easier to [lived response]. There is something [supportive/challenging/clarifying] here that helps you see [core dynamic].",
+      "Their [planet quality] can make it easier/harder to [specific relationship behavior]. When life is [situation], they may [specific effect]. When life is [opposite situation], they can [specific effect]. That kind of [support/pressure/intensity] can help you [growth edge].",
+      "The thing to watch is [shadow]. You may both [pattern] before you have really [truth of the aspect].",
+      "[Direct advice]. This connection is strongest when [integration], not [avoidance/shadow].",
       "Use names when available. Be direct, specific, and human.",
       "Do not overstate fate, trauma, or permanence."
     ].join("\n"),
     generationGuide: [
       "Treat the contact as a dynamic between two people.",
-      "Explain what one person activates in the other and how that may feel from both sides.",
-      "For supportive aspects, name what feels easy and what still needs care.",
-      "For challenging aspects, name the mismatch, expectation, or recurring tension in concrete terms.",
-      "End with a practical relational move, such as naming expectations, slowing down, or separating intent from impact."
+      "Open with what becomes easier or harder to notice around the other person.",
+      "Name the specific behavior one person may bring out and the lived response it creates.",
+      "Tie the planet quality to practical relationship behavior, including one supportive condition and one harder condition.",
+      "Name the shadow pattern both people can fall into before the real aspect truth is understood.",
+      "End with direct advice framed as integration, not avoidance."
     ].join("\n"),
     bannedWords: [
       "soulmate",
@@ -1067,13 +1072,13 @@ const defaultVoiceTemplates: Record<VoiceTemplateSurface, VoiceTemplateConfig> =
       "guaranteed"
     ].join("\n"),
     phraseBank: [
-      "This can feel easy because...",
-      "The tension is that...",
-      "One person may expect...",
-      "The other person may experience...",
-      "This works best when both people...",
-      "Name the expectation before it becomes resentment.",
-      "The practical move is..."
+      "Around them...",
+      "They may...",
+      "There is something...",
+      "Their [planet quality] can make it easier/harder to...",
+      "When life is...",
+      "The thing to watch is...",
+      "This connection is strongest when..."
     ].join("\n")
   },
   composite: {

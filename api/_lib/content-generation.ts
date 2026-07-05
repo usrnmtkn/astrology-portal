@@ -2303,7 +2303,13 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
         `Person B body sign: ${aspectSignB || "missing"}.`,
         `Person B body house: ${aspectHouseB || "missing"}.`,
         "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning.",
-        "Relationship voice kit is not final yet, so write direct plain second-person relationship copy. No therapy-speak, no fate language, no soulmate language."
+        "Use this synastry aspect structure:",
+        "Around them, [emotional/relational experience becomes easier or harder to notice]. They may [specific behavior], which can make it easier to [lived response]. There is something [supportive/challenging/clarifying] here that helps you see [core dynamic].",
+        "Their [planet quality] can make it easier/harder to [specific relationship behavior]. When life is [situation], they may [specific effect]. When life is [opposite situation], they can [specific effect]. That kind of [support/pressure/intensity] can help you [growth edge].",
+        "The thing to watch is [shadow]. You may both [pattern] before you have really [truth of the aspect].",
+        "[Direct advice]. This connection is strongest when [integration], not [avoidance/shadow].",
+        "Fill the brackets with specific, chart-grounded relational copy; do not leave bracket placeholders in the output.",
+        "No therapy-speak, no fate language, no soulmate language."
       ].join("\n");
     }
 
