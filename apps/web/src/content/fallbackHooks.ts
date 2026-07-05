@@ -56,6 +56,17 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "sky.lunar-calendar-day",
+    label: "Sky > Lunar Calendar Day",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Reusable lunar calendar day copy when phase/sign/date-specific lunar editorial rows are missing.",
+    knowledgeIdTemplates: ["sky-moon-in-{moonSign}", "moon-in-{moonSign}", "lunar-{moonPhase}-{moonSign}"],
+    requiredFacts: ["moon phase", "moon sign"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "sky.planetary-placement",
     label: "Sky > Planetary Placement",
     surface: "sky",

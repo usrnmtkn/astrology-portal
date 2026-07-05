@@ -46,6 +46,26 @@
       "contentType": "template"
     },
     {
+      "contentId": "fallback-hook/sky.lunar-calendar-day",
+      "source": "fallbackHooks.ts",
+      "status": "published",
+      "fieldMapping": {
+        "title": "copy.headline",
+        "summary": "copy.summary",
+        "body": "copy.body",
+        "bestMove": "copy.bestMove",
+        "emptyState": "copy.emptyState"
+      },
+      "fields": {
+        "title": "",
+        "summary": "",
+        "body": "",
+        "bestMove": "",
+        "emptyState": ""
+      },
+      "contentType": "template"
+    },
+    {
       "contentId": "fallback-hook/sky.planetary-placement",
       "source": "fallbackHooks.ts",
       "status": "published",
