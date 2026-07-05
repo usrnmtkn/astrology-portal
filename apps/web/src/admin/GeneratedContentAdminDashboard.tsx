@@ -66,7 +66,7 @@ type VoiceTemplateConfig = {
 };
 
 type AdminContentExportFormat = "csv" | "json";
-type AdminContentScope = "settings" | "vocabulary" | "templates";
+type AdminContentScope = "settings" | "vocabulary" | "templates" | "context";
 
 type AdminContentExchangeBundle = {
   schema: "tldrastro-admin-content-v1";
@@ -92,6 +92,23 @@ type AdminContentExchangeBundle = {
     headline: string;
     summary: string;
     body: string;
+  }>;
+  contextRows: Array<{
+    id?: string;
+    contentKey: string;
+    hookKey: string;
+    label: string;
+    description: string;
+    surface: string;
+    mode: string;
+    domain: string;
+    requiredFacts: string[];
+    knowledgeIdPatterns: string[];
+    exampleIds: string[];
+    headline: string;
+    summary: string;
+    body: string;
+    bestMove: string;
   }>;
 };
 
@@ -585,6 +602,61 @@ function draftMapForTaglineRows(rows: AdminGeneratedContentRow[]) {
   return Object.fromEntries(rows.map((row) => [row.content_key, taglineDraftFromRow(row)]));
 }
 
+function contextContentKey(hookKey: string) {
+  return `fallback-hook/${hookKey}`;
+}
+
+function fallbackHookForContextRow(hookKey: string) {
+  return fallbackHookDefinitions.find((hook) => hook.key === hookKey) ?? null;
+}
+
+function stringArrayFromCsvValue(value: string | undefined) {
+  const text = value?.trim();
+
+  if (!text) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(text) as unknown;
+
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => String(item)).filter(Boolean);
+    }
+  } catch {
+    return text.split("|").map((item) => item.trim()).filter(Boolean);
+  }
+
+  return [];
+}
+
+function contextRowsFromTemplateRows(rows: AdminGeneratedContentRow[]): AdminContentExchangeBundle["contextRows"] {
+  return fallbackHookDefinitions.map((hook) => {
+    const contentKey = contextContentKey(hook.key);
+    const matchedRow = rows.find((row) => row.content_key === contentKey);
+    const draft = matchedRow ? templateDraftFromRow(matchedRow) : null;
+    const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
+
+    return {
+      id: matchedRow?.id,
+      contentKey,
+      hookKey: hook.key,
+      label: hook.label,
+      description: hook.description,
+      surface: hook.surface,
+      mode: hook.mode,
+      domain: hook.domain,
+      requiredFacts: hook.requiredFacts,
+      knowledgeIdPatterns: hook.knowledgeIdTemplates,
+      exampleIds: knowledgeIdsForFallbackHook(hook.key, sampleContext),
+      headline: draft?.headline || hook.copy.headline,
+      summary: draft?.summary || hook.copy.summary,
+      body: draft?.body || hook.copy.body,
+      bestMove: hook.copy.bestMove
+    };
+  });
+}
+
 function csvEscape(value: unknown) {
   const text = value === null || value === undefined ? "" : String(value);
 
@@ -597,10 +669,19 @@ function csvFromRows(rows: AdminContentCsvRow[]) {
     "surfaceKey",
     "id",
     "contentKey",
+    "hookKey",
     "point",
+    "label",
+    "description",
+    "mode",
+    "domain",
+    "requiredFacts",
+    "knowledgeIdPatterns",
+    "exampleIds",
     "headline",
     "summary",
     "body",
+    "bestMove",
     "natal",
     "sky",
     "tagline",
@@ -700,8 +781,26 @@ function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminCont
     summary: row.summary,
     body: row.body
   }));
+  const contextCsvRows = bundle.contextRows.map((row) => ({
+    collection: "context",
+    id: row.id ?? "",
+    contentKey: row.contentKey,
+    hookKey: row.hookKey,
+    label: row.label,
+    description: row.description,
+    surfaceKey: row.surface,
+    mode: row.mode,
+    domain: row.domain,
+    requiredFacts: JSON.stringify(row.requiredFacts),
+    knowledgeIdPatterns: JSON.stringify(row.knowledgeIdPatterns),
+    exampleIds: JSON.stringify(row.exampleIds),
+    headline: row.headline,
+    summary: row.summary,
+    body: row.body,
+    bestMove: row.bestMove,
+  }));
 
-  return [...settingsRows, ...vocabularyCsvRows, ...taglineCsvRows, ...templateCsvRows];
+  return [...settingsRows, ...vocabularyCsvRows, ...taglineCsvRows, ...templateCsvRows, ...contextCsvRows];
 }
 
 function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
@@ -710,6 +809,7 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
   const vocabularyRows: AdminContentExchangeBundle["vocabularyRows"] = [];
   const taglineRows: AdminContentExchangeBundle["taglineRows"] = [];
   const templateRows: AdminContentExchangeBundle["templateRows"] = [];
+  const contextRows: AdminContentExchangeBundle["contextRows"] = [];
 
   for (const row of csvRows) {
     if (row.collection === "settings" && row.surfaceKey in defaultVoiceTemplates) {
@@ -751,6 +851,31 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
         body: row.body ?? ""
       });
     }
+
+    if (row.collection === "context" && (row.hookKey || row.contentKey)) {
+      const hookKey = row.hookKey || row.contentKey.replace(/^fallback-hook\//, "");
+      const hook = fallbackHookForContextRow(hookKey);
+      const requiredFacts = stringArrayFromCsvValue(row.requiredFacts);
+      const knowledgeIdPatterns = stringArrayFromCsvValue(row.knowledgeIdPatterns);
+
+      contextRows.push({
+        id: row.id || undefined,
+        contentKey: row.contentKey || contextContentKey(hookKey),
+        hookKey,
+        label: row.label || hook?.label || titleFromVocabularyContentKey(hookKey),
+        description: row.description || hook?.description || "",
+        surface: row.surfaceKey || hook?.surface || "",
+        mode: row.mode || row.template || hook?.mode || "",
+        domain: row.domain || hook?.domain || "",
+        requiredFacts: requiredFacts.length ? requiredFacts : hook?.requiredFacts ?? [],
+        knowledgeIdPatterns: knowledgeIdPatterns.length ? knowledgeIdPatterns : hook?.knowledgeIdTemplates ?? [],
+        exampleIds: stringArrayFromCsvValue(row.exampleIds),
+        headline: row.headline ?? "",
+        summary: row.summary ?? "",
+        body: row.body ?? "",
+        bestMove: row.bestMove ?? ""
+      });
+    }
   }
 
   return {
@@ -759,7 +884,8 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
     settings,
     vocabularyRows,
     taglineRows,
-    templateRows
+    templateRows,
+    contextRows
   };
 }
 
@@ -776,7 +902,8 @@ function contentBundleFromJson(text: string): AdminContentExchangeBundle {
     settings: parsed.settings ?? {},
     vocabularyRows: parsed.vocabularyRows ?? [],
     taglineRows: parsed.taglineRows ?? [],
-    templateRows: parsed.templateRows ?? []
+    templateRows: parsed.templateRows ?? [],
+    contextRows: parsed.contextRows ?? []
   };
 }
 
@@ -2466,7 +2593,8 @@ export function GeneratedContentAdminDashboard() {
           summary: draftValue.summary,
           body: draftValue.body
         };
-      }) : []
+      }) : [],
+      contextRows: scope === "context" ? contextRowsFromTemplateRows(nextTemplateRows) : []
     };
   }
 
@@ -2534,6 +2662,7 @@ export function GeneratedContentAdminDashboard() {
   function contentScopeFilename(scope: AdminContentScope) {
     if (scope === "settings") return "settings";
     if (scope === "vocabulary") return "vocabulary";
+    if (scope === "context") return "context-rows";
     return "templates";
   }
 
@@ -2553,7 +2682,7 @@ export function GeneratedContentAdminDashboard() {
       const [nextVocabularyRows, nextTaglineRows] = scope === "vocabulary"
         ? await Promise.all([fetchVocabularyRowsForAdmin(), fetchTaglineRowsForAdmin()])
         : [vocabularyRows, taglineRows];
-      const nextTemplateRows = scope === "templates" ? await fetchTemplateRowsForAdmin() : templateContentRows;
+      const nextTemplateRows = scope === "templates" || scope === "context" ? await fetchTemplateRowsForAdmin() : templateContentRows;
 
       if (scope === "vocabulary") {
         setVocabularyRows(nextVocabularyRows);
@@ -2562,7 +2691,7 @@ export function GeneratedContentAdminDashboard() {
         setTaglineDrafts(draftMapForTaglineRows(nextTaglineRows));
       }
 
-      if (scope === "templates") {
+      if (scope === "templates" || scope === "context") {
         setTemplateContentRows(nextTemplateRows);
         setTemplateContentDrafts(draftMapForTemplateRows(nextTemplateRows));
       }
@@ -2669,6 +2798,64 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  async function upsertContextImportRow(
+    importedRow: AdminContentExchangeBundle["contextRows"][number],
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const hookKey = importedRow.hookKey || importedRow.contentKey.replace(/^fallback-hook\//, "");
+    const contentKey = importedRow.contentKey || contextContentKey(hookKey);
+    const hook = fallbackHookForContextRow(hookKey);
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === contentKey);
+    const patch = {
+      headline: importedRow.headline,
+      summary: importedRow.summary,
+      body: importedRow.body,
+      sourceSnapshot: {
+        contentType: "template",
+        source: "admin-context-import",
+        hookKey,
+        label: importedRow.label || hook?.label || "",
+        description: importedRow.description || hook?.description || "",
+        requiredFacts: importedRow.requiredFacts?.length ? importedRow.requiredFacts : hook?.requiredFacts ?? [],
+        knowledgeIdPatterns: importedRow.knowledgeIdPatterns?.length ? importedRow.knowledgeIdPatterns : hook?.knowledgeIdTemplates ?? [],
+        exampleIds: importedRow.exampleIds ?? []
+      }
+    };
+
+    if (matchedRow) {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: matchedRow.id,
+            ...patch
+          })
+        }
+      );
+      return;
+    }
+
+    await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          contentKey,
+          surface: hook?.surface ?? importedRow.surface ?? "sky",
+          mode: hook?.mode ?? importedRow.mode ?? "feed",
+          eventType: "fallback-hook",
+          status: "LIVE",
+          promptVersion: "fallback-hook-template-v1",
+          knowledgeIds: importedRow.exampleIds ?? [],
+          ...patch
+        })
+      }
+    );
+  }
+
   async function importManagedContentBundle(bundle: AdminContentExchangeBundle, scope: AdminContentScope) {
     if (scope !== "settings" && !canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -2717,6 +2904,19 @@ export function GeneratedContentAdminDashboard() {
         await loadVocabularyRows();
         setAccessStatus("valid");
         setMessage(`Imported ${bundle.vocabularyRows.length} vocabulary rows and ${bundle.taglineRows.length} tagline rows.`);
+        return;
+      }
+
+      if (scope === "context") {
+        const availableRows = await fetchTemplateRowsForAdmin();
+
+        for (const row of bundle.contextRows) {
+          await upsertContextImportRow(row, availableRows);
+        }
+
+        await loadTemplateContentRows();
+        setAccessStatus("valid");
+        setMessage(`Imported ${bundle.contextRows.length} context rows.`);
         return;
       }
 
@@ -5102,6 +5302,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <p className="admin-eyebrow">Content hooks</p>
                   <h2>Named Content Points</h2>
                 </div>
+                <div className="admin-template-actions">
+                  <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as JSON">
+                    <Download size={16} aria-hidden="true" />
+                    JSON
+                  </button>
+                  <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as CSV">
+                    <Download size={16} aria-hidden="true" />
+                    CSV
+                  </button>
+                  <button type="button" onClick={() => triggerContentImport("context")} disabled={isLoading || !canUseApi}>
+                    <Upload size={16} aria-hidden="true" />
+                    Import
+                  </button>
+                </div>
               </div>
 
               <div className="admin-hooks-grid">
@@ -5427,6 +5641,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <button type="button" onClick={() => setActivePage("content")}>
                   <LayoutDashboard size={16} aria-hidden="true" />
                   Back to Content
+                </button>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as JSON">
+                  <Download size={16} aria-hidden="true" />
+                  JSON
+                </button>
+                <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as CSV">
+                  <Download size={16} aria-hidden="true" />
+                  CSV
+                </button>
+                <button type="button" onClick={() => triggerContentImport("context")} disabled={isLoading || !canUseApi}>
+                  <Upload size={16} aria-hidden="true" />
+                  Import
                 </button>
               </div>
             </div>
