@@ -1,6 +1,6 @@
 import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
 import type { GeneratedContentMode } from "../services/generatedContent";
 import {
@@ -1994,7 +1994,7 @@ function normalizeGeneratedDraftCopy(
   );
 }
 
-function stopEditorKeyPropagation(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+function stopEditorKeyPropagation(event: ReactKeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
   event.stopPropagation();
 }
 
@@ -6074,6 +6074,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <span>Title</span>
                         <input
                           value={isEditingReviewRecord ? reviewEditTitle : selectedReviewRecord.title}
+                          onKeyDownCapture={stopEditorKeyPropagation}
                           onChange={(event) => {
                             if (!isEditingReviewRecord) {
                               beginReviewEdit(selectedReviewRecord);
@@ -6221,6 +6222,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           value={selectedReviewTldr}
                           placeholder="Optional short reader-facing TLDR."
                           readOnly={!canEditSelectedReviewRecord}
+                          onKeyDownCapture={stopEditorKeyPropagation}
                           onChange={(event) => {
                             if (!isEditingReviewRecord && selectedReviewRecord) {
                               beginReviewEdit(selectedReviewRecord);
@@ -6236,6 +6238,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           rows={18}
                           value={selectedReviewText}
                           readOnly={!canEditSelectedReviewRecord}
+                          onKeyDownCapture={stopEditorKeyPropagation}
                           onChange={(event) => {
                             if (!isEditingReviewRecord && selectedReviewRecord) {
                               beginReviewEdit(selectedReviewRecord);
