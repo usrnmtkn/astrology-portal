@@ -2901,7 +2901,7 @@ export function GeneratedContentAdminDashboard() {
           surface: "sky",
           mode: "feed",
           eventType: "tagline",
-          status: "LIVE",
+          status: "DRAFT",
           promptVersion: "tagline-v1",
           ...patch
         })
@@ -2958,7 +2958,7 @@ export function GeneratedContentAdminDashboard() {
           surface: hook?.surface ?? importedRow.surface ?? "sky",
           mode: hook?.mode ?? importedRow.mode ?? "feed",
           eventType: "fallback-hook",
-          status: "LIVE",
+          status: "DRAFT",
           promptVersion: "fallback-hook-template-v1",
           knowledgeIds: importedRow.exampleIds ?? [],
           ...patch

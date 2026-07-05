@@ -57,6 +57,7 @@ Last updated: 2026-06-04
 - [ ] Keep Sky, You, Synastry, and Composite content keyed separately.
 - [x] Add protected review API before allowing generated drafts to become `LIVE`.
 - [ ] Add admin or super-user dashboard UI for reviewing generated drafts.
+- [ ] Fix Sky detail deep-link hydration. Reproduction: fresh-load `http://127.0.0.1:5173/#sky/retrograde/south-node`; the hash stays in the URL but the app lands on the Sky landing view instead of the South Node detail page. In-app navigation from the Sky list opens the detail correctly. `#sky/aspect/chiron/sextile/north-node` shows the same fresh-load failure, so aspect detail routes likely share the same missing route-to-detail hydration.
 
 ## Content Review
 
