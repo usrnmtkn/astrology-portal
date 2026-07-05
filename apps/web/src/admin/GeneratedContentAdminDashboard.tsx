@@ -191,6 +191,8 @@ type AdminVocabularyDraft = {
   headline: string;
   natal: string;
   sky: string;
+  stylePhrase?: string;
+  styleShort?: string;
 };
 
 type AdminNatalTaglineDraft = {
@@ -205,6 +207,7 @@ type AdminVocabularyCardItem = {
   point: string;
   row?: AdminGeneratedContentRow;
   taglineContentKey?: string;
+  kind?: "topic" | "sign-style";
 };
 
 type AdminTemplateDraft = {
@@ -550,12 +553,38 @@ function vocabularyHeadline(row: AdminGeneratedContentRow) {
 function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyDraft {
   const sections = objectValue(row.sections);
   const topic = objectValue(sections?.topic);
+  const style = objectValue(sections?.style);
 
   return {
     headline: vocabularyHeadline(row),
     natal: stringValue(topic?.natal) || row.body || "",
-    sky: stringValue(topic?.sky) || stringValue(topic?.natal) || row.body || ""
+    sky: stringValue(topic?.sky) || stringValue(topic?.natal) || row.body || "",
+    stylePhrase: stringValue(style?.phrase) || row.body || "",
+    styleShort: stringValue(style?.short) || stringValue(style?.phrase) || row.summary || row.body || ""
   };
+}
+
+function vocabularyRowKind(contentKey: string): "topic" | "sign-style" {
+  return contentKey.startsWith("vocab/sign-style/") ? "sign-style" : "topic";
+}
+
+const signContextAspectCardsSettingKey = "app-setting/sign-context-on-aspect-cards";
+
+function signContextSettingEnabled(row?: AdminGeneratedContentRow | null) {
+  const sections = objectValue(row?.sections);
+  const enabled = sections?.enabled;
+
+  if (typeof enabled === "boolean") {
+    return enabled;
+  }
+
+  const normalizedBody = row?.body?.trim().toLowerCase();
+
+  if (normalizedBody && ["off", "false", "disabled", "0"].includes(normalizedBody)) {
+    return false;
+  }
+
+  return true;
 }
 
 function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft {
@@ -2430,6 +2459,8 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyRows, setVocabularyRows] = useState<AdminGeneratedContentRow[]>([]);
   const [taglineRows, setTaglineRows] = useState<AdminGeneratedContentRow[]>([]);
   const [templateContentRows, setTemplateContentRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [signContextSettingRow, setSignContextSettingRow] = useState<AdminGeneratedContentRow | null>(null);
+  const [signContextEnabled, setSignContextEnabled] = useState(true);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
   const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
@@ -2559,12 +2590,14 @@ export function GeneratedContentAdminDashboard() {
     const items: AdminVocabularyCardItem[] = vocabularyRows.map((row) => {
       const point = pointFromTaglineContentKey(row.content_key);
       const supportsTagline = natalCardTaglinePoints.some((taglinePoint) => normalizedNatalCardTaglinePoint(taglinePoint) === normalizedNatalCardTaglinePoint(point));
+      const kind = vocabularyRowKind(row.content_key);
 
       return {
         contentKey: row.content_key,
         point,
         row,
-        taglineContentKey: supportsTagline ? natalCardTaglineContentKey(point) : undefined
+        taglineContentKey: kind === "topic" && supportsTagline ? natalCardTaglineContentKey(point) : undefined,
+        kind
       };
     });
     const existingPointIds = new Set(items.map((item) => normalizedNatalCardTaglinePoint(item.point)));
@@ -2574,7 +2607,8 @@ export function GeneratedContentAdminDashboard() {
         items.push({
           contentKey: natalCardTaglineContentKey(point),
           point,
-          taglineContentKey: natalCardTaglineContentKey(point)
+          taglineContentKey: natalCardTaglineContentKey(point),
+          kind: "topic"
         });
       }
     }
@@ -2600,7 +2634,9 @@ export function GeneratedContentAdminDashboard() {
           contentKey: row.content_key,
           headline: draftValue.headline,
           natal: draftValue.natal,
-          sky: draftValue.sky
+          sky: draftValue.sky,
+          stylePhrase: draftValue.stylePhrase,
+          styleShort: draftValue.styleShort
         };
       }) : [],
       taglineRows: scope === "vocabulary" ? natalCardTaglinePoints.map((point) => {
@@ -2675,6 +2711,20 @@ export function GeneratedContentAdminDashboard() {
     return (payload.rows ?? [])
       .filter((row) => row.content_key.startsWith("fallback-hook/"))
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
+  }
+
+  async function fetchSignContextSettingForAdmin() {
+    const params = new URLSearchParams({
+      status: "all",
+      contentKeyPrefix: signContextAspectCardsSettingKey,
+      limit: "1"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return payload.rows?.find((row) => row.content_key === signContextAspectCardsSettingKey) ?? null;
   }
 
   async function fetchGlobalSynastryRowsForAdmin() {
@@ -3179,6 +3229,24 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadSignContextSetting() {
+    if (!canUseApi) {
+      return;
+    }
+
+    try {
+      const row = await fetchSignContextSettingForAdmin();
+
+      setSignContextSettingRow(row);
+      setSignContextEnabled(signContextSettingEnabled(row));
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not load sign context setting."));
+    }
+  }
+
   async function loadPrivateRows(nextReviewSurface = reviewSurface) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
@@ -3236,6 +3304,10 @@ export function GeneratedContentAdminDashboard() {
 
     if (activePage === "knowledge" && canUseApi) {
       void loadTemplateContentRows();
+    }
+
+    if (activePage === "settings" && canUseApi) {
+      void loadSignContextSetting();
     }
 
   }, [activePage, canUseApi]);
@@ -3459,6 +3531,7 @@ export function GeneratedContentAdminDashboard() {
     const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
     setIsLoading(true);
     try {
+      const isSignStyle = vocabularyRowKind(row.content_key) === "sign-style";
       await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
@@ -3467,13 +3540,21 @@ export function GeneratedContentAdminDashboard() {
           body: JSON.stringify({
             id: row.id,
             headline: draftValue.headline,
-            body: draftValue.natal,
-            sections: {
-              topic: {
-                natal: draftValue.natal,
-                sky: draftValue.sky
-              }
-            }
+            summary: isSignStyle ? draftValue.styleShort ?? "" : undefined,
+            body: isSignStyle ? draftValue.stylePhrase ?? "" : draftValue.natal,
+            sections: isSignStyle
+              ? {
+                  style: {
+                    phrase: draftValue.stylePhrase ?? "",
+                    short: draftValue.styleShort ?? ""
+                  }
+                }
+              : {
+                  topic: {
+                    natal: draftValue.natal,
+                    sky: draftValue.sky
+                  }
+                }
           })
         }
       );
@@ -3563,6 +3644,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       if (item.row) {
         const draftValue = vocabularyDrafts[item.row.id] ?? vocabularyDraftFromRow(item.row);
+        const isSignStyle = item.kind === "sign-style";
 
         await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           "/api/admin/generated-content",
@@ -3572,13 +3654,21 @@ export function GeneratedContentAdminDashboard() {
             body: JSON.stringify({
               id: item.row.id,
               headline: draftValue.headline,
-              body: draftValue.natal,
-              sections: {
-                topic: {
-                  natal: draftValue.natal,
-                  sky: draftValue.sky
-                }
-              }
+              summary: isSignStyle ? draftValue.styleShort ?? "" : undefined,
+              body: isSignStyle ? draftValue.stylePhrase ?? "" : draftValue.natal,
+              sections: isSignStyle
+                ? {
+                    style: {
+                      phrase: draftValue.stylePhrase ?? "",
+                      short: draftValue.styleShort ?? ""
+                    }
+                  }
+                : {
+                    topic: {
+                      natal: draftValue.natal,
+                      sky: draftValue.sky
+                    }
+                  }
             })
           }
         );
@@ -3671,6 +3761,75 @@ export function GeneratedContentAdminDashboard() {
         setAccessStatus("invalid");
       }
       setMessage(adminErrorMessage(error, "Could not save fallback template row."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveSignContextSetting(nextEnabled = signContextEnabled) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const payloadBody = {
+      headline: "Sign context on aspect cards",
+      summary: nextEnabled ? "Enabled" : "Disabled",
+      body: nextEnabled ? "on" : "off",
+      sections: {
+        enabled: nextEnabled
+      },
+      facts: {
+        setting: "sign-context-on-aspect-cards"
+      },
+      sourceSnapshot: {
+        contentType: "app-setting",
+        setting: "sign-context-on-aspect-cards"
+      },
+      reviewerNotes: "Admin setting: toggles appended sign-context lines on sky aspect cards and articles."
+    };
+
+    setIsLoading(true);
+    try {
+      if (signContextSettingRow) {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: signContextSettingRow.id,
+              status: "LIVE",
+              ...payloadBody
+            })
+          }
+        );
+      } else {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              contentKey: signContextAspectCardsSettingKey,
+              surface: "sky",
+              mode: "feed",
+              eventType: "app-setting",
+              status: "LIVE",
+              promptVersion: "app-setting-v1",
+              ...payloadBody
+            })
+          }
+        );
+      }
+
+      await loadSignContextSetting();
+      setMessage(`Sign context on aspect cards is ${nextEnabled ? "on" : "off"}.`);
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not save sign context setting."));
     } finally {
       setIsLoading(false);
     }
@@ -5210,6 +5369,34 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </section>
             </section>
 
+            <section className="admin-template-panel" aria-label="Sky aspect card settings">
+              <div className="admin-template-header">
+                <div>
+                  <p className="admin-eyebrow">Sky cards</p>
+                  <h2>Aspect Card Context</h2>
+                  <p>Append an editable sign-context line to sky aspect cards and detail articles when both calculated planet signs are available.</p>
+                  <code className="admin-managed-key">{signContextAspectCardsSettingKey}</code>
+                </div>
+                <div className="admin-template-actions">
+                  <label className="admin-setting-switch">
+                    <input
+                      checked={signContextEnabled}
+                      onChange={(event) => setSignContextEnabled(event.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>{signContextEnabled ? "On" : "Off"}</span>
+                  </label>
+                  <button type="button" onClick={() => void saveSignContextSetting()} disabled={isLoading || !canUseApi}>
+                    <Save size={16} aria-hidden="true" />
+                    Save Setting
+                  </button>
+                </div>
+              </div>
+              <p className="admin-template-note">
+                Off means sky aspect bodies render exactly as they did before this sign-context layer.
+              </p>
+            </section>
+
             <section className="admin-template-panel admin-infrastructure-panel" aria-label="Infrastructure links">
               <div className="admin-template-header">
                 <div>
@@ -5433,6 +5620,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               {vocabularyCardItems.map((item) => {
                 const topicRow = item.row;
                 const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
+                const isSignStyleRow = item.kind === "sign-style";
                 const matchedTaglineRow = item.taglineContentKey
                   ? taglineRows.find((row) => row.content_key === item.taglineContentKey)
                   : undefined;
@@ -5459,6 +5647,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       </div>
                       <div className="admin-managed-badges">
                         {topicRow && <span className={`ui-pill admin-status status-${topicRow.status.toLowerCase()}`}>{topicRow.status}</span>}
+                        {isSignStyleRow && <span className="ui-pill admin-status">Sign style</span>}
                         {item.taglineContentKey && (
                           <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
                             Tagline {matchedTaglineRow?.status ?? "not saved"}
@@ -5472,18 +5661,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     {rowDraft && topicRow && (
                       <div className="admin-managed-two-column">
                         <label className="admin-field-wide">
-                          <span>Natal phrase</span>
+                          <span>{isSignStyleRow ? "Style phrase" : "Natal phrase"}</span>
                           <textarea
-                            value={rowDraft.natal}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
+                            value={isSignStyleRow ? rowDraft.stylePhrase ?? "" : rowDraft.natal}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, isSignStyleRow ? { stylePhrase: event.target.value } : { natal: event.target.value })}
                             rows={3}
                           />
                         </label>
                         <label className="admin-field-wide">
-                          <span>Sky phrase</span>
+                          <span>{isSignStyleRow ? "Short style" : "Sky phrase"}</span>
                           <textarea
-                            value={rowDraft.sky}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, { sky: event.target.value })}
+                            value={isSignStyleRow ? rowDraft.styleShort ?? "" : rowDraft.sky}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, isSignStyleRow ? { styleShort: event.target.value } : { sky: event.target.value })}
                             rows={3}
                           />
                         </label>

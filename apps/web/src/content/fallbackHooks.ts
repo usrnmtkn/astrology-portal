@@ -78,6 +78,17 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "sky.aspect-sign-context",
+    label: "Sky > Aspect Sign Context",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "A short sign-context line appended to sky aspect cards and articles when both planet signs are available.",
+    knowledgeIdTemplates: [],
+    requiredFacts: ["planetA", "signA", "signAStyle", "planetB", "signB", "signBStyle"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "sky.retrograde",
     label: "Sky > Retrograde Detail",
     surface: "sky",

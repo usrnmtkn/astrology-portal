@@ -439,7 +439,26 @@ body,
 }
 
 .admin-template-actions {
+  align-items: center;
   justify-content: flex-end;
+}
+
+.admin-setting-switch {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  color: var(--admin-ink);
+  display: inline-flex;
+  font-size: var(--type-control-size);
+  font-weight: var(--weight-semibold);
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.admin-setting-switch input {
+  accent-color: var(--admin-accent);
 }
 
 .admin-template-actions .admin-format-button {
