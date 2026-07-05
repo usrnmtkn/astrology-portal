@@ -2,6 +2,8 @@ import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
+import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
+import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import type { GeneratedContentMode } from "../services/generatedContent";
 import {
   compositeAspectContentKey,
@@ -28,12 +30,14 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "settings" | "vocabulary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
+type AdminContentQueueFilter = "failed" | "missingSource" | "draft" | "published" | null;
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
+type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "settings";
 type AdminContentBlockFilter =
   | "all"
   | "fallback_template"
@@ -65,6 +69,19 @@ type VoiceTemplateConfig = {
   generationGuide: string;
   bannedWords: string;
   phraseBank: string;
+};
+
+type TemplateCopySeedRow = {
+  contentId: string;
+  fields: {
+    title?: string;
+    summary?: string;
+    body?: string;
+    bestMove?: string;
+    emptyState?: string;
+  };
+  contentType?: string;
+  status?: string;
 };
 
 type AdminContentExportFormat = "csv" | "json";
@@ -215,6 +232,7 @@ type AdminTemplateDraft = {
   headline: string;
   summary: string;
   body: string;
+  status: GeneratedContentStatus;
 };
 
 type AdminReviewRecord = {
@@ -494,7 +512,9 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
-  if (activePage === "settings") return "Settings";
+  if (activePage === "connection") return "Connection";
+  if (activePage === "appBehavior") return "App Behavior";
+  if (activePage === "templates") return "Templates & Voice";
   if (activePage === "vocabulary") return "Vocabulary";
   if (activePage === "knowledge") return "Fallback Rows";
   if (activePage === "hooks") return "Hook Catalog";
@@ -503,7 +523,9 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Admin / Release notes";
-  if (activePage === "settings") return "Admin / Settings";
+  if (activePage === "connection") return "Admin / Connection";
+  if (activePage === "appBehavior") return "Admin / App behavior";
+  if (activePage === "templates") return "Admin / Templates & voice";
   if (activePage === "vocabulary") return "Admin / Vocabulary";
   if (activePage === "knowledge") return "Admin / Fallback rows";
   if (activePage === "hooks") return "Admin / Hook catalog";
@@ -515,8 +537,16 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     return "Track product updates across the internal dashboard and the public app in one chronological log.";
   }
 
-  if (activePage === "settings") {
-    return "Manage generation templates, voice guidance, access, calculation API status, and app content hooks.";
+  if (activePage === "connection") {
+    return "Manage admin access, calculation API status, deploy links, and portable settings.";
+  }
+
+  if (activePage === "appBehavior") {
+    return "Manage app-setting toggles that change how the public app renders content.";
+  }
+
+  if (activePage === "templates") {
+    return "Edit reusable templates, generation guidance, banned words, and phrase banks by content surface.";
   }
 
   if (activePage === "vocabulary") {
@@ -528,7 +558,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "hooks") {
-    return "See where each fallback row is used, what facts it expects, and which knowledge IDs it tries before template copy is rendered.";
+    return "Every card surface in the app is a hook. When a card needs content, it checks three places in order: a published row written for that exact moment, then approved knowledge base content, then the fallback template. This catalog shows what each hook needs and where its content comes from.";
   }
 
   return "Manage every generated or authored astrology entry from one filtered CMS list.";
@@ -599,7 +629,8 @@ function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft
   return {
     headline: row.headline ?? "",
     summary: row.summary ?? "",
-    body: row.body ?? ""
+    body: row.body ?? "",
+    status: row.status
   };
 }
 
@@ -654,6 +685,162 @@ function contextContentKey(hookKey: string) {
 
 function fallbackHookForContextRow(hookKey: string) {
   return fallbackHookDefinitions.find((hook) => hook.key === hookKey) ?? null;
+}
+
+function generatedSurfaceForFallbackHook(hookKey: string): GeneratedContentSurface {
+  const hook = fallbackHookForContextRow(hookKey);
+
+  if (hook?.domain === "sky") return "sky";
+  if (hook?.domain === "relationship") return "relationship";
+
+  return "natal";
+}
+
+const extraTemplateCopySeeds: TemplateCopySeedRow[] = [
+  {
+    contentId: "fallback-hook/sky.aspect-sign-context",
+    status: "published",
+    contentType: "template",
+    fields: {
+      title: "Sky Aspect Sign Context",
+      summary: "Right now this runs through {{signA}} and {{signB}}: {{signAStyleShort}} meeting {{signBStyleShort}}.",
+      body: "Right now this runs through {{signA}} and {{signB}}: {{signAStyleShort}} meeting {{signBStyleShort}}.",
+      bestMove: "Read the aspect through both signs before choosing the next move.",
+      emptyState: "If no approved content exists, leave the product surface blank."
+    }
+  },
+  {
+    contentId: "fallback-hook/you.daily-timing",
+    status: "published",
+    contentType: "template",
+    fields: {
+      title: "{{transitPlanet}} {{aspect}} Natal {{natalPoint}}",
+      summary: "Today's strongest personal timing points to {{transitPlanet}} contacting your natal {{natalPoint}}. Notice the pattern without making it bigger than the day.",
+      body: "Daily timing is a short-window signal. {{transitPlanet}} brings {{transitPlanetTopic}} into contact with your natal {{natalPointTopic}} through a {{aspect}} aspect. This may show up as a mood, pressure, choice, conversation, or small correction that asks for attention now.",
+      bestMove: "Name what is active today, choose one useful response, and let the rest stay proportional.",
+      emptyState: "If no approved content exists, leave the product surface blank."
+    }
+  }
+];
+
+const templateCopySeedByContentKey = new Map(
+  [
+    ...((templateCopySeed as { rows: TemplateCopySeedRow[] }).rows ?? []),
+    ...extraTemplateCopySeeds
+  ].map((row) => [row.contentId, row])
+);
+
+function templateSeedDraftForContentKey(contentKey: string) {
+  const seed = templateCopySeedByContentKey.get(contentKey);
+
+  return {
+    headline: seed?.fields.title ?? "",
+    summary: seed?.fields.summary ?? "",
+    body: seed?.fields.body ?? ""
+  };
+}
+
+function templateSeedForFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key">) {
+  return templateCopySeedByContentKey.get(row.content_key) ?? null;
+}
+
+function fallbackHookSectionForRow(row: Pick<AdminGeneratedContentRow, "content_key" | "surface">): AdminFallbackHookSectionFilter {
+  const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+  const hookLabel = hook?.label.toLowerCase() ?? "";
+
+  if (hookLabel.startsWith("sky >")) return "sky";
+  if (hookLabel.startsWith("you >")) return "you";
+  if (hookLabel.startsWith("settings >")) return "settings";
+  if (hookLabel.startsWith("friends >")) return "friends";
+  if (row.surface === "sky") return "sky";
+  if (row.surface === "natal" || row.surface === "you") return "you";
+  if (row.surface === "relationship" || row.surface === "synastry" || row.surface === "composite") return "friends";
+
+  return "all";
+}
+
+const fallbackHookSectionFilters: Array<{ key: AdminFallbackHookSectionFilter; label: string }> = [
+  { key: "all", label: "All" },
+  { key: "sky", label: "Sky" },
+  { key: "you", label: "You" },
+  { key: "friends", label: "Friends" },
+  { key: "settings", label: "Settings" }
+];
+
+function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] = []) {
+  const savedByContentKey = new Map(savedRows.map((row) => [row.content_key, row]));
+  const now = new Date().toISOString();
+
+  return fallbackHookDefinitions
+    .map((hook) => {
+      const contentKey = contextContentKey(hook.key);
+      const savedRow = savedByContentKey.get(contentKey);
+
+      if (savedRow) {
+        return savedRow;
+      }
+      const seedDraft = templateSeedDraftForContentKey(contentKey);
+
+      return {
+        id: `placeholder:${contentKey}`,
+        content_key: contentKey,
+        surface: generatedSurfaceForFallbackHook(hook.key),
+        mode: hook.mode === "system" ? "feed" : hook.mode,
+        status: "DRAFT",
+        event_type: "fallback-hook",
+        target_date: null,
+        headline: seedDraft.headline || hook.copy.headline,
+        summary: seedDraft.summary || hook.copy.summary,
+        body: seedDraft.body || hook.copy.body,
+        sections: [],
+        block_type: "fallback_template",
+        facts: {
+          hook: hook.key,
+          surface: hook.surface,
+          domain: hook.domain,
+          requiredFacts: hook.requiredFacts
+        },
+        knowledge_ids: [],
+        source_snapshot: {
+          contentType: "template",
+          source: templateCopySeedByContentKey.has(contentKey) ? "template-copy-seed" : "fallback-hook-definition",
+          hook: hook.key
+        },
+        reviewer_notes: "Local placeholder for an unsaved fallback-hook template row.",
+        prompt_version: "fallback-hook-template-v1",
+        model: null,
+        reviewed_at: null,
+        published_at: null,
+        updated_at: now,
+        created_at: now
+      } satisfies AdminGeneratedContentRow;
+    })
+    .sort((first, second) => first.content_key.localeCompare(second.content_key));
+}
+
+function isFallbackTemplatePlaceholderRow(row: AdminGeneratedContentRow) {
+  return row.id.startsWith("placeholder:fallback-hook/");
+}
+
+function hookKeyFromFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key">) {
+  return row.content_key.replace(/^fallback-hook\//, "");
+}
+
+function labelForFallbackTemplateRow(row: AdminGeneratedContentRow) {
+  const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+
+  return hook?.label || row.headline || titleFromVocabularyContentKey(row.content_key);
+}
+
+function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
+  const hookKey = hookKeyFromFallbackTemplateRow(row);
+  const hook = fallbackHookForContextRow(hookKey);
+
+  return hookPlainDescriptions[hookKey] || hook?.description || "Reusable fallback copy for this app hook.";
+}
+
+function previewForFallbackTemplateDraft(draft: AdminTemplateDraft) {
+  return compactAdminText(draft.summary || draft.body || draft.headline, "No fallback copy saved yet.");
 }
 
 function stringArrayFromCsvValue(value: string | undefined) {
@@ -793,6 +980,12 @@ function parseCsv(text: string) {
     headers.map((header, index) => [header, dataRow[index] ?? ""])
   ) as AdminContentCsvRow);
 }
+
+const hookPlainDescriptions = Object.fromEntries(
+  parseCsv(hookCatalogDescriptionsCsv)
+    .map((row) => [row.hookKey?.trim(), row.plainDescription?.trim()] as const)
+    .filter((entry): entry is readonly [string, string] => Boolean(entry[0] && entry[1]))
+);
 
 function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminContentCsvRow[] {
   const settingsRows = (Object.keys(bundle.settings) as VoiceTemplateSurface[]).map((surfaceKey) => ({
@@ -2230,6 +2423,61 @@ function recordMatchesContentStatus(record: AdminReviewRecord, filter: AdminCont
   return true;
 }
 
+function valueContainsText(value: unknown, pattern: string): boolean {
+  if (typeof value === "string") {
+    return value.toLowerCase().includes(pattern.toLowerCase());
+  }
+
+  if (Array.isArray(value)) {
+    return value.some((item) => valueContainsText(item, pattern));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.values(value).some((item) => valueContainsText(item, pattern));
+  }
+
+  return false;
+}
+
+function recordDraftStatus(record: AdminReviewRecord) {
+  const factStatus = record.facts?.draftStatus ?? record.facts?.draft_status;
+  const sourceStatus = record.sourceSnapshot?.draftStatus ?? record.sourceSnapshot?.draft_status;
+
+  return typeof factStatus === "string" ? factStatus : typeof sourceStatus === "string" ? sourceStatus : "";
+}
+
+function isFailedQueueRecord(record: AdminReviewRecord) {
+  return record.status === "ERROR" || recordDraftStatus(record).toLowerCase() === "failed";
+}
+
+function isMissingSourceRecord(record: AdminReviewRecord) {
+  return valueContainsText(record.sourceSnapshot, "No authored source IDs")
+    || valueContainsText(record.facts, "No authored source IDs")
+    || valueContainsText(record.reviewerNotes, "No authored source IDs");
+}
+
+function recordMatchesQueueFilter(record: AdminReviewRecord, filter: AdminContentQueueFilter) {
+  if (filter === "failed") return isFailedQueueRecord(record);
+  if (filter === "missingSource") return isMissingSourceRecord(record);
+  if (filter === "draft") return isDraftWithCopy(record);
+  if (filter === "published") return record.status === "LIVE";
+
+  return true;
+}
+
+function contentQueueCounts(records: AdminReviewRecord[]) {
+  return {
+    failed: records.filter(isFailedQueueRecord).length,
+    missingSource: records.filter(isMissingSourceRecord).length,
+    draft: records.filter(isDraftWithCopy).length,
+    published: records.filter((record) => record.status === "LIVE").length
+  } satisfies Record<Exclude<AdminContentQueueFilter, null>, number>;
+}
+
+function isFailureQueueRecord(record: AdminReviewRecord) {
+  return isFailedQueueRecord(record) || isMissingSourceRecord(record);
+}
+
 function contentStatusCounts(records: AdminReviewRecord[]) {
   const activeRecords = records.filter((record) => !isArchivedRecord(record));
 
@@ -2477,6 +2725,7 @@ export function GeneratedContentAdminDashboard() {
   const [surface, setSurface] = useState<GeneratedContentSurfaceFilter>("sky");
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
+  const [contentQueueFilter, setContentQueueFilter] = useState<AdminContentQueueFilter>(null);
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
   const [contentBlockFilter, setContentBlockFilter] = useState<AdminContentBlockFilter>("all");
   const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
@@ -2492,6 +2741,8 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
   const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
+  const [fallbackHookSectionFilter, setFallbackHookSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
+  const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
   const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
@@ -2539,6 +2790,31 @@ export function GeneratedContentAdminDashboard() {
     error: isTldrAstroApiConfigured ? null : "VITE_TLDRASTRO_API_URL is not configured."
   });
   const selectedRow = rows.find((row) => row.id === selectedId) ?? null;
+  const fallbackHookSectionCounts = useMemo(() => {
+    const counts = {
+      all: templateContentRows.length,
+      sky: 0,
+      you: 0,
+      friends: 0,
+      settings: 0
+    } satisfies Record<AdminFallbackHookSectionFilter, number>;
+
+    templateContentRows.forEach((row) => {
+      const section = fallbackHookSectionForRow(row);
+
+      if (section !== "all") {
+        counts[section] += 1;
+      }
+    });
+
+    return counts;
+  }, [templateContentRows]);
+  const filteredTemplateContentRows = useMemo(() => (
+    fallbackHookSectionFilter === "all"
+      ? templateContentRows
+      : templateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
+  ), [fallbackHookSectionFilter, templateContentRows]);
+  const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId) ?? null;
   const canUseApi = secret.trim().length > 0;
   const dedupedContentRecords = useMemo(() => dedupeContentLibraryRecords(reviewRecords), [reviewRecords]);
   const filteredContentRecords = useMemo(() => {
@@ -2561,6 +2837,7 @@ export function GeneratedContentAdminDashboard() {
   }, [categoryFilter, contentBlockFilter, personQuery, dedupedContentRecords]);
   const allContentRecords = useMemo(() => {
     return filteredContentRecords
+      .filter((record) => recordMatchesQueueFilter(record, contentQueueFilter))
       .filter((record) => recordMatchesContentStatus(record, contentStatusFilter))
       .sort((first, second) => {
         const firstDate = first.targetDate ?? "";
@@ -2572,8 +2849,10 @@ export function GeneratedContentAdminDashboard() {
 
         return first.title.localeCompare(second.title);
       });
-  }, [contentStatusFilter, filteredContentRecords]);
+  }, [contentQueueFilter, contentStatusFilter, filteredContentRecords]);
   const cmsStatusCounts = useMemo(() => contentStatusCounts(filteredContentRecords), [filteredContentRecords]);
+  const cmsQueueCounts = useMemo(() => contentQueueCounts(filteredContentRecords), [filteredContentRecords]);
+  const contentFailureQueueCount = useMemo(() => dedupedContentRecords.filter(isFailureQueueRecord).length, [dedupedContentRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
@@ -2736,9 +3015,11 @@ export function GeneratedContentAdminDashboard() {
       secret
     );
 
-    return (payload.rows ?? [])
+    const savedRows = (payload.rows ?? [])
       .filter((row) => row.content_key.startsWith("fallback-hook/"))
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
+
+    return fallbackTemplatePlaceholderRows(savedRows);
   }
 
   async function fetchSignContextSettingForAdmin() {
@@ -3224,7 +3505,10 @@ export function GeneratedContentAdminDashboard() {
 
   async function loadTemplateContentRows() {
     if (!canUseApi) {
-      setMessage("Add the content generation secret first.");
+      const nextRows = fallbackTemplatePlaceholderRows();
+      setTemplateContentRows(nextRows);
+      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setMessage(`Showing ${nextRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.`);
       return;
     }
 
@@ -3239,19 +3523,23 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/generated-content?${params}`,
         secret
       );
-      const nextRows = (payload.rows ?? [])
+      const savedRows = (payload.rows ?? [])
         .filter((row) => row.content_key.startsWith("fallback-hook/"))
         .sort((first, second) => first.content_key.localeCompare(second.content_key));
+      const nextRows = fallbackTemplatePlaceholderRows(savedRows);
 
       setTemplateContentRows(nextRows);
       setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
       setAccessStatus("valid");
-      setMessage(`Loaded ${nextRows.length} fallback template rows.`);
+      setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
-      setMessage(adminErrorMessage(error, "Could not load fallback template rows."));
+      const nextRows = fallbackTemplatePlaceholderRows();
+      setTemplateContentRows(nextRows);
+      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setMessage(`${adminErrorMessage(error, "Could not load saved fallback template rows.")} Showing ${nextRows.length} local fallback-hook placeholders.`);
     } finally {
       setIsLoading(false);
     }
@@ -3330,11 +3618,11 @@ export function GeneratedContentAdminDashboard() {
       void loadVocabularyRows();
     }
 
-    if (activePage === "knowledge" && canUseApi) {
+    if (activePage === "knowledge") {
       void loadTemplateContentRows();
     }
 
-    if (activePage === "settings" && canUseApi) {
+    if (activePage === "appBehavior" && canUseApi) {
       void loadSignContextSetting();
     }
 
@@ -3544,7 +3832,7 @@ export function GeneratedContentAdminDashboard() {
     setTemplateContentDrafts((currentDrafts) => ({
       ...currentDrafts,
       [id]: {
-        ...(currentDrafts[id] ?? { headline: "", summary: "", body: "" }),
+        ...(currentDrafts[id] ?? { headline: "", summary: "", body: "", status: "DRAFT" }),
         ...patch
       }
     }));
@@ -3769,6 +4057,36 @@ export function GeneratedContentAdminDashboard() {
     const draftValue = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
     setIsLoading(true);
     try {
+      if (isFallbackTemplatePlaceholderRow(row)) {
+        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              contentKey: row.content_key,
+              surface: row.surface,
+              mode: row.mode,
+              eventType: "fallback-hook",
+              status: draftValue.status,
+              headline: draftValue.headline,
+              summary: draftValue.summary,
+              body: draftValue.body,
+              sections: [],
+              facts: row.facts ?? {},
+              knowledgeIds: row.knowledge_ids ?? [],
+              sourceSnapshot: row.source_snapshot ?? {},
+              promptVersion: row.prompt_version ?? "fallback-hook-template-v1",
+              blockType: "fallback_template",
+              reviewerNotes: row.reviewer_notes ?? ""
+            })
+          }
+        );
+        await loadTemplateContentRows();
+        setMessage(`Created and re-read ${row.content_key}.`);
+        return;
+      }
+
       await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
@@ -3776,6 +4094,7 @@ export function GeneratedContentAdminDashboard() {
           method: "PATCH",
           body: JSON.stringify({
             id: row.id,
+            status: draftValue.status,
             headline: draftValue.headline,
             summary: draftValue.summary,
             body: draftValue.body
@@ -5169,16 +5488,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "content" ? "page" : undefined}
           >
             <FileText size={18} aria-hidden="true" />
-            Content
-          </button>
-          <button
-            className={activePage === "settings" ? "active" : ""}
-            type="button"
-            onClick={() => setActivePage("settings")}
-            aria-current={activePage === "settings" ? "page" : undefined}
-          >
-            <Sparkles size={18} aria-hidden="true" />
-            Settings
+            <span className="admin-nav-label">Content</span>
+            {contentFailureQueueCount > 0 && <strong className="admin-nav-badge">{contentFailureQueueCount}</strong>}
           </button>
           <button
             className={activePage === "vocabulary" ? "active" : ""}
@@ -5188,6 +5499,15 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           >
             <Database size={18} aria-hidden="true" />
             Vocabulary
+          </button>
+          <button
+            className={activePage === "templates" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("templates")}
+            aria-current={activePage === "templates" ? "page" : undefined}
+          >
+            <Sparkles size={18} aria-hidden="true" />
+            Templates & Voice
           </button>
           <button
             className={activePage === "knowledge" ? "active" : ""}
@@ -5206,6 +5526,24 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           >
             <LayoutDashboard size={18} aria-hidden="true" />
             Hook Catalog
+          </button>
+          <button
+            className={activePage === "connection" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("connection")}
+            aria-current={activePage === "connection" ? "page" : undefined}
+          >
+            <Server size={18} aria-hidden="true" />
+            Connection
+          </button>
+          <button
+            className={activePage === "appBehavior" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("appBehavior")}
+            aria-current={activePage === "appBehavior" ? "page" : undefined}
+          >
+            <Sparkles size={18} aria-hidden="true" />
+            App Behavior
           </button>
           <button
             className={activePage === "releaseNotes" ? "active" : ""}
@@ -5318,8 +5656,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               ))}
             </div>
           </section>
-        ) : activePage === "settings" ? (
-          <section className="admin-settings-page" aria-label="Content settings">
+        ) : activePage === "connection" ? (
+          <section className="admin-settings-page" aria-label="Connection settings">
             <section className="admin-settings-grid">
               <section className="admin-secret-panel" aria-label="Admin access">
                 <div className="admin-sidebar-section-title">
@@ -5397,34 +5735,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </section>
             </section>
 
-            <section className="admin-template-panel" aria-label="Sky aspect card settings">
-              <div className="admin-template-header">
-                <div>
-                  <p className="admin-eyebrow">Sky cards</p>
-                  <h2>Aspect Card Context</h2>
-                  <p>Append an editable sign-context line to sky aspect cards and detail articles when both calculated planet signs are available.</p>
-                  <code className="admin-managed-key">{signContextAspectCardsSettingKey}</code>
-                </div>
-                <div className="admin-template-actions">
-                  <label className="admin-setting-switch">
-                    <input
-                      checked={signContextEnabled}
-                      onChange={(event) => setSignContextEnabled(event.target.checked)}
-                      type="checkbox"
-                    />
-                    <span>{signContextEnabled ? "On" : "Off"}</span>
-                  </label>
-                  <button type="button" onClick={() => void saveSignContextSetting()} disabled={isLoading || !canUseApi}>
-                    <Save size={16} aria-hidden="true" />
-                    Save Setting
-                  </button>
-                </div>
-              </div>
-              <p className="admin-template-note">
-                Off means sky aspect bodies render exactly as they did before this sign-context layer.
-              </p>
-            </section>
-
             <section className="admin-template-panel admin-infrastructure-panel" aria-label="Infrastructure links">
               <div className="admin-template-header">
                 <div>
@@ -5482,132 +5792,35 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </section>
 
-            <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
+          </section>
+        ) : activePage === "appBehavior" ? (
+          <section className="admin-settings-page" aria-label="App behavior settings">
+            <section className="admin-template-panel" aria-label="Sky aspect card settings">
               <div className="admin-template-header">
                 <div>
-                  <p className="admin-eyebrow">Templates and voice</p>
-                  <h2>{voiceTemplateLabels[activeTemplateSurface]}</h2>
+                  <p className="admin-eyebrow">App-setting toggle</p>
+                  <h2>Aspect Card Context</h2>
+                  <p>Append an editable sign-context line to sky aspect cards and detail articles when both calculated planet signs are available.</p>
+                  <code className="admin-managed-key">{signContextAspectCardsSettingKey}</code>
                 </div>
                 <div className="admin-template-actions">
-                  <button type="button" onClick={saveVoiceTemplates}>
+                  <label className="admin-setting-switch">
+                    <input
+                      checked={signContextEnabled}
+                      onChange={(event) => setSignContextEnabled(event.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>{signContextEnabled ? "On" : "Off"}</span>
+                  </label>
+                  <button type="button" onClick={() => void saveSignContextSetting()} disabled={isLoading || !canUseApi}>
                     <Save size={16} aria-hidden="true" />
-                    Save Templates
-                  </button>
-                  <button type="button" onClick={resetActiveVoiceTemplate}>
-                    Reset {voiceTemplateLabels[activeTemplateSurface]}
+                    Save Setting
                   </button>
                 </div>
               </div>
-
-              <div className="admin-template-tabs" role="tablist" aria-label="Template surface">
-                {(Object.keys(voiceTemplateLabels) as VoiceTemplateSurface[]).map((surfaceKey) => (
-                  <button
-                    key={surfaceKey}
-                    type="button"
-                    className={surfaceKey === activeTemplateSurface ? "active" : ""}
-                    onClick={() => setActiveTemplateSurface(surfaceKey)}
-                    role="tab"
-                    aria-selected={surfaceKey === activeTemplateSurface}
-                  >
-                    {voiceTemplateLabels[surfaceKey]}
-                  </button>
-                ))}
-              </div>
-
-              <label className="admin-field-wide">
-                <span>{voiceTemplateLabels[activeTemplateSurface]} template and voice</span>
-                <textarea
-                  value={voiceTemplates[activeTemplateSurface].template}
-                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "template", event.target.value)}
-                  rows={10}
-                />
-              </label>
-
-              <label className="admin-field-wide admin-template-guide-field">
-                <span>AI generation guide</span>
-                <textarea
-                  value={voiceTemplates[activeTemplateSurface].generationGuide}
-                  onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "generationGuide", event.target.value)}
-                  rows={7}
-                />
-              </label>
-
-              <div className="admin-template-two-column">
-                <label className="admin-field-wide">
-                  <span>Banned words and phrases</span>
-                  <textarea
-                    value={voiceTemplates[activeTemplateSurface].bannedWords}
-                    onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "bannedWords", event.target.value)}
-                    rows={7}
-                  />
-                </label>
-
-                <label className="admin-field-wide">
-                  <span>Language and phrase bank</span>
-                  <textarea
-                    value={voiceTemplates[activeTemplateSurface].phraseBank}
-                    onChange={(event) => updateVoiceTemplate(activeTemplateSurface, "phraseBank", event.target.value)}
-                    rows={7}
-                  />
-                </label>
-              </div>
-            </section>
-
-            <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
-              <div className="admin-template-header">
-                <div>
-                  <p className="admin-eyebrow">Content hooks</p>
-                  <h2>Named Content Points</h2>
-                </div>
-                <div className="admin-template-actions">
-                  <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("json", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as JSON">
-                    <Download size={16} aria-hidden="true" />
-                    JSON
-                  </button>
-                  <button className="admin-format-button" type="button" onClick={() => void downloadManagedContent("csv", "context")} disabled={isLoading || !canUseApi} aria-label="Download context rows as CSV">
-                    <Download size={16} aria-hidden="true" />
-                    CSV
-                  </button>
-                  <button type="button" onClick={() => triggerContentImport("context")} disabled={isLoading || !canUseApi}>
-                    <Upload size={16} aria-hidden="true" />
-                    Import
-                  </button>
-                </div>
-              </div>
-
-              <div className="admin-hooks-grid">
-                {fallbackHookDefinitions.map((hook) => {
-                  const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
-                  const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
-
-                  return (
-                    <article className="admin-hook-card" key={hook.key}>
-                      <div className="admin-hook-card-header">
-                        <div>
-                          <p className="admin-eyebrow">{hook.surface} / {hook.mode}</p>
-                          <h3>{hook.label}</h3>
-                        </div>
-                        <span>{hook.domain}</span>
-                      </div>
-                      <p>{hook.description}</p>
-                      <dl className="admin-hook-meta">
-                        <div>
-                          <dt>Hook key</dt>
-                          <dd>{hook.key}</dd>
-                        </div>
-                        <div>
-                          <dt>Required facts</dt>
-                          <dd>{hook.requiredFacts.map((fact) => <code key={fact}>{fact}</code>)}</dd>
-                        </div>
-                        <div>
-                          <dt>Example IDs</dt>
-                          <dd>{sampleIds.map((sampleId) => <code key={sampleId}>{sampleId}</code>)}</dd>
-                        </div>
-                      </dl>
-                    </article>
-                  );
-                })}
-              </div>
+              <p className="admin-template-note">
+                Off means sky aspect bodies render exactly as they did before this sign-context layer.
+              </p>
             </section>
           </section>
         ) : activePage === "vocabulary" ? (
@@ -5742,8 +5955,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
               <div className="admin-release-summary" aria-label="Template row count">
                 <article>
-                  <span>Rows</span>
-                  <strong>{templateContentRows.length}</strong>
+                  <span>{fallbackHookSectionFilter === "all" ? "Rows" : "Filtered"}</span>
+                  <strong>{filteredTemplateContentRows.length}</strong>
                 </article>
                 <article>
                   <span>Prefix</span>
@@ -5785,64 +5998,177 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </article>
             </div>
 
-            <div className="admin-managed-row-list">
-              {templateContentRows.map((row) => {
+            <div className="admin-fallback-section-filters" role="tablist" aria-label="Fallback hook sections">
+              {fallbackHookSectionFilters.map((filter) => (
+                <button
+                  key={filter.key}
+                  type="button"
+                  className={fallbackHookSectionFilter === filter.key ? "active" : ""}
+                  onClick={() => {
+                    setFallbackHookSectionFilter(filter.key);
+                    setSelectedTemplateContentId(null);
+                  }}
+                  role="tab"
+                  aria-selected={fallbackHookSectionFilter === filter.key}
+                >
+                  <span>{filter.label}</span>
+                  <strong>{fallbackHookSectionCounts[filter.key]}</strong>
+                </button>
+              ))}
+            </div>
+
+            <div className="admin-fallback-row-list" aria-label="Fallback template rows">
+              {filteredTemplateContentRows.map((row) => {
                 const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
                 const badge = contentTypeBadge(row);
+                const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+                const isSelected = row.id === selectedTemplateContentId;
+
+                const openTemplateRow = () => setSelectedTemplateContentId(row.id);
 
                 return (
-                  <article className="admin-managed-row-card admin-template-content-card" data-template-row={row.content_key} key={row.id}>
-                    <header>
+                  <article
+                    className={`admin-fallback-row ${isSelected ? "selected" : ""}`}
+                    data-template-row={row.content_key}
+                    key={row.id}
+                    onClick={openTemplateRow}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openTemplateRow();
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    title={`Edit ${row.content_key}`}
+                  >
+                    <div className="admin-fallback-row-main">
                       <div>
-                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {row.surface}</p>
-                        <label className="admin-managed-title">
-                          <span>Headline</span>
-                          <textarea
-                            value={rowDraft.headline}
-                            onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
-                            rows={2}
-                          />
-                        </label>
+                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {hook?.surface ?? row.surface}</p>
+                        <h3>{labelForFallbackTemplateRow(row)}</h3>
+                        <code>{row.content_key}</code>
                       </div>
                       <div className="admin-managed-badges">
                         {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
+                        {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
                         <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
                       </div>
-                    </header>
-
-                    <code className="admin-managed-key">{row.content_key}</code>
-
-                    <label className="admin-field-wide">
-                      <span>Summary</span>
-                      <textarea
-                        value={rowDraft.summary}
-                        onChange={(event) => updateTemplateContentDraft(row.id, { summary: event.target.value })}
-                        rows={3}
-                      />
-                    </label>
-
-                    <label className="admin-field-wide">
-                      <span>Body</span>
-                      <textarea
-                        value={rowDraft.body}
-                        onChange={(event) => updateTemplateContentDraft(row.id, { body: event.target.value })}
-                        rows={6}
-                      />
-                    </label>
-
-                    <div className="admin-template-actions">
-                      <button type="button" onClick={() => void saveTemplateContentRow(row)} disabled={isLoading}>
-                        <Save size={16} aria-hidden="true" />
-                        Save Row
-                      </button>
                     </div>
+                    <p>{descriptionForFallbackTemplateRow(row)}</p>
+                    <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
                   </article>
                 );
               })}
-              {templateContentRows.length === 0 && (
-                <p className="admin-empty">No fallback-hook template rows were found.</p>
+              {filteredTemplateContentRows.length === 0 && (
+                <p className="admin-empty">No fallback-hook template rows match this section.</p>
               )}
             </div>
+
+            {selectedTemplateContentRow && (
+              <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedTemplateContentId(null)}>
+                <section
+                  className="admin-editor-panel admin-template-drawer admin-editor-drawer"
+                  aria-label="Fallback template editor"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  {(() => {
+                    const row = selectedTemplateContentRow;
+                    const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+                    const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+                    const badge = contentTypeBadge(row);
+                    const seed = templateSeedForFallbackTemplateRow(row);
+
+                    return (
+                      <>
+                        <div className="admin-editor-toolbar">
+                          <div className="admin-drawer-topbar">
+                            <p className="admin-eyebrow">Fallback row editor</p>
+                            <button type="button" onClick={() => setSelectedTemplateContentId(null)}>
+                              <X size={16} aria-hidden="true" />
+                              Close
+                            </button>
+                          </div>
+                          <div className="admin-editor-heading">
+                            <div>
+                              <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {hook?.surface ?? row.surface}</p>
+                              <h2>{labelForFallbackTemplateRow(row)}</h2>
+                            </div>
+                            <div className="admin-managed-badges">
+                              {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
+                              {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
+                              <label className="admin-status-select-label">
+                                <span>Status</span>
+                                <select
+                                  className={`admin-status-select status-${rowDraft.status.toLowerCase()}`}
+                                  value={rowDraft.status}
+                                  onChange={(event) => updateTemplateContentDraft(row.id, { status: event.target.value as GeneratedContentStatus })}
+                                >
+                                  <option value="DRAFT">Draft</option>
+                                  <option value="REVIEWED">Reviewed</option>
+                                  <option value="LIVE">Published</option>
+                                  <option value="ARCHIVED">Archived</option>
+                                </select>
+                              </label>
+                            </div>
+                          </div>
+                          <code className="admin-managed-key">{row.content_key}</code>
+                          <p className="admin-template-note">{descriptionForFallbackTemplateRow(row)}</p>
+                        </div>
+
+                        <div className="admin-template-drawer-body">
+                          <label className="admin-field-wide">
+                            <span>Headline</span>
+                            <textarea
+                              value={rowDraft.headline}
+                              onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
+                              rows={3}
+                            />
+                          </label>
+
+                          <label className="admin-field-wide">
+                            <span>Summary</span>
+                            <textarea
+                              value={rowDraft.summary}
+                              onChange={(event) => updateTemplateContentDraft(row.id, { summary: event.target.value })}
+                              rows={5}
+                            />
+                          </label>
+
+                          <label className="admin-field-wide">
+                            <span>Body</span>
+                            <textarea
+                              value={rowDraft.body}
+                              onChange={(event) => updateTemplateContentDraft(row.id, { body: event.target.value })}
+                              rows={12}
+                            />
+                          </label>
+
+                          {seed && (
+                            <div className="admin-template-seed-context" aria-label="Template support copy">
+                              <article>
+                                <span>Best move</span>
+                                <p>{seed.fields.bestMove || "No best move seed saved for this template."}</p>
+                              </article>
+                              <article>
+                                <span>Empty state</span>
+                                <p>{seed.fields.emptyState || "If no approved content exists, leave the product surface blank."}</p>
+                              </article>
+                            </div>
+                          )}
+
+                          <div className="admin-template-actions">
+                            <button type="button" onClick={() => void saveTemplateContentRow(row)} disabled={isLoading}>
+                              <Save size={16} aria-hidden="true" />
+                              Save Row
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </section>
+              </div>
+            )}
           </section>
         ) : activePage === "privateRows" ? (
           <section className="admin-template-panel admin-private-page" aria-label="Personal generated content rows">
@@ -5914,7 +6240,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Hook catalog</p>
                 <h2>Named Content Points</h2>
-                <p>These are the app surfaces that need LIVE generated content or approved voice-backed copy. Use the labels below to identify what needs a generated row, template, or source-backed rewrite.</p>
+                <p>Every card surface in the app is a hook. When a card needs content, it checks three places in order: a published row written for that exact moment, then approved knowledge base content, then the fallback template. This catalog shows what each hook needs and where its content comes from.</p>
               </div>
               <div className="admin-template-actions">
                 <button type="button" onClick={() => setActivePage("content")}>
@@ -5936,10 +6262,30 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </div>
 
+            <div className="admin-fallback-usage" aria-label="How hooks resolve content">
+              <article>
+                <span>1. Exact Moment</span>
+                <p>A published row written for the specific card, date, chart factor, or relationship context wins first.</p>
+              </article>
+              <article>
+                <span>2. Knowledge Base</span>
+                <p>If there is no exact row, the hook looks for approved knowledge IDs that match the calculated facts.</p>
+              </article>
+              <article>
+                <span>3. Fallback Template</span>
+                <p>If authored knowledge misses, the hook renders the matching <code>fallback-hook/</code> template with live slot values.</p>
+              </article>
+              <article>
+                <span>Catalog Use</span>
+                <p>Use these cards to see what each surface needs, which IDs it checks, and which example lookups prove the route.</p>
+              </article>
+            </div>
+
             <div className="admin-hooks-grid">
               {fallbackHookDefinitions.map((hook) => {
                 const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
                 const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
+                const plainDescription = hookPlainDescriptions[hook.key] || hook.description;
 
                 return (
                   <article className="admin-hook-card" key={hook.key}>
@@ -5950,14 +6296,14 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       </div>
                       <span>{hook.domain}</span>
                     </div>
-                    <p>{hook.description}</p>
+                    <p>{plainDescription}</p>
                     <dl className="admin-hook-meta">
                       <div>
                         <dt>Hook key</dt>
                         <dd>{hook.key}</dd>
                       </div>
                       <div>
-                        <dt>Required facts</dt>
+                        <dt>What it needs to render</dt>
                         <dd>
                           {hook.requiredFacts.map((fact) => (
                             <code key={fact}>{fact}</code>
@@ -5965,7 +6311,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         </dd>
                       </div>
                       <div>
-                        <dt>Knowledge ID patterns</dt>
+                        <dt>What it looks for first</dt>
                         <dd>
                           {hook.knowledgeIdTemplates.map((template) => (
                             <code key={template}>{template}</code>
@@ -5973,7 +6319,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         </dd>
                       </div>
                       <div>
-                        <dt>Example IDs</dt>
+                        <dt>Example lookups</dt>
                         <dd>
                           {sampleIds.map((sampleId) => (
                             <code key={sampleId}>{sampleId}</code>
@@ -6120,6 +6466,29 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </section>
 
             <section className="admin-content-filters" aria-label="Content list filters">
+              <div className="admin-queue-chips" role="tablist" aria-label="Content queue filters">
+                {([
+                  { key: "failed", label: "Failed", count: cmsQueueCounts.failed },
+                  { key: "missingSource", label: "Missing source", count: cmsQueueCounts.missingSource },
+                  { key: "draft", label: "Draft", count: cmsQueueCounts.draft },
+                  { key: "published", label: "Published", count: cmsQueueCounts.published }
+                ] as Array<{ key: Exclude<AdminContentQueueFilter, null>; label: string; count: number }>).map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={contentQueueFilter === filter.key ? "active" : ""}
+                    onClick={() => {
+                      setContentQueueFilter(contentQueueFilter === filter.key ? null : filter.key);
+                      setContentStatusFilter("all");
+                    }}
+                    role="tab"
+                    aria-selected={contentQueueFilter === filter.key}
+                  >
+                    <span>{filter.label}</span>
+                    <strong>{filter.count}</strong>
+                  </button>
+                ))}
+              </div>
               <div className="admin-status-pills" role="tablist" aria-label="Status">
                 {contentStatusFilters.map((filter) => (
                   <button
