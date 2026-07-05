@@ -93,6 +93,15 @@ class Position(BaseModel):
     theme: Optional[str] = None
 
 
+class AspectConditions(BaseModel):
+    applying: bool = False
+    perfects: bool = False
+    receiverRetrograde: bool = False
+    receiverCombust: bool = False
+    reception: bool = False
+    favorEligible: bool = False
+
+
 class Aspect(BaseModel):
     from_: str = Field(..., alias="from")
     to: str
@@ -105,6 +114,7 @@ class Aspect(BaseModel):
     fromHouse: Optional[int] = None
     toHouse: Optional[int] = None
     knowledgeIds: List[str] = Field(default_factory=list)
+    conditions: AspectConditions = Field(default_factory=AspectConditions)
 
 
 class ContentFactPacket(BaseModel):
@@ -220,6 +230,7 @@ class TransitHit(BaseModel):
     score: int = Field(..., ge=0)
     exactAt: Optional[str] = None
     knowledgeIds: List[str] = Field(default_factory=list)
+    conditions: AspectConditions = Field(default_factory=AspectConditions)
 
 
 class TransitChartResponse(BaseModel):

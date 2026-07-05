@@ -67,7 +67,17 @@ export type SkySnapshot = {
     to: string;
     type: string;
     orb: number;
+    conditions?: AspectConditions;
   }>;
+};
+
+export type AspectConditions = {
+  applying: boolean;
+  perfects: boolean;
+  receiverRetrograde: boolean;
+  receiverCombust: boolean;
+  reception: boolean;
+  favorEligible: boolean;
 };
 
 export type Horoscope = {

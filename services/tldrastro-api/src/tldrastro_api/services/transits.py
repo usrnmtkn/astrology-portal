@@ -15,7 +15,9 @@ from tldrastro_api.services.chart import (
     ASPECT_DEFINITIONS,
     angular_separation,
     aspect_orbs,
+    julian_day_for,
     normalize_degrees,
+    transit_aspect_conditions,
 )
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.sky import calculate_current_sky
@@ -111,12 +113,26 @@ def _transit_hit(
     orb: float,
     max_orb: float,
     exact_angle: float,
+    natal_positions: List[Position],
+    transit_positions: List[Position],
+    request: TransitChartRequest,
+    transit_julian_day: float,
 ) -> TransitHit:
     phase = _phase_for_transit(transit_position, natal_position, exact_angle)
     strength = max(0, min(100, round(100 * (1 - orb / max_orb))))
     transit_slug = _slug(transit_position.point)
     natal_slug = _slug(natal_position.point)
     aspect_slug = _slug(aspect_type)
+    conditions = transit_aspect_conditions(
+        transit_position,
+        natal_position,
+        exact_angle,
+        phase,
+        transit_positions,
+        natal_positions,
+        request.settings,
+        transit_julian_day,
+    )
     return TransitHit(
         id=f"{transit_slug}-{aspect_slug}-{natal_slug}",
         transitPlanet=transit_position.point,
@@ -136,13 +152,16 @@ def _transit_hit(
             f"transit-natal-{transit_slug}-{aspect_slug}-{natal_slug}",
             f"{transit_slug}-{aspect_slug}-{natal_slug}",
         ],
+        conditions=conditions,
     )
 
 
 def _calculate_hits(
     transit_positions: List[Position],
     natal_targets: List[Position],
+    natal_positions: List[Position],
     request: TransitChartRequest,
+    transit_julian_day: float,
 ) -> List[TransitHit]:
     orbs = aspect_orbs(request.settings)
     hits: List[TransitHit] = []
@@ -161,6 +180,10 @@ def _calculate_hits(
                             orb,
                             max_orb,
                             exact,
+                            natal_positions,
+                            transit_positions,
+                            request,
+                            transit_julian_day,
                         )
                     )
                     break
@@ -194,7 +217,9 @@ def calculate_transits(request: TransitChartRequest) -> TransitChartResponse:
     hits = _calculate_hits(
         transit_chart.positions,
         _target_positions(natal_chart.positions, natal_chart.angles),
+        natal_chart.positions,
         request,
+        julian_day_for(datetime.fromisoformat(transit_chart.generatedAt)),
     )
 
     warnings = [

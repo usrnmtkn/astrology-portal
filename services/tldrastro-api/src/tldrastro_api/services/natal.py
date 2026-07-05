@@ -44,10 +44,9 @@ def calculate_natal_chart(request: NatalChartRequest) -> NatalChartResponse:
         positions=positions,
         angles=angles,
         houseCusps=[round(cusp, 6) for cusp in cusps],
-        aspects=calculate_aspects(positions, subject.settings),
+        aspects=calculate_aspects(positions, subject.settings, julian_day),
         chartRuler=chart_ruler,
         sect=None,
         dignitySummary={},
         contentFacts=[],
     )
-
