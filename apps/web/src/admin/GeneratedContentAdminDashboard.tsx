@@ -25,7 +25,7 @@ import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl,
 import "./admin.css";
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
-type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
 type AdminDashboardPage = "content" | "settings" | "vocabulary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
@@ -33,7 +33,7 @@ type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
-type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Fallback Templates";
+type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
 type AdminContentBlockFilter =
   | "all"
   | "fallback_template"
@@ -48,6 +48,7 @@ type AdminContentBlockFilter =
   | "transit_to_natal_aspect"
   | "synastry_aspect"
   | "composite_aspect"
+  | "condition_modifier"
   | "synthesis"
   | "essay";
 type ReleaseNoteArea = "Dashboard" | "App";
@@ -354,7 +355,8 @@ const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, strin
   natal: "Natal",
   synastry: "Synastry",
   composite: "Composite",
-  relationship: "Relationship"
+  relationship: "Relationship",
+  modifier: "Modifier"
 };
 
 const reviewSurfaceLabels: Record<AdminReviewSurface, { label: string; description: string }> = {
@@ -391,6 +393,7 @@ const contentCategoryFilters: Array<{ key: AdminContentCategoryFilter; label: st
   { key: "Natal Aspects", label: "Natal Aspects" },
   { key: "Natal Chart", label: "Natal Chart" },
   { key: "Relationship", label: "Relationship" },
+  { key: "Condition Modifiers", label: "Condition Modifiers" },
   { key: "Fallback Templates", label: "Fallback Templates" }
 ];
 
@@ -415,6 +418,7 @@ const contentBlockFilters: ContentBlockFilterOption[] = [
   { key: "transit_to_natal_aspect", label: "Transit to natal update", group: "You" },
   { key: "synastry_aspect", label: "Synastry aspect", group: "Friends" },
   { key: "composite_aspect", label: "Composite aspect", group: "Friends" },
+  { key: "condition_modifier", label: "Condition modifier", group: "General" },
   { key: "synthesis", label: "Generated chart summary", group: "You", showInEditor: false },
   { key: "essay", label: "General article", group: "General" }
 ];
@@ -439,6 +443,10 @@ function surfaceOptionLabel(surface: GeneratedContentSurfaceFilter) {
 function surfaceScopeLabel(surface: GeneratedContentSurfaceFilter) {
   if (surface === "sky") {
     return "Global publishable Sky content";
+  }
+
+  if (surface === "modifier") {
+    return "Shared condition modifier fragments";
   }
 
   if (surface === "all") {
@@ -1425,6 +1433,13 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
       headline: "Pluto relationship timing",
       mode: "feed",
       knowledgeIds: "relationship-timing-pluto, transit-natal-pluto-opposition-descendant"
+    },
+    modifier: {
+      contentKey: "condition.modifier.separating.tldrs",
+      eventType: "condition-modifier",
+      headline: "Condition modifier",
+      mode: "feed",
+      knowledgeIds: ""
     }
   };
   const defaultDraft = defaults[resolvedSurface];
@@ -1435,7 +1450,7 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
     mode: defaultDraft.mode,
     status: "DRAFT",
     eventType: defaultDraft.eventType,
-    targetDate: date,
+    targetDate: resolvedSurface === "modifier" ? "" : date,
     headline: defaultDraft.headline,
     summary: "",
     body: "",
@@ -1443,7 +1458,9 @@ function createAdminDraft(surface: GeneratedContentSurfaceFilter = "sky", date =
     factsJson: JSON.stringify({
       date,
       surface: resolvedSurface,
-      note: resolvedSurface === "sky"
+      note: resolvedSurface === "modifier"
+        ? "Shared condition modifier fragment."
+        : resolvedSurface === "sky"
         ? "Load current astrology facts before generating."
         : "Internal content test row only. Real content for this surface must be generated from user-specific chart, transit, synastry, or composite facts."
     }, null, 2),
@@ -2060,6 +2077,10 @@ function contentCategoryLabel(record: AdminReviewRecord): Exclude<AdminContentCa
     return "Fallback Templates";
   }
 
+  if (record.surface === "modifier") {
+    return "Condition Modifiers";
+  }
+
   if (record.surface === "sky") {
     return "Sky";
   }
@@ -2086,6 +2107,10 @@ function contentBlockType(record: AdminReviewRecord): AdminContentBlockFilter {
 
   if (isFallbackTemplateRecord(record)) {
     return "fallback_template";
+  }
+
+  if (record.surface === "modifier" || normalizedEventType.includes("condition-modifier")) {
+    return "condition_modifier";
   }
 
   const savedType = record.rawGlobalRow?.block_type ?? record.blockType;
@@ -2162,12 +2187,14 @@ function appLocationLabel(record: AdminReviewRecord) {
   if (record.surface === "sky") return "Sky";
   if (record.surface === "natal") return "Natal";
   if (record.surface === "you") return "You";
+  if (record.surface === "modifier") return "Modifier";
   if (record.surface === "synastry" || record.surface === "composite" || record.surface === "relationship") return "Circle";
 
   return generatedContentSurfaceLabels[record.surface];
 }
 
 function appLocationDetail(record: AdminReviewRecord) {
+  if (record.surface === "modifier") return "Condition modifier";
   if (record.surface === "synastry") return "Synastry";
   if (record.surface === "composite") return "Composite";
   if (record.surface === "relationship") return "Relationship";
@@ -2335,6 +2362,7 @@ function reviewMetadataForRecord(record: AdminReviewRecord): AdminReviewMetadata
 function surfaceForContentCategory(category: Exclude<AdminContentCategoryFilter, "all">): GeneratedContentSurface {
   if (category === "Sky") return "sky";
   if (category === "Relationship") return "relationship";
+  if (category === "Condition Modifiers") return "modifier";
   if (category === "Fallback Templates") return "sky";
 
   return "natal";
@@ -3128,11 +3156,11 @@ export function GeneratedContentAdminDashboard() {
         params.set("surface", nextSurface);
       }
 
-      if (dateStart) {
+      if (dateStart && nextSurface !== "modifier") {
         params.set("startDate", dateStart);
       }
 
-      if (dateEnd) {
+      if (dateEnd && nextSurface !== "modifier") {
         params.set("endDate", dateEnd);
       }
 
@@ -4992,13 +5020,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     }
   }
 
-  async function prepopulateContentQueue() {
+  async function prepopulateContentQueue(requestedSurface: GeneratedContentSurfaceFilter = "sky") {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
-
-    const requestedSurface: GeneratedContentSurfaceFilter = "sky";
 
     setIsLoading(true);
     try {
@@ -5028,7 +5054,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         setSelectedId(firstRow.id);
         setDraft(adminDraftFromRow(firstRow));
       }
-      setMessage(`Prepared ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and generate the reader-facing copy when you are ready.`);
+      setMessage(requestedSurface === "modifier"
+        ? `Prepared ${payload.inserted} condition modifier draft rows.`
+        : `Prepared ${payload.inserted} Sky draft rows for ${payload.targetDate}. Open each row and generate the reader-facing copy when you are ready.`);
       await loadRows("DRAFT", nextSurface);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
@@ -6080,6 +6108,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <Sparkles size={16} aria-hidden="true" />
                   Add Sky Aspect Drafts
                 </button>
+                <button type="button" onClick={() => void prepopulateContentQueue("modifier")} disabled={isLoading}>
+                  <Sparkles size={16} aria-hidden="true" />
+                  Add Modifier Drafts
+                </button>
                 <button type="button" onClick={() => void startNewContent()} disabled={isLoading}>
                   <Plus size={16} aria-hidden="true" />
                   New Content
@@ -6480,6 +6512,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <option value="you">You</option>
                             <option value="natal">Natal</option>
                             <option value="relationship">Circle</option>
+                            <option value="modifier">Modifier</option>
                             <option value="synastry">Synastry</option>
                             <option value="composite">Composite</option>
                           </select>
@@ -6503,6 +6536,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <option value="Natal Aspects">Natal Aspects</option>
                             <option value="Natal Chart">Natal Chart</option>
                             <option value="Relationship">Relationship</option>
+                            <option value="Condition Modifiers">Condition Modifiers</option>
                             <option value="Fallback Templates">Fallback Templates</option>
                           </select>
                         </label>

@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { readFile } from "node:fs/promises";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
@@ -6,7 +7,7 @@ import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
 loadLocalWebEnv();
 
 type ContentMode = "feed" | "in_depth" | "article";
-type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 
 type QueueInput = {
   surface?: GeneratedContentSurface | "all";
@@ -19,7 +20,7 @@ type QueueRow = {
   mode: ContentMode;
   status: "DRAFT";
   event_type: string;
-  target_date: string;
+  target_date: string | null;
   facts: Record<string, unknown>;
   knowledge_ids: string[];
   source_snapshot: Record<string, unknown>;
@@ -139,12 +140,13 @@ function queueRow(input: {
   surface?: GeneratedContentSurface;
   mode?: ContentMode;
   eventType: string;
-  targetDate: string;
+  targetDate: string | null;
   headline: string;
   facts: Record<string, unknown>;
   knowledgeIds?: string[];
   sourceSnapshot: Record<string, unknown>;
   reviewerNotes?: string;
+  body?: string;
 }): QueueRow {
   const surface = input.surface ?? "sky";
 
@@ -162,7 +164,7 @@ function queueRow(input: {
     model: "queued",
     headline: input.headline,
     summary: "",
-    body: "",
+    body: input.body ?? "",
     sections: [],
     reviewer_notes: input.reviewerNotes ?? (sampleSurfaces.has(surface)
       ? "INTERNAL CONTENT TEST. This row is for testing the template, voice, and knowledge hooks. Do not publish as global app content because real You, Synastry, Composite, and Relationship content must be generated from the user's chart or relationship facts."
@@ -182,6 +184,68 @@ function templateSourceSnapshot(surface: GeneratedContentSurface, targetDate: st
   };
 }
 
+type ConditionModifierSeedRow = {
+  contentKey: string;
+  surface: "modifier";
+  mode: "feed" | "article";
+  eventType: "condition-modifier";
+  targetDate: null;
+  status: "DRAFT";
+  body: string;
+};
+
+function isConditionModifierSeedRow(value: unknown): value is ConditionModifierSeedRow {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const row = value as Record<string, unknown>;
+
+  return typeof row.contentKey === "string"
+    && row.surface === "modifier"
+    && (row.mode === "feed" || row.mode === "article")
+    && row.eventType === "condition-modifier"
+    && row.targetDate === null
+    && row.status === "DRAFT"
+    && typeof row.body === "string";
+}
+
+async function loadConditionModifierSeedRows(): Promise<ConditionModifierSeedRow[]> {
+  const fileUrl = new URL("./condition-modifier-seed.json", import.meta.url);
+  const raw = await readFile(fileUrl, "utf8");
+  const parsed = JSON.parse(raw) as unknown;
+
+  if (!Array.isArray(parsed) || !parsed.every(isConditionModifierSeedRow)) {
+    throw new Error("Condition modifier seed file is invalid.");
+  }
+
+  return parsed;
+}
+
+async function buildConditionModifierRows(): Promise<QueueRow[]> {
+  const seedRows = await loadConditionModifierSeedRows();
+
+  return seedRows.map((row) => queueRow({
+    contentKey: row.contentKey,
+    surface: row.surface,
+    mode: row.mode,
+    eventType: row.eventType,
+    targetDate: row.targetDate,
+    headline: "",
+    facts: {
+      type: "condition_modifier",
+      contentKey: row.contentKey
+    },
+    knowledgeIds: [],
+    sourceSnapshot: {
+      source: "condition-modifier-seed",
+      surface: row.surface,
+      shared: true
+    },
+    body: row.body
+  }));
+}
+
 const natalSunAriesHouse9Source = [
   "You may notice a pattern of taking initiative in expanding your horizons and exploring unfamiliar territories, whether through travel, study, or philosophical inquiry.",
   "There can be a readiness to make quick judgments based on what feels urgent or exciting rather than lingering on all the details.",
@@ -195,7 +259,7 @@ const natalSunAriesHouse9Source = [
   "The 9th house influence means these themes are especially active in phases dedicated to education, travel, or significant life choices about belief systems and purpose, offering ongoing opportunities to cultivate and refine this assertive, explorative style."
 ].join(" ");
 
-function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky">, targetDate: string) {
+function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky" | "modifier">, targetDate: string) {
   const sourceSnapshot = templateSourceSnapshot(surface, targetDate);
   const rows: QueueRow[] = [];
 
@@ -650,10 +714,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       rows = rows.concat(buildSkyQueueRows(sky, targetDate));
     }
 
-    const templateSurfaces: Array<Exclude<GeneratedContentSurface, "sky">> =
+    if (requestedSurface === "modifier") {
+      rows = rows.concat(await buildConditionModifierRows());
+    }
+
+    const templateSurfaces: Array<Exclude<GeneratedContentSurface, "sky" | "modifier">> =
       requestedSurface === "all"
         ? []
-        : requestedSurface === "sky"
+        : requestedSurface === "sky" || requestedSurface === "modifier"
           ? []
           : [requestedSurface];
 

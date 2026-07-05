@@ -304,10 +304,11 @@ export async function loadLiveGeneratedContent(
     return new Map<string, LiveGeneratedContent>();
   }
 
+  const surfaces = Array.from(new Set([surface, "modifier"]));
   let query = supabase
     .from("generated_interpretations")
     .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, model, updated_at")
-    .eq("surface", surface)
+    .in("surface", surfaces)
     .eq("status", "LIVE")
     .order("updated_at", { ascending: false });
 

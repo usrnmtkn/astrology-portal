@@ -1,0 +1,74 @@
+[
+  {
+    "contentKey": "condition.modifier.separating.tldrs",
+    "surface": "modifier",
+    "mode": "feed",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "Exact already passed. The pressure is easing. Whatever this stirred up is now yours to finish, not brace for."
+  },
+  {
+    "contentKey": "condition.modifier.separating.longform",
+    "surface": "modifier",
+    "mode": "article",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "This contact has already made its exact pass. The peak is behind you, but the aftermath still needs handling. If something surfaced under this aspect, focus on follow-through, cleanup, and what remains after the initial impact."
+  },
+  {
+    "contentKey": "condition.modifier.non_perfecting.tldrs",
+    "surface": "modifier",
+    "mode": "feed",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "This builds but never lands. Expect the feeling of something coming that keeps not arriving. Do not wait on it."
+  },
+  {
+    "contentKey": "condition.modifier.non_perfecting.longform",
+    "surface": "modifier",
+    "mode": "article",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "This aspect approaches without completing. One planet changes sign or turns before the contact becomes exact, so the tension builds and then disperses without a defining moment. Treat any sense of anticipation here loosely. What seems promised may not arrive in the form or timing you expect."
+  },
+  {
+    "contentKey": "condition.modifier.receiver_retrograde.tldrs",
+    "surface": "modifier",
+    "mode": "feed",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "The receiving planet is retrograde. What gets handed over may come right back. Plan for a second pass."
+  },
+  {
+    "contentKey": "condition.modifier.receiver_retrograde.longform",
+    "surface": "modifier",
+    "mode": "article",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "The planet receiving this contact is moving retrograde, so it takes in what arrives slowly and often sends it back for revision. First attempts under this aspect tend to return. Build in room for the redo instead of treating the first exchange as final."
+  },
+  {
+    "contentKey": "condition.modifier.receiver_combust.tldrs",
+    "surface": "modifier",
+    "mode": "feed",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "The receiving planet sits too close to the Sun to hold much. Signals get lost here. Confirm anything important twice."
+  },
+  {
+    "contentKey": "condition.modifier.receiver_combust.longform",
+    "surface": "modifier",
+    "mode": "article",
+    "eventType": "condition-modifier",
+    "targetDate": null,
+    "status": "DRAFT",
+    "body": "The planet on the receiving end is too close to the Sun, so it is harder to see, use, or rely on cleanly. It cannot fully hold what this aspect delivers. Matters routed through it may go quiet, get absorbed, or lose definition. Keep expectations modest and keep receipts."
+  }
+]

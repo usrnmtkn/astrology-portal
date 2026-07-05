@@ -940,6 +940,58 @@ function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback:
   return generated?.headline?.trim() || fallback;
 }
 
+type ConditionModifierProfile = "tldrs" | "longform";
+
+function conditionModifierContentKey(aspect: SkySnapshot["aspects"][number], profile: ConditionModifierProfile) {
+  const conditions = aspect.conditions;
+
+  if (!conditions) {
+    return null;
+  }
+
+  if (conditions.applying && !conditions.perfects) {
+    return `condition.modifier.non_perfecting.${profile}`;
+  }
+
+  if (conditions.receiverCombust) {
+    return `condition.modifier.receiver_combust.${profile}`;
+  }
+
+  if (conditions.receiverRetrograde) {
+    return `condition.modifier.receiver_retrograde.${profile}`;
+  }
+
+  if (!conditions.applying) {
+    return `condition.modifier.separating.${profile}`;
+  }
+
+  return null;
+}
+
+function conditionModifierContent(
+  generatedContent: GeneratedContentMap,
+  aspect: SkySnapshot["aspects"][number],
+  profile: ConditionModifierProfile
+) {
+  const contentKey = conditionModifierContentKey(aspect, profile);
+
+  return contentKey ? liveGeneratedContent(generatedContent, contentKey) : null;
+}
+
+function conditionModifierSummary(
+  generatedContent: GeneratedContentMap,
+  aspect: SkySnapshot["aspects"][number]
+) {
+  return liveGeneratedSummaryIfPresent(conditionModifierContent(generatedContent, aspect, "tldrs"));
+}
+
+function conditionModifierBody(
+  generatedContent: GeneratedContentMap,
+  aspect: SkySnapshot["aspects"][number]
+) {
+  return generatedContentParagraphs(conditionModifierContent(generatedContent, aspect, "longform"));
+}
+
 function generatedSettingEnabled(
   generatedContent: GeneratedContentMap,
   contentKey: string,
@@ -994,9 +1046,8 @@ function skyAspectSignContextLine(
     templateFallbackContentKeys.skyAspectSignContext,
     slots
   );
-  const fallbackLine = `Right now this runs through ${slots.signA} and ${slots.signB}: ${slots.signAStyleShort} meeting ${slots.signBStyleShort}.`;
 
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallbackLine;
+  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
@@ -3745,9 +3796,16 @@ function SkyDetailArticle({
     body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
   }));
   const drilldown = detail.astrologyDrilldown;
-  const [lede] = paragraphs;
   const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
-  const articleSub = articleTldrText(detailSubtitle || statement || (typeof lede === "string" ? lede : ""));
+  const articleSub = articleTldrText(detailSubtitle || statement || "");
+  const articleSubComparable = comparableText(articleSub);
+  const displaySections = generatedSections.filter((section, index) => {
+    if (index !== 0 || !articleSubComparable || typeof section.body !== "string") {
+      return true;
+    }
+
+    return comparableText(stripLegacySkyArticleScaffoldPrefix(section.body)) !== articleSubComparable;
+  });
   const fallbackParagraphs = paragraphs;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
@@ -3760,7 +3818,7 @@ function SkyDetailArticle({
   const hasReadableBody = Boolean(
     detail.lensHint ||
       (detail.plainBody && fallbackParagraphs.length > 0) ||
-      generatedSections.length > 0 ||
+      displaySections.length > 0 ||
       fallbackParagraphs.length > 0 ||
       drilldown
   );
@@ -3821,7 +3879,7 @@ function SkyDetailArticle({
                     <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
                   ))}
                 </section>
-              ) : generatedSections.length > 0 ? (
+              ) : displaySections.length > 0 ? (
                 <>
                   {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
                     <section className="article-section sky-detail-section sky-detail-intro-section">
@@ -3830,7 +3888,7 @@ function SkyDetailArticle({
                       ))}
                     </section>
                   ) : null}
-                  {generatedSections.map((section, index) => {
+                  {displaySections.map((section, index) => {
                     const bodyParagraphs = typeof section.body === "string"
                       ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
@@ -4240,7 +4298,9 @@ function currentSkyAspectDetailArticle(
     return comparableText(stripTldrPrefix(paragraph)) !== normalizedSubtitle;
   });
   const signContextLine = skyAspectSignContextLine(aspect, generatedContent, positions);
+  const modifierBody = conditionModifierBody(generatedContent, aspect);
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
+  const baseBody = signContextLine ? [...body, signContextLine] : body;
 
   return {
     routePath: skyAspectRoutePath(aspect),
@@ -4251,7 +4311,7 @@ function currentSkyAspectDetailArticle(
     duration: timing,
     subtitle,
     content: content.bundle,
-    body: signContextLine ? [...body, signContextLine] : body,
+    body: modifierBody.length > 0 ? [...baseBody, ...modifierBody] : baseBody,
     sections: generatedDetailSections(generated),
     astrologyDrilldown: generatedAstrologyDrilldown(generated)
   };
@@ -12760,7 +12820,8 @@ function ActiveAspects({
               aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content)
             );
             const signContextLine = skyAspectSignContextLine(aspect, generatedContent, positions);
-            const displaySummary = signContextLine ? `${rowSummary} ${signContextLine}` : rowSummary;
+            const modifierSummary = conditionModifierSummary(generatedContent, aspect);
+            const displaySummary = [rowSummary, signContextLine, modifierSummary].filter(Boolean).join(" ");
 
                 return (
                   <button
