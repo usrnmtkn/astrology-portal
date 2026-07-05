@@ -5788,6 +5788,12 @@ function rankSkyPositionsByLifeAreaFocus(positions: PlanetPosition[], focusAreas
 
 function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
   return [...aspects].sort((first, second) => {
+    const tierDiff = skyAspectConditionTier(first) - skyAspectConditionTier(second);
+
+    if (tierDiff !== 0) {
+      return tierDiff;
+    }
+
     const durationDiff = skyAspectEstimatedDurationDays(first) - skyAspectEstimatedDurationDays(second);
 
     if (Math.abs(durationDiff) > 0.001) {
@@ -5803,6 +5809,18 @@ function rankSkyAspectsByTransitDuration(aspects: SkySnapshot["aspects"]) {
 
     return skyBodyOrderIndex(firstFastestPlanet ?? "") - skyBodyOrderIndex(secondFastestPlanet ?? "");
   });
+}
+
+function skyAspectConditionTier(aspect: SkySnapshot["aspects"][number]) {
+  if (aspect.conditions?.applying && aspect.conditions.perfects) {
+    return 0;
+  }
+
+  if (aspect.conditions?.applying) {
+    return 1;
+  }
+
+  return 2;
 }
 
 function skyAspectLifeAreaScore(aspect: SkySnapshot["aspects"][number], positions: PlanetPosition[], area: LifeAreaFocus) {
