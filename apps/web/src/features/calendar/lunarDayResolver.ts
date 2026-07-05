@@ -1,6 +1,7 @@
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
-import type { LiveGeneratedContent } from "../../services/generatedContent";
+import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
 import { slugContentPart } from "../../services/generatedContentKeys";
+import type { TemplateSlotValues } from "../../services/templateInterpolation";
 import type { LocationInput } from "../../types";
 import type { LunarDay, LunarDayArcPoint, LunarDayCheckpointRole, LunarDayTransit, LunarDayTransitType } from "./lunarDayTypes";
 
@@ -263,6 +264,25 @@ function contentBody(generatedContent: Map<string, LiveGeneratedContent> | undef
   return null;
 }
 
+function lunarDayTemplateSlots(
+  day: LunarCalendarDay
+): TemplateSlotValues {
+  return {
+    moonSign: day.moonSign,
+    moonPhase: day.moonPhase
+  };
+}
+
+function fallbackLunarDayContent(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  slots: TemplateSlotValues
+) {
+  return renderGeneratedContentTemplate(
+    generatedContent?.get("fallback-hook/sky.lunar-calendar-day"),
+    slots
+  );
+}
+
 function editorialFor(
   day: LunarCalendarDay,
   seasonSign: string,
@@ -287,9 +307,14 @@ function editorialFor(
     `lunar.eclipse.${day.dateKey}.witness`,
     `lunar.eclipse.${lunationSignPart}.${seasonPart}.witness`
   ];
+  const fallbackDay = fallbackLunarDayContent(
+    generatedContent,
+    lunarDayTemplateSlots(day)
+  );
+  const fallbackDayBody = fallbackDay?.body.trim() || null;
 
   return {
-    body: contentBody(generatedContent, baseKeys.map((key) => `${key}.body`)),
+    body: contentBody(generatedContent, baseKeys.map((key) => `${key}.body`)) ?? fallbackDayBody,
     practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
     reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
     ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),

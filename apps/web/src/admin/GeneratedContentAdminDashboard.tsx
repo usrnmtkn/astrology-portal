@@ -495,6 +495,7 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
 const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
   "sky.seasonal-current": { planet: "Sun", sign: "Gemini" },
   "sky.lunar-cycle": { planet: "Moon", sign: "Capricorn" },
+  "sky.lunar-calendar-day": { moonPhase: "Waxing Crescent", moonSign: "Cancer" },
   "sky.planetary-placement": { planet: "Venus", sign: "Cancer" },
   "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune" },
   "sky.retrograde": { planet: "Pluto", sign: "Aquarius" },
@@ -5951,7 +5952,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Slot-based app copy</p>
                 <h2>Fallback Rows</h2>
-                <p>Edit the `fallback-hook/` rows that hold reusable template copy for app cards such as sky aspects, sign seasons, synastry contacts, and house overlays.</p>
+                <p>Edit the `fallback-hook/` rows that hold reusable template copy for app cards such as sky aspects, sign seasons, lunar calendar days, synastry contacts, and house overlays.</p>
               </div>
               <div className="admin-release-summary" aria-label="Template row count">
                 <article>
@@ -5990,7 +5991,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </article>
               <article>
                 <span>How Slots Work</span>
-                <p>Values like <code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{personA}}"}</code>, and <code>{"{{house}}"}</code> are filled from the calculated sky, natal, or relationship context at render time.</p>
+                <p>Values like <code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{moonPhase}}"}</code>, <code>{"{{personA}}"}</code>, and <code>{"{{house}}"}</code> are filled from the calculated sky, lunar calendar, natal, or relationship context at render time.</p>
               </article>
               <article>
                 <span>Review Surface</span>
