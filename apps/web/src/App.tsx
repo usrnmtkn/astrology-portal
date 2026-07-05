@@ -994,8 +994,9 @@ function skyAspectSignContextLine(
     templateFallbackContentKeys.skyAspectSignContext,
     slots
   );
+  const fallbackLine = `Right now this runs through ${slots.signA} and ${slots.signB}: ${slots.signAStyleShort} meeting ${slots.signBStyleShort}.`;
 
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallbackLine;
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
