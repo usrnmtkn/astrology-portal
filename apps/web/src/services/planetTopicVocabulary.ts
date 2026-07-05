@@ -173,8 +173,8 @@ function fallbackPlanetTopicPhrase(planet: string, variant: PlanetTopicVariant) 
   const planetId = normalizedPlanetId(planet);
 
   return variant === "sky"
-    ? fallbackSkyTopics[planetId] ?? fallbackNatalTopics[planetId] ?? "how this part of the moment becomes active"
-    : fallbackNatalTopics[planetId] ?? "how this part of you becomes active";
+    ? fallbackSkyTopics[planetId] ?? fallbackNatalTopics[planetId] ?? ""
+    : fallbackNatalTopics[planetId] ?? "";
 }
 
 function fallbackSignStyle(sign: string) {

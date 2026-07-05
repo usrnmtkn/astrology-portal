@@ -264,7 +264,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
-    status: body.status && allowedStatuses.has(body.status) && !isSampleOnlyRow(body.surface, body.contentKey) ? body.status : "DRAFT",
+    status: "DRAFT",
     event_type: body.eventType.trim(),
     target_date: body.targetDate || null,
     facts: body.facts ?? {},
