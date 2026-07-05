@@ -187,6 +187,29 @@ function normalizeAspect(aspect: Partial<SkyAspect>): SkyAspect | null {
   };
 }
 
+function skyAspectConditionTier(aspect: SkyAspect) {
+  if (aspect.conditions?.applying && aspect.conditions.perfects) {
+    return 0;
+  }
+
+  if (aspect.conditions?.applying) {
+    return 1;
+  }
+
+  return 2;
+}
+
+function rankSkyAspectsByConditionTier(aspects: SkyAspect[]) {
+  return aspects
+    .map((aspect, index) => ({ aspect, index }))
+    .sort((first, second) => {
+      const tierDifference = skyAspectConditionTier(first.aspect) - skyAspectConditionTier(second.aspect);
+
+      return tierDifference || first.index - second.index;
+    })
+    .map(({ aspect }) => aspect);
+}
+
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
   const response = await fetch(`${tldrAstroApiUrl()}${path}`, {
     method: "POST",
@@ -221,7 +244,9 @@ export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
     includeContentFacts: false
   });
   const positions = (sky.positions ?? []).map(normalizePosition);
-  const aspects = (sky.aspects ?? []).map(normalizeAspect).filter((aspect): aspect is SkyAspect => Boolean(aspect));
+  const aspects = rankSkyAspectsByConditionTier(
+    (sky.aspects ?? []).map(normalizeAspect).filter((aspect): aspect is SkyAspect => Boolean(aspect))
+  );
 
   return {
     location: sky.location ?? defaultLocation,
