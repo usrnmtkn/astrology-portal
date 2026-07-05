@@ -3562,16 +3562,31 @@ function projectAuthoredNatalPlacementSources(input: GenerateContentInput) {
 
 export function natalPlacementGenerationSafetySummary(input: GenerateContentInput): NatalPlacementGenerationSafetySummary {
   const isPrimaryNatalPlacement = isPrimaryNatalPlacementGeneration(input);
+  const sourceSnapshot = isRecord(input.sourceSnapshot) ? input.sourceSnapshot : {};
+  const snapshotSourceId = stringValue(sourceSnapshot.kbId);
+  const snapshotSourcePath = stringValue(sourceSnapshot.sourcePath);
+  const snapshotContentType = stringValue(sourceSnapshot.contentType);
+  const requestedSourceIds = (input.knowledgeIds ?? []).map((id) => id.trim()).filter(Boolean);
+
   const authoredSources = isPrimaryNatalPlacement ? projectAuthoredNatalPlacementSources(input) : [];
   const authoredPlacementSources = authoredSources.filter((source) => source.role.startsWith("ASTROLOGY SOURCE MATERIAL - authored placement"));
+  const sourceIds = isPrimaryNatalPlacement
+    ? authoredPlacementSources.map((source) => source.id).filter((id): id is string => Boolean(id))
+    : Array.from(new Set([...requestedSourceIds, snapshotSourceId].filter(Boolean)));
+  const sourcePaths = isPrimaryNatalPlacement
+    ? Array.from(new Set(authoredPlacementSources.map((source) => source.sourcePath).filter(Boolean)))
+    : Array.from(new Set([snapshotSourcePath].filter(Boolean)));
+  const astrologyBodySent = isPrimaryNatalPlacement
+    ? authoredPlacementSources.some((source) => source.excerpts.some((excerpt) => excerpt.trim().length > 0))
+    : Boolean(sourceIds.length || sourcePaths.length || snapshotContentType);
 
   return {
     isPrimaryNatalPlacement,
-    sourceIds: authoredPlacementSources.map((source) => source.id).filter((id): id is string => Boolean(id)),
-    sourcePaths: Array.from(new Set(authoredPlacementSources.map((source) => source.sourcePath).filter(Boolean))),
+    sourceIds,
+    sourcePaths,
     sourceSafety: {
       sourceBodyExcluded: true,
-      astrologyBodySent: authoredPlacementSources.some((source) => source.excerpts.some((excerpt) => excerpt.trim().length > 0)),
+      astrologyBodySent,
       tarotNotesExcluded: true,
       businessNotesExcluded: true,
       authoredSourceGenerationAllowed: allowsPrivateSourceModelGeneration()

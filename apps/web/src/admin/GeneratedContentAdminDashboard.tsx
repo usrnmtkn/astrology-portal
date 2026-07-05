@@ -211,6 +211,7 @@ type AdminReviewRecord = {
   sections: Array<{ heading: string; body: string }>;
   blockType?: AdminContentBlockFilter | null;
   facts: Record<string, unknown> | null;
+  knowledgeIds?: string[];
   sourceSnapshot: Record<string, unknown> | null;
   reviewerNotes: string | null;
   userId?: string;
@@ -1424,6 +1425,7 @@ function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
     body: row.body ?? "",
     sections,
     facts: row.facts,
+    knowledgeIds: row.knowledge_ids ?? [],
     sourceSnapshot: row.source_snapshot,
     reviewerNotes: row.reviewer_notes,
     model: row.model,
@@ -1440,6 +1442,10 @@ function savedGlobalRowId(record: AdminReviewRecord) {
   const match = record.id.match(/^(?:global|saved):(.+)$/);
 
   return match?.[1] ?? "";
+}
+
+function knowledgeIdsForReviewRecord(record: AdminReviewRecord) {
+  return record.rawGlobalRow?.knowledge_ids ?? record.knowledgeIds ?? [];
 }
 
 function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewRecord {
@@ -3901,6 +3907,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       const nextSummary = normalizedCopy.summary;
       const nextTitle = (isActiveEdit ? reviewEditTitle : record.title).trim() || record.title;
       const existingGlobalRowId = savedGlobalRowId(record);
+      const nextKnowledgeIds = knowledgeIdsForReviewRecord(record);
 
       if (record.source === "private" && record.rawPrivateRow) {
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
@@ -3960,7 +3967,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               adminReviewSource: record.source,
               savedFromReviewRecordId: record.id
             },
-            knowledgeIds: [],
+            knowledgeIds: nextKnowledgeIds,
             reviewerNotes: record.reviewerNotes ?? "",
             promptVersion: modularPayload.promptVersion,
             blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType
@@ -3989,6 +3996,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               summary: nextSummary,
               body: nextBody,
               facts: nextFacts,
+              knowledgeIds: row?.knowledge_ids ?? nextKnowledgeIds,
+              sourceSnapshot: row?.source_snapshot ?? currentRecord.sourceSnapshot,
               rawGlobalRow: row ?? currentRecord.rawGlobalRow
             }
           : currentRecord
@@ -4092,6 +4101,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setReviewEditBody(readerFacingTextForReview(record));
     setReviewEditMetadata(metadata);
     setIsGeneratingReviewDraft(true);
+    const nextKnowledgeIds = knowledgeIdsForReviewRecord(record);
     setReviewDraftResults((currentResults) => {
       const nextResults = { ...currentResults };
       delete nextResults[record.id];
@@ -4137,7 +4147,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               adminReviewSource: record.source,
               generatedFromReviewRecordId: record.id
             },
-            knowledgeIds: [],
+            knowledgeIds: nextKnowledgeIds,
             provider: reviewGenerationProvider,
             allowQualityFallback: true,
             blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType,
@@ -4187,6 +4197,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               eventType: savedRow?.event_type ?? currentRecord.eventType,
               targetDate: savedRow?.target_date ?? currentRecord.targetDate,
               facts: savedRow?.facts ?? currentRecord.facts,
+              knowledgeIds: savedRow?.knowledge_ids ?? currentRecord.knowledgeIds,
               sourceSnapshot: savedRow?.source_snapshot ?? currentRecord.sourceSnapshot,
               sections: generated.sections ?? currentRecord.sections,
               model: generated.model ?? currentRecord.model,
@@ -5852,7 +5863,15 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </div>
                           <div>
                             <span>Sources</span>
-                            <strong>{selectedReviewDraftResult.sourceIds?.length ? selectedReviewDraftResult.sourceIds.join(", ") : "No authored source IDs returned"}</strong>
+                            <strong>
+                              {(() => {
+                                const sourceIds = selectedReviewDraftResult.sourceIds?.length
+                                  ? selectedReviewDraftResult.sourceIds
+                                  : knowledgeIdsForReviewRecord(selectedReviewRecord);
+
+                                return sourceIds.length ? sourceIds.join(", ") : "No source IDs returned";
+                              })()}
+                            </strong>
                           </div>
                           <div>
                             <span>Safety checks</span>
