@@ -10396,21 +10396,7 @@ function retrogradeCollapsedName(position: PlanetPosition) {
 }
 
 function retrogradeAttentionTopic(planet: string) {
-  const topics: Record<string, string> = {
-    Mercury: "messages, plans, and daily logistics",
-    Venus: "relationships, money, comfort, and desire",
-    Mars: "energy, anger, urgency, and effort",
-    Jupiter: "beliefs, growth, promises, and perspective",
-    Saturn: "commitments, limits, timing, and responsibility",
-    Uranus: "restlessness, change, disruption, and freedom",
-    Neptune: "uncertainty, sensitivity, ideals, and escape",
-    Pluto: "control, power, endings, and deeper pressure",
-    Chiron: "old tenderness, repair, and places that still feel sensitive",
-    "North Node": "direction, appetite, growth, and old patterns",
-    "True Node": "direction, appetite, growth, and old patterns"
-  };
-
-  return topics[skyDisplayPlanetName(planet)] ?? "the places asking for review";
+  return planetTopicPhrase(planet, "sky");
 }
 
 function generatedRetrogradeSummaryMatchesPlanets(summary: string, retrogrades: PlanetPosition[]) {
