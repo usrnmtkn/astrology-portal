@@ -20,6 +20,9 @@ export type PlanetPosition = {
   transitStart?: string | null;
   transitEnd?: string | null;
   transitRemainingLabel?: string | null;
+  retrogradeStart?: string | null;
+  retrogradeEnd?: string | null;
+  retrogradeWindowSource?: "station" | "sign-transit" | null;
 };
 
 export type SolarDaylight = {
