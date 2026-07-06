@@ -1,15 +1,23 @@
 import { getSupabaseClient } from "./auth";
 
-export type PlanetTopicVariant = "natal" | "sky";
+export type PlanetTopicVariant = "you" | "friend" | "sky" | "natal";
 
 type PlanetTopicPhrases = {
-  natal: string;
+  you?: string;
+  friend?: string;
+  natal?: string;
   sky?: string;
+  body?: string;
 };
 
 type SignStylePhrases = {
   phrase: string;
   short?: string;
+};
+
+type SignNeedPhrases = {
+  natal: string;
+  sky?: string;
 };
 
 type PlanetTopicVocabularyRow = {
@@ -21,40 +29,7 @@ type PlanetTopicVocabularyRow = {
 
 export type PlanetTopicVocabulary = Map<string, PlanetTopicPhrases>;
 export type SignStyleVocabulary = Map<string, SignStylePhrases>;
-
-const fallbackNatalTopics: Record<string, string> = {
-  ascendant: "how you meet the world and come across",
-  chiron: "where old tenderness, repair, and integration become active",
-  jupiter: "where you look for growth, meaning, faith, and a wider view of life",
-  mars: "how you act, pursue, defend, and move toward what you want",
-  mercury: "how your mind notices, learns, translates, and puts experience into words",
-  midheaven: "public role, visibility, direction, and what you are building toward",
-  moon: "how your emotional body responds before you have had time to explain yourself",
-  neptune: "where you are sensitive, imaginative, porous, and moved by longing",
-  pluto: "where you meet intensity, control, honesty, pressure, and deep change",
-  saturn: "where you build maturity, boundaries, responsibility, and earned confidence",
-  sun: "how you build identity, confidence, vitality, and a sense of direction",
-  "true-node": "the developmental direction that keeps asking for growth",
-  uranus: "where you need freedom, honesty, disruption, and room to break old patterns",
-  venus: "what you value, what you are drawn to, and what helps connection feel real"
-};
-
-const fallbackSkyTopics: Record<string, string> = {
-  ascendant: "how the moment meets the world and becomes visible",
-  chiron: "tenderness, repair, and old patterns asking for care",
-  jupiter: "growth, opportunity, and perspective",
-  mars: "energy, conflict, and momentum",
-  mercury: "thinking, communication, and decisions",
-  midheaven: "visibility, direction, and public momentum",
-  moon: "the emotional tone",
-  neptune: "imagination, longing, and uncertainty",
-  pluto: "power, pressure, and deep change",
-  saturn: "limits, responsibility, and structure",
-  sun: "attention, vitality, and the tone of the season",
-  "true-node": "the directional pull of the moment",
-  uranus: "change, disruption, and new patterns",
-  venus: "connection, pleasure, money, and desire"
-};
+export type SignNeedVocabulary = Map<string, SignNeedPhrases>;
 
 const fallbackSignStyles: Record<string, SignStylePhrases> = {
   aries: { phrase: "direct and initiating", short: "direct initiation" },
@@ -73,6 +48,7 @@ const fallbackSignStyles: Record<string, SignStylePhrases> = {
 
 let cachedVocabulary: PlanetTopicVocabulary | null = null;
 let cachedSignStyles: SignStyleVocabulary | null = null;
+let cachedSignNeeds: SignNeedVocabulary | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
 
@@ -105,9 +81,12 @@ function stringField(record: Record<string, unknown>, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function topicFromSections(sections: unknown): PlanetTopicPhrases | null {
+function topicFromRow(row: PlanetTopicVocabularyRow): PlanetTopicPhrases | null {
+  const sections = row.sections;
+
   if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
-    return null;
+    const body = row.body?.trim() ?? "";
+    return body ? { body } : null;
   }
 
   const record = sections as Record<string, unknown>;
@@ -115,14 +94,17 @@ function topicFromSections(sections: unknown): PlanetTopicPhrases | null {
   const topicRecord = topic && typeof topic === "object" && !Array.isArray(topic)
     ? topic as Record<string, unknown>
     : record;
+  const you = stringField(topicRecord, "you");
+  const friend = stringField(topicRecord, "friend");
   const natal = stringField(topicRecord, "natal");
   const sky = stringField(topicRecord, "sky");
+  const body = row.body?.trim() ?? "";
 
-  if (!natal) {
+  if (!you && !friend && !sky && !natal && !body) {
     return null;
   }
 
-  return sky && sky !== natal ? { natal, sky } : { natal };
+  return { you, friend, sky, natal, body };
 }
 
 function signStyleFromRow(row: PlanetTopicVocabularyRow): SignStylePhrases | null {
@@ -147,13 +129,31 @@ function signStyleFromRow(row: PlanetTopicVocabularyRow): SignStylePhrases | nul
   return short && short !== phrase ? { phrase, short } : { phrase };
 }
 
-function warnFallback(planet: string, variant: PlanetTopicVariant, reason: string) {
-  const warningKey = `${variant}:${normalizedPlanetId(planet)}:${reason}`;
+function signNeedFromRow(row: PlanetTopicVocabularyRow): SignNeedPhrases | null {
+  const sections = row.sections && typeof row.sections === "object" && !Array.isArray(row.sections)
+    ? row.sections as Record<string, unknown>
+    : {};
+  const need = sections.need && typeof sections.need === "object" && !Array.isArray(sections.need)
+    ? sections.need as Record<string, unknown>
+    : {};
+  const phrase = stringField(need, "phrase") || row.body?.trim() || "";
+  const natal = stringField(need, "natal") || phrase;
+  const sky = stringField(need, "sky") || natal;
+
+  if (!natal) {
+    return null;
+  }
+
+  return sky && sky !== natal ? { natal, sky } : { natal };
+}
+
+function warnTopicMissing(planet: string, variant: PlanetTopicVariant, reason: string) {
+  const warningKey = `topic:${variant}:${normalizedPlanetId(planet)}:${reason}`;
 
   if (!warnedFallbacks.has(warningKey)) {
     warnedFallbacks.add(warningKey);
     console.warn(
-      `Planet topic vocabulary missing ${reason} for "${planet}" (${variant}); using code fallback.`
+      `Planet topic vocabulary missing ${reason} for "${planet}" (${variant}); leaving topic slot blank.`
     );
   }
 }
@@ -167,14 +167,6 @@ function warnSignFallback(sign: string, reason: string) {
       `Sign style vocabulary missing ${reason} for "${sign}"; using code fallback.`
     );
   }
-}
-
-function fallbackPlanetTopicPhrase(planet: string, variant: PlanetTopicVariant) {
-  const planetId = normalizedPlanetId(planet);
-
-  return variant === "sky"
-    ? fallbackSkyTopics[planetId] ?? fallbackNatalTopics[planetId] ?? ""
-    : fallbackNatalTopics[planetId] ?? "";
 }
 
 function fallbackSignStyle(sign: string) {
@@ -194,7 +186,7 @@ export function planetTopicVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) 
 
   for (const row of rows) {
     const planet = row.content_key.replace(/^vocab\/planet-topic\//, "");
-    const topic = topicFromSections(row.sections);
+    const topic = topicFromRow(row);
 
     if (planet && topic) {
       vocabulary.set(planet, topic);
@@ -223,6 +215,25 @@ export function signStyleVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
   return vocabulary;
 }
 
+export function signNeedVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
+  const vocabulary: SignNeedVocabulary = new Map();
+
+  for (const row of rows) {
+    if (!row.content_key.startsWith("vocab/sign-need/")) {
+      continue;
+    }
+
+    const sign = row.content_key.replace(/^vocab\/sign-need\//, "");
+    const need = signNeedFromRow(row);
+
+    if (sign && need) {
+      vocabulary.set(sign, need);
+    }
+  }
+
+  return vocabulary;
+}
+
 export function planetTopicPhraseFromVocabulary(
   vocabulary: PlanetTopicVocabulary | null,
   planet: string,
@@ -230,17 +241,14 @@ export function planetTopicPhraseFromVocabulary(
 ) {
   const planetId = normalizedPlanetId(planet);
   const topic = vocabulary?.get(planetId);
-  const rowValue = variant === "sky"
-    ? topic?.sky || topic?.natal
-    : topic?.natal;
+  const rowValue = topic?.[variant] || topic?.natal || topic?.body || "";
 
   if (rowValue) {
     return rowValue;
   }
 
-  warnFallback(planet, variant, topic ? "field" : "row");
-
-  return fallbackPlanetTopicPhrase(planet, variant);
+  warnTopicMissing(planet, variant, topic ? "field" : "row");
+  return "";
 }
 
 export function signStylePhrase(sign: string) {
@@ -270,9 +278,26 @@ export function signStyleShortPhrase(sign: string) {
   return fallback.short || fallback.phrase;
 }
 
+export function signNeedPhrase(sign: string, variant: PlanetTopicVariant = "natal") {
+  const signId = normalizedSignId(sign);
+  const need = cachedSignNeeds?.get(signId);
+  const rowValue = variant === "sky"
+    ? need?.sky || need?.natal
+    : need?.natal;
+
+  if (rowValue) {
+    return rowValue;
+  }
+
+  warnSignFallback(sign, need ? "field" : "row");
+
+  return "";
+}
+
 export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = "natal") {
   if (!cachedVocabulary) {
-    return fallbackPlanetTopicPhrase(planet, variant);
+    warnTopicMissing(planet, variant, "cache");
+    return "";
   }
 
   return planetTopicPhraseFromVocabulary(cachedVocabulary, planet, variant);
@@ -293,6 +318,7 @@ export async function loadPlanetTopicVocabulary() {
     if (!supabase) {
       cachedVocabulary = new Map();
       cachedSignStyles = new Map();
+      cachedSignNeeds = new Map();
       return cachedVocabulary;
     }
 
@@ -305,14 +331,16 @@ export async function loadPlanetTopicVocabulary() {
       .returns<PlanetTopicVocabularyRow[]>();
 
     if (error) {
-      console.warn("Planet topic vocabulary failed to load; code fallbacks will be used.", error);
+      console.warn("Planet topic vocabulary failed to load; topic slots will be blank.", error);
       cachedVocabulary = new Map();
       cachedSignStyles = new Map();
+      cachedSignNeeds = new Map();
       return cachedVocabulary;
     }
 
     cachedVocabulary = planetTopicVocabularyFromRows(data ?? []);
     cachedSignStyles = signStyleVocabularyFromRows(data ?? []);
+    cachedSignNeeds = signNeedVocabularyFromRows(data ?? []);
     return cachedVocabulary;
   })();
 

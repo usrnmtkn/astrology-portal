@@ -95,12 +95,13 @@ import {
   generatedContentSections,
   generatedContentParagraphs,
   loadLiveGeneratedContent,
+  loadLiveGeneratedContentForSurfaces,
   renderGeneratedContentTemplate,
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
-import { loadPlanetTopicVocabulary, planetTopicPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
+import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
@@ -116,6 +117,7 @@ import {
 import {
   createManualChart,
   deleteManualChart,
+  listCachedManualCharts,
   listManualCharts,
   migrateLocalManualChartsToRemote,
   updateManualChart
@@ -745,7 +747,8 @@ function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues
     planet: position.planet,
     planetTopic: planetTopicSlot(position.planet, "sky"),
     sign: position.sign,
-    signStyle: signStyleSlot(position.sign)
+    signStyle: signStyleSlot(position.sign),
+    signNeed: position.planet === "Moon" ? signNeedPhrase(position.sign, "sky") : ""
   };
 }
 
@@ -809,23 +812,23 @@ function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number], position
   };
 }
 
-function natalPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
+function natalPlacementTemplateSlots(position: PlanetPosition, variant: PlanetTopicVariant = "natal"): TemplateSlotValues {
   return {
     planet: position.planet,
-    planetTopic: planetTopicSlot(position.planet),
+    planetTopic: planetTopicSlot(position.planet, variant),
     sign: position.sign,
     signStyle: signStyleSlot(position.sign),
     house: position.house ? ordinalHouse(position.house) : ""
   };
 }
 
-function transitToNatalTemplateSlots(transit: TransitItem): TemplateSlotValues {
+function transitToNatalTemplateSlots(transit: TransitItem, natalVariant: PlanetTopicVariant = "natal"): TemplateSlotValues {
   return {
     transitPlanet: transit.transitPlanet,
     transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
     natalPoint: transit.natalPoint,
-    natalPointTopic: planetTopicSlot(transit.natalPoint)
+    natalPointTopic: planetTopicSlot(transit.natalPoint, natalVariant)
   };
 }
 
@@ -834,16 +837,17 @@ function synastryTemplateSlots(
   planetA: string,
   aspect: string,
   personB: string,
-  planetB: string
+  planetB: string,
+  variant: PlanetTopicVariant = "friend"
 ): TemplateSlotValues {
   return {
     personA,
     planetA,
-    planetATopic: planetTopicSlot(planetA),
+    planetATopic: planetTopicSlot(planetA, variant),
     aspect: titleCase(aspect).toLowerCase(),
     personB,
     planetB,
-    planetBTopic: planetTopicSlot(planetB)
+    planetBTopic: planetTopicSlot(planetB, variant)
   };
 }
 
@@ -851,12 +855,13 @@ function houseOverlayTemplateSlots(
   personA: string,
   planet: string,
   personB: string,
-  house: number
+  house: number,
+  variant: PlanetTopicVariant = "friend"
 ): TemplateSlotValues {
   return {
     personA,
     planet,
-    planetTopic: planetTopicSlot(planet),
+    planetTopic: planetTopicSlot(planet, variant),
     personB,
     house: ordinalHouse(house),
     houseLifeArea: houseLifeAreas[house] ?? readableHouseTopic(house)
@@ -880,7 +885,7 @@ function relationshipTimingTemplateSlots(person: string, transit: TransitItem): 
     transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
     natalPoint: transit.natalPoint,
-    natalPointTopic: planetTopicSlot(transit.natalPoint)
+    natalPointTopic: planetTopicSlot(transit.natalPoint, "friend")
   };
 }
 
@@ -1181,7 +1186,7 @@ function dailyTimingTemplateSlots(personalTiming: PersonalTimingResponse): Templ
     transitPlanetTopic: planetTopicPhrase(transitPlanet, "sky"),
     aspect,
     natalPoint,
-    natalPointTopic: planetTopicPhrase(natalPoint, "natal"),
+    natalPointTopic: planetTopicPhrase(natalPoint, "you"),
     orb,
     window,
     activeTransit: `${transitPlanet} ${aspect} ${natalPoint}`.trim(),
@@ -4206,7 +4211,7 @@ function natalAspectDetailArticle(
     [contentKey],
     {
       contentKey: templateFallbackContentKeys.youNatalAspect,
-      slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+      slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, ownerContext ? "friend" : "you"),
       afterContentFallback: content
     }
   );
@@ -4386,7 +4391,7 @@ function relatedAspectRowsForPlacement({
             aspectContentId(aspect.from, aspect.type, aspect.to)
           ], {
             contentKey: templateFallbackContentKeys.youNatalAspect,
-            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, ownerContext ? "friend" : "you"),
             afterContentFallback: fallback
           });
       const rowSummary = liveGeneratedSummary(
@@ -5991,7 +5996,7 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
         transitToNatalGeneratedContentKeys(transit),
         {
           contentKey: templateFallbackContentKeys.youTransitToNatal,
-          slots: transitToNatalTemplateSlots(transit),
+          slots: transitToNatalTemplateSlots(transit, "friend"),
           afterContentFallback: content
         }
       )
@@ -7795,7 +7800,7 @@ function circleFeedPreviewCards(
   if (circleCards.length > 0) {
     return circleCards.map((card) => ({
       ...card,
-      label: "Circle pattern",
+      label: "Shared timing",
       body: circleGeneratedSummary(card.title, card.body)
     }));
   }
@@ -7832,9 +7837,9 @@ function circleFeedPreviewCards(
       body: "Add a chart to see what the current sky is bringing up in that person's chart."
     },
     {
-      label: "Circle patterns",
-      title: "Who is feeling something similar",
-      body: "With two or more friends, this shows where similar topics are moving through different people at the same time."
+      label: "Shared timing",
+      title: "Patterns across your circle",
+      body: "With two or more saved charts, this looks for repeated timing signals: the same active planet, house topic, profection house, or lord of year showing up for more than one person."
     },
     {
       label: "Between Us",
@@ -8272,13 +8277,10 @@ export function App() {
       };
     }
 
-    Promise.all([
-      loadLiveGeneratedContent("natal", skyDate),
-      loadLiveGeneratedContent("you", skyDate)
-    ])
-      .then((maps) => {
+    loadLiveGeneratedContentForSurfaces(["natal", "you"], skyDate)
+      .then((content) => {
         if (!cancelled) {
-          setNatalGeneratedContent(mergeGeneratedContentMaps(...maps));
+          setNatalGeneratedContent(content);
         }
       })
       .catch((error) => {
@@ -8304,14 +8306,10 @@ export function App() {
       };
     }
 
-    Promise.all([
-      loadLiveGeneratedContent("relationship", skyDate),
-      loadLiveGeneratedContent("synastry", skyDate),
-      loadLiveGeneratedContent("composite", skyDate)
-    ])
-      .then((maps) => {
+    loadLiveGeneratedContentForSurfaces(["relationship", "synastry", "composite"], skyDate)
+      .then((content) => {
         if (!cancelled) {
-          setRelationshipGeneratedContent(mergeGeneratedContentMaps(...maps));
+          setRelationshipGeneratedContent(content);
         }
       })
       .catch((error) => {
@@ -10098,7 +10096,8 @@ export function App() {
                     landingKey={friendsLandingKey}
                     sunriseOrbDegrees={activeSunriseOrbDegrees}
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
-                    chartsReady={authAccountChecked && (!remoteAccountId || remoteProfileReady)}
+                    chartRefreshKey={remoteProfileReady ? 1 : 0}
+                    chartsReady={Boolean(remoteAccountId) || authAccountChecked}
                     onOpenDetail={setSelectedSkyDetail}
                   />
                 </FriendsRoute>
@@ -11060,7 +11059,7 @@ function natalPlacementSignModule(
     placementContentId(position.planet, position.sign)
   ], {
     contentKey: templateFallbackContentKeys.youNatalPlacement,
-    slots: natalPlacementTemplateSlots(position),
+    slots: natalPlacementTemplateSlots(position, "you"),
     afterContentFallback: content
   });
   const generatedParagraphs = generatedContentParagraphs(generated);
@@ -11696,7 +11695,7 @@ function natalPlacementKnowledgeSummary(position: PlanetPosition, generatedConte
         [placementContentId(position.planet, position.sign)],
         {
           contentKey: templateFallbackContentKeys.youNatalPlacement,
-          slots: natalPlacementTemplateSlots(position),
+          slots: natalPlacementTemplateSlots(position, "you"),
           afterContentFallback: content
         }
       )
@@ -11848,7 +11847,7 @@ function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: Gene
           contentKey: templateFallbackContentKeys.youNatalPlacement,
           slots: {
             planet: "Ascendant",
-            planetTopic: planetTopicSlot("Ascendant"),
+            planetTopic: planetTopicSlot("Ascendant", "you"),
             sign: risingSign,
             signStyle: signStyleSlot(risingSign),
             house: "1st"
@@ -14621,7 +14620,7 @@ function ProfileView({
       [contentKey],
       {
         contentKey: templateFallbackContentKeys.youNatalAspect,
-        slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+        slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "you"),
         afterContentFallback: content
       }
     );
@@ -14668,7 +14667,7 @@ function ProfileView({
       [contentKey],
       {
         contentKey: templateFallbackContentKeys.youTransitToNatal,
-        slots: transitToNatalTemplateSlots(transit),
+        slots: transitToNatalTemplateSlots(transit, "you"),
         afterContentFallback: content
       }
     );
@@ -14875,6 +14874,7 @@ function ManualChartsPanel({
   landingKey,
   sunriseOrbDegrees,
   chartOwnerUserId,
+  chartRefreshKey,
   chartsReady,
   onOpenDetail
 }: {
@@ -14887,10 +14887,15 @@ function ManualChartsPanel({
   landingKey: number;
   sunriseOrbDegrees: number;
   chartOwnerUserId: string;
+  chartRefreshKey: number;
   chartsReady: boolean;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const [charts, setCharts] = useState<ManualChart[]>([]);
+  const initialCachedCharts = useMemo(
+    () => listCachedManualCharts([chartOwnerUserId, profile.id]),
+    [chartOwnerUserId, profile.id]
+  );
+  const [charts, setCharts] = useState<ManualChart[]>(() => initialCachedCharts);
   const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
@@ -14903,8 +14908,11 @@ function ManualChartsPanel({
   const [relationshipCompareStatus, setRelationshipCompareStatus] = useState<RelationshipCompareStatus>("idle");
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">("loading");
+  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">(
+    () => initialCachedCharts.length > 0 ? "idle" : "loading"
+  );
   const [message, setMessage] = useState("");
+  const chartsLoadedRef = useRef(false);
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = charts.find((chart) => chart.id === selectedChartId) ?? null;
   const isEventForm = form.chartType === "event";
@@ -14918,6 +14926,10 @@ function ManualChartsPanel({
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
+  const friendGeneratedContent = useMemo(
+    () => mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent),
+    [natalGeneratedContent, relationshipGeneratedContent]
+  );
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
   const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
     const selfInitials = profileInitials(profile.name, profile.email);
@@ -15021,7 +15033,6 @@ function ManualChartsPanel({
     ? Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !selectedFriendOccupiedHouses.has(house))
     : [];
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
-    const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const ownerName = selectedChart?.displayName ?? "This chart";
     const ownerKind = selectedChartIsEvent ? "chart" : "person";
     const article = natalAspectDetailArticle(aspect, friendGeneratedContent, {
@@ -15058,7 +15069,6 @@ function ManualChartsPanel({
     }
 
     const contentKey = natalPlacementWriteupContentKey(position);
-    const friendGeneratedContent = mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent);
     const liveWriteup = friendGeneratedContent.get(contentKey) ?? null;
 
     onOpenDetail(natalPlacementSkyDetail(
@@ -15222,15 +15232,17 @@ function ManualChartsPanel({
     profile.charts[0]?.birthLocation?.timeZone
   ]);
   const circleCards = useMemo(
-    () => circleFeedPreviewCards(
-      currentSky,
-      charts,
-      mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent),
-      lifeAreaFocus,
-      sunriseOrbDegrees,
-      profileTransits
-    ),
-    [currentSky, charts, natalGeneratedContent, relationshipGeneratedContent, lifeAreaFocus, sunriseOrbDegrees, profileTransits]
+    () => resolvedFriendsMainView === "circle"
+      ? circleFeedPreviewCards(
+          currentSky,
+          charts,
+          friendGeneratedContent,
+          lifeAreaFocus,
+          sunriseOrbDegrees,
+          profileTransits
+        )
+      : [],
+    [resolvedFriendsMainView, currentSky, charts, friendGeneratedContent, lifeAreaFocus, sunriseOrbDegrees, profileTransits]
   );
   const selectableCircleCards = useMemo(
     () => circleCards.map((card) => {
@@ -15285,16 +15297,28 @@ function ManualChartsPanel({
     let cancelled = false;
 
     if (!chartsReady) {
-      setStatus("loading");
+      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profile.id]);
+
+      if (cachedCharts.length > 0) {
+        chartsLoadedRef.current = true;
+        setCharts(cachedCharts);
+        setStatus("idle");
+      } else {
+        setStatus("loading");
+      }
+
       return () => {
         cancelled = true;
       };
     }
 
-    setStatus("loading");
+    if (!chartsLoadedRef.current) {
+      setStatus("loading");
+    }
     listManualCharts(chartOwnerUserId)
       .then((nextCharts) => {
         if (!cancelled) {
+          chartsLoadedRef.current = true;
           setCharts(nextCharts);
           setSelectedChartId((currentId) => (
             currentId && nextCharts.some((chart) => chart.id === currentId)
@@ -15306,6 +15330,7 @@ function ManualChartsPanel({
       })
       .catch((error) => {
         if (!cancelled) {
+          chartsLoadedRef.current = true;
           setMessage(error instanceof Error ? error.message : "Could not load manual charts.");
         }
       })
@@ -15318,7 +15343,7 @@ function ManualChartsPanel({
     return () => {
       cancelled = true;
     };
-  }, [chartOwnerUserId, chartsReady]);
+  }, [chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
 
   useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
@@ -15874,7 +15899,7 @@ function ManualChartsPanel({
                           [contentKey],
                           {
                             contentKey: templateFallbackContentKeys.youNatalAspect,
-                            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to),
+                            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "friend"),
                             afterContentFallback: content
                           }
                         );
