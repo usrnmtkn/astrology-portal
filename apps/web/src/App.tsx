@@ -10390,6 +10390,64 @@ function retrogradeDetailKicker(position: PlanetPosition) {
   return `${skyDisplayPlanetName(position.planet)} Retrograde`;
 }
 
+function retrogradeCollapsedName(position: PlanetPosition) {
+  const name = skyDisplayPlanetName(position.planet);
+  return name === "North Node" ? name : `${name} Rx`;
+}
+
+function retrogradeAttentionTopic(planet: string) {
+  const topics: Record<string, string> = {
+    Mercury: "messages, plans, and daily logistics",
+    Venus: "relationships, money, comfort, and desire",
+    Mars: "energy, anger, urgency, and effort",
+    Jupiter: "beliefs, growth, promises, and perspective",
+    Saturn: "commitments, limits, timing, and responsibility",
+    Uranus: "restlessness, change, disruption, and freedom",
+    Neptune: "uncertainty, sensitivity, ideals, and escape",
+    Pluto: "control, power, endings, and deeper pressure",
+    Chiron: "old tenderness, repair, and places that still feel sensitive",
+    "North Node": "direction, appetite, growth, and old patterns",
+    "True Node": "direction, appetite, growth, and old patterns"
+  };
+
+  return topics[skyDisplayPlanetName(planet)] ?? "the places asking for review";
+}
+
+function generatedRetrogradeSummaryMatchesPlanets(summary: string, retrogrades: PlanetPosition[]) {
+  const normalizedSummary = normalizedArticleCopy(summary);
+  const requiredNames = retrogrades.map(retrogradeCollapsedName).map(normalizedArticleCopy);
+  const knownNames = [
+    "Mercury Rx",
+    "Venus Rx",
+    "Mars Rx",
+    "Jupiter Rx",
+    "Saturn Rx",
+    "Uranus Rx",
+    "Neptune Rx",
+    "Pluto Rx",
+    "Chiron Rx",
+    "North Node"
+  ].map(normalizedArticleCopy);
+  const namesMentioned = knownNames.some((name) => normalizedSummary.includes(name));
+
+  if (!namesMentioned) {
+    return true;
+  }
+
+  return requiredNames.every((name) => normalizedSummary.includes(name));
+}
+
+function retrogradeSummaryFallback(retrogrades: PlanetPosition[], personal: PlanetPosition[]) {
+  if (retrogrades.length === 0) {
+    return "";
+  }
+
+  const fastest = personal[0] ?? retrogrades[0];
+  const fastestLabel = retrogradeCollapsedName(fastest);
+
+  return `${fastestLabel} may be the one you feel first, calling your attention to ${retrogradeAttentionTopic(fastest.planet)}. The slower retrogrades point to longer patterns you are still working through.`;
+}
+
 function stripGeneratedTitleParagraph(paragraphs: string[], title: string) {
   const normalizedTitle = normalizedArticleCopy(title);
 
@@ -12014,7 +12072,8 @@ function retrogradeSummaryCaption(
 
   const slots = {
     count: retrogrades.length,
-    fastestPlanet: skyDisplayPlanetName(fastestPlanet.planet)
+    fastestPlanet: skyDisplayPlanetName(fastestPlanet.planet),
+    fastestPlanetTopic: retrogradeAttentionTopic(fastestPlanet.planet)
   };
   const generated = liveGeneratedContentByKeys(generatedContent, [
     templateFallbackContentKeys.skyRetrogradeSection
@@ -12022,8 +12081,11 @@ function retrogradeSummaryCaption(
     contentKey: templateFallbackContentKeys.skyRetrogradeSection,
     slots
   });
+  const generatedSummary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
 
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  return generatedSummary && generatedRetrogradeSummaryMatchesPlanets(generatedSummary, retrogrades)
+    ? generatedSummary
+    : retrogradeSummaryFallback(retrogrades, personal);
 }
 
 function retrogradePlacementTitle(position: PlanetPosition) {
@@ -12374,6 +12436,7 @@ function RetrogradeCallout({
   const summaryCaption = showSummary
     ? retrogradeSummaryCaption(retrogrades, personalRetrogrades, generatedContent)
     : "";
+  const outerRetrogradeLabel = readableNameList(outerRetrogrades.map(retrogradeCollapsedName));
 
   const buildRetrogradeDetail = (position: PlanetPosition) => {
     const detailData = currentSkyRetrogradeDetailData(position, generatedAt, generatedContent);
@@ -12514,7 +12577,7 @@ function RetrogradeCallout({
                   <span className="ro-more-text">
                     {showOuterRetrogrades
                       ? "Show less"
-                      : `Show ${outerRetrogrades.length} outer-planet retrograde${outerRetrogrades.length === 1 ? "" : "s"}`}
+                      : outerRetrogradeLabel}
                   </span>
                 </span>
                 <ChevronRight className={`ro-more-chevron${showOuterRetrogrades ? " is-open" : ""}`} aria-hidden="true" />
