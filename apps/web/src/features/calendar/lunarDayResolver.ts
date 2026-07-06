@@ -1,3 +1,4 @@
+import { skyBodyOrderIndex } from "../../astrologyConfig";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
 import { slugContentPart } from "../../services/generatedContentKeys";
@@ -240,6 +241,186 @@ function eventSign(event: LunarCalendarEvent | null, fallback: string) {
   return event?.sign ?? fallback;
 }
 
+function oppositeSign(sign: string) {
+  const signs = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces"
+  ];
+  const signIndex = signs.indexOf(sign);
+
+  return signIndex >= 0 ? signs[(signIndex + 6) % signs.length] : "";
+}
+
+function isEclipseLunation(event: LunarCalendarEvent | null) {
+  return Boolean(event?.eclipseType) || Boolean(event?.title.toLowerCase().includes("eclipse"));
+}
+
+function phaseTypeForMoonPhase(moonPhase: string) {
+  const normalizedPhase = moonPhase.trim().toLowerCase();
+
+  if (normalizedPhase.includes("new")) return "new-moon";
+  if (normalizedPhase.includes("first quarter")) return "first-quarter";
+  if (normalizedPhase.includes("full")) return "full-moon";
+  if (normalizedPhase.includes("last quarter") || normalizedPhase.includes("third quarter")) return "last-quarter";
+  if (normalizedPhase.includes("waning")) return "waning-other";
+
+  return "waxing-other";
+}
+
+function eclipseEventForDay(day: LunarCalendarDay, arcEvents: {
+  origin: LunarCalendarEvent | null;
+  culmination: LunarCalendarEvent | null;
+  nextNewMoon: LunarCalendarEvent | null;
+}) {
+  return day.events.find((event) => event.type === "lunation" && isEclipseLunation(event))
+    ?? [arcEvents.origin, arcEvents.culmination, arcEvents.nextNewMoon].find((event) => (
+      event?.dateKey === day.dateKey && isEclipseLunation(event)
+    ))
+    ?? null;
+}
+
+function moonPhaseHelperSlots(moonPhase: string): TemplateSlotValues {
+  const normalizedPhase = moonPhase.trim().toLowerCase();
+
+  if (normalizedPhase.includes("new")) {
+    return {
+      moonPhaseAction: "begin simply and choose the question for the next cycle",
+      moonPhasePlainMeaning: "the lunar cycle is opening and the next focus is still taking shape",
+      moonPhaseRole: "origin point"
+    };
+  }
+
+  if (normalizedPhase.includes("waxing crescent")) {
+    return {
+      moonPhaseAction: "feed the new direction without forcing it to be complete",
+      moonPhasePlainMeaning: "the cycle is gathering energy after the new moon",
+      moonPhaseRole: "early build"
+    };
+  }
+
+  if (normalizedPhase.includes("first quarter")) {
+    return {
+      moonPhaseAction: "make the adjustment that lets the intention keep moving",
+      moonPhasePlainMeaning: "the cycle has reached a turning point where action clarifies the next step",
+      moonPhaseRole: "choice point"
+    };
+  }
+
+  if (normalizedPhase.includes("waxing gibbous")) {
+    return {
+      moonPhaseAction: "refine what is already growing and notice what needs support",
+      moonPhasePlainMeaning: "the cycle is approaching its full-moon reveal",
+      moonPhaseRole: "refinement phase"
+    };
+  }
+
+  if (normalizedPhase.includes("full")) {
+    return {
+      moonPhaseAction: "name what has become visible and respond to it clearly",
+      moonPhasePlainMeaning: "the lunar cycle is at a point of visibility, culmination, or emotional clarity",
+      moonPhaseRole: "culmination point"
+    };
+  }
+
+  if (normalizedPhase.includes("waning gibbous")) {
+    return {
+      moonPhaseAction: "sort what the full moon revealed and keep what is useful",
+      moonPhasePlainMeaning: "the cycle is moving from revelation into understanding",
+      moonPhaseRole: "meaning-making phase"
+    };
+  }
+
+  if (normalizedPhase.includes("last quarter") || normalizedPhase.includes("third quarter")) {
+    return {
+      moonPhaseAction: "simplify and clear what no longer needs energy",
+      moonPhasePlainMeaning: "the cycle has reached a clearing point before the next beginning",
+      moonPhaseRole: "release checkpoint"
+    };
+  }
+
+  if (normalizedPhase.includes("waning crescent")) {
+    return {
+      moonPhaseAction: "rest, close the loop, and let the next cycle stay quiet for now",
+      moonPhasePlainMeaning: "the cycle is winding down before the next new moon",
+      moonPhaseRole: "closing phase"
+    };
+  }
+
+  return {
+    moonPhaseAction: "notice what this phase is asking for before reacting",
+    moonPhasePlainMeaning: "the lunar cycle gives the day its emotional timing",
+    moonPhaseRole: "lunar timing point"
+  };
+}
+
+const moonSignModes: Record<string, string> = {
+  Aries: "fast, direct, and ready to act",
+  Taurus: "steady, sensory, and slow to be rushed",
+  Gemini: "curious, changeable, and pulled toward conversation",
+  Cancer: "protective, receptive, and led by memory or mood",
+  Leo: "expressive, warm, and ready to be seen",
+  Virgo: "practical, observant, and focused on what can be improved",
+  Libra: "relational, balancing, and aware of what feels fair",
+  Scorpio: "private, intense, and drawn toward the emotional truth underneath",
+  Sagittarius: "restless, candid, and looking for a wider meaning",
+  Capricorn: "contained, responsible, and focused on what can hold up over time",
+  Aquarius: "independent, future-minded, and needing space to think",
+  Pisces: "porous, imaginative, and sensitive to what is unspoken"
+};
+
+const seasonThemes: Record<string, string> = {
+  Aries: "initiation, courage, identity, and direct action",
+  Taurus: "stability, embodiment, resources, and what can be sustained",
+  Gemini: "language, curiosity, choices, and changing information",
+  Cancer: "care, memory, belonging, and emotional safety",
+  Leo: "visibility, creativity, confidence, and heartfelt expression",
+  Virgo: "discernment, repair, usefulness, and everyday practice",
+  Libra: "relationship, balance, fairness, and mutual consideration",
+  Scorpio: "depth, honesty, privacy, and emotional complexity",
+  Sagittarius: "meaning, movement, perspective, and belief",
+  Capricorn: "structure, responsibility, time, and long-term consequences",
+  Aquarius: "systems, friendship, difference, and collective futures",
+  Pisces: "release, imagination, compassion, and what cannot be fully controlled"
+};
+
+function moonSignMode(sign: string) {
+  return moonSignModes[sign] ?? "colored by the Moon's current sign";
+}
+
+function seasonTheme(sign: string) {
+  return seasonThemes[sign] ?? "the wider tone of the current season";
+}
+
+function mercuryRetrogradeSlots(day: LunarCalendarDay): TemplateSlotValues {
+  const mercuryRetrogradeEvent = day.events.find((event) => (
+    event.type === "station"
+    && event.planet === "Mercury"
+    && event.title.toLowerCase().includes("retrograde")
+    && !event.title.toLowerCase().includes("stations")
+  )) ?? null;
+
+  return {
+    mercuryRetrograde: mercuryRetrogradeEvent ? "yes" : "no",
+    mercuryRetrogradeEndsAt: mercuryRetrogradeEvent?.endsAt ?? "",
+    mercuryRetrogradeEvent: mercuryRetrogradeEvent?.title ?? "",
+    mercuryRxPlainFlag: mercuryRetrogradeEvent
+      ? `Mercury is retrograde in ${mercuryRetrogradeEvent.sign ?? "the current sky"}, so messages, memories, or decisions may need a second pass.`
+      : "",
+    mercuryRetrogradeSign: mercuryRetrogradeEvent?.sign ?? "",
+    mercuryRx: mercuryRetrogradeEvent ? "yes" : "no"
+  };
+}
+
 function arcPointFor(event: LunarCalendarEvent | null, fallbackSign: string): LunarDayArcPoint | null {
   return event ? {
     sign: eventSign(event, fallbackSign),
@@ -264,12 +445,191 @@ function contentBody(generatedContent: Map<string, LiveGeneratedContent> | undef
   return null;
 }
 
-function lunarDayTemplateSlots(
-  day: LunarCalendarDay
+function renderedContentBody(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  keys: string[],
+  slots: TemplateSlotValues
+) {
+  if (!generatedContent) return null;
+
+  for (const key of keys) {
+    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim();
+
+    if (body) {
+      return body;
+    }
+  }
+
+  return null;
+}
+
+function renderedContentKey(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  keys: string[],
+  slots: TemplateSlotValues
+) {
+  if (!generatedContent) return null;
+
+  for (const key of keys) {
+    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim();
+
+    if (body) {
+      return { key, body };
+    }
+  }
+
+  return null;
+}
+
+const activeAspectTypeOrbLimits: Record<string, number> = {
+  conjunction: 4,
+  sextile: 3,
+  square: 4,
+  trine: 4,
+  opposition: 4
+};
+
+function fastestActiveAspectPlanet(aspect: LunarCalendarDay["activeAspects"][number]) {
+  return [aspect.planetA, aspect.planetB]
+    .map((planet) => ({ planet, order: skyBodyOrderIndex(planet) }))
+    .sort((first, second) => first.order - second.order)[0]?.planet ?? null;
+}
+
+function activeAspectWindowOrb(fastestPlanet: string | null) {
+  if (fastestPlanet === "Moon") {
+    return 6;
+  }
+
+  return ["Sun", "Mercury", "Venus", "Mars"].includes(fastestPlanet ?? "")
+    ? 3
+    : 1.5;
+}
+
+function activeAspectOrbLimit(aspect: LunarCalendarDay["activeAspects"][number]) {
+  const aspectTypeLimit = activeAspectTypeOrbLimits[aspect.aspectType] ?? 0;
+  const speedLimit = activeAspectWindowOrb(fastestActiveAspectPlanet(aspect));
+
+  return Math.min(aspectTypeLimit, speedLimit);
+}
+
+function significantActiveAspects(day: LunarCalendarDay) {
+  return day.activeAspects
+    .filter((aspect) => aspect.orb <= activeAspectOrbLimit(aspect))
+    .sort((first, second) => first.orb - second.orb);
+}
+
+function lunarArcSlotsForPhase(
+  moonPhase: string,
+  options: {
+    fallbackSign: string;
+    origin: LunarCalendarEvent | null;
+    culmination: LunarCalendarEvent | null;
+    nextNewMoon: LunarCalendarEvent | null;
+  }
 ): TemplateSlotValues {
+  const normalizedPhase = moonPhase.trim().toLowerCase();
+  const isNewMoon = normalizedPhase.includes("new");
+  const isFullMoon = normalizedPhase.includes("full");
+  const isWaning = normalizedPhase.includes("waning") || normalizedPhase.includes("last quarter") || normalizedPhase.includes("third quarter");
+  const lunarArcDirection = isFullMoon || isWaning ? "waning" : "waxing";
+  const lunarArcTarget = lunarArcDirection === "waning" ? "new moon" : "full moon";
+  const lunarArcTargetEvent = lunarArcDirection === "waning" ? options.nextNewMoon : options.culmination;
+  const lunarArcTargetSign = eventSign(lunarArcTargetEvent, options.fallbackSign);
+  const newMoonSign = eventSign(options.origin, options.fallbackSign);
+  const newMoonOppositeSign = oppositeSign(newMoonSign);
+  const eclipseSeasonEvents = lunarArcDirection === "waning"
+    ? [options.culmination, options.nextNewMoon]
+    : [options.origin, options.culmination];
+  const eclipseSeasonEvent = eclipseSeasonEvents.find(isEclipseLunation) ?? null;
+  const eclipseSeasonType = eclipseSeasonEvent?.eclipseType ?? "";
+  const eclipseSeasonPlainFlag = eclipseSeasonEvent
+    ? `This lunar arc includes ${eclipseSeasonEvent.title}, so treat the day as part of eclipse season.`
+    : "";
+
+  if (isNewMoon) {
+    return {
+      eclipseSeason: eclipseSeasonEvent ? "yes" : "no",
+      eclipseSeasonEvent: eclipseSeasonEvent?.title ?? "",
+      eclipseSeasonPlainFlag,
+      eclipseSeasonType,
+      arcPlainMeaning: `the cycle is opening and beginning to build toward a full-moon reveal in ${lunarArcTargetSign}`,
+      lunarArcDirection,
+      lunarArcTarget,
+      lunarArcTargetSign,
+      arcTargetSign: lunarArcTargetSign,
+      lunarArcPosition: `new moon, waxing toward the full moon in ${lunarArcTargetSign}`,
+      arcPosition: lunarArcDirection,
+      newMoonSign,
+      newMoonOppositeSign
+    };
+  }
+
+  if (isFullMoon) {
+    return {
+      eclipseSeason: eclipseSeasonEvent ? "yes" : "no",
+      eclipseSeasonEvent: eclipseSeasonEvent?.title ?? "",
+      eclipseSeasonPlainFlag,
+      eclipseSeasonType,
+      arcPlainMeaning: `the cycle has reached its full-moon reveal and will begin clearing toward a new moon in ${lunarArcTargetSign}`,
+      lunarArcDirection,
+      lunarArcTarget,
+      lunarArcTargetSign,
+      arcTargetSign: lunarArcTargetSign,
+      lunarArcPosition: `full moon, waning toward the new moon in ${lunarArcTargetSign}`,
+      arcPosition: lunarArcDirection,
+      newMoonSign,
+      newMoonOppositeSign
+    };
+  }
+
   return {
+    eclipseSeason: eclipseSeasonEvent ? "yes" : "no",
+    eclipseSeasonEvent: eclipseSeasonEvent?.title ?? "",
+    eclipseSeasonPlainFlag,
+    eclipseSeasonType,
+    arcPlainMeaning: `the cycle is ${lunarArcDirection} toward a ${lunarArcTarget} in ${lunarArcTargetSign}`,
+    lunarArcDirection,
+    lunarArcTarget,
+    lunarArcTargetSign,
+    arcTargetSign: lunarArcTargetSign,
+    lunarArcPosition: `${lunarArcDirection} toward the ${lunarArcTarget} in ${lunarArcTargetSign}`,
+    arcPosition: lunarArcDirection,
+    newMoonSign,
+    newMoonOppositeSign
+  };
+}
+
+function lunarDayTemplateSlots(
+  day: LunarCalendarDay,
+  seasonSign: string,
+  arcEvents: {
+    origin: LunarCalendarEvent | null;
+    culmination: LunarCalendarEvent | null;
+    nextNewMoon: LunarCalendarEvent | null;
+  }
+): TemplateSlotValues {
+  const eclipseEvent = eclipseEventForDay(day, arcEvents);
+
+  return {
+    ...lunarArcSlotsForPhase(day.moonPhase, {
+      fallbackSign: day.moonSign,
+      ...arcEvents
+    }),
+    ...moonPhaseHelperSlots(day.moonPhase),
+    ...mercuryRetrogradeSlots(day),
+    currentSeason: `${seasonSign} season`,
+    currentSunSign: seasonSign,
+    eclipseFlag: eclipseEvent ? "yes" : "no",
+    eclipseType: eclipseEvent?.eclipseType ?? "",
+    moonSignMode: moonSignMode(day.moonSign),
     moonSign: day.moonSign,
-    moonPhase: day.moonPhase
+    moonPhase: day.moonPhase,
+    oppositeSign: oppositeSign(day.moonSign),
+    phaseType: phaseTypeForMoonPhase(day.moonPhase),
+    season: `${seasonSign} season`,
+    seasonSign,
+    seasonTheme: seasonTheme(seasonSign),
+    sunSign: seasonSign
   };
 }
 
@@ -288,12 +648,28 @@ function editorialFor(
   seasonSign: string,
   lunation: LunarCalendarEvent | null,
   transits: LunarDayTransit[],
+  arcEvents: {
+    origin: LunarCalendarEvent | null;
+    culmination: LunarCalendarEvent | null;
+    nextNewMoon: LunarCalendarEvent | null;
+  },
   generatedContent?: Map<string, LiveGeneratedContent>
 ): LunarDay["editorial"] {
   const seasonPart = slugContentPart(seasonSign);
   const signPart = slugContentPart(day.moonSign);
   const phasePart = slugContentPart(day.moonPhase);
   const lunationSignPart = slugContentPart(lunation?.sign ?? day.moonSign);
+  const slots = lunarDayTemplateSlots(day, seasonSign, arcEvents);
+  const phaseType = String(slots.phaseType ?? "");
+  const newMoonSignPart = slugContentPart(String(slots.newMoonSign ?? day.moonSign));
+  const phaseContentKeys = (() => {
+    if (phaseType === "new-moon") return [`lunation/new-moon/${signPart}`];
+    if (phaseType === "full-moon") return [`lunation/full-moon/${signPart}`];
+    if (phaseType === "first-quarter") return [`lunation/first-quarter/${newMoonSignPart}`];
+    if (phaseType === "last-quarter") return [`lunation/last-quarter/${newMoonSignPart}`];
+
+    return [];
+  })();
   const baseKeys = [
     `lunar.day.${day.dateKey}`,
     `lunar.day.${phasePart}.${signPart}`,
@@ -307,22 +683,18 @@ function editorialFor(
     `lunar.eclipse.${day.dateKey}.witness`,
     `lunar.eclipse.${lunationSignPart}.${seasonPart}.witness`
   ];
+  const newBodyKeys = [
+    `lunar.day.${day.dateKey}.body`,
+    ...(slots.eclipseFlag === "yes" ? ["lunation/eclipse"] : []),
+    ...phaseContentKeys
+  ];
   const fallbackDay = fallbackLunarDayContent(
     generatedContent,
-    lunarDayTemplateSlots(day)
+    slots
   );
   const fallbackDayBody = fallbackDay?.body.trim() || null;
-
-  return {
-    body: contentBody(generatedContent, baseKeys.map((key) => `${key}.body`)) ?? fallbackDayBody,
-    practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
-    reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
-    ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),
-    eclipseWitness: contentBody(generatedContent, eclipseKeys),
-    callback: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
-    arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`)),
-    arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`)),
-    transitNotes: transits.map((transit) => {
+  const transitNotes = [
+    ...transits.map((transit) => {
       const copyKey = `${slugContentPart(transit.title)}__${lunationSignPart}_lunation_${seasonPart}_season`;
 
       return {
@@ -330,7 +702,43 @@ function editorialFor(
         copyKey,
         body: contentBody(generatedContent, [copyKey])
       };
+    }),
+    ...significantActiveAspects(day).map((aspect) => {
+      const title = `${aspect.planetA} ${aspect.aspectType} ${aspect.planetB}`;
+      const authoredKey = `${slugContentPart(title)}__${lunationSignPart}_lunation_${seasonPart}_season`;
+      const fallbackKey = `transit-fallback/${slugContentPart(aspect.aspectType)}`;
+      const aspectSlots: TemplateSlotValues = {
+        ...slots,
+        applying: aspect.applying ? "yes" : "no",
+        aspectType: aspect.aspectType,
+        orb: aspect.orb,
+        planetA: aspect.planetA,
+        planetB: aspect.planetB
+      };
+      const resolved = renderedContentKey(generatedContent, [authoredKey, fallbackKey], aspectSlots);
+
+      return {
+        transitRef: `active-aspect.${slugContentPart(title)}`,
+        copyKey: resolved?.key ?? authoredKey,
+        title,
+        body: resolved?.body ?? null
+      };
     })
+  ];
+
+  return {
+    body: renderedContentBody(generatedContent, newBodyKeys, slots)
+      ?? contentBody(generatedContent, baseKeys.map((key) => `${key}.body`))
+      ?? fallbackDayBody,
+    practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
+    reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
+    ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),
+    eclipseWitness: contentBody(generatedContent, eclipseKeys),
+    callback: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
+    arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`)),
+    arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`)),
+    season: renderedContentBody(generatedContent, [`season/${seasonPart}`], slots),
+    transitNotes
   };
 }
 
@@ -347,6 +755,7 @@ export function resolveLunarDay({
   const origin = previousLunation(events, selectedTime, "New Moon");
   const culmination = nextLunation(events, selectedTime, "Full Moon")
     ?? previousLunation(events, selectedTime, "Full Moon");
+  const nextNewMoon = nextLunation(events, selectedTime, "New Moon");
   const sixMonthCulmination = origin
     ? nextLunationInSign(events, new Date(origin.startsAt).getTime() + (120 * dayMs), "Full Moon", eventSign(origin, day.moonSign))
     : null;
@@ -356,7 +765,11 @@ export function resolveLunarDay({
   const transits = dayModifiers(day, events, selectedTime);
   const hasEclipse = transits.some((transit) => transit.type === "eclipse");
   const checkpointRole = hasEclipse ? "eclipse" : checkpointRoleForPhase(day.moonPhase);
-  const editorial = editorialFor(day, season.sign, currentLunation, transits, generatedContent);
+  const editorial = editorialFor(day, season.sign, currentLunation, transits, {
+    origin,
+    culmination,
+    nextNewMoon
+  }, generatedContent);
 
   return {
     date: day.dateKey,
@@ -373,7 +786,8 @@ export function resolveLunarDay({
         durationMin: durationMinutes(day.voidOfCourse.startsAt, day.voidOfCourse.until),
         nextSign: day.voidOfCourse.nextSign ?? null
       } : null,
-      transits
+      transits,
+      activeAspects: day.activeAspects
     },
     arc: arcEnabled ? {
       season,

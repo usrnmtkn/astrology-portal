@@ -1,4 +1,4 @@
-import type { LunarCalendarEvent } from "../../services/ephemeris";
+import type { LunarCalendarActiveAspect, LunarCalendarEvent } from "../../services/ephemeris";
 import type { LocationInput } from "../../types";
 
 export type LunarDayTransitType = "ingress" | "retrograde" | "station" | "aspect" | "eclipse";
@@ -36,6 +36,7 @@ export type LunarDayArcPoint = {
 export type LunarDayEditorialTransitNote = {
   transitRef: string;
   copyKey: string;
+  title?: string;
   body: string | null;
 };
 
@@ -55,6 +56,7 @@ export type LunarDay = {
       nextSign: string | null;
     } | null;
     transits: LunarDayTransit[];
+    activeAspects: LunarCalendarActiveAspect[];
   };
   arc: {
     season: {
@@ -89,6 +91,7 @@ export type LunarDay = {
     callback: string | null;
     arcLesson: string | null;
     arcSeeded: string | null;
+    season: string | null;
     transitNotes: LunarDayEditorialTransitNote[];
   };
   source: {
