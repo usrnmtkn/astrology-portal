@@ -97,8 +97,16 @@ type AdminContentExchangeBundle = {
     id?: string;
     contentKey: string;
     headline: string;
+    you?: string;
+    friend?: string;
     natal: string;
     sky: string;
+    stylePhrase?: string;
+    styleShort?: string;
+    signNeed?: string;
+    story?: string;
+    shadow?: string;
+    higherExpression?: string;
   }>;
   taglineRows: Array<{
     id?: string;
@@ -161,6 +169,7 @@ type AdminGeneratedContentRow = {
   source_snapshot: Record<string, unknown> | null;
   reviewer_notes: string | null;
   prompt_version: string | null;
+  provider: string | null;
   model: string | null;
   reviewed_at: string | null;
   published_at: string | null;
@@ -209,10 +218,16 @@ type AdminGeneratedContentDraft = {
 
 type AdminVocabularyDraft = {
   headline: string;
+  you?: string;
+  friend?: string;
   natal: string;
   sky: string;
   stylePhrase?: string;
   styleShort?: string;
+  signNeed?: string;
+  story?: string;
+  shadow?: string;
+  higherExpression?: string;
 };
 
 type AdminNatalTaglineDraft = {
@@ -226,9 +241,15 @@ type AdminVocabularyCardItem = {
   contentKey: string;
   point: string;
   row?: AdminGeneratedContentRow;
+  signNeedRow?: AdminGeneratedContentRow;
+  storyRow?: AdminGeneratedContentRow;
+  shadowRow?: AdminGeneratedContentRow;
+  higherExpressionRow?: AdminGeneratedContentRow;
   taglineContentKey?: string;
   kind?: "topic" | "sign-style";
 };
+
+type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac";
 
 type AdminTemplateDraft = {
   headline: string;
@@ -495,23 +516,191 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
 };
 
 const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
-  "sky.seasonal-current": { planet: "Sun", sign: "Gemini" },
-  "sky.lunar-cycle": { planet: "Moon", sign: "Capricorn" },
+  "sky.seasonal-current": { planet: "Sun", sign: "Gemini", signStyle: "curious, verbal, and changeable attention" },
+  "sky.lunar-cycle": { planet: "Moon", sign: "Capricorn", signStyle: "practical, contained, and responsibility-aware", signNeed: "wanting something steady enough to hold up over time" },
   "sky.lunar-calendar-day": { moonPhase: "Waxing Crescent", moonSign: "Cancer" },
-  "sky.planetary-placement": { planet: "Venus", sign: "Cancer" },
-  "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune" },
-  "sky.retrograde": { planet: "Pluto", sign: "Aquarius" },
-  "you.natal-placement": { planet: "Moon", sign: "Capricorn", house: 6 },
-  "you.natal-aspect": { planetA: "Moon", aspect: "trine", planetB: "Saturn" },
-  "you.transit-to-natal": { transitPlanet: "Saturn", aspect: "square", natalPoint: "Venus" },
-  "friends.synastry-contact": { planetA: "Venus", aspect: "sextile", planetB: "Ascendant" },
-  "friends.house-overlay": { planet: "Venus", house: 4 },
-  "friends.composite-aspect": { planetA: "Sun", aspect: "square", planetB: "Moon" },
-  "friends.composite-placement": { planet: "Venus", sign: "Cancer", house: 4 },
-  "friends.relationship-timing": { transitPlanet: "Pluto", aspect: "opposition", natalPoint: "Descendant" },
+  "sky.planetary-placement": { planet: "Venus", sign: "Cancer", planetTopic: "connection, taste, and desire", signStyle: "protective, receptive, and memory-led" },
+  "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune", planetATopic: "thinking and language", planetBTopic: "imagination and blur" },
+  "sky.aspect-sign-context": { planetA: "Mercury", signA: "Cancer", signAStyleShort: "protective feeling", planetB: "Neptune", signB: "Aries", signBStyleShort: "fast instinct" },
+  "sky.retrograde": { planet: "Pluto", sign: "Aquarius", planetTopic: "power, pressure, and deep change" },
+  "you.natal-placement": { planet: "Moon", sign: "Capricorn", house: 6, planetTopic: "needs and reaction", signStyle: "practical, contained, and responsibility-aware" },
+  "you.natal-aspect": { planetA: "Moon", aspect: "trine", planetB: "Saturn", planetATopic: "needs and reaction", planetBTopic: "structure and limits" },
+  "you.transit-to-natal": { transitPlanet: "Saturn", aspect: "square", natalPoint: "Venus", transitPlanetTopic: "structure and limits", natalPointTopic: "connection, taste, and desire" },
+  "friends.synastry-contact": { personA: "Avery", planetA: "Venus", aspect: "sextile", personB: "Mira", planetB: "Ascendant", planetATopic: "connection, taste, and desire", planetBTopic: "presence and first impression" },
+  "friends.house-overlay": { personA: "Avery", personB: "Mira", planet: "Venus", house: 4, planetTopic: "connection, taste, and desire", houseLifeArea: "home, privacy, and belonging" },
+  "friends.composite-aspect": { planetA: "Sun", aspect: "square", planetB: "Moon", planetATopic: "identity and direction", planetBTopic: "needs and reaction" },
+  "friends.composite-placement": { planet: "Venus", sign: "Cancer", house: 4, planetTopic: "connection, taste, and desire" },
+  "friends.relationship-timing": { transitPlanet: "Pluto", aspect: "opposition", person: "Mira", natalPoint: "Descendant", transitPlanetTopic: "power, pressure, and deep change", natalPointTopic: "partnership and mirroring" },
   "friends.circle-feed": { topic: "saturn" },
-  "settings.life-area-focus": { topic: "career" }
+  "settings.life-area-focus": { topic: "career", lifeArea: "Career", lifeAreaDescription: "work, responsibility, visibility, and direction" }
 };
+
+function normalizedVocabularyKeyPart(value: string | number | null | undefined) {
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (normalized === "north-node") {
+    return "true-node";
+  }
+
+  return normalized;
+}
+
+function liveVocabularyRowsByContentKey(rows: AdminGeneratedContentRow[]) {
+  return new Map(
+    rows
+      .filter((row) => row.status === "LIVE")
+      .map((row) => [row.content_key, row])
+  );
+}
+
+type AdminPlanetTopicVariant = "you" | "friend" | "sky" | "natal";
+
+function topicPhraseForPreview(row: AdminGeneratedContentRow | undefined, variant: AdminPlanetTopicVariant) {
+  const sections = objectValue(row?.sections);
+  const topic = objectValue(sections?.topic);
+  const requested = stringValue(topic?.[variant]);
+  const natal = stringValue(topic?.natal) || row?.body || "";
+
+  return requested || natal || row?.body || "";
+}
+
+function signStylePhraseForPreview(row: AdminGeneratedContentRow | undefined, short = false) {
+  const sections = objectValue(row?.sections);
+  const style = objectValue(sections?.style);
+  const phrase = stringValue(style?.phrase) || row?.body || "";
+  const shortPhrase = stringValue(style?.short) || stringValue(style?.summary) || row?.summary || phrase;
+
+  return short ? shortPhrase : phrase;
+}
+
+function vocabularyPhraseForPreview(
+  rowsByContentKey: Map<string, AdminGeneratedContentRow>,
+  contentKey: string,
+  options: { variant?: AdminPlanetTopicVariant; short?: boolean } = {}
+) {
+  const row = rowsByContentKey.get(contentKey);
+
+  if (!row) {
+    return "";
+  }
+
+  if (contentKey.startsWith("vocab/planet-topic/")) {
+    return topicPhraseForPreview(row, options.variant ?? "natal");
+  }
+
+  if (contentKey.startsWith("vocab/sign-style/")) {
+    return signStylePhraseForPreview(row, options.short);
+  }
+
+  if (contentKey.startsWith("vocab/sign-need/")) {
+    const sections = objectValue(row.sections);
+    const need = objectValue(sections?.need);
+    const phrase = stringValue(need?.phrase) || row.body || "";
+    const natal = stringValue(need?.natal) || phrase;
+    const sky = stringValue(need?.sky) || natal;
+
+    return options.variant === "natal" ? natal : sky;
+  }
+
+  const sections = objectValue(row.sections);
+  const topic = objectValue(sections?.topic);
+  const note = objectValue(sections?.note);
+
+  return stringValue(topic?.phrase)
+    || stringValue(note?.phrase)
+    || row.body
+    || "";
+}
+
+function setResolvedSampleSlot(
+  context: FallbackHookContext,
+  slot: string,
+  value: string
+) {
+  if (value) {
+    context[slot] = value;
+  }
+}
+
+function resolveFallbackHookSampleContextFromVocabulary(
+  hookKey: string,
+  rowsByContentKey: Map<string, AdminGeneratedContentRow>
+) {
+  const context: FallbackHookContext = { ...(fallbackHookSampleContexts[hookKey] ?? {}) };
+  const isSkyHook = hookKey.startsWith("sky.");
+  const planetTopicVariant: AdminPlanetTopicVariant = isSkyHook
+    ? "sky"
+    : hookKey.startsWith("friends.")
+      ? "friend"
+      : hookKey.startsWith("you.")
+        ? "you"
+        : "natal";
+  const signStyleSlot = (slot: string, signSlot: string, short = false) => {
+    const sign = context[signSlot];
+    const phrase = vocabularyPhraseForPreview(
+      rowsByContentKey,
+      `vocab/sign-style/${normalizedVocabularyKeyPart(sign)}`,
+      { short }
+    );
+
+    setResolvedSampleSlot(context, slot, phrase);
+  };
+  const signNeedSlot = (slot: string, signSlot: string) => {
+    const sign = context[signSlot];
+    const phrase = vocabularyPhraseForPreview(
+      rowsByContentKey,
+      `vocab/sign-need/${normalizedVocabularyKeyPart(sign)}`
+    );
+
+    setResolvedSampleSlot(context, slot, phrase);
+  };
+  const planetTopicSlot = (slot: string, planetSlot: string, variant: AdminPlanetTopicVariant = planetTopicVariant) => {
+    const planet = context[planetSlot];
+    const phrase = vocabularyPhraseForPreview(
+      rowsByContentKey,
+      `vocab/planet-topic/${normalizedVocabularyKeyPart(planet)}`,
+      { variant }
+    );
+
+    setResolvedSampleSlot(context, slot, phrase);
+  };
+
+  planetTopicSlot("planetTopic", "planet");
+  planetTopicSlot("planetATopic", "planetA");
+  planetTopicSlot("planetBTopic", "planetB");
+  planetTopicSlot("transitPlanetTopic", "transitPlanet", "sky");
+  planetTopicSlot("natalPointTopic", "natalPoint", planetTopicVariant === "friend" ? "friend" : planetTopicVariant === "sky" ? "natal" : "you");
+  signStyleSlot("signStyle", "sign");
+  signStyleSlot("signAStyle", "signA");
+  signStyleSlot("signBStyle", "signB");
+  signStyleSlot("signAStyleShort", "signA", true);
+  signStyleSlot("signBStyleShort", "signB", true);
+  signNeedSlot("signNeed", "sign");
+
+  const house = context.house;
+  const houseTopic = vocabularyPhraseForPreview(
+    rowsByContentKey,
+    `vocab/house-topic/${normalizedVocabularyKeyPart(house)}`
+  );
+
+  setResolvedSampleSlot(context, "houseTopic", houseTopic);
+  setResolvedSampleSlot(context, "houseLifeArea", houseTopic);
+
+  const retrogradeNote = vocabularyPhraseForPreview(
+    rowsByContentKey,
+    `vocab/retrograde-note/${normalizedVocabularyKeyPart(context.planet)}`
+  );
+
+  setResolvedSampleSlot(context, "retrogradeNote", retrogradeNote);
+
+  return context;
+}
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "releaseNotes") return "Release Notes";
@@ -595,18 +784,148 @@ function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyD
   const sections = objectValue(row.sections);
   const topic = objectValue(sections?.topic);
   const style = objectValue(sections?.style);
+  const need = objectValue(sections?.need);
+  const story = objectValue(sections?.story);
+  const shadow = objectValue(sections?.shadow);
+  const higherExpression = objectValue(sections?.higherExpression);
+  const family = vocabularyRowFamily(row.content_key);
 
   return {
     headline: vocabularyHeadline(row),
+    you: stringValue(topic?.you),
+    friend: stringValue(topic?.friend),
     natal: stringValue(topic?.natal) || row.body || "",
-    sky: stringValue(topic?.sky) || stringValue(topic?.natal) || row.body || "",
+    sky: stringValue(topic?.sky),
     stylePhrase: stringValue(style?.phrase) || row.body || "",
-    styleShort: stringValue(style?.short) || stringValue(style?.phrase) || row.summary || row.body || ""
+    styleShort: stringValue(style?.short) || stringValue(style?.phrase) || row.summary || row.body || "",
+    signNeed: stringValue(need?.natal) || stringValue(need?.sky) || stringValue(need?.phrase) || (family === "sign-need" ? row.body || "" : ""),
+    story: stringValue(story?.legend) || stringValue(story?.body) || (family === "zodiac-story" ? row.body || "" : ""),
+    shadow: stringValue(shadow?.body) || stringValue(shadow?.phrase) || (family === "planet-shadow" || family === "house-shadow" ? row.body || "" : ""),
+    higherExpression: stringValue(higherExpression?.body) || stringValue(higherExpression?.phrase) || (family === "higher-expression" ? row.body || "" : "")
+  };
+}
+
+function vocabularySectionsFromDraft(row: AdminGeneratedContentRow, draftValue: AdminVocabularyDraft) {
+  const existingSections = objectValue(row.sections) ?? {};
+  const family = vocabularyRowFamily(row.content_key);
+  const nextSections: Record<string, unknown> = { ...existingSections };
+  const storyText = draftValue.story?.trim() ?? "";
+  const signNeedText = draftValue.signNeed?.trim() ?? "";
+  const shadowText = draftValue.shadow?.trim() ?? "";
+  const higherExpressionText = draftValue.higherExpression?.trim() ?? "";
+
+  if (family === "sign-style") {
+    nextSections.style = {
+      phrase: draftValue.stylePhrase ?? "",
+      short: draftValue.styleShort ?? ""
+    };
+    nextSections.need = {
+      ...(objectValue(existingSections.need) ?? {}),
+      natal: signNeedText,
+      sky: signNeedText,
+      phrase: signNeedText
+    };
+    nextSections.story = {
+      ...(objectValue(existingSections.story) ?? {}),
+      legend: storyText
+    };
+    nextSections.shadow = {
+      ...(objectValue(existingSections.shadow) ?? {}),
+      body: shadowText
+    };
+  } else if (family === "zodiac-story") {
+    nextSections.story = {
+      ...(objectValue(existingSections.story) ?? {}),
+      legend: storyText
+    };
+  } else if (family === "sign-need") {
+    nextSections.need = {
+      ...(objectValue(existingSections.need) ?? {}),
+      natal: signNeedText,
+      sky: signNeedText,
+      phrase: signNeedText
+    };
+  } else if (family === "planet-shadow" || family === "house-shadow") {
+    nextSections.shadow = {
+      ...(objectValue(existingSections.shadow) ?? {}),
+      body: shadowText
+    };
+  } else if (family === "higher-expression") {
+    nextSections.higherExpression = {
+      ...(objectValue(existingSections.higherExpression) ?? {}),
+      body: higherExpressionText
+    };
+  } else {
+    nextSections.topic = {
+      you: draftValue.you ?? "",
+      friend: draftValue.friend ?? "",
+      natal: draftValue.natal,
+      sky: draftValue.sky
+    };
+  }
+
+  return nextSections;
+}
+
+function vocabularyBodyFromDraft(row: AdminGeneratedContentRow, draftValue: AdminVocabularyDraft) {
+  const family = vocabularyRowFamily(row.content_key);
+
+  if (family === "sign-style") return draftValue.stylePhrase ?? "";
+  if (family === "sign-need") return draftValue.signNeed ?? "";
+  if (family === "zodiac-story") return draftValue.story ?? "";
+  if (family === "planet-shadow" || family === "house-shadow") return draftValue.shadow ?? "";
+  if (family === "higher-expression") return draftValue.higherExpression ?? "";
+  return draftValue.natal;
+}
+
+function vocabularySummaryFromDraft(row: AdminGeneratedContentRow, draftValue: AdminVocabularyDraft) {
+  return vocabularyRowFamily(row.content_key) === "sign-style" ? draftValue.styleShort ?? "" : undefined;
+}
+
+function vocabularyDraftFromImportRow(row: AdminContentExchangeBundle["vocabularyRows"][number]): AdminVocabularyDraft {
+  return {
+    headline: row.headline || titleFromVocabularyContentKey(row.contentKey),
+    you: row.you ?? "",
+    friend: row.friend ?? "",
+    natal: row.natal ?? "",
+    sky: row.sky ?? "",
+    stylePhrase: row.stylePhrase || row.natal || "",
+    styleShort: row.styleShort || row.sky || row.stylePhrase || row.natal || "",
+    signNeed: row.signNeed || row.natal || "",
+    story: row.story ?? "",
+    shadow: row.shadow ?? "",
+    higherExpression: row.higherExpression ?? ""
   };
 }
 
 function vocabularyRowKind(contentKey: string): "topic" | "sign-style" {
   return contentKey.startsWith("vocab/sign-style/") ? "sign-style" : "topic";
+}
+
+function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign-need" | "zodiac-story" | "planet-shadow" | "house-shadow" | "higher-expression" {
+  if (contentKey.startsWith("vocab/sign-style/")) return "sign-style";
+  if (contentKey.startsWith("vocab/sign-need/")) return "sign-need";
+  if (contentKey.startsWith("vocab/zodiac-story/") || contentKey.startsWith("vocab/zodiac-cycle/")) return "zodiac-story";
+  if (contentKey.startsWith("vocab/planet-shadow/")) return "planet-shadow";
+  if (contentKey.startsWith("vocab/house-shadow/")) return "house-shadow";
+  if (contentKey.startsWith("vocab/higher-expression/")) return "higher-expression";
+  return "topic";
+}
+
+function vocabularyItemCategory(item: Pick<AdminVocabularyCardItem, "contentKey" | "kind" | "taglineContentKey">): AdminVocabularyCategoryFilter {
+  if (item.kind === "sign-style" || item.contentKey.startsWith("vocab/sign-style/") || item.contentKey.startsWith("vocab/sign-need/") || item.contentKey.startsWith("vocab/zodiac-story/") || item.contentKey.startsWith("vocab/zodiac-cycle/") || item.contentKey.startsWith("vocab/higher-expression/sign/") || item.contentKey.startsWith("vocab/higher-expression/zodiac/")) {
+    return "zodiac";
+  }
+
+  if (item.contentKey.startsWith("vocab/house-topic/") || item.contentKey.startsWith("vocab/house-shadow/") || item.contentKey.startsWith("vocab/higher-expression/house/")) {
+    return "houses";
+  }
+
+  if (item.contentKey.startsWith("vocab/planet-topic/") || item.contentKey.startsWith("vocab/planet-shadow/") || item.contentKey.startsWith("vocab/higher-expression/planet/") || item.contentKey.startsWith("vocab/natal-card-tagline/") || item.taglineContentKey) {
+    return "planets";
+  }
+
+  return "all";
 }
 
 const signContextAspectCardsSettingKey = "app-setting/sign-context-on-aspect-cards";
@@ -705,7 +1024,7 @@ const extraTemplateCopySeeds: TemplateCopySeedRow[] = [
     status: "published",
     contentType: "template",
     fields: {
-      title: "Sky Aspect Sign Context",
+      title: "Sky Aspect Supporting Sign Line",
       summary: "Right now this runs through {{signA}} and {{signB}}: {{signAStyleShort}} meeting {{signBStyleShort}}.",
       body: "Right now this runs through {{signA}} and {{signB}}: {{signAStyleShort}} meeting {{signBStyleShort}}.",
       bestMove: "Read the aspect through both signs before choosing the next move.",
@@ -820,6 +1139,7 @@ function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] =
         },
         reviewer_notes: "Local placeholder for an unsaved fallback-hook template row.",
         prompt_version: "fallback-hook-template-v1",
+        provider: null,
         model: null,
         reviewed_at: null,
         published_at: null,
@@ -968,8 +1288,16 @@ function csvFromRows(rows: AdminContentCsvRow[]) {
     "summary",
     "body",
     "bestMove",
+    "you",
+    "friend",
     "natal",
     "sky",
+    "stylePhrase",
+    "styleShort",
+    "signNeed",
+    "story",
+    "shadow",
+    "higherExpression",
     "tagline",
     "template",
     "generationGuide",
@@ -1054,8 +1382,16 @@ function csvRowsFromContentBundle(bundle: AdminContentExchangeBundle): AdminCont
     id: row.id ?? "",
     contentKey: row.contentKey,
     headline: row.headline,
+    you: row.you ?? "",
+    friend: row.friend ?? "",
     natal: row.natal,
-    sky: row.sky
+    sky: row.sky,
+    stylePhrase: row.stylePhrase ?? "",
+    styleShort: row.styleShort ?? "",
+    signNeed: row.signNeed ?? "",
+    story: row.story ?? "",
+    shadow: row.shadow ?? "",
+    higherExpression: row.higherExpression ?? ""
   }));
   const taglineCsvRows = bundle.taglineRows.map((row) => ({
     collection: "taglines",
@@ -1119,8 +1455,16 @@ function contentBundleFromCsv(text: string): AdminContentExchangeBundle {
         id: row.id || undefined,
         contentKey: row.contentKey,
         headline: row.headline ?? "",
+        you: row.you ?? "",
+        friend: row.friend ?? "",
         natal: row.natal ?? "",
-        sky: row.sky ?? ""
+        sky: row.sky ?? "",
+        stylePhrase: row.stylePhrase ?? "",
+        styleShort: row.styleShort ?? "",
+        signNeed: row.signNeed ?? "",
+        story: row.story ?? "",
+        shadow: row.shadow ?? "",
+        higherExpression: row.higherExpression ?? ""
       });
     }
 
@@ -1215,6 +1559,19 @@ function contentTypeBadge(row: AdminGeneratedContentRow) {
 }
 
 const releaseNotes: ReleaseNote[] = [
+  {
+    date: "July 5, 2026",
+    time: "3:15 PM EDT",
+    title: "Provider audit closed for framework drafts",
+    summary: "Generated content now stores provider as a first-class column, and the source-backed framework drafts show Claude ownership in Content Ops.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Added the generated_interpretations provider migration and backfilled existing rows from source snapshots or the Claude default.",
+      "Updated source-framework seeding so the five framework drafts write top-level provider instead of relying on source_snapshot metadata.",
+      "Removed provider fallbacks from dashboard content reads so Provider reflects the database column directly.",
+      "Added Provider to the global Content table and verified the five source-backed framework drafts render as Claude."
+    ]
+  },
   {
     date: "July 4, 2026",
     time: "4:59 PM EDT",
@@ -1857,6 +2214,7 @@ function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
     knowledgeIds: row.knowledge_ids ?? [],
     sourceSnapshot: row.source_snapshot,
     reviewerNotes: row.reviewer_notes,
+    provider: row.provider,
     model: row.model,
     promptVersion: row.prompt_version,
     updatedAt: row.updated_at,
@@ -2792,6 +3150,7 @@ export function GeneratedContentAdminDashboard() {
   const [signContextSettingRow, setSignContextSettingRow] = useState<AdminGeneratedContentRow | null>(null);
   const [signContextEnabled, setSignContextEnabled] = useState(true);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
+  const [vocabularyCategoryFilter, setVocabularyCategoryFilter] = useState<AdminVocabularyCategoryFilter>("all");
   const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
   const [templatePreviewSlotDrafts, setTemplatePreviewSlotDrafts] = useState<Record<string, Record<string, string>>>({});
@@ -2836,7 +3195,7 @@ export function GeneratedContentAdminDashboard() {
   const [activeTemplateSurface, setActiveTemplateSurface] = useState<VoiceTemplateSurface>("sky");
   const [activePage, setActivePage] = useState<AdminDashboardPage>("content");
   const contentImportInputRef = useRef<HTMLInputElement | null>(null);
-  const [contentImportScope, setContentImportScope] = useState<AdminContentScope>("settings");
+  const contentImportScopeRef = useRef<AdminContentScope>("settings");
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -2949,18 +3308,54 @@ export function GeneratedContentAdminDashboard() {
   const approveButtonLabel = selectedReviewRecord?.status === "REVIEWED" ? "Publish Live" : "Approve";
   const isDateFilterActive = categoryUsesDateFilter(categoryFilter);
   const vocabularyCardItems = useMemo<AdminVocabularyCardItem[]>(() => {
-    const items: AdminVocabularyCardItem[] = vocabularyRows.map((row) => {
+    const rowsByContentKey = new Map(vocabularyRows.map((row) => [row.content_key, row]));
+    const items: AdminVocabularyCardItem[] = vocabularyRows.flatMap((row) => {
+      const family = vocabularyRowFamily(row.content_key);
+
       const point = pointFromTaglineContentKey(row.content_key);
       const supportsTagline = natalCardTaglinePoints.some((taglinePoint) => normalizedNatalCardTaglinePoint(taglinePoint) === normalizedNatalCardTaglinePoint(point));
       const kind = vocabularyRowKind(row.content_key);
+      const houseTopicMatch = row.content_key.match(/^vocab\/house-topic\/(.+)$/);
+      const planetTopicMatch = row.content_key.match(/^vocab\/planet-topic\/(.+)$/);
+      const signStyleMatch = row.content_key.match(/^vocab\/sign-style\/(.+)$/);
+      const houseKeyForStandalone = row.content_key.match(/^vocab\/(?:house-shadow|higher-expression\/house)\/(.+)$/)?.[1] ?? "";
+      const planetKeyForStandalone = row.content_key.match(/^vocab\/(?:planet-shadow|higher-expression\/planet)\/(.+)$/)?.[1] ?? "";
+      const signKeyForStandalone = row.content_key.match(/^vocab\/(?:sign-need|zodiac-story|higher-expression\/sign|higher-expression\/zodiac)\/(.+)$/)?.[1] ?? "";
 
-      return {
+      if ((family === "house-shadow" || row.content_key.startsWith("vocab/higher-expression/house/")) && rowsByContentKey.has(`vocab/house-topic/${houseKeyForStandalone}`)) {
+        return [];
+      }
+
+      if ((family === "planet-shadow" || row.content_key.startsWith("vocab/higher-expression/planet/")) && rowsByContentKey.has(`vocab/planet-topic/${planetKeyForStandalone}`)) {
+        return [];
+      }
+
+      if ((family === "sign-need" || family === "zodiac-story" || row.content_key.startsWith("vocab/higher-expression/sign/") || row.content_key.startsWith("vocab/higher-expression/zodiac/")) && rowsByContentKey.has(`vocab/sign-style/${signKeyForStandalone}`)) {
+        return [];
+      }
+
+      const houseKey = houseTopicMatch?.[1] ?? "";
+      const planetKey = planetTopicMatch?.[1] ?? "";
+      const signKey = signStyleMatch?.[1] ?? "";
+
+      return [{
         contentKey: row.content_key,
         point,
         row,
+        signNeedRow: signKey ? rowsByContentKey.get(`vocab/sign-need/${signKey}`) : undefined,
+        storyRow: signKey ? rowsByContentKey.get(`vocab/zodiac-story/${signKey}`) : undefined,
+        shadowRow: houseKey ? rowsByContentKey.get(`vocab/house-shadow/${houseKey}`) : undefined,
+        higherExpressionRow: houseKey
+          ? rowsByContentKey.get(`vocab/higher-expression/house/${houseKey}`)
+          : planetKey
+            ? rowsByContentKey.get(`vocab/higher-expression/planet/${planetKey}`)
+            : signKey
+              ? rowsByContentKey.get(`vocab/higher-expression/sign/${signKey}`) ?? rowsByContentKey.get(`vocab/higher-expression/zodiac/${signKey}`)
+              : undefined,
+        ...(planetKey ? { shadowRow: rowsByContentKey.get(`vocab/planet-shadow/${planetKey}`) } : {}),
         taglineContentKey: kind === "topic" && supportsTagline ? natalCardTaglineContentKey(point) : undefined,
         kind
-      };
+      }];
     });
     const existingPointIds = new Set(items.map((item) => normalizedNatalCardTaglinePoint(item.point)));
 
@@ -2976,6 +3371,39 @@ export function GeneratedContentAdminDashboard() {
     }
 
     return items;
+  }, [vocabularyRows]);
+  const vocabularyCategoryCounts = useMemo(() => {
+    const counts = {
+      all: vocabularyCardItems.length,
+      planets: 0,
+      houses: 0,
+      zodiac: 0
+    } satisfies Record<AdminVocabularyCategoryFilter, number>;
+
+    vocabularyCardItems.forEach((item) => {
+      const category = vocabularyItemCategory(item);
+
+      if (category !== "all") {
+        counts[category] += 1;
+      }
+    });
+
+    return counts;
+  }, [vocabularyCardItems]);
+  const filteredVocabularyCardItems = useMemo(() => (
+    vocabularyCategoryFilter === "all"
+      ? vocabularyCardItems
+      : vocabularyCardItems.filter((item) => vocabularyItemCategory(item) === vocabularyCategoryFilter)
+  ), [vocabularyCardItems, vocabularyCategoryFilter]);
+  const resolvedFallbackHookSampleContexts = useMemo<Record<string, FallbackHookContext>>(() => {
+    const rowsByContentKey = liveVocabularyRowsByContentKey(vocabularyRows);
+
+    return Object.fromEntries(
+      Object.keys(fallbackHookSampleContexts).map((hookKey) => [
+        hookKey,
+        resolveFallbackHookSampleContextFromVocabulary(hookKey, rowsByContentKey)
+      ])
+    );
   }, [vocabularyRows]);
 
   function buildContentExchangeBundle(
@@ -2995,10 +3423,16 @@ export function GeneratedContentAdminDashboard() {
           id: row.id,
           contentKey: row.content_key,
           headline: draftValue.headline,
+          you: draftValue.you,
+          friend: draftValue.friend,
           natal: draftValue.natal,
           sky: draftValue.sky,
           stylePhrase: draftValue.stylePhrase,
-          styleShort: draftValue.styleShort
+          styleShort: draftValue.styleShort,
+          signNeed: draftValue.signNeed,
+          story: draftValue.story,
+          shadow: draftValue.shadow,
+          higherExpression: draftValue.higherExpression
         };
       }) : [],
       taglineRows: scope === "vocabulary" ? natalCardTaglinePoints.map((point) => {
@@ -3114,7 +3548,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function triggerContentImport(scope: AdminContentScope) {
-    setContentImportScope(scope);
+    contentImportScopeRef.current = scope;
     contentImportInputRef.current?.click();
   }
 
@@ -3197,6 +3631,48 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  async function upsertVocabularyImportRow(
+    importedRow: AdminContentExchangeBundle["vocabularyRows"][number],
+    patch: Record<string, unknown>,
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+
+    if (matchedRow) {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: matchedRow.id,
+            ...patch
+          })
+        }
+      );
+      return;
+    }
+
+    await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          contentKey: importedRow.contentKey,
+          surface: "natal",
+          mode: "in_depth",
+          eventType: "vocabulary",
+          status: "DRAFT",
+          promptVersion: "vocab-v1",
+          provider: "claude",
+          model: "manual",
+          ...patch
+        })
+      }
+    );
+  }
+
   async function upsertTaglineImportRow(
     importedRow: AdminContentExchangeBundle["taglineRows"][number],
     availableRows: AdminGeneratedContentRow[]
@@ -3243,6 +3719,90 @@ export function GeneratedContentAdminDashboard() {
         })
       }
     );
+  }
+
+  function generatedContentImportPayloadForVocabularyRow(
+    importedRow: AdminContentExchangeBundle["vocabularyRows"][number],
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const draft = vocabularyDraftFromImportRow(importedRow);
+    const rowShell = {
+      content_key: importedRow.contentKey,
+      sections: null
+    } as AdminGeneratedContentRow;
+
+    return {
+      contentKey: importedRow.contentKey,
+      surface: matchedRow?.surface ?? "natal",
+      mode: matchedRow?.mode ?? "in_depth",
+      eventType: "vocabulary",
+      status: matchedRow?.status ?? "DRAFT",
+      promptVersion: "vocab-v1",
+      provider: "claude",
+      model: "manual",
+      headline: draft.headline,
+      summary: vocabularySummaryFromDraft(rowShell, draft),
+      body: vocabularyBodyFromDraft(rowShell, draft),
+      sections: vocabularySectionsFromDraft(rowShell, draft),
+      sourceSnapshot: {
+        source: "dashboard-bulk-import",
+        contentType: "vocabulary",
+        importedAt: new Date().toISOString()
+      },
+      reviewerNotes: "Imported from dashboard vocabulary upload."
+    };
+  }
+
+  function generatedContentImportPayloadForTaglineRow(
+    importedRow: AdminContentExchangeBundle["taglineRows"][number],
+    availableRows: AdminGeneratedContentRow[]
+  ) {
+    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+
+    return {
+      contentKey: importedRow.contentKey,
+      surface: matchedRow?.surface ?? "sky",
+      mode: matchedRow?.mode ?? "feed",
+      eventType: "tagline",
+      status: matchedRow?.status ?? "DRAFT",
+      promptVersion: "tagline-v1",
+      provider: "claude",
+      model: "manual",
+      headline: importedRow.headline,
+      body: importedRow.tagline,
+      sections: {
+        tagline: {
+          natal: importedRow.tagline
+        }
+      },
+      sourceSnapshot: {
+        source: "dashboard-bulk-import",
+        contentType: "tagline",
+        importedAt: new Date().toISOString()
+      },
+      reviewerNotes: "Imported from dashboard vocabulary upload."
+    };
+  }
+
+  async function bulkUpsertGeneratedContentImportRows(rowsToImport: Array<Record<string, unknown>>) {
+    if (rowsToImport.length === 0) {
+      return [];
+    }
+
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          rows: rowsToImport
+        })
+      },
+      120000
+    );
+
+    return payload.rows ?? [];
   }
 
   async function upsertContextImportRow(
@@ -3326,27 +3886,13 @@ export function GeneratedContentAdminDashboard() {
       if (scope === "vocabulary") {
         const availableRows = await fetchVocabularyRowsForAdmin();
         const availableTaglineRows = await fetchTaglineRowsForAdmin();
+        const rowsToImport = [
+          ...bundle.vocabularyRows.map((row) => generatedContentImportPayloadForVocabularyRow(row, availableRows)),
+          ...bundle.taglineRows.map((row) => generatedContentImportPayloadForTaglineRow(row, availableTaglineRows))
+        ];
 
-        for (const row of bundle.vocabularyRows) {
-          await patchGeneratedContentByImportKey(
-            row,
-            {
-              headline: row.headline,
-              body: row.natal,
-              sections: {
-                topic: {
-                  natal: row.natal,
-                  sky: row.sky
-                }
-              }
-            },
-            availableRows
-          );
-        }
-
-        for (const row of bundle.taglineRows) {
-          await upsertTaglineImportRow(row, availableTaglineRows);
-        }
+        setMessage(`Uploading ${rowsToImport.length} vocabulary and tagline rows...`);
+        await bulkUpsertGeneratedContentImportRows(rowsToImport);
 
         await loadVocabularyRows();
         setAccessStatus("valid");
@@ -3396,6 +3942,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function importManagedContentFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    const scope = contentImportScopeRef.current;
     event.target.value = "";
 
     if (!file) {
@@ -3403,12 +3950,13 @@ export function GeneratedContentAdminDashboard() {
     }
 
     try {
+      setMessage(`Reading ${file.name}...`);
       const text = await file.text();
       const bundle = file.name.toLowerCase().endsWith(".csv")
         ? contentBundleFromCsv(text)
         : contentBundleFromJson(text);
 
-      await importManagedContentBundle(bundle, contentImportScope);
+      await importManagedContentBundle(bundle, scope);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not read import file.");
     }
@@ -3574,10 +4122,13 @@ export function GeneratedContentAdminDashboard() {
         contentKeyPrefix: "fallback-hook/",
         limit: "200"
       });
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?${params}`,
-        secret
-      );
+      const [payload, nextVocabularyRows] = await Promise.all([
+        adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          `/api/admin/generated-content?${params}`,
+          secret
+        ),
+        fetchVocabularyRowsForAdmin()
+      ]);
       const savedRows = (payload.rows ?? [])
         .filter((row) => row.content_key.startsWith("fallback-hook/"))
         .sort((first, second) => first.content_key.localeCompare(second.content_key));
@@ -3585,6 +4136,8 @@ export function GeneratedContentAdminDashboard() {
 
       setTemplateContentRows(nextRows);
       setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setVocabularyRows(nextVocabularyRows);
+      setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
       setAccessStatus("valid");
       setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.`);
     } catch (error) {
@@ -3930,21 +4483,9 @@ export function GeneratedContentAdminDashboard() {
           body: JSON.stringify({
             id: row.id,
             headline: draftValue.headline,
-            summary: isSignStyle ? draftValue.styleShort ?? "" : undefined,
-            body: isSignStyle ? draftValue.stylePhrase ?? "" : draftValue.natal,
-            sections: isSignStyle
-              ? {
-                  style: {
-                    phrase: draftValue.stylePhrase ?? "",
-                    short: draftValue.styleShort ?? ""
-                  }
-                }
-              : {
-                  topic: {
-                    natal: draftValue.natal,
-                    sky: draftValue.sky
-                  }
-                }
+            summary: vocabularySummaryFromDraft(row, draftValue),
+            body: vocabularyBodyFromDraft(row, draftValue),
+            sections: vocabularySectionsFromDraft(row, draftValue)
           })
         }
       );
@@ -4030,38 +4571,45 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
+    const patchVocabularyRow = async (row: AdminGeneratedContentRow) => {
+      const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: row.id,
+            headline: draftValue.headline,
+            summary: vocabularySummaryFromDraft(row, draftValue),
+            body: vocabularyBodyFromDraft(row, draftValue),
+            sections: vocabularySectionsFromDraft(row, draftValue)
+          })
+        }
+      );
+    };
+
     setIsLoading(true);
     try {
       if (item.row) {
-        const draftValue = vocabularyDrafts[item.row.id] ?? vocabularyDraftFromRow(item.row);
-        const isSignStyle = item.kind === "sign-style";
+        await patchVocabularyRow(item.row);
+      }
 
-        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-          "/api/admin/generated-content",
-          secret,
-          {
-            method: "PATCH",
-            body: JSON.stringify({
-              id: item.row.id,
-              headline: draftValue.headline,
-              summary: isSignStyle ? draftValue.styleShort ?? "" : undefined,
-              body: isSignStyle ? draftValue.stylePhrase ?? "" : draftValue.natal,
-              sections: isSignStyle
-                ? {
-                    style: {
-                      phrase: draftValue.stylePhrase ?? "",
-                      short: draftValue.styleShort ?? ""
-                    }
-                  }
-                : {
-                    topic: {
-                      natal: draftValue.natal,
-                      sky: draftValue.sky
-                    }
-                  }
-            })
-          }
-        );
+      if (item.signNeedRow) {
+        await patchVocabularyRow(item.signNeedRow);
+      }
+
+      if (item.storyRow) {
+        await patchVocabularyRow(item.storyRow);
+      }
+
+      if (item.shadowRow) {
+        await patchVocabularyRow(item.shadowRow);
+      }
+
+      if (item.higherExpressionRow) {
+        await patchVocabularyRow(item.higherExpressionRow);
       }
 
       if (item.taglineContentKey) {
@@ -5902,8 +6450,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <div className="admin-template-header">
               <div>
                 <p className="admin-eyebrow">Prompt version vocab-v1</p>
-                <h2>Planet Vocabulary</h2>
-                <p>Edit the phrases used by template interpolation and the taglines shown on natal chart cards.</p>
+                <h2>Vocabulary</h2>
+                <p>Edit the planet, house, and zodiac phrases used by template interpolation and natal chart card taglines.</p>
               </div>
               <div className="admin-release-summary" aria-label="Vocabulary row count">
                 <article>
@@ -5931,11 +6479,49 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </div>
 
+            <div className="admin-vocabulary-filter-panel" aria-label="Vocabulary category filters">
+              <div className="admin-fallback-section-filters" role="tablist" aria-label="Vocabulary categories">
+                {([
+                  { key: "all", label: "All" },
+                  { key: "planets", label: "Planets" },
+                  { key: "houses", label: "Houses" },
+                  { key: "zodiac", label: "Zodiac" }
+                ] as Array<{ key: AdminVocabularyCategoryFilter; label: string }>).map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={vocabularyCategoryFilter === filter.key ? "active" : ""}
+                    onClick={() => setVocabularyCategoryFilter(filter.key)}
+                    role="tab"
+                    aria-selected={vocabularyCategoryFilter === filter.key}
+                  >
+                    <span>{filter.label}</span>
+                    <strong>{vocabularyCategoryCounts[filter.key]}</strong>
+                  </button>
+                ))}
+              </div>
+
+              <p className="admin-template-note">
+                Zodiac style is the short tone phrase templates use for a sign, like “steady and slow to change course.” It describes the sign’s manner or texture, not a full placement interpretation.
+              </p>
+            </div>
+
             <div className="admin-managed-row-list">
-              {vocabularyCardItems.map((item) => {
+              {filteredVocabularyCardItems.map((item) => {
                 const topicRow = item.row;
                 const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
+                const signNeedDraft = item.signNeedRow ? vocabularyDrafts[item.signNeedRow.id] ?? vocabularyDraftFromRow(item.signNeedRow) : null;
+                const storyDraft = item.storyRow ? vocabularyDrafts[item.storyRow.id] ?? vocabularyDraftFromRow(item.storyRow) : null;
+                const shadowDraft = item.shadowRow ? vocabularyDrafts[item.shadowRow.id] ?? vocabularyDraftFromRow(item.shadowRow) : null;
+                const higherExpressionDraft = item.higherExpressionRow ? vocabularyDrafts[item.higherExpressionRow.id] ?? vocabularyDraftFromRow(item.higherExpressionRow) : null;
                 const isSignStyleRow = item.kind === "sign-style";
+                const vocabularyFamily = vocabularyRowFamily(item.contentKey);
+                const vocabularyCategory = vocabularyItemCategory(item);
+                const showsPrimaryPhraseFields = vocabularyFamily === "topic" || vocabularyFamily === "sign-style";
+                const showsSignNeed = vocabularyFamily === "sign-style" || vocabularyFamily === "sign-need" || Boolean(item.signNeedRow);
+                const showsZodiacStory = vocabularyFamily === "sign-style" || vocabularyFamily === "zodiac-story" || Boolean(item.storyRow);
+                const showsShadow = vocabularyFamily === "sign-style" || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" || Boolean(item.shadowRow);
+                const showsHigherExpression = vocabularyFamily === "higher-expression" || Boolean(item.higherExpressionRow);
                 const matchedTaglineRow = item.taglineContentKey
                   ? taglineRows.find((row) => row.content_key === item.taglineContentKey)
                   : undefined;
@@ -5962,7 +6548,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       </div>
                       <div className="admin-managed-badges">
                         {topicRow && <span className={`ui-pill admin-status status-${topicRow.status.toLowerCase()}`}>{topicRow.status}</span>}
-                        {isSignStyleRow && <span className="ui-pill admin-status">Sign style</span>}
+                        {isSignStyleRow && <span className="ui-pill admin-status">Zodiac style</span>}
+                        {vocabularyFamily === "sign-need" && <span className="ui-pill admin-status">Moon need</span>}
+                        {vocabularyFamily === "zodiac-story" && <span className="ui-pill admin-status">Zodiac story</span>}
+                        {vocabularyFamily === "planet-shadow" && <span className="ui-pill admin-status">Planet shadow</span>}
+                        {vocabularyFamily === "house-shadow" && <span className="ui-pill admin-status">House shadow</span>}
+                        {vocabularyFamily === "higher-expression" && <span className="ui-pill admin-status">Higher expression</span>}
+                        {item.signNeedRow && <span className={`ui-pill admin-status status-${item.signNeedRow.status.toLowerCase()}`}>Moon need</span>}
+                        {item.storyRow && <span className={`ui-pill admin-status status-${item.storyRow.status.toLowerCase()}`}>Zodiac story</span>}
+                        {item.shadowRow && <span className={`ui-pill admin-status status-${item.shadowRow.status.toLowerCase()}`}>{vocabularyItemCategory(item) === "planets" ? "Planet shadow" : "House shadow"}</span>}
+                        {item.higherExpressionRow && <span className={`ui-pill admin-status status-${item.higherExpressionRow.status.toLowerCase()}`}>Higher expression</span>}
+                        {vocabularyCategory === "houses" && <span className="ui-pill admin-status">House</span>}
+                        {vocabularyCategory === "planets" && <span className="ui-pill admin-status">Planet</span>}
                         {item.taglineContentKey && (
                           <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
                             Tagline {matchedTaglineRow?.status ?? "not saved"}
@@ -5973,25 +6570,120 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
                     <code className="admin-managed-key">{topicRow?.content_key ?? item.contentKey}</code>
 
-                    {rowDraft && topicRow && (
+                    {rowDraft && topicRow && showsPrimaryPhraseFields && isSignStyleRow && (
                       <div className="admin-managed-two-column">
                         <label className="admin-field-wide">
-                          <span>{isSignStyleRow ? "Style phrase" : "Natal phrase"}</span>
+                          <span>Zodiac style phrase</span>
                           <textarea
-                            value={isSignStyleRow ? rowDraft.stylePhrase ?? "" : rowDraft.natal}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, isSignStyleRow ? { stylePhrase: event.target.value } : { natal: event.target.value })}
+                            value={rowDraft.stylePhrase ?? ""}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, { stylePhrase: event.target.value })}
                             rows={3}
                           />
                         </label>
                         <label className="admin-field-wide">
-                          <span>{isSignStyleRow ? "Short style" : "Sky phrase"}</span>
+                          <span>Short style</span>
                           <textarea
-                            value={isSignStyleRow ? rowDraft.styleShort ?? "" : rowDraft.sky}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, isSignStyleRow ? { styleShort: event.target.value } : { sky: event.target.value })}
+                            value={rowDraft.styleShort ?? ""}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, { styleShort: event.target.value })}
                             rows={3}
                           />
                         </label>
                       </div>
+                    )}
+
+                    {rowDraft && topicRow && showsPrimaryPhraseFields && !isSignStyleRow && (
+                      <>
+                        <div className="admin-managed-two-column">
+                          <label className="admin-field-wide">
+                            <span>You phrase</span>
+                            <textarea
+                              value={rowDraft.you ?? ""}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { you: event.target.value })}
+                              rows={3}
+                            />
+                          </label>
+                          <label className="admin-field-wide">
+                            <span>Friend phrase</span>
+                            <textarea
+                              value={rowDraft.friend ?? ""}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { friend: event.target.value })}
+                              rows={3}
+                            />
+                          </label>
+                        </div>
+                        <div className="admin-managed-two-column">
+                          <label className="admin-field-wide">
+                            <span>Natal fallback phrase</span>
+                            <textarea
+                              value={rowDraft.natal}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
+                              rows={3}
+                            />
+                          </label>
+                          <label className="admin-field-wide">
+                            <span>Sky phrase</span>
+                            <textarea
+                              value={rowDraft.sky}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { sky: event.target.value })}
+                              rows={3}
+                            />
+                          </label>
+                        </div>
+                      </>
+                    )}
+
+                    {rowDraft && topicRow && showsSignNeed && (
+                      <label className="admin-field-wide">
+                        <span>Moon need</span>
+                        <textarea
+                          value={item.signNeedRow ? signNeedDraft?.signNeed ?? "" : rowDraft.signNeed ?? ""}
+                          onChange={(event) => updateVocabularyDraft(item.signNeedRow?.id ?? topicRow.id, { signNeed: event.target.value })}
+                          rows={2}
+                        />
+                        <small>Completes: Moon in this sign days tend to run on...</small>
+                      </label>
+                    )}
+
+                    {rowDraft && topicRow && (showsZodiacStory || showsShadow) && (
+                      <div className="admin-managed-two-column">
+                        {showsZodiacStory && (
+                          <label className="admin-field-wide">
+                            <span>Zodiac story / legend</span>
+                            <textarea
+                              value={item.storyRow ? storyDraft?.story ?? "" : rowDraft.story ?? ""}
+                              onChange={(event) => updateVocabularyDraft(item.storyRow?.id ?? topicRow.id, { story: event.target.value })}
+                              rows={4}
+                            />
+                          </label>
+                        )}
+                        {showsShadow && (
+                          <label className="admin-field-wide">
+                            <span>
+                              {item.shadowRow || vocabularyFamily === "house-shadow"
+                                ? "House shadow"
+                                : vocabularyFamily === "planet-shadow"
+                                  ? "Planet shadow"
+                                  : "Zodiac shadow"}
+                            </span>
+                            <textarea
+                              value={item.shadowRow ? shadowDraft?.shadow ?? "" : rowDraft.shadow ?? ""}
+                              onChange={(event) => updateVocabularyDraft(item.shadowRow?.id ?? topicRow.id, { shadow: event.target.value })}
+                              rows={4}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    )}
+
+                    {rowDraft && topicRow && showsHigherExpression && (
+                      <label className="admin-field-wide">
+                        <span>Higher expression</span>
+                        <textarea
+                          value={item.higherExpressionRow ? higherExpressionDraft?.higherExpression ?? "" : rowDraft.higherExpression ?? ""}
+                          onChange={(event) => updateVocabularyDraft(item.higherExpressionRow?.id ?? topicRow.id, { higherExpression: event.target.value })}
+                          rows={5}
+                        />
+                      </label>
                     )}
 
                     {item.taglineContentKey && taglineDraft && (
@@ -6014,8 +6706,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   </article>
                 );
               })}
-              {vocabularyCardItems.length === 0 && (
-                <p className="admin-empty">No vocabulary rows were found.</p>
+              {filteredVocabularyCardItems.length === 0 && (
+                <p className="admin-empty">No vocabulary rows match this filter.</p>
               )}
             </div>
           </section>
@@ -6432,7 +7124,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
             <div className="admin-hooks-grid">
               {fallbackHookDefinitions.map((hook) => {
-                const sampleContext = fallbackHookSampleContexts[hook.key] ?? {};
+                const sampleContext = resolvedFallbackHookSampleContexts[hook.key] ?? fallbackHookSampleContexts[hook.key] ?? {};
                 const sampleIds = knowledgeIdsForFallbackHook(hook.key, sampleContext);
                 const plainDescription = hookPlainDescriptions[hook.key] || hook.description;
 
@@ -6731,6 +7423,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <tr>
                         <th scope="col">Content</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Provider</th>
                         <th scope="col">Visibility</th>
                         <th scope="col">Lives in</th>
                         <th scope="col">Date</th>
@@ -6769,6 +7462,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             </td>
                             <td className="admin-content-badge-cell">
                               <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                            </td>
+                            <td className="admin-content-badge-cell">
+                              <span className="ui-pill">{record.provider || "unknown"}</span>
                             </td>
                             <td className="admin-content-badge-cell">
                               <span className={`ui-pill admin-restriction-pill restriction-${contentRestrictionLabel(record).toLowerCase()}`}>{contentRestrictionLabel(record)}</span>
