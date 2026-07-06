@@ -1,7 +1,7 @@
 import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
-import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
+import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
 import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import type { GeneratedContentMode } from "../services/generatedContent";
@@ -256,6 +256,18 @@ type AdminTemplateDraft = {
   summary: string;
   body: string;
   status: GeneratedContentStatus;
+};
+
+type LunarCoverageFieldKey = LunarCalendarContentKeyDefinition["fieldKeys"][number];
+
+type LunarCoverageSummaryItem = {
+  group: LunarCalendarContentKeyGroup;
+  label: string;
+  total: number;
+  live: number;
+  draft: number;
+  empty: number;
+  vocabGaps: string[];
 };
 
 type AdminReviewRecord = {
@@ -1556,6 +1568,94 @@ function downloadTextFile(filename: string, text: string, type: string) {
 function contentTypeBadge(row: AdminGeneratedContentRow) {
   const sourceSnapshot = objectValue(row.source_snapshot);
   return stringValue(sourceSnapshot?.contentType);
+}
+
+const lunarCoverageGroupLabels: Record<LunarCalendarContentKeyGroup, string> = {
+  "new-moon": "New Moon",
+  "full-moon": "Full Moon",
+  "first-quarter": "First Quarter",
+  "last-quarter": "Last Quarter",
+  eclipse: "Eclipse",
+  season: "Season",
+  "transit-fallback": "Transit Fallback"
+};
+
+const lunarCoverageGroups: LunarCalendarContentKeyGroup[] = [
+  "new-moon",
+  "full-moon",
+  "first-quarter",
+  "last-quarter",
+  "eclipse",
+  "season",
+  "transit-fallback"
+];
+
+const zodiacOppositesBySlug: Record<string, string> = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+
+function lunarCoverageSignPart(definition: LunarCalendarContentKeyDefinition) {
+  return definition.key.split("/").at(-1) ?? "";
+}
+
+function lunarCoverageVocabDependencies(definition: LunarCalendarContentKeyDefinition) {
+  const signPart = lunarCoverageSignPart(definition);
+  const dependencies = new Set<string>();
+
+  if (["new-moon", "full-moon", "first-quarter", "last-quarter", "season"].includes(definition.group) && signPart) {
+    dependencies.add(`vocab/sign-style/${signPart}`);
+  }
+
+  if (["new-moon", "full-moon", "first-quarter", "last-quarter"].includes(definition.group) && signPart) {
+    dependencies.add(`vocab/sign-need/${signPart}`);
+  }
+
+  if (definition.group === "full-moon" && zodiacOppositesBySlug[signPart]) {
+    dependencies.add(`vocab/sign-style/${zodiacOppositesBySlug[signPart]}`);
+  }
+
+  if (definition.group === "transit-fallback" && signPart) {
+    dependencies.add(`vocab/aspect-verb/${signPart}`);
+  }
+
+  return [...dependencies];
+}
+
+function lunarCoverageFieldLabel(field: LunarCoverageFieldKey) {
+  if (field === "journalPrompt") return "journalPrompt";
+  return field;
+}
+
+function lunarCoverageFieldFilled(row: AdminGeneratedContentRow | undefined, field: LunarCoverageFieldKey) {
+  if (!row) return false;
+
+  if (field === "journalPrompt") {
+    const sections = objectValue(row.sections);
+    return typeof sections?.journalPrompt === "string" && sections.journalPrompt.trim().length > 0;
+  }
+
+  return typeof row[field] === "string" && row[field]?.trim().length > 0;
+}
+
+function lunarCoverageDescription(definition: LunarCalendarContentKeyDefinition) {
+  if (definition.group === "new-moon") return "Lunar calendar row used for a new moon in this sign.";
+  if (definition.group === "full-moon") return "Lunar calendar row used for a full moon in this sign.";
+  if (definition.group === "first-quarter") return "Lunar calendar row used for the first quarter of this new-moon cycle.";
+  if (definition.group === "last-quarter") return "Lunar calendar row used for the last quarter of this new-moon cycle.";
+  if (definition.group === "eclipse") return "Lunar calendar row used when the selected lunation is an eclipse.";
+  if (definition.group === "season") return "Lunar calendar season block used for the current Sun sign.";
+  return "Lunar calendar transit note fallback used for an active aspect type.";
 }
 
 const releaseNotes: ReleaseNote[] = [
@@ -3147,6 +3247,8 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyRows, setVocabularyRows] = useState<AdminGeneratedContentRow[]>([]);
   const [taglineRows, setTaglineRows] = useState<AdminGeneratedContentRow[]>([]);
   const [templateContentRows, setTemplateContentRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [lunarCoverageRows, setLunarCoverageRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [lunarCoverageLoadedFromDb, setLunarCoverageLoadedFromDb] = useState(false);
   const [signContextSettingRow, setSignContextSettingRow] = useState<AdminGeneratedContentRow | null>(null);
   const [signContextEnabled, setSignContextEnabled] = useState(true);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
@@ -3229,6 +3331,51 @@ export function GeneratedContentAdminDashboard() {
       : templateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
   ), [fallbackHookSectionFilter, templateContentRows]);
   const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId) ?? null;
+  const lunarCoverageRowsByKey = useMemo(() => (
+    new Map(lunarCoverageRows.map((row) => [row.content_key, row]))
+  ), [lunarCoverageRows]);
+  const vocabularyRowsByContentKey = useMemo(() => (
+    new Map(vocabularyRows.map((row) => [row.content_key, row]))
+  ), [vocabularyRows]);
+  const lunarCoverageSummaries = useMemo<LunarCoverageSummaryItem[]>(() => (
+    lunarCoverageGroups.map((group) => {
+      const definitions = lunarCalendarContentKeyDefinitions.filter((definition) => definition.group === group);
+      const vocabGaps = new Set<string>();
+      let live = 0;
+      let draft = 0;
+      let empty = 0;
+
+      definitions.forEach((definition) => {
+        const row = lunarCoverageRowsByKey.get(definition.key);
+
+        if (!row) {
+          empty += 1;
+        } else if (row.status === "LIVE") {
+          live += 1;
+        } else {
+          draft += 1;
+        }
+
+        if (lunarCoverageLoadedFromDb) {
+          lunarCoverageVocabDependencies(definition).forEach((vocabKey) => {
+            if (!vocabularyRowsByContentKey.has(vocabKey)) {
+              vocabGaps.add(vocabKey);
+            }
+          });
+        }
+      });
+
+      return {
+        group,
+        label: lunarCoverageGroupLabels[group],
+        total: definitions.length,
+        live,
+        draft,
+        empty,
+        vocabGaps: [...vocabGaps].sort((first, second) => first.localeCompare(second))
+      };
+    })
+  ), [lunarCoverageLoadedFromDb, lunarCoverageRowsByKey, vocabularyRowsByContentKey]);
   const canUseApi = secret.trim().length > 0;
   const dedupedContentRecords = useMemo(() => dedupeContentLibraryRecords(reviewRecords), [reviewRecords]);
   const filteredContentRecords = useMemo(() => {
@@ -3509,6 +3656,28 @@ export function GeneratedContentAdminDashboard() {
       .sort((first, second) => first.content_key.localeCompare(second.content_key));
 
     return fallbackTemplatePlaceholderRows(savedRows);
+  }
+
+  async function fetchLunarCoverageRowsForAdmin() {
+    const prefixes = ["lunation/", "season/", "transit-fallback/"];
+    const payloads = await Promise.all(prefixes.map((prefix) => {
+      const params = new URLSearchParams({
+        status: "all",
+        contentKeyPrefix: prefix,
+        limit: "200"
+      });
+
+      return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?${params}`,
+        secret
+      );
+    }));
+    const registeredKeys = new Set(lunarCalendarContentKeyDefinitions.map((definition) => definition.key));
+
+    return payloads
+      .flatMap((payload) => payload.rows ?? [])
+      .filter((row) => registeredKeys.has(row.content_key))
+      .sort((first, second) => first.content_key.localeCompare(second.content_key));
   }
 
   async function fetchSignContextSettingForAdmin() {
@@ -4121,6 +4290,8 @@ export function GeneratedContentAdminDashboard() {
       const nextRows = fallbackTemplatePlaceholderRows();
       setTemplateContentRows(nextRows);
       setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setLunarCoverageRows([]);
+      setLunarCoverageLoadedFromDb(false);
       setMessage(`Showing ${nextRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.`);
       return;
     }
@@ -4132,12 +4303,13 @@ export function GeneratedContentAdminDashboard() {
         contentKeyPrefix: "fallback-hook/",
         limit: "200"
       });
-      const [payload, nextVocabularyRows] = await Promise.all([
+      const [payload, nextVocabularyRows, nextLunarCoverageRows] = await Promise.all([
         adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           `/api/admin/generated-content?${params}`,
           secret
         ),
-        fetchVocabularyRowsForAdmin()
+        fetchVocabularyRowsForAdmin(),
+        fetchLunarCoverageRowsForAdmin()
       ]);
       const savedRows = (payload.rows ?? [])
         .filter((row) => row.content_key.startsWith("fallback-hook/"))
@@ -4148,6 +4320,8 @@ export function GeneratedContentAdminDashboard() {
       setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
       setVocabularyRows(nextVocabularyRows);
       setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+      setLunarCoverageRows(nextLunarCoverageRows);
+      setLunarCoverageLoadedFromDb(true);
       setAccessStatus("valid");
       setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.`);
     } catch (error) {
@@ -4157,6 +4331,8 @@ export function GeneratedContentAdminDashboard() {
       const nextRows = fallbackTemplatePlaceholderRows();
       setTemplateContentRows(nextRows);
       setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      setLunarCoverageRows([]);
+      setLunarCoverageLoadedFromDb(false);
       setMessage(`${adminErrorMessage(error, "Could not load saved fallback template rows.")} Showing ${nextRows.length} local fallback-hook placeholders.`);
     } finally {
       setIsLoading(false);
@@ -4422,6 +4598,22 @@ export function GeneratedContentAdminDashboard() {
     setSelectedId(row.id);
     setDraft(adminDraftFromRow(row));
     void loadRowDetails(row.id);
+  }
+
+  function openLunarCoverageEditor(row: AdminGeneratedContentRow | undefined) {
+    if (!row) {
+      setMessage("Create the lunar content row before editing it in Content.");
+      return;
+    }
+
+    setRows((currentRows) => (
+      currentRows.some((currentRow) => currentRow.id === row.id)
+        ? currentRows
+        : [row, ...currentRows]
+    ));
+    selectRow(row);
+    setActivePage("content");
+    setMessage(`Editing ${row.content_key}.`);
   }
 
   function updateVocabularyDraft(id: string, patch: Partial<AdminVocabularyDraft>) {
@@ -6844,6 +7036,87 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               )}
             </div>
 
+            <section className="admin-lunar-coverage" aria-label="Lunar calendar content coverage">
+              <div className="admin-lunar-coverage-heading">
+                <div>
+                  <p className="admin-eyebrow">Lunar calendar</p>
+                  <h3>Content Coverage</h3>
+                </div>
+                <p className="admin-template-note">Registered lunar calendar keys are checked against saved rows and vocabulary dependencies. Empty rows are listed without creating content.</p>
+              </div>
+
+              <div className="admin-lunar-coverage-summary" aria-label="Lunar coverage summary">
+                {lunarCoverageSummaries.map((summary) => (
+                  <article key={summary.group}>
+                    <span>{summary.label}</span>
+                    <strong>{summary.live} of {summary.total} LIVE</strong>
+                    <small>{summary.draft} DRAFT / {summary.empty} empty</small>
+                    {!lunarCoverageLoadedFromDb && (
+                      <small>DB coverage not loaded</small>
+                    )}
+                    {summary.vocabGaps.length > 0 && (
+                      <details>
+                        <summary>{summary.vocabGaps.length} vocab gaps</summary>
+                        <div>
+                          {summary.vocabGaps.map((vocabKey) => (
+                            <code key={vocabKey}>{vocabKey}</code>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </article>
+                ))}
+              </div>
+
+              <div className="admin-lunar-coverage-groups">
+                {lunarCoverageGroups.map((group) => {
+                  const definitions = lunarCalendarContentKeyDefinitions.filter((definition) => definition.group === group);
+
+                  return (
+                    <section key={group} aria-label={`${lunarCoverageGroupLabels[group]} lunar content rows`}>
+                      <div className="admin-lunar-coverage-group-heading">
+                        <h4>{lunarCoverageGroupLabels[group]}</h4>
+                        <span>{definitions.length} keys</span>
+                      </div>
+                      <div className="admin-lunar-coverage-row-list">
+                        {definitions.map((definition) => {
+                          const row = lunarCoverageRowsByKey.get(definition.key);
+                          const rowStatus = row?.status ?? "empty";
+
+                          return (
+                            <article className="admin-lunar-coverage-row" data-lunar-coverage-key={definition.key} key={definition.key}>
+                              <div>
+                                <strong>{definition.label}</strong>
+                                <code>{definition.key}</code>
+                              </div>
+                              <div className="admin-lunar-field-states" aria-label={`${definition.label} field coverage`}>
+                                {definition.fieldKeys.map((field) => {
+                                  const filled = lunarCoverageFieldFilled(row, field);
+
+                                  return (
+                                    <span className={filled ? "is-filled" : "is-empty"} key={field}>
+                                      {lunarCoverageFieldLabel(field)}: {filled ? "filled" : "empty"}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                              <div className="admin-lunar-coverage-row-actions">
+                                <span className={`ui-pill admin-status status-${rowStatus.toLowerCase()}`}>{rowStatus}</span>
+                                <button type="button" onClick={() => openLunarCoverageEditor(row)} disabled={!row}>
+                                  <Pencil size={15} aria-hidden="true" />
+                                  Edit Row
+                                </button>
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            </section>
+
             {selectedTemplateContentRow && (
               <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedTemplateContentId(null)}>
                 <section
@@ -7131,6 +7404,27 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <p>Use these cards to see what each surface needs, which IDs it checks, and which example lookups prove the route.</p>
               </article>
             </div>
+
+            <section className="admin-lunar-hook-catalog" aria-label="Lunar calendar hook catalog">
+              <div className="admin-lunar-coverage-heading">
+                <div>
+                  <p className="admin-eyebrow">Lunar calendar</p>
+                  <h3>Registered Content Keys</h3>
+                </div>
+                <p className="admin-template-note">Structural descriptions for the lunar calendar keys registered in code.</p>
+              </div>
+              <div className="admin-lunar-hook-grid">
+                {lunarCalendarContentKeyDefinitions.map((definition) => (
+                  <article key={definition.key}>
+                    <div>
+                      <span>{lunarCoverageGroupLabels[definition.group]}</span>
+                      <code>{definition.key}</code>
+                    </div>
+                    <p>{lunarCoverageDescription(definition)}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
 
             <div className="admin-hooks-grid">
               {fallbackHookDefinitions.map((hook) => {
