@@ -3787,10 +3787,14 @@ export function GeneratedContentAdminDashboard() {
 
   async function bulkUpsertGeneratedContentImportRows(rowsToImport: Array<Record<string, unknown>>) {
     if (rowsToImport.length === 0) {
-      return [];
+      return { rows: [], skippedLiveRows: [] };
     }
 
-    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+    const payload = await adminJsonRequest<{
+      ok: boolean;
+      rows: AdminGeneratedContentRow[];
+      skippedLiveRows?: Array<{ contentKey: string; id?: string; status: "LIVE" }>;
+    }>(
       "/api/admin/generated-content",
       secret,
       {
@@ -3802,7 +3806,10 @@ export function GeneratedContentAdminDashboard() {
       120000
     );
 
-    return payload.rows ?? [];
+    return {
+      rows: payload.rows ?? [],
+      skippedLiveRows: payload.skippedLiveRows ?? []
+    };
   }
 
   async function upsertContextImportRow(
@@ -3892,11 +3899,14 @@ export function GeneratedContentAdminDashboard() {
         ];
 
         setMessage(`Uploading ${rowsToImport.length} vocabulary and tagline rows...`);
-        await bulkUpsertGeneratedContentImportRows(rowsToImport);
+        const importResult = await bulkUpsertGeneratedContentImportRows(rowsToImport);
 
         await loadVocabularyRows();
         setAccessStatus("valid");
-        setMessage(`Imported ${bundle.vocabularyRows.length} vocabulary rows and ${bundle.taglineRows.length} tagline rows.`);
+        const skippedMessage = importResult.skippedLiveRows.length > 0
+          ? ` Skipped ${importResult.skippedLiveRows.length} published rows: ${importResult.skippedLiveRows.map((row) => row.contentKey).join(", ")}.`
+          : "";
+        setMessage(`Imported ${importResult.rows.length} vocabulary/tagline rows.${skippedMessage}`);
         return;
       }
 

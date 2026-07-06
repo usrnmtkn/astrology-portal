@@ -7,6 +7,44 @@ loadLocalWebEnv();
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 
+type GeneratedContentWriteBody = {
+  id?: string;
+  contentKey?: string;
+  surface?: GeneratedContentSurface;
+  mode?: "feed" | "in_depth" | "article" | "card";
+  eventType?: string;
+  targetDate?: string | null;
+  status?: ReviewStatus;
+  headline?: string;
+  summary?: string;
+  body?: string;
+  sections?: unknown;
+  facts?: unknown;
+  knowledgeIds?: string[];
+  sourceSnapshot?: unknown;
+  promptVersion?: string;
+  provider?: string;
+  model?: string;
+  blockType?: string | null;
+  reviewerNotes?: string;
+};
+
+type GeneratedContentRequestBody = GeneratedContentWriteBody & {
+  rows?: GeneratedContentWriteBody[];
+};
+
+type ExistingGeneratedContentRow = {
+  id: string;
+  content_key: string;
+  status: ReviewStatus;
+};
+
+type SkippedLiveGeneratedContentRow = {
+  contentKey: string;
+  id?: string;
+  status: "LIVE";
+};
+
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
@@ -54,47 +92,11 @@ async function readJsonBody(req: IncomingMessage) {
   const preParsedBody = (req as IncomingMessage & { body?: unknown }).body;
 
   if (typeof preParsedBody === "string") {
-    return JSON.parse(preParsedBody) as {
-      id?: string;
-      contentKey?: string;
-      surface?: GeneratedContentSurface;
-      mode?: "feed" | "in_depth" | "article";
-      eventType?: string;
-      targetDate?: string | null;
-      status?: ReviewStatus;
-      headline?: string;
-      summary?: string;
-      body?: string;
-      sections?: unknown;
-      facts?: unknown;
-      knowledgeIds?: string[];
-      sourceSnapshot?: unknown;
-      promptVersion?: string;
-      blockType?: string | null;
-      reviewerNotes?: string;
-    };
+    return JSON.parse(preParsedBody) as GeneratedContentRequestBody;
   }
 
   if (preParsedBody && typeof preParsedBody === "object") {
-    return preParsedBody as {
-      id?: string;
-      contentKey?: string;
-      surface?: GeneratedContentSurface;
-      mode?: "feed" | "in_depth" | "article";
-      eventType?: string;
-      targetDate?: string | null;
-      status?: ReviewStatus;
-      headline?: string;
-      summary?: string;
-      body?: string;
-      sections?: unknown;
-      facts?: unknown;
-      knowledgeIds?: string[];
-      sourceSnapshot?: unknown;
-      promptVersion?: string;
-      blockType?: string | null;
-      reviewerNotes?: string;
-    };
+    return preParsedBody as GeneratedContentRequestBody;
   }
 
   const chunks: Buffer[] = [];
@@ -107,25 +109,7 @@ async function readJsonBody(req: IncomingMessage) {
     throw new Error("Request JSON body is required.");
   }
 
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
-    id?: string;
-    contentKey?: string;
-    surface?: GeneratedContentSurface;
-    mode?: "feed" | "in_depth" | "article";
-    eventType?: string;
-    targetDate?: string | null;
-    status?: ReviewStatus;
-    headline?: string;
-    summary?: string;
-    body?: string;
-    sections?: unknown;
-    facts?: unknown;
-    knowledgeIds?: string[];
-    sourceSnapshot?: unknown;
-    promptVersion?: string;
-    blockType?: string | null;
-    reviewerNotes?: string;
-  };
+  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as GeneratedContentRequestBody;
 }
 
 function adminHeaders() {
@@ -150,8 +134,8 @@ async function listGeneratedContent(req: IncomingMessage) {
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
   const params = new URLSearchParams({
     select: id
-      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at"
-      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,reviewer_notes,prompt_version,model,reviewed_at,published_at,updated_at,created_at",
+      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,provider,model,reviewed_at,published_at,updated_at,created_at"
+      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,reviewer_notes,prompt_version,provider,model,reviewed_at,published_at,updated_at,created_at",
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: id ? "1" : String(limit)
   });
@@ -241,9 +225,7 @@ async function generatedContentStats(req: IncomingMessage) {
   };
 }
 
-async function createGeneratedContent(req: IncomingMessage) {
-  const body = await readJsonBody(req);
-
+async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   if (!body.contentKey?.trim()) {
     throw new Error("contentKey is required.");
   }
@@ -272,6 +254,7 @@ async function createGeneratedContent(req: IncomingMessage) {
     source_snapshot: body.sourceSnapshot ?? {},
     ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
+    provider: "claude",
     model: "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
@@ -295,6 +278,133 @@ async function createGeneratedContent(req: IncomingMessage) {
   }
 
   return payload;
+}
+
+function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
+  if (!body.contentKey?.trim()) {
+    throw new Error("contentKey is required for every row.");
+  }
+
+  if (!body.surface) {
+    throw new Error(`surface is required for ${body.contentKey}.`);
+  }
+
+  if (!body.mode) {
+    throw new Error(`mode is required for ${body.contentKey}.`);
+  }
+
+  if (!body.eventType?.trim()) {
+    throw new Error(`eventType is required for ${body.contentKey}.`);
+  }
+
+  if (body.status && !allowedStatuses.has(body.status)) {
+    throw new Error(`status for ${body.contentKey} must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.`);
+  }
+
+  if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
+    throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
+  }
+
+  return {
+    content_key: body.contentKey.trim(),
+    surface: body.surface,
+    mode: body.mode,
+    status: body.status ?? "DRAFT",
+    event_type: body.eventType.trim(),
+    target_date: body.targetDate || null,
+    facts: body.facts ?? {},
+    knowledge_ids: body.knowledgeIds ?? [],
+    source_snapshot: body.sourceSnapshot ?? {},
+    ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
+    prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
+    provider: typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : "claude",
+    model: typeof body.model === "string" && body.model.trim() ? body.model.trim() : "manual",
+    headline: body.headline ?? "",
+    summary: body.summary ?? "",
+    body: body.body ?? "",
+    sections: body.sections ?? [],
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function fetchExistingRowsByContentKey(contentKeys: string[]) {
+  const uniqueKeys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
+  const rows: ExistingGeneratedContentRow[] = [];
+
+  for (let index = 0; index < uniqueKeys.length; index += 80) {
+    const batch = uniqueKeys.slice(index, index + 80);
+    const params = new URLSearchParams();
+    params.set("select", "id,content_key,status");
+    params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+      headers: adminHeaders()
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(`Supabase existing row lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+    }
+
+    rows.push(...payload);
+  }
+
+  return rows;
+}
+
+async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
+  const rows = body.rows;
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error("rows must be a non-empty array.");
+  }
+
+  const contentKeys = rows.map((row) => row.contentKey ?? "");
+  const existingRows = await fetchExistingRowsByContentKey(contentKeys);
+  const existingByContentKey = new Map(existingRows.map((row) => [row.content_key, row]));
+  const skippedLiveRows: SkippedLiveGeneratedContentRow[] = [];
+  const upsertRows = rows
+    .filter((row) => {
+      const contentKey = row.contentKey?.trim() ?? "";
+      const existingRow = existingByContentKey.get(contentKey);
+
+      if (existingRow?.status === "LIVE") {
+        skippedLiveRows.push({
+          contentKey,
+          id: existingRow.id,
+          status: "LIVE"
+        });
+        return false;
+      }
+
+      return true;
+    })
+    .map(generatedContentRowFromWriteBody);
+  const allRows = [];
+
+  for (let index = 0; index < upsertRows.length; index += 100) {
+    const batch = upsertRows.slice(index, index + 100);
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key`, {
+      method: "POST",
+      headers: {
+        ...adminHeaders(),
+        prefer: "resolution=merge-duplicates,return=representation"
+      },
+      body: JSON.stringify(batch)
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(`Supabase bulk upsert failed with ${response.status}: ${JSON.stringify(payload)}`);
+    }
+
+    allRows.push(...payload);
+  }
+
+  return {
+    rows: allRows,
+    skippedLiveRows
+  };
 }
 
 async function updateGeneratedContent(req: IncomingMessage) {
@@ -452,7 +562,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     if (req.method === "POST") {
-      sendJson(res, 200, { ok: true, rows: await createGeneratedContent(req) });
+      const body = await readJsonBody(req);
+      if (Array.isArray(body.rows)) {
+        const result = await bulkUpsertGeneratedContent(body);
+        sendJson(res, 200, { ok: true, rows: result.rows, skippedLiveRows: result.skippedLiveRows });
+        return;
+      }
+
+      sendJson(res, 200, { ok: true, rows: await createGeneratedContentFromBody(body) });
       return;
     }
 
