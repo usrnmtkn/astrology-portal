@@ -463,6 +463,32 @@ function renderedContentBody(
   return null;
 }
 
+function renderedContentSection(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  keys: string[],
+  slots: TemplateSlotValues,
+  sectionKey: string
+) {
+  if (!generatedContent) return null;
+
+  for (const key of keys) {
+    const rendered = renderGeneratedContentTemplate(generatedContent.get(key), slots);
+    const sections = rendered?.sections;
+
+    if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+      continue;
+    }
+
+    const value = (sections as Record<string, unknown>)[sectionKey];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return null;
+}
+
 function renderedContentKey(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   keys: string[],
@@ -737,6 +763,9 @@ function editorialFor(
     callback: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
     arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`)),
     arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`)),
+    journalPrompt: renderedContentSection(generatedContent, newBodyKeys, slots, "journalPrompt")
+      ?? renderedContentSection(generatedContent, baseKeys.map((key) => `${key}.body`), slots, "journalPrompt")
+      ?? renderedContentSection(generatedContent, ["fallback-hook/sky.lunar-calendar-day"], slots, "journalPrompt"),
     season: renderedContentBody(generatedContent, [`season/${seasonPart}`], slots),
     transitNotes
   };

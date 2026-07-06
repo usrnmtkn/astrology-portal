@@ -31,6 +31,7 @@ type LunarCalendarProps = {
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   generatedContent?: Map<string, LiveGeneratedContent>;
+  showJournalPrompts?: boolean;
 };
 
 type ViewTransitionDocument = Document & {
@@ -1220,7 +1221,7 @@ function locationFromLabel(label: string): LocationInput {
   };
 }
 
-export function LunarCalendar({ location, onLocationChange, generatedContent }: LunarCalendarProps) {
+export function LunarCalendar({ location, onLocationChange, generatedContent, showJournalPrompts = true }: LunarCalendarProps) {
   const [visibleMonth, setVisibleMonth] = useState(() => monthStart(new Date()));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => dateKeyFromDate(new Date()));
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>("week");
@@ -1465,6 +1466,9 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
       : moonSignPractices[selectedDay.moonSign] ?? "Keep the intention close today; take one small, specific step before doubt turns into delay."
     : null;
   const selectedReflect = enableLunarArcContent ? selectedLunarDay?.editorial.reflect ?? null : null;
+  const selectedJournalPrompt = enableLunarArcContent && showJournalPrompts
+    ? selectedLunarDay?.editorial.journalPrompt ?? null
+    : null;
   const selectedSeasonNote = enableLunarArcContent ? selectedLunarDay?.editorial.season ?? null : null;
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
@@ -1678,6 +1682,14 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
           <div className="lunar-selected-card__practice">
             <span>Reflect</span>
             {textParagraphs(selectedReflect).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        )}
+        {selectedJournalPrompt && (
+          <div className="lunar-selected-card__practice lunar-selected-card__journal">
+            <span>Journal prompt</span>
+            {textParagraphs(selectedJournalPrompt).map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
