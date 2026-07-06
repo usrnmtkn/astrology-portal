@@ -2212,6 +2212,203 @@ body,
   padding: 7px 11px;
 }
 
+.admin-lunar-coverage,
+.admin-lunar-hook-catalog {
+  border-top: 1px solid var(--admin-line);
+  display: grid;
+  gap: 14px;
+  padding-top: 16px;
+}
+
+.admin-lunar-coverage-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-lunar-coverage-heading h3 {
+  color: var(--admin-ink);
+  font-size: var(--type-section-title-size);
+  line-height: var(--leading-title);
+  margin: 4px 0 0;
+}
+
+.admin-lunar-coverage-heading .admin-template-note {
+  margin: 0;
+  max-width: 680px;
+}
+
+.admin-lunar-coverage-summary {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.admin-lunar-coverage-summary article,
+.admin-lunar-hook-grid article {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.admin-lunar-coverage-summary span,
+.admin-lunar-hook-grid span,
+.admin-lunar-coverage-group-heading span {
+  color: var(--admin-muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.admin-lunar-coverage-summary strong {
+  color: var(--admin-ink);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-body);
+}
+
+.admin-lunar-coverage-summary small {
+  color: rgba(200, 192, 176, 0.76);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
+}
+
+.admin-lunar-coverage-summary details {
+  color: rgba(232, 224, 208, 0.82);
+  font-size: var(--type-meta-size);
+}
+
+.admin-lunar-coverage-summary summary {
+  cursor: pointer;
+}
+
+.admin-lunar-coverage-summary details div {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.admin-lunar-coverage-summary code,
+.admin-lunar-coverage-row code,
+.admin-lunar-hook-grid code {
+  color: var(--admin-muted);
+  font-size: var(--type-hint-size);
+  overflow-wrap: anywhere;
+}
+
+.admin-lunar-coverage-groups {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-lunar-coverage-groups section {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-lunar-coverage-group-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.admin-lunar-coverage-group-heading h4 {
+  color: var(--admin-ink);
+  font-size: var(--type-nav-size);
+  line-height: var(--leading-title);
+  margin: 0;
+}
+
+.admin-lunar-coverage-row-list {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-lunar-coverage-row {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(240px, 1.6fr) auto;
+  padding: 12px;
+}
+
+.admin-lunar-coverage-row > div:first-child {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-lunar-coverage-row strong {
+  color: var(--admin-ink);
+  font-size: var(--type-description-size);
+  line-height: var(--leading-description);
+}
+
+.admin-lunar-field-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-lunar-field-states span {
+  border: 1px solid var(--admin-line);
+  border-radius: 999px;
+  color: rgba(232, 224, 208, 0.82);
+  font-size: var(--type-meta-size);
+  line-height: 1;
+  padding: 6px 8px;
+}
+
+.admin-lunar-field-states span.is-filled {
+  border-color: rgba(97, 205, 152, 0.34);
+  color: #8fe6b9;
+}
+
+.admin-lunar-field-states span.is-empty {
+  border-color: rgba(255, 170, 107, 0.34);
+  color: #f2b184;
+}
+
+.admin-lunar-coverage-row-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-lunar-coverage-row-actions button {
+  min-height: 34px;
+  padding: 7px 11px;
+}
+
+.admin-lunar-hook-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.admin-lunar-hook-grid article div {
+  display: grid;
+  gap: 5px;
+}
+
+.admin-lunar-hook-grid p {
+  color: rgba(232, 224, 208, 0.82);
+  font-size: var(--type-description-size);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
 .admin-template-drawer-body {
   display: grid;
   gap: 16px;
