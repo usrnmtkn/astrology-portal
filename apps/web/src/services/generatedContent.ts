@@ -51,6 +51,7 @@ type GeneratedContentRow = {
   body: string;
   sections: unknown | null;
   block_type?: GeneratedContentBlockType | null;
+  provider?: string | null;
   model: string | null;
   updated_at: string;
 };
@@ -139,6 +140,7 @@ function fromRow(
     sections: row.sections ?? {},
     blockType: row.block_type ?? null,
     sourceSnapshot: row.source_snapshot ?? null,
+    provider: row.provider ?? null,
     model: row.model,
     updatedAt: row.updated_at
   };
@@ -326,21 +328,28 @@ export async function loadLiveGeneratedContent(
   surface: string,
   targetDate?: string
 ) {
+  return loadLiveGeneratedContentForSurfaces([surface], targetDate);
+}
+
+export async function loadLiveGeneratedContentForSurfaces(
+  requestedSurfaces: string[],
+  targetDate?: string
+) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
     return new Map<string, LiveGeneratedContent>();
   }
 
-  const surfaces = Array.from(new Set([surface, "modifier"]));
+  const surfaces = Array.from(new Set([...requestedSurfaces, "modifier"]));
   let query = supabase
     .from("generated_interpretations")
-    .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, model, updated_at")
+    .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, provider, model, updated_at")
     .in("surface", surfaces)
     .eq("status", "LIVE")
     .order("updated_at", { ascending: false });
 
-  if (targetDate && surface !== "sky") {
+  if (targetDate && !requestedSurfaces.includes("sky")) {
     query = query.or(`target_date.is.null,target_date.eq.${targetDate}`);
   }
 

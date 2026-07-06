@@ -214,6 +214,26 @@ function deleteLocalManualChart(userId: string, chartId: string) {
   );
 }
 
+export function listCachedManualCharts(userIds: string[]): ManualChart[] {
+  const seen = new Set<string>();
+  const charts: ManualChart[] = [];
+
+  userIds.forEach((userId) => {
+    readLocalManualCharts(userId).forEach((chart) => {
+      const key = chart.id || chartIdentity(chart);
+
+      if (seen.has(key)) {
+        return;
+      }
+
+      seen.add(key);
+      charts.push(chart);
+    });
+  });
+
+  return charts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+}
+
 function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart) {
   const deletedIdentity = chartIdentity(deletedChart);
   const nextCharts = readLocalManualCharts(userId).filter((chart) => (
