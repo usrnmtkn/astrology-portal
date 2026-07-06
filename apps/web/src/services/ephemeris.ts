@@ -69,6 +69,14 @@ export type LunarCalendarEvent = {
   eclipseType?: LunarCalendarEclipseType;
 };
 
+export type LunarCalendarActiveAspect = {
+  planetA: string;
+  aspectType: string;
+  planetB: string;
+  orb: number;
+  applying: boolean;
+};
+
 export type LunarCalendarDay = {
   date: string;
   dateKey: string;
@@ -85,6 +93,7 @@ export type LunarCalendarDay = {
     until?: string;
     nextSign?: string;
   } | null;
+  activeAspects: LunarCalendarActiveAspect[];
   events: LunarCalendarEvent[];
 };
 
@@ -1524,6 +1533,53 @@ function findSkyAspects(
   return events;
 }
 
+function activeSkyAspectsForDay(swe: SwissEphInstance, date: Date): LunarCalendarActiveAspect[] {
+  const planetIds = [
+    swe.SE_SUN,
+    swe.SE_MOON,
+    swe.SE_MERCURY,
+    swe.SE_VENUS,
+    swe.SE_MARS,
+    swe.SE_JUPITER,
+    swe.SE_SATURN,
+    swe.SE_URANUS,
+    swe.SE_NEPTUNE,
+    swe.SE_PLUTO
+  ];
+  const calendarPlanets = planets.slice(0, planetIds.length);
+  const comparisonDate = new Date(date.getTime() + 60 * 60_000);
+  const activeAspects: LunarCalendarActiveAspect[] = [];
+
+  calendarPlanets.forEach(([firstPlanet], firstIndex) => {
+    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet], offsetIndex) => {
+      const secondIndex = firstIndex + offsetIndex + 1;
+      const firstPlanetId = planetIds[firstIndex];
+      const secondPlanetId = planetIds[secondIndex];
+
+      calendarAspectDefinitions.forEach(([aspectType, degrees]) => {
+        const currentDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, date, degrees);
+        const orb = Math.abs(currentDistance);
+
+        if (orb > 5) {
+          return;
+        }
+
+        const nextDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, comparisonDate, degrees);
+
+        activeAspects.push({
+          planetA: firstPlanet,
+          aspectType,
+          planetB: secondPlanet,
+          orb: Number(orb.toFixed(2)),
+          applying: Math.abs(nextDistance) < orb
+        });
+      });
+    });
+  });
+
+  return activeAspects.sort((first, second) => first.orb - second.orb);
+}
+
 const lunarCalendarMonthCache = new Map<string, Promise<LunarCalendarMonth>>();
 const maxLunarCalendarMonthCacheEntries = 12;
 
@@ -1624,6 +1680,7 @@ function buildLunarCalendarRange(
         until: moonStatus.until,
         nextSign: moonStatus.nextSign
       } : null,
+      activeAspects: detail === "full" ? activeSkyAspectsForDay(swe, noon) : [],
       events: eventsByDateKey.get(dateKey) ?? []
     };
   });

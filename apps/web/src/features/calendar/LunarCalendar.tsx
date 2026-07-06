@@ -1465,13 +1465,14 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
       : moonSignPractices[selectedDay.moonSign] ?? "Keep the intention close today; take one small, specific step before doubt turns into delay."
     : null;
   const selectedReflect = enableLunarArcContent ? selectedLunarDay?.editorial.reflect ?? null : null;
+  const selectedSeasonNote = enableLunarArcContent ? selectedLunarDay?.editorial.season ?? null : null;
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
         .map((note) => ({
           ...note,
           event: selectedDayTransits.find((event) => event.id === note.transitRef) ?? null
         }))
-        .filter((note) => note.body && note.event)
+        .filter((note) => note.body && (note.event || note.title))
     : [];
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
@@ -1549,7 +1550,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
           </div>
         </div>
 
-        {(selectedDayTransits.length > 0 || (selectedDay.voidOfCourse && selectedVoidWindow)) && (
+        {(selectedDayTransits.length > 0 || selectedTransitNotes.length > 0 || (selectedDay.voidOfCourse && selectedVoidWindow)) && (
           <div className="lunar-selected-card__after">
             {selectedDay.voidOfCourse && selectedVoidWindow && (
               <section className="lunar-selected-card__void" aria-label="Moon void of course">
@@ -1610,7 +1611,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
               <div className="lunar-selected-card__transit-notes" aria-label="Daily transit notes">
                 {selectedTransitNotes.map((note) => (
                   <section key={note.transitRef}>
-                    <span>{note.event?.title}</span>
+                    <span>{note.event?.title ?? note.title}</span>
                     {textParagraphs(note.body ?? "").map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
@@ -1655,6 +1656,13 @@ export function LunarCalendar({ location, onLocationChange, generatedContent }: 
                 ))}
               </ol>
             )}
+          </section>
+        )}
+        {selectedSeasonNote && (
+          <section className="lunar-selected-card__arc" aria-label={`${selectedSeasonArc?.season.sign ?? selectedDay.moonSign} season note`}>
+            {textParagraphs(selectedSeasonNote).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </section>
         )}
 
