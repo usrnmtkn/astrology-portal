@@ -1297,6 +1297,121 @@ function findActiveRetrogrades(
   return events;
 }
 
+function retrogradeSearchWindowDays(planet: string) {
+  if (["Mercury", "Venus", "Mars"].includes(planet)) {
+    return 180;
+  }
+
+  if (["Jupiter", "Saturn"].includes(planet)) {
+    return 420;
+  }
+
+  if (["Uranus", "Neptune", "Pluto"].includes(planet)) {
+    return 600;
+  }
+
+  return 240;
+}
+
+function findPreviousStation(
+  swe: SwissEphInstance,
+  planetId: number,
+  date: Date,
+  maxDays: number
+) {
+  const stepMs = 12 * 60 * 60_000;
+  let upper = date;
+  let upperSpeed = exactPlanetSpeed(swe, planetId, upper);
+
+  for (let elapsedMs = stepMs; elapsedMs <= maxDays * 86_400_000; elapsedMs += stepMs) {
+    const lower = new Date(date.getTime() - elapsedMs);
+    const lowerSpeed = exactPlanetSpeed(swe, planetId, lower);
+
+    if (lowerSpeed === 0 || lowerSpeed * upperSpeed <= 0) {
+      return refineStationEvent(swe, planetId, lower, upper);
+    }
+
+    upper = lower;
+    upperSpeed = lowerSpeed;
+  }
+
+  return null;
+}
+
+function findNextStation(
+  swe: SwissEphInstance,
+  planetId: number,
+  date: Date,
+  maxDays: number
+) {
+  const stepMs = 12 * 60 * 60_000;
+  let lower = date;
+  let lowerSpeed = exactPlanetSpeed(swe, planetId, lower);
+
+  for (let elapsedMs = stepMs; elapsedMs <= maxDays * 86_400_000; elapsedMs += stepMs) {
+    const upper = new Date(date.getTime() + elapsedMs);
+    const upperSpeed = exactPlanetSpeed(swe, planetId, upper);
+
+    if (lowerSpeed === 0 || lowerSpeed * upperSpeed <= 0) {
+      return refineStationEvent(swe, planetId, lower, upper);
+    }
+
+    lower = upper;
+    lowerSpeed = upperSpeed;
+  }
+
+  return null;
+}
+
+function activeRetrogradeWindowFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  date: Date,
+  motion: PlanetPosition["motion"]
+): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource"> {
+  if (motion !== "retrograde") {
+    return {};
+  }
+
+  const searchDays = retrogradeSearchWindowDays(planet);
+  const previousStation = findPreviousStation(swe, planetId, date, searchDays);
+  const nextStation = findNextStation(swe, planetId, date, searchDays);
+
+  if (!previousStation || !nextStation) {
+    return {};
+  }
+
+  const speedAfterPreviousStation = exactPlanetSpeed(swe, planetId, addDays(previousStation, 1));
+  const speedAfterNextStation = exactPlanetSpeed(swe, planetId, addDays(nextStation, 1));
+
+  if (speedAfterPreviousStation >= 0 || speedAfterNextStation < 0) {
+    return {};
+  }
+
+  return {
+    retrogradeStart: previousStation.toISOString(),
+    retrogradeEnd: nextStation.toISOString(),
+    retrogradeWindowSource: "station"
+  };
+}
+
+function nodeRetrogradeTransitWindowFor(
+  planet: string,
+  motion: PlanetPosition["motion"],
+  transitWindow: Pick<PlanetPosition, "transitStart" | "transitEnd">
+): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource"> {
+  if (planet !== "North Node" || motion !== "retrograde" || !transitWindow.transitStart || !transitWindow.transitEnd) {
+    return {};
+  }
+
+  return {
+    retrogradeStart: transitWindow.transitStart,
+    retrogradeEnd: transitWindow.transitEnd,
+    retrogradeWindowSource: "sign-transit"
+  };
+}
+
 function planetLongitudeAt(swe: SwissEphInstance, planetId: number, date: Date) {
   return exactPlanetLongitude(swe, planetId, date);
 }
@@ -1740,8 +1855,15 @@ export async function getAstrodienstSky(
     const result = swe.calc_ut(jd, planetIds[index], flags);
     const longitude = normalizeDegrees(result[0]);
     const { sign, signGlyph, degree } = signForLongitude(longitude);
+    const motion = result[3] < -0.0001 ? "retrograde" : "direct";
     const transitWindow = options.includeTransitWindows
       ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
+      : {};
+    const retrogradeWindow = options.includeTransitWindows
+      ? {
+          ...nodeRetrogradeTransitWindowFor(planet, motion, transitWindow),
+          ...activeRetrogradeWindowFor(swe, planet, planetIds[index], date, motion)
+        }
       : {};
 
     return {
@@ -1751,8 +1873,9 @@ export async function getAstrodienstSky(
       signGlyph,
       degree,
       house: wholeSignHouse(sign, ascendant),
-      motion: result[3] < -0.0001 ? "retrograde" : "direct",
+      motion,
       ...transitWindow,
+      ...retrogradeWindow,
       longitude,
       speed: result[3]
     };
