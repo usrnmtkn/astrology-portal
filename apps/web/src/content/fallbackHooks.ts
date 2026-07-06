@@ -111,6 +111,17 @@ export const fallbackHookDefinitions = [
     copy: emptyFallbackHookCopy
   },
   {
+    key: "sky.retrograde-section",
+    label: "Sky > Retrograde Section",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Section-level summary for multiple active retrogrades in the current sky.",
+    knowledgeIdTemplates: [],
+    requiredFacts: ["count", "fastestPlanet"],
+    copy: emptyFallbackHookCopy
+  },
+  {
     key: "you.natal-placement",
     label: "You > Natal Placement",
     surface: "you",

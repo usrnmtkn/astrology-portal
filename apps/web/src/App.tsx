@@ -626,6 +626,7 @@ const templateFallbackContentKeys = {
   skyAspectDetail: "fallback-hook/sky.aspect-detail",
   skyAspectSignContext: "fallback-hook/sky.aspect-sign-context",
   skyRetrograde: "fallback-hook/sky.retrograde",
+  skyRetrogradeSection: "fallback-hook/sky.retrograde-section",
   youNatalPlacement: "fallback-hook/you.natal-placement",
   youNatalAspect: "fallback-hook/you.natal-aspect",
   youTransitToNatal: "fallback-hook/you.transit-to-natal",
@@ -4166,36 +4167,6 @@ type AspectCopyContext = {
 
 function skyAspectPosition(point: string, positions?: PlanetPosition[]) {
   return positions?.find((position) => position.planet === point) ?? null;
-}
-
-function aspectHousePhrase(point: string, positions?: PlanetPosition[]) {
-  const position = skyAspectPosition(point, positions);
-
-  if (!position?.house) {
-    return "";
-  }
-
-  const phrases: Record<number, string> = {
-    1: "your body, mood, and first response",
-    2: "money, comfort, or feeling supported",
-    3: "a conversation, message, or decision",
-    4: "home, family, or what helps you settle",
-    5: "pleasure, dating, creativity, or what feels alive",
-    6: "work rhythms, health, or daily needs",
-    7: "a relationship, agreement, or one-on-one exchange",
-    8: "trust, shared money, or a feeling that has more weight",
-    9: "belief, study, travel, or a wider perspective",
-    10: "work, reputation, or a public decision",
-    11: "friends, groups, or future plans",
-    12: "rest, privacy, or what is happening behind the scenes"
-  };
-
-  return phrases[position.house] ?? readableHouseTopic(position.house).replace(/^your\s+/i, "");
-}
-
-function aspectTimingNudge(context?: AspectCopyContext) {
-  void context;
-  return "";
 }
 
 function comparableText(value: string) {
@@ -12093,33 +12064,27 @@ function formatRetrogradeCountChip(retrogradeStartDate?: string, retrogradeEndDa
   return formatCountdown(retrogradeStartDate, retrogradeEndDate)?.replace(/\s+left$/u, "") ?? null;
 }
 
-function joinRetrogradeNames(names: string[]) {
-  if (names.length <= 1) {
-    return names[0] ?? "";
+function retrogradeSummaryCaption(
+  retrogrades: PlanetPosition[],
+  personal: PlanetPosition[],
+  generatedContent: GeneratedContentMap
+) {
+  const fastestPlanet = personal[0] ?? retrogrades[0];
+
+  if (!fastestPlanet) {
+    return "";
   }
 
-  if (names.length === 2) {
-    return `${names[0]} and ${names[1]}`;
-  }
+  const generated = liveGeneratedContent(
+    generatedContent,
+    templateFallbackContentKeys.skyRetrogradeSection,
+    {
+      count: retrogrades.length,
+      fastestPlanet: skyDisplayPlanetName(fastestPlanet.planet)
+    }
+  );
 
-  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
-}
-
-function retrogradeSummaryCaption(personal: PlanetPosition[], outer: PlanetPosition[]) {
-  if (personal.length > 0 && outer.length > 0) {
-    const personalNames = joinRetrogradeNames(personal.map((position) => position.planet));
-    const singular = personal.length === 1;
-
-    return `${personalNames} ${singular ? "is" : "are"} the ${singular ? "one" : "ones"} you may feel most in daily life. The slower retrogrades work in the background, helping you revisit old patterns, notice what is no longer working, and make adjustments over time.`;
-  }
-
-  if (personal.length > 0) {
-    const personalNames = joinRetrogradeNames(personal.map((position) => position.planet));
-
-    return `${personalNames} ${personal.length === 1 ? "is" : "are"} retrograde among your faster, daily-felt planets - expect plans, feelings, and timing to ask for a second pass.`;
-  }
-
-  return "These are all slow outer-planet retrogrades. They work quietly in the background, helping you revisit old patterns and make adjustments over the months ahead.";
+  return liveGeneratedSummaryIfPresent(generated);
 }
 
 function retrogradePlacementTitle(position: PlanetPosition) {
@@ -12514,6 +12479,9 @@ function RetrogradeCallout({
   const outerRetrogrades = retrogrades.filter((position) => !isPersonalRetrogradePlanet(position.planet));
   const showSummary = retrogrades.length >= 3;
   const eyebrow = retrogrades.length === 1 ? "Retrograde" : "Retrogrades";
+  const summaryCaption = showSummary
+    ? retrogradeSummaryCaption(retrogrades, personalRetrogrades, generatedContent)
+    : "";
 
   const buildRetrogradeDetail = (position: PlanetPosition) => {
     const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
@@ -12601,7 +12569,7 @@ function RetrogradeCallout({
               ))}
             </div>
           </div>
-          <p className="ro-sum-cap">{retrogradeSummaryCaption(personalRetrogrades, outerRetrogrades)}</p>
+          {summaryCaption ? <p className="ro-sum-cap">{summaryCaption}</p> : null}
         </div>
       ) : null}
 
