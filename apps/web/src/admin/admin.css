@@ -2149,13 +2149,11 @@ body,
   border: 1px solid var(--admin-line);
   border-radius: 8px;
   color: var(--admin-ink);
-  cursor: pointer;
   display: grid;
   gap: 10px;
   padding: 14px;
 }
 
-.admin-fallback-row:focus-visible,
 .admin-fallback-row:hover,
 .admin-fallback-row.selected {
   background:
@@ -2202,6 +2200,18 @@ body,
   -webkit-line-clamp: 2;
 }
 
+.admin-fallback-row-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-fallback-row-actions button {
+  min-height: 34px;
+  padding: 7px 11px;
+}
+
 .admin-template-drawer-body {
   display: grid;
   gap: 16px;
@@ -2244,6 +2254,86 @@ body,
   font-size: var(--type-description-size);
   line-height: var(--leading-description);
   margin: 0;
+}
+
+.admin-template-rendered-preview {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-template-rendered-preview article {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.admin-template-rendered-preview span,
+.admin-template-slot-preview span {
+  color: var(--admin-muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.admin-template-rendered-preview h3 {
+  color: var(--admin-ink);
+  font-size: var(--type-section-title-size);
+  line-height: var(--leading-title);
+  margin: 0;
+}
+
+.admin-template-rendered-preview p {
+  color: rgba(232, 224, 208, 0.86);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-body);
+  margin: 0;
+}
+
+.admin-template-slot-preview {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.admin-template-slot-preview article,
+.admin-template-slot-preview label {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+}
+
+.admin-template-slot-preview input {
+  background: transparent;
+  border: 0;
+  color: var(--admin-ink);
+  font: inherit;
+  font-size: var(--type-description-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-description);
+  min-width: 0;
+  outline: none;
+  padding: 0;
+  width: 100%;
+}
+
+.admin-template-slot-preview input:focus-visible {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.admin-template-slot-preview strong {
+  color: var(--admin-ink);
+  font-size: var(--type-description-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-description);
+  overflow-wrap: anywhere;
 }
 
 .admin-managed-badges {

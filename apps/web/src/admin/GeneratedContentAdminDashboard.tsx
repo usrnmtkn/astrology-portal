@@ -1,4 +1,4 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { fallbackHookDefinitions, knowledgeIdsForFallbackHook, type FallbackHookContext } from "../content/fallbackHooks";
@@ -23,6 +23,7 @@ import {
   natalCardTaglinePoints,
   normalizedNatalCardTaglinePoint
 } from "../services/natalPlacementTaglines";
+import { interpolateTemplateString, type TemplateSlotValues } from "../services/templateInterpolation";
 import { getTldrAstroApiHealth, isTldrAstroApiConfigured, tldrAstroApiStatusUrl, type TldrAstroApiHealth } from "../services/tldrastroApi";
 import "./admin.css";
 
@@ -38,6 +39,7 @@ type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" |
 type AdminContentQueueFilter = "failed" | "missingSource" | "draft" | "published" | null;
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "settings";
+type AdminTemplateDrawerMode = "view" | "edit";
 type AdminContentBlockFilter =
   | "all"
   | "fallback_template"
@@ -750,6 +752,7 @@ function fallbackHookSectionForRow(row: Pick<AdminGeneratedContentRow, "content_
   const hookLabel = hook?.label.toLowerCase() ?? "";
 
   if (hookLabel.startsWith("sky >")) return "sky";
+  if (hookLabel.startsWith("natal >")) return "you";
   if (hookLabel.startsWith("you >")) return "you";
   if (hookLabel.startsWith("settings >")) return "settings";
   if (hookLabel.startsWith("friends >")) return "friends";
@@ -763,10 +766,18 @@ function fallbackHookSectionForRow(row: Pick<AdminGeneratedContentRow, "content_
 const fallbackHookSectionFilters: Array<{ key: AdminFallbackHookSectionFilter; label: string }> = [
   { key: "all", label: "All" },
   { key: "sky", label: "Sky" },
-  { key: "you", label: "You" },
+  { key: "you", label: "Natal" },
   { key: "friends", label: "Friends" },
   { key: "settings", label: "Settings" }
 ];
+
+function fallbackHookSurfaceLabel(row: Pick<AdminGeneratedContentRow, "surface">, hook?: ReturnType<typeof fallbackHookForContextRow>) {
+  if (hook?.domain === "natal" && (hook.surface === "you" || row.surface === "you" || row.surface === "natal")) {
+    return "natal";
+  }
+
+  return hook?.surface ?? row.surface;
+}
 
 function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] = []) {
   const savedByContentKey = new Map(savedRows.map((row) => [row.content_key, row]));
@@ -842,6 +853,47 @@ function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
 
 function previewForFallbackTemplateDraft(draft: AdminTemplateDraft) {
   return compactAdminText(draft.summary || draft.body || draft.headline, "No fallback copy saved yet.");
+}
+
+function fallbackTemplatePreviewField(
+  contentKey: string,
+  field: "headline" | "summary" | "body",
+  value: string,
+  slots: TemplateSlotValues
+) {
+  const template = value.trim();
+
+  if (!template) {
+    return "";
+  }
+
+  return interpolateTemplateString(template, slots, {
+    contentKey,
+    field
+  });
+}
+
+function fallbackTemplatePreviewForDraft(
+  row: Pick<AdminGeneratedContentRow, "content_key">,
+  hookKey: string,
+  draft: AdminTemplateDraft,
+  previewSlots?: TemplateSlotValues
+) {
+  const slots = previewSlots ?? fallbackHookSampleContexts[hookKey] ?? {};
+
+  return {
+    slots,
+    headline: fallbackTemplatePreviewField(row.content_key, "headline", draft.headline, slots),
+    summary: fallbackTemplatePreviewField(row.content_key, "summary", draft.summary, slots),
+    body: fallbackTemplatePreviewField(row.content_key, "body", draft.body, slots)
+  };
+}
+
+function fallbackPreviewParagraphs(value: string) {
+  return value
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 }
 
 function stringArrayFromCsvValue(value: string | undefined) {
@@ -2742,8 +2794,10 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
   const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
+  const [templatePreviewSlotDrafts, setTemplatePreviewSlotDrafts] = useState<Record<string, Record<string, string>>>({});
   const [fallbackHookSectionFilter, setFallbackHookSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
+  const [templateDrawerMode, setTemplateDrawerMode] = useState<AdminTemplateDrawerMode>("view");
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
   const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
@@ -3837,6 +3891,25 @@ export function GeneratedContentAdminDashboard() {
         ...patch
       }
     }));
+  }
+
+  function updateTemplatePreviewSlot(contentKey: string, slot: string, value: string) {
+    setTemplatePreviewSlotDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [contentKey]: {
+        ...(currentDrafts[contentKey] ?? {}),
+        [slot]: value
+      }
+    }));
+  }
+
+  function resetTemplatePreviewSlots(contentKey: string) {
+    setTemplatePreviewSlotDrafts((currentDrafts) => {
+      const remainingDrafts = { ...currentDrafts };
+
+      delete remainingDrafts[contentKey];
+      return remainingDrafts;
+    });
   }
 
   async function saveVocabularyRow(row: AdminGeneratedContentRow) {
@@ -6022,30 +6095,24 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               {filteredTemplateContentRows.map((row) => {
                 const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
                 const badge = contentTypeBadge(row);
-                const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+                const hookKey = hookKeyFromFallbackTemplateRow(row);
+                const hook = fallbackHookForContextRow(hookKey);
                 const isSelected = row.id === selectedTemplateContentId;
 
-                const openTemplateRow = () => setSelectedTemplateContentId(row.id);
+                const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
+                  setTemplateDrawerMode(mode);
+                  setSelectedTemplateContentId(row.id);
+                };
 
                 return (
                   <article
                     className={`admin-fallback-row ${isSelected ? "selected" : ""}`}
                     data-template-row={row.content_key}
                     key={row.id}
-                    onClick={openTemplateRow}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        openTemplateRow();
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    title={`Edit ${row.content_key}`}
                   >
                     <div className="admin-fallback-row-main">
                       <div>
-                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {hook?.surface ?? row.surface}</p>
+                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {fallbackHookSurfaceLabel(row, hook)}</p>
                         <h3>{labelForFallbackTemplateRow(row)}</h3>
                         <code>{row.content_key}</code>
                       </div>
@@ -6057,6 +6124,16 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     </div>
                     <p>{descriptionForFallbackTemplateRow(row)}</p>
                     <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
+                    <div className="admin-fallback-row-actions">
+                      <button type="button" onClick={() => openTemplateRow("view")} title={`View ${row.content_key} inside the dashboard`}>
+                        <Eye size={15} aria-hidden="true" />
+                        View in dashboard
+                      </button>
+                      <button type="button" onClick={() => openTemplateRow("edit")} title={`Edit ${row.content_key}`}>
+                        <Pencil size={15} aria-hidden="true" />
+                        Edit
+                      </button>
+                    </div>
                   </article>
                 );
               })}
@@ -6069,21 +6146,30 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedTemplateContentId(null)}>
                 <section
                   className="admin-editor-panel admin-template-drawer admin-editor-drawer"
-                  aria-label="Fallback template editor"
+                  aria-label={templateDrawerMode === "view" ? "Fallback template preview" : "Fallback template editor"}
                   onClick={(event) => event.stopPropagation()}
                 >
                   {(() => {
                     const row = selectedTemplateContentRow;
                     const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
-                    const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
+                    const hookKey = hookKeyFromFallbackTemplateRow(row);
+                    const hook = fallbackHookForContextRow(hookKey);
                     const badge = contentTypeBadge(row);
                     const seed = templateSeedForFallbackTemplateRow(row);
+                    const isViewMode = templateDrawerMode === "view";
+                    const previewSlotDefaults = fallbackHookSampleContexts[hookKey] ?? {};
+                    const previewSlotDraft = templatePreviewSlotDrafts[row.content_key] ?? {};
+                    const previewSlots = Object.fromEntries(
+                      Object.entries(previewSlotDefaults).map(([slot, value]) => [slot, previewSlotDraft[slot] ?? String(value ?? "")])
+                    );
+                    const renderedPreview = fallbackTemplatePreviewForDraft(row, hookKey, rowDraft, previewSlots);
+                    const renderedParagraphs = fallbackPreviewParagraphs(renderedPreview.body);
 
                     return (
                       <>
                         <div className="admin-editor-toolbar">
                           <div className="admin-drawer-topbar">
-                            <p className="admin-eyebrow">Fallback row editor</p>
+                            <p className="admin-eyebrow">{isViewMode ? "Fallback row preview" : "Fallback row editor"}</p>
                             <button type="button" onClick={() => setSelectedTemplateContentId(null)}>
                               <X size={16} aria-hidden="true" />
                               Close
@@ -6091,25 +6177,29 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           </div>
                           <div className="admin-editor-heading">
                             <div>
-                              <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {hook?.surface ?? row.surface}</p>
+                              <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {fallbackHookSurfaceLabel(row, hook)}</p>
                               <h2>{labelForFallbackTemplateRow(row)}</h2>
                             </div>
                             <div className="admin-managed-badges">
                               {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
                               {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
-                              <label className="admin-status-select-label">
-                                <span>Status</span>
-                                <select
-                                  className={`admin-status-select status-${rowDraft.status.toLowerCase()}`}
-                                  value={rowDraft.status}
-                                  onChange={(event) => updateTemplateContentDraft(row.id, { status: event.target.value as GeneratedContentStatus })}
-                                >
-                                  <option value="DRAFT">Draft</option>
-                                  <option value="REVIEWED">Reviewed</option>
-                                  <option value="LIVE">Published</option>
-                                  <option value="ARCHIVED">Archived</option>
-                                </select>
-                              </label>
+                              {isViewMode ? (
+                                <span className={`ui-pill admin-status status-${rowDraft.status.toLowerCase()}`}>{rowDraft.status}</span>
+                              ) : (
+                                <label className="admin-status-select-label">
+                                  <span>Status</span>
+                                  <select
+                                    className={`admin-status-select status-${rowDraft.status.toLowerCase()}`}
+                                    value={rowDraft.status}
+                                    onChange={(event) => updateTemplateContentDraft(row.id, { status: event.target.value as GeneratedContentStatus })}
+                                  >
+                                    <option value="DRAFT">Draft</option>
+                                    <option value="REVIEWED">Reviewed</option>
+                                    <option value="LIVE">Published</option>
+                                    <option value="ARCHIVED">Archived</option>
+                                  </select>
+                                </label>
+                              )}
                             </div>
                           </div>
                           <code className="admin-managed-key">{row.content_key}</code>
@@ -6117,32 +6207,69 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         </div>
 
                         <div className="admin-template-drawer-body">
-                          <label className="admin-field-wide">
-                            <span>Headline</span>
-                            <textarea
-                              value={rowDraft.headline}
-                              onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
-                              rows={3}
-                            />
-                          </label>
+                          {isViewMode ? (
+                            <>
+                              <section className="admin-template-slot-preview admin-template-slot-editor" aria-label="Editable sample variables">
+                                {Object.entries(renderedPreview.slots).map(([slot, value]) => (
+                                  <label key={slot}>
+                                    <span>{slot}</span>
+                                    <input
+                                      value={String(value ?? "")}
+                                      onChange={(event) => updateTemplatePreviewSlot(row.content_key, slot, event.target.value)}
+                                    />
+                                  </label>
+                                ))}
+                              </section>
 
-                          <label className="admin-field-wide">
-                            <span>Summary</span>
-                            <textarea
-                              value={rowDraft.summary}
-                              onChange={(event) => updateTemplateContentDraft(row.id, { summary: event.target.value })}
-                              rows={5}
-                            />
-                          </label>
+                              <section className="admin-template-rendered-preview" aria-label="Rendered fallback preview">
+                                <article>
+                                  <span>Headline</span>
+                                  <h3>{renderedPreview.headline || "No headline template saved."}</h3>
+                                </article>
+                                <article>
+                                  <span>Summary</span>
+                                  <p>{renderedPreview.summary || "No summary template saved."}</p>
+                                </article>
+                                <article>
+                                  <span>Body</span>
+                                  {renderedParagraphs.length > 0 ? (
+                                    renderedParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+                                  ) : (
+                                    <p>No body template saved.</p>
+                                  )}
+                                </article>
+                              </section>
+                            </>
+                          ) : (
+                            <>
+                              <label className="admin-field-wide">
+                                <span>Headline</span>
+                                <textarea
+                                  value={rowDraft.headline}
+                                  onChange={(event) => updateTemplateContentDraft(row.id, { headline: event.target.value })}
+                                  rows={3}
+                                />
+                              </label>
 
-                          <label className="admin-field-wide">
-                            <span>Body</span>
-                            <textarea
-                              value={rowDraft.body}
-                              onChange={(event) => updateTemplateContentDraft(row.id, { body: event.target.value })}
-                              rows={12}
-                            />
-                          </label>
+                              <label className="admin-field-wide">
+                                <span>Summary</span>
+                                <textarea
+                                  value={rowDraft.summary}
+                                  onChange={(event) => updateTemplateContentDraft(row.id, { summary: event.target.value })}
+                                  rows={5}
+                                />
+                              </label>
+
+                              <label className="admin-field-wide">
+                                <span>Body</span>
+                                <textarea
+                                  value={rowDraft.body}
+                                  onChange={(event) => updateTemplateContentDraft(row.id, { body: event.target.value })}
+                                  rows={12}
+                                />
+                              </label>
+                            </>
+                          )}
 
                           {seed && (
                             <div className="admin-template-seed-context" aria-label="Template support copy">
@@ -6158,10 +6285,31 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           )}
 
                           <div className="admin-template-actions">
-                            <button type="button" onClick={() => void saveTemplateContentRow(row)} disabled={isLoading}>
-                              <Save size={16} aria-hidden="true" />
-                              Save Row
-                            </button>
+                            {isViewMode ? (
+                              <>
+                                {Object.keys(previewSlotDefaults).length > 0 && (
+                                  <button type="button" onClick={() => resetTemplatePreviewSlots(row.content_key)}>
+                                    <RefreshCw size={16} aria-hidden="true" />
+                                    Reset Variables
+                                  </button>
+                                )}
+                                <button type="button" onClick={() => setTemplateDrawerMode("edit")}>
+                                  <Pencil size={16} aria-hidden="true" />
+                                  Edit Row
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button type="button" onClick={() => setTemplateDrawerMode("view")}>
+                                  <Eye size={16} aria-hidden="true" />
+                                  View in dashboard
+                                </button>
+                                <button type="button" onClick={() => void saveTemplateContentRow(row)} disabled={isLoading}>
+                                  <Save size={16} aria-hidden="true" />
+                                  Save Row
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       </>
@@ -6292,7 +6440,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <article className="admin-hook-card" key={hook.key}>
                     <div className="admin-hook-card-header">
                       <div>
-                        <p className="admin-eyebrow">{hook.surface} / {hook.mode}</p>
+                        <p className="admin-eyebrow">{hook.domain === "natal" && hook.surface === "you" ? "natal" : hook.surface} / {hook.mode}</p>
                         <h3>{hook.label}</h3>
                       </div>
                       <span>{hook.domain}</span>
