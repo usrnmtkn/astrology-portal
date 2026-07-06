@@ -24,6 +24,23 @@ export type FallbackHookDefinition = {
   copy: FallbackHookCopyGuidance;
 };
 
+export type LunarCalendarContentKeyGroup =
+  | "new-moon"
+  | "full-moon"
+  | "first-quarter"
+  | "last-quarter"
+  | "eclipse"
+  | "season"
+  | "transit-fallback";
+
+export type LunarCalendarContentKeyDefinition = {
+  key: string;
+  group: LunarCalendarContentKeyGroup;
+  label: string;
+  slotKeys: string[];
+  fieldKeys: Array<"headline" | "summary" | "body" | "journalPrompt">;
+};
+
 const emptyFallbackHookCopy: FallbackHookCopyGuidance = {
   headline: "",
   summary: "",
@@ -31,6 +48,84 @@ const emptyFallbackHookCopy: FallbackHookCopyGuidance = {
   bestMove: "",
   emptyState: "If no approved content exists, leave the product surface blank."
 };
+
+const zodiacSigns = [
+  "aries",
+  "taurus",
+  "gemini",
+  "cancer",
+  "leo",
+  "virgo",
+  "libra",
+  "scorpio",
+  "sagittarius",
+  "capricorn",
+  "aquarius",
+  "pisces"
+];
+
+const aspectTypes = ["conjunction", "sextile", "square", "trine", "opposition"];
+
+function titleCaseKeyPart(value: string) {
+  return value
+    .split("-")
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+}
+
+const lunationFieldKeys: LunarCalendarContentKeyDefinition["fieldKeys"] = ["headline", "summary", "body", "journalPrompt"];
+
+export const lunarCalendarContentKeyDefinitions: LunarCalendarContentKeyDefinition[] = [
+  ...zodiacSigns.map((sign) => ({
+    key: `lunation/new-moon/${sign}`,
+    group: "new-moon" as const,
+    label: `New Moon / ${titleCaseKeyPart(sign)}`,
+    slotKeys: ["moonPhase", "moonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    fieldKeys: lunationFieldKeys
+  })),
+  ...zodiacSigns.map((sign) => ({
+    key: `lunation/full-moon/${sign}`,
+    group: "full-moon" as const,
+    label: `Full Moon / ${titleCaseKeyPart(sign)}`,
+    slotKeys: ["moonPhase", "moonSign", "oppositeSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    fieldKeys: lunationFieldKeys
+  })),
+  ...zodiacSigns.map((sign) => ({
+    key: `lunation/first-quarter/${sign}`,
+    group: "first-quarter" as const,
+    label: `First Quarter / ${titleCaseKeyPart(sign)} New Moon`,
+    slotKeys: ["moonPhase", "moonSign", "newMoonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    fieldKeys: lunationFieldKeys
+  })),
+  ...zodiacSigns.map((sign) => ({
+    key: `lunation/last-quarter/${sign}`,
+    group: "last-quarter" as const,
+    label: `Last Quarter / ${titleCaseKeyPart(sign)} New Moon`,
+    slotKeys: ["moonPhase", "moonSign", "newMoonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    fieldKeys: lunationFieldKeys
+  })),
+  {
+    key: "lunation/eclipse",
+    group: "eclipse",
+    label: "Eclipse",
+    slotKeys: ["moonPhase", "moonSign", "sunSign", "season", "eclipseType", "eclipseSeason", "arcPosition", "arcTargetSign", "mercuryRx"],
+    fieldKeys: lunationFieldKeys
+  },
+  ...zodiacSigns.map((sign) => ({
+    key: `season/${sign}`,
+    group: "season" as const,
+    label: `${titleCaseKeyPart(sign)} Season`,
+    slotKeys: ["sunSign", "season", "seasonTheme"],
+    fieldKeys: ["body"] as LunarCalendarContentKeyDefinition["fieldKeys"]
+  })),
+  ...aspectTypes.map((aspectType) => ({
+    key: `transit-fallback/${aspectType}`,
+    group: "transit-fallback" as const,
+    label: `Transit Fallback / ${titleCaseKeyPart(aspectType)}`,
+    slotKeys: ["planetA", "planetB", "aspectType", "orb", "applying", "moonPhase", "moonSign", "sunSign", "season"],
+    fieldKeys: ["body"] as LunarCalendarContentKeyDefinition["fieldKeys"]
+  }))
+];
 
 export const fallbackHookDefinitions = [
   {

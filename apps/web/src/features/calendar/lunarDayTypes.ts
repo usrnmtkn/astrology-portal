@@ -91,6 +91,7 @@ export type LunarDay = {
     callback: string | null;
     arcLesson: string | null;
     arcSeeded: string | null;
+    journalPrompt: string | null;
     season: string | null;
     transitNotes: LunarDayEditorialTransitNote[];
   };

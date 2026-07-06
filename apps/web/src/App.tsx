@@ -1374,6 +1374,7 @@ type ProfilePersistencePayload = {
     theme: UiTheme;
     sunriseOrbEnabled: boolean;
     dyslexiaFriendlyFont: boolean;
+    journalPromptsEnabled: boolean;
     selectedLocation: LocationInput | null;
   };
   updatedAt: string;
@@ -1386,6 +1387,7 @@ const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
 const houseSignLabelStyleStorageKey = "tldrastro:houseSignLabelStyle";
+const journalPromptsStorageKey = "tldrastro:journalPrompts";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
 const friendsTabStorageKey = "tldrastro:friendsTab";
@@ -2177,12 +2179,14 @@ function createProfilePersistencePayload({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  journalPromptsEnabled,
   selectedLocation
 }: {
   profile: UserProfile;
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  journalPromptsEnabled: boolean;
   selectedLocation: LocationInput | null;
 }): ProfilePersistencePayload {
   return {
@@ -2192,6 +2196,7 @@ function createProfilePersistencePayload({
       theme,
       sunriseOrbEnabled,
       dyslexiaFriendlyFont,
+      journalPromptsEnabled,
       selectedLocation
     },
     updatedAt: new Date().toISOString()
@@ -2577,6 +2582,20 @@ function getInitialHouseSignLabelStyle(): HouseSignLabelStyle {
     return normalizeHouseSignLabelStyle(window.localStorage.getItem(houseSignLabelStyleStorageKey));
   } catch {
     return "text";
+  }
+}
+
+function getInitialJournalPrompts() {
+  try {
+    const savedValue = window.localStorage.getItem(journalPromptsStorageKey);
+
+    if (savedValue === "false" || savedValue === "off") {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return true;
   }
 }
 
@@ -8043,6 +8062,7 @@ export function App() {
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
+  const [journalPromptsEnabled, setJournalPromptsEnabled] = useState(getInitialJournalPrompts);
   const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
   const [skyDate, setSkyDate] = useState(dateInputValue);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
@@ -8680,6 +8700,14 @@ export function App() {
 
   useEffect(() => {
     try {
+      window.localStorage.setItem(journalPromptsStorageKey, journalPromptsEnabled ? "true" : "false");
+    } catch {
+      return;
+    }
+  }, [journalPromptsEnabled]);
+
+  useEffect(() => {
+    try {
       window.localStorage.setItem(houseSignLabelStyleStorageKey, guestHouseSignLabelStyle);
     } catch {
       return;
@@ -8781,6 +8809,7 @@ export function App() {
       theme,
       sunriseOrbEnabled,
       dyslexiaFriendlyFont,
+      journalPromptsEnabled,
       selectedLocation: hasLocationPreference ? location : null
     });
     const serializedPayload = JSON.stringify(payload);
@@ -8808,6 +8837,7 @@ export function App() {
     theme,
     sunriseOrbEnabled,
     dyslexiaFriendlyFont,
+    journalPromptsEnabled,
     hasLocationPreference,
     location
   ]);
@@ -9268,6 +9298,7 @@ export function App() {
           const remoteTheme = persistedProfile.preferences?.theme;
           const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
           const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
+          const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
           const remoteLocation = persistedProfile.preferences?.selectedLocation;
           const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
 
@@ -9280,6 +9311,9 @@ export function App() {
           }
           if (typeof remoteDyslexiaFont === "boolean") {
             setDyslexiaFriendlyFont(remoteDyslexiaFont);
+          }
+          if (typeof remoteJournalPrompts === "boolean") {
+            setJournalPromptsEnabled(remoteJournalPrompts);
           }
           if (isLocationInput(remoteLocation)) {
             const nextLocation = withTimeZone(remoteLocation);
@@ -10053,6 +10087,7 @@ export function App() {
                     setManualLocation(nextLocation.label);
                     setHasLocationPreference(true);
                   }}
+                  showJournalPrompts={journalPromptsEnabled}
                 />
               )}
               {mode === "profile" && (
@@ -10132,8 +10167,10 @@ export function App() {
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                      journalPromptsEnabled={journalPromptsEnabled}
                       generatedContent={settingsGeneratedContent}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                      onJournalPromptsChange={setJournalPromptsEnabled}
                       onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                     />
                   ) : (
@@ -10144,7 +10181,9 @@ export function App() {
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
+                      journalPromptsEnabled={journalPromptsEnabled}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
+                      onJournalPromptsChange={setJournalPromptsEnabled}
                       houseSignLabelStyle={guestHouseSignLabelStyle}
                       onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
                     />
@@ -13685,10 +13724,12 @@ function SettingsView({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  journalPromptsEnabled,
   generatedContent,
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
+  onJournalPromptsChange,
   onHouseSignLabelStyleChange
 }: {
   profile: UserProfile;
@@ -13696,10 +13737,12 @@ function SettingsView({
   theme: UiTheme;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  journalPromptsEnabled: boolean;
   generatedContent: GeneratedContentMap;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
+  onJournalPromptsChange: (enabled: boolean) => void;
   onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
   const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
@@ -13843,6 +13886,14 @@ function SettingsView({
                   onChange={onDyslexiaFontChange}
                 />
               </div>
+              <div className="settings-row settings-row-control">
+                <span className="settings-row__label">Journal prompts</span>
+                <SwitchControl
+                  checked={journalPromptsEnabled}
+                  label="Toggle journal prompts"
+                  onChange={onJournalPromptsChange}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -13916,9 +13967,11 @@ function GuestSettingsView({
   location,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  journalPromptsEnabled,
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
+  onJournalPromptsChange,
   houseSignLabelStyle,
   onHouseSignLabelStyleChange
 }: {
@@ -13926,9 +13979,11 @@ function GuestSettingsView({
   location: LocationInput;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  journalPromptsEnabled: boolean;
   onThemeChange: (theme: UiTheme) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
+  onJournalPromptsChange: (enabled: boolean) => void;
   houseSignLabelStyle: HouseSignLabelStyle;
   onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
 }) {
@@ -13979,6 +14034,14 @@ function GuestSettingsView({
                   checked={dyslexiaFriendlyFont}
                   label="Toggle dyslexia-friendly font"
                   onChange={onDyslexiaFontChange}
+                />
+              </div>
+              <div className="settings-row settings-row-control">
+                <span className="settings-row__label">Journal prompts</span>
+                <SwitchControl
+                  checked={journalPromptsEnabled}
+                  label="Toggle journal prompts"
+                  onChange={onJournalPromptsChange}
                 />
               </div>
             </div>
