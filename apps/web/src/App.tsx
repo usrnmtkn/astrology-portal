@@ -1722,6 +1722,18 @@ function skyDetailRoutePathFromUrl() {
   }
 }
 
+function skyRoutePartMatches(value: string, routePart: string) {
+  const normalizedValue = normalizeContentIdPart(value);
+
+  return normalizedValue === routePart
+    || (routePart === "north-node" && normalizedValue === "true-node")
+    || (routePart === "true-node" && normalizedValue === "north-node");
+}
+
+function decodeSkyRouteParts(routePath: string) {
+  return routePath.split("/").map((part) => decodeURIComponent(part));
+}
+
 function skyPlacementRoutePath(position: Pick<PlanetPosition, "planet">) {
   return `sky/placement/${encodeURIComponent(normalizeContentIdPart(position.planet))}`;
 }
@@ -4315,6 +4327,37 @@ function currentSkyAspectDetailArticle(
     sections: generatedDetailSections(generated),
     astrologyDrilldown: generatedAstrologyDrilldown(generated)
   };
+}
+
+function skyDetailFromRoutePath(
+  routePath: string,
+  sky: SkySnapshot,
+  generatedContent: GeneratedContentMap
+) {
+  const [surface, detailType, firstPart, secondPart, thirdPart] = decodeSkyRouteParts(routePath);
+
+  if (surface !== "sky") {
+    return null;
+  }
+
+  if (detailType === "retrograde" && firstPart) {
+    const position = activeRetrogradePositions(skyNodeDisplayPositions(sky.positions), sky.generatedAt)
+      .find((retrogradePosition) => skyRoutePartMatches(retrogradePosition.planet, firstPart));
+
+    return position ? currentSkyRetrogradeDetailData(position, sky.generatedAt, generatedContent).detail : null;
+  }
+
+  if (detailType === "aspect" && firstPart && secondPart && thirdPart) {
+    const aspect = sky.aspects.find((candidate) => (
+      skyRoutePartMatches(candidate.from, firstPart)
+      && skyRoutePartMatches(candidate.type, secondPart)
+      && skyRoutePartMatches(candidate.to, thirdPart)
+    ));
+
+    return aspect ? currentSkyAspectDetailArticle(aspect, sky.generatedAt, generatedContent, sky.positions) : null;
+  }
+
+  return null;
 }
 
 function relatedAspectRowsForPlacement({
@@ -8070,6 +8113,7 @@ export function App() {
   const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
+  const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
   const [, setContentRegistryVersion] = useState(0);
   const userLifeAreaFocus = userProfile ? normalizeChartSettings(userProfile.settings).lifeAreaFocus : [];
   const activeHouseSignLabelStyle = userProfile
@@ -8088,12 +8132,14 @@ export function App() {
     setSelectedSkyDetail(detail);
 
     if (detail.routePath) {
+      setSkyDetailRoutePath(detail.routePath);
       updateSkyDetailRouteUrl(detail.routePath);
     }
   }
 
   function closeSkyDetail() {
     setSelectedSkyDetail(null);
+    setSkyDetailRoutePath(null);
     updatePortalModeUrl(userProfile ? "member" : "guest", "push");
   }
 
@@ -8101,6 +8147,7 @@ export function App() {
     const nextTab = initialFriendsTab();
 
     setSelectedSkyDetail(null);
+    setSkyDetailRoutePath(null);
     updateFriendsTabUrl(nextTab, "push");
     storeFriendsTab(nextTab);
     storePortalMode("friends");
@@ -8110,6 +8157,7 @@ export function App() {
 
   function navigateToPortalMode(nextMode: PortalMode) {
     setSelectedSkyDetail(null);
+    setSkyDetailRoutePath(null);
     updatePortalModeUrl(nextMode, "push");
     storePortalMode(nextMode);
     setMode(nextMode);
@@ -8124,9 +8172,11 @@ export function App() {
       }
 
       const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
+      const nextSkyDetailRoutePath = skyDetailRoutePathFromUrl();
 
       storePortalMode(nextMode);
-      if (skyDetailRoutePathFromUrl()) {
+      setSkyDetailRoutePath(nextSkyDetailRoutePath);
+      if (nextSkyDetailRoutePath) {
         storePortalMode(nextMode);
         setMode(nextMode);
         return;
@@ -8148,6 +8198,16 @@ export function App() {
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
   }, [userProfile]);
+
+  useEffect(() => {
+    if (!skyDetailRoutePath || !sky) {
+      return;
+    }
+
+    const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent);
+
+    setSelectedSkyDetail(detail);
+  }, [sky, skyDetailRoutePath, skyGeneratedContent]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -9856,7 +9916,7 @@ export function App() {
       )}
 
       {selectedSkyDetail ? (
-          <SkyDetailArticle detail={selectedSkyDetail} onClose={() => setSelectedSkyDetail(null)} />
+          <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
@@ -9981,7 +10041,7 @@ export function App() {
                       positions={sky.positions}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
-                      onOpenDetail={setSelectedSkyDetail}
+                      onOpenDetail={openSkyDetail}
                     />
                   )}
                   {!isSkyLoading && sky && mode === "guest" && (
@@ -9991,7 +10051,7 @@ export function App() {
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
                       lifeAreaFocus={[]}
-                      onOpenDetail={setSelectedSkyDetail}
+                      onOpenDetail={openSkyDetail}
                     />
                   )}
                   {!isSkyLoading && sky && mode === "member" && (
@@ -10001,7 +10061,7 @@ export function App() {
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
                       lifeAreaFocus={userLifeAreaFocus}
-                      onOpenDetail={setSelectedSkyDetail}
+                      onOpenDetail={openSkyDetail}
                     />
                   )}
                 </SkyRoute>
@@ -12162,6 +12222,71 @@ function retrogradeRemainingCountLabel(generatedAt: string, window?: RetrogradeW
   return count ? `${count} left` : null;
 }
 
+function currentSkyRetrogradeDetailData(
+  position: PlanetPosition,
+  generatedAt: string,
+  generatedContent: GeneratedContentMap
+) {
+  const contentKey = placementContentId(position.planet, position.sign, "sky");
+  const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+  const generated = liveGeneratedContentByKeys(
+    generatedContent,
+    skyPlacementGeneratedContentKeys(position, generatedAt),
+    {
+      contentKey: skyPlacementTemplateFallbackKey(position),
+      slots: skyPlacementTemplateSlots(position),
+      afterContentFallback: content
+    }
+  );
+  const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
+  const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
+  const durationDescription = retrogradeWindow
+    ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
+    : null;
+  const timelineLines = retrogradeTimelineLines(retrogradeWindow);
+  const tldr = retrogradeArticleTldr(position, generated, content);
+  const fallbackDetailParagraphs = [
+    content.body,
+    ...content.detailParagraphs
+  ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
+  const generatedBodyParagraphs = stripGeneratedTitleParagraph(
+    liveGeneratedBody(generated, fallbackDetailParagraphs),
+    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+  );
+  const detailParagraphs = [
+    ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
+    ...(durationLine
+      ? [
+          <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
+              <DurationLabelText label={durationLine} />
+            </span>
+          </span>
+        ]
+      : []),
+    ...generatedBodyParagraphs
+  ];
+
+  return {
+    blurb: retrogradePreviewCopy(position, generated, content),
+    detail: {
+      routePath: skyRetrogradeRoutePath(position),
+      glyph: `${position.glyph} ℞`,
+      kicker: retrogradeDetailKicker(position),
+      title: retrogradePlacementTitle(position),
+      meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
+      duration: retrogradeRangeText(retrogradeWindow),
+      subtitle: tldr,
+      retrograde: true,
+      plainBody: true,
+      body: detailParagraphs,
+      sections: [],
+      astrologyDrilldown: generatedAstrologyDrilldown(generated),
+      content: content.bundle
+    } satisfies SkyDetail
+  };
+}
+
 function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string, retrogradeWindow?: RetrogradeWindow | null) {
   if (position.motion === "retrograde" && retrogradeWindow?.retrogradeEnd) {
     return formatCountdown(generatedAt, retrogradeWindow.retrogradeEnd);
@@ -12391,64 +12516,13 @@ function RetrogradeCallout({
   const eyebrow = retrogrades.length === 1 ? "Retrograde" : "Retrogrades";
 
   const buildRetrogradeDetail = (position: PlanetPosition) => {
-    const contentKey = placementContentId(position.planet, position.sign, "sky");
-    const content = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
-    const generated = liveGeneratedContentByKeys(
-      generatedContent,
-      skyPlacementGeneratedContentKeys(position, generatedAt),
-      {
-        contentKey: skyPlacementTemplateFallbackKey(position),
-        slots: skyPlacementTemplateSlots(position),
-        afterContentFallback: content
-      }
-    );
     const retrogradeWindow = retrogradeWindowFor(position, generatedAt);
-    const durationLine = formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd);
-    const durationDescription = retrogradeWindow
-      ? formatDurationLong(retrogradeWindow.retrogradeStart, retrogradeWindow.retrogradeEnd, "Retrograde")
-      : null;
-    const timelineLines = retrogradeTimelineLines(retrogradeWindow);
-    const tldr = retrogradeArticleTldr(position, generated, content);
-    const fallbackDetailParagraphs = [
-      content.body,
-      ...content.detailParagraphs
-    ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
-    const generatedBodyParagraphs = stripGeneratedTitleParagraph(
-      liveGeneratedBody(generated, fallbackDetailParagraphs),
-      retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
-    );
-    const detailParagraphs = [
-      ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
-      ...(durationLine
-        ? [
-            <span className="retrograde-detail-line retrograde-detail-meta" key={`${position.planet}-retrograde-duration`}>
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed retro-pill retro-pill--countdown" aria-label={durationDescription ?? durationLine}>
-                <DurationLabelText label={durationLine} />
-              </span>
-            </span>
-          ]
-        : []),
-      ...generatedBodyParagraphs
-    ];
+    const detailData = currentSkyRetrogradeDetailData(position, generatedAt, generatedContent);
 
     return {
-      blurb: retrogradePreviewCopy(position, generated, content),
+      blurb: detailData.blurb,
       count: formatRetrogradeDuration(retrogradeWindow?.retrogradeStart, retrogradeWindow?.retrogradeEnd),
-      detail: {
-        routePath: skyRetrogradeRoutePath(position),
-        glyph: `${position.glyph} ℞`,
-        kicker: retrogradeDetailKicker(position),
-        title: retrogradePlacementTitle(position),
-        meta: `${formatPlacementPosition(position).toUpperCase()} · ${compactRetrogradeTiming(position, retrogradeWindow)}`,
-        duration: retrogradeRangeText(retrogradeWindow),
-        subtitle: tldr,
-        retrograde: true,
-        plainBody: true,
-        body: detailParagraphs,
-        sections: [],
-        astrologyDrilldown: generatedAstrologyDrilldown(generated),
-        content: content.bundle
-      } satisfies SkyDetail,
+      detail: detailData.detail,
       remainingCount: retrogradeRemainingCountLabel(generatedAt, retrogradeWindow),
       range: retrogradeRangeText(retrogradeWindow)
     };
