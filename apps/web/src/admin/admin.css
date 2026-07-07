@@ -2144,6 +2144,18 @@ body,
   letter-spacing: var(--tracking-number);
 }
 
+.admin-vocabulary-filter-panel {
+  border-top: 1px solid var(--admin-line);
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+}
+
+.admin-vocabulary-filter-panel .admin-template-note {
+  margin: 0;
+  max-width: 780px;
+}
+
 .admin-fallback-row {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--admin-line);
@@ -2237,6 +2249,29 @@ body,
 .admin-lunar-coverage-heading .admin-template-note {
   margin: 0;
   max-width: 680px;
+}
+
+.admin-lunar-coverage-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-lunar-coverage-filter button {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  color: rgba(232, 224, 208, 0.82);
+  font-size: var(--type-nav-size);
+  font-weight: var(--weight-semibold);
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+.admin-lunar-coverage-filter button.active {
+  background: rgba(118, 157, 255, 0.9);
+  border-color: rgba(118, 157, 255, 0.95);
+  color: #f7f5f0;
 }
 
 .admin-lunar-coverage-summary {
