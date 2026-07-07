@@ -730,6 +730,21 @@ function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedCon
   return content?.headline?.trim() || event.title;
 }
 
+function calendarEventTitleWithSign(event: LunarCalendarEvent, title: string) {
+  if (event.type !== "station" || !event.sign) {
+    return title;
+  }
+
+  const normalizedTitle = title.toLowerCase();
+  const normalizedSign = event.sign.toLowerCase();
+
+  if (normalizedTitle.includes(` in ${normalizedSign}`) || normalizedTitle.includes(` enters ${normalizedSign}`)) {
+    return title;
+  }
+
+  return `${title} in ${event.sign}`;
+}
+
 function calendarEventDescription(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
   return content?.summary?.trim() || generatedContentParagraphs(content)[0] || "";
 }
@@ -1586,29 +1601,33 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
             )}
             {selectedDayTransits.length > 0 && (
               <div className="lunar-selected-card__daily-events" aria-label="Daily transits and aspects">
-                {selectedDayTransits.map((event) => (
-                  <button
-                    className={`lunar-selected-card__daily-event event-${event.type}`}
-                    type="button"
-                    key={event.id}
-                    aria-label={event.title}
-                  >
-                    <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
-                    <strong>{event.title}</strong>
-                    {isActiveRetrogradeEvent(event) ? (
-                      <>
-                        <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
-                        <span className="lunar-selected-card__daily-event-time">{activeRetrogradeUntilLabel(event, zone)}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
-                        <span className="lunar-selected-card__daily-event-time">{formatEventTime(event.startsAt, zone)}</span>
-                        <span aria-hidden="true">↗</span>
-                      </>
-                    )}
-                  </button>
-                ))}
+                {selectedDayTransits.map((event) => {
+                  const eventTitle = calendarEventTitleWithSign(event, event.title);
+
+                  return (
+                    <button
+                      className={`lunar-selected-card__daily-event event-${event.type}`}
+                      type="button"
+                      key={event.id}
+                      aria-label={eventTitle}
+                    >
+                      <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
+                      <strong>{eventTitle}</strong>
+                      {isActiveRetrogradeEvent(event) ? (
+                        <>
+                          <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
+                          <span className="lunar-selected-card__daily-event-time">{activeRetrogradeUntilLabel(event, zone)}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="lunar-selected-card__daily-event-separator" aria-hidden="true">·</span>
+                          <span className="lunar-selected-card__daily-event-time">{formatEventTime(event.startsAt, zone)}</span>
+                          <span aria-hidden="true">↗</span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
             {selectedTransitNotes.length > 0 && (
@@ -2090,7 +2109,7 @@ function TransitCard({
 }) {
   const glyphParts = transitCardGlyphParts(event);
   const content = liveCalendarEventContent(generatedContent, event);
-  const title = calendarEventTitle(event, content);
+  const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
   const description = calendarEventDescription(event, content);
 
   return (
