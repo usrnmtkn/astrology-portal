@@ -1156,7 +1156,7 @@ a.tx-card.has-article:hover .tx-more {
   flex: 1 1 0;
   min-width: 0;
   min-height: 0;
-  height: 184px;
+  height: 198px;
   padding: 8px 6px;
   border: 1px solid transparent;
   border-radius: var(--lunar-card-radius);
@@ -1945,7 +1945,7 @@ a.tx-card.has-article:hover .tx-more {
 
 @keyframes lunar-rows-expand {
   from {
-    max-height: 194px;
+    max-height: 228px;
     transform: scaleY(0.96);
   }
 
@@ -1962,7 +1962,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   to {
-    max-height: 194px;
+    max-height: 228px;
     transform: scaleY(1);
   }
 }
@@ -2090,7 +2090,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    min-height: 178px;
+    min-height: 198px;
   }
 
   .lunar-selected-card {
@@ -2250,7 +2250,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    height: 166px;
+    height: 198px;
     min-height: 0;
     padding: 8px 2px 10px;
   }
@@ -2359,7 +2359,7 @@ a.tx-card.has-article:hover .tx-more {
   .lunar-week-day {
     grid-template-rows: 14px 22px 36px 21px 12px 15px 17px;
     gap: 3px;
-    height: 158px;
+    height: 173px;
     padding: 8px 1px 8px;
     border-radius: var(--lunar-card-radius);
   }
