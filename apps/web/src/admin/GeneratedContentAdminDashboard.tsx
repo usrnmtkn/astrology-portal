@@ -38,7 +38,8 @@ type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
 type AdminContentQueueFilter = "failed" | "missingSource" | "draft" | "published" | null;
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
-type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "settings";
+type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
+type LunarCoverageFilter = "all" | "lunar-calendar" | "eclipse" | "season" | "transit-fallback";
 type AdminTemplateDrawerMode = "view" | "edit";
 type AdminContentBlockFilter =
   | "all"
@@ -249,7 +250,7 @@ type AdminVocabularyCardItem = {
   kind?: "topic" | "sign-style";
 };
 
-type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac";
+type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "eclipses";
 
 type AdminTemplateDraft = {
   headline: string;
@@ -530,7 +531,35 @@ const voiceTemplateLabels: Record<VoiceTemplateSurface, string> = {
 const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
   "sky.seasonal-current": { planet: "Sun", sign: "Gemini", signStyle: "curious, verbal, and changeable attention" },
   "sky.lunar-cycle": { planet: "Moon", sign: "Capricorn", signStyle: "practical, contained, and responsibility-aware", signNeed: "wanting something steady enough to hold up over time" },
-  "sky.lunar-calendar-day": { moonPhase: "Waxing Crescent", moonSign: "Cancer" },
+  "sky.lunar-calendar-day": {
+    arcPlainMeaning: "the cycle is waxing toward a full moon in Capricorn",
+    currentSeason: "Cancer season",
+    currentSunSign: "Cancer",
+    eclipseSeason: "no",
+    eclipseSeasonEvent: "",
+    eclipseSeasonPlainFlag: "",
+    eclipseSeasonType: "",
+    lunarArcDirection: "waxing",
+    lunarArcPosition: "waxing toward the full moon in Capricorn",
+    lunarArcTarget: "full moon",
+    lunarArcTargetSign: "Capricorn",
+    mercuryRetrograde: "no",
+    mercuryRetrogradeEndsAt: "",
+    mercuryRetrogradeEvent: "",
+    mercuryRxPlainFlag: "",
+    mercuryRetrogradeSign: "",
+    mercuryRx: "no",
+    moonPhaseAction: "feed the new direction without forcing it to be complete",
+    moonPhasePlainMeaning: "the cycle is gathering energy after the new moon",
+    moonPhaseRole: "early build",
+    moonPhase: "Waxing Crescent",
+    moonSignMode: "protective, receptive, and led by memory or mood",
+    moonSign: "Cancer",
+    season: "Cancer season",
+    seasonSign: "Cancer",
+    seasonTheme: "care, memory, belonging, and emotional safety",
+    sunSign: "Cancer"
+  },
   "sky.planetary-placement": { planet: "Venus", sign: "Cancer", planetTopic: "connection, taste, and desire", signStyle: "protective, receptive, and memory-led" },
   "sky.aspect-detail": { planetA: "Mercury", aspect: "square", planetB: "Neptune", planetATopic: "thinking and language", planetBTopic: "imagination and blur" },
   "sky.aspect-sign-context": { planetA: "Mercury", signA: "Cancer", signAStyleShort: "protective feeling", planetB: "Neptune", signB: "Aries", signBStyleShort: "fast instinct" },
@@ -786,8 +815,25 @@ function titleFromVocabularyContentKey(contentKey: string) {
     .join(" ");
 }
 
+function eclipseCycleHeadline(contentKey: string) {
+  const slug = contentKey.split("/").pop() ?? contentKey;
+  const labels: Record<string, string> = {
+    intro: "Eclipse Cycle > Season Overview",
+    lunar: "Eclipse Cycle > Lunar Eclipse",
+    solar: "Eclipse Cycle > Solar Eclipse",
+    "ritual-note": "Eclipse Cycle > Ritual Guidance"
+  };
+
+  return labels[slug] ?? `Eclipse Cycle > ${titleFromVocabularyContentKey(contentKey)}`;
+}
+
 function vocabularyHeadline(row: AdminGeneratedContentRow) {
   const headline = row.headline?.trim().replace(/\s+Topic$/i, "");
+  const isShortEclipseHeadline = headline && ["Intro", "Lunar", "Solar", "Ritual Note"].includes(headline);
+
+  if (row.content_key.startsWith("vocab/eclipse-cycle/") && (!headline || isShortEclipseHeadline)) {
+    return eclipseCycleHeadline(row.content_key);
+  }
 
   return headline || titleFromVocabularyContentKey(row.content_key);
 }
@@ -925,6 +971,10 @@ function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign
 }
 
 function vocabularyItemCategory(item: Pick<AdminVocabularyCardItem, "contentKey" | "kind" | "taglineContentKey">): AdminVocabularyCategoryFilter {
+  if (item.contentKey.startsWith("vocab/eclipse-cycle/")) {
+    return "eclipses";
+  }
+
   if (item.kind === "sign-style" || item.contentKey.startsWith("vocab/sign-style/") || item.contentKey.startsWith("vocab/sign-need/") || item.contentKey.startsWith("vocab/zodiac-story/") || item.contentKey.startsWith("vocab/zodiac-cycle/") || item.contentKey.startsWith("vocab/higher-expression/sign/") || item.contentKey.startsWith("vocab/higher-expression/zodiac/")) {
     return "zodiac";
   }
@@ -1099,6 +1149,7 @@ const fallbackHookSectionFilters: Array<{ key: AdminFallbackHookSectionFilter; l
   { key: "sky", label: "Sky" },
   { key: "you", label: "Natal" },
   { key: "friends", label: "Friends" },
+  { key: "lunar-calendar", label: "Lunar Calendar" },
   { key: "settings", label: "Settings" }
 ];
 
@@ -1590,6 +1641,22 @@ const lunarCoverageGroups: LunarCalendarContentKeyGroup[] = [
   "transit-fallback"
 ];
 
+const lunarCoverageFilterGroups: Record<LunarCoverageFilter, LunarCalendarContentKeyGroup[]> = {
+  all: lunarCoverageGroups,
+  "lunar-calendar": ["new-moon", "full-moon", "first-quarter", "last-quarter"],
+  eclipse: ["eclipse"],
+  season: ["season"],
+  "transit-fallback": ["transit-fallback"]
+};
+
+const lunarCoverageFilters: Array<{ key: LunarCoverageFilter; label: string }> = [
+  { key: "all", label: "All" },
+  { key: "lunar-calendar", label: "Lunar Calendar" },
+  { key: "eclipse", label: "Eclipse" },
+  { key: "season", label: "Season" },
+  { key: "transit-fallback", label: "Transit Fallback" }
+];
+
 const zodiacOppositesBySlug: Record<string, string> = {
   aries: "libra",
   taurus: "scorpio",
@@ -1659,6 +1726,20 @@ function lunarCoverageDescription(definition: LunarCalendarContentKeyDefinition)
 }
 
 const releaseNotes: ReleaseNote[] = [
+  {
+    date: "July 6, 2026",
+    time: "4:54 PM EDT",
+    title: "Audience-aware vocabulary and safer content updates",
+    summary: "Content Ops now separates topic vocabulary by audience while the team tightened the process around live-row imports and targeted vocabulary updates.",
+    areas: ["Dashboard", "App"],
+    items: [
+      "Added You, Friend, Sky, and neutral Natal fallback fields for planet-topic vocabulary so templates can resolve copy by surface without forcing third-person or second-person language everywhere.",
+      "Updated app template slots so You pages request You topic copy, friend and relationship surfaces request Friend copy, and Sky surfaces keep collective Sky language.",
+      "Updated dashboard fallback previews to resolve slot samples from LIVE vocabulary rows using the same requested to Natal to body fallback chain as runtime.",
+      "Identified that the bulk vocabulary importer preserved LIVE status but replaced body and sections wholesale, which caused Sky topic copy to be overwritten by second-person natal phrasing.",
+      "Restored the Venus Sky topic phrase and switched recent zodiac-story and house higher-expression authoring updates to targeted DRAFT row patches instead of broad imports."
+    ]
+  },
   {
     date: "July 5, 2026",
     time: "3:15 PM EDT",
@@ -2451,14 +2532,33 @@ function manualEntryEventType(category: AdminContentCategoryFilter, surface: Gen
   return "manual-entry";
 }
 
-function manualEntryRecord(category: AdminContentCategoryFilter, fallbackSurface: GeneratedContentSurfaceFilter): AdminReviewRecord {
+function manualEntryBlockType(category: AdminContentCategoryFilter, selectedBlockType: AdminContentBlockFilter): AdminContentBlockFilter {
+  if (selectedBlockType !== "all" && selectedBlockType !== "fallback_template") {
+    return selectedBlockType;
+  }
+
+  if (category === "Sky") return "sky_article";
+  if (category === "Natal Aspects") return "natal_aspect";
+  if (category === "Natal Chart") return "placement";
+  if (category === "Relationship") return "synastry_aspect";
+  if (category === "Condition Modifiers") return "condition_modifier";
+  if (category === "Fallback Templates") return "fallback_template";
+
+  return "essay";
+}
+
+function manualEntryRecord(
+  category: AdminContentCategoryFilter,
+  fallbackSurface: GeneratedContentSurfaceFilter,
+  selectedBlockType: AdminContentBlockFilter = "all"
+): AdminReviewRecord {
   const surface = manualEntrySurface(category, fallbackSurface);
   const now = new Date();
   const timestamp = now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
   const targetDate = surface === "sky" ? dateInputValue(now) : null;
   const eventType = manualEntryEventType(category, surface);
   const title = "Untitled content";
-  const blockType: AdminContentBlockFilter = surface === "sky" ? "sky_article" : category === "Natal Chart" ? "placement" : "essay";
+  const blockType = manualEntryBlockType(category, selectedBlockType);
 
   return {
     id: `manual:${timestamp}`,
@@ -2469,7 +2569,7 @@ function manualEntryRecord(category: AdminContentCategoryFilter, fallbackSurface
     title,
     subtitle: `Manual entry / ${generatedContentSurfaceLabels[surface]} / ${adminDateLabel(targetDate)}`,
     targetDate,
-    contentKey: `manual-${surface}-${timestamp}`,
+    contentKey: `manual-${surface}-${blockType}-${timestamp}`,
     eventType,
     summary: "",
     body: "",
@@ -3257,6 +3357,7 @@ export function GeneratedContentAdminDashboard() {
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
   const [templatePreviewSlotDrafts, setTemplatePreviewSlotDrafts] = useState<Record<string, Record<string, string>>>({});
   const [fallbackHookSectionFilter, setFallbackHookSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
+  const [lunarCoverageFilter, setLunarCoverageFilter] = useState<LunarCoverageFilter>("all");
   const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
   const [templateDrawerMode, setTemplateDrawerMode] = useState<AdminTemplateDrawerMode>("view");
   const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
@@ -3312,6 +3413,7 @@ export function GeneratedContentAdminDashboard() {
       sky: 0,
       you: 0,
       friends: 0,
+      "lunar-calendar": lunarCalendarContentKeyDefinitions.length,
       settings: 0
     } satisfies Record<AdminFallbackHookSectionFilter, number>;
 
@@ -3326,10 +3428,13 @@ export function GeneratedContentAdminDashboard() {
     return counts;
   }, [templateContentRows]);
   const filteredTemplateContentRows = useMemo(() => (
-    fallbackHookSectionFilter === "all"
-      ? templateContentRows
-      : templateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
+    fallbackHookSectionFilter === "lunar-calendar"
+      ? []
+      : fallbackHookSectionFilter === "all"
+        ? templateContentRows
+        : templateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
   ), [fallbackHookSectionFilter, templateContentRows]);
+  const isLunarCoverageSelected = fallbackHookSectionFilter === "lunar-calendar";
   const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId) ?? null;
   const lunarCoverageRowsByKey = useMemo(() => (
     new Map(lunarCoverageRows.map((row) => [row.content_key, row]))
@@ -3376,6 +3481,10 @@ export function GeneratedContentAdminDashboard() {
       };
     })
   ), [lunarCoverageLoadedFromDb, lunarCoverageRowsByKey, vocabularyRowsByContentKey]);
+  const filteredLunarCoverageGroups = useMemo(
+    () => lunarCoverageFilterGroups[lunarCoverageFilter],
+    [lunarCoverageFilter]
+  );
   const canUseApi = secret.trim().length > 0;
   const dedupedContentRecords = useMemo(() => dedupeContentLibraryRecords(reviewRecords), [reviewRecords]);
   const filteredContentRecords = useMemo(() => {
@@ -3524,7 +3633,8 @@ export function GeneratedContentAdminDashboard() {
       all: vocabularyCardItems.length,
       planets: 0,
       houses: 0,
-      zodiac: 0
+      zodiac: 0,
+      eclipses: 0
     } satisfies Record<AdminVocabularyCategoryFilter, number>;
 
     vocabularyCardItems.forEach((item) => {
@@ -3542,6 +3652,25 @@ export function GeneratedContentAdminDashboard() {
       ? vocabularyCardItems
       : vocabularyCardItems.filter((item) => vocabularyItemCategory(item) === vocabularyCategoryFilter)
   ), [vocabularyCardItems, vocabularyCategoryFilter]);
+  const vocabularyCategoryNote = useMemo(() => {
+    if (vocabularyCategoryFilter === "eclipses") {
+      return "Eclipse rows cover eclipse-season, solar eclipse, lunar eclipse, and ritual guidance language for sky and natal fallback phrasing.";
+    }
+
+    if (vocabularyCategoryFilter === "planets") {
+      return "Planet rows provide the topic language used when templates need a planet's core theme, shadow, higher expression, or natal-card tagline.";
+    }
+
+    if (vocabularyCategoryFilter === "houses") {
+      return "House rows provide life-area language, house shadows, and higher-expression phrasing for chart placement templates.";
+    }
+
+    if (vocabularyCategoryFilter === "zodiac") {
+      return "Zodiac style is the short tone phrase templates use for a sign, like \"steady and slow to change course.\" It describes the sign's manner or texture, not a full placement interpretation.";
+    }
+
+    return "Vocabulary rows provide reusable phrases for planets, houses, zodiac signs, and eclipse-cycle copy used by interpolation templates.";
+  }, [vocabularyCategoryFilter]);
   const resolvedFallbackHookSampleContexts = useMemo<Record<string, FallbackHookContext>>(() => {
     const rowsByContentKey = liveVocabularyRowsByContentKey(vocabularyRows);
 
@@ -4600,9 +4729,72 @@ export function GeneratedContentAdminDashboard() {
     void loadRowDetails(row.id);
   }
 
-  function openLunarCoverageEditor(row: AdminGeneratedContentRow | undefined) {
+  async function openLunarCoverageEditor(row: AdminGeneratedContentRow | undefined, definition: LunarCalendarContentKeyDefinition) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
     if (!row) {
-      setMessage("Create the lunar content row before editing it in Content.");
+      setIsLoading(true);
+      try {
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              contentKey: definition.key,
+              surface: "sky",
+              mode: "feed",
+              eventType: "lunar-calendar",
+              headline: definition.label,
+              summary: "",
+              body: "",
+              sections: definition.fieldKeys.includes("journalPrompt") ? { journalPrompt: "" } : {},
+              facts: {
+                contentType: "lunar-calendar",
+                group: definition.group,
+                slotKeys: definition.slotKeys
+              },
+              sourceSnapshot: {
+                contentType: "lunar-calendar-coverage",
+                keyGroup: definition.group
+              },
+              promptVersion: "sky-lunar-calendar-v1",
+              blockType: "lunar_calendar",
+              reviewerNotes: "Admin-created lunar calendar content coverage row."
+            })
+          }
+        );
+        const createdRow = payload.rows?.[0];
+
+        if (!createdRow) {
+          setMessage(`Could not create ${definition.key}.`);
+          return;
+        }
+
+        setLunarCoverageRows((currentRows) => (
+          currentRows.some((currentRow) => currentRow.id === createdRow.id)
+            ? currentRows
+            : [createdRow, ...currentRows]
+        ));
+        setRows((currentRows) => (
+          currentRows.some((currentRow) => currentRow.id === createdRow.id)
+            ? currentRows
+            : [createdRow, ...currentRows]
+        ));
+        selectRow(createdRow);
+        setActivePage("content");
+        setMessage(`Created DRAFT row for ${createdRow.content_key}.`);
+      } catch (error) {
+        if (error instanceof AdminRequestError && error.status === 401) {
+          setAccessStatus("invalid");
+        }
+        setMessage(adminErrorMessage(error, `Could not create ${definition.key}.`));
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -6063,7 +6255,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
   }
 
   function startNewContent() {
-    const nextRecord = manualEntryRecord(categoryFilter, surface);
+    const nextRecord = manualEntryRecord(categoryFilter, surface, contentBlockFilter);
+    const nextMetadata = reviewMetadataForRecord(nextRecord);
 
     setReviewRecords((currentRecords) => [nextRecord, ...currentRecords.filter((record) => record.id !== nextRecord.id)]);
     setReviewCounts((currentCounts) => ({
@@ -6076,6 +6269,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     setReviewEditTitle(nextRecord.title);
     setReviewEditSummary("");
     setReviewEditBody("");
+    setReviewEditMetadata(nextMetadata);
     setSelectedId(null);
     setDraft(createAdminDraft(nextRecord.surface, nextRecord.targetDate ?? dateInputValue()));
     setSurface(nextRecord.surface);
@@ -6735,7 +6929,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   { key: "all", label: "All" },
                   { key: "planets", label: "Planets" },
                   { key: "houses", label: "Houses" },
-                  { key: "zodiac", label: "Zodiac" }
+                  { key: "zodiac", label: "Zodiac" },
+                  { key: "eclipses", label: "Eclipses" }
                 ] as Array<{ key: AdminVocabularyCategoryFilter; label: string }>).map((filter) => (
                   <button
                     key={filter.key}
@@ -6752,7 +6947,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
 
               <p className="admin-template-note">
-                Zodiac style is the short tone phrase templates use for a sign, like “steady and slow to change course.” It describes the sign’s manner or texture, not a full placement interpretation.
+                {vocabularyCategoryNote}
               </p>
             </div>
 
@@ -6799,12 +6994,12 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <div className="admin-managed-badges">
                         {topicRow && <span className={`ui-pill admin-status status-${topicRow.status.toLowerCase()}`}>{topicRow.status}</span>}
                         {isSignStyleRow && <span className="ui-pill admin-status">Zodiac style</span>}
-                        {vocabularyFamily === "sign-need" && <span className="ui-pill admin-status">Moon need</span>}
+                        {vocabularyFamily === "sign-need" && <span className="ui-pill admin-status">Current Moon in sign</span>}
                         {vocabularyFamily === "zodiac-story" && <span className="ui-pill admin-status">Zodiac story</span>}
                         {vocabularyFamily === "planet-shadow" && <span className="ui-pill admin-status">Planet shadow</span>}
                         {vocabularyFamily === "house-shadow" && <span className="ui-pill admin-status">House shadow</span>}
                         {vocabularyFamily === "higher-expression" && <span className="ui-pill admin-status">Higher expression</span>}
-                        {item.signNeedRow && <span className={`ui-pill admin-status status-${item.signNeedRow.status.toLowerCase()}`}>Moon need</span>}
+                        {item.signNeedRow && <span className={`ui-pill admin-status status-${item.signNeedRow.status.toLowerCase()}`}>Current Moon in sign</span>}
                         {item.storyRow && <span className={`ui-pill admin-status status-${item.storyRow.status.toLowerCase()}`}>Zodiac story</span>}
                         {item.shadowRow && <span className={`ui-pill admin-status status-${item.shadowRow.status.toLowerCase()}`}>{vocabularyItemCategory(item) === "planets" ? "Planet shadow" : "House shadow"}</span>}
                         {item.higherExpressionRow && <span className={`ui-pill admin-status status-${item.higherExpressionRow.status.toLowerCase()}`}>Higher expression</span>}
@@ -6884,13 +7079,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
                     {rowDraft && topicRow && showsSignNeed && (
                       <label className="admin-field-wide">
-                        <span>Moon need</span>
+                        <span>Current Moon in sign</span>
                         <textarea
                           value={item.signNeedRow ? signNeedDraft?.signNeed ?? "" : rowDraft.signNeed ?? ""}
                           onChange={(event) => updateVocabularyDraft(item.signNeedRow?.id ?? topicRow.id, { signNeed: event.target.value })}
                           rows={2}
                         />
-                        <small>Completes: Moon in this sign days tend to run on...</small>
+                        <small>Used when the lunar calendar Moon is in this sign. Completes: Moon in this sign days tend to run on...</small>
                       </label>
                     )}
 
@@ -7033,57 +7228,60 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               ))}
             </div>
 
-            <div className="admin-fallback-row-list" aria-label="Fallback template rows">
-              {filteredTemplateContentRows.map((row) => {
-                const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
-                const badge = contentTypeBadge(row);
-                const hookKey = hookKeyFromFallbackTemplateRow(row);
-                const hook = fallbackHookForContextRow(hookKey);
-                const isSelected = row.id === selectedTemplateContentId;
+            {!isLunarCoverageSelected && (
+              <div className="admin-fallback-row-list" aria-label="Fallback template rows">
+                {filteredTemplateContentRows.map((row) => {
+                  const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+                  const badge = contentTypeBadge(row);
+                  const hookKey = hookKeyFromFallbackTemplateRow(row);
+                  const hook = fallbackHookForContextRow(hookKey);
+                  const isSelected = row.id === selectedTemplateContentId;
 
-                const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
-                  setTemplateDrawerMode(mode);
-                  setSelectedTemplateContentId(row.id);
-                };
+                  const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
+                    setTemplateDrawerMode(mode);
+                    setSelectedTemplateContentId(row.id);
+                  };
 
-                return (
-                  <article
-                    className={`admin-fallback-row ${isSelected ? "selected" : ""}`}
-                    data-template-row={row.content_key}
-                    key={row.id}
-                  >
-                    <div className="admin-fallback-row-main">
-                      <div>
-                        <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {fallbackHookSurfaceLabel(row, hook)}</p>
-                        <h3>{labelForFallbackTemplateRow(row)}</h3>
-                        <code>{row.content_key}</code>
+                  return (
+                    <article
+                      className={`admin-fallback-row ${isSelected ? "selected" : ""}`}
+                      data-template-row={row.content_key}
+                      key={row.id}
+                    >
+                      <div className="admin-fallback-row-main">
+                        <div>
+                          <p className="admin-eyebrow">{row.prompt_version ?? "unknown prompt"} / {fallbackHookSurfaceLabel(row, hook)}</p>
+                          <h3>{labelForFallbackTemplateRow(row)}</h3>
+                          <code>{row.content_key}</code>
+                        </div>
+                        <div className="admin-managed-badges">
+                          {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
+                          {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
+                          <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                        </div>
                       </div>
-                      <div className="admin-managed-badges">
-                        {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
-                        {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
-                        <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                      <p>{descriptionForFallbackTemplateRow(row)}</p>
+                      <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
+                      <div className="admin-fallback-row-actions">
+                        <button type="button" onClick={() => openTemplateRow("view")} title={`View ${row.content_key} inside the dashboard`}>
+                          <Eye size={15} aria-hidden="true" />
+                          View in dashboard
+                        </button>
+                        <button type="button" onClick={() => openTemplateRow("edit")} title={`Edit ${row.content_key}`}>
+                          <Pencil size={15} aria-hidden="true" />
+                          Edit
+                        </button>
                       </div>
-                    </div>
-                    <p>{descriptionForFallbackTemplateRow(row)}</p>
-                    <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
-                    <div className="admin-fallback-row-actions">
-                      <button type="button" onClick={() => openTemplateRow("view")} title={`View ${row.content_key} inside the dashboard`}>
-                        <Eye size={15} aria-hidden="true" />
-                        View in dashboard
-                      </button>
-                      <button type="button" onClick={() => openTemplateRow("edit")} title={`Edit ${row.content_key}`}>
-                        <Pencil size={15} aria-hidden="true" />
-                        Edit
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-              {filteredTemplateContentRows.length === 0 && (
-                <p className="admin-empty">No fallback-hook template rows match this section.</p>
-              )}
-            </div>
+                    </article>
+                  );
+                })}
+                {filteredTemplateContentRows.length === 0 && (
+                  <p className="admin-empty">No fallback-hook template rows match this section.</p>
+                )}
+              </div>
+            )}
 
+            {isLunarCoverageSelected && (
             <section className="admin-lunar-coverage" aria-label="Lunar calendar content coverage">
               <div className="admin-lunar-coverage-heading">
                 <div>
@@ -7093,8 +7291,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <p className="admin-template-note">Registered lunar calendar keys are checked against saved rows and vocabulary dependencies. Empty rows are listed without creating content.</p>
               </div>
 
+              <div className="admin-lunar-coverage-filter" role="tablist" aria-label="Lunar content coverage filters">
+                {lunarCoverageFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={lunarCoverageFilter === filter.key ? "active" : ""}
+                    onClick={() => setLunarCoverageFilter(filter.key)}
+                    role="tab"
+                    aria-selected={lunarCoverageFilter === filter.key}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+
               <div className="admin-lunar-coverage-summary" aria-label="Lunar coverage summary">
-                {lunarCoverageSummaries.map((summary) => (
+                {lunarCoverageSummaries.filter((summary) => filteredLunarCoverageGroups.includes(summary.group)).map((summary) => (
                   <article key={summary.group}>
                     <span>{summary.label}</span>
                     <strong>{summary.live} of {summary.total} LIVE</strong>
@@ -7117,7 +7330,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
 
               <div className="admin-lunar-coverage-groups">
-                {lunarCoverageGroups.map((group) => {
+                {filteredLunarCoverageGroups.map((group) => {
                   const definitions = lunarCalendarContentKeyDefinitions.filter((definition) => definition.group === group);
 
                   return (
@@ -7150,7 +7363,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                               </div>
                               <div className="admin-lunar-coverage-row-actions">
                                 <span className={`ui-pill admin-status status-${rowStatus.toLowerCase()}`}>{rowStatus}</span>
-                                <button type="button" onClick={() => openLunarCoverageEditor(row)} disabled={!row}>
+                                <button type="button" onClick={() => void openLunarCoverageEditor(row, definition)}>
                                   <Pencil size={15} aria-hidden="true" />
                                   Edit Row
                                 </button>
@@ -7164,6 +7377,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 })}
               </div>
             </section>
+            )}
 
             {selectedTemplateContentRow && (
               <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedTemplateContentId(null)}>
@@ -7247,18 +7461,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                               <section className="admin-template-rendered-preview" aria-label="Rendered fallback preview">
                                 <article>
                                   <span>Headline</span>
-                                  <h3>{renderedPreview.headline || "No headline template saved."}</h3>
+                                  <h3>{renderedPreview.headline || "No fallback copy saved yet."}</h3>
                                 </article>
                                 <article>
                                   <span>Summary</span>
-                                  <p>{renderedPreview.summary || "No summary template saved."}</p>
+                                  <p>{renderedPreview.summary || "No fallback copy saved yet."}</p>
                                 </article>
                                 <article>
                                   <span>Body</span>
                                   {renderedParagraphs.length > 0 ? (
                                     renderedParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
                                   ) : (
-                                    <p>No body template saved.</p>
+                                    <p>No fallback copy saved yet.</p>
                                   )}
                                 </article>
                               </section>
