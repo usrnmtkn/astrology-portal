@@ -5586,6 +5586,54 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
     }
   }
 
+  async function deleteReviewRecord(record: AdminReviewRecord) {
+    const existingGlobalRowId = savedGlobalRowId(record);
+
+    if (!existingGlobalRowId) {
+      if (!window.confirm("Discard this unsaved content entry?")) {
+        return;
+      }
+
+      setReviewRecords((currentRecords) => currentRecords.filter((currentRecord) => currentRecord.id !== record.id));
+      cancelReviewEdit();
+      setSelectedReviewId(null);
+      setMessage("Discarded unsaved content entry.");
+      return;
+    }
+
+    if (record.status === "LIVE") {
+      setMessage("Demote to DRAFT before deleting.");
+      return;
+    }
+
+    if (!window.confirm("Delete this content row? This cannot be undone.")) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?id=${encodeURIComponent(existingGlobalRowId)}`,
+        secret,
+        { method: "DELETE" }
+      );
+      setReviewRecords((currentRecords) => currentRecords.filter((currentRecord) => currentRecord.id !== record.id));
+      setDraft(createAdminDraft(surface));
+      setSelectedId(null);
+      cancelReviewEdit();
+      setSelectedReviewId(null);
+      setMessage("Deleted content row.");
+      await loadRows();
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not delete content row."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   function showReviewDraftValidationError(record: AdminReviewRecord, message: string, violations: string[] = []) {
     setReviewDraftResults((currentResults) => ({
       ...currentResults,
@@ -7870,6 +7918,26 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           <Check size={16} aria-hidden="true" />
                           Publish
                         </button>
+                        {selectedReviewRecord.source !== "private" && (
+                          <button
+                            className="admin-danger-button"
+                            type="button"
+                            onClick={() => {
+                              void deleteReviewRecord(selectedReviewRecord);
+                            }}
+                            disabled={isLoading || (Boolean(savedGlobalRowId(selectedReviewRecord)) && selectedReviewRecord.status === "LIVE")}
+                            title={
+                              savedGlobalRowId(selectedReviewRecord) && selectedReviewRecord.status === "LIVE"
+                                ? "Demote to DRAFT before deleting."
+                                : savedGlobalRowId(selectedReviewRecord)
+                                  ? "Delete this content row."
+                                  : "Discard this unsaved content entry."
+                            }
+                          >
+                            <Trash2 size={16} aria-hidden="true" />
+                            {savedGlobalRowId(selectedReviewRecord) ? "Delete" : "Discard"}
+                          </button>
+                        )}
                       </div>
                     </div>
 
