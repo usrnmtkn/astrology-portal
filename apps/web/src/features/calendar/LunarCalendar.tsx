@@ -1574,7 +1574,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
                     <>
                       <span aria-hidden="true">·</span>
                       <span className="lunar-selected-card__void-next">
-                        enters
+                        then enters
                         {selectedVoidNextSign.glyph && <span aria-hidden="true">{selectedVoidNextSign.glyph}</span>}
                         {selectedVoidNextSign.sign}
                       </span>
