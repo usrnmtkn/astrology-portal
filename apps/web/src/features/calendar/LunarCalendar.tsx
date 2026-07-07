@@ -390,6 +390,30 @@ function isExactDayEvent(event: LunarCalendarEvent, day: LunarCalendarDay) {
   return event.dateKey === day.dateKey && !isActiveRetrogradeEvent(event);
 }
 
+function removeActiveRetrogradeStationDuplicates(events: LunarCalendarEvent[], day: LunarCalendarDay) {
+  const exactStationPlanets = new Set(
+    events
+      .filter((event) => (
+        event.primary
+        && event.type === "station"
+        && event.planet
+        && event.dateKey === day.dateKey
+        && event.title.toLowerCase().includes("stations")
+      ))
+      .map((event) => event.planet)
+  );
+
+  if (exactStationPlanets.size === 0) {
+    return events;
+  }
+
+  return events.filter((event) => !(
+    isActiveRetrogradeEvent(event)
+    && event.planet
+    && exactStationPlanets.has(event.planet)
+  ));
+}
+
 function selectedDayTransitEvents(
   day: LunarCalendarDay,
   lunarDay: ReturnType<typeof resolveLunarDay> | null,
@@ -398,7 +422,7 @@ function selectedDayTransitEvents(
   const transits = lunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
     ?? selectedEvents.filter(isDayCardSurfaceEvent);
 
-  return [...transits].sort((first, second) => {
+  return removeActiveRetrogradeStationDuplicates([...transits], day).sort((first, second) => {
     const firstIsExact = isExactDayEvent(first, day);
     const secondIsExact = isExactDayEvent(second, day);
 
