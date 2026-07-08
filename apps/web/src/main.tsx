@@ -7,8 +7,8 @@ function isAdminContentPath() {
 
 async function startApp() {
   if (!isAdminContentPath()) {
+    await import("./styles.css");
     await Promise.all([
-      import("./styles.css"),
       import("./styles/responsive.css"),
       import("./styles/card-systems.css")
     ]);
