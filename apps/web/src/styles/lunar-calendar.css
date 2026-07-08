@@ -2267,23 +2267,47 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-milestones button {
-    justify-content: flex-start;
+    display: grid;
+    grid-template:
+      "disc title date" auto
+      "disc title relative" auto / 28px minmax(0, 1fr) auto;
+    justify-content: stretch;
     width: 100%;
     min-width: 0;
+    min-height: 48px;
   }
 
-  .lunar-milestones strong,
-  .lunar-milestones__date,
-  .lunar-milestones__relative {
+  .lunar-milestones .lunar-moon-disc {
+    grid-area: disc;
+  }
+
+  .lunar-milestones strong {
+    grid-area: title;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
+  .lunar-milestones__date,
+  .lunar-milestones__relative {
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lunar-milestones__date {
+    grid-area: date;
+  }
+
+  .lunar-milestones__relative {
+    grid-area: relative;
+  }
+
   .lunar-milestones__separator {
-    min-width: auto;
-    overflow: visible;
+    display: none;
   }
 
   .lunar-selected-card {
