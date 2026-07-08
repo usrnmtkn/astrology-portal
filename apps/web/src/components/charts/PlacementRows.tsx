@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
@@ -505,6 +506,14 @@ export function PlacementTableRow({
     </>
   );
 
+  if (onClick && asButton) {
+    return (
+      <button className={className} type="button" aria-label={ariaLabel ?? title} onClick={onClick}>
+        {content}
+      </button>
+    );
+  }
+
   if (onClick) {
     return (
       <div
@@ -527,7 +536,7 @@ export function PlacementTableRow({
 
   if (asButton) {
     return (
-      <button className={className} type="button" aria-label={ariaLabel ?? title} onClick={onClick}>
+      <button className={className} type="button" aria-label={ariaLabel ?? title}>
         {content}
       </button>
     );
@@ -770,60 +779,63 @@ export function SynastryPlacementsComparison({
   innerIsSelf: boolean;
 }) {
   const innerTitle = innerIsSelf ? "You" : innerName;
+  const outerPlacements = relationshipPlacementPreview(outerSky);
+  const innerPlacements = relationshipPlacementPreview(innerSky);
+  const placementRowCount = Math.max(outerPlacements.length, innerPlacements.length);
 
   return (
     <section className="synastry-placements-comparison" aria-label="Synastry placements comparison">
       <span className="eyebrow section-label friend-section-label">Placements</span>
       <div className="synastry-placement-columns">
-        <SynastryPlacementColumn
-          title={outerName}
-          placements={relationshipPlacementPreview(outerSky)}
-          variant="outer"
-        />
-        <SynastryPlacementColumn
-          title={innerTitle}
-          placements={relationshipPlacementPreview(innerSky)}
-          variant="inner"
-        />
+        <div className="synastry-placement-column-header">
+          <h3>{outerName}</h3>
+        </div>
+        <div className="synastry-placement-column-header">
+          <h3>{innerTitle}</h3>
+        </div>
       </div>
+      {placementRowCount > 0 ? (
+        <div className="synastry-placement-paired-table">
+          {Array.from({ length: placementRowCount }, (_, index) => (
+            <Fragment key={`synastry-placement-pair-${index}`}>
+              <SynastryPlacementCard position={outerPlacements[index] ?? null} variant="outer" />
+              <SynastryPlacementCard position={innerPlacements[index] ?? null} variant="inner" />
+            </Fragment>
+          ))}
+        </div>
+      ) : (
+        <div className="synastry-placement-columns">
+          <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
+          <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
+        </div>
+      )}
     </section>
   );
 }
 
-function SynastryPlacementColumn({
-  title,
-  placements,
+function SynastryPlacementCard({
+  position,
   variant
 }: {
-  title: string;
-  placements: PlanetPosition[];
+  position: PlanetPosition | null;
   variant: "outer" | "inner";
 }) {
+  if (!position) {
+    return <div className={`synastry-placement-row synastry-placement-row-empty synastry-placement-row-${variant}`} aria-hidden="true" />;
+  }
+
   return (
-    <section className={`synastry-placement-column synastry-placement-column-${variant}`}>
-      <div className="synastry-placement-column-header">
-        <h3>{title}</h3>
-      </div>
-      {placements.length > 0 ? (
-        <div className="synastry-placement-table">
-          {placements.map((position) => (
-            <div className={`synastry-placement-row${position.motion === "retrograde" ? " is-retrograde" : ""}`} key={`${variant}-${position.planet}`}>
-              <SynastryPlacementLead position={position} />
-              <span className="synastry-placement-copy">
-                <SynastryPlacementSign sign={position.sign} />
-              </span>
-              <span className="synastry-placement-meta">
-                <span>{formatPlacementDegree(position)}</span>
-                <span aria-hidden="true">·</span>
-                <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
-      )}
-    </section>
+    <div className={`synastry-placement-row synastry-placement-row-${variant}${position.motion === "retrograde" ? " is-retrograde" : ""}`}>
+      <SynastryPlacementLead position={position} />
+      <span className="synastry-placement-copy">
+        <SynastryPlacementSign sign={position.sign} />
+      </span>
+      <span className="synastry-placement-meta">
+        <span>{formatPlacementDegree(position)}</span>
+        <span aria-hidden="true">·</span>
+        <span>{typeof position.house === "number" ? `H${position.house}` : "H-"}</span>
+      </span>
+    </div>
   );
 }
 

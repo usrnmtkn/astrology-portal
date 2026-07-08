@@ -989,16 +989,9 @@
     line-height: 1;
   }
 
-  .mode-guest .sky-intro__lead-desktop,
-  .mode-member .sky-intro__lead-desktop,
   .mode-guest .today-controls,
   .mode-member .today-controls {
     display: none;
-  }
-
-  .mode-guest .sky-intro__lead-mobile,
-  .mode-member .sky-intro__lead-mobile {
-    display: inline;
   }
 
   .mode-guest .mobile-full-chart-card,
@@ -1267,6 +1260,7 @@
   .signup-grid,
   .manual-chart-grid,
   .synastry-placement-columns,
+  .synastry-placement-paired-table,
   .synastry-placement-strip,
   .friend-placement-table,
   .friend-placement-column-compact .friend-placement-table {

@@ -59,6 +59,7 @@ import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContex
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
   SkyAspectGroup,
@@ -742,6 +743,34 @@ function planetTopicSlot(planet: string, variant: PlanetTopicVariant = "natal") 
   return planetTopicPhrase(planet, variant);
 }
 
+const relationshipPlanetTopicFallbacks: Record<string, string> = {
+  Sun: "identity and direction",
+  Moon: "needs and reactions",
+  Mercury: "thinking and communication",
+  Venus: "connection, pleasure, money, and desire",
+  Mars: "action, desire, and conflict",
+  Jupiter: "growth, meaning, and opportunity",
+  Saturn: "commitment, limits, timing, and responsibility",
+  Uranus: "change, disruption, and freedom",
+  Neptune: "sensitivity, ideals, uncertainty, and escape",
+  Pluto: "control, power, endings, and deeper pressure",
+  Chiron: "old tenderness, repair, and sensitive places",
+  Ascendant: "presence and first impression",
+  Midheaven: "visibility, direction, and public role",
+  "North Node": "direction, appetite, growth, and old patterns",
+  "True Node": "direction, appetite, growth, and old patterns"
+};
+
+function relationshipPlanetTopicSlot(planet: string, variant: PlanetTopicVariant = "friend") {
+  const phrase = planetTopicSlot(planet, variant).trim();
+
+  if (!phrase || /^(how|where|what)\s+(a person|someone|you|your)\b/i.test(phrase)) {
+    return relationshipPlanetTopicFallbacks[planet] ?? phrase;
+  }
+
+  return phrase;
+}
+
 function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
   return {
     planet: position.planet,
@@ -777,9 +806,9 @@ function aspectTemplateSlots(
   return {
     aspect: titleCase(aspect).toLowerCase(),
     planetA: firstPoint,
-    planetATopic: planetTopicSlot(firstPoint, variant),
+    planetATopic: variant === "friend" ? relationshipPlanetTopicSlot(firstPoint, variant) : planetTopicSlot(firstPoint, variant),
     planetB: secondPoint,
-    planetBTopic: planetTopicSlot(secondPoint, variant)
+    planetBTopic: variant === "friend" ? relationshipPlanetTopicSlot(secondPoint, variant) : planetTopicSlot(secondPoint, variant)
   };
 }
 
@@ -843,11 +872,11 @@ function synastryTemplateSlots(
   return {
     personA,
     planetA,
-    planetATopic: planetTopicSlot(planetA, variant),
+    planetATopic: relationshipPlanetTopicSlot(planetA, variant),
     aspect: titleCase(aspect).toLowerCase(),
     personB,
     planetB,
-    planetBTopic: planetTopicSlot(planetB, variant)
+    planetBTopic: relationshipPlanetTopicSlot(planetB, variant)
   };
 }
 
@@ -861,7 +890,7 @@ function houseOverlayTemplateSlots(
   return {
     personA,
     planet,
-    planetTopic: planetTopicSlot(planet, variant),
+    planetTopic: relationshipPlanetTopicSlot(planet, variant),
     personB,
     house: ordinalHouse(house),
     houseLifeArea: houseLifeAreas[house] ?? readableHouseTopic(house)
@@ -871,7 +900,7 @@ function houseOverlayTemplateSlots(
 function compositePlacementTemplateSlots(position: { planet: string; sign: string; house?: number | null }): TemplateSlotValues {
   return {
     planet: position.planet,
-    planetTopic: planetTopicSlot(position.planet),
+    planetTopic: relationshipPlanetTopicSlot(position.planet, "friend"),
     sign: position.sign,
     signStyle: signStyleSlot(position.sign),
     house: position.house ? ordinalHouse(position.house) : ""
@@ -1572,11 +1601,38 @@ function parseFriendsTab(value: string | null): FriendsTab {
   return value === "charts" || value === "circle" ? value : "circle";
 }
 
+function parseFriendProfileTab(value: string | null): FriendProfileTab {
+  return value === "synastry" || value === "composite" || value === "natal" ? value : "natal";
+}
+
 function friendsHashParts(hash: string) {
   const cleanHash = hash.replace(/^#/, "");
   const [path = "", query = ""] = cleanHash.split("?");
 
   return { path, params: new URLSearchParams(query) };
+}
+
+function friendsRouteStateFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const { path, params } = friendsHashParts(url.hash);
+    const routeParams = url.pathname === "/friends" ? url.searchParams : path === "friends" ? params : null;
+
+    if (!routeParams) {
+      return null;
+    }
+
+    const chartId = routeParams.get("chart");
+
+    return {
+      tab: parseFriendsTab(routeParams.get("tab")),
+      chartId,
+      view: parseFriendProfileTab(routeParams.get("view")),
+      detail: routeParams.get("detail")
+    };
+  } catch {
+    return null;
+  }
 }
 
 function portalModeFromHashPath(path: string): PortalMode | null {
@@ -1784,10 +1840,16 @@ function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push")
 
     if (url.pathname === "/friends") {
       url.searchParams.set("tab", tab);
+      url.searchParams.delete("chart");
+      url.searchParams.delete("view");
+      url.searchParams.delete("detail");
     } else {
       const { path, params } = friendsHashParts(url.hash);
       const nextParams = path === "friends" ? params : new URLSearchParams();
       nextParams.set("tab", tab);
+      nextParams.delete("chart");
+      nextParams.delete("view");
+      nextParams.delete("detail");
       url.hash = `friends?${nextParams.toString()}`;
     }
 
@@ -1795,6 +1857,46 @@ function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push")
   } catch {
     // URL state is an enhancement; keep the tab usable if history is unavailable.
   }
+}
+
+function updateFriendProfileUrl(chartId: string, view: FriendProfileTab = "natal", mode: "push" | "replace" = "push", detail?: string | null) {
+  try {
+    const url = new URL(window.location.href);
+
+    if (url.pathname === "/friends") {
+      url.searchParams.set("tab", "charts");
+      url.searchParams.set("chart", chartId);
+      url.searchParams.set("view", view);
+      if (detail) {
+        url.searchParams.set("detail", detail);
+      } else {
+        url.searchParams.delete("detail");
+      }
+    } else {
+      const nextParams = new URLSearchParams();
+      nextParams.set("tab", "charts");
+      nextParams.set("chart", chartId);
+      nextParams.set("view", view);
+      if (detail) {
+        nextParams.set("detail", detail);
+      }
+      url.hash = `friends?${nextParams.toString()}`;
+    }
+
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep the friend profile usable if history is unavailable.
+  }
+}
+
+function friendDetailRoutePath(chartId: string, view: FriendProfileTab, detail: string) {
+  const params = new URLSearchParams();
+  params.set("tab", "charts");
+  params.set("chart", chartId);
+  params.set("view", view);
+  params.set("detail", detail);
+
+  return `friends?${params.toString()}`;
 }
 
 function storePortalMode(mode: PortalMode) {
@@ -7132,6 +7234,37 @@ function relationshipGeneratedCopyForPerspective(text: string, primaryName: stri
     .replace(/\byou\b/g, pair);
 }
 
+function repairRelationshipFallbackGrammar(text: string) {
+  const repairedText = Object.entries({
+    "how a person thinks, learns, communicates, decides, and exchanges information": relationshipPlanetTopicFallbacks.Mercury,
+    "how a person thinks, learns, communicates, and makes decisions": relationshipPlanetTopicFallbacks.Mercury,
+    "how a person connects, attracts, chooses, values, and receives pleasure": relationshipPlanetTopicFallbacks.Venus,
+    "how a person acts, wants, pursues, initiates, and handles friction": relationshipPlanetTopicFallbacks.Mars,
+    "how a person grows, believes, trusts, seeks meaning, and opens to possibility": relationshipPlanetTopicFallbacks.Jupiter,
+    "how a person handles limits, time, pressure, commitment, and responsibility": relationshipPlanetTopicFallbacks.Saturn,
+    "how a person changes, breaks patterns, seeks freedom, and handles disruption": relationshipPlanetTopicFallbacks.Uranus,
+    "how a person imagines, dissolves, idealizes, senses, and escapes": relationshipPlanetTopicFallbacks.Neptune,
+    "how a person handles power, control, endings, intensity, and deep pressure": relationshipPlanetTopicFallbacks.Pluto,
+    "where a person feels tender, exposed, or ready for repair": relationshipPlanetTopicFallbacks.Chiron,
+    "where a person is being pulled toward growth, appetite, and new direction": relationshipPlanetTopicFallbacks["North Node"],
+    "what a person needs, remembers, protects, and reacts from": relationshipPlanetTopicFallbacks.Moon,
+    "what a person is becoming, expressing, centering, and radiating": relationshipPlanetTopicFallbacks.Sun,
+    "how a person enters a room, meets life, and is first perceived": relationshipPlanetTopicFallbacks.Ascendant,
+    "where a person is visible, directed, and publicly oriented": relationshipPlanetTopicFallbacks.Midheaven
+  }).reduce((currentText, [fragment, replacement]) => (
+    currentText.replace(new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), replacement)
+  ), text);
+
+  return repairedText
+    .replace(/\b(A|B)'s ([^.!?]{0,80}\band\b[^.!?]{0,80}) meets\b/g, "$1's $2 meet")
+    .replace(/\b(A|B)'s (dreams|feelings|needs|drives|values|ideas|beliefs|limits|patterns|wounds|sensitivities) meets\b/gi, "$1's $2 meet")
+    .replace(/\bdescribes how how\b/gi, "describes how")
+    .replace(/\bOne person's how a person\b/gi, "One person's")
+    .replace(/\bthe other person's how a person\b/gi, "the other person's")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function synastryContactSummary(
   friendName: string,
   comparisonName: string,
@@ -7153,12 +7286,12 @@ function synastryContactSummary(
     : null;
   const generatedPreview = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || null;
 
-  return relationshipGeneratedCopyForPerspective(
+  return repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(
     textPreview(generatedPreview || ""),
     friendName,
     comparisonName,
     comparisonIsSelf
-  );
+  ));
 }
 
 function synastryContacts(
@@ -7219,11 +7352,13 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
   const generatedParagraphs = generatedContentParagraphs(generated);
 
   if (generatedParagraphs.length > 0) {
-    return generatedParagraphs.map((paragraph) => relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf));
+    return generatedParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+    ));
   }
 
   return liveGeneratedBody(generated, hookFallback.detailParagraphs).map((paragraph) => (
-    relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+    repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf))
   ));
 }
 
@@ -7494,10 +7629,14 @@ function compositeAspectSummary(
     : null;
 
   if (generated) {
-    return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf);
+    return repairRelationshipFallbackGrammar(
+      relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf)
+    );
   }
 
-  return relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, hookFallback.summary), chartName, comparisonName, comparisonIsSelf);
+  return repairRelationshipFallbackGrammar(
+    relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, hookFallback.summary), chartName, comparisonName, comparisonIsSelf)
+  );
 }
 
 function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedContentMap): SocialPlacementRow[] {
@@ -7519,12 +7658,12 @@ function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedCo
         afterContentFallback: { summary: row.description }
       }
     );
-    const description = relationshipGeneratedCopyForPerspective(
+    const description = repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(
       liveGeneratedSummary(generated, row.description ?? ""),
       "the relationship",
       "you",
       true
-    );
+    ));
 
     return description ? { ...row, description } : row;
   });
@@ -8242,8 +8381,22 @@ export function App() {
   }
 
   function closeSkyDetail() {
+    const routePath = selectedSkyDetail?.routePath;
+
     setSelectedSkyDetail(null);
     setSkyDetailRoutePath(null);
+    if (routePath?.startsWith("friends?")) {
+      const { params } = friendsHashParts(`#${routePath}`);
+      const chartId = params.get("chart");
+
+      if (chartId) {
+        updateFriendProfileUrl(chartId, parseFriendProfileTab(params.get("view")), "push");
+        storePortalMode("friends");
+        setMode("friends");
+        return;
+      }
+    }
+
     updatePortalModeUrl(userProfile ? "member" : "guest", "push");
   }
 
@@ -8304,7 +8457,7 @@ export function App() {
   }, [userProfile]);
 
   useEffect(() => {
-    if (!skyDetailRoutePath || !sky) {
+    if (!skyDetailRoutePath?.startsWith("sky/") || !sky) {
       return;
     }
 
@@ -8734,10 +8887,6 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (mode === "friends") {
-      return;
-    }
-
     let cancelled = false;
     const skyLocation = withTimeZone(location);
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, new Date(skyRefreshKey));
@@ -10058,10 +10207,7 @@ export function App() {
                 <SkyRoute>
                   <section className="today-hero" aria-label="Today controls">
                     <div className="sky-intro">
-                      <h1 className="sky-intro__lead">
-                        <span className="sky-intro__lead-desktop">{formatSkyHeroTitle()}</span>
-                        <span className="sky-intro__lead-mobile">The sky today.</span>
-                      </h1>
+                      <h1 className="sky-intro__lead">{formatSkyHeroTitle()}</h1>
                       <p className="sky-intro__copy">
                         What is up there today, and what it means down here.
                       </p>
@@ -10241,7 +10387,7 @@ export function App() {
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={Boolean(remoteAccountId) || authAccountChecked}
-                    onOpenDetail={setSelectedSkyDetail}
+                    onOpenDetail={openSkyDetail}
                   />
                 </FriendsRoute>
               )}
@@ -14613,6 +14759,7 @@ function ProfileView({
   }, [activePlacementRouteId, generatedContent, natalSky, placementWriteups, routeableNatalPositions.map(natalPlacementRouteId).join("|")]);
   const bigThreeRows = [
     <PlacementTableRow
+      asButton={Boolean(natalSun)}
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
       description={natalCardTagline("Sun")}
       dignity={natalSun ? placementDignity(natalSun) : null}
@@ -14626,6 +14773,7 @@ function ProfileView({
       key="sun"
     />,
     <PlacementTableRow
+      asButton={Boolean(natalMoon)}
       degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
       description={natalCardTagline("Moon")}
       dignity={natalMoon ? placementDignity(natalMoon) : null}
@@ -14668,6 +14816,7 @@ function ProfileView({
     return (
       <PlacementTableRow
         ariaLabel={`Read more about ${emptyHouseTitle(house, natalSky)}`}
+        asButton
         description={emptyHouseCardDescription(house, natalSky)}
         glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
         house={house}
@@ -14986,6 +15135,7 @@ function ManualChartsPanel({
   const [relationshipCompareStatus, setRelationshipCompareStatus] = useState<RelationshipCompareStatus>("idle");
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
+  const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">(
     () => initialCachedCharts.length > 0 ? "idle" : "loading"
   );
@@ -15119,6 +15269,11 @@ function ManualChartsPanel({
     });
 
     onOpenDetail({
+      routePath: selectedChart ? friendDetailRoutePath(
+        selectedChart.id,
+        friendProfileTab,
+        `natal-aspect-${normalizeContentIdPart(aspect.from)}-${normalizeContentIdPart(aspect.type)}-${normalizeContentIdPart(aspect.to)}`
+      ) : undefined,
       glyph: article.glyph || pointGlyph(aspect.from),
       kicker: "",
       title: article.title,
@@ -15149,7 +15304,8 @@ function ManualChartsPanel({
     const contentKey = natalPlacementWriteupContentKey(position);
     const liveWriteup = friendGeneratedContent.get(contentKey) ?? null;
 
-    onOpenDetail(natalPlacementSkyDetail(
+    onOpenDetail({
+      ...natalPlacementSkyDetail(
       position,
       selectedChart.natalChart,
       liveWriteup,
@@ -15159,7 +15315,9 @@ function ManualChartsPanel({
         ownerName: selectedChart.displayName,
         ownerKind: selectedChartIsEvent ? "chart" : "person"
       }
-    ));
+      ),
+      routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `natal-placement-${normalizeContentIdPart(position.planet)}`)
+    });
   };
   const openFriendEmptyHouseDetail = (house: number) => {
     if (!selectedChart?.natalChart) {
@@ -15169,6 +15327,7 @@ function ManualChartsPanel({
     const article = emptyHouseDetailArticle(house, selectedChart.natalChart, "friend", selectedChart.displayName);
 
     onOpenDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `empty-house-${house}`),
       glyph: article.glyph || "○",
       kicker: "",
       title: article.title,
@@ -15201,29 +15360,60 @@ function ManualChartsPanel({
     updateFriendsTabUrl(nextTab, historyMode);
   }
 
-  useEffect(() => {
-    const nextTab = initialFriendsTab();
-    storeFriendsTab(nextTab);
-    setFriendsMainView(nextTab);
-    setSelectedChartId(null);
-    setFriendProfileTab("natal");
-    setRelationshipChartFullscreenMode(null);
-    setRelationshipComparisonChartId("self");
-    setRelationshipComparisonPickerOpen(false);
+  function applyFriendsRouteStateFromUrl() {
+    const routeState = friendsRouteStateFromUrl();
+
+    if (!routeState) {
+      return false;
+    }
+
+    storeFriendsTab(routeState.tab);
     setOpenChartMenuId(null);
-    updateFriendsTabUrl(nextTab, "replace");
-  }, [landingKey]);
+    setRelationshipComparisonPickerOpen(false);
+
+    if (routeState.chartId) {
+      setFriendsMainView("profile");
+      setSelectedChartId(routeState.chartId);
+      setFriendProfileTab(routeState.view);
+      setRelationshipComparisonChartId("self");
+    } else {
+      setFriendsMainView(routeState.tab);
+      setSelectedChartId(null);
+      setFriendProfileTab("natal");
+      setRelationshipComparisonChartId("self");
+      setRelationshipChartFullscreenMode(null);
+    }
+
+    return true;
+  }
 
   useEffect(() => {
-    function handlePopState() {
+    if (!applyFriendsRouteStateFromUrl()) {
       const nextTab = initialFriendsTab();
       storeFriendsTab(nextTab);
       setFriendsMainView(nextTab);
       setSelectedChartId(null);
       setFriendProfileTab("natal");
       setRelationshipChartFullscreenMode(null);
+      setRelationshipComparisonChartId("self");
       setRelationshipComparisonPickerOpen(false);
       setOpenChartMenuId(null);
+      updateFriendsTabUrl(nextTab, "replace");
+    }
+  }, [landingKey]);
+
+  useEffect(() => {
+    function handlePopState() {
+      if (!applyFriendsRouteStateFromUrl()) {
+        const nextTab = initialFriendsTab();
+        storeFriendsTab(nextTab);
+        setFriendsMainView(nextTab);
+        setSelectedChartId(null);
+        setFriendProfileTab("natal");
+        setRelationshipChartFullscreenMode(null);
+        setRelationshipComparisonPickerOpen(false);
+        setOpenChartMenuId(null);
+      }
     }
 
     window.addEventListener("popstate", handlePopState);
@@ -15535,6 +15725,11 @@ function ManualChartsPanel({
     setFriendChartModalOpen(true);
   }
 
+  function requestDeleteChart(chart: ManualChart) {
+    setOpenChartMenuId(null);
+    setDeleteCandidateChart(chart);
+  }
+
   function openFriendProfile(chart: ManualChart) {
     setOpenChartMenuId(null);
     setSelectedChartId(chart.id);
@@ -15542,6 +15737,14 @@ function ManualChartsPanel({
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setFriendsMainView("profile");
+    updateFriendProfileUrl(chart.id, "natal");
+  }
+
+  function changeFriendProfileTab(tab: FriendProfileTab) {
+    setFriendProfileTab(tab);
+    if (selectedChart) {
+      updateFriendProfileUrl(selectedChart.id, tab);
+    }
   }
 
   function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
@@ -15620,6 +15823,7 @@ function ManualChartsPanel({
       setFriendProfileTab("natal");
       setRelationshipComparisonChartId("self");
       setRelationshipComparisonPickerOpen(false);
+      updateFriendProfileUrl(savedChart.id, "natal", "replace");
       resetForm(editingChartId ? "Chart updated." : "Chart created.");
       setFriendChartModalOpen(false);
     } catch (error) {
@@ -15651,6 +15855,7 @@ function ManualChartsPanel({
         resetForm();
       }
       setMessage("Chart deleted.");
+      setDeleteCandidateChart(null);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not delete chart.");
     } finally {
@@ -15689,7 +15894,7 @@ function ManualChartsPanel({
           showMessage={!friendChartModalOpen}
           onAddBirthTime={addBirthTime}
           onAddChart={openAddChartModal}
-          onDeleteChart={removeChart}
+          onDeleteChart={requestDeleteChart}
           onEditChart={editChart}
           onOpenChart={openFriendProfile}
           onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
@@ -15723,6 +15928,53 @@ function ManualChartsPanel({
           onFieldChange={updateField}
           onSubmit={saveManualChart}
         />
+      )}
+      {deleteCandidateChart && (
+        <ModalPortal
+          className="friend-chart-delete-modal-root"
+          panelClassName="chart-modal friend-chart-delete-modal add-chart-modal"
+          titleId="friend-chart-delete-title"
+          width="440px"
+          onClose={() => {
+            if (status !== "deleting") {
+              setDeleteCandidateChart(null);
+            }
+          }}
+        >
+          <section className="manual-chart-form friend-chart-delete-form add-chart-form">
+            <button
+              className="chart-modal-close modal-close add-chart-modal__close"
+              type="button"
+              aria-label="Close"
+              disabled={status === "deleting"}
+              onClick={() => setDeleteCandidateChart(null)}
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
+            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
+              <h2 id="friend-chart-delete-title">Delete {deleteCandidateChart.displayName}?</h2>
+              <p className="add-chart-modal__subtitle">This removes the saved chart and cannot be undone.</p>
+            </div>
+            <div className="modal-actions friend-chart-delete-actions">
+              <button
+                className="secondary-button"
+                type="button"
+                disabled={status === "deleting"}
+                onClick={() => setDeleteCandidateChart(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="manual-chart-save manual-chart-delete-confirm"
+                type="button"
+                disabled={status === "deleting"}
+                onClick={() => void removeChart(deleteCandidateChart)}
+              >
+                {status === "deleting" ? "Deleting..." : "Delete chart"}
+              </button>
+            </div>
+          </section>
+        </ModalPortal>
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
         relationshipChartFullscreenMode === "synastry" && selectedChart.natalChart && relationshipComparisonSky ? (
@@ -15875,7 +16127,7 @@ function ManualChartsPanel({
           moon={selectedFriendBigThree?.moon ?? "Pending"}
           name={selectedChart.displayName}
           onEdit={() => editChart(selectedChart)}
-          onTabChange={(tab) => setFriendProfileTab(tab)}
+          onTabChange={changeFriendProfileTab}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}
           sun={selectedFriendBigThree?.sun ?? "Pending"}
         >
@@ -15900,6 +16152,7 @@ function ManualChartsPanel({
 
                     return (
                       <PlacementTableRow
+                        asButton={canOpenDetail}
                         description={body}
                         dignity={dignitiesFor(row.label, row.sign)}
                         glyph={row.glyph}
@@ -15942,6 +16195,7 @@ function ManualChartsPanel({
                             return (
                               <PlacementTableRow
                                 ariaLabel={`Read more about ${emptyHouseTitle(house, friendNatalChart)}`}
+                                asButton
                                 description={emptyHouseCardDescription(house, friendNatalChart, "friend", selectedChart.displayName)}
                                 glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
                                 house={house}
@@ -16056,6 +16310,7 @@ function ManualChartsPanel({
                         key={contact.id}
                         aria-label={`Open full entry for ${title}`}
                         onClick={() => onOpenDetail({
+                          routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `synastry-${contact.id}`),
                           glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
                           kicker: "Synastry",
                           title,
