@@ -8,7 +8,6 @@
 }
 
 .detail-panel {
-  grid-column: 2;
   display: flex;
   flex-direction: column;
   min-width: 0;
