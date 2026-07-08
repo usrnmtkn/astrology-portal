@@ -75,6 +75,7 @@ type SavedContentRow = {
   facts: Record<string, unknown> | null;
   source_snapshot: Record<string, unknown> | null;
   reviewer_notes: string | null;
+  provider: string | null;
   model: string | null;
   updated_at: string;
 };
@@ -119,6 +120,11 @@ type ReviewRecord = {
   provider?: string | null;
   model?: string | null;
   updatedAt: string;
+};
+
+type ReviewRecordsResult = {
+  records: ReviewRecord[];
+  warnings: string[];
 };
 
 type CalculatedAspect = {
@@ -438,6 +444,25 @@ async function skyForDate(date: Date): Promise<SkySnapshot> {
   }
 }
 
+async function skySnapshotsForDates(dates: Date[]) {
+  const results = await Promise.allSettled(dates.map((date) => skyForDate(date)));
+  const warnings: string[] = [];
+  const entries: Array<{ date: Date; sky: SkySnapshot }> = [];
+
+  results.forEach((result, index) => {
+    if (result.status === "fulfilled") {
+      entries.push({ date: dates[index], sky: result.value });
+      return;
+    }
+
+    const dateLabel = dateOnly(dates[index]);
+    const reason = result.reason instanceof Error ? result.reason.message : "Unknown sky calculation error.";
+    warnings.push(`${dateLabel}: ${reason}`);
+  });
+
+  return { entries, warnings };
+}
+
 function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurface) {
   if (surface === "upcomingAspects") {
     return row.surface === "sky";
@@ -456,7 +481,7 @@ function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurfa
 
 async function savedContentRows(startDate?: string | null, endDate?: string | null) {
   const params = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,model,updated_at",
+    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,provider,model,updated_at",
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: "5000"
   });
@@ -480,7 +505,7 @@ async function savedContentRows(startDate?: string | null, endDate?: string | nu
 
   const rows = (payload ?? []) as SavedContentRow[];
   const fallbackParams = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,model,updated_at",
+    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,reviewer_notes,provider,model,updated_at",
     content_key: "like.fallback-hook/*",
     order: "content_key.asc",
     limit: "500"
@@ -491,7 +516,8 @@ async function savedContentRows(startDate?: string | null, endDate?: string | nu
   const fallbackPayload = await fallbackResponse.json().catch(() => null);
 
   if (!fallbackResponse.ok) {
-    throw new Error(`Supabase fallback template list failed with ${fallbackResponse.status}: ${JSON.stringify(fallbackPayload)}`);
+    console.warn(`Supabase fallback template list failed with ${fallbackResponse.status}: ${JSON.stringify(fallbackPayload)}`);
+    return rows;
   }
 
   const byId = new Map(rows.map((row) => [row.id, row]));
@@ -522,6 +548,7 @@ function savedReviewRecord(row: SavedContentRow): ReviewRecord {
     facts: row.facts,
     sourceSnapshot: row.source_snapshot,
     reviewerNotes: row.reviewer_notes,
+    provider: row.provider,
     model: row.model,
     updatedAt: row.updated_at
   };
@@ -643,7 +670,7 @@ function skyAspectSummary(aspect: { from: string; type: string; to: string }) {
   return `${aspect.from} ${aspect.type} ${aspect.to} is active in the selected sky window.`;
 }
 
-async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<string, SavedContentRow>) {
+async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<string, SavedContentRow>): Promise<ReviewRecordsResult> {
   const byAspect = new Map<string, {
     aspect: CalculatedAspect;
     targetDate: string;
@@ -652,9 +679,10 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
     nextOrb: number | null;
   }>();
   const dates = datesInRange(start, end);
-  const skies = await Promise.all(dates.map((date) => skyForDate(date)));
+  const { entries, warnings } = await skySnapshotsForDates(dates);
+  const skies = entries.map((entry) => entry.sky);
 
-  skies.forEach((sky, index) => {
+  entries.forEach(({ date, sky }, index) => {
     calculatedAspectsForPositions(sky.positions).forEach((aspect) => {
       const key = [aspect.from, aspect.type, aspect.to].map(slug).join("-");
       const existing = byAspect.get(key);
@@ -667,7 +695,7 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
 
         byAspect.set(key, {
           aspect,
-          targetDate: dateOnly(dates[index]),
+          targetDate: dateOnly(date),
           orb: aspect.orb,
           previousOrb,
           nextOrb
@@ -676,45 +704,48 @@ async function upcomingAspectRecords(start: Date, end: Date, savedRows: Map<stri
     });
   });
 
-  return Array.from(byAspect.values())
-    .sort((first, second) => first.targetDate.localeCompare(second.targetDate) || first.orb - second.orb)
-    .map((entry) => {
-      const direction = entry.nextOrb !== null && entry.nextOrb < entry.orb ? "applying" : entry.previousOrb !== null && entry.previousOrb < entry.orb ? "separating" : entry.orb <= 0.3 ? "exact" : "forming";
-      const contentKey = aspectContentKey(entry.aspect, entry.targetDate);
-      const baseRecord: ReviewRecord = {
-        id: `calculated:${contentKey}`,
-        source: "calculated",
-        surface: "sky",
-        status: "DRAFT",
-        mode: "feed",
-        title: `${entry.aspect.from} ${entry.aspect.type} ${entry.aspect.to}`,
-        subtitle: `${entry.targetDate} · ${direction} · ${entry.orb.toFixed(1)}° orb`,
-        targetDate: entry.targetDate,
-        contentKey,
-        eventType: "current-aspect",
-        summary: skyAspectSummary(entry.aspect),
-        body: "",
-        sections: [],
-        blockType: "sky_aspect",
-        facts: {
+  return {
+    records: Array.from(byAspect.values())
+      .sort((first, second) => first.targetDate.localeCompare(second.targetDate) || first.orb - second.orb)
+      .map((entry) => {
+        const direction = entry.nextOrb !== null && entry.nextOrb < entry.orb ? "applying" : entry.previousOrb !== null && entry.previousOrb < entry.orb ? "separating" : entry.orb <= 0.3 ? "exact" : "forming";
+        const contentKey = aspectContentKey(entry.aspect, entry.targetDate);
+        const baseRecord: ReviewRecord = {
+          id: `calculated:${contentKey}`,
+          source: "calculated",
+          surface: "sky",
+          status: "DRAFT",
+          mode: "feed",
+          title: `${entry.aspect.from} ${entry.aspect.type} ${entry.aspect.to}`,
+          subtitle: `${entry.targetDate} · ${direction} · ${entry.orb.toFixed(1)}° orb`,
+          targetDate: entry.targetDate,
+          contentKey,
+          eventType: "current-aspect",
+          summary: skyAspectSummary(entry.aspect),
+          body: "",
+          sections: [],
           blockType: "sky_aspect",
-          type: "upcoming_aspect",
-          from: entry.aspect.from,
-          fromSign: entry.aspect.fromSign,
-          to: entry.aspect.to,
-          toSign: entry.aspect.toSign,
-          aspect: entry.aspect.type,
-          exactDate: entry.targetDate,
-          direction,
-          orb: entry.orb
-        },
-        sourceSnapshot: null,
-        reviewerNotes: null,
-        updatedAt: new Date().toISOString()
-      };
+          facts: {
+            blockType: "sky_aspect",
+            type: "upcoming_aspect",
+            from: entry.aspect.from,
+            fromSign: entry.aspect.fromSign,
+            to: entry.aspect.to,
+            toSign: entry.aspect.toSign,
+            aspect: entry.aspect.type,
+            exactDate: entry.targetDate,
+            direction,
+            orb: entry.orb
+          },
+          sourceSnapshot: null,
+          reviewerNotes: null,
+          updatedAt: new Date().toISOString()
+        };
 
-      return mergeSaved(baseRecord, savedRows.get(contentKey));
-    });
+        return mergeSaved(baseRecord, savedRows.get(contentKey));
+      }),
+    warnings
+  };
 }
 
 async function findManualCharts(query: string) {
@@ -755,7 +786,7 @@ function chartNeedsNatal(chart: ManualChartRow) {
   return chart.natal_chart;
 }
 
-async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow, savedRows: Map<string, SavedContentRow>) {
+async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow, savedRows: Map<string, SavedContentRow>): Promise<ReviewRecordsResult> {
   const natal = chartNeedsNatal(chart);
   const byTransit = new Map<string, {
     transit: PlanetPosition;
@@ -763,7 +794,8 @@ async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow
     aspect: ReturnType<typeof aspectForPositions>;
     targetDate: string;
   }>();
-  const skies = await Promise.all(datesInRange(start, end).map((date) => skyForDate(date)));
+  const { entries, warnings } = await skySnapshotsForDates(datesInRange(start, end));
+  const skies = entries.map((entry) => entry.sky);
 
   skies.forEach((sky) => {
     sky.positions.forEach((transitPosition) => {
@@ -789,52 +821,55 @@ async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow
     });
   });
 
-  return Array.from(byTransit.values())
-    .sort((first, second) => first.targetDate.localeCompare(second.targetDate) || ((first.aspect?.orbValue ?? 0) - (second.aspect?.orbValue ?? 0)))
-    .map((entry) => {
-      const aspect = entry.aspect;
-      const contentKey = transitNatalContentKey(entry.transit.planet, aspect?.type ?? "contact", entry.natal.planet, entry.targetDate, {
-        transitSign: entry.transit.sign,
-        natalSign: entry.natal.sign,
-        natalHouse: entry.natal.house
-      });
-      const baseRecord: ReviewRecord = {
-        id: `calculated:${contentKey}`,
-        source: "calculated",
-        surface: "you",
-        status: "DRAFT",
-        mode: "article",
-        title: `${entry.transit.planet} ${aspect?.type ?? "contacts"} ${chart.display_name}'s ${entry.natal.planet}`,
-        subtitle: `${entry.targetDate} · ${entry.transit.sign} to natal ${entry.natal.sign} · ${(aspect?.orbValue ?? 0).toFixed(1)}° orb`,
-        targetDate: entry.targetDate,
-        contentKey,
-        eventType: "transit-to-natal",
-        summary: `${entry.transit.planet} ${aspect?.type ?? "contacts"} ${entry.natal.planet} activates ${chart.display_name}'s ${entry.natal.planet} pattern in the selected window.`,
-        body: "",
-        sections: [],
-        blockType: "transit_to_natal_aspect",
-        facts: {
-          blockType: "transit_to_natal_aspect",
-          type: "transit_to_natal",
-          transitPlanet: entry.transit.planet,
+  return {
+    records: Array.from(byTransit.values())
+      .sort((first, second) => first.targetDate.localeCompare(second.targetDate) || ((first.aspect?.orbValue ?? 0) - (second.aspect?.orbValue ?? 0)))
+      .map((entry) => {
+        const aspect = entry.aspect;
+        const contentKey = transitNatalContentKey(entry.transit.planet, aspect?.type ?? "contact", entry.natal.planet, entry.targetDate, {
           transitSign: entry.transit.sign,
-          aspect: aspect?.type,
-          natalPoint: entry.natal.planet,
           natalSign: entry.natal.sign,
-          natalHouse: entry.natal.house,
-          exactDate: entry.targetDate,
-          orb: aspect?.orbValue
-        },
-        sourceSnapshot: null,
-        reviewerNotes: null,
-        subjectId: chart.id,
-        subjectType: "manual_chart",
-        userId: chart.owner_user_id,
-        updatedAt: new Date().toISOString()
-      };
+          natalHouse: entry.natal.house
+        });
+        const baseRecord: ReviewRecord = {
+          id: `calculated:${contentKey}`,
+          source: "calculated",
+          surface: "you",
+          status: "DRAFT",
+          mode: "article",
+          title: `${entry.transit.planet} ${aspect?.type ?? "contacts"} ${chart.display_name}'s ${entry.natal.planet}`,
+          subtitle: `${entry.targetDate} · ${entry.transit.sign} to natal ${entry.natal.sign} · ${(aspect?.orbValue ?? 0).toFixed(1)}° orb`,
+          targetDate: entry.targetDate,
+          contentKey,
+          eventType: "transit-to-natal",
+          summary: `${entry.transit.planet} ${aspect?.type ?? "contacts"} ${entry.natal.planet} activates ${chart.display_name}'s ${entry.natal.planet} pattern in the selected window.`,
+          body: "",
+          sections: [],
+          blockType: "transit_to_natal_aspect",
+          facts: {
+            blockType: "transit_to_natal_aspect",
+            type: "transit_to_natal",
+            transitPlanet: entry.transit.planet,
+            transitSign: entry.transit.sign,
+            aspect: aspect?.type,
+            natalPoint: entry.natal.planet,
+            natalSign: entry.natal.sign,
+            natalHouse: entry.natal.house,
+            exactDate: entry.targetDate,
+            orb: aspect?.orbValue
+          },
+          sourceSnapshot: null,
+          reviewerNotes: null,
+          subjectId: chart.id,
+          subjectType: "manual_chart",
+          userId: chart.owner_user_id,
+          updatedAt: new Date().toISOString()
+        };
 
-      return mergeSaved(baseRecord, savedRows.get(contentKey));
-    });
+        return mergeSaved(baseRecord, savedRows.get(contentKey));
+      }),
+    warnings
+  };
 }
 
 function natalChartRecords(chart: ManualChartRow, savedRows: Map<string, SavedContentRow>) {
@@ -1198,9 +1233,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const savedRows = savedByContentKey(savedRowsList);
     let records: ReviewRecord[] = [];
     let prompt: string | null = null;
+    const warnings: string[] = [];
 
     if (surface === "upcomingAspects") {
-      records = await upcomingAspectRecords(start, end, savedRows);
+      const result = await upcomingAspectRecords(start, end, savedRows);
+
+      records = result.records;
+      warnings.push(...result.warnings);
     } else if (surface === "relationshipLayer") {
       const chartParts = person.split(",").map((part) => part.trim()).filter(Boolean);
 
@@ -1223,7 +1262,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (charts.length === 0) {
         prompt = "Enter a person or chart name in Person or Subject to load this review surface.";
       } else if (surface === "transitNatal") {
-        records = await transitNatalRecords(start, end, charts[0], savedRows);
+        const result = await transitNatalRecords(start, end, charts[0], savedRows);
+
+        records = result.records;
+        warnings.push(...result.warnings);
       } else if (surface === "natalChart") {
         records = natalChartRecords(charts[0], savedRows);
       }
@@ -1239,6 +1281,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       startDate,
       endDate,
       prompt,
+      warnings,
       rows: filteredRecords,
       counts: counts(filteredRecords)
     });
