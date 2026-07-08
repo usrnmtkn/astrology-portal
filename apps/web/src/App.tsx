@@ -4332,6 +4332,93 @@ function currentSkyAspectDetailArticle(
   };
 }
 
+function skyAspectsForPlacement(planet: string, aspects: SkySnapshot["aspects"]) {
+  return aspects
+    .filter((aspect) => aspect.from === planet || aspect.to === planet)
+    .slice()
+    .sort((first, second) => first.orb - second.orb)
+    .slice(0, 2);
+}
+
+function currentSkyPlacementDetailArticle({
+  aspects,
+  generatedAt,
+  generatedContent,
+  onOpenDetail,
+  position,
+  positions
+}: {
+  aspects: SkySnapshot["aspects"];
+  generatedAt: string;
+  generatedContent: GeneratedContentMap;
+  onOpenDetail?: (detail: SkyDetail) => void;
+  position: PlanetPosition;
+  positions: PlanetPosition[];
+}): SkyDetail {
+  const activeAspects = skyAspectsForPlacement(position.planet, aspects);
+  const title = placementDetailTitle(position, activeAspects);
+  const isRetrograde = position.motion === "retrograde";
+  const transitRangeLabel = isRetrograde
+    ? retrogradeRangeText(position)
+    : placementTransitRangeLabel(position, generatedAt);
+  const contentKey = placementContentId(position.planet, position.sign, "sky");
+  const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+  const placementHookKey = position.planet === "Sun"
+    ? "sky.seasonal-current"
+    : position.planet === "Moon"
+      ? "sky.lunar-cycle"
+      : "sky.planetary-placement";
+  const content = fallbackFromHook(
+    placementHookKey,
+    {
+      planet: position.planet,
+      sign: position.sign
+    },
+    localContent
+  );
+  const generated = liveGeneratedContentByKeys(
+    generatedContent,
+    skyPlacementGeneratedContentKeys(position, generatedAt),
+    {
+      contentKey: skyPlacementTemplateFallbackKey(position),
+      slots: skyPlacementTemplateSlots(position),
+      afterContentFallback: content
+    }
+  );
+  const body = liveGeneratedBody(generated, content.detailParagraphs);
+  const relatedAspectRows = relatedAspectRowsForPlacement({
+    aspects: activeAspects,
+    generatedAt,
+    generatedContent,
+    mode: "sky",
+    onOpenSkyAspect: onOpenDetail
+      ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
+      : undefined,
+    pointName: position.planet,
+    positions
+  });
+
+  return {
+    routePath: skyPlacementRoutePath(position),
+    glyph: detailGlyphForPlacement(position),
+    kicker: placementDetailKicker(position, activeAspects),
+    title,
+    meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
+    duration: transitRangeLabel ?? undefined,
+    retrograde: isRetrograde,
+    body,
+    sections: [],
+    relatedAspects: relatedAspectRows.length > 0
+      ? {
+          heading: `Aspects to ${position.planet} today`,
+          rows: relatedAspectRows
+        }
+      : undefined,
+    astrologyDrilldown: generatedAstrologyDrilldown(generated),
+    content: content.bundle
+  };
+}
+
 function skyDetailFromRoutePath(
   routePath: string,
   sky: SkySnapshot,
@@ -4348,6 +4435,19 @@ function skyDetailFromRoutePath(
       .find((retrogradePosition) => skyRoutePartMatches(retrogradePosition.planet, firstPart));
 
     return position ? currentSkyRetrogradeDetailData(position, sky.generatedAt, generatedContent).detail : null;
+  }
+
+  if (detailType === "placement" && firstPart) {
+    const displayPositions = skyNodeDisplayPositions(sky.positions);
+    const position = displayPositions.find((candidate) => skyRoutePartMatches(candidate.planet, firstPart));
+
+    return position ? currentSkyPlacementDetailArticle({
+      aspects: sky.aspects,
+      generatedAt: sky.generatedAt,
+      generatedContent,
+      position,
+      positions: displayPositions
+    }) : null;
   }
 
   if (detailType === "aspect" && firstPart && secondPart && thirdPart) {
@@ -12987,36 +13087,14 @@ function PlacementTable({
             }
           );
           const rowSummary = liveGeneratedSummary(generated, fallbackPreviewText(content));
-          const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
-          const body = detailParagraphs;
-          const relatedAspectRows = relatedAspectRowsForPlacement({
-            aspects: activeAspects,
+          const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
+            aspects,
             generatedAt,
             generatedContent,
-            mode: "sky",
-            onOpenSkyAspect: (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions)),
-            pointName: position.planet,
+            onOpenDetail,
+            position,
             positions
-          });
-          const openDetail = () => onOpenDetail({
-            routePath: skyPlacementRoutePath(position),
-            glyph: detailGlyphForPlacement(position),
-            kicker: placementDetailKicker(position, activeAspects),
-            title,
-            meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
-            duration: transitRangeLabel ?? undefined,
-            retrograde: position.motion === "retrograde",
-            body,
-            sections: [],
-            relatedAspects: relatedAspectRows.length > 0
-              ? {
-                  heading: `Aspects to ${position.planet} today`,
-                  rows: relatedAspectRows
-                }
-              : undefined,
-            astrologyDrilldown: generatedAstrologyDrilldown(generated),
-            content: content.bundle
-          });
+          }));
 
           return (
             <SkyPlacementListItem id={position.planet} key={position.planet}>
