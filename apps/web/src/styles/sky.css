@@ -14,6 +14,11 @@
 
 .article-shell,
 .sky-detail-article {
+  /* Intentional Sky article reading-surface variant; softer than standard cards. */
+  --radius-article: 28px;
+  --radius-article-mobile: 22px;
+  --shadow-article: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
+
   display: grid;
   width: min(1140px, 100%);
   margin-inline: auto;
@@ -38,9 +43,9 @@
   gap: 0;
   padding: clamp(40px, 5.4vw, 80px) clamp(26px, 6vw, 92px) clamp(52px, 6vw, 84px);
   border: 1px solid var(--card-border);
-  border-radius: 28px;
+  border-radius: var(--radius-article);
   background: var(--card-bg);
-  box-shadow: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
+  box-shadow: var(--shadow-article);
 }
 
 .article-id,
@@ -377,7 +382,7 @@
   .article-card,
   .sky-detail-card {
     padding: 34px 22px 42px;
-    border-radius: 22px;
+    border-radius: var(--radius-article-mobile);
   }
 
   .article-title,
