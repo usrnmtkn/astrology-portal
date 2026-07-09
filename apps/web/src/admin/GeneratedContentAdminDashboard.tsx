@@ -4495,6 +4495,24 @@ export function GeneratedContentAdminDashboard() {
     };
   }
 
+  function missingFallbackTaglineImportRows(availableRows: AdminGeneratedContentRow[]) {
+    const savedContentKeys = new Set(availableRows.map((row) => row.content_key));
+
+    return natalCardTaglinePoints
+      .map((point) => {
+        const contentKey = natalCardTaglineContentKey(point);
+        const draft = fallbackTaglineDraft(point);
+
+        return {
+          contentKey,
+          point,
+          headline: draft.headline,
+          tagline: draft.tagline
+        };
+      })
+      .filter((row) => row.tagline.trim().length > 0 && !savedContentKeys.has(row.contentKey));
+  }
+
   async function bulkUpsertGeneratedContentImportRows(rowsToImport: Array<Record<string, unknown>>) {
     if (rowsToImport.length === 0) {
       return { rows: [], skippedLiveRows: [] };
@@ -4812,17 +4830,30 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
-      const [nextRows, nextTaglineRows] = await Promise.all([
+      const [nextRows, initialTaglineRows] = await Promise.all([
         fetchVocabularyRowsForAdmin(),
         fetchTaglineRowsForAdmin()
       ]);
+      const missingTaglineRows = missingFallbackTaglineImportRows(initialTaglineRows);
+      let nextTaglineRows = initialTaglineRows;
+
+      if (missingTaglineRows.length > 0) {
+        await bulkUpsertGeneratedContentImportRows(
+          missingTaglineRows.map((row) => generatedContentImportPayloadForTaglineRow(row, initialTaglineRows))
+        );
+        nextTaglineRows = await fetchTaglineRowsForAdmin();
+      }
 
       setVocabularyRows(nextRows);
       setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
       setTaglineRows(nextTaglineRows);
       setTaglineDrafts(draftMapForTaglineRows(nextTaglineRows));
       setAccessStatus("valid");
-      setMessage(`Loaded ${nextRows.length} vocabulary rows and ${nextTaglineRows.length} tagline rows.`);
+      setMessage(
+        `Loaded ${nextRows.length} vocabulary rows and ${nextTaglineRows.length} tagline rows.${
+          missingTaglineRows.length > 0 ? ` Auto-saved ${missingTaglineRows.length} natal card tagline rows.` : ""
+        }`
+      );
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
