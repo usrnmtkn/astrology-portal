@@ -439,9 +439,9 @@
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-day {
-  grid-template-rows: 20px 64px 12px 36px;
+  grid-template-rows: 20px 64px minmax(12px, auto) minmax(36px, auto);
   gap: 6px;
-  height: 160px;
+  min-height: 160px;
   padding: 10px 8px 9px;
   border-radius: var(--lunar-card-radius);
 }
@@ -478,11 +478,10 @@
 .lunar-calendar-day {
   position: relative;
   display: grid;
-  grid-template-rows: 18px 54px 14px minmax(28px, 1fr);
+  grid-template-rows: 18px 54px minmax(14px, auto) minmax(28px, auto);
   justify-items: center;
   gap: 3px;
-  height: 122px;
-  min-height: 0;
+  min-height: 122px;
   padding: 8px 5px 7px;
   border: 1px solid transparent;
   border-radius: var(--lunar-card-radius);
@@ -589,7 +588,6 @@
   justify-self: stretch;
   gap: 4px;
   min-height: 0;
-  max-height: 100%;
   overflow: visible;
 }
 
@@ -1169,14 +1167,13 @@ a.tx-card.has-article:hover .tx-more {
 .lunar-week-day {
   position: relative;
   display: grid;
-  grid-template-rows: 16px 24px 40px 22px 14px 18px 20px;
+  grid-template-rows: 16px 24px 40px 22px minmax(14px, auto) minmax(18px, auto) 20px;
   justify-items: center;
   align-items: center;
   gap: 4px;
   flex: 1 1 0;
   min-width: 0;
-  min-height: 0;
-  height: 198px;
+  min-height: 198px;
   padding: 8px 6px;
   border: 1px solid transparent;
   border-radius: var(--lunar-card-radius);
@@ -2086,24 +2083,24 @@ a.tx-card.has-article:hover .tx-more {
 
 @keyframes lunar-rows-expand {
   from {
-    max-height: 228px;
+    opacity: 0.92;
     transform: scaleY(0.96);
   }
 
   to {
-    max-height: 1400px;
+    opacity: 1;
     transform: scaleY(1);
   }
 }
 
 @keyframes lunar-rows-collapse {
   from {
-    max-height: 420px;
+    opacity: 0.96;
     transform: scaleY(0.98);
   }
 
   to {
-    max-height: 228px;
+    opacity: 1;
     transform: scaleY(1);
   }
 }
@@ -2186,14 +2183,13 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-day {
-    height: 126px;
-    min-height: 0;
+    min-height: 126px;
     padding: 8px;
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-day {
-    grid-template-rows: 18px 58px 12px 32px;
-    height: 142px;
+    grid-template-rows: 18px 58px minmax(12px, auto) minmax(32px, auto);
+    min-height: 142px;
     padding: 8px 5px;
   }
 
@@ -2333,8 +2329,8 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-day {
-    grid-template-rows: 17px 50px 12px 29px;
-    height: 128px;
+    grid-template-rows: 17px 50px minmax(12px, auto) minmax(29px, auto);
+    min-height: 128px;
     padding: 7px 1px 6px;
     border-radius: var(--lunar-card-radius);
   }
@@ -2391,8 +2387,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    height: 198px;
-    min-height: 0;
+    min-height: 198px;
     padding: 8px 2px 10px;
   }
 
@@ -2525,9 +2520,9 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    grid-template-rows: 14px 22px 36px 21px 12px 15px 17px;
+    grid-template-rows: 14px 22px 36px 21px minmax(12px, auto) minmax(15px, auto) 17px;
     gap: 3px;
-    height: 173px;
+    min-height: 173px;
     padding: 8px 1px 8px;
     border-radius: var(--lunar-card-radius);
   }
@@ -2606,7 +2601,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-day {
-    height: 124px;
+    min-height: 124px;
   }
 
   .lunar-selected-card {
