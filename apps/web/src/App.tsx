@@ -14137,7 +14137,6 @@ function SettingsView({
   const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
   const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
   const chartSettings = normalizeChartSettings(profile.settings);
-  const selectedLifeAreaFocus = new Set(chartSettings.lifeAreaFocus);
 
   function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
     onHouseSignLabelStyleChange(houseSignLabelStyle);
@@ -14146,20 +14145,6 @@ function SettingsView({
       settings: {
         ...chartSettings,
         houseSignLabelStyle
-      }
-    });
-  }
-
-  function updateLifeAreaFocus(area: LifeAreaFocus, enabled: boolean) {
-    const nextFocus = enabled
-      ? [...chartSettings.lifeAreaFocus, area]
-      : chartSettings.lifeAreaFocus.filter((currentArea) => currentArea !== area);
-
-    onUpdateProfile({
-      ...profile,
-      settings: {
-        ...chartSettings,
-        lifeAreaFocus: Array.from(new Set(nextFocus))
       }
     });
   }
@@ -14316,16 +14301,11 @@ function SettingsView({
                 const description = liveGeneratedSummary(generated, option.description);
 
                 return (
-                  <div className="settings-row settings-row-control" key={option.value}>
+                  <div className="settings-row" key={option.value}>
                     <div className="settings-row-copy">
                       <span className="settings-row-title">{title}</span>
                       <small className="settings-row-description">{description}</small>
                     </div>
-                    <SwitchControl
-                      checked={selectedLifeAreaFocus.has(option.value)}
-                      label={`Toggle ${option.label} focus`}
-                      onChange={(enabled) => updateLifeAreaFocus(option.value, enabled)}
-                    />
                   </div>
                 );
               })}
