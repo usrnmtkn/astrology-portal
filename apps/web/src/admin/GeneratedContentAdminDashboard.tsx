@@ -1,7 +1,7 @@
 import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
-import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
+import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type FallbackHookDefinition, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
 import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import type { GeneratedContentMode } from "../services/generatedContent";
@@ -1154,6 +1154,29 @@ function draftMapForTaglineRows(rows: AdminGeneratedContentRow[]) {
   return Object.fromEntries(rows.map((row) => [row.content_key, taglineDraftFromRow(row)]));
 }
 
+function adminGeneratedContentTargetKey(contentKey: string, targetDate: string | null | undefined, mode: string | null | undefined) {
+  return [
+    contentKey.trim(),
+    targetDate || "",
+    mode ?? ""
+  ].join("\u0000");
+}
+
+function adminGeneratedContentRowTargetKey(row: Pick<AdminGeneratedContentRow, "content_key" | "target_date" | "mode">) {
+  return adminGeneratedContentTargetKey(row.content_key, row.target_date, row.mode);
+}
+
+function findAdminGeneratedContentRow(
+  rows: AdminGeneratedContentRow[],
+  target: { id?: string; contentKey: string; targetDate?: string | null; mode?: GeneratedContentMode | string | null }
+) {
+  const targetKey = target.mode
+    ? adminGeneratedContentTargetKey(target.contentKey, target.targetDate ?? null, target.mode)
+    : null;
+
+  return rows.find((row) => row.id === target.id || (targetKey ? adminGeneratedContentRowTargetKey(row) === targetKey : row.content_key === target.contentKey));
+}
+
 function contextContentKey(hookKey: string) {
   return `fallback-hook/${hookKey}`;
 }
@@ -1440,14 +1463,19 @@ function fallbackHookSurfaceLabel(row: Pick<AdminGeneratedContentRow, "surface">
   return hook?.surface ?? row.surface;
 }
 
+function generatedContentModeForFallbackHook(hook: FallbackHookDefinition) {
+  return hook.mode === "system" ? "feed" : hook.mode;
+}
+
 function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] = []) {
-  const savedByContentKey = new Map(savedRows.map((row) => [row.content_key, row]));
+  const savedByTargetKey = new Map(savedRows.map((row) => [adminGeneratedContentRowTargetKey(row), row]));
   const now = new Date().toISOString();
 
   return fallbackHookDefinitions
     .map((hook) => {
       const contentKey = contextContentKey(hook.key);
-      const savedRow = savedByContentKey.get(contentKey);
+      const hookMode = generatedContentModeForFallbackHook(hook);
+      const savedRow = savedByTargetKey.get(adminGeneratedContentTargetKey(contentKey, null, hookMode));
 
       if (savedRow) {
         return savedRow;
@@ -1458,7 +1486,7 @@ function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] =
         id: `placeholder:${contentKey}`,
         content_key: contentKey,
         surface: generatedSurfaceForFallbackHook(hook.key),
-        mode: hook.mode === "system" ? "feed" : hook.mode,
+        mode: hookMode,
         status: "DRAFT",
         event_type: "fallback-hook",
         target_date: null,
@@ -1603,7 +1631,10 @@ function stringArrayFromCsvValue(value: string | undefined) {
 function contextRowsFromTemplateRows(rows: AdminGeneratedContentRow[]): AdminContentExchangeBundle["contextRows"] {
   return fallbackHookDefinitions.map((hook) => {
     const contentKey = contextContentKey(hook.key);
-    const matchedRow = rows.find((row) => row.content_key === contentKey);
+    const matchedRow = findAdminGeneratedContentRow(rows, {
+      contentKey,
+      mode: generatedContentModeForFallbackHook(hook)
+    });
     const draft = matchedRow ? templateDraftFromRow(matchedRow) : null;
     const sampleContext = fallbackHookSampleContextForKey(hook.key);
 
@@ -4160,7 +4191,10 @@ export function GeneratedContentAdminDashboard() {
       }) : [],
       taglineRows: scope === "vocabulary" ? natalCardTaglinePoints.map((point) => {
         const contentKey = natalCardTaglineContentKey(point);
-        const matchedRow = nextTaglineRows.find((row) => row.content_key === contentKey);
+        const matchedRow = findAdminGeneratedContentRow(nextTaglineRows, {
+          contentKey,
+          mode: "feed"
+        });
         const draftValue = taglineDrafts[contentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
 
         return {
@@ -4267,7 +4301,10 @@ export function GeneratedContentAdminDashboard() {
       secret
     );
 
-    return payload.rows?.find((row) => row.content_key === signContextAspectCardsSettingKey) ?? null;
+    return findAdminGeneratedContentRow(payload.rows ?? [], {
+      contentKey: signContextAspectCardsSettingKey,
+      mode: "feed"
+    }) ?? null;
   }
 
   async function fetchGlobalSynastryRowsForAdmin() {
@@ -4379,7 +4416,10 @@ export function GeneratedContentAdminDashboard() {
     patch: Record<string, unknown>,
     availableRows: AdminGeneratedContentRow[]
   ) {
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey: importedRow.contentKey
+    });
 
     if (!matchedRow) {
       throw new Error(`No existing dashboard row matched ${importedRow.contentKey}.`);
@@ -4403,7 +4443,11 @@ export function GeneratedContentAdminDashboard() {
     patch: Record<string, unknown>,
     availableRows: AdminGeneratedContentRow[]
   ) {
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey: importedRow.contentKey,
+      mode: "in_depth"
+    });
 
     if (matchedRow) {
       await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
@@ -4444,7 +4488,11 @@ export function GeneratedContentAdminDashboard() {
     importedRow: AdminContentExchangeBundle["taglineRows"][number],
     availableRows: AdminGeneratedContentRow[]
   ) {
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey: importedRow.contentKey,
+      mode: "feed"
+    });
     const patch = {
       headline: importedRow.headline,
       body: importedRow.tagline,
@@ -4492,7 +4540,11 @@ export function GeneratedContentAdminDashboard() {
     importedRow: AdminContentExchangeBundle["vocabularyRows"][number],
     availableRows: AdminGeneratedContentRow[]
   ) {
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey: importedRow.contentKey,
+      mode: "in_depth"
+    });
     const draft = vocabularyDraftFromImportRow(importedRow);
     const rowShell = {
       content_key: importedRow.contentKey,
@@ -4525,7 +4577,11 @@ export function GeneratedContentAdminDashboard() {
     importedRow: AdminContentExchangeBundle["taglineRows"][number],
     availableRows: AdminGeneratedContentRow[]
   ) {
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === importedRow.contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey: importedRow.contentKey,
+      mode: "feed"
+    });
 
     return {
       contentKey: importedRow.contentKey,
@@ -4553,7 +4609,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function missingFallbackTaglineImportRows(availableRows: AdminGeneratedContentRow[]) {
-    const savedContentKeys = new Set(availableRows.map((row) => row.content_key));
+    const savedTargetKeys = new Set(availableRows.map(adminGeneratedContentRowTargetKey));
 
     return natalCardTaglinePoints
       .map((point) => {
@@ -4567,7 +4623,10 @@ export function GeneratedContentAdminDashboard() {
           tagline: draft.tagline
         };
       })
-      .filter((row) => row.tagline.trim().length > 0 && !savedContentKeys.has(row.contentKey));
+      .filter((row) => (
+        row.tagline.trim().length > 0
+        && !savedTargetKeys.has(adminGeneratedContentTargetKey(row.contentKey, null, "feed"))
+      ));
   }
 
   async function bulkUpsertGeneratedContentImportRows(rowsToImport: Array<Record<string, unknown>>) {
@@ -4604,7 +4663,11 @@ export function GeneratedContentAdminDashboard() {
     const hookKey = importedRow.hookKey || importedRow.contentKey.replace(/^fallback-hook\//, "");
     const contentKey = importedRow.contentKey || contextContentKey(hookKey);
     const hook = fallbackHookForContextRow(hookKey);
-    const matchedRow = availableRows.find((row) => row.id === importedRow.id || row.content_key === contentKey);
+    const matchedRow = findAdminGeneratedContentRow(availableRows, {
+      id: importedRow.id,
+      contentKey,
+      mode: hook ? generatedContentModeForFallbackHook(hook) : importedRow.mode ?? "feed"
+    });
     const patch = {
       headline: importedRow.headline,
       summary: importedRow.summary,
@@ -5505,7 +5568,10 @@ export function GeneratedContentAdminDashboard() {
     }
 
     const point = pointFromTaglineContentKey(contentKey);
-    const matchedRow = taglineRows.find((row) => row.content_key === contentKey);
+    const matchedRow = findAdminGeneratedContentRow(taglineRows, {
+      contentKey,
+      mode: "feed"
+    });
     const draftValue = taglineDrafts[contentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
     const payloadBody = {
       headline: draftValue.headline,
@@ -5620,7 +5686,10 @@ export function GeneratedContentAdminDashboard() {
 
       if (item.taglineContentKey) {
         const point = pointFromTaglineContentKey(item.taglineContentKey);
-        const matchedRow = taglineRows.find((row) => row.content_key === item.taglineContentKey);
+        const matchedRow = findAdminGeneratedContentRow(taglineRows, {
+          contentKey: item.taglineContentKey,
+          mode: "feed"
+        });
         const draftValue = taglineDrafts[item.taglineContentKey] ?? (matchedRow ? taglineDraftFromRow(matchedRow) : fallbackTaglineDraft(point));
         const payloadBody = {
           headline: draftValue.headline,
@@ -7811,7 +7880,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 const showsShadow = vocabularyFamily === "sign-style" || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" || Boolean(item.shadowRow);
                 const showsHigherExpression = vocabularyFamily === "higher-expression" || Boolean(item.higherExpressionRow);
                 const matchedTaglineRow = item.taglineContentKey
-                  ? taglineRows.find((row) => row.content_key === item.taglineContentKey)
+                  ? findAdminGeneratedContentRow(taglineRows, {
+                    contentKey: item.taglineContentKey,
+                    mode: "feed"
+                  })
                   : undefined;
                 const taglineDraft = item.taglineContentKey
                   ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
