@@ -11,3 +11,4 @@ ephemeris/
 test-results/
 playwright-report/
 artifacts/
+api/_lib/local-env.js
