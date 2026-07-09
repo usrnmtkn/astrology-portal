@@ -42,7 +42,8 @@ type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar
 type AdminHookCatalogSelection = { type: "lunar"; key: string } | { type: "fallback"; key: string };
 type LunarCoverageFilter = "all" | "lunar-calendar" | "eclipse" | "season" | "transit-fallback";
 type SlotDictionarySourceFilter = "all" | "calculated" | "vocabulary" | "fallback";
-type SlotDictionaryStatusFilter = "all" | "calculated" | "ready" | "missing";
+type SlotDictionaryStatus = "calculated" | "ready" | "draft" | "local" | "missing";
+type SlotDictionaryStatusFilter = "all" | SlotDictionaryStatus;
 type AdminTemplateDrawerMode = "view" | "edit";
 type AdminContentBlockFilter =
   | "all"
@@ -280,7 +281,7 @@ type AdminSlotDictionaryRow = {
   group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Lunar language" | "Relationship language";
   source: string;
   editableIn: "Calculated" | "Vocabulary" | "Fallback Rows";
-  status: "calculated" | "ready" | "missing";
+  status: SlotDictionaryStatus;
   description: string;
   examples?: string[];
   action?: {
@@ -1379,6 +1380,8 @@ const slotDictionaryStatusFilters: Array<{ key: SlotDictionaryStatusFilter; labe
   { key: "all", label: "All statuses" },
   { key: "calculated", label: "Calculated" },
   { key: "ready", label: "Ready" },
+  { key: "draft", label: "Draft exists" },
+  { key: "local", label: "Local only" },
   { key: "missing", label: "Needs rows" }
 ];
 
@@ -1397,7 +1400,17 @@ function slotDictionarySourceBadge(row: AdminSlotDictionaryRow) {
 function slotDictionaryStatusLabel(status: AdminSlotDictionaryRow["status"]) {
   if (status === "calculated") return "Calculated";
   if (status === "ready") return "Ready";
+  if (status === "draft") return "Draft exists";
+  if (status === "local") return "Local only";
   return "Needs rows";
+}
+
+function slotDictionaryStatusTitle(status: AdminSlotDictionaryRow["status"]) {
+  if (status === "ready") return "A persisted LIVE row is available for this slot source.";
+  if (status === "draft") return "A persisted row exists, but it is not LIVE yet.";
+  if (status === "local") return "Only a local built-in placeholder exists; no DB row has been saved.";
+  if (status === "missing") return "No matching saved rows were found for this slot source.";
+  return "Calculated by the app at render time.";
 }
 
 function slotDictionarySearchText(row: AdminSlotDictionaryRow) {
@@ -1481,6 +1494,28 @@ function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] =
 
 function isFallbackTemplatePlaceholderRow(row: AdminGeneratedContentRow) {
   return row.id.startsWith("placeholder:fallback-hook/");
+}
+
+function isLocalPlaceholderGeneratedContentRow(row: AdminGeneratedContentRow) {
+  return row.id.startsWith("placeholder:");
+}
+
+function adminContentReadinessStatus(rows: AdminGeneratedContentRow[]): Exclude<SlotDictionaryStatus, "calculated"> {
+  const persistedRows = rows.filter((row) => !isLocalPlaceholderGeneratedContentRow(row));
+
+  if (persistedRows.some((row) => row.status === "LIVE")) {
+    return "ready";
+  }
+
+  if (persistedRows.length > 0) {
+    return "draft";
+  }
+
+  if (rows.some(isLocalPlaceholderGeneratedContentRow)) {
+    return "local";
+  }
+
+  return "missing";
 }
 
 function hookKeyFromFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key">) {
@@ -4047,8 +4082,12 @@ export function GeneratedContentAdminDashboard() {
     [taglineDrafts, taglineRows]
   );
   const slotDictionaryRows = useMemo(() => {
-    const hasVocabularyPrefix = (prefix: string) => vocabularyRows.some((row) => row.content_key.startsWith(prefix));
-    const hasFallbackPrefix = (prefix: string) => templateContentRows.some((row) => row.content_key.startsWith(prefix));
+    const vocabularyReadiness = (prefix: string) => adminContentReadinessStatus(
+      [...vocabularyRows, ...taglineRows].filter((row) => row.content_key.startsWith(prefix))
+    );
+    const fallbackReadiness = (prefix: string) => adminContentReadinessStatus(
+      templateContentRows.filter((row) => row.content_key.startsWith(prefix))
+    );
 
     return baseSlotDictionaryRows.map((row) => {
       if (row.editableIn === "Calculated") {
@@ -4056,19 +4095,21 @@ export function GeneratedContentAdminDashboard() {
       }
 
       const sourcePrefix = slotDictionarySourcePrefix(row.source);
-      const isReady = row.editableIn === "Vocabulary"
-        ? hasVocabularyPrefix(sourcePrefix)
-        : hasFallbackPrefix(sourcePrefix);
+      const status = row.editableIn === "Vocabulary"
+        ? vocabularyReadiness(sourcePrefix)
+        : fallbackReadiness(sourcePrefix);
 
       return {
         ...row,
-        status: isReady ? "ready" : "missing"
+        status
       } satisfies AdminSlotDictionaryRow;
     });
-  }, [templateContentRows, vocabularyRows]);
+  }, [taglineRows, templateContentRows, vocabularyRows]);
   const slotDictionaryCounts = useMemo(() => ({
     calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
     ready: slotDictionaryRows.filter((row) => row.status === "ready").length,
+    draft: slotDictionaryRows.filter((row) => row.status === "draft").length,
+    local: slotDictionaryRows.filter((row) => row.status === "local").length,
     missing: slotDictionaryRows.filter((row) => row.status === "missing").length
   }), [slotDictionaryRows]);
   const filteredSlotDictionaryRows = useMemo(() => {
@@ -7485,6 +7526,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <strong>{slotDictionaryCounts.ready}</strong>
               </article>
               <button
+                type="button"
+                onClick={() => setSlotDictionaryStatusFilter("draft")}
+              >
+                <span>Draft exists</span>
+                <strong>{slotDictionaryCounts.draft}</strong>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSlotDictionaryStatusFilter("local")}
+              >
+                <span>Local only</span>
+                <strong>{slotDictionaryCounts.local}</strong>
+              </button>
+              <button
                 className="is-warning"
                 type="button"
                 onClick={() => setSlotDictionaryStatusFilter("missing")}
@@ -7592,7 +7647,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <td>
                         <span
                           className={`ui-pill admin-status admin-slot-status-${row.status}`}
-                          title={row.status === "missing" ? "No matching saved rows were found for this slot source." : slotDictionaryStatusLabel(row.status)}
+                          title={slotDictionaryStatusTitle(row.status)}
                         >
                           {slotDictionaryStatusLabel(row.status)}
                         </span>
@@ -7989,6 +8044,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   const hookKey = hookKeyFromFallbackTemplateRow(row);
                   const hook = fallbackHookForContextRow(hookKey);
                   const isSelected = row.id === selectedTemplateContentId;
+                  const isLocalOnly = isLocalPlaceholderGeneratedContentRow(row);
 
                   const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
                     setTemplateDrawerMode(mode);
@@ -8010,7 +8066,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <div className="admin-managed-badges">
                           {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
                           {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
-                          <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                          {isLocalOnly ? (
+                            <span className="ui-pill admin-status admin-slot-status-local">Local only</span>
+                          ) : (
+                            <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                          )}
                         </div>
                       </div>
                       <p>{descriptionForFallbackTemplateRow(row)}</p>
@@ -8147,6 +8207,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     const badge = contentTypeBadge(row);
                     const seed = templateSeedForFallbackTemplateRow(row);
                     const isViewMode = templateDrawerMode === "view";
+                    const isLocalOnly = isLocalPlaceholderGeneratedContentRow(row);
                     const previewSlotDefaults = fallbackHookSampleContextForKey(hookKey);
                     const previewSlotDraft = templatePreviewSlotDrafts[row.content_key] ?? {};
                     const previewSlots = Object.fromEntries(
@@ -8173,8 +8234,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <div className="admin-managed-badges">
                               {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
                               {hook?.domain && <span className="ui-pill admin-template-badge">{hook.domain}</span>}
+                              {isLocalOnly && <span className="ui-pill admin-status admin-slot-status-local">Local only</span>}
                               {isViewMode ? (
-                                <span className={`ui-pill admin-status status-${rowDraft.status.toLowerCase()}`}>{rowDraft.status}</span>
+                                !isLocalOnly && <span className={`ui-pill admin-status status-${rowDraft.status.toLowerCase()}`}>{rowDraft.status}</span>
                               ) : (
                                 <label className="admin-status-select-label">
                                   <span>Status</span>
