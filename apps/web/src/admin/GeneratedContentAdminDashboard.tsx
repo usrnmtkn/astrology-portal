@@ -459,7 +459,7 @@ const contentStatusFilters: Array<{ key: AdminContentStatusFilter; label: string
   { key: "all", label: "All" },
   { key: "DRAFT", label: "Draft" },
   { key: "NEEDS_REVIEW", label: "Needs Review" },
-  { key: "SCHEDULED", label: "Scheduled" },
+  { key: "SCHEDULED", label: "Reviewed" },
   { key: "LIVE", label: "Published" },
   { key: "ARCHIVED", label: "Archived" }
 ];
@@ -3284,7 +3284,7 @@ function contentBlockTypeLabel(record: AdminReviewRecord) {
 
 function contentStatusLabel(status: string) {
   if (status === "LIVE") return "Published";
-  if (status === "REVIEWED") return "Scheduled";
+  if (status === "REVIEWED") return "Reviewed";
   if (status === "ERROR") return "Needs Review";
   if (status === "DRAFT") return "Draft";
 
@@ -9133,7 +9133,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                           >
                             <option value="DRAFT">Draft</option>
                             <option value="ERROR">Needs Review</option>
-                            <option value="REVIEWED">Scheduled</option>
+                            <option value="REVIEWED">Reviewed</option>
                             <option value="LIVE">Published</option>
                             <option value="ARCHIVED">Archived</option>
                           </select>
