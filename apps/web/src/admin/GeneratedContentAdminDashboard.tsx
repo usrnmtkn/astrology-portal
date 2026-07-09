@@ -31,7 +31,7 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
@@ -2674,14 +2674,6 @@ function reviewSurfaceForGeneratedSurface(surface: GeneratedContentSurface): Adm
   return "relationshipLayer";
 }
 
-function generatedSurfaceForReviewSurface(surface: AdminReviewSurface): GeneratedContentSurfaceFilter {
-  if (surface === "upcomingAspects") return "sky";
-  if (surface === "transitNatal") return "you";
-  if (surface === "natalChart") return "natal";
-
-  return "all";
-}
-
 function isUpcomingAspectRecord(record: AdminReviewRecord) {
   const searchable = `${record.contentKey} ${record.eventType ?? ""}`.toLowerCase();
 
@@ -3690,7 +3682,6 @@ export function GeneratedContentAdminDashboard() {
   const [selectedHookCatalogItem, setSelectedHookCatalogItem] = useState<AdminHookCatalogSelection | null>(null);
   const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
   const [templateDrawerMode, setTemplateDrawerMode] = useState<AdminTemplateDrawerMode>("view");
-  const [privateRows, setPrivateRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [reviewRecords, setReviewRecords] = useState<AdminReviewRecord[]>([]);
   const [reviewCounts, setReviewCounts] = useState<AdminReviewCounts>({
     total: 0,
@@ -4979,49 +4970,6 @@ export function GeneratedContentAdminDashboard() {
         setAccessStatus("invalid");
       }
       setMessage(adminErrorMessage(error, "Could not load sign context setting."));
-    }
-  }
-
-  async function loadPrivateRows(nextReviewSurface = reviewSurface) {
-    if (!canUseApi) {
-      setMessage("Add the content generation secret first.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const privateSurface = generatedSurfaceForReviewSurface(nextReviewSurface);
-      const params = new URLSearchParams({
-        status: "all",
-        limit: "100"
-      });
-
-      if (privateSurface !== "all") {
-        params.set("surface", privateSurface);
-      }
-
-      if (dateStart) {
-        params.set("startDate", dateStart);
-      }
-
-      if (dateEnd) {
-        params.set("endDate", dateEnd);
-      }
-
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
-        `/api/admin/user-generated-content?${params}`,
-        secret
-      );
-
-      setPrivateRows(payload.rows ?? []);
-      setMessage(`Loaded ${(payload.rows ?? []).length} personal content rows for the selected review window.`);
-    } catch (error) {
-      if (error instanceof AdminRequestError && error.status === 401) {
-        setAccessStatus("invalid");
-      }
-      setMessage(adminErrorMessage(error, "Could not load personal content rows."));
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -8297,70 +8245,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 </section>
               </div>
             )}
-          </section>
-        ) : activePage === "privateRows" ? (
-          <section className="admin-template-panel admin-private-page" aria-label="Personal generated content rows">
-            <div className="admin-template-header">
-              <div>
-                <p className="admin-eyebrow">Natal and person-specific content</p>
-                <h2>Provider + Model Audit</h2>
-                <p>These rows can be tied to individual people, natal charts, or relationship subjects. Use this read-only view to confirm whether Claude or OpenAI wrote a saved interpretation.</p>
-              </div>
-              <div className="admin-release-summary" aria-label="Personal generated row count">
-                <article>
-                  <span>Rows</span>
-                  <strong>{privateRows.length}</strong>
-                </article>
-                <article>
-                  <span>Scope</span>
-                  <strong>Personal</strong>
-                </article>
-              </div>
-            </div>
-
-            <div className="admin-private-row-list">
-              {privateRows.map((row) => (
-                <article className="admin-private-row-card" key={row.id}>
-                  <header>
-                    <div>
-                      <p className="admin-eyebrow">{row.subject_type} / {row.surface} / {row.mode}</p>
-                      <h3>{row.headline || row.content_key}</h3>
-                    </div>
-                    <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
-                  </header>
-                  <div className="admin-provider-meta" aria-label="AI provider and model">
-                    <span>Provider: <strong>{row.provider || "unknown"}</strong></span>
-                    <span>Model: <strong>{row.model || "unknown"}</strong></span>
-                  </div>
-                  <p>{row.summary || row.body || row.error || "No generated body saved yet."}</p>
-                  <dl className="admin-private-meta">
-                    <div>
-                      <dt>User</dt>
-                      <dd>{row.user_id}</dd>
-                    </div>
-                    <div>
-                      <dt>Subject</dt>
-                      <dd>{row.subject_id}</dd>
-                    </div>
-                    <div>
-                      <dt>Content key</dt>
-                      <dd>{row.content_key}</dd>
-                    </div>
-                    <div>
-                      <dt>Target date</dt>
-                      <dd>{adminDateLabel(row.target_date)}</dd>
-                    </div>
-                    <div>
-                      <dt>Updated</dt>
-                      <dd>{new Date(row.updated_at).toLocaleString()}</dd>
-                    </div>
-                  </dl>
-                </article>
-              ))}
-              {privateRows.length === 0 && (
-                <p className="admin-empty">No personal content rows have been saved yet.</p>
-              )}
-            </div>
           </section>
         ) : activePage === "hooks" ? (
           <section id="content-hooks" className="admin-template-panel admin-hooks-page" aria-label="Content hook catalog">
