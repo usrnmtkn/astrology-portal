@@ -1000,6 +1000,26 @@ a.tx-card.has-article:hover {
   box-shadow: var(--elev-pill);
 }
 
+.lunar-month-transit-card--button {
+  appearance: none;
+  width: 100%;
+  border: 1px solid var(--aspect-card-border);
+  background: var(--aspect-card-bg);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.lunar-month-transit-card--button:hover {
+  border-color: color-mix(in srgb, var(--event-accent, var(--aspect-flow)) 36%, var(--line));
+  box-shadow: var(--elev-pill);
+}
+
+.lunar-month-transit-card--button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--event-accent, var(--accent)) 60%, transparent);
+  outline-offset: 3px;
+}
+
 .tx-glyphs {
   display: flex;
   grid-column: 1;
@@ -1471,6 +1491,15 @@ a.tx-card.has-article:hover .tx-more {
   font-family: var(--font-glyph);
 }
 
+.lunar-selected-card__subtitle {
+  margin: -4px 0 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 28px);
+  font-style: italic;
+  line-height: 1.2;
+}
+
 .lunar-selected-card__meta {
   display: flex;
   flex-wrap: wrap;
@@ -1555,6 +1584,28 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-selected-card__body p {
   margin: 0;
+}
+
+.lunar-selected-card__archetype,
+.lunar-selected-card__check-in {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.lunar-selected-card__archetype > span,
+.lunar-selected-card__check-in > span {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__check-in p {
+  color: var(--ink);
 }
 
 .lunar-selected-card__arc {
@@ -1650,6 +1701,96 @@ a.tx-card.has-article:hover .tx-more {
   font-family: var(--font-label);
   font-size: 12px;
   white-space: nowrap;
+}
+
+.lunar-selected-card__season-story {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.lunar-selected-card__arc-phase-list {
+  display: grid;
+  gap: 10px;
+}
+
+.lunar-selected-card__arc-phase-list > span {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.lunar-selected-card__arc-phase-list ol {
+  gap: 8px;
+}
+
+.lunar-selected-card__arc-phase-list li {
+  grid-template-columns: minmax(92px, 0.42fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  min-height: 0;
+  padding: 8px 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.lunar-selected-card__arc-phase-list li strong {
+  overflow: visible;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  line-height: 1.25;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: normal;
+}
+
+.lunar-selected-card__arc-phase-list li small {
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.lunar-selected-card__arc-phase-list li.is-current strong,
+.lunar-selected-card__arc-phase-list li.is-current small {
+  color: var(--ink);
+}
+
+.lunar-selected-card__arc-phase-list li:not(.is-current) {
+  opacity: 0.58;
+}
+
+.lunar-selected-card__arc-phase-list li.is-current {
+  padding: 10px 0;
+  border-top-color: color-mix(in srgb, var(--lunation) 35%, var(--line));
+  border-bottom: 1px solid color-mix(in srgb, var(--lunation) 35%, var(--line));
+}
+
+.lunar-selected-card__arc-all-phases {
+  display: grid;
+  gap: 8px;
+}
+
+.lunar-selected-card__arc-all-phases summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.35;
+}
+
+.lunar-selected-card__arc-all-phases[open] summary {
+  margin-bottom: 8px;
 }
 
 .lunar-selected-card__daily-events {
@@ -2338,10 +2479,13 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-selected-card__daily-event strong {
     font-size: 18px;
+    line-height: 1.12;
+    white-space: normal;
   }
 
   .lunar-selected-card__daily-event-time {
     font-size: 12px;
+    white-space: nowrap;
   }
 
   .tx-card {

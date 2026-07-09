@@ -1,0 +1,64 @@
+{
+  "id": "traditional-delineation-examples-framework",
+  "kind": "framework",
+  "title": "Traditional Delineation Examples Framework",
+  "role": "traditional-natal-synthesis-method",
+  "category": "traditional-method",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Traditional delineation starts with condition, context, and significator discipline before psychological description. A planet's nature, dignity, house, sect, motion, aspects, and dispositor describe how well it can act and where its topics become visible."
+    },
+    {
+      "id": "dignity-use",
+      "heading": "Dignity Use",
+      "body": "Use dignity and debility as condition markers, not moral judgments or fixed talent scores. A debilitated planet does not mean a failed person or missing capacity; it means the planet's topics require more context, support, practice, or workaround. Minor dignities can mitigate major debility, but they do not erase the need to read the whole chart."
+    },
+    {
+      "id": "dispositor-chain",
+      "heading": "Dispositor Chain",
+      "body": "The dispositor shows the motive and manager behind a planet's expression. When a planet is in another planet's sign, read the condition of that ruler before finalizing the interpretation. Mutual reception reinforces the two planets even when their natures are different. A final dispositor, when present, can color many chart motives."
+    },
+    {
+      "id": "ascendant-ruler",
+      "heading": "Ascendant Ruler",
+      "body": "Read the ruler of the Ascendant as a major indicator of personal motivation. Start with the ruler's planetary nature, then modify it by sign element and mode, house placement, aspects, dignity, debility, speed, direction, sect condition, and dispositor."
+    },
+    {
+      "id": "example-patterns",
+      "heading": "Example Patterns",
+      "body": "Use these examples as interpretation patterns rather than biographical claims to repeat.",
+      "items": [
+        {
+          "label": "Dignified Mars in the 10th",
+          "body": "A Scorpio rising chart with Mars in Virgo in the 10th can describe a forceful personal drive expressed through craft, analysis, work, and public accomplishment. If Mars is dignified by triplicity or terms and joined to Mercury, the martial motive can become intellectual, argumentative, strategic, or vocationally visible."
+        },
+        {
+          "label": "Venus ruling the Ascendant in the 3rd",
+          "body": "A Libra rising chart with Venus in Sagittarius in the 3rd can center motivation on communication, learning, exchange, aesthetics, and social harmony. If Venus is peregrine, out of sect, combust, or otherwise strained, the same topics may carry dissatisfaction or become harder to stabilize."
+        },
+        {
+          "label": "Saturn ruling the Ascendant in the 5th",
+          "body": "A Capricorn or Aquarius rising chart with Saturn in Gemini in the 5th can give creative, romantic, or pleasure-seeking topics a serious, intellectual, restrained, or melancholic tone. If Saturn is supported but retrograde or opposed by its dispositor, the person may have real capacity while also hesitating or meeting contradiction around pleasure and self-expression."
+        },
+        {
+          "label": "Temperament as backdrop",
+          "body": "Temperament frames how chart combinations manifest. The same Moon, Mars, or Mercury pattern will express differently in a choleric, sanguine, melancholic, or phlegmatic constitution. Treat temperament as the background climate of the chart, not as a complete personality verdict."
+        }
+      ]
+    },
+    {
+      "id": "product-use",
+      "heading": "Product Use",
+      "body": "When generating traditional-style output, include the evidence chain. Name the significator, its condition, what it rules, where it is placed, what modifies it, and why that changes the interpretation. Avoid isolated claims like 'Venus in detriment means bad at love.'"
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local user-supplied sources reviewed July 2026: Helena Avelar and Luis Ribeiro, On the Heavenly Spheres; Hayden's Book of Synastry; and Rod Suskin, Synastry: Understanding the Astrology of Relationships. Source files were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

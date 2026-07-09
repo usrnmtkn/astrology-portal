@@ -1,8 +1,10 @@
 import { skyBodyOrderIndex } from "../../astrologyConfig";
+import { fallbackHookByKey } from "../../content/fallbackHooks";
+import { lunarBeatArchetypeForKey, lunarBeatArchetypeLoreForKey, lunarBeatBodyForKey } from "../../content/lunarBeatCopy";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import type { TemplateSlotValues } from "../../services/templateInterpolation";
+import { interpolateTemplateString, type TemplateSlotValues } from "../../services/templateInterpolation";
 import type { LocationInput } from "../../types";
 import type { LunarDay, LunarDayArcPoint, LunarDayCheckpointRole, LunarDayTransit, LunarDayTransitType } from "./lunarDayTypes";
 
@@ -277,6 +279,26 @@ function phaseTypeForMoonPhase(moonPhase: string) {
   return "waxing-other";
 }
 
+function quarterLunationForDay(day: LunarCalendarDay, phaseType: string) {
+  if (phaseType !== "first-quarter" && phaseType !== "last-quarter") return null;
+
+  const prefix = phaseType === "first-quarter" ? "First Quarter" : "Last Quarter";
+
+  return day.events.find((event) => event.type === "lunation" && event.title.startsWith(prefix)) ?? null;
+}
+
+function exactLunationForDay(day: LunarCalendarDay, phaseType: string) {
+  if (phaseType === "new-moon") {
+    return day.events.find((event) => event.type === "lunation" && event.title.startsWith("New Moon")) ?? null;
+  }
+
+  if (phaseType === "full-moon") {
+    return day.events.find((event) => event.type === "lunation" && event.title.startsWith("Full Moon")) ?? null;
+  }
+
+  return quarterLunationForDay(day, phaseType);
+}
+
 function eclipseEventForDay(day: LunarCalendarDay, arcEvents: {
   origin: LunarCalendarEvent | null;
   culmination: LunarCalendarEvent | null;
@@ -393,12 +415,50 @@ const seasonThemes: Record<string, string> = {
   Pisces: "release, imagination, compassion, and what cannot be fully controlled"
 };
 
+const twoWeekArcConnections: Record<string, string> = {
+  "Aries->Libra": "If you've been starting new chapters while worrying about who you're leaving behind, this Full Moon shows that the right people support your growth.",
+  "Taurus->Scorpio": "Exposing where you've been accepting less because you didn't think you deserved more.",
+  "Gemini->Sagittarius": "If you've been keeping your message small, what if your truth could free someone else?",
+  "Cancer->Capricorn": "Where protecting yourself became isolating yourself.",
+  "Leo->Aquarius": "Your people want exactly who you are, not who you think you should be.",
+  "Virgo->Pisces": "You can't hate yourself into a version you'll love.",
+  "Libra->Aries": "Where compromising became self-betrayal.",
+  "Scorpio->Taurus": "Where holding on too tight pushes away what you want.",
+  "Sagittarius->Gemini": "Your story needs updating to match who you've become.",
+  "Capricorn->Cancer": "Where success was chosen over softness.",
+  "Aquarius->Leo": "You can't change the world while selling a version of yourself you don't believe in.",
+  "Pisces->Virgo": "Where structure will set you free."
+};
+
+const sixMonthArcConnections: Record<string, string> = {
+  Capricorn: "Foundation to legacy.",
+  Aquarius: "Difference to belonging.",
+  Pisces: "Dream to wisdom.",
+  Aries: "Courage to command.",
+  Taurus: "Value to harvest.",
+  Gemini: "Words to story.",
+  Cancer: "Protection to belonging.",
+  Leo: "Spark to radiance.",
+  Virgo: "Routine to devotion.",
+  Libra: "Harmony to honesty.",
+  Scorpio: "Death to rebirth.",
+  Sagittarius: "Journey to message."
+};
+
 function moonSignMode(sign: string) {
   return moonSignModes[sign] ?? "colored by the Moon's current sign";
 }
 
 function seasonTheme(sign: string) {
   return seasonThemes[sign] ?? "the wider tone of the current season";
+}
+
+function twoWeekArcConnection(newMoonSign: string, fullMoonSign: string) {
+  return twoWeekArcConnections[`${newMoonSign}->${fullMoonSign}`] ?? null;
+}
+
+function sixMonthArcConnection(newMoonSign: string) {
+  return sixMonthArcConnections[newMoonSign] ?? null;
 }
 
 function mercuryRetrogradeSlots(day: LunarCalendarDay): TemplateSlotValues {
@@ -461,6 +521,77 @@ function renderedContentBody(
   }
 
   return null;
+}
+
+function renderedContent(
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  keys: string[],
+  slots: TemplateSlotValues
+) {
+  if (!generatedContent) return null;
+
+  for (const key of keys) {
+    const rendered = renderGeneratedContentTemplate(generatedContent.get(key), slots);
+    const headline = rendered?.headline?.trim() ?? "";
+    const summary = rendered?.summary?.trim() ?? "";
+    const body = rendered?.body?.trim() ?? "";
+
+    if (rendered && (headline || summary || body)) {
+      return rendered;
+    }
+  }
+
+  return null;
+}
+
+function lunarBeatBody(keys: string[]) {
+  for (const key of keys) {
+    const body = lunarBeatBodyForKey(key)?.trim();
+
+    if (body) {
+      return body;
+    }
+  }
+
+  return null;
+}
+
+function lunarBeatArchetype(keys: string[]) {
+  for (const key of keys) {
+    const archetypeTitle = lunarBeatArchetypeForKey(key)?.trim();
+
+    if (archetypeTitle) {
+      return archetypeTitle;
+    }
+  }
+
+  return null;
+}
+
+function lunarBeatArchetypeLore(keys: string[]) {
+  for (const key of keys) {
+    const archetypeLore = lunarBeatArchetypeLoreForKey(key)?.trim();
+
+    if (archetypeLore) {
+      return archetypeLore;
+    }
+  }
+
+  return null;
+}
+
+function renderedFallbackHookDefinitionBody(hookContentKey: string, slots: TemplateSlotValues) {
+  const hook = fallbackHookByKey(hookContentKey.replace(/^fallback-hook\//, ""));
+  const body = hook?.copy.body.trim();
+
+  if (!body) {
+    return null;
+  }
+
+  return interpolateTemplateString(body, slots, {
+    contentKey: hookContentKey,
+    field: "body"
+  }).trim() || null;
 }
 
 function renderedContentSection(
@@ -562,7 +693,10 @@ function lunarArcSlotsForPhase(
   const lunarArcTargetEvent = lunarArcDirection === "waning" ? options.nextNewMoon : options.culmination;
   const lunarArcTargetSign = eventSign(lunarArcTargetEvent, options.fallbackSign);
   const newMoonSign = eventSign(options.origin, options.fallbackSign);
+  const fullMoonSign = eventSign(options.culmination, options.fallbackSign);
   const newMoonOppositeSign = oppositeSign(newMoonSign);
+  const lunarTwoWeekArcConnection = isFullMoon ? twoWeekArcConnection(newMoonSign, fullMoonSign) ?? "" : "";
+  const lunarSixMonthArcConnection = sixMonthArcConnection(isFullMoon ? fullMoonSign : newMoonSign) ?? "";
   const eclipseSeasonEvents = lunarArcDirection === "waning"
     ? [options.culmination, options.nextNewMoon]
     : [options.origin, options.culmination];
@@ -583,6 +717,10 @@ function lunarArcSlotsForPhase(
       lunarArcTarget,
       lunarArcTargetSign,
       arcTargetSign: lunarArcTargetSign,
+      lunarTwoWeekArcConnection,
+      lunarSixMonthArcConnection,
+      twoWeekArcConnection: lunarTwoWeekArcConnection,
+      sixMonthArcConnection: lunarSixMonthArcConnection,
       lunarArcPosition: `new moon, waxing toward the full moon in ${lunarArcTargetSign}`,
       arcPosition: lunarArcDirection,
       newMoonSign,
@@ -601,6 +739,10 @@ function lunarArcSlotsForPhase(
       lunarArcTarget,
       lunarArcTargetSign,
       arcTargetSign: lunarArcTargetSign,
+      lunarTwoWeekArcConnection,
+      lunarSixMonthArcConnection,
+      twoWeekArcConnection: lunarTwoWeekArcConnection,
+      sixMonthArcConnection: lunarSixMonthArcConnection,
       lunarArcPosition: `full moon, waning toward the new moon in ${lunarArcTargetSign}`,
       arcPosition: lunarArcDirection,
       newMoonSign,
@@ -618,6 +760,10 @@ function lunarArcSlotsForPhase(
     lunarArcTarget,
     lunarArcTargetSign,
     arcTargetSign: lunarArcTargetSign,
+    lunarTwoWeekArcConnection,
+    lunarSixMonthArcConnection,
+    twoWeekArcConnection: lunarTwoWeekArcConnection,
+    sixMonthArcConnection: lunarSixMonthArcConnection,
     lunarArcPosition: `${lunarArcDirection} toward the ${lunarArcTarget} in ${lunarArcTargetSign}`,
     arcPosition: lunarArcDirection,
     newMoonSign,
@@ -663,8 +809,12 @@ function fallbackLunarDayContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   slots: TemplateSlotValues
 ) {
-  return renderGeneratedContentTemplate(
-    generatedContent?.get("fallback-hook/sky.lunar-calendar-day"),
+  return renderedContent(
+    generatedContent,
+    [
+      "fallback-hook/lunar-calendar/day",
+      "fallback-hook/sky.lunar-calendar-day"
+    ],
     slots
   );
 }
@@ -681,18 +831,35 @@ function editorialFor(
   },
   generatedContent?: Map<string, LiveGeneratedContent>
 ): LunarDay["editorial"] {
-  const seasonPart = slugContentPart(seasonSign);
-  const signPart = slugContentPart(day.moonSign);
   const phasePart = slugContentPart(day.moonPhase);
   const lunationSignPart = slugContentPart(lunation?.sign ?? day.moonSign);
-  const slots = lunarDayTemplateSlots(day, seasonSign, arcEvents);
+  const initialPhaseType = phaseTypeForMoonPhase(day.moonPhase);
+  const exactLunation = exactLunationForDay(day, initialPhaseType);
+  const quarterLunation = initialPhaseType === "first-quarter" || initialPhaseType === "last-quarter" ? exactLunation : null;
+  const exactQuarterSunSign = quarterLunation?.sunSign ?? null;
+  const calendarSunSign = exactLunation?.sunSign ?? seasonSign;
+  const calendarMoonSign = exactLunation?.sign || day.moonSign;
+  const seasonPart = slugContentPart(calendarSunSign);
+  const signPart = slugContentPart(calendarMoonSign);
+  const slots: TemplateSlotValues = {
+    ...lunarDayTemplateSlots(day, calendarSunSign, arcEvents),
+    moonSign: calendarMoonSign,
+    quarterMoonSign: calendarMoonSign,
+    quarterSunSign: exactQuarterSunSign ?? "",
+    quarterSignRule: exactQuarterSunSign
+      ? `${initialPhaseType === "first-quarter" ? "First Quarter" : "Last Quarter"} archetype uses the Moon sign at exact perfection.`
+      : ""
+  };
   const phaseType = String(slots.phaseType ?? "");
-  const newMoonSignPart = slugContentPart(String(slots.newMoonSign ?? day.moonSign));
+  const newMoonSign = String(slots.newMoonSign ?? "");
+  const hasExactLunationEvent = Boolean(exactLunation);
   const phaseContentKeys = (() => {
+    if (!hasExactLunationEvent) return [];
+
     if (phaseType === "new-moon") return [`lunation/new-moon/${signPart}`];
     if (phaseType === "full-moon") return [`lunation/full-moon/${signPart}`];
-    if (phaseType === "first-quarter") return [`lunation/first-quarter/${newMoonSignPart}`];
-    if (phaseType === "last-quarter") return [`lunation/last-quarter/${newMoonSignPart}`];
+    if (phaseType === "first-quarter") return [`lunation/first-quarter/${signPart}`];
+    if (phaseType === "last-quarter") return [`lunation/last-quarter/${signPart}`];
 
     return [];
   })();
@@ -711,9 +878,25 @@ function editorialFor(
   ];
   const newBodyKeys = [
     `lunar.day.${day.dateKey}.body`,
-    ...(slots.eclipseFlag === "yes" ? ["lunation/eclipse"] : []),
+    ...(hasExactLunationEvent && slots.eclipseFlag === "yes" ? ["lunation/eclipse"] : []),
     ...phaseContentKeys
   ];
+  const phaseFallbackHookKeys = phaseContentKeys.map((key) => `fallback-hook/${key}`);
+  const phaseFallbackContent = renderedContent(generatedContent, phaseFallbackHookKeys, slots);
+  const fallbackArcLesson = hasExactLunationEvent && phaseType === "full-moon" && (slots.twoWeekArcConnection || slots.sixMonthArcConnection)
+    ? renderedContentBody(generatedContent, [
+      "fallback-hook/lunar-calendar/arc-full-moon",
+      "fallback-hook/sky.lunar-arc-full-moon"
+    ], slots)
+      ?? renderedFallbackHookDefinitionBody("fallback-hook/lunar-calendar/arc-full-moon", slots)
+    : null;
+  const fallbackArcSeeded = hasExactLunationEvent && phaseType === "new-moon" && slots.sixMonthArcConnection
+    ? renderedContentBody(generatedContent, [
+      "fallback-hook/lunar-calendar/arc-new-moon",
+      "fallback-hook/sky.lunar-arc-new-moon"
+    ], slots)
+      ?? renderedFallbackHookDefinitionBody("fallback-hook/lunar-calendar/arc-new-moon", slots)
+    : null;
   const fallbackDay = fallbackLunarDayContent(
     generatedContent,
     slots
@@ -754,18 +937,27 @@ function editorialFor(
 
   return {
     body: renderedContentBody(generatedContent, newBodyKeys, slots)
+      ?? phaseFallbackContent?.body.trim()
+      ?? lunarBeatBody(phaseContentKeys)
       ?? contentBody(generatedContent, baseKeys.map((key) => `${key}.body`))
       ?? fallbackDayBody,
+    archetypeTitle: phaseFallbackContent?.headline?.trim() || lunarBeatArchetype(phaseContentKeys),
+    archetypeLore: phaseFallbackContent?.summary?.trim() || lunarBeatArchetypeLore(phaseContentKeys),
     practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
     reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
     ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),
     eclipseWitness: contentBody(generatedContent, eclipseKeys),
     callback: contentBody(generatedContent, baseKeys.map((key) => `${key}.callback`)),
-    arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`)),
-    arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`)),
+    arcLesson: contentBody(generatedContent, arcKeys.map((key) => `${key}.lesson`))
+      ?? fallbackArcLesson,
+    arcSeeded: contentBody(generatedContent, arcKeys.map((key) => `${key}.seeded`))
+      ?? fallbackArcSeeded,
     journalPrompt: renderedContentSection(generatedContent, newBodyKeys, slots, "journalPrompt")
       ?? renderedContentSection(generatedContent, baseKeys.map((key) => `${key}.body`), slots, "journalPrompt")
-      ?? renderedContentSection(generatedContent, ["fallback-hook/sky.lunar-calendar-day"], slots, "journalPrompt"),
+      ?? renderedContentSection(generatedContent, [
+        "fallback-hook/lunar-calendar/day",
+        "fallback-hook/sky.lunar-calendar-day"
+      ], slots, "journalPrompt"),
     season: renderedContentBody(generatedContent, [`season/${seasonPart}`], slots),
     transitNotes
   };

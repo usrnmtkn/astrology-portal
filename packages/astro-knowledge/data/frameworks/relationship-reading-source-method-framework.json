@@ -1,0 +1,59 @@
+{
+  "id": "relationship-reading-source-method-framework",
+  "kind": "framework",
+  "title": "Relationship Reading Source Method Framework",
+  "role": "relationship-synthesis-method",
+  "category": "synastry-composite",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "A relationship reading has three layers: each person's natal relationship capacity, the cross-chart exchange between them, and the relationship entity shown by the composite. Keep those layers separate before synthesizing them."
+    },
+    {
+      "id": "natal-first",
+      "heading": "Natal First",
+      "body": "Before comparing charts, identify each person's basic relationship needs. Give special weight to the Sun, Moon, Ascendant, Venus, Mars, Saturn, the 5th and 7th houses, the rulers of relationship houses, and any repeated relationship signature. A synastry contact matters more when it activates a need already promised in the natal chart."
+    },
+    {
+      "id": "directionality",
+      "heading": "Directionality",
+      "body": "In house overlays and interaspects, track who experiences what. The house person feels the life area being activated; the planet person brings the planetary function. Cross-chart aspects can be mutual, but they are still experienced through two natal charts with different needs, defenses, and priorities."
+    },
+    {
+      "id": "examples",
+      "heading": "Examples",
+      "body": "Use these as synthesis examples, not deterministic rules.",
+      "items": [
+        {
+          "label": "Sun-Moon mismatch",
+          "body": "If one person's Sun style does not support the other's Moon needs, the relationship may have attraction without emotional rest. Do not stop at sign compatibility; check house emphasis, dignity, aspects, and whether the people can actually meet the need."
+        },
+        {
+          "label": "Venus without Moon support",
+          "body": "A strong Venus contact can create romance, pleasure, or attraction, but the bond may still feel unsafe if Moon contacts are harsh, absent, or unsupported. Love style and emotional safety are related but not interchangeable."
+        },
+        {
+          "label": "Saturn durability",
+          "body": "Saturn contacts can hold people together through commitment, responsibility, time, or obligation. That does not automatically mean the bond is warm or healthy. Read whether Saturn is supportive structure, fear, inhibition, duty, or a stuck pattern."
+        },
+        {
+          "label": "Repeated testimony",
+          "body": "A difficult theme becomes higher confidence when it appears in several layers: natal promise, synastry, composite, and timing. One hard contact raises a question; repetition shows a pattern to address."
+        }
+      ]
+    },
+    {
+      "id": "ethics",
+      "heading": "Ethics",
+      "body": "Do not use charts to excuse control, coercion, contempt, violence, or repeated harm. Difficult synastry can describe why a pattern is activated, but it is not a spiritual obligation to stay in the pattern. Keep the reading practical, agency-forward, and reality-based."
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local user-supplied sources reviewed July 2026: Helena Avelar and Luis Ribeiro, On the Heavenly Spheres; Hayden's Book of Synastry; and Rod Suskin, Synastry: Understanding the Astrology of Relationships. Source files were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}

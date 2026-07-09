@@ -64,6 +64,7 @@ export type LunarCalendarEvent = {
   planets?: [string, string];
   aspect?: string;
   sign?: string;
+  sunSign?: string;
   fromSign?: string;
   toSign?: string;
   eclipseType?: LunarCalendarEclipseType;
@@ -1003,7 +1004,9 @@ function findLunations(
         }
 
         const occursAt = refinePhaseEvent(swe, phaseTarget.target, previous.date, current.date);
-        const sign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
+        const moonSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
+        const sunSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_SUN, occursAt)).sign;
+        const sign = moonSign;
         const dateKey = localDateKey(occursAt, timeZone);
         const eclipseType = eclipseTypeForLunation(swe, occursAt, phaseTarget.target);
         const title = lunationTitle(phaseTarget.name, sign, eclipseType);
@@ -1018,6 +1021,7 @@ function findLunations(
             glyph: phaseTarget.glyph,
             primary: phaseTarget.primary,
             sign,
+            sunSign,
             eclipseType: eclipseType ?? undefined
           });
         }

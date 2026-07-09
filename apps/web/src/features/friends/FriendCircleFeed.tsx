@@ -3,6 +3,7 @@ export type FriendCircleFeedCard = {
   title: string;
   body: string;
   onSelect?: () => void;
+  previewCharts?: FriendCircleFeedChart[];
 };
 
 export type FriendCircleFeedChart = {
@@ -53,11 +54,12 @@ export function FriendCircleFeed({
                   : `${index + 2} days ago`;
 
             const CardElement = card.onSelect ? "button" : "article";
+            const cardPreviewCharts = card.previewCharts ?? previewCharts;
 
             return (
               <CardElement
-                className={`friends-feed-card${card.onSelect ? " friends-feed-card-button" : ""}`}
-                key={card.title}
+                className={`friends-feed-card${card.onSelect ? " friends-feed-card-button" : " friends-feed-card-static"}`}
+                key={`${card.label}-${card.title}-${index}`}
                 type={card.onSelect ? "button" : undefined}
                 onClick={card.onSelect}
               >
@@ -67,20 +69,22 @@ export function FriendCircleFeed({
                   <p>{card.body}</p>
                 </span>
                 <span className="friends-feed-avatar-stack" aria-hidden="true">
-                  {previewCharts.map((chart) => (
+                  {cardPreviewCharts.map((chart) => (
                     <span className="friends-feed-avatar" key={chart.id}>
                       {chart.initials}
                     </span>
                   ))}
-                  {previewCharts.length === 0 && (
+                  {cardPreviewCharts.length === 0 && (
                     <span className="friends-feed-avatar">
                       {fallbackInitials}
                     </span>
                   )}
                 </span>
-                <span className="friends-feed-chevron" aria-hidden="true">
-                  ›
-                </span>
+                {card.onSelect && (
+                  <span className="friends-feed-chevron" aria-hidden="true">
+                    ›
+                  </span>
+                )}
               </CardElement>
             );
           })

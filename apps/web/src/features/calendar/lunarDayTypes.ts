@@ -84,6 +84,8 @@ export type LunarDay = {
   } | null;
   editorial: {
     body: string | null;
+    archetypeTitle: string | null;
+    archetypeLore: string | null;
     practice: string | null;
     reflect: string | null;
     ritual: string | null;

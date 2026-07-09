@@ -1,7 +1,9 @@
 hookKey,plainDescription
 sky.seasonal-current,"Shows the current Sun season and adds the strongest sky context when it matters."
 sky.lunar-cycle,"Shows the Moon's current sign, phase, and strongest active lunar influence."
-sky.lunar-calendar-day,"Shows reusable selected-day copy in the lunar calendar when no date, phase, sign, or arc-specific row exists."
+lunar-calendar/day,"Shows reusable selected-day copy in the lunar calendar when no date, phase, sign, or arc-specific row exists."
+lunar-calendar/arc-new-moon,"Shows fallback arc copy on exact New Moon calendar cards when authored lunar arc seed rows are missing."
+lunar-calendar/arc-full-moon,"Shows fallback arc copy on exact Full Moon calendar cards when authored lunar arc lesson rows are missing."
 sky.planetary-placement,"Explains what a current planet-in-sign placement may feel like in the sky today."
 sky.aspect-detail,"Explains an active aspect between two current sky bodies with action and timing."
 sky.aspect-sign-context,"Adds a short sign-context line when both planets in a sky aspect have known signs."

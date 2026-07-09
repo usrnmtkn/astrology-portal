@@ -522,6 +522,102 @@ const conditionalChartLanguagePhrases = [
   "wherever this lands"
 ];
 
+const synastryLivedExampleBank = {
+  ascendant: [
+    "You may notice yourself changing your tone, standing differently, softening your expression, or becoming more aware of whether you are being read the way you intended.",
+    "A small comment from them can make you suddenly aware of your silence, your humor, your confidence, or the way your face gives you away before you have said anything.",
+    "Around them, you may become more conscious of your outfit, your posture, your timing, or the first impression you are leaving.",
+    "You may feel more visible around them, even in ordinary moments like walking into a room, sending a text, or explaining why you chose something."
+  ],
+  midheaven: [
+    "You may be trying to finish a project, hold a role, meet a deadline, or stay composed in public, and suddenly their presence brings up what is happening behind the scenes.",
+    "They may ask about the plan, the title, the launch, the money, the next step, or whether the version of you being seen by everyone else still feels honest.",
+    "Their response may matter most when you are trying to stay focused, visible, professional, or in control.",
+    "You may notice this around work, reputation, public choices, family pressure, or the part of your life where people expect you to have it together."
+  ],
+  mercury: [
+    "They may ask the question that makes your plan clearer, or say one small thing that makes you rethink how you are presenting yourself.",
+    "A casual comment from them can stay with you longer than expected, especially if it names something about your tone, your timing, or the way you are coming across.",
+    "They may point out the part of the story that does not hold, the detail you skipped, or the sentence you keep using to avoid saying what you mean.",
+    "You may find yourself explaining more than usual around them, not because they demand it, but because their questions make the vague part harder to hide."
+  ],
+  venus: [
+    "You may notice yourself dressing differently, softening your tone, becoming more charming, or checking whether they seem pleased with you before you realize you are doing it.",
+    "They may compliment your style, invite you into softer spaces, or make you feel like you do not have to work so hard to be liked.",
+    "Their approval may matter in small ways: what you wear, how you show up, whether you feel attractive, or whether the room feels easier when they are in it.",
+    "You may feel liked one moment and oddly self-conscious the next, especially if their warmth is inconsistent or hard to read."
+  ],
+  mars: [
+    "They may push you to answer faster, move sooner, say the thing directly, or stop waiting for perfect conditions.",
+    "Their urgency can be motivating when you are stuck, but irritating when you already know what you are doing.",
+    "You may feel this as chemistry, competition, impatience, or the sudden need to defend your pace.",
+    "They may interrupt the part of you that is trying to stay focused, visible, or in control."
+  ],
+  jupiter: [
+    "They may make your idea feel more possible, encourage you to apply for the thing, or talk you into seeing a future you were too cautious to name.",
+    "Around them, the plan can get bigger quickly: one conversation turns into a trip, a launch, a promise, or a version of the future that suddenly feels reachable.",
+    "Their confidence can help when you are doubting yourself, but it can also make it easy to skip the part where the plan needs structure.",
+    "You may leave a conversation with them feeling more hopeful, more ambitious, or more willing to believe that what you want is not unreasonable."
+  ],
+  saturn: [
+    "They may ask about the deadline, the plan, the money, the commitment, or the part of the promise that has to survive after the feeling changes.",
+    "Their presence can make you aware of what has not been handled yet: the boundary, the responsibility, the delay, or the choice you keep postponing.",
+    "You may feel steadier around them, or more judged, depending on whether their standards feel supportive or withholding.",
+    "They may not say much, but their silence can make you more aware of what you are avoiding."
+  ],
+  chiron: [
+    "They may touch a place where you are quicker to defend yourself than you expected, especially around being misunderstood, dismissed, or not taken seriously.",
+    "A small moment with them can bring up an older reaction: shutting down, overexplaining, apologizing too quickly, or trying to prove you are fine.",
+    "They may remind you of a pattern you thought you had already moved through, not because you failed, but because the same place is asking for a different response.",
+    "Care can get complicated here. You may want to help them, fix the moment, or make yourself useful before you have checked what it is bringing up in you."
+  ],
+  lilith: [
+    "They may make it harder to pretend you are fine with something you already know you do not want.",
+    "Around them, you may notice the part of you that does not want to explain, soften, negotiate, or make your refusal easier for someone else to accept.",
+    "They may bring out a private instinct: the line you will not cross, the desire you will not dress up, or the part of you that does not want to be managed.",
+    "You may feel more aware of where you have been performing agreement, especially in places where your body already knew the answer was no."
+  ],
+  uranus: [
+    "They may disrupt the routine, change the plan, or make the version of you that needs more freedom harder to ignore.",
+    "Around them, something can shift quickly: your mood, your plans, your certainty, or your tolerance for doing things the usual way.",
+    "They may make you feel more awake, but also less settled, especially if the connection keeps changing before you have caught up.",
+    "You may notice yourself wanting more space, more honesty, more experimentation, or fewer rules around who you are allowed to become."
+  ],
+  neptune: [
+    "They may make the situation feel more meaningful than it is ready to be, especially when longing fills in details that have not been said out loud.",
+    "Around them, you may feel softer, more forgiving, more inspired, or less clear about what is actually happening.",
+    "A text, a silence, or a vague promise can become easy to overread when you want the connection to mean something specific.",
+    "They may bring out compassion, fantasy, avoidance, or the urge to believe the best before the facts have caught up."
+  ],
+  pluto: [
+    "They may make it harder to stay casual about something you were trying not to care about.",
+    "Around them, a small moment can feel loaded: a look, a delay, a question, or the feeling that someone has more power in the room than they are naming.",
+    "They may bring out intensity, suspicion, desire, protectiveness, or the need to know what is really going on underneath the surface.",
+    "You may notice where you want control, where you are afraid of losing it, or where the connection is asking for honesty you cannot fake."
+  ]
+} as const;
+
+const synastryBannedPhrases = [
+  "soulmate",
+  "twin flame",
+  "karmic contract",
+  "meant to be",
+  "toxic",
+  "destined",
+  "guaranteed",
+  "the hard thing",
+  "hold space",
+  "deeply affirming",
+  "masquerade",
+  "this aspect activates",
+  "their energy reaches",
+  "their emotional world connects",
+  "who they are connects with",
+  "the thing to watch",
+  "give it somewhere to go",
+  "this connection works best when"
+];
+
 function bannedPhrasePattern(phrase: string) {
   const escaped = phrase.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\ /g, "\\s+");
   return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i");
@@ -529,6 +625,36 @@ function bannedPhrasePattern(phrase: string) {
 
 function hasBannedPhrase(text: string, phrase: string) {
   return bannedPhrasePattern(phrase).test(text);
+}
+
+function badAiGenerationFlags(text: string) {
+  const flags: string[] = [];
+
+  if (/\bnot\b.{0,80}\bbut\b/i.test(text)) {
+    flags.push("not X but Y construction");
+  }
+
+  if (/\bnot\b.{0,80}\binstead\b/i.test(text)) {
+    flags.push("contrast-reveal construction");
+  }
+
+  if (/\b(the harder pattern is|the difficult part is|the shadow is|the gift is|the lesson is)\b/i.test(text)) {
+    flags.push("formula scaffold");
+  }
+
+  if (/\bperform(?:s|ed|ing)?\b/i.test(text)) {
+    flags.push("banned word: perform");
+  }
+
+  if (/\bshows where\b|\bdescribes where\b|\bcan explain why\b/i.test(text)) {
+    flags.push("repetitive astrology explainer scaffold");
+  }
+
+  if (/(?:\b\w+\b,\s*){4,}/.test(text)) {
+    flags.push("keyword-list cadence");
+  }
+
+  return [...new Set(flags)];
 }
 
 function hardEditorialViolation(violations: string[], message?: string): never {
@@ -541,6 +667,12 @@ function isHardEditorialViolation(error: Error | null): error is ContentGenerati
 
 function isAdminDraftGeneration(input: GenerateContentInput) {
   return stringValue(input.facts?.adminGenerationMode) === "admin_draft";
+}
+
+function isApprovedSynastryExampleException(phrase: string, normalizedText: string, input: GenerateContentInput) {
+  return isSynastryAspectInput(input)
+    && phrase === "performing"
+    && normalizedText.includes("performing agreement");
 }
 
 function softVoiceWarningFailures(content: GeneratedContent, input: GenerateContentInput) {
@@ -2169,6 +2301,133 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
   ].filter(Boolean).join("\n\n");
 }
 
+type SynastryExampleKey = keyof typeof synastryLivedExampleBank;
+
+function synastryExampleKey(value: string): SynastryExampleKey | undefined {
+  const normalized = slug(value);
+  const aliases: Record<string, SynastryExampleKey> = {
+    asc: "ascendant",
+    ascendant: "ascendant",
+    rising: "ascendant",
+    mc: "midheaven",
+    midheaven: "midheaven",
+    mercury: "mercury",
+    venus: "venus",
+    mars: "mars",
+    jupiter: "jupiter",
+    saturn: "saturn",
+    chiron: "chiron",
+    lilith: "lilith",
+    "black-moon-lilith": "lilith",
+    uranus: "uranus",
+    neptune: "neptune",
+    pluto: "pluto"
+  };
+
+  return aliases[normalized];
+}
+
+function isSynastryAspectInput(input: GenerateContentInput) {
+  const blockType = stringValue(input.facts.blockType);
+  return blockType === "synastry_aspect"
+    || (
+      input.surface === "synastry"
+      && (
+        input.eventType.includes("synastry-aspect")
+        || input.eventType.includes("synastry-contact")
+      )
+    );
+}
+
+function selectedSynastryExampleBank(input: GenerateContentInput) {
+  const facts = input.facts;
+  const candidates = [
+    stringValue(facts.body1),
+    stringValue(facts.planetA),
+    stringValue(facts.from),
+    stringValue(facts.body2),
+    stringValue(facts.planetB),
+    stringValue(facts.to),
+    input.headline ?? "",
+    input.contentKey
+  ];
+  const keys = new Set<SynastryExampleKey>();
+
+  for (const candidate of candidates) {
+    const directKey = synastryExampleKey(candidate);
+    if (directKey) {
+      keys.add(directKey);
+      continue;
+    }
+
+    for (const part of candidate.split(/[^A-Za-z]+/)) {
+      const partKey = synastryExampleKey(part);
+      if (partKey) {
+        keys.add(partKey);
+      }
+    }
+  }
+
+  const selectedKeys = keys.size ? [...keys] : Object.keys(synastryLivedExampleBank) as SynastryExampleKey[];
+
+  return selectedKeys.reduce<Record<string, readonly string[]>>((bank, key) => {
+    bank[`${key}_examples`] = synastryLivedExampleBank[key];
+    return bank;
+  }, {});
+}
+
+function synastryWritingSystemPrompt(input: GenerateContentInput) {
+  if (!isSynastryAspectInput(input)) {
+    return "";
+  }
+
+  const bank = selectedSynastryExampleBank(input);
+
+  return [
+    "SYNASTRY WRITING SYSTEM",
+    "Use this for client-facing synastry aspect copy.",
+    "",
+    "POV AND QUESTION",
+    "Anchor the POV on the reader looking at a friend's planet contacting the reader's chart.",
+    "The main question is: what does this person bring out in me?",
+    "Lead with how one person makes the other feel in plain language, then translate the astrology into daily relationship experience.",
+    "Use names when supplied in ASTROLOGY FACTS. Be direct, specific, and human.",
+    "Do not explain astrology mechanics in the body. The title already carries the chart label.",
+    "Do not overstate fate, trauma, permanence, compatibility, or harm.",
+    "",
+    "STRUCTURE",
+    "Open with the felt experience of being around this person.",
+    "Explain what one person brings out in the other and how it may feel on both sides.",
+    "For supportive aspects, name what feels easy, then name the catch: comfort can replace facing the issue, or encouragement can pass for progress.",
+    "For challenging aspects, name the concrete mismatch, expectation, or recurring tension without making either person the villain.",
+    "For conjunctions, write immediacy and concentration.",
+    "For oppositions, write reflection, polarity, projection, or one part of life pulling against another.",
+    "End with one practical move in plain language.",
+    "If writing a TLDR, use three short sentences: the feeling, why it works, and one thing to watch.",
+    "",
+    "LIVED EXAMPLES",
+    "Use one or two examples maximum, only where they naturally fit inside a paragraph.",
+    "Do not ask the model to invent examples. Do not create new examples. If you include an example, use one of the approved examples below verbatim or lightly adapted only for pronouns/names.",
+    "Do not turn examples into bullets or a list.",
+    "Keep examples optional with may, can, or you may notice.",
+    JSON.stringify(bank, null, 2),
+    "",
+    "LANGUAGE RULES",
+    "Never use em dashes.",
+    "Do not use the word real as a filler modifier.",
+    "Avoid overusing ease or discomfort.",
+    "Avoid phrases like their energy reaches your private side, their emotional world connects with your direction, who they are connects with, or this aspect activates.",
+    "Do not overuse the thing to watch, give it somewhere to go, or this connection works best when.",
+    "Banned words and phrases: soulmate, twin flame, karmic contract, meant to be, toxic, destined, guaranteed, the hard thing, hold space, deeply affirming, masquerade.",
+    "",
+    "GOOD SHAPE",
+    "{{personA}}'s Mars opposes your Midheaven, so they may interrupt the part of you that is trying to stay focused, visible, or in control. You may be trying to finish a project, hold a role, meet a deadline, or stay composed in public, and suddenly their urgency brings up what is happening behind the scenes.",
+    "",
+    "BAD SHAPE",
+    "Do not write: {{personA}}'s Mars opposes your Midheaven, so their Mars energy activates your IC axis."
+  ].join("\n");
+}
+
 function natalPlacementFactInstruction(input: GenerateContentInput) {
   const facts = input.facts;
   const type = stringValue(facts.type) || input.eventType;
@@ -2303,12 +2562,9 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
         `Person B body sign: ${aspectSignB || "missing"}.`,
         `Person B body house: ${aspectHouseB || "missing"}.`,
         "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning.",
-        "Use this synastry aspect structure:",
-        "Around them, [emotional/relational experience becomes easier or harder to notice]. They may [specific behavior], which can make it easier to [lived response]. There is something [supportive/challenging/clarifying] here that helps you see [core dynamic].",
-        "Their [planet quality] can make it easier/harder to [specific relationship behavior]. When life is [situation], they may [specific effect]. When life is [opposite situation], they can [specific effect]. That kind of [support/pressure/intensity] can help you [growth edge].",
-        "The thing to watch is [shadow]. You may both [pattern] before you have really [truth of the aspect].",
-        "[Direct advice]. This connection is strongest when [integration], not [avoidance/shadow].",
-        "Fill the brackets with specific, chart-grounded relational copy; do not leave bracket placeholders in the output.",
+        "Write the body from the reader's lived experience of the other person's contact, not as abstract compatibility mechanics.",
+        "Name the felt effect first, then the practical pattern, then one concrete move.",
+        "Use one or two approved lived examples from the Synastry Writing System when they fit. Do not invent examples.",
         "No therapy-speak, no fate language, no soulmate language."
       ].join("\n");
     }
@@ -4157,6 +4413,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     input.eventType,
     "",
     natalPlacementFactInstruction(input),
+    synastryWritingSystemPrompt(input),
     "",
     "TARGET DATE",
     input.targetDate ?? "not specified",
@@ -4309,10 +4566,20 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
     throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
   }
 
+  const badAiFlags = badAiGenerationFlags(userFacingText);
+
+  if (badAiFlags.length) {
+    hardEditorialViolation(badAiFlags, `Generated content matched bad AI generation pattern: ${badAiFlags.join(", ")}`);
+  }
+
   const softWarnings = softVoiceWarningFailures(content, input);
 
   for (const phrase of bannedUserFacingPhrases) {
     if (softWarnings.includes(phrase)) {
+      continue;
+    }
+
+    if (isApprovedSynastryExampleException(phrase, normalized, input)) {
       continue;
     }
 
@@ -4324,6 +4591,14 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
   for (const signature of bannedOutputSignatures) {
     if (normalized.includes(signature)) {
       hardEditorialViolation([signature], `Generated content included disallowed phrase: ${signature}`);
+    }
+  }
+
+  if (isSynastryAspectInput(input)) {
+    const synastryMatches = synastryBannedPhrases.filter((phrase) => hasBannedPhrase(normalized, phrase));
+
+    if (synastryMatches.length) {
+      hardEditorialViolation(synastryMatches, `Generated synastry content used banned phrase: ${synastryMatches.join(", ")}`);
     }
   }
 
@@ -5031,6 +5306,11 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
   const supabaseUrl = process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL");
   const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   const blockType = typeof input.facts.blockType === "string" ? input.facts.blockType : null;
+  const provider = contentGenerationProvider({
+    requestedProvider: input.provider,
+    blockType: typeof input.facts.blockType === "string" ? input.facts.blockType : null,
+    contentType: typeof input.facts.contentType === "string" ? input.facts.contentType : null
+  });
   const response = await fetch(`${supabaseUrl}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
@@ -5051,6 +5331,7 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
       knowledge_ids: input.knowledgeIds ?? [],
       source_snapshot: input.sourceSnapshot ?? {},
       prompt_version: promptVersion,
+      provider,
       model: generated.model,
       headline: generated.headline,
       summary: generated.summary,
