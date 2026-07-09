@@ -1091,6 +1091,25 @@ function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParag
       : interpretationInReviewParagraphs;
 }
 
+function generatedObjectSectionText(generated: LiveGeneratedContent | null, key: string) {
+  const sections = generated?.sections;
+
+  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+    return "";
+  }
+
+  const value = (sections as Record<string, unknown>)[key];
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function synastryHeadlinerParagraphs(generated: LiveGeneratedContent | null) {
+  const lead = generatedObjectSectionText(generated, "lead");
+  const verdict = generatedObjectSectionText(generated, "verdict");
+
+  return [lead, verdict].filter(Boolean);
+}
+
 function liveGeneratedHeadline(generated: LiveGeneratedContent | null, fallback: string) {
   return generated?.headline?.trim() || fallback;
 }
@@ -7137,34 +7156,11 @@ function relationshipAspectTitleFromSlots(slots: TemplateSlotValues) {
   return `${slots.personAPossessive} ${slots.planetA} ${slots.aspect} ${slots.personBPossessive} ${slots.planetB}`;
 }
 
-const synastryAnglePoints = new Set(["Ascendant", "Midheaven"]);
-
-function isSynastryAnglePoint(point: string) {
-  return synastryAnglePoints.has(point);
-}
-
-function isDirectionalPlanetToAngleSynastry(firstPoint: string, secondPoint: string) {
-  return !isSynastryAnglePoint(firstPoint) && isSynastryAnglePoint(secondPoint);
-}
-
-function shouldSkipDirectionalAngleSynastryKeys(firstPoint: string, secondPoint: string) {
-  return (isSynastryAnglePoint(firstPoint) || isSynastryAnglePoint(secondPoint))
-    && !isDirectionalPlanetToAngleSynastry(firstPoint, secondPoint);
-}
-
 function synastryContactContentKeys(firstPoint: string, aspect: string, secondPoint: string) {
-  if (shouldSkipDirectionalAngleSynastryKeys(firstPoint, secondPoint)) {
-    return [];
-  }
-
   return relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
 }
 
 function synastryContactFallback(firstPoint: string, aspect: string, secondPoint: string) {
-  if (shouldSkipDirectionalAngleSynastryKeys(firstPoint, secondPoint)) {
-    return emptyContentFallback("friends.synastry-contact");
-  }
-
   return fallbackFromHook(
     "friends.synastry-contact",
     {
@@ -7435,7 +7431,11 @@ function synastryContactSummary(
         }
       )
     : null;
-  const generatedPreview = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || null;
+  const headlinerParagraphs = synastryHeadlinerParagraphs(generated);
+  const generatedPreview = headlinerParagraphs[0]
+    || generated?.summary?.trim()
+    || generatedContentParagraphs(generated)[0]
+    || null;
 
   return repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(
     textPreview(generatedPreview || ""),
@@ -7529,6 +7529,14 @@ function synastryDetailCopy(
         }
       )
     : null;
+  const headlinerParagraphs = synastryHeadlinerParagraphs(generated);
+
+  if (headlinerParagraphs.length > 0) {
+    return headlinerParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+    ));
+  }
+
   const generatedParagraphs = generatedContentParagraphs(generated);
 
   if (generatedParagraphs.length > 0) {
