@@ -397,11 +397,15 @@ export async function updateManualChart(userId: string, chartId: string, input: 
     throw error;
   }
 
-  await client
+  const { error: connectionError } = await client
     .from("connections")
     .update({ relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend" })
     .eq("owner_user_id", userId)
     .eq("manual_chart_id", chartId);
+
+  if (connectionError) {
+    throw new Error(`Chart updated, but connection metadata could not be updated: ${connectionError.message}`);
+  }
 
   return rowToManualChart(data as ManualChartRow);
 }
@@ -430,11 +434,15 @@ export async function deleteManualChart(userId: string, chartId: string): Promis
     throw lookupError;
   }
 
-  await client
+  const { error: connectionDeleteError } = await client
     .from("connections")
     .delete()
     .eq("owner_user_id", userId)
     .eq("manual_chart_id", chartId);
+
+  if (connectionDeleteError) {
+    throw connectionDeleteError;
+  }
 
   const { error } = await client
     .from("manual_charts")
