@@ -3757,6 +3757,10 @@ export function GeneratedContentAdminDashboard() {
   const contentImportInputRef = useRef<HTMLInputElement | null>(null);
   const contentImportScopeRef = useRef<AdminContentScope>("settings");
   const saveToastTimeoutRef = useRef<number | null>(null);
+  const vocabularyLoadRequestRef = useRef(0);
+  const templateContentLoadRequestRef = useRef(0);
+  const vocabularyDraftDirtyRef = useRef(false);
+  const templateContentDraftDirtyRef = useRef(false);
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -4689,7 +4693,7 @@ export function GeneratedContentAdminDashboard() {
         setMessage(`Uploading ${rowsToImport.length} vocabulary and tagline rows...`);
         const importResult = await bulkUpsertGeneratedContentImportRows(rowsToImport);
 
-        await loadVocabularyRows();
+        await loadVocabularyRows({ forceDraftRefresh: true });
         setAccessStatus("valid");
         const skippedMessage = importResult.skippedLiveRows.length > 0
           ? ` Skipped ${importResult.skippedLiveRows.length} published rows: ${importResult.skippedLiveRows.map((row) => row.contentKey).join(", ")}.`
@@ -4705,7 +4709,7 @@ export function GeneratedContentAdminDashboard() {
           await upsertContextImportRow(row, availableRows);
         }
 
-        await loadTemplateContentRows();
+        await loadTemplateContentRows({ forceDraftRefresh: true });
         setAccessStatus("valid");
         setMessage(`Imported ${bundle.contextRows.length} context rows.`);
         return;
@@ -4725,7 +4729,7 @@ export function GeneratedContentAdminDashboard() {
         );
       }
 
-      await loadTemplateContentRows();
+      await loadTemplateContentRows({ forceDraftRefresh: true });
       setAccessStatus("valid");
       setMessage(`Imported ${bundle.templateRows.length} template rows.`);
     } catch (error) {
@@ -4875,12 +4879,14 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function loadVocabularyRows() {
+  async function loadVocabularyRows(options: { forceDraftRefresh?: boolean } = {}) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
 
+    const requestId = vocabularyLoadRequestRef.current + 1;
+    vocabularyLoadRequestRef.current = requestId;
     setIsLoading(true);
     try {
       const [nextRows, initialTaglineRows] = await Promise.all([
@@ -4888,12 +4894,20 @@ export function GeneratedContentAdminDashboard() {
         fetchTaglineRowsForAdmin()
       ]);
 
+      if (requestId !== vocabularyLoadRequestRef.current) {
+        return;
+      }
+
+      const refreshDrafts = options.forceDraftRefresh || !vocabularyDraftDirtyRef.current;
       setVocabularyRows(nextRows);
-      setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
       setTaglineRows(initialTaglineRows);
-      setTaglineDrafts(draftMapForTaglineRows(initialTaglineRows));
+      if (refreshDrafts) {
+        setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
+        setTaglineDrafts(draftMapForTaglineRows(initialTaglineRows));
+        vocabularyDraftDirtyRef.current = false;
+      }
       setAccessStatus("valid");
-      setMessage(`Loaded ${nextRows.length} vocabulary rows and ${initialTaglineRows.length} saved tagline rows.`);
+      setMessage(`Loaded ${nextRows.length} vocabulary rows and ${initialTaglineRows.length} saved tagline rows.${refreshDrafts ? "" : " Kept unsaved local edits."}`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -4926,7 +4940,7 @@ export function GeneratedContentAdminDashboard() {
         ? ` ${payload.skippedLiveRows.length} LIVE rows were left unchanged.`
         : "";
 
-      await loadVocabularyRows();
+      await loadVocabularyRows({ forceDraftRefresh: true });
       setMessage(`Created ${payload.rows.length} missing natal card tagline rows.${skippedMessage}`);
       showSaveToast("Missing tagline rows created");
     } catch (error) {
@@ -4939,17 +4953,22 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function loadTemplateContentRows() {
+  async function loadTemplateContentRows(options: { forceDraftRefresh?: boolean } = {}) {
     if (!canUseApi) {
       const nextRows = fallbackTemplatePlaceholderRows();
       setTemplateContentRows(nextRows);
-      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      if (options.forceDraftRefresh || !templateContentDraftDirtyRef.current) {
+        setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+        templateContentDraftDirtyRef.current = false;
+      }
       setLunarCoverageRows([]);
       setLunarCoverageLoadedFromDb(false);
       setMessage(`Showing ${nextRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.`);
       return;
     }
 
+    const requestId = templateContentLoadRequestRef.current + 1;
+    templateContentLoadRequestRef.current = requestId;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -4970,21 +4989,34 @@ export function GeneratedContentAdminDashboard() {
         .sort((first, second) => first.content_key.localeCompare(second.content_key));
       const nextRows = fallbackTemplatePlaceholderRows(savedRows);
 
+      if (requestId !== templateContentLoadRequestRef.current) {
+        return;
+      }
+
+      const refreshDrafts = options.forceDraftRefresh || !templateContentDraftDirtyRef.current;
       setTemplateContentRows(nextRows);
-      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
       setVocabularyRows(nextVocabularyRows);
-      setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+      if (refreshDrafts) {
+        setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+        templateContentDraftDirtyRef.current = false;
+      }
+      if (!vocabularyDraftDirtyRef.current) {
+        setVocabularyDrafts(draftMapForVocabularyRows(nextVocabularyRows));
+      }
       setLunarCoverageRows(nextLunarCoverageRows);
       setLunarCoverageLoadedFromDb(true);
       setAccessStatus("valid");
-      setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.`);
+      setMessage(`Loaded ${savedRows.length} saved fallback template rows and ${nextRows.length - savedRows.length} local hook placeholders.${refreshDrafts ? "" : " Kept unsaved local edits."}`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
       const nextRows = fallbackTemplatePlaceholderRows();
       setTemplateContentRows(nextRows);
-      setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+      if (options.forceDraftRefresh || !templateContentDraftDirtyRef.current) {
+        setTemplateContentDrafts(draftMapForTemplateRows(nextRows));
+        templateContentDraftDirtyRef.current = false;
+      }
       setLunarCoverageRows([]);
       setLunarCoverageLoadedFromDb(false);
       setMessage(`${adminErrorMessage(error, "Could not load saved fallback template rows.")} Showing ${nextRows.length} local fallback-hook placeholders.`);
@@ -5376,6 +5408,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function updateVocabularyDraft(id: string, patch: Partial<AdminVocabularyDraft>) {
+    vocabularyDraftDirtyRef.current = true;
     setVocabularyDrafts((currentDrafts) => ({
       ...currentDrafts,
       [id]: {
@@ -5388,6 +5421,7 @@ export function GeneratedContentAdminDashboard() {
   function updateTaglineDraft(contentKey: string, patch: Partial<AdminNatalTaglineDraft>) {
     const point = pointFromTaglineContentKey(contentKey);
 
+    vocabularyDraftDirtyRef.current = true;
     setTaglineDrafts((currentDrafts) => ({
       ...currentDrafts,
       [contentKey]: {
@@ -5398,6 +5432,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function updateTemplateContentDraft(id: string, patch: Partial<AdminTemplateDraft>) {
+    templateContentDraftDirtyRef.current = true;
     setTemplateContentDrafts((currentDrafts) => ({
       ...currentDrafts,
       [id]: {
@@ -5450,7 +5485,7 @@ export function GeneratedContentAdminDashboard() {
           })
         }
       );
-      await loadVocabularyRows();
+      await loadVocabularyRows({ forceDraftRefresh: true });
       setMessage(`Saved and re-read ${row.content_key}.`);
       showSaveToast("Vocabulary row saved");
     } catch (error) {
@@ -5518,7 +5553,7 @@ export function GeneratedContentAdminDashboard() {
         createdTaglineStatus = payload.rows?.[0]?.status;
       }
 
-      await loadVocabularyRows();
+      await loadVocabularyRows({ forceDraftRefresh: true });
       const createdStatusMessage = createdTaglineStatus
         ? ` Created as ${savedStatusLabel(createdTaglineStatus)}; publish separately when ready.`
         : "";
@@ -5630,7 +5665,7 @@ export function GeneratedContentAdminDashboard() {
         }
       }
 
-      await loadVocabularyRows();
+      await loadVocabularyRows({ forceDraftRefresh: true });
       const createdStatusMessage = createdTaglineStatus
         ? ` Tagline created as ${savedStatusLabel(createdTaglineStatus)}; publish separately when ready.`
         : "";
@@ -5682,7 +5717,7 @@ export function GeneratedContentAdminDashboard() {
         );
         const createdStatus = payload.rows?.[0]?.status;
 
-        await loadTemplateContentRows();
+        await loadTemplateContentRows({ forceDraftRefresh: true });
         setMessage(`Created and re-read ${row.content_key}. Created as ${savedStatusLabel(createdStatus)}; publish separately when ready.`);
         showSaveToast(`Fallback row saved as ${savedStatusLabel(createdStatus)}`);
         return;
@@ -5704,7 +5739,7 @@ export function GeneratedContentAdminDashboard() {
       );
       const savedStatus = payload.rows?.[0]?.status ?? draftValue.status;
 
-      await loadTemplateContentRows();
+      await loadTemplateContentRows({ forceDraftRefresh: true });
       setMessage(`Saved and re-read ${row.content_key}.`);
       showSaveToast(savedStatus === "LIVE" ? "Fallback row published" : `Fallback row saved as ${savedStatusLabel(savedStatus)}`);
     } catch (error) {
