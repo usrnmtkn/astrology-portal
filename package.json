@@ -11,6 +11,7 @@
     "dev": "npx vercel dev --listen 3000",
     "dev:web": "npm run dev -w @tldr/web",
     "build": "npm run build -w @tldr/astro-knowledge && npm run build -w @tldr/web",
+    "test": "npm run typecheck && npm run build:web",
     "preview": "npm run preview -w @tldr/web",
     "typecheck": "npm run typecheck -w @tldr/web",
     "visual:smoke": "playwright test -c playwright.config.ts",
