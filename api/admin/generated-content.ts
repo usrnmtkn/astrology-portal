@@ -160,12 +160,12 @@ async function listGeneratedContent(req: IncomingMessage) {
     params.set("content_key", `like.${contentKeyPrefix}%`);
   }
 
-  if (!id && startDate) {
-    params.set("target_date", `gte.${startDate}`);
-  }
-
-  if (!id && endDate) {
-    params.append("target_date", `lte.${endDate}`);
+  if (!id && startDate && endDate) {
+    params.set("or", `(target_date.is.null,and(target_date.gte.${startDate},target_date.lte.${endDate}))`);
+  } else if (!id && startDate) {
+    params.set("or", `(target_date.is.null,target_date.gte.${startDate})`);
+  } else if (!id && endDate) {
+    params.set("or", `(target_date.is.null,target_date.lte.${endDate})`);
   }
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
