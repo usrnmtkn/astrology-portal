@@ -3706,7 +3706,6 @@ export function GeneratedContentAdminDashboard() {
   const [saveToastMessage, setSaveToastMessage] = useState("");
   const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
   const [isLoading, setIsLoading] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [areGenerationInputsOpen, setAreGenerationInputsOpen] = useState(true);
   const [statusMetrics, setStatusMetrics] = useState<Record<GeneratedContentStatus, number>>({
     DRAFT: 0,
@@ -5140,21 +5139,6 @@ export function GeneratedContentAdminDashboard() {
       setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (!isPreviewOpen) {
-      return;
-    }
-
-    function closePreviewOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsPreviewOpen(false);
-      }
-    }
-
-    window.addEventListener("keydown", closePreviewOnEscape);
-    return () => window.removeEventListener("keydown", closePreviewOnEscape);
-  }, [isPreviewOpen]);
 
   function saveSecret(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -9526,35 +9510,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         )}
       </section>
 
-      {isPreviewOpen && (
-        <div className="admin-preview-modal" role="dialog" aria-modal="true" aria-label="User preview">
-          <div className="admin-preview-modal-shell">
-            <header className="admin-preview-modal-header">
-              <div>
-                <p className="admin-eyebrow">User preview</p>
-                <h2>{draft.headline || "Untitled"}</h2>
-                <small>{draft.surface} / {draft.mode} / {draft.targetDate || "No date"}</small>
-              </div>
-              <button type="button" onClick={() => setIsPreviewOpen(false)} aria-label="Close preview">
-                <X size={22} aria-hidden="true" />
-              </button>
-            </header>
-
-            <article className="admin-preview-page">
-              <p className="admin-eyebrow">User preview</p>
-              <h1>{draft.headline || "Untitled"}</h1>
-              {draft.summary && <strong>{draft.summary}</strong>}
-              {draft.body ? (
-                draft.body.split(/\n{2,}/).filter(Boolean).map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))
-              ) : (
-                <p className="admin-preview-empty">No body copy yet.</p>
-              )}
-            </article>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
