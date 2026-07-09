@@ -5,6 +5,7 @@
   .relationship-explainer-card,
   .relationship-api-summary,
   .you-signatures-card,
+  .soul-roadmap-card,
   .friend-signature-card,
   .manual-chart-row,
   .daily-horoscope-summary,
@@ -23,6 +24,89 @@
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
+}
+
+.soul-roadmap-card {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.soul-roadmap-card__header {
+  display: grid;
+  gap: 10px;
+  padding: 24px var(--card-padding) 22px;
+}
+
+.soul-roadmap-card__header h3 {
+  margin: 0;
+  color: var(--card-title-color);
+  font-size: var(--type-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.soul-roadmap-card__header p {
+  margin: 0;
+  color: var(--card-body-color);
+  font-size: var(--type-md);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-description);
+}
+
+.soul-roadmap-card__points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.soul-roadmap-card__points span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 14px var(--card-padding);
+}
+
+.soul-roadmap-card__points span + span {
+  border-left: 1px solid var(--card-border);
+}
+
+.soul-roadmap-card__points strong {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.soul-roadmap-card__points em {
+  min-width: 0;
+  color: var(--card-title-color);
+  font-size: var(--type-md);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  overflow-wrap: anywhere;
+}
+
+.soul-roadmap-card__keywords {
+  display: grid;
+  gap: 8px;
+  padding: 16px var(--card-padding) 18px;
+}
+
+.soul-roadmap-card__keywords p {
+  margin: 0;
+  color: var(--card-body-color);
+  font-size: var(--type-sm);
+  line-height: var(--leading-description);
+}
+
+.soul-roadmap-card__keywords strong {
+  color: var(--card-title-color);
+  font-weight: var(--weight-semibold);
 }
 
 :where(

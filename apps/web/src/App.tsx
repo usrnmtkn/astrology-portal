@@ -42,6 +42,7 @@ import {
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
+import { SoulRoadmapCard } from "./components/charts/SoulRoadmapCard";
 import type { PlacementHouseInsight, SocialPlacementRow } from "./components/charts/PlacementRows";
 import {
   aspectGlyph,
@@ -15298,6 +15299,7 @@ function ProfileView({
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
+        unknownBirthTime={unknownBirthTime}
         transitArticle={transitArticle}
       />
     </Suspense>
@@ -16386,6 +16388,15 @@ function ManualChartsPanel({
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
               <div className="friend-profile-copy-column">
+                <SoulRoadmapCard
+                  className="friend-soul-roadmap-card"
+                  moon={selectedFriendBigThree?.moon ?? ""}
+                  ownerKind={selectedChartIsEvent ? "chart" : "person"}
+                  ownerName={selectedChart.displayName}
+                  rising={selectedFriendBigThree?.rising ?? ""}
+                  risingPending={selectedChart.birthTimeUnknown || selectedFriendBigThree?.rising === "Rising pending"}
+                  sun={selectedFriendBigThree?.sun ?? ""}
+                />
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {selectedFriendBigThreeDisplayRows.map((row) => {

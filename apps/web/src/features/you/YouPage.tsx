@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 
 type YouTab = "transits" | "chart";
 
@@ -71,6 +72,7 @@ export type YouPageProps = {
   signatureBody: string;
   signatureTitle: string;
   signaturesReady: boolean;
+  unknownBirthTime: boolean;
   transitArticle?: YouTransitArticle | null;
 };
 
@@ -231,6 +233,9 @@ function YouNatalChartPanel({
 
 function YouNatalTab({
   bigThreeRows,
+  displayMoon,
+  displayRising,
+  displaySun,
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
@@ -238,9 +243,13 @@ function YouNatalTab({
   planetRows,
   showNatalSignatures,
   signatureBody,
-  signatureTitle
+  signatureTitle,
+  unknownBirthTime
 }: {
   bigThreeRows: ReactNode[];
+  displayMoon: string;
+  displayRising: string;
+  displaySun: string;
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
@@ -249,6 +258,7 @@ function YouNatalTab({
   showNatalSignatures: boolean;
   signatureBody: string;
   signatureTitle: string;
+  unknownBirthTime: boolean;
 }) {
   return (
     <div className="subpane" id="sub-chart">
@@ -270,6 +280,13 @@ function YouNatalTab({
           </section>
         </>
       )}
+
+      <SoulRoadmapCard
+        moon={displayMoon}
+        rising={displayRising}
+        risingPending={unknownBirthTime || displayRising === "Rising pending"}
+        sun={displaySun}
+      />
 
       <span className="eyebrow section-label">Big Three</span>
       <div className="list you-list-card planet-placement-list" aria-label="Big three">
@@ -625,6 +642,7 @@ export function YouPage({
   signatureBody,
   signatureTitle,
   signaturesReady,
+  unknownBirthTime,
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("chart");
@@ -669,6 +687,9 @@ export function YouPage({
           {profileTab === "chart" && (
             <YouNatalTab
               bigThreeRows={bigThreeRows}
+              displayMoon={displayMoon}
+              displayRising={displayRising}
+              displaySun={displaySun}
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
@@ -677,6 +698,7 @@ export function YouPage({
               showNatalSignatures={showNatalSignatures}
               signatureBody={signatureBody}
               signatureTitle={signatureTitle}
+              unknownBirthTime={unknownBirthTime}
             />
           )}
 
