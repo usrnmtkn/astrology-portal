@@ -394,6 +394,7 @@ export const fallbackHookDefinitions = [
     description: "Two-chart interaspects, such as one person's Venus sextile the other's Ascendant.",
     knowledgeIdTemplates: ["synastry-{planetA}-{aspect}-{planetB}", "relationship-{planetA}-{aspect}-{planetB}", "{planetA}-{aspect}-{planetB}", "{planetB}-{aspect}-{planetA}"],
     requiredFacts: ["personA planet/point", "personB planet/point", "aspect"],
+    slotKeys: ["friendName", "friendNamePossessive", "friendPlanet", "friendPlanetTopic", "aspect", "readerName", "readerPossessive", "yourPlanet", "yourPlanetTopic", "personA", "personAPossessive", "planetA", "planetATopic", "personB", "personBPossessive", "planetB", "planetBTopic"],
     copy: emptyFallbackHookCopy
   },
   {

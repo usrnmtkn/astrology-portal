@@ -1,6 +1,6 @@
 export type TemplateSlotValues = Record<string, string | number | null | undefined>;
 
-const slotPattern = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
+const slotPattern = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}|\{(?!\{)\s*([A-Za-z0-9_]+)\s*\}(?!\})/g;
 const warnedTemplateSlots = new Set<string>();
 
 type InterpolationOptions = {
@@ -23,7 +23,9 @@ export function interpolateTemplateString(
 ): string {
   const missingSlots = new Set<string>();
 
-  template.replace(slotPattern, (_match, slotName: string) => {
+  template.replace(slotPattern, (_match, doubleBraceSlot: string | undefined, singleBraceSlot: string | undefined) => {
+    const slotName = doubleBraceSlot ?? singleBraceSlot ?? "";
+
     if (!slotValue(slots[slotName])) {
       missingSlots.add(slotName);
     }
@@ -45,7 +47,9 @@ export function interpolateTemplateString(
     return "";
   }
 
-  return template.replace(slotPattern, (_match, slotName: string) => slotValue(slots[slotName]));
+  return template.replace(slotPattern, (_match, doubleBraceSlot: string | undefined, singleBraceSlot: string | undefined) => (
+    slotValue(slots[doubleBraceSlot ?? singleBraceSlot ?? ""])
+  ));
 }
 
 export function hasTemplateSlots(value: string) {

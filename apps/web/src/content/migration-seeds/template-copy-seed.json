@@ -237,9 +237,9 @@
         "emptyState": "copy.emptyState"
       },
       "fields": {
-        "title": "{{personA}}'s {{planetA}} {{aspect}} {{personB}}'s {{planetB}}",
-        "summary": "This contact describes one way the connection gets attention. One person's {{planetATopic}} meets the other person's {{planetBTopic}}.",
-        "body": "Synastry describes what happens between two charts. This contact may feel easy, charged, familiar, confusing, or motivating depending on the aspect and the people involved. It is most useful when it explains an interaction pattern, not when it turns either person into the problem.",
+        "title": "{{personAPossessive}} {{planetA}} {{aspect}} {{personBPossessive}} {{planetB}}",
+        "summary": "{{friendNamePossessive}} {{friendPlanet}} touches {{readerPossessive}} {{yourPlanet}}: {{friendName}} brings {{friendPlanetTopic}}, and you bring {{yourPlanetTopic}}.",
+        "body": "{{friendNamePossessive}} {{friendPlanet}} touches {{readerPossessive}} {{yourPlanet}}: {{friendName}} brings {{friendPlanetTopic}}, and you bring {{yourPlanetTopic}}.\n\nThis contact may feel easy, charged, familiar, confusing, or motivating depending on the aspect and the people involved. It is most useful when it explains an interaction pattern between you and {{friendName}}, not when it turns either person into the problem.",
         "bestMove": "Name the dynamic as something happening between you. Then decide what would make the exchange cleaner, kinder, or easier to handle.",
         "emptyState": "If no approved content exists, leave the product surface blank."
       },
