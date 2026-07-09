@@ -4311,7 +4311,6 @@ export function GeneratedContentAdminDashboard() {
     const params = new URLSearchParams({
       status: "all",
       surface: "synastry",
-      promptVersion: "synastry-kb-v1",
       limit: "1000"
     });
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
