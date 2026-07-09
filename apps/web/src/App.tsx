@@ -929,14 +929,29 @@ function synastryTemplateSlots(
   planetB: string,
   variant: PlanetTopicVariant = "friend"
 ): TemplateSlotValues {
+  const planetATopic = relationshipPlanetTopicSlot(planetA, variant);
+  const planetBTopic = relationshipPlanetTopicSlot(planetB, variant);
+  const personAPossessive = possessiveLabel(personA);
+  const personBPossessive = personB.toLowerCase() === "you" ? "your" : possessiveLabel(personB);
+
   return {
     personA,
+    personAPossessive,
     planetA,
-    planetATopic: relationshipPlanetTopicSlot(planetA, variant),
+    planetATopic,
     aspect: titleCase(aspect).toLowerCase(),
     personB,
+    personBPossessive,
     planetB,
-    planetBTopic: relationshipPlanetTopicSlot(planetB, variant)
+    planetBTopic,
+    friendName: personA,
+    friendNamePossessive: personAPossessive,
+    friendPlanet: planetA,
+    friendPlanetTopic: planetATopic,
+    readerName: personB,
+    readerPossessive: personBPossessive,
+    yourPlanet: planetB,
+    yourPlanetTopic: planetBTopic
   };
 }
 

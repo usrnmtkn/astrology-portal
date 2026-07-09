@@ -272,6 +272,10 @@ function sourceSnapshot(path, entry, collection) {
   };
 }
 
+function generatedStatusFromEntry(entry) {
+  return entry.status === "REVIEWED" ? "LIVE" : "DRAFT";
+}
+
 function aspectRow(path) {
   const entry = readJson(path);
 
@@ -279,7 +283,7 @@ function aspectRow(path) {
     content_key: aspectContentKey(entry),
     surface: "synastry",
     mode: "in_depth",
-    status: "LIVE",
+    status: generatedStatusFromEntry(entry),
     event_type: "synastry-aspect",
     target_date: null,
     facts: {
@@ -315,7 +319,7 @@ function overlayRow(path) {
     content_key: overlayContentKey(entry),
     surface: "synastry",
     mode: "in_depth",
-    status: "LIVE",
+    status: generatedStatusFromEntry(entry),
     event_type: "synastry-house-overlay",
     target_date: null,
     facts: {
