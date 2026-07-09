@@ -41,6 +41,8 @@ type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminHookCatalogSelection = { type: "lunar"; key: string } | { type: "fallback"; key: string };
 type LunarCoverageFilter = "all" | "lunar-calendar" | "eclipse" | "season" | "transit-fallback";
+type SlotDictionarySourceFilter = "all" | "calculated" | "vocabulary" | "fallback";
+type SlotDictionaryStatusFilter = "all" | "calculated" | "ready" | "missing";
 type AdminTemplateDrawerMode = "view" | "edit";
 type AdminContentBlockFilter =
   | "all"
@@ -420,6 +422,7 @@ type AdminContentStatsPayload = {
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 const adminVoiceTemplateStorageKey = "tldrastro:contentVoiceTemplates";
+const adminSlotInfoDismissedStorageKey = "tldrastro:slotDictionaryInfoDismissed";
 const adminVoiceTemplateContentKeyPrefix = "admin/voice-template/";
 
 const generatedContentSurfaceLabels: Record<GeneratedContentSurfaceFilter, string> = {
@@ -1364,6 +1367,57 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     description: "Names or labels from the active friend, synastry, or composite context."
   }
 ];
+
+const slotDictionarySourceFilters: Array<{ key: SlotDictionarySourceFilter; label: string }> = [
+  { key: "all", label: "All sources" },
+  { key: "calculated", label: "Calculated" },
+  { key: "vocabulary", label: "Vocabulary" },
+  { key: "fallback", label: "Fallback" }
+];
+
+const slotDictionaryStatusFilters: Array<{ key: SlotDictionaryStatusFilter; label: string }> = [
+  { key: "all", label: "All statuses" },
+  { key: "calculated", label: "Calculated" },
+  { key: "ready", label: "Ready" },
+  { key: "missing", label: "Needs rows" }
+];
+
+function slotDictionarySourceFilterForRow(row: AdminSlotDictionaryRow): SlotDictionarySourceFilter {
+  if (row.editableIn === "Vocabulary") return "vocabulary";
+  if (row.editableIn === "Fallback Rows") return "fallback";
+  return "calculated";
+}
+
+function slotDictionarySourceBadge(row: AdminSlotDictionaryRow) {
+  if (row.editableIn === "Vocabulary") return "Vocabulary";
+  if (row.editableIn === "Fallback Rows") return "Fallback";
+  return "Calculated";
+}
+
+function slotDictionaryStatusLabel(status: AdminSlotDictionaryRow["status"]) {
+  if (status === "calculated") return "Calculated";
+  if (status === "ready") return "Ready";
+  return "Needs rows";
+}
+
+function slotDictionarySearchText(row: AdminSlotDictionaryRow) {
+  return [
+    row.slot,
+    row.label,
+    row.group,
+    row.source,
+    row.editableIn,
+    row.status,
+    row.description,
+    ...(row.examples ?? [])
+  ].join(" ").toLowerCase();
+}
+
+function slotDictionarySourcePrefix(source: string) {
+  return source.includes("{")
+    ? source.slice(0, source.indexOf("{"))
+    : source;
+}
 
 function fallbackHookSurfaceLabel(row: Pick<AdminGeneratedContentRow, "surface">, hook?: ReturnType<typeof fallbackHookForContextRow>) {
   if (hook?.domain === "natal" && (hook.surface === "you" || row.surface === "you" || row.surface === "natal")) {
@@ -3989,9 +4043,10 @@ export function GeneratedContentAdminDashboard() {
         return row;
       }
 
+      const sourcePrefix = slotDictionarySourcePrefix(row.source);
       const isReady = row.editableIn === "Vocabulary"
-        ? row.examples?.some((example) => hasVocabularyPrefix(example.replace(/\{.*$/, ""))) ?? false
-        : row.examples?.some((example) => hasFallbackPrefix(example.replace(/\{.*$/, ""))) ?? false;
+        ? hasVocabularyPrefix(sourcePrefix)
+        : hasFallbackPrefix(sourcePrefix);
 
       return {
         ...row,
