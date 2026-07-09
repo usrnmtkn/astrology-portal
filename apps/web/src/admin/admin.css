@@ -310,6 +310,16 @@ body,
   padding: 14px 16px;
 }
 
+.admin-message-card span {
+  flex: 1;
+}
+
+.admin-message-card button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
 .admin-save-toast {
   align-items: center;
   background: rgba(20, 38, 31, 0.96);
@@ -634,36 +644,6 @@ body,
   margin: 0;
 }
 
-.admin-slot-principles {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.admin-slot-principles article {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid var(--admin-line);
-  border-radius: 10px;
-  display: grid;
-  gap: 8px;
-  padding: 14px;
-}
-
-.admin-slot-principles span {
-  color: var(--admin-muted);
-  font-size: var(--type-label-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-}
-
-.admin-slot-principles p {
-  color: var(--admin-ink);
-  font-size: var(--type-meta-size);
-  line-height: var(--leading-description);
-  margin: 0;
-}
-
 .admin-slot-table-wrap {
   border: 1px solid var(--admin-line);
   border-radius: 8px;
@@ -674,16 +654,17 @@ body,
 .admin-slot-table {
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 1120px;
+  table-layout: fixed;
+  min-width: 1080px;
   width: 100%;
 }
 
 .admin-slot-table th,
 .admin-slot-table td {
   border-bottom: 1px solid rgba(245, 243, 238, 0.08);
-  padding: 12px;
+  padding: 10px 12px;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .admin-slot-table th {
@@ -698,14 +679,34 @@ body,
   z-index: 1;
 }
 
+.admin-slot-table th:nth-child(1) {
+  width: 26%;
+}
+
+.admin-slot-table th:nth-child(2) {
+  width: 22%;
+}
+
+.admin-slot-table th:nth-child(3) {
+  width: 13%;
+}
+
+.admin-slot-table th:nth-child(4) {
+  width: 27%;
+}
+
+.admin-slot-table th:nth-child(5) {
+  text-align: right;
+  width: 12%;
+}
+
 .admin-slot-table td {
   color: rgba(232, 224, 208, 0.84);
   font-size: var(--type-description-size);
   line-height: var(--leading-description);
 }
 
-.admin-slot-table td:first-child,
-.admin-slot-table td:nth-child(2) {
+.admin-slot-table td:first-child {
   display: grid;
   gap: 6px;
 }
@@ -727,6 +728,197 @@ body,
   max-width: 100%;
   overflow-wrap: anywhere;
   padding: 5px 7px;
+}
+
+.admin-slot-info-row,
+.admin-slot-controls {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-slot-info-row button {
+  flex: 0 0 auto;
+}
+
+.admin-slot-stat-row {
+  align-items: stretch;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-slot-stat-row article,
+.admin-slot-stat-row button {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  color: var(--admin-ink);
+  display: grid;
+  gap: 6px;
+  min-height: 74px;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.admin-slot-stat-row button {
+  cursor: pointer;
+}
+
+.admin-slot-stat-row span,
+.admin-slot-info-row summary,
+.admin-slot-controls label span {
+  color: var(--admin-muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.admin-slot-stat-row strong {
+  font-size: var(--type-title-size);
+  line-height: 1;
+}
+
+.admin-slot-stat-row .is-warning {
+  border-color: rgba(240, 166, 112, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(240, 166, 112, 0.08);
+}
+
+.admin-slot-stat-row .is-warning strong,
+.admin-slot-stat-row .is-warning span {
+  color: var(--admin-warn);
+}
+
+.admin-slot-info-row {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.admin-slot-info-row details {
+  flex: 1;
+}
+
+.admin-slot-info-row summary {
+  cursor: pointer;
+}
+
+.admin-slot-info-row p {
+  color: var(--admin-ink);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-description);
+  margin: 10px 0 0;
+  max-width: 980px;
+}
+
+.admin-slot-info-row code {
+  color: rgba(245, 243, 238, 0.9);
+}
+
+.admin-slot-controls {
+  flex-wrap: wrap;
+}
+
+.admin-slot-controls label {
+  display: grid;
+  flex: 1 1 260px;
+  gap: 6px;
+  max-width: 420px;
+}
+
+.admin-slot-controls input {
+  background: var(--admin-panel-dark);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  color: var(--admin-ink);
+  font: inherit;
+  min-height: 38px;
+  padding: 8px 10px;
+}
+
+.admin-slot-controls input::placeholder {
+  color: var(--admin-muted);
+}
+
+.admin-slot-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-slot-filter-group button {
+  min-height: 38px;
+  padding: 7px 10px;
+}
+
+.admin-slot-filter-group button.active {
+  background: var(--admin-accent);
+  border-color: var(--admin-accent);
+  color: #f8f8fb;
+}
+
+.admin-slot-source-calculated {
+  border-color: rgba(174, 184, 202, 0.28);
+  color: rgba(232, 224, 208, 0.82);
+}
+
+.admin-slot-source-vocabulary {
+  border-color: rgba(125, 165, 255, 0.32);
+  color: rgba(181, 203, 255, 0.95);
+}
+
+.admin-slot-source-fallback {
+  border-color: rgba(190, 160, 235, 0.32);
+  color: rgba(217, 198, 246, 0.96);
+}
+
+.admin-slot-row-detail {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.admin-slot-row-detail summary {
+  color: var(--admin-muted);
+  cursor: pointer;
+  font-size: var(--type-hint-size);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-slot-row-detail code,
+.admin-slot-row-detail small {
+  margin-left: 16px;
+}
+
+.admin-slot-description {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-slot-action-cell {
+  text-align: right;
+}
+
+.admin-slot-action-cell button {
+  max-width: 100%;
+  min-height: 36px;
+  overflow: hidden;
+  padding: 7px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-slot-action-cell button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .admin-slot-status-calculated {
@@ -1808,103 +2000,6 @@ body,
 .admin-advanced[open] {
   display: grid;
   gap: 14px;
-}
-
-.admin-preview-modal {
-  background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(18px);
-  display: grid;
-  inset: 0;
-  padding: 28px;
-  position: fixed;
-  z-index: 1000;
-}
-
-.admin-preview-modal-shell {
-  background: var(--admin-panel-3);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 14px;
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
-  color: var(--admin-ink-dark);
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: 0;
-  overflow: hidden;
-}
-
-.admin-preview-modal-header {
-  align-items: center;
-  background: #101116;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--admin-ink);
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  padding: 18px 22px;
-}
-
-.admin-preview-modal-header h2 {
-  font-size: var(--type-h1-size);
-  letter-spacing: var(--tracking-number);
-  line-height: 1;
-  margin: 4px 0 6px;
-}
-
-.admin-preview-modal-header small {
-  color: var(--admin-muted);
-  font-size: var(--type-meta-size);
-}
-
-.admin-preview-modal-header button {
-  border-radius: 999px;
-  flex: 0 0 auto;
-  height: 46px;
-  padding: 0;
-  width: 46px;
-}
-
-.admin-preview-page {
-  align-content: start;
-  display: grid;
-  gap: 24px;
-  margin: 0 auto;
-  max-width: 980px;
-  overflow: auto;
-  padding: clamp(36px, 6vw, 92px);
-  width: 100%;
-}
-
-.admin-preview-page .admin-eyebrow {
-  color: var(--admin-muted-dark);
-}
-
-.admin-preview-page h1 {
-  color: var(--admin-ink-dark);
-  font-size: var(--type-display-size);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-display);
-  margin: 0 0 10px;
-}
-
-.admin-preview-page strong {
-  color: var(--admin-ink-dark);
-  display: block;
-  font-size: var(--type-h1-size);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-meta);
-  max-width: 760px;
-}
-
-.admin-preview-page p {
-  color: #3f4542;
-  font-size: var(--type-large-title-size);
-  line-height: var(--leading-body);
-  margin: 0;
-  max-width: 780px;
-}
-
-.admin-preview-empty {
-  color: var(--admin-muted-dark);
 }
 
 .admin-release-page {
@@ -3208,17 +3303,6 @@ body,
     flex-wrap: wrap;
   }
 
-  .admin-preview-modal {
-    padding: 12px;
-  }
-
-  .admin-preview-modal-header {
-    align-items: flex-start;
-  }
-
-  .admin-preview-page {
-    padding: 28px;
-  }
 }
 
 /* Clean console pass: quieter admin shell inspired by modern API consoles. */

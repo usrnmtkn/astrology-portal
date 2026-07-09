@@ -7200,6 +7200,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         <section className="admin-message-card" aria-live="polite">
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
+          {activePage === "slotDictionary" && message.includes("fallback-hook placeholders") && (
+            <button type="button" onClick={() => setActivePage("connection")}>
+              Add secret
+            </button>
+          )}
         </section>
         {saveToastMessage && (
           <div className="admin-save-toast" role="status" aria-live="polite">
@@ -7404,14 +7409,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <p>Use this as the global map for what fills each template variable. Calculated facts are locked; reusable language points to Vocabulary or Fallback Rows.</p>
               </div>
             </div>
-
-            {!canUseApi && (
-              <div className="admin-slot-warning" role="status">
-                <Sparkles size={17} aria-hidden="true" />
-                <span>Showing {templateContentRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.</span>
-                <button type="button" onClick={() => setActivePage("connection")}>Add secret</button>
-              </div>
-            )}
 
             <div className="admin-slot-stat-row" aria-label="Slot dictionary coverage">
               <article>
