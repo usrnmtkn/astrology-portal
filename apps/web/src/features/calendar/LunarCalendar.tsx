@@ -1977,6 +1977,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, on
 
     setVisibleMonth(nextMonth);
     setVisibleWeekDateKey(dateKeyFromDate(nextMonth));
+    setSelectedDateKey("");
 
   };
   const applyLocation = (nextLocation: LocationInput) => {
