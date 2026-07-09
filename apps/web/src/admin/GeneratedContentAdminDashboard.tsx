@@ -3677,6 +3677,16 @@ export function GeneratedContentAdminDashboard() {
   const [templatePreviewSlotDrafts, setTemplatePreviewSlotDrafts] = useState<Record<string, Record<string, string>>>({});
   const [fallbackHookSectionFilter, setFallbackHookSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [lunarCoverageFilter, setLunarCoverageFilter] = useState<LunarCoverageFilter>("all");
+  const [slotDictionaryQuery, setSlotDictionaryQuery] = useState("");
+  const [slotDictionarySourceFilter, setSlotDictionarySourceFilter] = useState<SlotDictionarySourceFilter>("all");
+  const [slotDictionaryStatusFilter, setSlotDictionaryStatusFilter] = useState<SlotDictionaryStatusFilter>("all");
+  const [slotInfoDismissed, setSlotInfoDismissed] = useState(() => {
+    try {
+      return window.localStorage.getItem(adminSlotInfoDismissedStorageKey) === "true";
+    } catch {
+      return false;
+    }
+  });
   const [selectedHookCatalogItem, setSelectedHookCatalogItem] = useState<AdminHookCatalogSelection | null>(null);
   const [selectedTemplateContentId, setSelectedTemplateContentId] = useState<string | null>(null);
   const [templateDrawerMode, setTemplateDrawerMode] = useState<AdminTemplateDrawerMode>("view");
@@ -4059,6 +4069,17 @@ export function GeneratedContentAdminDashboard() {
     ready: slotDictionaryRows.filter((row) => row.status === "ready").length,
     missing: slotDictionaryRows.filter((row) => row.status === "missing").length
   }), [slotDictionaryRows]);
+  const filteredSlotDictionaryRows = useMemo(() => {
+    const query = slotDictionaryQuery.trim().toLowerCase();
+
+    return slotDictionaryRows.filter((row) => {
+      const matchesQuery = !query || slotDictionarySearchText(row).includes(query);
+      const matchesSource = slotDictionarySourceFilter === "all" || slotDictionarySourceFilterForRow(row) === slotDictionarySourceFilter;
+      const matchesStatus = slotDictionaryStatusFilter === "all" || row.status === slotDictionaryStatusFilter;
+
+      return matchesQuery && matchesSource && matchesStatus;
+    });
+  }, [slotDictionaryQuery, slotDictionaryRows, slotDictionarySourceFilter, slotDictionaryStatusFilter]);
 
   function buildContentExchangeBundle(
     scope: AdminContentScope,
@@ -5130,7 +5151,6 @@ export function GeneratedContentAdminDashboard() {
       const nextRecords = Array.from(mergedRecords.values());
 
       setReviewRecords(nextRecords);
-      setPrivateRows(privatePayload.rows ?? []);
       setReviewCounts({
         total: nextRecords.length,
         DRAFT: nextRecords.filter((record) => record.status === "DRAFT").length,
@@ -7432,38 +7452,94 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <div className="admin-template-header">
               <div>
                 <p className="admin-eyebrow">Template slot map</p>
-                <h2>Slot Dictionary</h2>
+                <h2>Template Slot Map</h2>
                 <p>Use this as the global map for what fills each template variable. Calculated facts are locked; reusable language points to Vocabulary or Fallback Rows.</p>
-              </div>
-              <div className="admin-release-summary" aria-label="Slot dictionary coverage">
-                <article>
-                  <span>Calculated</span>
-                  <strong>{slotDictionaryCounts.calculated}</strong>
-                </article>
-                <article>
-                  <span>Ready</span>
-                  <strong>{slotDictionaryCounts.ready}</strong>
-                </article>
-                <article>
-                  <span>Missing</span>
-                  <strong>{slotDictionaryCounts.missing}</strong>
-                </article>
               </div>
             </div>
 
-            <div className="admin-slot-principles" aria-label="Slot dictionary rules">
+            {!canUseApi && (
+              <div className="admin-slot-warning" role="status">
+                <Sparkles size={17} aria-hidden="true" />
+                <span>Showing {templateContentRows.length} local fallback-hook placeholders. Add the content generation secret to load saved rows.</span>
+                <button type="button" onClick={() => setActivePage("connection")}>Add secret</button>
+              </div>
+            )}
+
+            <div className="admin-slot-stat-row" aria-label="Slot dictionary coverage">
               <article>
-                <span>Facts</span>
-                <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> are calculated by the app and should not be hand-authored.</p>
+                <span>Calculated</span>
+                <strong>{slotDictionaryCounts.calculated}</strong>
               </article>
               <article>
-                <span>Language</span>
-                <p>Editable rows supply the wording attached to those facts, such as topics, sign style, house topics, lunar phase meaning, and archetype fallback copy.</p>
+                <span>Ready</span>
+                <strong>{slotDictionaryCounts.ready}</strong>
               </article>
-              <article>
-                <span>Rendering</span>
-                <p>Fallback hooks fill these slots with live values only after exact authored content and approved knowledge rows miss.</p>
-              </article>
+              <button
+                className="is-warning"
+                type="button"
+                onClick={() => setSlotDictionaryStatusFilter("missing")}
+              >
+                <span>Missing</span>
+                <strong>{slotDictionaryCounts.missing}</strong>
+              </button>
+            </div>
+
+            {!slotInfoDismissed && (
+              <div className="admin-slot-info-row">
+                <details>
+                  <summary>How slots work</summary>
+                  <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> are calculated by the app. Editable rows supply reusable wording through Vocabulary or Fallback Rows, and fallback hooks render only after exact authored content and approved knowledge rows miss.</p>
+                </details>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSlotInfoDismissed(true);
+                    try {
+                      window.localStorage.setItem(adminSlotInfoDismissedStorageKey, "true");
+                    } catch {
+                      return;
+                    }
+                  }}
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            <div className="admin-slot-controls" aria-label="Slot dictionary controls">
+              <label>
+                <span>Search slots</span>
+                <input
+                  type="search"
+                  value={slotDictionaryQuery}
+                  onChange={(event) => setSlotDictionaryQuery(event.target.value)}
+                  placeholder="Search slot, source, or use"
+                />
+              </label>
+              <div className="admin-slot-filter-group" aria-label="Filter by source">
+                {slotDictionarySourceFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={slotDictionarySourceFilter === filter.key ? "active" : ""}
+                    onClick={() => setSlotDictionarySourceFilter(filter.key)}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+              <div className="admin-slot-filter-group" aria-label="Filter by status">
+                {slotDictionaryStatusFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={slotDictionaryStatusFilter === filter.key ? "active" : ""}
+                    onClick={() => setSlotDictionaryStatusFilter(filter.key)}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="admin-slot-table-wrap">
@@ -7472,15 +7548,20 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <tr>
                     <th>Slot</th>
                     <th>Source</th>
-                    <th>Editable In</th>
                     <th>Status</th>
                     <th>Use</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                {slotDictionaryRows.map((row) => {
+                {filteredSlotDictionaryRows.map((row) => {
                   const rowAction = row.action;
+                  const sourceBadge = slotDictionarySourceBadge(row);
+                  const sourceDetail = [
+                    row.group,
+                    row.source,
+                    ...(row.examples ?? [])
+                  ].join(" · ");
 
                   return (
                     <tr key={row.slot}>
@@ -7489,23 +7570,31 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <span>{row.label}</span>
                       </td>
                       <td>
-                        <strong>{row.group}</strong>
-                        <code>{row.source}</code>
-                        {row.examples && (
-                          <small>{row.examples.join(" · ")}</small>
-                        )}
+                        <span className={`ui-pill admin-slot-source-${slotDictionarySourceFilterForRow(row)}`}>
+                          {sourceBadge}
+                        </span>
+                        <details className="admin-slot-row-detail">
+                          <summary title={sourceDetail}>{row.group}</summary>
+                          <code>{row.source}</code>
+                          {row.examples && <small>{row.examples.join(" · ")}</small>}
+                        </details>
                       </td>
-                      <td>{row.editableIn}</td>
                       <td>
-                        <span className={`ui-pill admin-status admin-slot-status-${row.status}`}>
-                          {row.status === "calculated" ? "Calculated" : row.status === "ready" ? "Rows found" : "Needs rows"}
+                        <span
+                          className={`ui-pill admin-status admin-slot-status-${row.status}`}
+                          title={row.status === "missing" ? "No matching saved rows were found for this slot source." : slotDictionaryStatusLabel(row.status)}
+                        >
+                          {slotDictionaryStatusLabel(row.status)}
                         </span>
                       </td>
-                      <td>{row.description}</td>
                       <td>
+                        <span className="admin-slot-description" title={row.description}>{row.description}</span>
+                      </td>
+                      <td className="admin-slot-action-cell">
                         {rowAction ? (
                           <button
                             type="button"
+                            title={rowAction.label}
                             onClick={() => {
                               if (rowAction.vocabularyFilter) {
                                 setVocabularyCategoryFilter(rowAction.vocabularyFilter);
@@ -7519,12 +7608,21 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             {rowAction.label}
                           </button>
                         ) : (
-                          <span className="admin-template-note">No editor</span>
+                          <button type="button" disabled title="This slot is calculated by the app and has no editor.">
+                            No editor
+                          </button>
                         )}
                       </td>
                     </tr>
                   );
                 })}
+                {filteredSlotDictionaryRows.length === 0 && (
+                  <tr>
+                    <td colSpan={5}>
+                      <span className="admin-template-note">No slots match the current filters.</span>
+                    </td>
+                  </tr>
+                )}
                 </tbody>
               </table>
             </div>
