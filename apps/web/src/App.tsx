@@ -20,7 +20,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { isValidElement, lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { isValidElement, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode, Ref } from "react";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
@@ -8436,7 +8436,6 @@ export function App() {
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
   const lastRemoteProfileSaveRef = useRef("");
-  const authBootstrapStartedRef = useRef(false);
   const initialSkyCacheKey = skySnapshotCacheKey(initialLocationState.location, dateInputValue());
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -9659,141 +9658,148 @@ export function App() {
     userProfile?.charts[0]?.id
   ]);
 
+  const applyAuthAccount = useCallback(async (account: AuthAccount | null, isCancelled: () => boolean) => {
+    if (isCancelled()) {
+      return;
+    }
+
+    setAuthAccountChecked(false);
+
+    if (!account) {
+      setRemoteAccountId(null);
+      setRemoteProfileReady(false);
+      lastRemoteProfileSaveRef.current = "";
+      setMode(unauthenticatedLandingMode);
+      setAuthAccountChecked(true);
+      return;
+    }
+
+    setRemoteAccountId(account.id);
+    setRemoteProfileReady(false);
+
+    const pendingForm = readPendingSignupForm();
+    const cachedLocalProfile = getInitialUserProfile();
+    let persistedProfileId: string | null = null;
+
+    try {
+      const persistedProfile = await loadPersistedProfile(account.id);
+
+      if (isCancelled()) {
+        return;
+      }
+
+      if (isProfilePersistencePayload(persistedProfile)) {
+        persistedProfileId = persistedProfile.profile.id;
+        const remoteTheme = persistedProfile.preferences?.theme;
+        const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
+        const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
+        const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
+        const remoteLocation = persistedProfile.preferences?.selectedLocation;
+        const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
+
+        setUserProfile(accountProfile);
+        if (remoteTheme === "light" || remoteTheme === "dark") {
+          setTheme(remoteTheme);
+        }
+        if (typeof remoteSunriseOrb === "boolean") {
+          setSunriseOrbEnabled(remoteSunriseOrb);
+        }
+        if (typeof remoteDyslexiaFont === "boolean") {
+          setDyslexiaFriendlyFont(remoteDyslexiaFont);
+        }
+        if (typeof remoteJournalPrompts === "boolean") {
+          setJournalPromptsEnabled(remoteJournalPrompts);
+        }
+        if (isLocationInput(remoteLocation)) {
+          const nextLocation = withTimeZone(remoteLocation);
+
+          setLocation(nextLocation);
+          setManualLocation(nextLocation.label);
+          setHasLocationPreference(true);
+        }
+      } else {
+        setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
+      }
+
+      try {
+        await migrateLocalManualChartsToRemote(account.id, [
+          cachedLocalProfile?.id,
+          persistedProfileId,
+          account.id
+        ]);
+      } catch (migrationError) {
+        console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
+      }
+      clearPendingSignupForm();
+      setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
+      setRemoteProfileReady(true);
+      setAuthAccountChecked(true);
+    } catch (error) {
+      if (isCancelled()) {
+        return;
+      }
+
+      console.warn("Supabase profile load failed; using local profile cache.", error);
+      setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
+      try {
+        await migrateLocalManualChartsToRemote(account.id, [
+          cachedLocalProfile?.id,
+          account.id
+        ]);
+      } catch (migrationError) {
+        console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
+      }
+      clearPendingSignupForm();
+      setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
+      setRemoteProfileReady(true);
+      setAuthAccountChecked(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (!shouldBootstrapAuth(mode)) {
       setAuthAccountChecked(true);
       return;
     }
 
-    if (authBootstrapStartedRef.current) {
-      return;
-    }
-
-    authBootstrapStartedRef.current = true;
     let cancelled = false;
-
-    async function applyAuthAccount(account: AuthAccount | null) {
-      setAuthAccountChecked(false);
-
-      if (!account) {
-        setRemoteAccountId(null);
-        setRemoteProfileReady(false);
-        lastRemoteProfileSaveRef.current = "";
-        setMode(unauthenticatedLandingMode);
-        setAuthAccountChecked(true);
-        return;
-      }
-
-      setRemoteAccountId(account.id);
-      setRemoteProfileReady(false);
-
-      const pendingForm = readPendingSignupForm();
-      const cachedLocalProfile = getInitialUserProfile();
-      let persistedProfileId: string | null = null;
-
-      try {
-        const persistedProfile = await loadPersistedProfile(account.id);
-
-        if (cancelled) {
-          return;
-        }
-
-        if (isProfilePersistencePayload(persistedProfile)) {
-          persistedProfileId = persistedProfile.profile.id;
-          const remoteTheme = persistedProfile.preferences?.theme;
-          const remoteSunriseOrb = persistedProfile.preferences?.sunriseOrbEnabled;
-          const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
-          const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
-          const remoteLocation = persistedProfile.preferences?.selectedLocation;
-          const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
-
-          setUserProfile(accountProfile);
-          if (remoteTheme === "light" || remoteTheme === "dark") {
-            setTheme(remoteTheme);
-          }
-          if (typeof remoteSunriseOrb === "boolean") {
-            setSunriseOrbEnabled(remoteSunriseOrb);
-          }
-          if (typeof remoteDyslexiaFont === "boolean") {
-            setDyslexiaFriendlyFont(remoteDyslexiaFont);
-          }
-          if (typeof remoteJournalPrompts === "boolean") {
-            setJournalPromptsEnabled(remoteJournalPrompts);
-          }
-          if (isLocationInput(remoteLocation)) {
-            const nextLocation = withTimeZone(remoteLocation);
-
-            setLocation(nextLocation);
-            setManualLocation(nextLocation.label);
-            setHasLocationPreference(true);
-          }
-        } else {
-          setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
-        }
-
-        try {
-          await migrateLocalManualChartsToRemote(account.id, [
-            cachedLocalProfile?.id,
-            persistedProfileId,
-            account.id
-          ]);
-        } catch (migrationError) {
-          console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
-        }
-        clearPendingSignupForm();
-        setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
-        setRemoteProfileReady(true);
-        setAuthAccountChecked(true);
-      } catch (error) {
-        if (cancelled) {
-          return;
-        }
-
-        console.warn("Supabase profile load failed; using local profile cache.", error);
-        setUserProfile(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
-        try {
-          await migrateLocalManualChartsToRemote(account.id, [
-            cachedLocalProfile?.id,
-            account.id
-          ]);
-        } catch (migrationError) {
-          console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
-        }
-        clearPendingSignupForm();
-        setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
-        setRemoteProfileReady(true);
-        setAuthAccountChecked(true);
-      }
-    }
+    const isCancelled = () => cancelled;
 
     getAuthAccount()
       .then((account) => {
-        if (cancelled) {
-          return;
-        }
-
-        void applyAuthAccount(account);
+        void applyAuthAccount(account, isCancelled);
       })
       .catch(() => {
         if (!cancelled) {
           setAuthAccountChecked(true);
         }
-        return;
       });
 
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldBootstrapAuth(mode)) {
+      return;
+    }
+
+    let cancelled = false;
+    const isCancelled = () => cancelled;
     const unsubscribe = onAuthAccountChange((account) => {
       if (cancelled) {
         return;
       }
 
-      void applyAuthAccount(account);
+      void applyAuthAccount(account, isCancelled);
     });
 
     return () => {
       cancelled = true;
       unsubscribe();
     };
-  }, [mode]);
+  }, [applyAuthAccount, mode]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
