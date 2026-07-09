@@ -631,7 +631,7 @@
   border-radius: 8px;
   background: var(--ink);
   color: var(--bg);
-  box-shadow: 0 18px 44px rgba(22, 25, 35, 0.22), var(--shadow-card);
+  box-shadow: var(--tooltip-shadow);
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: var(--weight-semibold);
