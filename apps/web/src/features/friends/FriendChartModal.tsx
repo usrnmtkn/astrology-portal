@@ -3,10 +3,16 @@ import type { FormEvent, ReactNode } from "react";
 import { ModalPortal } from "../../components/ModalPortal";
 import type { LocationInput } from "../../types";
 import type { ManualChartType } from "../../services/manualCharts";
+import {
+  pronounChoiceLabels,
+  pronounChoices,
+  type PronounChoice
+} from "../../services/personReferences";
 
 export type FriendChartFormState = {
   chartType: ManualChartType;
   displayName: string;
+  pronouns: PronounChoice;
   relationshipType: string;
   birthDate: string;
   birthTime: string;
@@ -107,22 +113,40 @@ export function FriendChartModal({
         </label>
 
         {!isEventForm && (
-          <label className="signup-field add-chart-field">
-            <span>Relationship</span>
-            <div>
-              <select
-                value={form.relationshipType}
-                onChange={(event) => onFieldChange("relationshipType", event.target.value)}
-                aria-label="Relationship type"
-              >
-                <option value="friend">Friend</option>
-                <option value="partner">Partner</option>
-                <option value="family">Family</option>
-                <option value="work">Coworker</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </label>
+          <>
+            <label className="signup-field add-chart-field">
+              <span>Relationship</span>
+              <div>
+                <select
+                  value={form.relationshipType}
+                  onChange={(event) => onFieldChange("relationshipType", event.target.value)}
+                  aria-label="Relationship type"
+                >
+                  <option value="friend">Friend</option>
+                  <option value="partner">Partner</option>
+                  <option value="family">Family</option>
+                  <option value="work">Coworker</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </label>
+            <fieldset className="add-chart-pronouns">
+              <legend>Pronouns</legend>
+              <div className="add-chart-pronoun-options">
+                {pronounChoices.map((choice) => (
+                  <label className="add-chart-pronoun-option" key={choice}>
+                    <input
+                      type="radio"
+                      name="friend-chart-pronouns"
+                      checked={form.pronouns === choice}
+                      onChange={() => onFieldChange("pronouns", choice)}
+                    />
+                    <span>{pronounChoiceLabels[choice]}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </>
         )}
 
         <div className="manual-chart-grid add-chart-birth-grid">

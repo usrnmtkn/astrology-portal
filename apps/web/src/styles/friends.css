@@ -1843,6 +1843,48 @@
   color-scheme: dark;
 }
 
+.add-chart-pronouns {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 18px 0 0;
+}
+
+.add-chart-pronouns legend {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-11);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.add-chart-pronoun-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 12px;
+}
+
+.add-chart-pronoun-option {
+  align-items: center;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-13);
+  font-weight: 700;
+  gap: 8px;
+}
+
+.add-chart-pronoun-option input {
+  accent-color: var(--text);
+  height: 18px;
+  margin: 0;
+  width: 18px;
+}
+
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1) grayscale(1) brightness(1.55);
