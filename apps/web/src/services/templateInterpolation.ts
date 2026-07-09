@@ -6,6 +6,8 @@ const warnedTemplateSlots = new Set<string>();
 type InterpolationOptions = {
   contentKey?: string;
   field?: string;
+  missingSlotBehavior?: "empty" | "preserve";
+  capitalizeSentenceStart?: boolean;
 };
 
 function slotValue(value: string | number | null | undefined) {
@@ -44,12 +46,25 @@ export function interpolateTemplateString(
       );
     }
 
+    if (options.missingSlotBehavior === "preserve") {
+      return template;
+    }
+
     return "";
   }
 
-  return template.replace(slotPattern, (_match, doubleBraceSlot: string | undefined, singleBraceSlot: string | undefined) => (
-    slotValue(slots[doubleBraceSlot ?? singleBraceSlot ?? ""])
-  ));
+  return template.replace(slotPattern, (_match, doubleBraceSlot: string | undefined, singleBraceSlot: string | undefined, offset: number) => {
+    const value = slotValue(slots[doubleBraceSlot ?? singleBraceSlot ?? ""]);
+
+    if (!options.capitalizeSentenceStart || !value) {
+      return value;
+    }
+
+    const before = template.slice(0, offset);
+    const atSentenceStart = before.trim().length === 0 || /(?:^|[.!?]\s+)$/.test(before);
+
+    return atSentenceStart ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+  });
 }
 
 export function hasTemplateSlots(value: string) {

@@ -76,7 +76,7 @@ export type GeneratedContentDrilldown = {
 function interpolateOptionalString(
   value: string | null,
   context: TemplateSlotValues,
-  options: { contentKey: string; field: string }
+  options: { contentKey: string; field: string; missingSlotBehavior?: "empty" | "preserve"; capitalizeSentenceStart?: boolean }
 ) {
   if (value === null) {
     return null;
@@ -89,20 +89,26 @@ function interpolateSections(
   value: unknown,
   context: TemplateSlotValues,
   contentKey: string,
-  fieldPath = "sections"
+  fieldPath = "sections",
+  missingSlotBehavior: "empty" | "preserve" = "empty"
 ): unknown {
   if (typeof value === "string") {
-    return interpolateTemplateString(value, context, { contentKey, field: fieldPath });
+    return interpolateTemplateString(value, context, {
+      contentKey,
+      field: fieldPath,
+      missingSlotBehavior,
+      capitalizeSentenceStart: true
+    });
   }
 
   if (Array.isArray(value)) {
-    return value.map((item, index) => interpolateSections(item, context, contentKey, `${fieldPath}.${index}`));
+    return value.map((item, index) => interpolateSections(item, context, contentKey, `${fieldPath}.${index}`, missingSlotBehavior));
   }
 
   if (value && typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
-        .map(([key, item]) => [key, interpolateSections(item, context, contentKey, `${fieldPath}.${key}`)] as const)
+        .map(([key, item]) => [key, interpolateSections(item, context, contentKey, `${fieldPath}.${key}`, missingSlotBehavior)] as const)
     );
   }
 
@@ -166,19 +172,32 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
+  const preserveMissingSlots = content.sourceSnapshot?.contentType === "synastry-kb-seed";
   const headline = interpolateOptionalString(content.headline, slots, {
     contentKey: content.contentKey,
-    field: "headline"
+    field: "headline",
+    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
+    capitalizeSentenceStart: true
   });
   const summary = interpolateOptionalString(content.summary, slots, {
     contentKey: content.contentKey,
-    field: "summary"
+    field: "summary",
+    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
+    capitalizeSentenceStart: true
   });
   const body = interpolateTemplateString(content.body, slots, {
     contentKey: content.contentKey,
-    field: "body"
+    field: "body",
+    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
+    capitalizeSentenceStart: true
   });
-  const sections = interpolateSections(content.sections ?? {}, slots, content.contentKey);
+  const sections = interpolateSections(
+    content.sections ?? {},
+    slots,
+    content.contentKey,
+    "sections",
+    preserveMissingSlots ? "preserve" : "empty"
+  );
 
   if (
     content.sourceSnapshot?.contentType === "synastry-kb-seed"

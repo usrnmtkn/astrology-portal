@@ -124,6 +124,16 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import {
+  defaultPronounChoice,
+  genericPersonReferenceSlots,
+  normalizePronounChoice,
+  personReferenceSlots,
+  possessiveName,
+  resolvePersonReference,
+  type PersonReference,
+  type PronounChoice
+} from "./services/personReferences";
 import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
@@ -235,12 +245,19 @@ type TransitForm = {
 type ManualChartForm = {
   chartType: ManualChartType;
   displayName: string;
+  pronouns: PronounChoice;
   relationshipType: string;
   birthDate: string;
   birthTime: string;
   birthTimeUnknown: boolean;
   birthPlace: string;
   birthLocation: LocationInput | null;
+};
+
+type ChartOwnerContext = {
+  ownerName: string;
+  ownerKind?: "person" | "chart";
+  ownerPronouns?: PronounChoice | null;
 };
 
 type TransitItem = {
@@ -927,31 +944,52 @@ function synastryTemplateSlots(
   aspect: string,
   personB: string,
   planetB: string,
-  variant: PlanetTopicVariant = "friend"
+  variant: PlanetTopicVariant = "friend",
+  options: {
+    personAIsReader?: boolean;
+    personBIsReader?: boolean;
+    personAPronouns?: PronounChoice | null;
+    personBPronouns?: PronounChoice | null;
+  } = {}
 ): TemplateSlotValues {
   const planetATopic = relationshipPlanetTopicSlot(planetA, variant);
   const planetBTopic = relationshipPlanetTopicSlot(planetB, variant);
-  const personAPossessive = possessiveLabel(personA);
-  const personBPossessive = personB.toLowerCase() === "you" ? "your" : possessiveLabel(personB);
+  const personAReference = resolvePersonReference({
+    name: personA,
+    pronouns: options.personAPronouns,
+    isReader: options.personAIsReader
+  });
+  const personBReference = resolvePersonReference({
+    name: personB,
+    pronouns: options.personBPronouns,
+    isReader: options.personBIsReader
+  });
+  const resolvedPersonA = personAReference.name;
+  const resolvedPersonB = personBReference.name;
+  const personAPossessive = personAReference.namePossessive;
+  const personBPossessive = personBReference.namePossessive;
 
   return {
-    personA,
+    personA: resolvedPersonA,
     personAPossessive,
     planetA,
     planetATopic,
     aspect: titleCase(aspect).toLowerCase(),
-    personB,
+    personB: resolvedPersonB,
     personBPossessive,
     planetB,
     planetBTopic,
-    friendName: personA,
+    friendName: resolvedPersonA,
     friendNamePossessive: personAPossessive,
     friendPlanet: planetA,
     friendPlanetTopic: planetATopic,
-    readerName: personB,
+    readerName: resolvedPersonB,
     readerPossessive: personBPossessive,
     yourPlanet: planetB,
-    yourPlanetTopic: planetBTopic
+    yourPlanetTopic: planetBTopic,
+    ...genericPersonReferenceSlots(personBReference),
+    ...personReferenceSlots("personA", personAReference),
+    ...personReferenceSlots("personB", personBReference)
   };
 }
 
@@ -2145,6 +2183,7 @@ const defaultTransitForm: TransitForm = {
 const defaultManualChartForm: ManualChartForm = {
   chartType: "person",
   displayName: "",
+  pronouns: defaultPronounChoice,
   relationshipType: "friend",
   birthDate: "",
   birthTime: "12:00",
@@ -3005,6 +3044,7 @@ function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
   return {
     chartType: chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person"),
     displayName: chart.displayName,
+    pronouns: normalizePronounChoice(chart.pronouns),
     relationshipType: chart.relationshipType || "friend",
     birthDate: chart.birthDate,
     birthTime: displayTimeToTwentyFourHour(chart.birthTime),
@@ -4422,7 +4462,7 @@ function aspectOtherPoint(aspect: SkySnapshot["aspects"][number], point: string)
 function natalAspectDetailArticle(
   aspect: SkySnapshot["aspects"][number],
   generatedContent: GeneratedContentMap = new Map(),
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+  ownerContext?: ChartOwnerContext
 ): YouTransitArticle {
   const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
   const title = `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
@@ -4455,7 +4495,7 @@ function natalAspectDetailArticle(
     content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
   );
   const ownerAwareCopy = (value: string) => ownerContext
-    ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person")
+    ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
     : value;
 
   return {
@@ -4682,7 +4722,7 @@ function relatedAspectRowsForPlacement({
   mode: "sky" | "natal";
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
   onOpenSkyAspect?: (aspect: SkySnapshot["aspects"][number]) => void;
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
+  ownerContext?: ChartOwnerContext;
   pointName: string;
   positions?: PlanetPosition[];
 }) {
@@ -4730,7 +4770,7 @@ function relatedAspectRowsForPlacement({
           : fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
       );
       const displaySummary = ownerContext && mode === "natal"
-        ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person")
+        ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
         : rowSummary;
       const rowContent = (
         <>
@@ -6356,7 +6396,11 @@ function relationshipAspectContentKeys(firstPoint: string, aspect: string, secon
     keys.add(compositeAspectContentKey(firstPoint, aspect, secondPoint));
   }
 
-  [baseKey, reversedBaseKey].forEach((key) => {
+  const relationshipKeys = context === "synastry"
+    ? [baseKey]
+    : [baseKey, reversedBaseKey];
+
+  relationshipKeys.forEach((key) => {
     keys.add(key);
     prefixes.forEach((prefix) => keys.add(`${prefix}-${key}`));
   });
@@ -6876,7 +6920,12 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
               topHit.theirPosition.planet,
               topHit.aspect.type,
               "You",
-              topHit.yourPosition.planet
+              topHit.yourPosition.planet,
+              "friend",
+              {
+                personAPronouns: chart.pronouns,
+                personBIsReader: true
+              }
             ),
             afterContentFallback: hookFallback
           }
@@ -7084,8 +7133,8 @@ function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect:
   return fallbackTitles[aspect] ?? "You Affect Each Other";
 }
 
-function relationshipAspectTitle(ownerName: string, firstPoint: string, aspect: string, comparisonPossessive: string, secondPoint: string) {
-  return `${possessiveLabel(ownerName)} ${firstPoint} ${aspect} ${comparisonPossessive} ${secondPoint}`;
+function relationshipAspectTitleFromSlots(slots: TemplateSlotValues) {
+  return `${slots.personAPossessive} ${slots.planetA} ${slots.aspect} ${slots.personBPossessive} ${slots.planetB}`;
 }
 
 const synastryAnglePoints = new Set(["Ascendant", "Midheaven"]);
@@ -7174,16 +7223,14 @@ function synastryTone(aspect: string) {
 }
 
 function possessiveLabel(name: string) {
-  return name.endsWith("s") ? `${name}'` : `${name}'s`;
+  return possessiveName(name);
 }
 
-function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person") {
+function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
   const isChart = ownerKind === "chart";
   const firstSubject = isChart ? "This chart" : ownerName;
   const firstPossessive = isChart ? "This chart's" : possessiveLabel(ownerName);
-  const pronouns = isChart
-    ? { subject: "it", object: "it", possessive: "its", reflexive: "itself" }
-    : { subject: "they", object: "them", possessive: "their", reflexive: "themselves" };
+  const pronouns = isChart ? chartPronouns : resolvePersonReference({ name: ownerName, pronouns: ownerPronouns });
   let namedMentionUsed = false;
 
   const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -7269,37 +7316,27 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou\b/g, () => subject(false));
 }
 
-function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person") {
-  return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind)(text);
+function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
+  return createNatalGeneratedCopyForOwnerConverter(ownerName, ownerKind, ownerPronouns)(text);
 }
 
-type ThirdPersonPronouns = {
-  subject: string;
-  object: string;
-  possessive: string;
-  reflexive: string;
-};
-
-const defaultFriendPronouns: ThirdPersonPronouns = {
-  subject: "they",
-  object: "them",
-  possessive: "their",
-  reflexive: "themselves"
-};
-
-const chartPronouns: ThirdPersonPronouns = {
+const chartPronouns: PersonReference = {
   subject: "it",
   object: "it",
+  possessivePronoun: "its",
   possessive: "its",
-  reflexive: "itself"
+  reflexive: "itself",
+  name: "this chart",
+  namePossessive: "this chart's",
+  verbAgreement: "singular"
 };
 
 function capitalizeText(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function pronounSetForOwner(ownerKind: "person" | "chart" = "person") {
-  return ownerKind === "chart" ? chartPronouns : defaultFriendPronouns;
+function pronounSetForOwner(ownerName: string, ownerKind: "person" | "chart" = "person", pronouns?: PronounChoice | null): PersonReference {
+  return ownerKind === "chart" ? chartPronouns : resolvePersonReference({ name: ownerName, pronouns });
 }
 
 function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
@@ -7370,7 +7407,9 @@ function synastryContactSummary(
   comparisonName: string,
   comparisonIsSelf: boolean,
   contact: Omit<SynastryContact, "summary">,
-  generatedContent?: GeneratedContentMap
+  generatedContent?: GeneratedContentMap,
+  friendPronouns?: PronounChoice | null,
+  comparisonPronouns?: PronounChoice | null
 ) {
   const afterContentFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
@@ -7379,7 +7418,19 @@ function synastryContactSummary(
         contact.contentKeys,
         {
           contentKey: templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name),
+          slots: synastryTemplateSlots(
+            friendName,
+            contact.friendPoint.name,
+            contact.aspect,
+            comparisonName,
+            contact.yourPoint.name,
+            "friend",
+            {
+              personAPronouns: friendPronouns,
+              personBPronouns: comparisonPronouns,
+              personBIsReader: comparisonIsSelf
+            }
+          ),
           afterContentFallback
         }
       )
@@ -7399,7 +7450,8 @@ function synastryContacts(
   chart: ManualChart,
   generatedContent?: GeneratedContentMap,
   comparisonName = "You",
-  comparisonIsSelf = true
+  comparisonIsSelf = true,
+  comparisonPronouns?: PronounChoice | null
 ): SynastryContact[] {
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
@@ -7429,14 +7481,30 @@ function synastryContacts(
 
       return [{
         ...baseContact,
-        summary: synastryContactSummary(chart.displayName, comparisonName, comparisonIsSelf, baseContact, generatedContent)
+        summary: synastryContactSummary(
+          chart.displayName,
+          comparisonName,
+          comparisonIsSelf,
+          baseContact,
+          generatedContent,
+          chart.pronouns,
+          comparisonPronouns
+        )
       }];
     }))
     .sort((first, second) => second.score - first.score || first.orb - second.orb)
     .slice(0, 16);
 }
 
-function synastryDetailCopy(friendName: string, comparisonName: string, comparisonIsSelf: boolean, contact: SynastryContact, generatedContent?: GeneratedContentMap) {
+function synastryDetailCopy(
+  friendName: string,
+  comparisonName: string,
+  comparisonIsSelf: boolean,
+  contact: SynastryContact,
+  generatedContent?: GeneratedContentMap,
+  friendPronouns?: PronounChoice | null,
+  comparisonPronouns?: PronounChoice | null
+) {
   const hookFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
@@ -7444,7 +7512,19 @@ function synastryDetailCopy(friendName: string, comparisonName: string, comparis
         contact.contentKeys,
         {
           contentKey: templateFallbackContentKeys.friendsSynastryContact,
-          slots: synastryTemplateSlots(friendName, contact.friendPoint.name, contact.aspect, comparisonName, contact.yourPoint.name),
+          slots: synastryTemplateSlots(
+            friendName,
+            contact.friendPoint.name,
+            contact.aspect,
+            comparisonName,
+            contact.yourPoint.name,
+            "friend",
+            {
+              personAPronouns: friendPronouns,
+              personBPronouns: comparisonPronouns,
+              personBIsReader: comparisonIsSelf
+            }
+          ),
           afterContentFallback: hookFallback
         }
       )
@@ -11349,20 +11429,21 @@ function natalPlanetPlacementLead(position: PlanetPosition) {
   return lines[position.planet] ?? `${lead} shows how this part of you works in real life.`;
 }
 
-function natalRetrogradePlacementNote(position: PlanetPosition, owner: "you" | "friend" = "you", pronouns: ThirdPersonPronouns = defaultFriendPronouns) {
+function natalRetrogradePlacementNote(position: PlanetPosition, owner: "you" | "friend" = "you", pronouns?: PersonReference) {
   if (position.motion !== "retrograde") {
     return "";
   }
 
   if (owner === "friend") {
-    const subject = capitalizeText(pronouns.subject);
+    const reference = pronouns ?? resolvePersonReference({ name: "They", pronouns: "they" });
+    const subject = capitalizeText(reference.subject);
     const notes: Record<string, string> = {
-      Mercury: `Because Mercury is retrograde, ${pronouns.possessive} mind may work by revisiting, rewording, checking, and thinking things through more than once. ${subject} may need time to find the right language, but the result can be more precise.`,
-      Venus: `Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before ${pronouns.subject} know what ${pronouns.subject} really value. ${subject} may not trust what ${pronouns.subject} want until it has proven itself over time.`,
-      Mars: `Because Mars is retrograde, action may build internally before it becomes visible. ${subject} may need to understand what ${pronouns.subject} are angry about, what ${pronouns.subject} want, or what is worth fighting for before ${pronouns.subject} move.`,
-      Jupiter: `Because Jupiter is retrograde, confidence may need to be built from the inside first. ${subject} may not fully believe an idea just because it sounds inspiring. ${subject} may need to test it, question it, and live with it before ${pronouns.subject} can call it true.`,
-      Saturn: `Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. ${subject} may carry pressure privately, or need to decide which rules are actually ${pronouns.possessive}.`,
-      Uranus: `Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. ${subject} may not rebel loudly, but ${pronouns.subject} may quietly refuse to live inside a pattern that no longer fits.`,
+      Mercury: `Because Mercury is retrograde, ${reference.possessive} mind may work by revisiting, rewording, checking, and thinking things through more than once. ${subject} may need time to find the right language, but the result can be more precise.`,
+      Venus: `Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before ${reference.name} can trust what feels valuable. ${subject} may need time before desire proves itself.`,
+      Mars: `Because Mars is retrograde, action may build internally before it becomes visible. ${subject} may need to understand anger, desire, and what is worth fighting for before moving.`,
+      Jupiter: `Because Jupiter is retrograde, confidence may need to be built from the inside first. ${subject} may need to test an idea, question it, and live with it before calling it true.`,
+      Saturn: `Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. ${subject} may carry pressure privately, or need to decide which rules are actually ${reference.possessive}.`,
+      Uranus: `Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. ${subject} may not rebel loudly, but may quietly refuse a pattern that no longer fits.`,
       Neptune: `Because Neptune is retrograde, longing, sensitivity, imagination, and confusion may be processed privately. ${subject} may need to separate real intuition from wishful thinking.`,
       Pluto: `Because Pluto is retrograde, power, control, fear, and deep change may work below the surface. ${subject} may go through major inner shifts before anyone else sees what has changed.`
     };
@@ -11688,7 +11769,7 @@ function natalPlacementRulerModule(
 function natalPlacementSynthesisModule(
   position: PlanetPosition,
   liveWriteup: LiveGeneratedContent | null,
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+  ownerContext?: ChartOwnerContext
 ): YouTransitArticle["sections"][number] | null {
   const isFriendOwner = ownerContext?.ownerKind !== "chart" && Boolean(ownerContext?.ownerName);
   const liveParagraphs = generatedContentParagraphs(liveWriteup);
@@ -11717,7 +11798,7 @@ function natalPlacementModularSections({
   generatedContent: GeneratedContentMap;
   liveWriteup: LiveGeneratedContent | null;
   natalSky: SkySnapshot | null;
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" };
+  ownerContext?: ChartOwnerContext;
   position: PlanetPosition;
 }) {
   if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
@@ -11853,7 +11934,7 @@ const friendSignPlanetTone: Record<string, Record<string, string>> = {
   }
 };
 
-function friendSignTone(position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+function friendSignTone(position: PlanetPosition, pronouns: PersonReference) {
   const signTone = friendSignPlanetTone[position.sign]?.[position.planet]
     ?? friendSignPlanetTone[position.sign]?.Sun
     ?? `In ${position.sign}, the tone is shaped by how ${pronouns.subject} meet life, solve problems, and stay close to what feels real.`;
@@ -11861,7 +11942,7 @@ function friendSignTone(position: PlanetPosition, pronouns: ThirdPersonPronouns)
   return signTone;
 }
 
-function friendPlacementSignBehavior(position: PlanetPosition, ownerName: string, pronouns: ThirdPersonPronouns) {
+function friendPlacementSignBehavior(position: PlanetPosition, ownerName: string, pronouns: PersonReference) {
   if (position.planet === "Jupiter" && position.sign === "Leo") {
     return `In Leo, Jupiter wants confidence, warmth, and permission to care about what lights ${pronouns.object} up. ${ownerName} grows when ${pronouns.subject} let ${pronouns.possessive} perspective have a little more color and conviction.`;
   }
@@ -11877,7 +11958,7 @@ function friendPlacementSignBehavior(position: PlanetPosition, ownerName: string
   return friendSignTone(position, pronouns);
 }
 
-function friendHouseConcreteSentence(position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+function friendHouseConcreteSentence(position: PlanetPosition, pronouns: PersonReference) {
   const house = position.house ?? 0;
   const sentences: Record<number, string> = {
     1: `In the 1st house, this shows through presence: the way ${pronouns.subject} enter situations, respond on instinct, and become recognizable before anything is explained.`,
@@ -11897,7 +11978,7 @@ function friendHouseConcreteSentence(position: PlanetPosition, pronouns: ThirdPe
   return sentences[house] ?? `This placement becomes clearer through ${readableHouseTopic(house).replace(/^your\s+/i, "")}.`;
 }
 
-function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: PersonReference) {
   const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this house";
   const retrograde = position.motion === "retrograde" ? " retrograde" : "";
   const placement = `${position.planet} is${retrograde} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
@@ -11953,7 +12034,7 @@ function friendPlacementRulerConcern(position: PlanetPosition) {
   return planetConcerns[position.planet] ?? "this placement";
 }
 
-function friendPlacementRulerParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+function friendPlacementRulerParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
   if (!position.house) {
     return "";
   }
@@ -11982,7 +12063,7 @@ function friendPlacementRulerParagraph(ownerName: string, position: PlanetPositi
   return `${cuspSign} points ${possessiveLabel(ownerName)} ${houseLabel} toward ${houseRuler}. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, pulling ${placementConcern} toward ${rulerHouseDynamic}.`;
 }
 
-function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: ThirdPersonPronouns) {
+function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: PersonReference) {
   switch (position.planet) {
     case "Sun":
       return `Confidence gets stronger when it comes from what is true, not only from what gets recognized.`;
@@ -12013,7 +12094,7 @@ function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPo
   }
 }
 
-function friendSpecificPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+function friendSpecificPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
   const jupiterPosition = natalSky?.positions.find((candidate) => candidate.planet === "Jupiter") ?? null;
   const saturnPosition = natalSky?.positions.find((candidate) => candidate.planet === "Saturn") ?? null;
   const mercuryPosition = natalSky?.positions.find((candidate) => candidate.planet === "Mercury") ?? null;
@@ -12109,7 +12190,7 @@ function natalPlacementAspectKnowledgeIds(position: PlanetPosition, natalSky: Sk
   return natalAspectsForPlacement(position, natalSky).map((aspect) => aspectContentId(aspect.from, aspect.type, aspect.to));
 }
 
-function friendIntegratedPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: ThirdPersonPronouns) {
+function friendIntegratedPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
   const aspects = natalAspectsForPlacement(position, natalSky);
 
   if (position.planet !== "Venus") {
@@ -12129,18 +12210,18 @@ function friendIntegratedPlacementAspectParagraph(ownerName: string, position: P
   }
 
   if (hasTrueNodeSextile) {
-    aspectNotes.push(`Venus sextile the True Node gives this placement a growth path. The things ${ownerName} values are not random. Attraction, pleasure, money, beauty, and connection can all become ways ${pronouns.subject} learn what ${pronouns.subject} are moving toward. When ${pronouns.subject} choose what feels alive and honest instead of what only feels familiar, Venus becomes part of ${pronouns.possessive} future direction.`);
+    aspectNotes.push(`Venus sextile the True Node gives this placement a growth path. The things ${ownerName} values are not random. Attraction, pleasure, money, beauty, and connection can all become ways ${ownerName} clarifies a future direction. When ${ownerName} chooses what feels alive and honest instead of what only feels familiar, Venus becomes part of ${pronouns.possessive} future direction.`);
   }
 
   return aspectNotes.join("\n\n");
 }
 
-function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person") {
+function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
   if (ownerKind === "chart") {
     return null;
   }
 
-  const pronouns = pronounSetForOwner(ownerKind);
+  const pronouns = pronounSetForOwner(ownerName, ownerKind, ownerPronouns);
   const specificBody = friendSpecificPlacementBody(ownerName, position, natalSky, pronouns);
 
   if (specificBody) {
@@ -12161,10 +12242,10 @@ function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, n
 function placementStructureBody(
   position: PlanetPosition,
   natalSky: SkySnapshot | null,
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+  ownerContext?: ChartOwnerContext
 ) {
   if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
-    return friendNatalPlacementBody(ownerContext.ownerName, position, natalSky, ownerContext.ownerKind ?? "person")?.join("\n\n") ?? "";
+    return friendNatalPlacementBody(ownerContext.ownerName, position, natalSky, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)?.join("\n\n") ?? "";
   }
 
   return "";
@@ -12269,7 +12350,7 @@ function natalPlacementDetailArticle(
   liveWriteup: LiveGeneratedContent | null,
   generatedContent: GeneratedContentMap = new Map(),
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+  ownerContext?: ChartOwnerContext
 ): YouTransitArticle {
   const sections = natalPlacementModularSections({
     generatedContent,
@@ -12321,7 +12402,7 @@ function natalPlacementSkyDetail(
   liveWriteup: LiveGeneratedContent | null,
   generatedContent: GeneratedContentMap = new Map(),
   onOpenNatalAspect?: (aspect: SkySnapshot["aspects"][number]) => void,
-  ownerContext?: { ownerName: string; ownerKind?: "person" | "chart" }
+  ownerContext?: ChartOwnerContext
 ): SkyDetail {
   const article = natalPlacementDetailArticle(position, natalSky, liveWriteup, generatedContent, onOpenNatalAspect, ownerContext);
   const ownerAwareCopy = (value: ReactNode) => {
@@ -12329,7 +12410,7 @@ function natalPlacementSkyDetail(
       return value;
     }
 
-    return natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person");
+    return natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns);
   };
 
   return {
@@ -15344,6 +15425,10 @@ function ManualChartsPanel({
   const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
   const relationshipComparisonIsSelf = selectedRelationshipComparison?.isSelf ?? true;
+  const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
+    ? null
+    : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
+  const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
   const selectedSynastryContacts = selectedChart
     ? selectedChartIsEvent
       ? []
@@ -15353,7 +15438,8 @@ function ManualChartsPanel({
           selectedChart,
           relationshipGeneratedContent,
           relationshipComparisonName,
-          relationshipComparisonIsSelf
+          relationshipComparisonIsSelf,
+          relationshipComparisonPronouns
         ),
         lifeAreaFocus
       )
@@ -15471,7 +15557,8 @@ function ManualChartsPanel({
       openFriendNatalAspectDetail,
       {
         ownerName: selectedChart.displayName,
-        ownerKind: selectedChartIsEvent ? "chart" : "person"
+        ownerKind: selectedChartIsEvent ? "chart" : "person",
+        ownerPronouns: selectedChart.pronouns
       }
       ),
       routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `natal-placement-${normalizeContentIdPart(position.planet)}`)
@@ -15502,10 +15589,6 @@ function ManualChartsPanel({
       }))
     });
   };
-  const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
-    ? null
-    : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
-
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
     setFriendsMainView(nextTab);
@@ -15913,6 +15996,7 @@ function ManualChartsPanel({
     setForm((currentForm) => ({
       ...currentForm,
       chartType,
+      pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
       relationshipType: chartType === "event" ? "friend" : currentForm.relationshipType || "friend"
     }));
   }
@@ -15956,6 +16040,7 @@ function ManualChartsPanel({
         displayName,
         firstName,
         lastName: lastNameParts.join(" ") || null,
+        pronouns: form.chartType === "event" ? defaultPronounChoice : form.pronouns,
         relationshipType: form.chartType === "event" ? null : form.relationshipType || "friend",
         birthDate,
         birthTime: form.birthTimeUnknown ? null : form.birthTime,
@@ -16394,7 +16479,7 @@ function ManualChartsPanel({
                           }
                         );
                         const rawSummary = liveGeneratedSummary(generated, content.summary);
-                        const rowSummary = natalGeneratedCopyForOwner(rawSummary, selectedChart.displayName, selectedChartIsEvent ? "chart" : "person");
+                        const rowSummary = natalGeneratedCopyForOwner(rawSummary, selectedChart.displayName, selectedChartIsEvent ? "chart" : "person", selectedChart.pronouns);
 
                         return (
                           <div
@@ -16449,15 +16534,29 @@ function ManualChartsPanel({
                 <span className="eyebrow section-label friend-section-label">Interaspects · by strength</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list" aria-label={`${selectedChart.displayName} compatibility contacts`}>
                   {selectedSynastryContacts.map((contact) => {
-                    const comparisonPossessive = relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf);
-                    const title = relationshipAspectTitle(selectedChart.displayName, contact.friendPoint.name, contact.aspect, comparisonPossessive, contact.yourPoint.name);
+                    const titleSlots = synastryTemplateSlots(
+                      selectedChart.displayName,
+                      contact.friendPoint.name,
+                      contact.aspect,
+                      relationshipComparisonName,
+                      contact.yourPoint.name,
+                      "friend",
+                      {
+                        personAPronouns: selectedChart.pronouns,
+                        personBPronouns: relationshipComparisonPronouns,
+                        personBIsReader: relationshipComparisonIsSelf
+                      }
+                    );
+                    const title = relationshipAspectTitleFromSlots(titleSlots);
                     const subtitle = relationshipThemeTitle(contact.friendPoint.name, contact.yourPoint.name, contact.aspect);
                     const detailParagraphs = synastryDetailCopy(
                       selectedChart.displayName,
                       relationshipComparisonName,
                       relationshipComparisonIsSelf,
                       contact,
-                      relationshipGeneratedContent
+                      relationshipGeneratedContent,
+                      selectedChart.pronouns,
+                      relationshipComparisonPronouns
                     ).filter(Boolean);
                     const description = contact.summary || textPreview(detailParagraphs.join("\n\n"));
 

@@ -84,6 +84,7 @@ type ManualChartRow = {
   id: string;
   owner_user_id: string;
   display_name: string;
+  pronouns?: string | null;
   relationship_type: string;
   birth_date: string;
   birth_time: string | null;
@@ -756,7 +757,7 @@ async function findManualCharts(query: string) {
   }
 
   const params = new URLSearchParams({
-    select: "id,owner_user_id,display_name,relationship_type,birth_date,birth_time,birth_time_unknown,birth_place,birth_latitude,birth_longitude,birth_timezone,natal_chart,updated_at",
+    select: "id,owner_user_id,display_name,pronouns,relationship_type,birth_date,birth_time,birth_time_unknown,birth_place,birth_latitude,birth_longitude,birth_timezone,natal_chart,updated_at",
     limit: "20"
   });
 

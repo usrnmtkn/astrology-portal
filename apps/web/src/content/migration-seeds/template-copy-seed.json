@@ -238,8 +238,8 @@
       },
       "fields": {
         "title": "{{personAPossessive}} {{planetA}} {{aspect}} {{personBPossessive}} {{planetB}}",
-        "summary": "{{friendNamePossessive}} {{friendPlanet}} touches {{readerPossessive}} {{yourPlanet}}: {{friendName}} brings {{friendPlanetTopic}}, and you bring {{yourPlanetTopic}}.",
-        "body": "{{friendNamePossessive}} {{friendPlanet}} touches {{readerPossessive}} {{yourPlanet}}: {{friendName}} brings {{friendPlanetTopic}}, and you bring {{yourPlanetTopic}}.\n\nThis contact may feel easy, charged, familiar, confusing, or motivating depending on the aspect and the people involved. It is most useful when it explains an interaction pattern between you and {{friendName}}, not when it turns either person into the problem.",
+        "summary": "{{personAPossessive}} {{planetA}} touches {{personBPossessive}} {{planetB}}: {{personA}} brings {{planetATopic}}, and {{personB}} brings {{planetBTopic}}.",
+        "body": "{{personAPossessive}} {{planetA}} touches {{personBPossessive}} {{planetB}}: {{personA}} brings {{planetATopic}}, and {{personB}} brings {{planetBTopic}}.\n\nThis contact may feel easy, charged, familiar, confusing, or motivating depending on the aspect and the people involved. It is most useful when it explains an interaction pattern between {{personA}} and {{personB}}, not when it turns either person into the problem.",
         "bestMove": "Name the dynamic as something happening between you. Then decide what would make the exchange cleaner, kinder, or easier to handle.",
         "emptyState": "If no approved content exists, leave the product surface blank."
       },

@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -11,6 +12,7 @@ export type ManualChart = {
   displayName: string;
   firstName?: string | null;
   lastName?: string | null;
+  pronouns: PronounChoice;
   relationshipType?: string | null;
   birthDate: string;
   birthTime: string | null;
@@ -28,6 +30,7 @@ export type ManualChartInput = {
   displayName: string;
   firstName?: string | null;
   lastName?: string | null;
+  pronouns?: PronounChoice | null;
   relationshipType?: string | null;
   birthDate: string;
   birthTime: string | null;
@@ -45,6 +48,7 @@ type ManualChartRow = {
   display_name: string;
   first_name: string | null;
   last_name: string | null;
+  pronouns?: string | null;
   relationship_type: string;
   birth_date: string;
   birth_time: string | null;
@@ -72,6 +76,7 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
     displayName: row.display_name,
     firstName: row.first_name,
     lastName: row.last_name,
+    pronouns: normalizePronounChoice(row.pronouns),
     relationshipType: chartType === "event" ? null : row.relationship_type,
     birthDate: row.birth_date,
     birthTime: row.birth_time,
@@ -96,6 +101,7 @@ function inputToRow(userId: string, input: ManualChartInput) {
     display_name: input.displayName,
     first_name: input.firstName ?? null,
     last_name: input.lastName ?? null,
+    pronouns: normalizePronounChoice(input.pronouns),
     relationship_type: input.chartType === "event" ? "event" : input.relationshipType || "friend",
     birth_date: input.birthDate,
     birth_time: input.birthTimeUnknown ? null : input.birthTime,
@@ -115,6 +121,7 @@ function manualChartToInput(chart: ManualChart): ManualChartInput {
     displayName: chart.displayName,
     firstName: chart.firstName ?? null,
     lastName: chart.lastName ?? null,
+    pronouns: normalizePronounChoice(chart.pronouns),
     relationshipType: chart.chartType === "event" ? null : chart.relationshipType ?? "friend",
     birthDate: chart.birthDate,
     birthTime: chart.birthTimeUnknown ? null : chart.birthTime,
@@ -148,6 +155,7 @@ function readLocalManualCharts(userId: string): ManualChart[] {
           return {
             ...chart,
             chartType,
+            pronouns: normalizePronounChoice(chart.pronouns),
             relationshipType: chartType === "event" ? null : chart.relationshipType ?? "friend"
           };
         })
@@ -177,6 +185,7 @@ function createLocalManualChart(userId: string, input: ManualChartInput): Manual
   const now = new Date().toISOString();
   const nextChart: ManualChart = {
     ...input,
+    pronouns: normalizePronounChoice(input.pronouns ?? defaultPronounChoice),
     id: `manual-${Date.now()}`,
     ownerUserId: userId,
     createdAt: now,
@@ -194,7 +203,7 @@ function updateLocalManualChart(userId: string, chartId: string, input: ManualCh
   const updatedAt = new Date().toISOString();
   const nextCharts = charts.map((chart) => (
     chart.id === chartId
-      ? { ...chart, ...input, ownerUserId: userId, updatedAt }
+      ? { ...chart, ...input, pronouns: normalizePronounChoice(input.pronouns), ownerUserId: userId, updatedAt }
       : chart
   )).sort((first, second) => first.displayName.localeCompare(second.displayName));
   const nextChart = nextCharts.find((chart) => chart.id === chartId);
