@@ -851,13 +851,73 @@ function natalPlacementTemplateSlots(position: PlanetPosition, variant: PlanetTo
   };
 }
 
+function aspectTonePhrase(aspect: string) {
+  const tones: Record<string, string> = {
+    conjunction: "concentration, emphasis, and amplification",
+    opposition: "contrast, projection, and the need to see both sides",
+    square: "friction, pressure, and adjustment",
+    trine: "ease, support, and momentum",
+    sextile: "openings, cooperation, and small useful choices"
+  };
+
+  return tones[aspect.toLowerCase()] ?? "contact, timing, and response";
+}
+
+function transitPlanetWeatherPhrase(planet: string) {
+  const weather: Record<string, string> = {
+    Sun: "visibility, vitality, identity, and what needs attention",
+    Moon: "mood, instinct, memory, and immediate emotional weather",
+    Mercury: "thinking, messages, logistics, learning, and exchange",
+    Venus: "connection, pleasure, money, values, and desire",
+    Mars: "action, heat, urgency, conflict, and the impulse to move",
+    Jupiter: "growth, belief, opportunity, meaning, and expansion",
+    Saturn: "commitment, limits, timing, responsibility, and reality checks",
+    Uranus: "change, disruption, restlessness, freedom, and pattern breaks",
+    Neptune: "uncertainty, sensitivity, ideals, imagination, and escape",
+    Pluto: "power, pressure, exposure, endings, and deeper change",
+    Chiron: "old tenderness, repair, sensitivity, and what still needs care",
+    "North Node": "direction, appetite, growth, and old patterns",
+    "True Node": "direction, appetite, growth, and old patterns"
+  };
+
+  return weather[planet] ?? planetTopicSlot(planet, "sky");
+}
+
+function personalActivationPhrase(natalPoint: string, natalPointTopic: string) {
+  return `${natalPoint}: ${natalPointTopic}`;
+}
+
+function transitTimingIntensity(transit: TransitItem) {
+  const orb = transitOrbValue(transit);
+
+  if (orb <= 1) return "loud today";
+  if (transit.term === "long" || transit.isSlowGeneralWeather) return "background pattern";
+  if (orb <= 3) return "noticeable now";
+  return "subtle signal";
+}
+
+function transitTimingPhase(direction?: TransitDirection) {
+  if (direction === "applying") return "building";
+  if (direction === "separating") return "processing";
+  return "active";
+}
+
 function transitToNatalTemplateSlots(transit: TransitItem, natalVariant: PlanetTopicVariant = "natal"): TemplateSlotValues {
+  const natalPointTopic = planetTopicSlot(transit.natalPoint, natalVariant);
+
   return {
     transitPlanet: transit.transitPlanet,
     transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
     aspect: titleCase(transit.aspect).toLowerCase(),
+    aspectTone: aspectTonePhrase(transit.aspect),
     natalPoint: transit.natalPoint,
-    natalPointTopic: planetTopicSlot(transit.natalPoint, natalVariant)
+    natalPointTopic,
+    transitPlanetWeather: transitPlanetWeatherPhrase(transit.transitPlanet),
+    personalActivation: personalActivationPhrase(transit.natalPoint, natalPointTopic),
+    activatedHouse: transit.natalHouse ? ordinalHouse(transit.natalHouse) : "",
+    activatedHouseTopic: transit.natalHouse ? houseLifeAreas[transit.natalHouse] ?? "" : "",
+    timingIntensity: transitTimingIntensity(transit),
+    timingPhase: transitTimingPhase(transit.direction)
   };
 }
 
@@ -920,6 +980,13 @@ function relationshipTimingTemplateSlots(person: string, transit: TransitItem): 
 
 function circleFeedTemplateSlots(topic: string): TemplateSlotValues {
   return { topic };
+}
+
+function circleFeedPreviewChart(chart: Pick<ManualChart, "id" | "displayName">) {
+  return {
+    id: chart.id,
+    initials: profileInitials(chart.displayName, chart.displayName)
+  };
 }
 
 function lifeAreaFocusTemplateSlots(option: { label: string; description: string }): TemplateSlotValues {
@@ -1207,19 +1274,37 @@ function dailyTimingTemplateSlots(personalTiming: PersonalTimingResponse): Templ
   const transitPlanet = timingField(activeTransit, ["transitPlanet", "planet", "body", "from"]) || "the current sky";
   const aspect = timingField(activeTransit, ["aspect", "aspectType", "type"]) || "activating";
   const natalPoint = timingField(activeTransit, ["natalPoint", "point", "to", "body2"]) || personalTiming.activatedNatalPlanets[0] || "your chart";
+  const natalPointTopic = planetTopicPhrase(natalPoint, "you");
   const orb = timingOrbLabel(activeTransit);
   const window = timingWindowLabel(activeTransit);
+  const direction = timingField(activeTransit, ["direction"]) as TransitDirection | "";
+  const term = timingField(activeTransit, ["term"]);
+  const orbValue = timingNumberField(activeTransit, ["orbDegrees", "orbDegree", "orb"]);
+  const activatedHouseTopic = personalTiming.activatedHouse ? houseLifeAreas[personalTiming.activatedHouse] ?? "" : "";
+  const timingIntensity = typeof orbValue === "number" && orbValue <= 1
+    ? "loud today"
+    : term === "long"
+      ? "background pattern"
+      : typeof orbValue === "number" && orbValue <= 3
+        ? "noticeable now"
+        : "active signal";
 
   return {
     transitPlanet,
     transitPlanetTopic: planetTopicPhrase(transitPlanet, "sky"),
+    transitPlanetWeather: transitPlanetWeatherPhrase(transitPlanet),
     aspect,
+    aspectTone: aspectTonePhrase(aspect),
     natalPoint,
-    natalPointTopic: planetTopicPhrase(natalPoint, "you"),
+    natalPointTopic,
+    personalActivation: personalActivationPhrase(natalPoint, natalPointTopic),
     orb,
     window,
+    timingIntensity,
+    timingPhase: transitTimingPhase(direction || undefined),
     activeTransit: `${transitPlanet} ${aspect} ${natalPoint}`.trim(),
     activatedHouse: personalTiming.activatedHouse ? ordinalHouse(personalTiming.activatedHouse) : "",
+    activatedHouseTopic,
     activatedSign: personalTiming.activatedSign,
     activatedRuler: personalTiming.activatedRuler
   };
@@ -7992,6 +8077,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
       return {
         title: groupPlanetHeadline(planet),
         body: `${names} are all being touched by ${planet} right now. ${groupPlanetFeedNotice(planet)} ${groupPlanetSocialCue(planet)}`,
+        previewCharts: uniqueCharts.slice(0, 2).map(circleFeedPreviewChart),
         detail: circlePlanetDetailArticle(planet, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -8004,6 +8090,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
       return {
         title: groupHouseHeadline(house),
         body: `${names} may all be dealing with ${groupHousePlainTopic(house)} in different ways. ${groupHouseFeedNotice(house)} ${groupHouseSocialCue(house)}`,
+        previewCharts: uniqueCharts.slice(0, 2).map(circleFeedPreviewChart),
         detail: circleHouseDetailArticle(house, uniqueCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -8015,6 +8102,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
       return {
         title: groupHouseHeadline(house),
         body: `${names} may all be dealing with ${groupHousePlainTopic(house)} in different ways this year. ${groupHouseFeedNotice(house)} ${groupHouseSocialCue(house)}`,
+        previewCharts: activeCharts.slice(0, 2).map(circleFeedPreviewChart),
         detail: circleProfectionDetailArticle(house, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -8026,6 +8114,7 @@ function circleActivationCards(currentSky: SkySnapshot, charts: ManualChart[], f
       return {
         title: groupPlanetHeadline(planet),
         body: `${names} may all be dealing with ${groupPlanetPlainTopic(planet)} in different ways this year. ${groupPlanetFeedNotice(planet)} ${groupPlanetSocialCue(planet)}`,
+        previewCharts: activeCharts.slice(0, 2).map(circleFeedPreviewChart),
         detail: circleLordOfYearDetailArticle(planet, activeCharts, currentSky, focusAreas, sunriseOrb)
       };
     });
@@ -8080,18 +8169,21 @@ function circleFeedPreviewCards(
       {
         label: "Friend update",
         title: topTransit ? `${chart.displayName}: ${topTransit.transitPlanet} ${topTransit.aspect} ${topTransit.natalPoint}` : `${chart.displayName}'s update is ready`,
-        body: topTransit ? friendUpdateSummary(chart, topTransit, generatedContent) : timingSummary(chart, timing)
+        body: topTransit ? friendUpdateSummary(chart, topTransit, generatedContent) : timingSummary(chart, timing),
+        previewCharts: [circleFeedPreviewChart(chart)]
       },
       {
         label: "Comparison chart",
         title: `${chart.displayName} and you`,
-        body: "Start with the strongest contacts between your charts, then look at where each person's planets land. That shows what feels easy, what gets stirred up, and where the relationship needs more care."
+        body: "Start with the strongest contacts between your charts, then look at where each person's planets land. That shows what feels easy, what gets stirred up, and where the relationship needs more care.",
+        previewCharts: [circleFeedPreviewChart(chart)]
       },
       {
-      label: "Relationship timing",
+        label: "Relationship timing",
         title: "What each person is carrying",
         body: relationshipTiming(profileTransits, rankedFriendTransits(currentSky, chart, sunriseOrb), chart, generatedContent)[0]?.body
-          ?? "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing."
+          ?? "Look at what today's sky is touching in each chart. That can make it easier to tell the difference between relationship tension and personal timing.",
+        previewCharts: [circleFeedPreviewChart(chart)]
       }
     ];
   }
@@ -8378,6 +8470,70 @@ export function App() {
       setSkyDetailRoutePath(detail.routePath);
       updateSkyDetailRouteUrl(detail.routePath);
     }
+  }
+
+  function openCalendarTransitDetail(event: LunarCalendarEvent) {
+    if (!sky || event.type === "lunation") {
+      return;
+    }
+
+    const generatedAt = event.startsAt || sky.generatedAt;
+
+    if (event.type === "aspect" && event.planets && event.aspect) {
+      const [planetA, planetB] = event.planets;
+      const eventAspect = event.aspect.toLowerCase();
+      const matchingAspect = sky.aspects.find((aspect) => (
+        aspect.from === planetA
+        && aspect.to === planetB
+        && aspect.type.toLowerCase() === eventAspect
+      )) ?? sky.aspects.find((aspect) => (
+        aspect.from === planetB
+        && aspect.to === planetA
+        && aspect.type.toLowerCase() === eventAspect
+      ));
+      const detailAspect: SkySnapshot["aspects"][number] = matchingAspect ?? {
+        from: planetA,
+        to: planetB,
+        type: event.aspect,
+        orb: 0
+      };
+
+      openSkyDetail(currentSkyAspectDetailArticle(detailAspect, generatedAt, skyGeneratedContent, sky.positions));
+      return;
+    }
+
+    if (!event.planet) {
+      return;
+    }
+
+    const position = sky.positions.find((candidate) => candidate.planet === event.planet);
+
+    if (!position) {
+      return;
+    }
+
+    const eventSign = event.toSign ?? event.sign;
+    const isRetrogradeEvent = event.title.toLowerCase().includes("retrograde");
+    const eventPosition: PlanetPosition = {
+      ...position,
+      sign: eventSign ?? position.sign,
+      signGlyph: eventSign ? signGlyph(eventSign) : position.signGlyph,
+      motion: isRetrogradeEvent ? "retrograde" : position.motion
+    };
+
+    if (event.type === "station" && isRetrogradeEvent) {
+      openSkyDetail(currentSkyRetrogradeDetailData(eventPosition, generatedAt, skyGeneratedContent).detail);
+      return;
+    }
+
+    openSkyDetail(currentSkyPlacementDetailArticle({
+      aspects: sky.aspects,
+      generatedAt,
+      generatedContent: skyGeneratedContent,
+      onOpenDetail: openSkyDetail,
+      position: eventPosition,
+      positions: sky.positions
+    }));
   }
 
   function closeSkyDetail() {
@@ -10333,6 +10489,7 @@ export function App() {
                     setManualLocation(nextLocation.label);
                     setHasLocationPreference(true);
                   }}
+                  onOpenTransit={openCalendarTransitDetail}
                   showJournalPrompts={journalPromptsEnabled}
                 />
               )}

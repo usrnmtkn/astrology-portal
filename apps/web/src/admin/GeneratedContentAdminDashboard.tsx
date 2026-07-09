@@ -31,7 +31,7 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "privateRows" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
@@ -251,7 +251,7 @@ type AdminVocabularyCardItem = {
   kind?: "topic" | "sign-style";
 };
 
-type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "eclipses";
+type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "lunar" | "eclipses";
 
 type AdminTemplateDraft = {
   headline: string;
@@ -270,6 +270,23 @@ type LunarCoverageSummaryItem = {
   draft: number;
   empty: number;
   vocabGaps: string[];
+};
+
+type AdminSlotDictionaryRow = {
+  slot: string;
+  label: string;
+  group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Lunar language" | "Relationship language";
+  source: string;
+  editableIn: "Calculated" | "Vocabulary" | "Fallback Rows";
+  status: "calculated" | "ready" | "missing";
+  description: string;
+  examples?: string[];
+  action?: {
+    label: string;
+    page: AdminDashboardPage;
+    vocabularyFilter?: AdminVocabularyCategoryFilter;
+    fallbackFilter?: AdminFallbackHookSectionFilter;
+  };
 };
 
 type AdminReviewRecord = {
@@ -594,7 +611,39 @@ const fallbackHookSampleContexts: Record<string, FallbackHookContext> = {
   "sky.retrograde": { planet: "Pluto", sign: "Aquarius", planetTopic: "power, pressure, and deep change" },
   "you.natal-placement": { planet: "Moon", sign: "Capricorn", house: 6, planetTopic: "needs and reaction", signStyle: "practical, contained, and responsibility-aware" },
   "you.natal-aspect": { planetA: "Moon", aspect: "trine", planetB: "Saturn", planetATopic: "needs and reaction", planetBTopic: "structure and limits" },
-  "you.transit-to-natal": { transitPlanet: "Saturn", aspect: "square", natalPoint: "Venus", transitPlanetTopic: "structure and limits", natalPointTopic: "connection, taste, and desire" },
+  "you.transit-to-natal": {
+    transitPlanet: "Saturn",
+    aspect: "square",
+    natalPoint: "Venus",
+    transitPlanetTopic: "structure and limits",
+    natalPointTopic: "connection, taste, and desire",
+    transitPlanetWeather: "commitment, limits, timing, responsibility, and reality checks",
+    aspectTone: "friction, pressure, and adjustment",
+    personalActivation: "Venus: connection, taste, and desire",
+    activatedHouse: "7th",
+    activatedHouseTopic: "partnership, conflict, attraction, agreements, and direct one-on-one connection",
+    timingIntensity: "loud today",
+    timingPhase: "building"
+  },
+  "you.daily-timing": {
+    activeTransit: "Saturn square Venus",
+    transitPlanet: "Saturn",
+    aspect: "square",
+    natalPoint: "Venus",
+    transitPlanetTopic: "structure and limits",
+    natalPointTopic: "connection, taste, and desire",
+    transitPlanetWeather: "commitment, limits, timing, responsibility, and reality checks",
+    aspectTone: "friction, pressure, and adjustment",
+    personalActivation: "Venus: connection, taste, and desire",
+    activatedHouse: "7th",
+    activatedHouseTopic: "partnership, conflict, attraction, agreements, and direct one-on-one connection",
+    timingIntensity: "loud today",
+    timingPhase: "building",
+    orb: "0°54'",
+    window: "today",
+    activatedSign: "Libra",
+    activatedRuler: "Venus"
+  },
   "friends.synastry-contact": { personA: "Avery", planetA: "Venus", aspect: "sextile", personB: "Mira", planetB: "Ascendant", planetATopic: "connection, taste, and desire", planetBTopic: "presence and first impression" },
   "friends.house-overlay": { personA: "Avery", personB: "Mira", planet: "Venus", house: 4, planetTopic: "connection, taste, and desire", houseLifeArea: "home, privacy, and belonging" },
   "friends.composite-aspect": { planetA: "Sun", aspect: "square", planetB: "Moon", planetATopic: "identity and direction", planetBTopic: "needs and reaction" },
@@ -777,6 +826,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "appBehavior") return "App Behavior";
   if (activePage === "templates") return "Templates & Voice";
   if (activePage === "vocabulary") return "Vocabulary";
+  if (activePage === "slotDictionary") return "Slot Dictionary";
   if (activePage === "knowledge") return "Fallback Rows";
   if (activePage === "hooks") return "Hook Catalog";
   return "Content";
@@ -788,6 +838,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "appBehavior") return "Admin / App behavior";
   if (activePage === "templates") return "Admin / Templates & voice";
   if (activePage === "vocabulary") return "Admin / Vocabulary";
+  if (activePage === "slotDictionary") return "Admin / Slot dictionary";
   if (activePage === "knowledge") return "Admin / Fallback rows";
   if (activePage === "hooks") return "Admin / Hook catalog";
   return "Admin / Content";
@@ -812,6 +863,10 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 
   if (activePage === "vocabulary") {
     return "Manage dashboard-authored vocabulary rows that feed interpolation slots in app copy.";
+  }
+
+  if (activePage === "slotDictionary") {
+    return "See which calculated facts and editable rows fill each template slot across the app.";
   }
 
   if (activePage === "knowledge") {
@@ -999,6 +1054,10 @@ function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign
 }
 
 function vocabularyItemCategory(item: Pick<AdminVocabularyCardItem, "contentKey" | "kind" | "taglineContentKey">): AdminVocabularyCategoryFilter {
+  if (item.contentKey.startsWith("vocab/lunar-phase/") || item.contentKey.startsWith("vocab/lunar-archetype/")) {
+    return "lunar";
+  }
+
   if (item.contentKey.startsWith("vocab/eclipse-cycle/")) {
     return "eclipses";
   }
@@ -1132,10 +1191,10 @@ const extraTemplateCopySeeds: TemplateCopySeedRow[] = [
     status: "published",
     contentType: "template",
     fields: {
-      title: "{{transitPlanet}} {{aspect}} Natal {{natalPoint}}",
-      summary: "Today's strongest personal timing points to {{transitPlanet}} contacting your natal {{natalPoint}}. Notice the pattern without making it bigger than the day.",
-      body: "Daily timing is a short-window signal. {{transitPlanet}} brings {{transitPlanetTopic}} into contact with your natal {{natalPointTopic}} through a {{aspect}} aspect. This may show up as a mood, pressure, choice, conversation, or small correction that asks for attention now.",
-      bestMove: "Name what is active today, choose one useful response, and let the rest stay proportional.",
+      title: "{{activeTransit}}",
+      summary: "{{activeTransit}} is the loudest timing signal today. Collectively, it brings {{aspectTone}} around {{transitPlanetWeather}}. For you, it lands on {{personalActivation}}.",
+      body: "Today’s main signal is {{activeTransit}}. Collectively, this is wider weather around {{transitPlanetWeather}}, moving through {{aspectTone}}.\n\nFor you, it touches {{personalActivation}}. Watch for that theme becoming louder through ordinary moments: a conversation, decision, delay, mood, request, or pressure to respond. The point is not to over-read the day. The point is to notice what asks for attention and choose the cleanest next step.",
+      bestMove: "Name the collective weather, then name where it lands for you. Keep the next step practical and proportionate to the real situation.",
       emptyState: "If no approved content exists, leave the product surface blank."
     }
   }
@@ -1186,6 +1245,124 @@ const fallbackHookSectionFilters: Array<{ key: AdminFallbackHookSectionFilter; l
   { key: "friends", label: "Friends" },
   { key: "lunar-calendar", label: "Lunar Calendar" },
   { key: "settings", label: "Settings" }
+];
+
+const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
+  {
+    slot: "{{planet}}",
+    label: "Planet name",
+    group: "Calculated facts",
+    source: "Ephemeris / chart calculation",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Literal planet or point name from the active sky, natal chart, or relationship context.",
+    examples: ["Moon", "Venus", "Pluto"]
+  },
+  {
+    slot: "{{planetTopic}}",
+    label: "Planet topic language",
+    group: "Planet language",
+    source: "vocab/planet-topic/{planet}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Reusable topic phrasing for what a planet governs on Sky, You, Natal, and relationship surfaces.",
+    examples: ["vocab/planet-topic/moon", "vocab/planet-topic/venus"],
+    action: { label: "Open planet vocabulary", page: "vocabulary", vocabularyFilter: "planets" }
+  },
+  {
+    slot: "{{sign}}",
+    label: "Zodiac sign name",
+    group: "Calculated facts",
+    source: "Ephemeris / chart calculation",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Literal sign from the calculated placement, Moon event, or season context.",
+    examples: ["Aries", "Cancer", "Capricorn"]
+  },
+  {
+    slot: "{{signStyle}}",
+    label: "Sign style language",
+    group: "Zodiac language",
+    source: "vocab/sign-style/{sign}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Short reusable texture for how a sign moves, reacts, or changes a planet or event.",
+    examples: ["vocab/sign-style/aries", "vocab/sign-style/cancer"],
+    action: { label: "Open zodiac vocabulary", page: "vocabulary", vocabularyFilter: "zodiac" }
+  },
+  {
+    slot: "{{signNeed}}",
+    label: "Sign need language",
+    group: "Zodiac language",
+    source: "vocab/sign-need/{sign}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Reusable language for what a sign wants, protects, or requires in interpretation templates.",
+    examples: ["vocab/sign-need/aries", "vocab/sign-need/cancer"],
+    action: { label: "Open zodiac vocabulary", page: "vocabulary", vocabularyFilter: "zodiac" }
+  },
+  {
+    slot: "{{house}}",
+    label: "Natal house number",
+    group: "Calculated facts",
+    source: "Natal chart calculation",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Literal natal house number from the user's chart.",
+    examples: ["1st house", "7th house", "12th house"]
+  },
+  {
+    slot: "{{houseTopics}}",
+    label: "House topic language",
+    group: "House language",
+    source: "vocab/house-topic/{house}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Reusable real-life topics for where a placement, transit, or Moon check-in lands in the chart.",
+    examples: ["vocab/house-topic/1", "vocab/house-topic/12"],
+    action: { label: "Open house vocabulary", page: "vocabulary", vocabularyFilter: "houses" }
+  },
+  {
+    slot: "{{moonPhase}}",
+    label: "Moon phase name",
+    group: "Calculated facts",
+    source: "Lunar calendar calculation",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Literal lunar phase from the calculated lunar calendar day.",
+    examples: ["New Moon", "First Quarter", "Full Moon"]
+  },
+  {
+    slot: "{{moonPhaseMeaning}}",
+    label: "Moon phase meaning",
+    group: "Lunar language",
+    source: "vocab/lunar-phase/{phase}",
+    editableIn: "Vocabulary",
+    status: "missing",
+    description: "Reusable phase meaning for templates that need the phase's general function without a full event write-up.",
+    examples: ["vocab/lunar-phase/new-moon", "vocab/lunar-phase/last-quarter"],
+    action: { label: "Open lunar vocabulary", page: "vocabulary", vocabularyFilter: "lunar" }
+  },
+  {
+    slot: "{{lunarArchetype}}",
+    label: "Lunar archetype copy",
+    group: "Lunar language",
+    source: "fallback-hook/lunation/{phase}/{sign}",
+    editableIn: "Fallback Rows",
+    status: "missing",
+    description: "Moon-sign and phase-specific archetype content used by the Lunar Calendar when exact authored copy is unavailable.",
+    examples: ["fallback-hook/lunation/first-quarter/aries", "fallback-hook/lunation/full-moon/cancer"],
+    action: { label: "Open lunar fallback rows", page: "knowledge", fallbackFilter: "lunar-calendar" }
+  },
+  {
+    slot: "{{personA}} / {{personB}}",
+    label: "Relationship names",
+    group: "Relationship language",
+    source: "Relationship context",
+    editableIn: "Calculated",
+    status: "calculated",
+    description: "Names or labels from the active friend, synastry, or composite context."
+  }
 ];
 
 function fallbackHookSurfaceLabel(row: Pick<AdminGeneratedContentRow, "surface">, hook?: ReturnType<typeof fallbackHookForContextRow>) {
@@ -3751,6 +3928,7 @@ export function GeneratedContentAdminDashboard() {
       planets: 0,
       houses: 0,
       zodiac: 0,
+      lunar: 0,
       eclipses: 0
     } satisfies Record<AdminVocabularyCategoryFilter, number>;
 
@@ -3786,6 +3964,10 @@ export function GeneratedContentAdminDashboard() {
       return "Zodiac style is the short tone phrase templates use for a sign, like \"steady and slow to change course.\" It describes the sign's manner or texture, not a full placement interpretation.";
     }
 
+    if (vocabularyCategoryFilter === "lunar") {
+      return "Lunar vocabulary rows provide reusable phase and archetype language for lunar calendar templates without replacing event-specific write-ups.";
+    }
+
     return "Vocabulary rows provide reusable phrases for planets, houses, zodiac signs, and eclipse-cycle copy used by interpolation templates.";
   }, [vocabularyCategoryFilter]);
   const resolvedFallbackHookSampleContexts = useMemo<Record<string, FallbackHookContext>>(() => {
@@ -3798,6 +3980,30 @@ export function GeneratedContentAdminDashboard() {
       ])
     );
   }, [vocabularyRows]);
+  const slotDictionaryRows = useMemo(() => {
+    const hasVocabularyPrefix = (prefix: string) => vocabularyRows.some((row) => row.content_key.startsWith(prefix));
+    const hasFallbackPrefix = (prefix: string) => templateContentRows.some((row) => row.content_key.startsWith(prefix));
+
+    return baseSlotDictionaryRows.map((row) => {
+      if (row.editableIn === "Calculated") {
+        return row;
+      }
+
+      const isReady = row.editableIn === "Vocabulary"
+        ? row.examples?.some((example) => hasVocabularyPrefix(example.replace(/\{.*$/, ""))) ?? false
+        : row.examples?.some((example) => hasFallbackPrefix(example.replace(/\{.*$/, ""))) ?? false;
+
+      return {
+        ...row,
+        status: isReady ? "ready" : "missing"
+      } satisfies AdminSlotDictionaryRow;
+    });
+  }, [templateContentRows, vocabularyRows]);
+  const slotDictionaryCounts = useMemo(() => ({
+    calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
+    ready: slotDictionaryRows.filter((row) => row.status === "ready").length,
+    missing: slotDictionaryRows.filter((row) => row.status === "missing").length
+  }), [slotDictionaryRows]);
 
   function buildContentExchangeBundle(
     scope: AdminContentScope,
@@ -4751,11 +4957,11 @@ export function GeneratedContentAdminDashboard() {
   }, [secret]);
 
   useEffect(() => {
-    if (activePage === "vocabulary" && canUseApi) {
+    if ((activePage === "vocabulary" || activePage === "slotDictionary") && canUseApi) {
       void loadVocabularyRows();
     }
 
-    if (activePage === "knowledge" || activePage === "hooks") {
+    if (activePage === "knowledge" || activePage === "hooks" || activePage === "slotDictionary") {
       void loadTemplateContentRows();
     }
 
@@ -6867,6 +7073,15 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             Vocabulary
           </button>
           <button
+            className={activePage === "slotDictionary" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("slotDictionary")}
+            aria-current={activePage === "slotDictionary" ? "page" : undefined}
+          >
+            <KeyRound size={18} aria-hidden="true" />
+            Slot Dictionary
+          </button>
+          <button
             className={activePage === "templates" ? "active" : ""}
             type="button"
             onClick={() => setActivePage("templates")}
@@ -7157,6 +7372,108 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </p>
             </section>
           </section>
+        ) : activePage === "slotDictionary" ? (
+          <section className="admin-template-panel admin-slot-dictionary-page" aria-label="Slot dictionary">
+            <div className="admin-template-header">
+              <div>
+                <p className="admin-eyebrow">Template slot map</p>
+                <h2>Slot Dictionary</h2>
+                <p>Use this as the global map for what fills each template variable. Calculated facts are locked; reusable language points to Vocabulary or Fallback Rows.</p>
+              </div>
+              <div className="admin-release-summary" aria-label="Slot dictionary coverage">
+                <article>
+                  <span>Calculated</span>
+                  <strong>{slotDictionaryCounts.calculated}</strong>
+                </article>
+                <article>
+                  <span>Ready</span>
+                  <strong>{slotDictionaryCounts.ready}</strong>
+                </article>
+                <article>
+                  <span>Missing</span>
+                  <strong>{slotDictionaryCounts.missing}</strong>
+                </article>
+              </div>
+            </div>
+
+            <div className="admin-slot-principles" aria-label="Slot dictionary rules">
+              <article>
+                <span>Facts</span>
+                <p><code>{"{{planet}}"}</code>, <code>{"{{sign}}"}</code>, <code>{"{{house}}"}</code>, and <code>{"{{moonPhase}}"}</code> are calculated by the app and should not be hand-authored.</p>
+              </article>
+              <article>
+                <span>Language</span>
+                <p>Editable rows supply the wording attached to those facts, such as topics, sign style, house topics, lunar phase meaning, and archetype fallback copy.</p>
+              </article>
+              <article>
+                <span>Rendering</span>
+                <p>Fallback hooks fill these slots with live values only after exact authored content and approved knowledge rows miss.</p>
+              </article>
+            </div>
+
+            <div className="admin-slot-table-wrap">
+              <table className="admin-slot-table">
+                <thead>
+                  <tr>
+                    <th>Slot</th>
+                    <th>Source</th>
+                    <th>Editable In</th>
+                    <th>Status</th>
+                    <th>Use</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {slotDictionaryRows.map((row) => {
+                  const rowAction = row.action;
+
+                  return (
+                    <tr key={row.slot}>
+                      <td>
+                        <code>{row.slot}</code>
+                        <span>{row.label}</span>
+                      </td>
+                      <td>
+                        <strong>{row.group}</strong>
+                        <code>{row.source}</code>
+                        {row.examples && (
+                          <small>{row.examples.join(" · ")}</small>
+                        )}
+                      </td>
+                      <td>{row.editableIn}</td>
+                      <td>
+                        <span className={`ui-pill admin-status admin-slot-status-${row.status}`}>
+                          {row.status === "calculated" ? "Calculated" : row.status === "ready" ? "Rows found" : "Needs rows"}
+                        </span>
+                      </td>
+                      <td>{row.description}</td>
+                      <td>
+                        {rowAction ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (rowAction.vocabularyFilter) {
+                                setVocabularyCategoryFilter(rowAction.vocabularyFilter);
+                              }
+                              if (rowAction.fallbackFilter) {
+                                setFallbackHookSectionFilter(rowAction.fallbackFilter);
+                              }
+                              setActivePage(rowAction.page);
+                            }}
+                          >
+                            {rowAction.label}
+                          </button>
+                        ) : (
+                          <span className="admin-template-note">No editor</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+                </tbody>
+              </table>
+            </div>
+          </section>
         ) : activePage === "vocabulary" ? (
           <section className="admin-template-panel admin-vocabulary-page" aria-label="Vocabulary content rows">
             <div className="admin-template-header">
@@ -7198,6 +7515,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   { key: "planets", label: "Planets" },
                   { key: "houses", label: "Houses" },
                   { key: "zodiac", label: "Zodiac" },
+                  { key: "lunar", label: "Lunar" },
                   { key: "eclipses", label: "Eclipses" }
                 ] as Array<{ key: AdminVocabularyCategoryFilter; label: string }>).map((filter) => (
                   <button

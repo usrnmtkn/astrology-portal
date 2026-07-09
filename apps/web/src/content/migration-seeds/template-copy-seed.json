@@ -38,15 +38,15 @@
       },
       "fields": {
         "title": "Moon in {{sign}}",
-        "summary": "The Moon in {{sign}} can make the day feel filtered through {{signStyle}}. Needs, moods, and reactions may become easier to read when you slow the first response down.",
-        "body": "The Moon describes what people reach for quickly: comfort, safety, memory, appetite, mood, and reaction. In {{sign}}, those needs tend to move through {{signStyle}}. If the day feels reactive, start by naming the need before deciding what to do with it.",
-        "bestMove": "Pause before answering. Separate the feeling from the fact, then choose the response that still makes sense later.",
+        "summary": "Moon in {{sign}} days tend to run on {{signNeed}}. Moods come and go faster than facts, so if the day feels reactive, name the feeling before responding to it.",
+        "body": "",
+        "bestMove": "name the feeling before responding to it",
         "emptyState": "If no approved content exists, leave the product surface blank."
       },
       "contentType": "template"
     },
     {
-      "contentId": "fallback-hook/sky.lunar-calendar-day",
+      "contentId": "fallback-hook/lunar-calendar/day",
       "source": "fallbackHooks.ts",
       "status": "published",
       "fieldMapping": {
@@ -62,6 +62,46 @@
         "body": "",
         "bestMove": "",
         "emptyState": ""
+      },
+      "contentType": "template"
+    },
+    {
+      "contentId": "fallback-hook/lunar-calendar/arc-new-moon",
+      "source": "fallbackHooks.ts",
+      "status": "published",
+      "fieldMapping": {
+        "title": "copy.headline",
+        "summary": "copy.summary",
+        "body": "copy.body",
+        "bestMove": "copy.bestMove",
+        "emptyState": "copy.emptyState"
+      },
+      "fields": {
+        "title": "",
+        "summary": "",
+        "body": "Theme: {{sixMonthArcConnection}}",
+        "bestMove": "",
+        "emptyState": "If no approved content exists, leave the product surface blank."
+      },
+      "contentType": "template"
+    },
+    {
+      "contentId": "fallback-hook/lunar-calendar/arc-full-moon",
+      "source": "fallbackHooks.ts",
+      "status": "published",
+      "fieldMapping": {
+        "title": "copy.headline",
+        "summary": "copy.summary",
+        "body": "copy.body",
+        "bestMove": "copy.bestMove",
+        "emptyState": "copy.emptyState"
+      },
+      "fields": {
+        "title": "",
+        "summary": "",
+        "body": "Recent arc: {{twoWeekArcConnection}}\n\nLonger {{moonSign}} arc: {{sixMonthArcConnection}}",
+        "bestMove": "",
+        "emptyState": "If no approved content exists, leave the product surface blank."
       },
       "contentType": "template"
     },
@@ -178,9 +218,9 @@
       },
       "fields": {
         "title": "{{transitPlanet}} {{aspect}} Natal {{natalPoint}}",
-        "summary": "A current movement of {{transitPlanetTopic}} is contacting your natal {{natalPoint}} pattern. This is timing, not destiny.",
-        "body": "Transits describe what is being activated now. Your natal {{natalPoint}} already carries a pattern connected to {{natalPointTopic}}. As {{transitPlanet}} contacts it, that part of life may become louder through events, moods, conversations, choices, or pressure to respond.",
-        "bestMove": "Treat it as a short window for noticing the pattern and choosing the cleanest next step. Do not make the transit bigger than the actual situation.",
+        "summary": "Collectively, {{transitPlanet}} {{aspect}} brings {{aspectTone}} around {{transitPlanetWeather}}. For you, it touches natal {{natalPoint}}, making {{natalPointTopic}} harder to ignore.",
+        "body": "Collectively, {{transitPlanet}} {{aspect}} describes a wider weather pattern around {{transitPlanetWeather}}. The aspect tone is {{aspectTone}}.\n\nFor you, this lands on {{personalActivation}}. That means the wider weather may become personal through mood, timing, pressure, conversations, choices, or the need to respond differently.",
+        "bestMove": "Name the collective weather, then name where it lands for you. Keep the next step practical and proportionate to the real situation.",
         "emptyState": "If no approved content exists, leave the product surface blank."
       },
       "contentType": "template"

@@ -11,6 +11,7 @@ import {
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
+import { seasonArcCopyForSign } from "../../content/seasonArcCopy";
 import {
   skyAspectContentKey,
   skyAspectInstanceContentKey,
@@ -31,6 +32,7 @@ type LunarCalendarProps = {
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   generatedContent?: Map<string, LiveGeneratedContent>;
+  onOpenTransit?: (event: LunarCalendarEvent) => void;
   showJournalPrompts?: boolean;
 };
 
@@ -779,6 +781,78 @@ function textParagraphs(value?: string | null) {
     : [];
 }
 
+type LunarDayBodyPresentation = {
+  main: string[];
+  loreTitle: string | null;
+  lore: string[];
+  prompt: string | null;
+  storyPosition: string | null;
+};
+
+function moonTitleForArchetype(name: string) {
+  const trimmed = name.trim();
+
+  if (!trimmed) return null;
+  if (trimmed.endsWith("Moon")) return trimmed;
+
+  return `${trimmed}${trimmed.endsWith("s") ? "'" : "'s"} Moon`;
+}
+
+function archetypeFigureName(title?: string | null) {
+  const trimmed = title?.trim();
+
+  if (!trimmed) return null;
+  if (trimmed.startsWith("Moon of the ")) return trimmed.replace(/^Moon of the\s+/, "");
+  if (trimmed.startsWith("Moon of ")) return trimmed.replace(/^Moon of\s+/, "");
+  if (trimmed.endsWith("'s Moon")) return trimmed.replace(/'s Moon$/, "");
+  if (trimmed.endsWith(" Moon")) return trimmed.replace(/ Moon$/, "");
+
+  return trimmed;
+}
+
+function archetypeTitleFromLore(lore: string[]) {
+  const first = lore[0] ?? "";
+  const belongsMatch = first.match(/\bbelongs to the ([A-Z][A-Za-z' -]+?)(?:,|\s+who|\.|$)/);
+  const sentenceStartMatch = first.match(/^The ([A-Z][A-Za-z' -]+?)(?:\s+(?:is|was|got|started|began|throws|learns|knows|finally|had|built|gave|fought|returns|appears|turns|carries|discovers|reaches|opens|swears|sits|keeps|wants)\b|,|\.)/);
+  const namedMoonMatch = first.match(/^On the ([A-Z][A-Za-z' -]+? Moon)\b/);
+
+  return moonTitleForArchetype(namedMoonMatch?.[1] ?? belongsMatch?.[1] ?? sentenceStartMatch?.[1] ?? "");
+}
+
+function lunarDayBodyPresentation(paragraphs: string[], seasonSign: string): LunarDayBodyPresentation {
+  const result: LunarDayBodyPresentation = {
+    main: [],
+    loreTitle: null,
+    lore: [],
+    prompt: null,
+    storyPosition: null
+  };
+  const seasonLabelPattern = new RegExp(`^${seasonSign} Season (?:cycle reflection|lessons under pressure|culmination|opening):\\s*`, "i");
+
+  paragraphs.forEach((paragraph) => {
+    if (paragraph.startsWith("Story position:")) {
+      result.storyPosition = paragraph.replace(/^Story position:\s*/, "").trim();
+      return;
+    }
+
+    if (paragraph.startsWith("Check-in:")) {
+      result.prompt = paragraph.replace(/^Check-in:\s*/, "").trim();
+      return;
+    }
+
+    if (seasonLabelPattern.test(paragraph)) {
+      result.lore.push(paragraph.replace(seasonLabelPattern, "").trim());
+      return;
+    }
+
+    result.main.push(paragraph);
+  });
+
+  result.loreTitle = archetypeTitleFromLore(result.lore);
+
+  return result;
+}
+
 function formatEventCount(count: number) {
   return count === 1 ? "1 event" : `${count} events`;
 }
@@ -1095,6 +1169,47 @@ function lunarArcMilestones(lunarDay: LunarDay | null) {
     .sort((first, second) => new Date(first.point.datetime).getTime() - new Date(second.point.datetime).getTime());
 }
 
+function seasonStoryPhaseLabel(moonPhase: string) {
+  const normalized = moonPhase.trim().toLowerCase();
+
+  if (normalized.includes("new")) return "New Moon";
+  if (normalized.includes("crescent")) return "Crescent Moon";
+  if (normalized.includes("first quarter")) return "First Quarter";
+  if (normalized.includes("gibbous") && normalized.includes("waxing")) return "Gibbous Moon";
+  if (normalized.includes("full")) return "Full Moon";
+  if (normalized.includes("gibbous") && normalized.includes("waning")) return "Disseminating Moon";
+  if (normalized.includes("last quarter") || normalized.includes("third quarter")) return "Last Quarter";
+  if (normalized.includes("balsamic") || normalized.includes("waning crescent")) return "Balsamic Moon";
+
+  return moonPhase;
+}
+
+function generatedContentField(content: LiveGeneratedContent | undefined, field: "headline" | "body") {
+  return content?.[field]?.trim() || null;
+}
+
+function seasonArcCopyWithGeneratedFallbacks(
+  sign: string,
+  baseCopy: NonNullable<ReturnType<typeof seasonArcCopyForSign>>,
+  generatedContent?: Map<string, LiveGeneratedContent>
+) {
+  const signSlug = slugContentPart(sign);
+  const storyBody = generatedContentField(generatedContent?.get(`fallback-hook/season-arc/${signSlug}`), "body");
+
+  return {
+    story: storyBody ?? baseCopy.story,
+    phases: baseCopy.phases.map((phase) => {
+      const phaseRow = generatedContent?.get(`fallback-hook/season-arc/${signSlug}/${slugContentPart(phase.phase)}`);
+
+      return {
+        ...phase,
+        figure: generatedContentField(phaseRow, "headline") ?? phase.figure,
+        body: generatedContentField(phaseRow, "body") ?? phase.body
+      };
+    })
+  };
+}
+
 function isSeasonStart(day: LunarCalendarDay) {
   return day.events.some((event) => event.type === "ingress" && event.planet === "Sun");
 }
@@ -1260,7 +1375,7 @@ function locationFromLabel(label: string): LocationInput {
   };
 }
 
-export function LunarCalendar({ location, onLocationChange, generatedContent, showJournalPrompts = true }: LunarCalendarProps) {
+export function LunarCalendar({ location, onLocationChange, generatedContent, onOpenTransit, showJournalPrompts = true }: LunarCalendarProps) {
   const [visibleMonth, setVisibleMonth] = useState(() => monthStart(new Date()));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => dateKeyFromDate(new Date()));
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>("week");
@@ -1485,20 +1600,31 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
     : [];
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedIsEclipse = selectedLunarDay?.arc?.checkpoint.role === "eclipse";
+  const selectedArcNote = selectedLunarDay?.editorial.arcSeeded ?? selectedLunarDay?.editorial.arcLesson ?? null;
   const selectedEditorialBody = selectedLunarDay
     ? selectedIsEclipse
       ? selectedLunarDay.editorial.eclipseWitness
         ?? selectedLunarDay.editorial.body
         ?? selectedLunarDay.editorial.arcLesson
-      : selectedLunarDay.editorial.arcSeeded
-      ?? selectedLunarDay.editorial.arcLesson
-      ?? selectedLunarDay.editorial.body
+      : [
+          selectedLunarDay.editorial.body,
+          selectedArcNote
+        ].filter(Boolean).join("\n\n") || null
     : null;
   const selectedDayBody = selectedDay
     ? enableLunarArcContent
       ? textParagraphs(selectedEditorialBody)
       : dayCardBody(selectedDay, selectedSurfacedTransit, zone, selectedPrimaryLunation)
     : [];
+  const selectedDayBodyPresentation = selectedDay
+    ? lunarDayBodyPresentation(selectedDayBody, seasonSignForDay(selectedDay, zone))
+    : {
+        main: [],
+        loreTitle: null,
+        lore: [],
+        prompt: null,
+        storyPosition: null
+      };
   const selectedPractice = selectedDay
     ? enableLunarArcContent
       ? selectedLunarDay?.editorial.practice ?? null
@@ -1521,6 +1647,16 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
   const selectedSeasonArc = selectedLunarDay?.arc ?? null;
+  const selectedSeasonStoryBase = selectedSeasonArc ? seasonArcCopyForSign(selectedSeasonArc.season.sign) : null;
+  const selectedSeasonStory = selectedSeasonArc && selectedSeasonStoryBase
+    ? seasonArcCopyWithGeneratedFallbacks(selectedSeasonArc.season.sign, selectedSeasonStoryBase, generatedContent)
+    : null;
+  const selectedSeasonStoryPhase = selectedDay ? seasonStoryPhaseLabel(selectedDay.moonPhase) : "";
+  const selectedSeasonStoryCurrentPhase = selectedSeasonStory?.phases.find((phase) => phase.phase === selectedSeasonStoryPhase) ?? null;
+  const selectedSeasonStoryOtherPhases = selectedSeasonStory?.phases.filter((phase) => phase.phase !== selectedSeasonStoryPhase) ?? [];
+  const selectedMoonArchetypeTitle = selectedLunarDay?.editorial.archetypeTitle ?? selectedDayBodyPresentation.loreTitle;
+  const selectedMoonArchetypeFigure = archetypeFigureName(selectedMoonArchetypeTitle);
+  const selectedMoonArchetypeLore = selectedLunarDay?.editorial.archetypeLore ?? null;
   const selectedSeasonArcMilestones = useMemo(
     () => lunarArcMilestones(selectedLunarDay),
     [selectedLunarDay]
@@ -1569,6 +1705,9 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
               {titleGlyphForDay(selectedDay)}
             </span>
           </h2>
+          {selectedMoonArchetypeTitle && (
+            <p className="lunar-selected-card__subtitle">the {selectedMoonArchetypeTitle}</p>
+          )}
           <p className="lunar-selected-card__meta">
             <span className="lunar-selected-card__phase-chip">
               <span className={`lunar-moon-disc ${isWaxingPhase(selectedDay.moonPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(selectedDay)} aria-hidden="true" />
@@ -1586,11 +1725,32 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
               </>
             )}
           </p>
-          <div className="lunar-selected-card__body">
-            {selectedDayBody.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+          {selectedDayBody.length > 0 && (
+            <div className="lunar-selected-card__body">
+              {selectedDayBodyPresentation.main.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {selectedDayBodyPresentation.lore.length > 0 && (
+                <section className="lunar-selected-card__archetype" aria-label={selectedMoonArchetypeTitle ?? "Lunar archetype"}>
+                  {(selectedMoonArchetypeFigure ?? selectedDayBodyPresentation.loreTitle) && (
+                    <span>{selectedMoonArchetypeFigure ?? selectedDayBodyPresentation.loreTitle}</span>
+                  )}
+                  {selectedDayBodyPresentation.lore.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                  {selectedMoonArchetypeLore && (
+                    <p>{selectedMoonArchetypeLore}</p>
+                  )}
+                </section>
+              )}
+              {selectedDayBodyPresentation.prompt && (
+                <section className="lunar-selected-card__check-in" aria-label="Check-in">
+                  <span>Check-in</span>
+                  <p>{selectedDayBodyPresentation.prompt}</p>
+                </section>
+              )}
+            </div>
+          )}
         </div>
 
         {(selectedDayTransits.length > 0 || selectedTransitNotes.length > 0 || (selectedDay.voidOfCourse && selectedVoidWindow)) && (
@@ -1692,8 +1852,47 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
               <span>{selectedSeasonArc.season.sign} season</span>
               <small>{formatSeasonRange(selectedSeasonArc.season.start, selectedSeasonArc.season.end, zone)}</small>
             </div>
+            {selectedSeasonStory && (
+              <>
+                <p className="lunar-selected-card__season-story">{selectedSeasonStory.story}</p>
+                <div className="lunar-selected-card__arc-phase-list" aria-label="Season lunar phase story">
+                  <span>Where you are in the story</span>
+                  {selectedSeasonStoryCurrentPhase && (
+                    <ol>
+                      <li className="is-current" key={selectedSeasonStoryCurrentPhase.phase}>
+                        <strong>{selectedSeasonStoryCurrentPhase.phase}</strong>
+                        <small>{selectedSeasonStoryCurrentPhase.body}</small>
+                      </li>
+                    </ol>
+                  )}
+                  {selectedSeasonStoryOtherPhases.length > 0 && (
+                    <details className="lunar-selected-card__arc-all-phases">
+                      <summary>View full season path</summary>
+                      <ol>
+                        {selectedSeasonStoryOtherPhases.map((phase) => (
+                          <li key={phase.phase}>
+                            <strong>{phase.phase}</strong>
+                            <small>{phase.body}</small>
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
+                  )}
+                  {!selectedSeasonStoryCurrentPhase && (
+                    <ol>
+                      {selectedSeasonStory.phases.map((phase) => (
+                        <li key={phase.phase}>
+                        <strong>{phase.phase}</strong>
+                        <small>{phase.body}</small>
+                      </li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              </>
+            )}
             {selectedSeasonArcMilestones.length > 0 && (
-              <ol>
+              <ol className="lunar-selected-card__arc-milestones">
                 {selectedSeasonArcMilestones.map((milestone) => (
                   <li className={milestone.isCurrent ? "is-current" : ""} key={milestone.id}>
                     <span className={`lunar-moon-disc ${milestone.discClass}`} aria-hidden="true" />
@@ -1994,7 +2193,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
               <span className="lunar-calendar-upcoming__label">This week</span>
               <div className="lunar-week-transits__list">
                 {visibleWeekTransitEvents.map((event) => (
-                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} timeZone={zone} />
+                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} onOpenTransit={onOpenTransit} timeZone={zone} />
                 ))}
               </div>
             </section>
@@ -2109,7 +2308,7 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
               <span className="lunar-calendar-upcoming__label">This month</span>
               <div className="lunar-month-transits__list">
                 {monthTransitEvents.map((event) => (
-                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} timeZone={zone} />
+                  <TransitCard event={event} generatedContent={generatedContent} key={event.id} onOpenTransit={onOpenTransit} timeZone={zone} />
                 ))}
               </div>
             </section>
@@ -2125,19 +2324,20 @@ export function LunarCalendar({ location, onLocationChange, generatedContent, sh
 function TransitCard({
   event,
   generatedContent,
+  onOpenTransit,
   timeZone
 }: {
   event: LunarCalendarEvent;
   generatedContent?: Map<string, LiveGeneratedContent>;
+  onOpenTransit?: (event: LunarCalendarEvent) => void;
   timeZone: string;
 }) {
   const glyphParts = transitCardGlyphParts(event);
   const content = liveCalendarEventContent(generatedContent, event);
   const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
   const description = calendarEventDescription(event, content);
-
-  return (
-    <article className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}>
+  const cardContent = (
+    <>
       <span className="tx-glyphs" aria-hidden="true">
         {glyphParts.map((part, index) => (
           <span className={part.className} key={`${part.value}-${index}`}>{part.value}</span>
@@ -2149,6 +2349,24 @@ function TransitCard({
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
       </div>
+    </>
+  );
+
+  if (onOpenTransit) {
+    return (
+      <button
+        className={`aspect-card tx-card lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
+        onClick={() => onOpenTransit(event)}
+        type="button"
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return (
+    <article className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}>
+      {cardContent}
     </article>
   );
 }

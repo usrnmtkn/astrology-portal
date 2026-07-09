@@ -1,3 +1,6 @@
+import { lunarBeatCopyByKey } from "./lunarBeatCopy";
+import { seasonArcCopyBySign } from "./seasonArcCopy";
+
 export type FallbackHookSurface = "sky" | "you" | "natal" | "friends" | "synastry" | "composite" | "relationship" | "settings";
 
 export type FallbackHookDomain = "sky" | "natal" | "relationship";
@@ -21,6 +24,7 @@ export type FallbackHookDefinition = {
   description: string;
   knowledgeIdTemplates: string[];
   requiredFacts: string[];
+  slotKeys?: string[];
   copy: FallbackHookCopyGuidance;
 };
 
@@ -31,6 +35,7 @@ export type LunarCalendarContentKeyGroup =
   | "last-quarter"
   | "eclipse"
   | "season"
+  | "arc-fallback"
   | "transit-fallback";
 
 export type LunarCalendarContentKeyDefinition = {
@@ -93,15 +98,15 @@ export const lunarCalendarContentKeyDefinitions: LunarCalendarContentKeyDefiniti
   ...zodiacSigns.map((sign) => ({
     key: `lunation/first-quarter/${sign}`,
     group: "first-quarter" as const,
-    label: `First Quarter / ${titleCaseKeyPart(sign)} New Moon`,
-    slotKeys: ["moonPhase", "moonSign", "newMoonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    label: `First Quarter / Moon in ${titleCaseKeyPart(sign)}`,
+    slotKeys: ["moonPhase", "moonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
     fieldKeys: lunationFieldKeys
   })),
   ...zodiacSigns.map((sign) => ({
     key: `lunation/last-quarter/${sign}`,
     group: "last-quarter" as const,
-    label: `Last Quarter / ${titleCaseKeyPart(sign)} New Moon`,
-    slotKeys: ["moonPhase", "moonSign", "newMoonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    label: `Last Quarter / Moon in ${titleCaseKeyPart(sign)}`,
+    slotKeys: ["moonPhase", "moonSign", "sunSign", "season", "arcPosition", "arcTargetSign", "eclipseSeason", "mercuryRx"],
     fieldKeys: lunationFieldKeys
   })),
   {
@@ -118,6 +123,20 @@ export const lunarCalendarContentKeyDefinitions: LunarCalendarContentKeyDefiniti
     slotKeys: ["sunSign", "season", "seasonTheme"],
     fieldKeys: ["body"] as LunarCalendarContentKeyDefinition["fieldKeys"]
   })),
+  {
+    key: "fallback-hook/lunar-calendar/arc-new-moon",
+    group: "arc-fallback",
+    label: "Lunar Arc Fallback / New Moon",
+    slotKeys: ["moonPhase", "moonSign", "sunSign", "season", "sixMonthArcConnection", "arcTargetSign", "eclipseSeason", "mercuryRx"],
+    fieldKeys: ["body"] as LunarCalendarContentKeyDefinition["fieldKeys"]
+  },
+  {
+    key: "fallback-hook/lunar-calendar/arc-full-moon",
+    group: "arc-fallback",
+    label: "Lunar Arc Fallback / Full Moon",
+    slotKeys: ["moonPhase", "moonSign", "oppositeSign", "sunSign", "season", "twoWeekArcConnection", "sixMonthArcConnection", "eclipseSeason", "mercuryRx"],
+    fieldKeys: ["body"] as LunarCalendarContentKeyDefinition["fieldKeys"]
+  },
   ...aspectTypes.map((aspectType) => ({
     key: `transit-fallback/${aspectType}`,
     group: "transit-fallback" as const,
@@ -127,7 +146,83 @@ export const lunarCalendarContentKeyDefinitions: LunarCalendarContentKeyDefiniti
   }))
 ];
 
+function titleCaseFromSlug(value: string) {
+  return value
+    .split("-")
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+}
+
+function phaseSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+const lunarBeatFallbackHookDefinitions = Object.entries(lunarBeatCopyByKey).map(([contentKey, copy]) => {
+  const [, phase = "lunation", sign = ""] = contentKey.match(/^lunation\/([^/]+)\/([^/]+)$/) ?? [];
+  const labelPhase = titleCaseFromSlug(phase);
+  const labelSign = titleCaseFromSlug(sign);
+
+  return {
+    key: contentKey,
+    label: `Lunar Calendar > ${labelPhase} / ${labelSign}`,
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: `Editable fallback row for ${copy.title}. Headline stores the Moon archetype name, summary stores the Story/Shadow/Growth lore paragraph, and body stores the client-facing day copy.`,
+    knowledgeIdTemplates: [contentKey],
+    requiredFacts: ["moon phase", "moon sign", "sun sign", "season", "lunar arc position"],
+    copy: {
+      ...emptyFallbackHookCopy,
+      headline: copy.archetypeTitle ?? copy.title,
+      summary: copy.archetypeLore ?? "",
+      body: copy.body
+    }
+  } satisfies FallbackHookDefinition;
+});
+
+const seasonArcFallbackHookDefinitions = Object.entries(seasonArcCopyBySign).flatMap(([sign, copy]) => {
+  const signSlug = phaseSlug(sign);
+  const storyHook = {
+    key: `season-arc/${signSlug}`,
+    label: `Lunar Calendar > ${sign} Season Story`,
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: `Editable fallback row for the ${sign} season story in the lunar calendar rail.`,
+    knowledgeIdTemplates: [`season/${signSlug}`],
+    requiredFacts: ["sun sign", "season"],
+    copy: {
+      ...emptyFallbackHookCopy,
+      headline: `${sign} Season Story`,
+      body: copy.story
+    }
+  } satisfies FallbackHookDefinition;
+  const phaseHooks = copy.phases.map((phase) => ({
+    key: `season-arc/${signSlug}/${phaseSlug(phase.phase)}`,
+    label: `Lunar Calendar > ${sign} Season / ${phase.phase}`,
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: `Editable fallback row for the ${phase.phase} chapter in the ${sign} season story.`,
+    knowledgeIdTemplates: [`season/${signSlug}`, `season-arc/${signSlug}`],
+    requiredFacts: ["sun sign", "season", "moon phase"],
+    copy: {
+      ...emptyFallbackHookCopy,
+      headline: phase.figure ?? phase.phase,
+      body: phase.body
+    }
+  } satisfies FallbackHookDefinition));
+
+  return [storyHook, ...phaseHooks];
+});
+
 export const fallbackHookDefinitions = [
+  ...lunarBeatFallbackHookDefinitions,
+  ...seasonArcFallbackHookDefinitions,
   {
     key: "sky.seasonal-current",
     label: "Sky > Season",
@@ -147,19 +242,47 @@ export const fallbackHookDefinitions = [
     mode: "feed",
     description: "Moon sign and lunar cycle cards, including the Moon's strongest active aspect.",
     knowledgeIdTemplates: ["sky-{planet}-in-{sign}", "{planet}-in-{sign}"],
-    requiredFacts: ["moon sign", "moon phase", "optional strongest aspect"],
+    requiredFacts: ["moon sign", "Moon sign need", "moon phase", "optional strongest aspect"],
     copy: emptyFallbackHookCopy
   },
   {
-    key: "sky.lunar-calendar-day",
-    label: "Sky > Lunar Calendar Day",
+    key: "lunar-calendar/day",
+    label: "Lunar Calendar > Day",
     surface: "sky",
     domain: "sky",
     mode: "feed",
     description: "Reusable lunar calendar day copy when phase/sign/date-specific lunar editorial rows are missing.",
     knowledgeIdTemplates: ["sky-moon-in-{moonSign}", "moon-in-{moonSign}", "lunar-{moonPhase}-{moonSign}"],
-    requiredFacts: ["moon phase", "moon sign"],
+    requiredFacts: ["moon phase", "moon phase helper", "moon sign", "moon sign mode", "current sun sign", "current season", "season theme", "lunar arc position", "lunar arc helper", "lunar arc target sign", "eclipse season flag", "Mercury retrograde flag"],
     copy: emptyFallbackHookCopy
+  },
+  {
+    key: "lunar-calendar/arc-new-moon",
+    label: "Lunar Calendar > Arc / New Moon",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Fallback arc copy for New Moon calendar cards when authored lunar arc seed rows are missing.",
+    knowledgeIdTemplates: ["lunation/new-moon/{moonSign}", "season/{sunSign}"],
+    requiredFacts: ["moon phase", "moon sign", "current sun sign", "six-month arc connection", "arc target sign", "eclipse season flag", "Mercury retrograde flag"],
+    copy: {
+      ...emptyFallbackHookCopy,
+      body: "Theme: {{sixMonthArcConnection}}"
+    }
+  },
+  {
+    key: "lunar-calendar/arc-full-moon",
+    label: "Lunar Calendar > Arc / Full Moon",
+    surface: "sky",
+    domain: "sky",
+    mode: "feed",
+    description: "Fallback arc copy for Full Moon calendar cards when authored lunar arc lesson rows are missing.",
+    knowledgeIdTemplates: ["lunation/full-moon/{moonSign}", "season/{sunSign}"],
+    requiredFacts: ["moon phase", "moon sign", "opposite sign", "current sun sign", "two-week arc connection", "six-month arc connection", "eclipse season flag", "Mercury retrograde flag"],
+    copy: {
+      ...emptyFallbackHookCopy,
+      body: "Recent arc: {{twoWeekArcConnection}}\n\nLonger {{moonSign}} arc: {{sixMonthArcConnection}}"
+    }
   },
   {
     key: "sky.planetary-placement",
@@ -174,22 +297,22 @@ export const fallbackHookDefinitions = [
   },
   {
     key: "sky.aspect-detail",
-    label: "Sky > Current Aspect Detail",
+    label: "Sky > Aspect Detail Write-Up",
     surface: "sky",
     domain: "sky",
     mode: "feed",
-    description: "Current sky aspects between two planets, with action and timing.",
+    description: "Primary fallback for the full active-aspect card or detail article between two current sky bodies.",
     knowledgeIdTemplates: ["sky-{planetA}-{aspect}-{planetB}", "{planetA}-{aspect}-{planetB}", "{planetB}-{aspect}-{planetA}"],
     requiredFacts: ["planetA", "planetB", "aspect", "orb", "applying/separating optional"],
     copy: emptyFallbackHookCopy
   },
   {
     key: "sky.aspect-sign-context",
-    label: "Sky > Aspect Sign Context",
+    label: "Sky > Aspect Supporting Sign Line",
     surface: "sky",
     domain: "sky",
     mode: "feed",
-    description: "A short sign-context line appended to sky aspect cards and articles when both planet signs are available.",
+    description: "Supplemental one-line context appended after the aspect write-up when both current planet signs are available.",
     knowledgeIdTemplates: [],
     requiredFacts: ["planetA", "signA", "signAStyle", "planetB", "signB", "signBStyle"],
     copy: emptyFallbackHookCopy
@@ -218,7 +341,7 @@ export const fallbackHookDefinitions = [
   },
   {
     key: "you.natal-placement",
-    label: "You > Natal Placement",
+    label: "Natal > Placement",
     surface: "you",
     domain: "natal",
     mode: "in_depth",
@@ -229,7 +352,7 @@ export const fallbackHookDefinitions = [
   },
   {
     key: "you.natal-aspect",
-    label: "You > Natal Aspect",
+    label: "Natal > Aspect",
     surface: "you",
     domain: "natal",
     mode: "in_depth",
@@ -240,24 +363,26 @@ export const fallbackHookDefinitions = [
   },
   {
     key: "you.transit-to-natal",
-    label: "You > Transit To Natal",
+    label: "Natal > Transit To Natal",
     surface: "you",
     domain: "natal",
     mode: "feed",
     description: "Current transit hitting a natal planet or angle on the You page.",
     knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{natalPoint}", "{transitPlanet}-{aspect}-{natalPoint}"],
     requiredFacts: ["transitPlanet", "aspect", "natalPoint", "orb/timing optional"],
+    slotKeys: ["transitPlanet", "aspect", "natalPoint", "transitPlanetTopic", "natalPointTopic", "transitPlanetWeather", "aspectTone", "personalActivation", "activatedHouse", "activatedHouseTopic", "timingIntensity", "timingPhase"],
     copy: emptyFallbackHookCopy
   },
   {
     key: "you.daily-timing",
-    label: "You > Daily Timing",
+    label: "Natal > Daily Timing",
     surface: "you",
     domain: "natal",
     mode: "feed",
     description: "Daily personal timing summary assembled from the strongest current transit against the natal chart.",
     knowledgeIdTemplates: ["transit-natal-{transitPlanet}-{aspect}-{natalPoint}", "{transitPlanet}-{aspect}-{natalPoint}", "{natalPoint}"],
     requiredFacts: ["transitPlanet", "aspect", "natalPoint", "orb", "window"],
+    slotKeys: ["activeTransit", "transitPlanet", "aspect", "natalPoint", "transitPlanetTopic", "natalPointTopic", "transitPlanetWeather", "aspectTone", "personalActivation", "activatedHouse", "activatedHouseTopic", "timingIntensity", "timingPhase", "orb", "window", "activatedSign", "activatedRuler"],
     copy: emptyFallbackHookCopy
   },
   {
@@ -339,8 +464,16 @@ export const fallbackHookDefinitions = [
   }
 ] satisfies FallbackHookDefinition[];
 
+const fallbackHookAliases: Record<string, string> = {
+  "sky.lunar-calendar-day": "lunar-calendar/day",
+  "sky.lunar-arc-new-moon": "lunar-calendar/arc-new-moon",
+  "sky.lunar-arc-full-moon": "lunar-calendar/arc-full-moon"
+};
+
 export function fallbackHookByKey(key: string) {
-  return fallbackHookDefinitions.find((hook) => hook.key === key) ?? null;
+  const canonicalKey = fallbackHookAliases[key] ?? key;
+
+  return fallbackHookDefinitions.find((hook) => hook.key === canonicalKey) ?? null;
 }
 
 export function normalizeFallbackHookPart(value: string | number | null | undefined) {

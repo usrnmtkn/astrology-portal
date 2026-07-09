@@ -1,0 +1,54 @@
+{
+  "id": "composite-chart-source-method-framework",
+  "kind": "framework",
+  "title": "Composite Chart Source Method Framework",
+  "role": "relationship-synthesis-method",
+  "category": "synastry-composite",
+  "sections": [
+    {
+      "id": "principle",
+      "heading": "Principle",
+      "body": "Read the composite chart as the relationship's shared field, not as either person's natal chart and not as a replacement for synastry. Synastry shows the exchange between people; the composite shows the tone, purpose, pressure, and behavior of the bond they create together."
+    },
+    {
+      "id": "core-factors",
+      "heading": "Core Factors",
+      "body": "Begin with composite Sun, Moon, Ascendant, Venus, Mars, and Saturn. The Sun shows the relationship's organizing purpose, the Moon its emotional climate, Venus its affection and pleasure, Mars its drive and conflict style, Saturn its tests and durability, and the Ascendant how the bond presents itself."
+    },
+    {
+      "id": "examples",
+      "heading": "Examples",
+      "body": "Use these source-backed example patterns in relationship synthesis.",
+      "items": [
+        {
+          "label": "Easy synastry, hard composite",
+          "body": "Two people may have attractive Venus-Mars or Sun-Venus synastry while the composite Moon-Saturn or Sun-Mars pattern makes the relationship itself feel heavy, defensive, pressured, or combative. The attraction is personal; the shared field still needs care."
+        },
+        {
+          "label": "Hard synastry, useful composite",
+          "body": "A relationship can include frictional interaspects while the composite shows cooperation, purpose, or public function. Read this as a bond that may require translation between the people but can still produce a coherent shared life or project."
+        },
+        {
+          "label": "Composite trigger points",
+          "body": "When a composite chart repeats a difficult synastry theme, later timing to the composite can activate the issue for both people at once. Use timing as an alert to the relationship field, not as proof of unavoidable outcome."
+        },
+        {
+          "label": "Inside versus outside",
+          "body": "The composite is most useful for what the relationship feels like from the inside. A relative or public-facing chart can describe how the pair appears from outside, but it should not replace lived synastry when the question is how the people affect each other."
+        }
+      ]
+    },
+    {
+      "id": "product-use",
+      "heading": "Product Use",
+      "body": "In product output, keep labels explicit: 'between you' for synastry, 'the relationship itself' for composite, and 'how it may look from outside' only when a relative/public layer is actually being used."
+    },
+    {
+      "id": "source-note",
+      "heading": "Source Note",
+      "body": "Paraphrased from local user-supplied sources reviewed July 2026: Helena Avelar and Luis Ribeiro, On the Heavenly Spheres; Hayden's Book of Synastry; and Rod Suskin, Synastry: Understanding the Astrology of Relationships. Source files were reviewed locally and not copied into this repository."
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "DRAFT"
+}
