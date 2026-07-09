@@ -4034,6 +4034,10 @@ export function GeneratedContentAdminDashboard() {
       ])
     );
   }, [vocabularyRows]);
+  const missingTaglinePlaceholderRows = useMemo(
+    () => missingFallbackTaglineImportRows(taglineRows),
+    [taglineDrafts, taglineRows]
+  );
   const slotDictionaryRows = useMemo(() => {
     const hasVocabularyPrefix = (prefix: string) => vocabularyRows.some((row) => row.content_key.startsWith(prefix));
     const hasFallbackPrefix = (prefix: string) => templateContentRows.some((row) => row.content_key.startsWith(prefix));
@@ -4834,31 +4838,53 @@ export function GeneratedContentAdminDashboard() {
         fetchVocabularyRowsForAdmin(),
         fetchTaglineRowsForAdmin()
       ]);
-      const missingTaglineRows = missingFallbackTaglineImportRows(initialTaglineRows);
-      let nextTaglineRows = initialTaglineRows;
-
-      if (missingTaglineRows.length > 0) {
-        await bulkUpsertGeneratedContentImportRows(
-          missingTaglineRows.map((row) => generatedContentImportPayloadForTaglineRow(row, initialTaglineRows))
-        );
-        nextTaglineRows = await fetchTaglineRowsForAdmin();
-      }
 
       setVocabularyRows(nextRows);
       setVocabularyDrafts(draftMapForVocabularyRows(nextRows));
-      setTaglineRows(nextTaglineRows);
-      setTaglineDrafts(draftMapForTaglineRows(nextTaglineRows));
+      setTaglineRows(initialTaglineRows);
+      setTaglineDrafts(draftMapForTaglineRows(initialTaglineRows));
       setAccessStatus("valid");
-      setMessage(
-        `Loaded ${nextRows.length} vocabulary rows and ${nextTaglineRows.length} tagline rows.${
-          missingTaglineRows.length > 0 ? ` Auto-saved ${missingTaglineRows.length} natal card tagline rows.` : ""
-        }`
-      );
+      setMessage(`Loaded ${nextRows.length} vocabulary rows and ${initialTaglineRows.length} saved tagline rows.`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
       setMessage(adminErrorMessage(error, "Could not load vocabulary rows."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function createMissingTaglineRows() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    const rowsToCreate = missingFallbackTaglineImportRows(taglineRows);
+
+    if (rowsToCreate.length === 0) {
+      setMessage("No missing natal card tagline rows to create.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = await bulkUpsertGeneratedContentImportRows(
+        rowsToCreate.map((row) => generatedContentImportPayloadForTaglineRow(row, taglineRows))
+      );
+      const skippedMessage = payload.skippedLiveRows?.length
+        ? ` ${payload.skippedLiveRows.length} LIVE rows were left unchanged.`
+        : "";
+
+      await loadVocabularyRows();
+      setMessage(`Created ${payload.rows.length} missing natal card tagline rows.${skippedMessage}`);
+      showSaveToast("Missing tagline rows created");
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not create missing natal card tagline rows."));
     } finally {
       setIsLoading(false);
     }
@@ -7617,6 +7643,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <button type="button" onClick={() => triggerContentImport("vocabulary")} disabled={isLoading || !canUseApi}>
                   <Upload size={16} aria-hidden="true" />
                   Import
+                </button>
+                <button type="button" onClick={() => void createMissingTaglineRows()} disabled={isLoading || !canUseApi || missingTaglinePlaceholderRows.length === 0}>
+                  <Plus size={16} aria-hidden="true" />
+                  Create Missing Taglines
                 </button>
               </div>
             </div>
