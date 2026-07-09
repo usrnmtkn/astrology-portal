@@ -36,8 +36,14 @@
 .lunar-calendar-body {
   display: grid;
   gap: 14px;
+  grid-template-rows: 1fr;
   min-width: 0;
+  overflow: visible;
   transform-origin: top center;
+}
+
+.lunar-calendar-body > * {
+  min-height: 0;
 }
 
 .lunar-calendar-body.is-week {
@@ -2063,20 +2069,40 @@ a.tx-card.has-article:hover .tx-more {
 
 @keyframes lunar-month-settle {
   from {
+    grid-template-rows: 0fr;
+    opacity: 0.96;
+    overflow: clip;
     transform: translateY(-8px);
   }
 
+  99% {
+    overflow: clip;
+  }
+
   to {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    overflow: visible;
     transform: translateY(0);
   }
 }
 
 @keyframes lunar-week-settle {
   from {
+    grid-template-rows: 0fr;
+    opacity: 0.96;
+    overflow: clip;
     transform: translateY(6px);
   }
 
+  99% {
+    overflow: clip;
+  }
+
   to {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    overflow: visible;
     transform: translateY(0);
   }
 }
