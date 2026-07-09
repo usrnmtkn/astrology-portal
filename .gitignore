@@ -3,6 +3,7 @@ dist/
 .env
 .env.*
 !.env.example
+api/_lib/local-env.js
 .DS_Store
 npm-debug.log*
 .vercel
