@@ -36,6 +36,8 @@ type GeneratedContentRequestBody = GeneratedContentWriteBody & {
 type ExistingGeneratedContentRow = {
   id: string;
   content_key: string;
+  target_date: string | null;
+  mode: string;
   status: ReviewStatus;
 };
 
@@ -335,7 +337,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   for (let index = 0; index < uniqueKeys.length; index += 80) {
     const batch = uniqueKeys.slice(index, index + 80);
     const params = new URLSearchParams();
-    params.set("select", "id,content_key,status");
+    params.set("select", "id,content_key,target_date,mode,status");
     params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
     const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
@@ -352,6 +354,26 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   return rows;
 }
 
+function generatedContentTargetKey({
+  contentKey,
+  targetDate,
+  mode
+}: Pick<GeneratedContentWriteBody, "contentKey" | "targetDate" | "mode">) {
+  return [
+    contentKey?.trim() ?? "",
+    targetDate || "",
+    mode ?? ""
+  ].join("\u0000");
+}
+
+function existingGeneratedContentTargetKey(row: ExistingGeneratedContentRow) {
+  return [
+    row.content_key,
+    row.target_date ?? "",
+    row.mode
+  ].join("\u0000");
+}
+
 async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   const rows = body.rows;
 
@@ -361,12 +383,12 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
 
   const contentKeys = rows.map((row) => row.contentKey ?? "");
   const existingRows = await fetchExistingRowsByContentKey(contentKeys);
-  const existingByContentKey = new Map(existingRows.map((row) => [row.content_key, row]));
+  const existingByTarget = new Map(existingRows.map((row) => [existingGeneratedContentTargetKey(row), row]));
   const skippedLiveRows: SkippedLiveGeneratedContentRow[] = [];
   const upsertRows = rows
     .filter((row) => {
       const contentKey = row.contentKey?.trim() ?? "";
-      const existingRow = existingByContentKey.get(contentKey);
+      const existingRow = existingByTarget.get(generatedContentTargetKey(row));
 
       if (existingRow?.status === "LIVE") {
         skippedLiveRows.push({
@@ -384,7 +406,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
 
   for (let index = 0; index < upsertRows.length; index += 100) {
     const batch = upsertRows.slice(index, index + 100);
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key`, {
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
       method: "POST",
       headers: {
         ...adminHeaders(),
