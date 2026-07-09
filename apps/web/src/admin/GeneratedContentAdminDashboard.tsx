@@ -3831,6 +3831,14 @@ export function GeneratedContentAdminDashboard() {
     }, 2600);
   }
 
+  function savedStatusLabel(status: GeneratedContentStatus | undefined) {
+    if (status === "LIVE") return "published";
+    if (status === "REVIEWED") return "reviewed";
+    if (status === "ARCHIVED") return "archived";
+    if (status === "ERROR") return "error";
+    return "draft";
+  }
+
   const dedupedContentRecords = useMemo(
     () => dedupeContentLibraryRecords(reviewRecords.filter((record) => !isInternalAdminSettingRecord(record))),
     [reviewRecords]
@@ -5435,6 +5443,8 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
+      let createdTaglineStatus: GeneratedContentStatus | undefined;
+
       if (matchedRow) {
         await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           "/api/admin/generated-content",
@@ -5448,7 +5458,7 @@ export function GeneratedContentAdminDashboard() {
           }
         );
       } else {
-        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           "/api/admin/generated-content",
           secret,
           {
@@ -5464,11 +5474,15 @@ export function GeneratedContentAdminDashboard() {
             })
           }
         );
+        createdTaglineStatus = payload.rows?.[0]?.status;
       }
 
       await loadVocabularyRows();
-      setMessage(`Saved and re-read ${contentKey}.`);
-      showSaveToast("Tagline saved");
+      const createdStatusMessage = createdTaglineStatus
+        ? ` Created as ${savedStatusLabel(createdTaglineStatus)}; publish separately when ready.`
+        : "";
+      setMessage(`Saved and re-read ${contentKey}.${createdStatusMessage}`);
+      showSaveToast(createdTaglineStatus ? `Tagline saved as ${savedStatusLabel(createdTaglineStatus)}` : "Tagline saved");
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -5506,6 +5520,8 @@ export function GeneratedContentAdminDashboard() {
 
     setIsLoading(true);
     try {
+      let createdTaglineStatus: GeneratedContentStatus | undefined;
+
       if (item.row) {
         await patchVocabularyRow(item.row);
       }
@@ -5553,7 +5569,7 @@ export function GeneratedContentAdminDashboard() {
             }
           );
         } else {
-          await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
             "/api/admin/generated-content",
             secret,
             {
@@ -5569,12 +5585,16 @@ export function GeneratedContentAdminDashboard() {
               })
             }
           );
+          createdTaglineStatus = payload.rows?.[0]?.status;
         }
       }
 
       await loadVocabularyRows();
-      setMessage(`Saved and re-read ${item.point}.`);
-      showSaveToast("Vocabulary card saved");
+      const createdStatusMessage = createdTaglineStatus
+        ? ` Tagline created as ${savedStatusLabel(createdTaglineStatus)}; publish separately when ready.`
+        : "";
+      setMessage(`Saved and re-read ${item.point}.${createdStatusMessage}`);
+      showSaveToast(createdTaglineStatus ? `Vocabulary card saved; tagline is ${savedStatusLabel(createdTaglineStatus)}` : "Vocabulary card saved");
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -5595,7 +5615,7 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       if (isFallbackTemplatePlaceholderRow(row)) {
-        await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           "/api/admin/generated-content",
           secret,
           {
@@ -5619,13 +5639,15 @@ export function GeneratedContentAdminDashboard() {
             })
           }
         );
+        const createdStatus = payload.rows?.[0]?.status;
+
         await loadTemplateContentRows();
-        setMessage(`Created and re-read ${row.content_key}.`);
-        showSaveToast(draftValue.status === "LIVE" ? "Fallback row saved live" : "Fallback row saved as draft");
+        setMessage(`Created and re-read ${row.content_key}. Created as ${savedStatusLabel(createdStatus)}; publish separately when ready.`);
+        showSaveToast(`Fallback row saved as ${savedStatusLabel(createdStatus)}`);
         return;
       }
 
-      await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
         {
@@ -5639,9 +5661,11 @@ export function GeneratedContentAdminDashboard() {
           })
         }
       );
+      const savedStatus = payload.rows?.[0]?.status ?? draftValue.status;
+
       await loadTemplateContentRows();
       setMessage(`Saved and re-read ${row.content_key}.`);
-      showSaveToast(draftValue.status === "LIVE" ? "Fallback row saved live" : "Fallback row saved as draft");
+      showSaveToast(savedStatus === "LIVE" ? "Fallback row published" : `Fallback row saved as ${savedStatusLabel(savedStatus)}`);
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
