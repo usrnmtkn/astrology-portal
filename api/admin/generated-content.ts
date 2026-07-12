@@ -22,11 +22,16 @@ type GeneratedContentWriteBody = {
   facts?: unknown;
   knowledgeIds?: string[];
   sourceSnapshot?: unknown;
+  lane?: "serving" | "reference" | string | null;
+  reviewState?: string | null;
   promptVersion?: string;
   provider?: string;
   model?: string;
   blockType?: string | null;
   reviewerNotes?: string;
+  evergreen?: boolean;
+  evergreenAt?: string | null;
+  evergreenBy?: string | null;
 };
 
 type GeneratedContentRequestBody = GeneratedContentWriteBody & {
@@ -124,20 +129,61 @@ function adminHeaders() {
   };
 }
 
+function missingGeneratedInterpretationsColumn(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const message = "message" in payload && typeof payload.message === "string" ? payload.message : "";
+  const match = message.match(/column generated_interpretations\.([a-z_]+) does not exist/i)
+    ?? message.match(/column "([a-z_]+)" does not exist/i);
+
+  return match?.[1] ?? null;
+}
+
 async function listGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
   const id = requestUrl.searchParams.get("id");
   const status = requestUrl.searchParams.get("status") ?? "DRAFT";
   const surface = requestUrl.searchParams.get("surface");
   const promptVersion = requestUrl.searchParams.get("promptVersion");
+  const contentKey = requestUrl.searchParams.get("contentKey");
   const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
+  const selectColumns = [
+    "id",
+    "content_key",
+    "surface",
+    "mode",
+    "status",
+    "event_type",
+    "target_date",
+    "headline",
+    "summary",
+    "body",
+    "sections",
+    "block_type",
+    "lane",
+    "review_state",
+    "evergreen",
+    "evergreen_at",
+    "evergreen_by",
+    "facts",
+    "knowledge_ids",
+    "source_snapshot",
+    "reviewer_notes",
+    "prompt_version",
+    "provider",
+    "model",
+    "reviewed_at",
+    "published_at",
+    "updated_at",
+    "created_at"
+  ];
   const params = new URLSearchParams({
-    select: id
-      ? "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,facts,knowledge_ids,source_snapshot,reviewer_notes,prompt_version,provider,model,reviewed_at,published_at,updated_at,created_at"
-      : "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,block_type,reviewer_notes,prompt_version,provider,model,reviewed_at,published_at,updated_at,created_at",
+    select: selectColumns.join(","),
     order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
     limit: id ? "1" : String(limit)
   });
@@ -156,7 +202,9 @@ async function listGeneratedContent(req: IncomingMessage) {
     params.set("prompt_version", `eq.${promptVersion}`);
   }
 
-  if (!id && contentKeyPrefix) {
+  if (!id && contentKey) {
+    params.set("content_key", `eq.${contentKey}`);
+  } else if (!id && contentKeyPrefix) {
     params.set("content_key", `like.${contentKeyPrefix}%`);
   }
 
@@ -168,16 +216,30 @@ async function listGeneratedContent(req: IncomingMessage) {
     params.set("or", `(target_date.is.null,target_date.lte.${endDate})`);
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
-    headers: adminHeaders()
-  });
-  const payload = await response.json().catch(() => null);
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+      headers: adminHeaders()
+    });
+    const payload = await response.json().catch(() => null);
 
-  if (!response.ok) {
+    if (response.ok) {
+      return payload;
+    }
+
+    const missingColumn = response.status === 400 ? missingGeneratedInterpretationsColumn(payload) : null;
+
+    if (missingColumn && selectColumns.includes(missingColumn)) {
+      const columnIndex = selectColumns.indexOf(missingColumn);
+
+      selectColumns.splice(columnIndex, 1);
+      params.set("select", selectColumns.join(","));
+      continue;
+    }
+
     throw new Error(`Supabase list failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
-  return payload;
+  throw new Error("Supabase list failed after retrying missing generated_interpretations columns.");
 }
 
 function exactCountFromContentRange(contentRange: string | null) {
@@ -254,6 +316,11 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     facts: body.facts ?? {},
     knowledge_ids: body.knowledgeIds ?? [],
     source_snapshot: body.sourceSnapshot ?? {},
+    ...(typeof body.lane === "string" && body.lane.trim() ? { lane: body.lane.trim() } : {}),
+    ...(body.reviewState !== undefined ? { review_state: body.reviewState || null } : {}),
+    evergreen: Boolean(body.evergreen),
+    evergreen_at: body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null,
+    evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     provider: "claude",
@@ -317,6 +384,11 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     facts: body.facts ?? {},
     knowledge_ids: body.knowledgeIds ?? [],
     source_snapshot: body.sourceSnapshot ?? {},
+    ...(typeof body.lane === "string" && body.lane.trim() ? { lane: body.lane.trim() } : {}),
+    ...(body.reviewState !== undefined ? { review_state: body.reviewState || null } : {}),
+    evergreen: Boolean(body.evergreen),
+    evergreen_at: body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null,
+    evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(typeof body.blockType === "string" && body.blockType.trim() ? { block_type: body.blockType.trim() } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
     provider: typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : "claude",
@@ -451,12 +523,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
     if (body.status === "REVIEWED") {
       patch.reviewed_at = new Date().toISOString();
+      patch.review_state = null;
     }
 
     if (body.status === "LIVE") {
       const now = new Date().toISOString();
       patch.reviewed_at = now;
       patch.published_at = now;
+      patch.review_state = null;
     }
   }
 
@@ -508,6 +582,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.source_snapshot = body.sourceSnapshot;
   }
 
+  if (typeof body.lane === "string") {
+    patch.lane = body.lane.trim() || "serving";
+  }
+
+  if (body.reviewState !== undefined) {
+    patch.review_state = body.reviewState || null;
+  }
+
   if (typeof body.promptVersion === "string") {
     patch.prompt_version = body.promptVersion.trim() || "manual-admin";
   }
@@ -518,6 +600,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (typeof body.reviewerNotes === "string") {
     patch.reviewer_notes = body.reviewerNotes;
+  }
+
+  if (typeof body.evergreen === "boolean") {
+    patch.evergreen = body.evergreen;
+    patch.evergreen_at = body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null;
+    patch.evergreen_by = body.evergreen ? body.evergreenBy ?? "admin" : null;
   }
 
   if (Object.keys(patch).length === 0) {
