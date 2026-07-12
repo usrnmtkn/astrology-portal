@@ -1,7 +1,10 @@
-import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Server, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Activity, Archive, BarChart3, BookOpenText, Check, Database, Download, Eye, FileText, Flag, KeyRound, LayoutDashboard, Pencil, Plus, RefreshCw, Save, Search, Server, Sparkles, Trash2, TreePine, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { fallbackHookByKey, fallbackHookDefinitions, knowledgeIdsForFallbackHook, lunarCalendarContentKeyDefinitions, type FallbackHookContext, type FallbackHookDefinition, type LunarCalendarContentKeyDefinition, type LunarCalendarContentKeyGroup } from "../content/fallbackHooks";
+import { fallbackVocabularyDependencyFamilies, fallbackVocabularyReferenceLanePolicy } from "../content/fallbackVocabularyDependencies";
+import { findMetaphorPhraseFlags, metaphorFamilies, metaphorGuidanceSummary, metaphorValidationPhrases } from "../content/metaphorSpecificityPhraseBook";
+import { firstReaderFacingCopy, isReaderFacingCopy } from "../content/readerSafety";
 import templateCopySeed from "../content/migration-seeds/template-copy-seed.json";
 import hookCatalogDescriptionsCsv from "./hook-catalog-descriptions.csv?raw";
 import type { GeneratedContentMode } from "../services/generatedContent";
@@ -31,13 +34,19 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 type GeneratedContentSurfaceFilter = GeneratedContentSurface | "all";
 type VoiceTemplateSurface = "sky" | "fullMoon" | "newMoon" | "eclipse" | "natal" | "synastry" | "composite";
-type AdminDashboardPage = "content" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "templates" | "hooks" | "releaseNotes";
+type AdminDashboardPage = "content" | "reviewQueue" | "connection" | "appBehavior" | "vocabulary" | "slotDictionary" | "knowledge" | "templates" | "hooks" | "releaseNotes";
 type AdminAccessStatus = "empty" | "checking" | "valid" | "invalid";
 type AdminReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
 type AdminGenerationProvider = "claude" | "openai";
 type AdminContentStatusFilter = "all" | "DRAFT" | "NEEDS_REVIEW" | "SCHEDULED" | "LIVE" | "ARCHIVED";
 type AdminContentQueueFilter = "failed" | "missingSource" | "draft" | "published" | null;
+type AdminReviewQueueStatusFilter = GeneratedContentStatus | "all";
+type AdminReviewQueueEvergreenFilter = "all" | "evergreen" | "hideEvergreen";
+type AdminReviewQueueSourceFilter = "all" | "revoicePending" | "voiced";
+type AdminReviewQueueFamilyFilter = "all" | "placement" | "aspect" | "ingress" | "retrograde" | "eclipse" | "synastry" | "other";
+type AdminReviewQueueGroupKey = `${AdminReviewQueueFamilyFilter}:${string}`;
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Templates";
+type AdminVocabularyStatusFilter = GeneratedContentStatus | "all";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminHookCatalogSelection = { type: "lunar"; key: string } | { type: "fallback"; key: string };
 type LunarCoverageFilter = "all" | "lunar-calendar" | "eclipse" | "season" | "transit-fallback";
@@ -169,6 +178,11 @@ type AdminGeneratedContentRow = {
   body: string | null;
   sections: Array<{ heading: string; body: string }> | Record<string, unknown> | null;
   block_type?: AdminContentBlockFilter | null;
+  lane?: "serving" | "reference" | string | null;
+  review_state?: string | null;
+  evergreen?: boolean | null;
+  evergreen_at?: string | null;
+  evergreen_by?: string | null;
   facts: Record<string, unknown> | null;
   knowledge_ids: string[] | null;
   source_snapshot: Record<string, unknown> | null;
@@ -223,6 +237,7 @@ type AdminGeneratedContentDraft = {
 
 type AdminVocabularyDraft = {
   headline: string;
+  status: GeneratedContentStatus;
   you?: string;
   friend?: string;
   natal: string;
@@ -254,7 +269,7 @@ type AdminVocabularyCardItem = {
   kind?: "topic" | "sign-style";
 };
 
-type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "lunar" | "eclipses";
+type AdminVocabularyCategoryFilter = "all" | "planets" | "houses" | "zodiac" | "lunar" | "eclipses" | "career" | "relationship";
 
 type AdminTemplateDraft = {
   headline: string;
@@ -278,7 +293,7 @@ type LunarCoverageSummaryItem = {
 type AdminSlotDictionaryRow = {
   slot: string;
   label: string;
-  group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Lunar language" | "Relationship language";
+  group: "Calculated facts" | "Planet language" | "Zodiac language" | "House language" | "Lunar language" | "Sky language" | "Aspect language" | "Relationship language";
   source: string;
   editableIn: "Calculated" | "Vocabulary" | "Fallback Rows";
   status: SlotDictionaryStatus;
@@ -310,6 +325,9 @@ type AdminReviewRecord = {
   facts: Record<string, unknown> | null;
   knowledgeIds?: string[];
   sourceSnapshot: Record<string, unknown> | null;
+  evergreen: boolean;
+  evergreenAt: string | null;
+  evergreenBy: string | null;
   reviewerNotes: string | null;
   userId?: string;
   subjectId?: string;
@@ -683,6 +701,16 @@ function liveVocabularyRowsByContentKey(rows: AdminGeneratedContentRow[]) {
 
 type AdminPlanetTopicVariant = "you" | "friend" | "sky" | "natal";
 
+const dashboardVocabularyPrefix = "fallback-vocab";
+
+function fallbackVocabularyContentKey(family: string, keyPart: string) {
+  return `${dashboardVocabularyPrefix}/${family}/${keyPart}`;
+}
+
+function isVocabularyFamilyKey(contentKey: string, family: string) {
+  return contentKey.startsWith(`${dashboardVocabularyPrefix}/${family}/`);
+}
+
 function topicPhraseForPreview(row: AdminGeneratedContentRow | undefined, variant: AdminPlanetTopicVariant) {
   const sections = objectValue(row?.sections);
   const topic = objectValue(sections?.topic);
@@ -712,15 +740,15 @@ function vocabularyPhraseForPreview(
     return "";
   }
 
-  if (contentKey.startsWith("vocab/planet-topic/")) {
+  if (isVocabularyFamilyKey(contentKey, "planet-topic")) {
     return topicPhraseForPreview(row, options.variant ?? "natal");
   }
 
-  if (contentKey.startsWith("vocab/sign-style/")) {
+  if (isVocabularyFamilyKey(contentKey, "sign-style")) {
     return signStylePhraseForPreview(row, options.short);
   }
 
-  if (contentKey.startsWith("vocab/sign-need/")) {
+  if (isVocabularyFamilyKey(contentKey, "sign-need")) {
     const sections = objectValue(row.sections);
     const need = objectValue(sections?.need);
     const phrase = stringValue(need?.phrase) || row.body || "";
@@ -767,7 +795,7 @@ function resolveFallbackHookSampleContextFromVocabulary(
     const sign = context[signSlot];
     const phrase = vocabularyPhraseForPreview(
       rowsByContentKey,
-      `vocab/sign-style/${normalizedVocabularyKeyPart(sign)}`,
+      fallbackVocabularyContentKey("sign-style", normalizedVocabularyKeyPart(sign)),
       { short }
     );
 
@@ -777,7 +805,7 @@ function resolveFallbackHookSampleContextFromVocabulary(
     const sign = context[signSlot];
     const phrase = vocabularyPhraseForPreview(
       rowsByContentKey,
-      `vocab/sign-need/${normalizedVocabularyKeyPart(sign)}`
+      fallbackVocabularyContentKey("sign-need", normalizedVocabularyKeyPart(sign))
     );
 
     setResolvedSampleSlot(context, slot, phrase);
@@ -786,7 +814,7 @@ function resolveFallbackHookSampleContextFromVocabulary(
     const planet = context[planetSlot];
     const phrase = vocabularyPhraseForPreview(
       rowsByContentKey,
-      `vocab/planet-topic/${normalizedVocabularyKeyPart(planet)}`,
+      fallbackVocabularyContentKey("planet-topic", normalizedVocabularyKeyPart(planet)),
       { variant }
     );
 
@@ -808,7 +836,7 @@ function resolveFallbackHookSampleContextFromVocabulary(
   const house = context.house;
   const houseTopic = vocabularyPhraseForPreview(
     rowsByContentKey,
-    `vocab/house-topic/${normalizedVocabularyKeyPart(house)}`
+    fallbackVocabularyContentKey("house-life-area", normalizedVocabularyKeyPart(house))
   );
 
   setResolvedSampleSlot(context, "houseTopic", houseTopic);
@@ -816,7 +844,7 @@ function resolveFallbackHookSampleContextFromVocabulary(
 
   const retrogradeNote = vocabularyPhraseForPreview(
     rowsByContentKey,
-    `vocab/retrograde-note/${normalizedVocabularyKeyPart(context.planet)}`
+    fallbackVocabularyContentKey("retrograde-note", normalizedVocabularyKeyPart(context.planet))
   );
 
   setResolvedSampleSlot(context, "retrogradeNote", retrogradeNote);
@@ -829,6 +857,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "connection") return "Connection";
   if (activePage === "appBehavior") return "App Behavior";
   if (activePage === "templates") return "Templates & Voice";
+  if (activePage === "reviewQueue") return "Review Queue";
   if (activePage === "vocabulary") return "Vocabulary";
   if (activePage === "slotDictionary") return "Slot Dictionary";
   if (activePage === "knowledge") return "Fallback Rows";
@@ -841,6 +870,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "connection") return "Admin / Connection";
   if (activePage === "appBehavior") return "Admin / App behavior";
   if (activePage === "templates") return "Admin / Templates & voice";
+  if (activePage === "reviewQueue") return "Admin / Review queue";
   if (activePage === "vocabulary") return "Admin / Vocabulary";
   if (activePage === "slotDictionary") return "Admin / Slot dictionary";
   if (activePage === "knowledge") return "Admin / Fallback rows";
@@ -863,6 +893,10 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 
   if (activePage === "templates") {
     return "Edit reusable templates, generation guidance, banned words, and phrase banks by content surface.";
+  }
+
+  if (activePage === "reviewQueue") {
+    return "Review authored and generated rows by family, move copy through editorial approval, and lock finished evergreen rows.";
   }
 
   if (activePage === "vocabulary") {
@@ -925,6 +959,44 @@ function vocabularyHeadline(row: AdminGeneratedContentRow) {
   return headline || titleFromVocabularyContentKey(row.content_key);
 }
 
+function localVocabularyCompanionRow(contentKey: string, point: string, sourceRow?: AdminGeneratedContentRow): AdminGeneratedContentRow {
+  const family = vocabularyRowFamily(contentKey);
+  const companionLabel = family === "planet-shadow"
+    ? "Planet Shadow"
+    : family === "house-shadow"
+      ? "House Shadow"
+      : family === "higher-expression"
+        ? "Higher Expression"
+        : "Vocabulary";
+  const now = new Date().toISOString();
+
+  return {
+    id: `local:${contentKey}`,
+    content_key: contentKey,
+    surface: sourceRow?.surface ?? "natal",
+    mode: sourceRow?.mode ?? "feed",
+    status: "DRAFT",
+    event_type: sourceRow?.event_type ?? "vocabulary",
+    target_date: null,
+    headline: `${point} ${companionLabel}`,
+    summary: null,
+    body: "",
+    sections: null,
+    block_type: sourceRow?.block_type ?? null,
+    facts: null,
+    knowledge_ids: null,
+    source_snapshot: null,
+    reviewer_notes: null,
+    prompt_version: sourceRow?.prompt_version ?? "vocab-v1",
+    provider: null,
+    model: null,
+    reviewed_at: null,
+    published_at: null,
+    updated_at: now,
+    created_at: now
+  };
+}
+
 function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyDraft {
   const sections = objectValue(row.sections);
   const topic = objectValue(sections?.topic);
@@ -937,6 +1009,7 @@ function vocabularyDraftFromRow(row: AdminGeneratedContentRow): AdminVocabularyD
 
   return {
     headline: vocabularyHeadline(row),
+    status: row.status,
     you: stringValue(topic?.you),
     friend: stringValue(topic?.friend),
     natal: stringValue(topic?.natal) || row.body || "",
@@ -1030,6 +1103,7 @@ function vocabularySummaryFromDraft(row: AdminGeneratedContentRow, draftValue: A
 function vocabularyDraftFromImportRow(row: AdminContentExchangeBundle["vocabularyRows"][number]): AdminVocabularyDraft {
   return {
     headline: row.headline || titleFromVocabularyContentKey(row.contentKey),
+    status: "DRAFT",
     you: row.you ?? "",
     friend: row.friend ?? "",
     natal: row.natal ?? "",
@@ -1044,12 +1118,12 @@ function vocabularyDraftFromImportRow(row: AdminContentExchangeBundle["vocabular
 }
 
 function vocabularyRowKind(contentKey: string): "topic" | "sign-style" {
-  return contentKey.startsWith("vocab/sign-style/") ? "sign-style" : "topic";
+  return isVocabularyFamilyKey(contentKey, "sign-style") ? "sign-style" : "topic";
 }
 
 function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign-need" | "zodiac-story" | "planet-shadow" | "house-shadow" | "higher-expression" {
-  if (contentKey.startsWith("vocab/sign-style/")) return "sign-style";
-  if (contentKey.startsWith("vocab/sign-need/")) return "sign-need";
+  if (isVocabularyFamilyKey(contentKey, "sign-style")) return "sign-style";
+  if (isVocabularyFamilyKey(contentKey, "sign-need")) return "sign-need";
   if (contentKey.startsWith("vocab/zodiac-story/") || contentKey.startsWith("vocab/zodiac-cycle/")) return "zodiac-story";
   if (contentKey.startsWith("vocab/planet-shadow/")) return "planet-shadow";
   if (contentKey.startsWith("vocab/house-shadow/")) return "house-shadow";
@@ -1057,28 +1131,89 @@ function vocabularyRowFamily(contentKey: string): "topic" | "sign-style" | "sign
   return "topic";
 }
 
+function isCareerVocabularyContentKey(contentKey: string) {
+  if (
+    contentKey.startsWith("vocab/house-career/") ||
+    contentKey.startsWith("vocab/house-cusp-element/") ||
+    contentKey.startsWith("vocab/element-career/") ||
+    contentKey.startsWith("vocab/mode-career/") ||
+    contentKey.startsWith("vocab/hemisphere/") ||
+    contentKey.startsWith("vocab/mc-element/") ||
+    contentKey.startsWith("vocab/planet-in-10th/") ||
+    contentKey.startsWith("vocab/saturn-mastery/") ||
+    contentKey.startsWith("vocab/north-node-mode/")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 function vocabularyItemCategory(item: Pick<AdminVocabularyCardItem, "contentKey" | "kind" | "taglineContentKey">): AdminVocabularyCategoryFilter {
-  if (item.contentKey.startsWith("vocab/lunar-phase/") || item.contentKey.startsWith("vocab/lunar-archetype/")) {
+  if (isCareerVocabularyContentKey(item.contentKey)) {
+    return "career";
+  }
+
+  if (item.contentKey.startsWith("vocab/relationship-context/") || isVocabularyFamilyKey(item.contentKey, "relationship-context")) {
+    return "relationship";
+  }
+
+  if (item.contentKey.startsWith("vocab/lunar-phase/") || item.contentKey.startsWith("vocab/lunar-archetype/") || isVocabularyFamilyKey(item.contentKey, "lunar-phase") || isVocabularyFamilyKey(item.contentKey, "lunar-archetype")) {
     return "lunar";
   }
 
-  if (item.contentKey.startsWith("vocab/eclipse-cycle/")) {
+  if (item.contentKey.startsWith("vocab/eclipse-cycle/") || isVocabularyFamilyKey(item.contentKey, "eclipse-cycle")) {
     return "eclipses";
   }
 
-  if (item.kind === "sign-style" || item.contentKey.startsWith("vocab/sign-style/") || item.contentKey.startsWith("vocab/sign-need/") || item.contentKey.startsWith("vocab/zodiac-story/") || item.contentKey.startsWith("vocab/zodiac-cycle/") || item.contentKey.startsWith("vocab/higher-expression/sign/") || item.contentKey.startsWith("vocab/higher-expression/zodiac/")) {
+  if (item.kind === "sign-style" || isVocabularyFamilyKey(item.contentKey, "sign-style") || isVocabularyFamilyKey(item.contentKey, "sign-need") || item.contentKey.startsWith("vocab/zodiac-story/") || item.contentKey.startsWith("vocab/zodiac-cycle/") || item.contentKey.startsWith("vocab/higher-expression/sign/") || item.contentKey.startsWith("vocab/higher-expression/zodiac/")) {
     return "zodiac";
   }
 
-  if (item.contentKey.startsWith("vocab/house-topic/") || item.contentKey.startsWith("vocab/house-shadow/") || item.contentKey.startsWith("vocab/higher-expression/house/")) {
+  if (isVocabularyFamilyKey(item.contentKey, "house-life-area") || item.contentKey.startsWith("vocab/house-shadow/") || item.contentKey.startsWith("vocab/higher-expression/house/")) {
     return "houses";
   }
 
-  if (item.contentKey.startsWith("vocab/planet-topic/") || item.contentKey.startsWith("vocab/planet-shadow/") || item.contentKey.startsWith("vocab/higher-expression/planet/") || item.contentKey.startsWith("vocab/natal-card-tagline/") || item.taglineContentKey) {
+  if (isVocabularyFamilyKey(item.contentKey, "planet-topic") || item.contentKey.startsWith("vocab/planet-shadow/") || item.contentKey.startsWith("vocab/planetary-word-bank/") || item.contentKey.startsWith("vocab/higher-expression/planet/") || item.contentKey.startsWith("vocab/natal-card-tagline/") || item.taglineContentKey) {
     return "planets";
   }
 
   return "all";
+}
+
+function vocabularyRowDisplayStatus(row: AdminGeneratedContentRow | undefined, drafts: Record<string, AdminVocabularyDraft>): GeneratedContentStatus | undefined {
+  return row ? drafts[row.id]?.status ?? row.status : undefined;
+}
+
+function vocabularyItemStatus(item: AdminVocabularyCardItem, drafts: Record<string, AdminVocabularyDraft> = {}): GeneratedContentStatus {
+  return vocabularyRowDisplayStatus(item.row, drafts)
+    ?? vocabularyRowDisplayStatus(item.signNeedRow, drafts)
+    ?? vocabularyRowDisplayStatus(item.storyRow, drafts)
+    ?? vocabularyRowDisplayStatus(item.shadowRow, drafts)
+    ?? vocabularyRowDisplayStatus(item.higherExpressionRow, drafts)
+    ?? "DRAFT";
+}
+
+function vocabularyItemSearchText(item: AdminVocabularyCardItem, draft?: AdminVocabularyDraft | null, taglineDraft?: AdminNatalTaglineDraft | null) {
+  return [
+    item.contentKey,
+    item.point,
+    item.kind ?? "",
+    vocabularyItemCategory(item),
+    draft?.status ?? vocabularyItemStatus(item),
+    draft?.headline,
+    draft?.you,
+    draft?.friend,
+    draft?.natal,
+    draft?.sky,
+    draft?.stylePhrase,
+    draft?.styleShort,
+    draft?.signNeed,
+    draft?.story,
+    draft?.shadow,
+    draft?.higherExpression,
+    taglineDraft?.tagline
+  ].filter(Boolean).join(" ").toLowerCase();
 }
 
 const signContextAspectCardsSettingKey = "app-setting/sign-context-on-aspect-cards";
@@ -1181,8 +1316,43 @@ function contextContentKey(hookKey: string) {
   return `fallback-hook/${hookKey}`;
 }
 
+function fallbackChildBaseHookKey(hookKey: string) {
+  const placementMatch = hookKey.match(/^sky\.planetary-placement\/[^/]+\/[^/]+$/);
+  if (placementMatch) return "sky.planetary-placement";
+
+  const aspectMatch = hookKey.match(/^sky\.aspect-detail\/[^/]+(?:\/[^/]+)?$/);
+  if (aspectMatch) return "sky.aspect-detail";
+
+  return hookKey;
+}
+
+function fallbackChildParts(row: Pick<AdminGeneratedContentRow, "content_key">) {
+  const hookKey = hookKeyFromFallbackTemplateRow(row);
+  const placementMatch = hookKey.match(/^sky\.planetary-placement\/([^/]+)\/([^/]+)$/);
+
+  if (placementMatch) {
+    return {
+      family: "placement" as const,
+      planet: placementMatch[1],
+      sign: placementMatch[2]
+    };
+  }
+
+  const aspectMatch = hookKey.match(/^sky\.aspect-detail\/([^/]+)(?:\/([^/]+))?$/);
+
+  if (aspectMatch) {
+    return {
+      family: "aspect" as const,
+      aspect: aspectMatch[1],
+      tier: aspectMatch[2] ?? ""
+    };
+  }
+
+  return null;
+}
+
 function fallbackHookForContextRow(hookKey: string) {
-  return fallbackHookByKey(hookKey);
+  return fallbackHookByKey(fallbackChildBaseHookKey(hookKey));
 }
 
 function fallbackHookSampleContextForKey(hookKey: string): FallbackHookContext {
@@ -1245,7 +1415,16 @@ function templateSeedDraftForContentKey(contentKey: string) {
 }
 
 function templateSeedForFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key">) {
-  return templateCopySeedByContentKey.get(row.content_key) ?? null;
+  return templateCopySeedByContentKey.get(row.content_key)
+    ?? templateCopySeedByContentKey.get(contextContentKey(fallbackChildBaseHookKey(hookKeyFromFallbackTemplateRow(row))))
+    ?? null;
+}
+
+function hookSectionForKey(hookKey: string): AdminFallbackHookSectionFilter {
+  return fallbackHookSectionForRow({
+    content_key: contextContentKey(hookKey),
+    surface: generatedSurfaceForFallbackHook(hookKey)
+  });
 }
 
 function fallbackHookSectionForRow(row: Pick<AdminGeneratedContentRow, "content_key" | "surface">): AdminFallbackHookSectionFilter {
@@ -1289,11 +1468,11 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     slot: "{{planetTopic}}",
     label: "Planet topic language",
     group: "Planet language",
-    source: "vocab/planet-topic/{planet}",
+    source: "fallback-vocab/planet-topic/{planet}",
     editableIn: "Vocabulary",
     status: "missing",
     description: "Reusable topic phrasing for what a planet governs on Sky, You, Natal, and relationship surfaces.",
-    examples: ["vocab/planet-topic/moon", "vocab/planet-topic/venus"],
+    examples: ["fallback-vocab/planet-topic/moon", "fallback-vocab/planet-topic/venus"],
     action: { label: "Open planet vocabulary", page: "vocabulary", vocabularyFilter: "planets" }
   },
   {
@@ -1310,22 +1489,22 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     slot: "{{signStyle}}",
     label: "Sign style language",
     group: "Zodiac language",
-    source: "vocab/sign-style/{sign}",
+    source: "fallback-vocab/sign-style/{sign}",
     editableIn: "Vocabulary",
     status: "missing",
     description: "Short reusable texture for how a sign moves, reacts, or changes a planet or event.",
-    examples: ["vocab/sign-style/aries", "vocab/sign-style/cancer"],
+    examples: ["fallback-vocab/sign-style/aries", "fallback-vocab/sign-style/cancer"],
     action: { label: "Open zodiac vocabulary", page: "vocabulary", vocabularyFilter: "zodiac" }
   },
   {
     slot: "{{signNeed}}",
     label: "Sign need language",
     group: "Zodiac language",
-    source: "vocab/sign-need/{sign}",
+    source: "fallback-vocab/sign-need/{sign}",
     editableIn: "Vocabulary",
     status: "missing",
     description: "Reusable language for what a sign wants, protects, or requires in interpretation templates.",
-    examples: ["vocab/sign-need/aries", "vocab/sign-need/cancer"],
+    examples: ["fallback-vocab/sign-need/aries", "fallback-vocab/sign-need/cancer"],
     action: { label: "Open zodiac vocabulary", page: "vocabulary", vocabularyFilter: "zodiac" }
   },
   {
@@ -1342,11 +1521,11 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     slot: "{{houseTopics}}",
     label: "House topic language",
     group: "House language",
-    source: "vocab/house-topic/{house}",
+    source: "fallback-vocab/house-life-area/{house}",
     editableIn: "Vocabulary",
     status: "missing",
     description: "Reusable real-life topics for where a placement, transit, or Moon check-in lands in the chart.",
-    examples: ["vocab/house-topic/1", "vocab/house-topic/12"],
+    examples: ["fallback-vocab/house-life-area/1", "fallback-vocab/house-life-area/12"],
     action: { label: "Open house vocabulary", page: "vocabulary", vocabularyFilter: "houses" }
   },
   {
@@ -1382,6 +1561,28 @@ const baseSlotDictionaryRows: AdminSlotDictionaryRow[] = [
     action: { label: "Open lunar fallback rows", page: "knowledge", fallbackFilter: "lunar-calendar" }
   },
   {
+    slot: "{{planet}} + {{sign}}",
+    label: "Sky placement child copy",
+    group: "Sky language",
+    source: "fallback-hook/sky.planetary-placement/{planet}/{sign}",
+    editableIn: "Fallback Rows",
+    status: "missing",
+    description: "Specific collective Sky placement fallback copy used before the generic planetary-placement template.",
+    examples: ["fallback-hook/sky.planetary-placement/sun/cancer", "fallback-hook/sky.planetary-placement/lilith/sagittarius"],
+    action: { label: "Open Sky fallback rows", page: "knowledge", fallbackFilter: "sky" }
+  },
+  {
+    slot: "{{aspect}}",
+    label: "Sky aspect child copy",
+    group: "Aspect language",
+    source: "fallback-hook/sky.aspect-detail/{aspect}",
+    editableIn: "Fallback Rows",
+    status: "missing",
+    description: "Aspect-specific fallback copy used before the generic sky.aspect-detail template.",
+    examples: ["fallback-hook/sky.aspect-detail/conjunction/feed", "fallback-hook/sky.aspect-detail/square/card"],
+    action: { label: "Open Sky fallback rows", page: "knowledge", fallbackFilter: "sky" }
+  },
+  {
     slot: "{{personA}} / {{personB}}",
     label: "Relationship names",
     group: "Relationship language",
@@ -1406,6 +1607,15 @@ const slotDictionaryStatusFilters: Array<{ key: SlotDictionaryStatusFilter; labe
   { key: "draft", label: "Draft exists" },
   { key: "local", label: "Local only" },
   { key: "missing", label: "Needs rows" }
+];
+
+const vocabularyStatusFilters: Array<{ key: AdminVocabularyStatusFilter; label: string }> = [
+  { key: "all", label: "All statuses" },
+  { key: "DRAFT", label: "Draft" },
+  { key: "REVIEWED", label: "Reviewed" },
+  { key: "LIVE", label: "Published" },
+  { key: "ARCHIVED", label: "Archived" },
+  { key: "ERROR", label: "Needs review" }
 ];
 
 function slotDictionarySourceFilterForRow(row: AdminSlotDictionaryRow): SlotDictionarySourceFilter {
@@ -1467,14 +1677,37 @@ function generatedContentModeForFallbackHook(hook: FallbackHookDefinition) {
   return hook.mode === "system" ? "feed" : hook.mode;
 }
 
+function generatedContentModeForFallbackContentKey(contentKey: string) {
+  const child = fallbackChildParts({ content_key: contentKey });
+
+  if (child?.family === "aspect" && child.tier === "expanded") {
+    return "in_depth";
+  }
+
+  const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow({ content_key: contentKey }));
+
+  return hook ? generatedContentModeForFallbackHook(hook) : "feed";
+}
+
+function generatedContentModeForFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key" | "mode">) {
+  const child = fallbackChildParts(row);
+
+  if (child?.family === "aspect" && child.tier === "expanded") {
+    return "in_depth";
+  }
+
+  return row.mode;
+}
+
 function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] = []) {
   const savedByTargetKey = new Map(savedRows.map((row) => [adminGeneratedContentRowTargetKey(row), row]));
   const now = new Date().toISOString();
-
-  return fallbackHookDefinitions
+  const registeredFallbackTargetKeys = new Set<string>();
+  const placeholderRows = fallbackHookDefinitions
     .map((hook) => {
       const contentKey = contextContentKey(hook.key);
       const hookMode = generatedContentModeForFallbackHook(hook);
+      registeredFallbackTargetKeys.add(adminGeneratedContentTargetKey(contentKey, null, hookMode));
       const savedRow = savedByTargetKey.get(adminGeneratedContentTargetKey(contentKey, null, hookMode));
 
       if (savedRow) {
@@ -1516,7 +1749,10 @@ function fallbackTemplatePlaceholderRows(savedRows: AdminGeneratedContentRow[] =
         updated_at: now,
         created_at: now
       } satisfies AdminGeneratedContentRow;
-    })
+    });
+  const childRows = savedRows.filter((row) => !registeredFallbackTargetKeys.has(adminGeneratedContentRowTargetKey(row)));
+
+  return [...placeholderRows, ...childRows]
     .sort((first, second) => first.content_key.localeCompare(second.content_key));
 }
 
@@ -1550,13 +1786,41 @@ function hookKeyFromFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "con
   return row.content_key.replace(/^fallback-hook\//, "");
 }
 
+function fallbackChildLabelPart(value: string) {
+  return value
+    .split(/[-_]/g)
+    .filter(Boolean)
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+}
+
 function labelForFallbackTemplateRow(row: AdminGeneratedContentRow) {
+  const child = fallbackChildParts(row);
+
+  if (child?.family === "placement") {
+    return `Sky > Placement / ${fallbackChildLabelPart(child.planet)} in ${fallbackChildLabelPart(child.sign)}`;
+  }
+
+  if (child?.family === "aspect") {
+    return `Sky > Aspect / ${fallbackChildLabelPart(child.aspect)}${child.tier ? ` / ${fallbackChildLabelPart(child.tier)}` : ""}`;
+  }
+
   const hook = fallbackHookForContextRow(hookKeyFromFallbackTemplateRow(row));
 
   return hook?.label || row.headline || titleFromVocabularyContentKey(row.content_key);
 }
 
 function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
+  const child = fallbackChildParts(row);
+
+  if (child?.family === "placement") {
+    return "Specific Sky placement fallback used before the generic planetary-placement template and before local emergency copy.";
+  }
+
+  if (child?.family === "aspect") {
+    return "Specific Sky aspect fallback used before the generic aspect-detail template and before local emergency copy.";
+  }
+
   const hookKey = hookKeyFromFallbackTemplateRow(row);
   const hook = fallbackHookForContextRow(hookKey);
 
@@ -1629,7 +1893,8 @@ function stringArrayFromCsvValue(value: string | undefined) {
 }
 
 function contextRowsFromTemplateRows(rows: AdminGeneratedContentRow[]): AdminContentExchangeBundle["contextRows"] {
-  return fallbackHookDefinitions.map((hook) => {
+  const registeredContentKeys = new Set(fallbackHookDefinitions.map((hook) => contextContentKey(hook.key)));
+  const topLevelRows = fallbackHookDefinitions.map((hook) => {
     const contentKey = contextContentKey(hook.key);
     const matchedRow = findAdminGeneratedContentRow(rows, {
       contentKey,
@@ -1656,6 +1921,35 @@ function contextRowsFromTemplateRows(rows: AdminGeneratedContentRow[]): AdminCon
       bestMove: hook.copy.bestMove
     };
   });
+  const childRows = rows
+    .filter((row) => row.content_key.startsWith("fallback-hook/"))
+    .filter((row) => !registeredContentKeys.has(row.content_key))
+    .filter((row) => !isLocalPlaceholderGeneratedContentRow(row))
+    .map((row) => {
+      const hookKey = hookKeyFromFallbackTemplateRow(row);
+      const hook = fallbackHookForContextRow(hookKey);
+      const draft = templateDraftFromRow(row);
+
+      return {
+        id: row.id,
+        contentKey: row.content_key,
+        hookKey,
+        label: labelForFallbackTemplateRow(row),
+        description: descriptionForFallbackTemplateRow(row),
+        surface: hook?.surface ?? row.surface,
+        mode: row.mode,
+        domain: hook?.domain ?? row.surface,
+        requiredFacts: hook?.requiredFacts ?? [],
+        knowledgeIdPatterns: hook?.knowledgeIdTemplates ?? [],
+        exampleIds: [],
+        headline: draft.headline,
+        summary: draft.summary,
+        body: draft.body,
+        bestMove: ""
+      };
+    });
+
+  return [...topLevelRows, ...childRows];
 }
 
 function csvEscape(value: unknown) {
@@ -1953,6 +2247,12 @@ function contentTypeBadge(row: AdminGeneratedContentRow) {
   return stringValue(sourceSnapshot?.contentType);
 }
 
+function isEditableTemplateSource(record: AdminReviewRecord) {
+  return record.sourceSnapshot?.contentType === "template"
+    || record.contentKey.startsWith("fallback-template/")
+    || record.blockType === "fallback_template";
+}
+
 const lunarCoverageGroupLabels: Record<LunarCalendarContentKeyGroup, string> = {
   "new-moon": "New Moon",
   "full-moon": "Full Moon",
@@ -2015,15 +2315,15 @@ function lunarCoverageVocabDependencies(definition: LunarCalendarContentKeyDefin
   const dependencies = new Set<string>();
 
   if (["new-moon", "full-moon", "first-quarter", "last-quarter", "season"].includes(definition.group) && signPart) {
-    dependencies.add(`vocab/sign-style/${signPart}`);
+    dependencies.add(fallbackVocabularyContentKey("sign-style", signPart));
   }
 
   if (["new-moon", "full-moon", "first-quarter", "last-quarter"].includes(definition.group) && signPart) {
-    dependencies.add(`vocab/sign-need/${signPart}`);
+    dependencies.add(fallbackVocabularyContentKey("sign-need", signPart));
   }
 
   if (definition.group === "full-moon" && zodiacOppositesBySlug[signPart]) {
-    dependencies.add(`vocab/sign-style/${zodiacOppositesBySlug[signPart]}`);
+    dependencies.add(fallbackVocabularyContentKey("sign-style", zodiacOppositesBySlug[signPart]));
   }
 
   if (definition.group === "transit-fallback" && signPart) {
@@ -2766,6 +3066,9 @@ function globalReviewRecord(row: AdminGeneratedContentRow): AdminReviewRecord {
     facts: row.facts,
     knowledgeIds: row.knowledge_ids ?? [],
     sourceSnapshot: row.source_snapshot,
+    evergreen: Boolean(row.evergreen),
+    evergreenAt: row.evergreen_at ?? null,
+    evergreenBy: row.evergreen_by ?? null,
     reviewerNotes: row.reviewer_notes,
     provider: row.provider,
     model: row.model,
@@ -2810,6 +3113,9 @@ function privateReviewRecord(row: AdminUserGeneratedContentRow): AdminReviewReco
     sections: [],
     facts: null,
     sourceSnapshot: null,
+    evergreen: false,
+    evergreenAt: null,
+    evergreenBy: null,
     reviewerNotes: null,
     userId: row.user_id,
     subjectId: row.subject_id,
@@ -2955,6 +3261,9 @@ function manualEntryRecord(
       source: "admin-manual-entry",
       createdAt: now.toISOString()
     },
+    evergreen: false,
+    evergreenAt: null,
+    evergreenBy: null,
     blockType,
     reviewerNotes: "",
     updatedAt: now.toISOString()
@@ -2974,6 +3283,79 @@ const natalPlacementBodies = [
   "Pluto",
   "North Node",
   "South Node"
+];
+
+const reviewQueuePlacementPlanets = [
+  "Sun",
+  "Moon",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+  "Chiron"
+];
+
+const zodiacSigns = [
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces"
+];
+
+const reviewQueueFamilyLabels: Record<AdminReviewQueueFamilyFilter, string> = {
+  all: "All",
+  placement: "Placement",
+  aspect: "Aspect",
+  ingress: "Ingress",
+  retrograde: "Retrograde",
+  eclipse: "Eclipse",
+  synastry: "Synastry",
+  other: "Other"
+};
+
+const reviewQueueStatusFilters: Array<{ key: AdminReviewQueueStatusFilter; label: string }> = [
+  { key: "all", label: "All statuses" },
+  { key: "ERROR", label: "Needs Review" },
+  { key: "DRAFT", label: "Draft" },
+  { key: "REVIEWED", label: "Reviewed" },
+  { key: "LIVE", label: "Published" },
+  { key: "ARCHIVED", label: "Archived" }
+];
+
+const reviewQueueEvergreenFilters: Array<{ key: AdminReviewQueueEvergreenFilter; label: string }> = [
+  { key: "hideEvergreen", label: "Hide evergreen" },
+  { key: "all", label: "All" },
+  { key: "evergreen", label: "Evergreen only" }
+];
+
+const timeBoundEvergreenPatterns = [
+  /\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\b/i,
+  /\b20\d{2}\b/,
+  /\bthis\s+(?:week|month|year|season|spring|summer|fall|autumn|winter)\b/i,
+  /\b(?:until|through|for the next|over the next|during the next)\b/i,
+  /\b(?:spring|summer|fall|autumn|winter)\s+(?:season|window)\b/i,
+  /\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/,
+  /\b\d{4}-\d{2}-\d{2}\b/,
+  /\b(?:from|between)\s+[^.]{0,40}\b(?:to|and|through)\b/i
+];
+
+const skyNatalPhrasingPatterns = [
+  /\byou were born\b/i,
+  /\byou grow through\b/i,
+  /\byour natal\b/i,
+  /\bin your chart you\b/i
 ];
 
 const traditionalRulersBySign: Record<string, string> = {
@@ -3224,6 +3606,201 @@ function readerFacingTextForReview(record: AdminReviewRecord) {
   return bodyWithoutLeadingTldr(record.body.trim() || fallbackReaderTextForReview(record));
 }
 
+function readerFacingCopyForRecord(record: AdminReviewRecord) {
+  return firstReaderFacingCopy([
+    bodyWithoutLeadingTldr(record.body),
+    stripTldrPrefix(record.summary),
+    ...record.sections.map((section) => section.body)
+  ]);
+}
+
+function reviewRecordPlainText(record: AdminReviewRecord) {
+  return [
+    record.title,
+    record.contentKey,
+    record.summary,
+    record.body,
+    ...record.sections.flatMap((section) => [section.heading, section.body])
+  ].join("\n");
+}
+
+function hasTimeBoundEvergreenLanguage(record: AdminReviewRecord) {
+  const text = [record.summary, record.body].join("\n");
+  const match = timeBoundEvergreenPatterns.find((pattern) => pattern.test(text));
+
+  return match
+    ? "Evergreen copy cannot include month names, years, date ranges, or time-window language."
+    : "";
+}
+
+function hasRevoicePendingProvenance(record: AdminReviewRecord) {
+  return valueContainsText(record.sourceSnapshot, "revoice-pending")
+    || valueContainsText(record.facts, "revoice-pending")
+    || valueContainsText(record.reviewerNotes, "revoice-pending")
+    || valueContainsText(record.rawGlobalRow?.source_snapshot, "revoice-pending");
+}
+
+function skyNatalPhrasingWarnings(record: AdminReviewRecord) {
+  if (record.surface !== "sky") return [];
+
+  const text = [record.summary, record.body].join("\n");
+  return skyNatalPhrasingPatterns
+    .filter((pattern) => pattern.test(text))
+    .map((pattern) => pattern.source.replaceAll("\\b", "").replaceAll("\\s+", " "));
+}
+
+function readerSafetyBlockReason(record: AdminReviewRecord) {
+  const hasAnyCopy = Boolean(record.body.trim() || record.summary.trim() || record.sections.some((section) => section.body.trim()));
+  const safeCopy = readerFacingCopyForRecord(record);
+
+  if (!hasAnyCopy) {
+    return "Body is empty.";
+  }
+
+  if (!safeCopy) {
+    return "Copy looks like metadata, provenance, source notes, or editorial/reference text.";
+  }
+
+  return "";
+}
+
+function canTransitionReviewRecord(record: AdminReviewRecord, nextStatus: GeneratedContentStatus) {
+  if (nextStatus === "REVIEWED" || nextStatus === "LIVE") {
+    return readerSafetyBlockReason(record);
+  }
+
+  return "";
+}
+
+function canMarkEvergreen(record: AdminReviewRecord) {
+  if (record.status !== "LIVE") {
+    return "Publish before marking evergreen.";
+  }
+
+  return readerSafetyBlockReason(record) || hasTimeBoundEvergreenLanguage(record);
+}
+
+function reviewQueueFamily(record: AdminReviewRecord): Exclude<AdminReviewQueueFamilyFilter, "all"> {
+  const key = record.contentKey.toLowerCase();
+  const eventType = (record.eventType ?? "").toLowerCase();
+  const blockType = contentBlockType(record);
+
+  if (key.includes("eclipse") || eventType.includes("eclipse")) return "eclipse";
+  if (key.includes("retrograde") || eventType.includes("retrograde") || key.includes("station")) return "retrograde";
+  if (key.includes("ingress") || eventType.includes("ingress")) return "ingress";
+  if (record.surface === "synastry" || record.surface === "relationship" || key.includes("synastry")) return "synastry";
+  if (blockType === "placement" || key.includes("planetary-placement") || key.includes(".placement.") || key.includes("-in-")) return "placement";
+  if (blockType.endsWith("_aspect") || key.includes("aspect") || /\b(conjunction|sextile|square|trine|opposition)\b/.test(key)) return "aspect";
+
+  return "other";
+}
+
+function reviewQueuePlacementPlanet(record: AdminReviewRecord) {
+  const search = `${record.contentKey} ${record.title} ${record.eventType ?? ""}`.toLowerCase();
+  const factPlanet = factStringFromSources(record, ["planet", "body", "point", "placementBody", "body1"]);
+  const matchedFact = reviewQueuePlacementPlanets.find((planet) => normalizeAstroToken(planet) === normalizeAstroToken(factPlanet));
+
+  if (matchedFact) return matchedFact;
+
+  return reviewQueuePlacementPlanets.find((planet) => search.includes(planet.toLowerCase().replace(/\s+/g, "-")) || search.includes(planet.toLowerCase())) ?? "Other";
+}
+
+function reviewQueuePlacementSign(record: AdminReviewRecord) {
+  const search = `${record.contentKey} ${record.title}`.toLowerCase();
+  const factSign = factStringFromSources(record, ["sign", "placementSign", "planetSign", "sign1"]);
+  const matchedFact = zodiacSigns.find((sign) => normalizeAstroToken(sign) === normalizeAstroToken(factSign));
+
+  if (matchedFact) return matchedFact;
+
+  return zodiacSigns.find((sign) => search.includes(sign.toLowerCase())) ?? "";
+}
+
+function reviewQueueGroupKey(record: AdminReviewRecord): AdminReviewQueueGroupKey {
+  const family = reviewQueueFamily(record);
+
+  if (family === "placement") {
+    return `placement:${reviewQueuePlacementPlanet(record)}`;
+  }
+
+  return `${family}:${family}`;
+}
+
+function reviewQueueGroupLabel(groupKey: AdminReviewQueueGroupKey) {
+  const [family, detail] = groupKey.split(":");
+
+  if (family === "placement") {
+    return `Placement · ${detail}`;
+  }
+
+  return reviewQueueFamilyLabels[family as AdminReviewQueueFamilyFilter] ?? detail;
+}
+
+function reviewQueueRecordLabel(record: AdminReviewRecord) {
+  if (reviewQueueFamily(record) === "placement") {
+    const planet = reviewQueuePlacementPlanet(record);
+    const sign = reviewQueuePlacementSign(record);
+
+    if (planet && sign) {
+      return `${planet} in ${sign}`;
+    }
+  }
+
+  return record.title || record.contentKey;
+}
+
+type AdminReaderSafetyState = {
+  key: "reader-ready" | "draft-held" | "reference-held" | "review-held" | "fallback-needed";
+  label: string;
+  detail: string;
+};
+
+function readerSafetyStateForRecord(record: AdminReviewRecord): AdminReaderSafetyState {
+  const lane = record.rawGlobalRow?.lane;
+  const reviewState = record.rawGlobalRow?.review_state;
+  const hasAnyCopy = Boolean(record.body.trim() || record.summary.trim() || record.sections.some((section) => section.body.trim()));
+  const hasSafeReaderCopy = Boolean(readerFacingCopyForRecord(record));
+
+  if (record.status !== "LIVE") {
+    return {
+      key: "draft-held",
+      label: "Not reader-visible",
+      detail: `${contentStatusLabel(record.status)} rows stay in the editorial queue.`
+    };
+  }
+
+  if (lane && lane !== "serving") {
+    return {
+      key: "reference-held",
+      label: "Reference only",
+      detail: "Reference lane rows can guide generation, but cannot render to readers."
+    };
+  }
+
+  if (reviewState) {
+    return {
+      key: "review-held",
+      label: "Review hold",
+      detail: `Blocked by review state: ${reviewState}.`
+    };
+  }
+
+  if (!hasSafeReaderCopy) {
+    return {
+      key: "fallback-needed",
+      label: hasAnyCopy ? "Fallback: unsafe copy" : "Fallback: no body",
+      detail: hasAnyCopy
+        ? "Saved copy looks like metadata, provenance, or notes, so runtime should use fallback copy."
+        : "No reader-facing paragraph is saved, so runtime should use fallback copy."
+    };
+  }
+
+  return {
+    key: "reader-ready",
+    label: "Reader-ready",
+    detail: "Published serving copy with a safe reader-facing body."
+  };
+}
+
 function reviewCopyState(record: AdminReviewRecord): "placeholder" | "draft" | "saved" {
   if ((record.status === "REVIEWED" || record.status === "LIVE") && readerFacingTextForReview(record)) {
     return "saved";
@@ -3444,6 +4021,27 @@ function isMissingSourceRecord(record: AdminReviewRecord) {
     || valueContainsText(record.reviewerNotes, "No authored source IDs");
 }
 
+function visibleReviewerNotes(record: AdminReviewRecord) {
+  const notes = record.reviewerNotes?.trim() ?? "";
+
+  if (!notes) {
+    return "";
+  }
+
+  const provenanceOnlyPatterns = [
+    /^imported from\b/i,
+    /^imported from dashboard\b/i,
+    /^admin-created\b/i,
+    /^admin setting\b/i,
+    /^admin voice template setting\b/i,
+    /^draft\b.*\bhandoff\b/i,
+    /\bsource file\b/i,
+    /\buploaded\b/i
+  ];
+
+  return provenanceOnlyPatterns.some((pattern) => pattern.test(notes)) ? "" : notes;
+}
+
 function recordMatchesQueueFilter(record: AdminReviewRecord, filter: AdminContentQueueFilter) {
   if (filter === "failed") return isFailedQueueRecord(record);
   if (filter === "missingSource") return isMissingSourceRecord(record);
@@ -3477,6 +4075,17 @@ function contentStatusCounts(records: AdminReviewRecord[]) {
     LIVE: records.filter((record) => recordMatchesContentStatus(record, "LIVE")).length,
     ARCHIVED: records.filter((record) => recordMatchesContentStatus(record, "ARCHIVED")).length
   } satisfies Record<AdminContentStatusFilter, number>;
+}
+
+function reviewCountsForRecords(records: AdminReviewRecord[]): AdminReviewCounts {
+  return {
+    total: records.length,
+    DRAFT: records.filter((record) => record.status === "DRAFT").length,
+    REVIEWED: records.filter((record) => record.status === "REVIEWED").length,
+    LIVE: records.filter((record) => record.status === "LIVE").length,
+    ARCHIVED: records.filter((record) => record.status === "ARCHIVED").length,
+    ERROR: records.filter((record) => record.status === "ERROR").length
+  };
 }
 
 function categoryUsesDateFilter(category: AdminContentCategoryFilter) {
@@ -3714,6 +4323,13 @@ export function GeneratedContentAdminDashboard() {
   const [status, setStatus] = useState<GeneratedContentStatus | "all">("DRAFT");
   const [contentStatusFilter, setContentStatusFilter] = useState<AdminContentStatusFilter>("all");
   const [contentQueueFilter, setContentQueueFilter] = useState<AdminContentQueueFilter>(null);
+  const [reviewQueueStatusFilter, setReviewQueueStatusFilter] = useState<AdminReviewQueueStatusFilter>("all");
+  const [reviewQueueEvergreenFilter, setReviewQueueEvergreenFilter] = useState<AdminReviewQueueEvergreenFilter>("hideEvergreen");
+  const [reviewQueueSourceFilter, setReviewQueueSourceFilter] = useState<AdminReviewQueueSourceFilter>("all");
+  const [reviewQueueFamilyFilter, setReviewQueueFamilyFilter] = useState<AdminReviewQueueFamilyFilter>("all");
+  const [reviewQueuePlanetFilter, setReviewQueuePlanetFilter] = useState("all");
+  const [reviewQueueQuery, setReviewQueueQuery] = useState("");
+  const [selectedReviewQueueGroupKey, setSelectedReviewQueueGroupKey] = useState<AdminReviewQueueGroupKey | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
   const [contentBlockFilter, setContentBlockFilter] = useState<AdminContentBlockFilter>("all");
   const [reviewSurface, setReviewSurface] = useState<AdminReviewSurface>("upcomingAspects");
@@ -3730,6 +4346,9 @@ export function GeneratedContentAdminDashboard() {
   const [signContextEnabled, setSignContextEnabled] = useState(true);
   const [vocabularyDrafts, setVocabularyDrafts] = useState<Record<string, AdminVocabularyDraft>>({});
   const [vocabularyCategoryFilter, setVocabularyCategoryFilter] = useState<AdminVocabularyCategoryFilter>("all");
+  const [vocabularyStatusFilter, setVocabularyStatusFilter] = useState<AdminVocabularyStatusFilter>("all");
+  const [vocabularyQuery, setVocabularyQuery] = useState("");
+  const [selectedVocabularyContentKey, setSelectedVocabularyContentKey] = useState<string | null>(null);
   const [taglineDrafts, setTaglineDrafts] = useState<Record<string, AdminNatalTaglineDraft>>({});
   const [templateContentDrafts, setTemplateContentDrafts] = useState<Record<string, AdminTemplateDraft>>({});
   const [templatePreviewSlotDrafts, setTemplatePreviewSlotDrafts] = useState<Record<string, Record<string, string>>>({});
@@ -3759,6 +4378,8 @@ export function GeneratedContentAdminDashboard() {
   });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [selectedContentRowIds, setSelectedContentRowIds] = useState<Set<string>>(() => new Set());
+  const [bulkContentStatus, setBulkContentStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [reviewEditTitle, setReviewEditTitle] = useState("");
   const [reviewEditSummary, setReviewEditSummary] = useState("");
@@ -3768,7 +4389,11 @@ export function GeneratedContentAdminDashboard() {
   const [isGeneratingReviewDraft, setIsGeneratingReviewDraft] = useState(false);
   const [reviewDraftResults, setReviewDraftResults] = useState<Record<string, AdminDraftResult>>({});
   const [draft, setDraft] = useState<AdminGeneratedContentDraft>(() => createAdminDraft());
-  const [message, setMessage] = useState("Use filters or search to narrow the content library.");
+  const [message, setMessage] = useState(() => secret.trim()
+    ? "Loading content library..."
+    : "Add the content generation secret first."
+  );
+  const [reviewLoadError, setReviewLoadError] = useState<string | null>(secret.trim() ? null : "Add the content generation secret first.");
   const [saveToastMessage, setSaveToastMessage] = useState("");
   const [accessStatus, setAccessStatus] = useState<AdminAccessStatus>(() => secret.trim() ? "checking" : "empty");
   const [isLoading, setIsLoading] = useState(false);
@@ -3792,6 +4417,7 @@ export function GeneratedContentAdminDashboard() {
   const templateContentLoadRequestRef = useRef(0);
   const vocabularyDraftDirtyRef = useRef(false);
   const templateContentDraftDirtyRef = useRef(false);
+  const handledAdminDeepLinkHashRef = useRef<string | null>(null);
   const [apiStatus, setApiStatus] = useState<AdminApiStatusState>({
     state: isTldrAstroApiConfigured ? "idle" : "notConfigured",
     checkedAt: null,
@@ -3839,6 +4465,53 @@ export function GeneratedContentAdminDashboard() {
     event.preventDefault();
     setSelectedHookCatalogItem(item);
   };
+  function navigateAdminPage(page: AdminDashboardPage) {
+    if (/^#(?:fallback-row|lunar-row)\//.test(window.location.hash)) {
+      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      handledAdminDeepLinkHashRef.current = null;
+    }
+
+    setActivePage(page);
+  }
+  function openFallbackHookTemplateEditor(hookKey: string, mode: AdminTemplateDrawerMode = "edit") {
+    const contentKey = contextContentKey(hookKey);
+    const hookMode = generatedContentModeForFallbackContentKey(contentKey);
+    const row = findAdminGeneratedContentRow(templateContentRows, {
+      contentKey,
+      mode: hookMode
+    });
+
+    setFallbackHookSectionFilter(hookSectionForKey(hookKey));
+    setTemplateDrawerMode(mode);
+    setSelectedTemplateContentId(row?.id ?? `placeholder:${contentKey}`);
+    setSelectedHookCatalogItem(null);
+    setActivePage("knowledge");
+    window.history.replaceState(null, "", `#fallback-row/${encodeURIComponent(hookKey)}`);
+    setMessage(`Editing ${contentKey}.`);
+  }
+
+  async function copyAdminEditorLink(nextUrl: string, label: string) {
+    window.history.replaceState(null, "", nextUrl);
+
+    try {
+      if (!window.navigator.clipboard) {
+        throw new Error("Clipboard API unavailable.");
+      }
+
+      await window.navigator.clipboard.writeText(nextUrl);
+      setMessage(`Copied link for ${label}.`);
+      showSaveToast("Link copied");
+    } catch {
+      window.prompt("Copy this row link:", nextUrl);
+      setMessage(`Copy this link to reopen ${label}.`);
+    }
+  }
+
+  function copyFallbackHookEditorLink(hookKey: string) {
+    const nextUrl = `${window.location.origin}${window.location.pathname}#fallback-row/${encodeURIComponent(hookKey)}`;
+
+    void copyAdminEditorLink(nextUrl, contextContentKey(hookKey));
+  }
   const lunarCoverageRowsByKey = useMemo(() => (
     new Map(lunarCoverageRows.map((row) => [row.content_key, row]))
   ), [lunarCoverageRows]);
@@ -3946,10 +4619,113 @@ export function GeneratedContentAdminDashboard() {
         return first.title.localeCompare(second.title);
       });
   }, [contentQueueFilter, contentStatusFilter, filteredContentRecords]);
+  const reviewQueueBaseRecords = useMemo(() => dedupedContentRecords, [dedupedContentRecords]);
+  const reviewQueueProgress = useMemo(() => {
+    const visibleRows = reviewQueueBaseRecords.filter((record) => !isArchivedRecord(record));
+    const workingRows = visibleRows.filter((record) => !record.evergreen);
+
+    return {
+      total: workingRows.length,
+      reviewed: workingRows.filter((record) => reviewStatusRank[record.status] >= reviewStatusRank.REVIEWED).length,
+      published: visibleRows.filter((record) => record.status === "LIVE").length,
+      evergreen: visibleRows.filter((record) => record.evergreen).length
+    };
+  }, [reviewQueueBaseRecords]);
+  const filteredReviewQueueRecords = useMemo(() => {
+    const query = reviewQueueQuery.trim().toLowerCase();
+
+    return reviewQueueBaseRecords
+      .filter((record) => reviewQueueStatusFilter === "all" ? !isArchivedRecord(record) : record.status === reviewQueueStatusFilter)
+      .filter((record) => {
+        if (reviewQueueEvergreenFilter === "all") return true;
+        if (reviewQueueEvergreenFilter === "evergreen") return record.evergreen;
+        return !record.evergreen;
+      })
+      .filter((record) => {
+        if (reviewQueueSourceFilter === "all") return true;
+        const pending = hasRevoicePendingProvenance(record);
+        return reviewQueueSourceFilter === "revoicePending" ? pending : !pending;
+      })
+      .filter((record) => reviewQueueFamilyFilter === "all" || reviewQueueFamily(record) === reviewQueueFamilyFilter)
+      .filter((record) => reviewQueuePlanetFilter === "all" || reviewQueuePlacementPlanet(record) === reviewQueuePlanetFilter)
+      .filter((record) => !query || reviewRecordPlainText(record).toLowerCase().includes(query))
+      .sort((first, second) => {
+        const familyCompare = reviewQueueGroupLabel(reviewQueueGroupKey(first)).localeCompare(reviewQueueGroupLabel(reviewQueueGroupKey(second)));
+        if (familyCompare) return familyCompare;
+
+        return reviewQueueRecordLabel(first).localeCompare(reviewQueueRecordLabel(second));
+      });
+  }, [reviewQueueBaseRecords, reviewQueueEvergreenFilter, reviewQueueFamilyFilter, reviewQueuePlanetFilter, reviewQueueQuery, reviewQueueSourceFilter, reviewQueueStatusFilter]);
+  const reviewQueueGroups = useMemo(() => {
+    const groups = new Map<AdminReviewQueueGroupKey, { key: AdminReviewQueueGroupKey; label: string; records: AdminReviewRecord[]; reviewed: number; evergreen: number; total: number }>();
+
+    filteredReviewQueueRecords.forEach((record) => {
+      const key = reviewQueueGroupKey(record);
+      const group = groups.get(key) ?? {
+        key,
+        label: reviewQueueGroupLabel(key),
+        records: [],
+        reviewed: 0,
+        evergreen: 0,
+        total: 0
+      };
+
+      group.records.push(record);
+      group.total += 1;
+      if (reviewStatusRank[record.status] >= reviewStatusRank.REVIEWED) {
+        group.reviewed += 1;
+      }
+      if (record.evergreen) {
+        group.evergreen += 1;
+      }
+      groups.set(key, group);
+    });
+
+    return Array.from(groups.values()).sort((first, second) => first.label.localeCompare(second.label));
+  }, [filteredReviewQueueRecords]);
+  const activeReviewQueueGroup = reviewQueueGroups.find((group) => group.key === selectedReviewQueueGroupKey) ?? reviewQueueGroups[0] ?? null;
+  const activeReviewQueueRecords = activeReviewQueueGroup?.records ?? filteredReviewQueueRecords;
+  const selectedReviewQueueRecord = activeReviewQueueRecords.find((record) => record.id === selectedReviewId)
+    ?? activeReviewQueueRecords[0]
+    ?? null;
+  const readerSafetyCounts = useMemo(() => {
+    return allContentRecords.reduce(
+      (counts, record) => {
+        const state = readerSafetyStateForRecord(record).key;
+
+        counts[state] += 1;
+
+        if (!isEditableTemplateSource(record) && !isReaderFacingCopy(record.body) && (record.body.trim() || record.summary.trim())) {
+          counts.flaggedCopy += 1;
+        }
+
+        return counts;
+      },
+      {
+        "reader-ready": 0,
+        "draft-held": 0,
+        "reference-held": 0,
+        "review-held": 0,
+        "fallback-needed": 0,
+        flaggedCopy: 0
+      }
+    );
+  }, [allContentRecords]);
   const cmsStatusCounts = useMemo(() => contentStatusCounts(filteredContentRecords), [filteredContentRecords]);
   const cmsQueueCounts = useMemo(() => contentQueueCounts(filteredContentRecords), [filteredContentRecords]);
   const contentFailureQueueCount = useMemo(() => dedupedContentRecords.filter(isFailureQueueRecord).length, [dedupedContentRecords]);
   const selectedReviewRecord = allContentRecords.find((record) => record.id === selectedReviewId) ?? null;
+  const selectableContentRecords = useMemo(() => (
+    allContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
+  ), [allContentRecords]);
+  const selectedContentRecords = useMemo(() => (
+    allContentRecords.filter((record) => selectedContentRowIds.has(record.id))
+  ), [allContentRecords, selectedContentRowIds]);
+  const selectedPersistedContentRecords = useMemo(() => (
+    selectedContentRecords.filter((record) => record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record)))
+  ), [selectedContentRecords]);
+  const areAllVisibleContentRowsSelected = selectableContentRecords.length > 0
+    && selectableContentRecords.every((record) => selectedContentRowIds.has(record.id));
   const isEditingReviewRecord = Boolean(selectedReviewRecord && editingReviewId === selectedReviewRecord.id);
   const canEditSelectedReviewRecord = Boolean(selectedReviewRecord);
   const selectedReviewCopyState = selectedReviewRecord ? reviewCopyState(selectedReviewRecord) : "placeholder";
@@ -3963,6 +4739,21 @@ export function GeneratedContentAdminDashboard() {
       ? reviewEditBody
       : readerFacingTextForReview(selectedReviewRecord)
     : "";
+  const selectedReviewMetaphorFlags = useMemo(() => {
+    if (!selectedReviewRecord) {
+      return [];
+    }
+
+    return findMetaphorPhraseFlags(
+      [
+        selectedReviewRecord.title,
+        selectedReviewTldr,
+        selectedReviewText,
+        ...selectedReviewRecord.sections.flatMap((section) => [section.heading, section.body])
+      ].join("\n"),
+      selectedReviewRecord.contentKey
+    );
+  }, [selectedReviewRecord, selectedReviewText, selectedReviewTldr]);
   const selectedReviewMetadata = selectedReviewRecord
     ? isEditingReviewRecord
       ? reviewEditMetadata ?? reviewMetadataForRecord(selectedReviewRecord)
@@ -3976,7 +4767,7 @@ export function GeneratedContentAdminDashboard() {
   const selectedMetadataIsNatalAspect = selectedMetadataCategory === "Natal Aspects";
   const selectedMetadataIsModularNatalBlock = selectedMetadataIsNatal && selectedMetadataBlockType !== "all" && selectedMetadataBlockType !== "essay";
   const selectedMetadataIsLunarCalendar = selectedMetadataBlockType === "lunar_calendar";
-  const selectedMetadataUsesAspectFields = !selectedMetadataIsLunarCalendar && (selectedMetadataBlockType.endsWith("_aspect") || (!selectedMetadataIsNatalPlacement && !selectedMetadataIsModularNatalBlock) || selectedMetadataIsNatalAspect);
+  const selectedMetadataUsesAspectFields = !selectedMetadataIsLunarCalendar && (selectedMetadataBlockType.endsWith("_aspect") || selectedMetadataIsNatalAspect);
   const selectedMetadataIsTimeBasedAspect = selectedMetadataBlockType === "sky_aspect" || selectedMetadataBlockType === "transit_to_natal_aspect";
   const selectedMetadataUsesAspectSigns = selectedMetadataUsesAspectFields && (selectedMetadataIsTimeBasedAspect || ["natal_aspect", "synastry_aspect", "composite_aspect"].includes(selectedMetadataBlockType));
   const selectedMetadataUsesAspectHouses = selectedMetadataUsesAspectFields && ["natal_aspect", "synastry_aspect", "composite_aspect", "transit_to_natal_aspect"].includes(selectedMetadataBlockType);
@@ -3997,22 +4788,22 @@ export function GeneratedContentAdminDashboard() {
       const point = pointFromTaglineContentKey(row.content_key);
       const supportsTagline = natalCardTaglinePoints.some((taglinePoint) => normalizedNatalCardTaglinePoint(taglinePoint) === normalizedNatalCardTaglinePoint(point));
       const kind = vocabularyRowKind(row.content_key);
-      const houseTopicMatch = row.content_key.match(/^vocab\/house-topic\/(.+)$/);
-      const planetTopicMatch = row.content_key.match(/^vocab\/planet-topic\/(.+)$/);
-      const signStyleMatch = row.content_key.match(/^vocab\/sign-style\/(.+)$/);
+      const houseTopicMatch = row.content_key.match(/^fallback-vocab\/house-life-area\/(.+)$/);
+      const planetTopicMatch = row.content_key.match(/^fallback-vocab\/planet-topic\/(.+)$/);
+      const signStyleMatch = row.content_key.match(/^fallback-vocab\/sign-style\/(.+)$/);
       const houseKeyForStandalone = row.content_key.match(/^vocab\/(?:house-shadow|higher-expression\/house)\/(.+)$/)?.[1] ?? "";
       const planetKeyForStandalone = row.content_key.match(/^vocab\/(?:planet-shadow|higher-expression\/planet)\/(.+)$/)?.[1] ?? "";
-      const signKeyForStandalone = row.content_key.match(/^vocab\/(?:sign-need|zodiac-story|higher-expression\/sign|higher-expression\/zodiac)\/(.+)$/)?.[1] ?? "";
+      const signKeyForStandalone = row.content_key.match(/^fallback-vocab\/sign-need\/(.+)$/)?.[1] ?? "";
 
-      if ((family === "house-shadow" || row.content_key.startsWith("vocab/higher-expression/house/")) && rowsByContentKey.has(`vocab/house-topic/${houseKeyForStandalone}`)) {
+      if ((family === "house-shadow" || row.content_key.startsWith("vocab/higher-expression/house/")) && rowsByContentKey.has(fallbackVocabularyContentKey("house-life-area", houseKeyForStandalone))) {
         return [];
       }
 
-      if ((family === "planet-shadow" || row.content_key.startsWith("vocab/higher-expression/planet/")) && rowsByContentKey.has(`vocab/planet-topic/${planetKeyForStandalone}`)) {
+      if ((family === "planet-shadow" || row.content_key.startsWith("vocab/higher-expression/planet/")) && rowsByContentKey.has(fallbackVocabularyContentKey("planet-topic", planetKeyForStandalone))) {
         return [];
       }
 
-      if ((family === "sign-need" || family === "zodiac-story" || row.content_key.startsWith("vocab/higher-expression/sign/") || row.content_key.startsWith("vocab/higher-expression/zodiac/")) && rowsByContentKey.has(`vocab/sign-style/${signKeyForStandalone}`)) {
+      if (family === "sign-need" && rowsByContentKey.has(fallbackVocabularyContentKey("sign-style", signKeyForStandalone))) {
         return [];
       }
 
@@ -4020,21 +4811,35 @@ export function GeneratedContentAdminDashboard() {
       const planetKey = planetTopicMatch?.[1] ?? "";
       const signKey = signStyleMatch?.[1] ?? "";
 
+      const shadowContentKey = planetKey
+        ? `vocab/planet-shadow/${planetKey}`
+        : houseKey
+          ? `vocab/house-shadow/${houseKey}`
+          : "";
+      const higherExpressionContentKey = planetKey
+        ? `vocab/higher-expression/planet/${planetKey}`
+        : houseKey
+          ? `vocab/higher-expression/house/${houseKey}`
+          : signKey
+            ? `vocab/higher-expression/sign/${signKey}`
+            : "";
+      const fallbackHigherExpressionContentKey = signKey ? `vocab/higher-expression/zodiac/${signKey}` : "";
+      const savedHigherExpressionRow = higherExpressionContentKey
+        ? rowsByContentKey.get(higherExpressionContentKey) ?? (fallbackHigherExpressionContentKey ? rowsByContentKey.get(fallbackHigherExpressionContentKey) : undefined)
+        : undefined;
+
       return [{
         contentKey: row.content_key,
         point,
         row,
-        signNeedRow: signKey ? rowsByContentKey.get(`vocab/sign-need/${signKey}`) : undefined,
+        signNeedRow: signKey ? rowsByContentKey.get(fallbackVocabularyContentKey("sign-need", signKey)) : undefined,
         storyRow: signKey ? rowsByContentKey.get(`vocab/zodiac-story/${signKey}`) : undefined,
-        shadowRow: houseKey ? rowsByContentKey.get(`vocab/house-shadow/${houseKey}`) : undefined,
-        higherExpressionRow: houseKey
-          ? rowsByContentKey.get(`vocab/higher-expression/house/${houseKey}`)
-          : planetKey
-            ? rowsByContentKey.get(`vocab/higher-expression/planet/${planetKey}`)
-            : signKey
-              ? rowsByContentKey.get(`vocab/higher-expression/sign/${signKey}`) ?? rowsByContentKey.get(`vocab/higher-expression/zodiac/${signKey}`)
-              : undefined,
-        ...(planetKey ? { shadowRow: rowsByContentKey.get(`vocab/planet-shadow/${planetKey}`) } : {}),
+        shadowRow: shadowContentKey
+          ? rowsByContentKey.get(shadowContentKey) ?? localVocabularyCompanionRow(shadowContentKey, point, row)
+          : undefined,
+        higherExpressionRow: higherExpressionContentKey
+          ? savedHigherExpressionRow ?? localVocabularyCompanionRow(higherExpressionContentKey, point, row)
+          : undefined,
         taglineContentKey: kind === "topic" && supportsTagline ? natalCardTaglineContentKey(point) : undefined,
         kind
       }];
@@ -4061,7 +4866,9 @@ export function GeneratedContentAdminDashboard() {
       houses: 0,
       zodiac: 0,
       lunar: 0,
-      eclipses: 0
+      eclipses: 0,
+      career: 0,
+      relationship: 0
     } satisfies Record<AdminVocabularyCategoryFilter, number>;
 
     vocabularyCardItems.forEach((item) => {
@@ -4074,11 +4881,48 @@ export function GeneratedContentAdminDashboard() {
 
     return counts;
   }, [vocabularyCardItems]);
-  const filteredVocabularyCardItems = useMemo(() => (
-    vocabularyCategoryFilter === "all"
+  const vocabularyStatusCounts = useMemo(() => {
+    const categoryItems = vocabularyCategoryFilter === "all"
       ? vocabularyCardItems
-      : vocabularyCardItems.filter((item) => vocabularyItemCategory(item) === vocabularyCategoryFilter)
-  ), [vocabularyCardItems, vocabularyCategoryFilter]);
+      : vocabularyCardItems.filter((item) => vocabularyItemCategory(item) === vocabularyCategoryFilter);
+
+    return {
+      all: categoryItems.length,
+      DRAFT: categoryItems.filter((item) => vocabularyItemStatus(item, vocabularyDrafts) === "DRAFT").length,
+      REVIEWED: categoryItems.filter((item) => vocabularyItemStatus(item, vocabularyDrafts) === "REVIEWED").length,
+      LIVE: categoryItems.filter((item) => vocabularyItemStatus(item, vocabularyDrafts) === "LIVE").length,
+      ARCHIVED: categoryItems.filter((item) => vocabularyItemStatus(item, vocabularyDrafts) === "ARCHIVED").length,
+      ERROR: categoryItems.filter((item) => vocabularyItemStatus(item, vocabularyDrafts) === "ERROR").length
+    } satisfies Record<AdminVocabularyStatusFilter, number>;
+  }, [vocabularyCardItems, vocabularyCategoryFilter, vocabularyDrafts]);
+  const filteredVocabularyCardItems = useMemo(() => {
+    const query = vocabularyQuery.trim().toLowerCase();
+
+    return vocabularyCardItems
+      .filter((item) => vocabularyCategoryFilter === "all" || vocabularyItemCategory(item) === vocabularyCategoryFilter)
+      .filter((item) => vocabularyStatusFilter === "all" || vocabularyItemStatus(item, vocabularyDrafts) === vocabularyStatusFilter)
+      .filter((item) => {
+        if (!query) return true;
+
+        const draft = item.row ? vocabularyDrafts[item.row.id] ?? vocabularyDraftFromRow(item.row) : null;
+        const matchedTaglineRow = item.taglineContentKey
+          ? findAdminGeneratedContentRow(taglineRows, {
+            contentKey: item.taglineContentKey,
+            mode: "feed"
+          })
+          : undefined;
+        const taglineDraft = item.taglineContentKey
+          ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
+          : null;
+
+        return vocabularyItemSearchText(item, draft, taglineDraft).includes(query);
+      });
+  }, [taglineDrafts, taglineRows, vocabularyCardItems, vocabularyCategoryFilter, vocabularyDrafts, vocabularyQuery, vocabularyStatusFilter]);
+  const selectedVocabularyItem = useMemo(() => (
+    selectedVocabularyContentKey
+      ? vocabularyCardItems.find((item) => item.contentKey === selectedVocabularyContentKey) ?? null
+      : null
+  ), [selectedVocabularyContentKey, vocabularyCardItems]);
   const vocabularyCategoryNote = useMemo(() => {
     if (vocabularyCategoryFilter === "eclipses") {
       return "Eclipse rows cover eclipse-season, solar eclipse, lunar eclipse, and ritual guidance language for sky and natal fallback phrasing.";
@@ -4100,7 +4944,15 @@ export function GeneratedContentAdminDashboard() {
       return "Lunar vocabulary rows provide reusable phase and archetype language for lunar calendar templates without replacing event-specific write-ups.";
     }
 
-    return "Vocabulary rows provide reusable phrases for planets, houses, zodiac signs, and eclipse-cycle copy used by interpolation templates.";
+    if (vocabularyCategoryFilter === "career") {
+      return "Career rows provide reusable natal-career language for houses, Midheaven elements, hemispheres, modes, Saturn mastery, North Node growth, and planets in the 10th house.";
+    }
+
+    if (vocabularyCategoryFilter === "relationship") {
+      return "Relationship rows provide context language for friends, family, coworkers, business contacts, romantic partners, exes, mentors, managers, roommates, and acquaintances.";
+    }
+
+    return "Vocabulary rows provide reusable phrases for planets, houses, zodiac signs, lunar/eclipses, relationship, and career archetype copy used by interpolation templates.";
   }, [vocabularyCategoryFilter]);
   const resolvedFallbackHookSampleContexts = useMemo<Record<string, FallbackHookContext>>(() => {
     const rowsByContentKey = liveVocabularyRowsByContentKey(vocabularyRows);
@@ -4147,6 +4999,20 @@ export function GeneratedContentAdminDashboard() {
     local: slotDictionaryRows.filter((row) => row.status === "local").length,
     missing: slotDictionaryRows.filter((row) => row.status === "missing").length
   }), [slotDictionaryRows]);
+  const slotDictionarySourceCounts = useMemo(() => ({
+    all: slotDictionaryRows.length,
+    calculated: slotDictionaryRows.filter((row) => slotDictionarySourceFilterForRow(row) === "calculated").length,
+    vocabulary: slotDictionaryRows.filter((row) => slotDictionarySourceFilterForRow(row) === "vocabulary").length,
+    fallback: slotDictionaryRows.filter((row) => slotDictionarySourceFilterForRow(row) === "fallback").length
+  } satisfies Record<SlotDictionarySourceFilter, number>), [slotDictionaryRows]);
+  const slotDictionaryStatusCounts = useMemo(() => ({
+    all: slotDictionaryRows.length,
+    calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
+    ready: slotDictionaryRows.filter((row) => row.status === "ready").length,
+    draft: slotDictionaryRows.filter((row) => row.status === "draft").length,
+    local: slotDictionaryRows.filter((row) => row.status === "local").length,
+    missing: slotDictionaryRows.filter((row) => row.status === "missing").length
+  } satisfies Record<SlotDictionaryStatusFilter, number>), [slotDictionaryRows]);
   const filteredSlotDictionaryRows = useMemo(() => {
     const query = slotDictionaryQuery.trim().toLowerCase();
 
@@ -4158,6 +5024,7 @@ export function GeneratedContentAdminDashboard() {
       return matchesQuery && matchesSource && matchesStatus;
     });
   }, [slotDictionaryQuery, slotDictionaryRows, slotDictionarySourceFilter, slotDictionaryStatusFilter]);
+  const hasSlotDictionaryFilters = Boolean(slotDictionaryQuery.trim()) || slotDictionarySourceFilter !== "all" || slotDictionaryStatusFilter !== "all";
 
   function buildContentExchangeBundle(
     scope: AdminContentScope,
@@ -4254,7 +5121,7 @@ export function GeneratedContentAdminDashboard() {
     const params = new URLSearchParams({
       status: "all",
       contentKeyPrefix: "fallback-hook/",
-      limit: "300"
+      limit: "1000"
     });
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
       `/api/admin/generated-content?${params}`,
@@ -4665,7 +5532,7 @@ export function GeneratedContentAdminDashboard() {
     const matchedRow = findAdminGeneratedContentRow(availableRows, {
       id: importedRow.id,
       contentKey,
-      mode: hook ? generatedContentModeForFallbackHook(hook) : importedRow.mode ?? "feed"
+      mode: generatedContentModeForFallbackContentKey(contentKey)
     });
     const patch = {
       headline: importedRow.headline,
@@ -5036,7 +5903,7 @@ export function GeneratedContentAdminDashboard() {
       const params = new URLSearchParams({
         status: "all",
         contentKeyPrefix: "fallback-hook/",
-        limit: "200"
+        limit: "1000"
       });
       const [payload, nextVocabularyRows, nextLunarCoverageRows] = await Promise.all([
         adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
@@ -5180,6 +6047,10 @@ export function GeneratedContentAdminDashboard() {
   }, [secret]);
 
   useEffect(() => {
+    if ((activePage === "content" || activePage === "reviewQueue") && canUseApi) {
+      void loadReviewWorkspace();
+    }
+
     if ((activePage === "vocabulary" || activePage === "slotDictionary") && canUseApi) {
       void loadVocabularyRows();
     }
@@ -5199,6 +6070,91 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage, canUseApi]);
 
   useEffect(() => {
+    setSelectedContentRowIds((currentIds) => {
+      const visibleIds = new Set(allContentRecords.map((record) => record.id));
+      const nextIds = new Set([...currentIds].filter((id) => visibleIds.has(id)));
+
+      return nextIds.size === currentIds.size ? currentIds : nextIds;
+    });
+  }, [allContentRecords]);
+
+  useEffect(() => {
+    const openFromHash = () => {
+      const hash = window.location.hash;
+      const fallbackMatch = hash.match(/^#fallback-row\/(.+)$/);
+      const lunarMatch = hash.match(/^#lunar-row\/(.+)$/);
+
+      if (hash === "#reviewQueue") {
+        setActivePage("reviewQueue");
+        handledAdminDeepLinkHashRef.current = hash;
+        return;
+      }
+
+      if (!fallbackMatch && !lunarMatch) {
+        handledAdminDeepLinkHashRef.current = null;
+        return;
+      }
+
+      if (fallbackMatch) {
+        const hookKey = decodeURIComponent(fallbackMatch[1]);
+        const contentKey = contextContentKey(hookKey);
+        const hookMode = generatedContentModeForFallbackContentKey(contentKey);
+        const row = findAdminGeneratedContentRow(templateContentRows, {
+          contentKey,
+          mode: hookMode
+        });
+        const expectedSelectedId = row?.id ?? `placeholder:${contentKey}`;
+
+        if (handledAdminDeepLinkHashRef.current === hash && selectedTemplateContentId === expectedSelectedId) {
+          return;
+        }
+
+        handledAdminDeepLinkHashRef.current = hash;
+        setActivePage("knowledge");
+        setFallbackHookSectionFilter(hookSectionForKey(hookKey));
+        setTemplateDrawerMode("edit");
+        setSelectedTemplateContentId(expectedSelectedId);
+        setSelectedHookCatalogItem(null);
+        return;
+      }
+
+      if (lunarMatch) {
+        const key = decodeURIComponent(lunarMatch[1]);
+        const definition = lunarCalendarContentKeyDefinitions.find((item) => item.key === key);
+
+        if (!definition) return;
+
+        const row = lunarCoverageRowsByKey.get(definition.key);
+        const expectedSelectionKey = row?.id ?? definition.key;
+
+        if (handledAdminDeepLinkHashRef.current === hash && (selectedId === expectedSelectionKey || selectedHookCatalogItem?.key === definition.key)) {
+          return;
+        }
+
+        handledAdminDeepLinkHashRef.current = hash;
+
+        if (row) {
+          setRows((currentRows) => (
+            currentRows.some((currentRow) => currentRow.id === row.id)
+              ? currentRows
+              : [row, ...currentRows]
+          ));
+          selectRow(row);
+          setActivePage("content");
+        } else {
+          setSelectedHookCatalogItem({ type: "lunar", key: definition.key });
+          setActivePage("hooks");
+        }
+      }
+    };
+
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, [lunarCoverageRowsByKey, selectedHookCatalogItem?.key, selectedId, selectedTemplateContentId, templateContentRows]);
+
+  useEffect(() => {
     void checkTldrAstroApiStatus();
   }, []);
 
@@ -5216,12 +6172,16 @@ export function GeneratedContentAdminDashboard() {
     setSelectedReviewId(null);
     setDraft(createAdminDraft(surface));
     if (!canUseApi) {
-      setMessage("Add the content generation secret first.");
+      const nextMessage = "Add the content generation secret first.";
+
+      setReviewLoadError(nextMessage);
+      setMessage(nextMessage);
       return;
     }
 
     setIsLoading(true);
     setAccessStatus("checking");
+    setReviewLoadError(null);
     try {
       const reviewRequests = surfaces.map((reviewSurfaceKey) => {
         const params = new URLSearchParams({
@@ -5274,13 +6234,21 @@ export function GeneratedContentAdminDashboard() {
         privateParams.set("endDate", dateEnd);
       }
 
-      const privatePayload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
-        `/api/admin/user-generated-content?${privateParams}`,
-        secret
-      );
-      const globalSynastryRows = categoryUsesGlobalSynastryRows(nextCategory)
-        ? await fetchGlobalSynastryRowsForAdmin()
-        : [];
+      const [privateResult, globalSynastryResult] = await Promise.allSettled([
+        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
+          `/api/admin/user-generated-content?${privateParams}`,
+          secret
+        ),
+        categoryUsesGlobalSynastryRows(nextCategory)
+          ? fetchGlobalSynastryRowsForAdmin()
+          : Promise.resolve([] as AdminGeneratedContentRow[])
+      ]);
+      const privateRows = privateResult.status === "fulfilled" ? privateResult.value.rows ?? [] : [];
+      const globalSynastryRows = globalSynastryResult.status === "fulfilled" ? globalSynastryResult.value : [];
+      const supplementalLoadFailures = [
+        privateResult.status === "rejected" ? adminErrorMessage(privateResult.reason, "Could not load personal content rows.") : "",
+        globalSynastryResult.status === "rejected" ? adminErrorMessage(globalSynastryResult.reason, "Could not load global synastry rows.") : ""
+      ].filter(Boolean);
       const mergedRecords = new Map<string, AdminReviewRecord>();
 
       payloads.flatMap((payload) => payload.rows ?? []).forEach((record) => {
@@ -5291,7 +6259,7 @@ export function GeneratedContentAdminDashboard() {
         const mergeKey = reviewRecordMergeKey(record);
         mergedRecords.set(mergeKey, preferredReviewRecord(mergedRecords.get(mergeKey), record));
       });
-      (privatePayload.rows ?? []).map(privateReviewRecord).forEach((record) => {
+      privateRows.map(privateReviewRecord).forEach((record) => {
         mergedRecords.set(record.id, record);
       });
 
@@ -5311,6 +6279,7 @@ export function GeneratedContentAdminDashboard() {
       const warnings = payloads.flatMap((payload) => payload.warnings ?? []);
       const warningMessage = [
         reviewLoadFailures.length > 0 ? `${reviewLoadFailures.length} review surface failed.` : "",
+        supplementalLoadFailures.length > 0 ? `${supplementalLoadFailures.length} supplemental content request failed.` : "",
         warnings.length > 0 ? `${warnings.length} calculated sky dates were skipped.` : ""
       ].filter(Boolean).join(" ");
 
@@ -5321,7 +6290,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage(
         `${loadedMessage}${warningMessage ? ` ${warningMessage}` : ""}`
       );
+      setReviewLoadError(null);
     } catch (error) {
+      const nextMessage = adminErrorMessage(error, "Could not load review records.");
+
       setReviewRecords([]);
       setReviewCounts({
         total: 0,
@@ -5334,7 +6306,8 @@ export function GeneratedContentAdminDashboard() {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
       }
-      setMessage(adminErrorMessage(error, "Could not load review records."));
+      setReviewLoadError(nextMessage);
+      setMessage(nextMessage);
     } finally {
       setIsLoading(false);
     }
@@ -5346,7 +6319,8 @@ export function GeneratedContentAdminDashboard() {
 
     setSecret(nextSecret);
     setAccessStatus(nextSecret ? "checking" : "empty");
-    setMessage(nextSecret ? "Checking admin access..." : "Use filters or search to narrow the content library.");
+    setReviewLoadError(nextSecret ? null : "Add the content generation secret first.");
+    setMessage(nextSecret ? "Checking admin access..." : "Add the content generation secret first.");
     try {
       if (nextSecret) {
         window.localStorage.setItem(adminSecretStorageKey, nextSecret);
@@ -5390,15 +6364,449 @@ export function GeneratedContentAdminDashboard() {
     void loadRowDetails(row.id);
   }
 
+  function toggleContentRowSelection(record: AdminReviewRecord) {
+    setSelectedContentRowIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (nextIds.has(record.id)) {
+        nextIds.delete(record.id);
+      } else {
+        nextIds.add(record.id);
+      }
+
+      return nextIds;
+    });
+  }
+
+  function toggleAllVisibleContentRows() {
+    setSelectedContentRowIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (areAllVisibleContentRowsSelected) {
+        selectableContentRecords.forEach((record) => nextIds.delete(record.id));
+      } else {
+        selectableContentRecords.forEach((record) => nextIds.add(record.id));
+      }
+
+      return nextIds;
+    });
+  }
+
+  function mergeUpdatedGlobalReviewRow(recordId: string, row: AdminGeneratedContentRow, fallback: AdminReviewRecord) {
+    return {
+      ...fallback,
+      source: "global" as const,
+      surface: row.surface,
+      mode: row.mode,
+      status: row.status,
+      eventType: row.event_type,
+      targetDate: row.target_date,
+      contentKey: row.content_key,
+      title: row.headline || fallback.title,
+      summary: row.summary ?? fallback.summary,
+      body: row.body ?? fallback.body,
+      sections: Array.isArray(row.sections) ? row.sections : fallback.sections,
+      facts: row.facts ?? fallback.facts,
+      knowledgeIds: row.knowledge_ids ?? fallback.knowledgeIds,
+      sourceSnapshot: row.source_snapshot ?? fallback.sourceSnapshot,
+      reviewerNotes: row.reviewer_notes ?? fallback.reviewerNotes,
+      provider: row.provider ?? fallback.provider,
+      model: row.model ?? fallback.model,
+      promptVersion: row.prompt_version ?? fallback.promptVersion,
+      evergreen: Boolean(row.evergreen),
+      evergreenAt: row.evergreen_at ?? null,
+      evergreenBy: row.evergreen_by ?? null,
+      updatedAt: row.updated_at,
+      rawGlobalRow: row,
+      id: recordId
+    };
+  }
+
+  function updateReviewRecordFromGlobalRow(record: AdminReviewRecord, row: AdminGeneratedContentRow) {
+    setReviewRecords((currentRecords) => {
+      const nextRecords = currentRecords.map((currentRecord) => (
+        currentRecord.id === record.id ? mergeUpdatedGlobalReviewRow(record.id, row, currentRecord) : currentRecord
+      ));
+
+      setReviewCounts(reviewCountsForRecords(nextRecords));
+      return nextRecords;
+    });
+  }
+
+  async function applyBulkContentStatus() {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    if (selectedContentRowIds.size === 0) {
+      setMessage("Select rows first.");
+      return;
+    }
+
+    if (selectedPersistedContentRecords.length === 0) {
+      setMessage("Selected rows are calculated placeholders. Save them before changing status in bulk.");
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage(`Updating ${selectedPersistedContentRecords.length} selected row${selectedPersistedContentRecords.length === 1 ? "" : "s"}...`);
+
+    try {
+      const results = await Promise.allSettled(selectedPersistedContentRecords.map(async (record) => {
+        if (record.source === "private" && record.rawPrivateRow) {
+          const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
+            "/api/admin/user-generated-content",
+            secret,
+            {
+              method: "PATCH",
+              body: JSON.stringify({
+                id: record.rawPrivateRow.id,
+                status: bulkContentStatus
+              })
+            }
+          );
+
+          return {
+            kind: "private" as const,
+            recordId: record.id,
+            rawPrivateRow: payload.rows?.[0] ?? record.rawPrivateRow
+          };
+        }
+
+        const globalRowId = savedGlobalRowId(record);
+
+        if (!globalRowId) {
+          throw new Error(`${record.title} is not saved yet.`);
+        }
+
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          "/api/admin/generated-content",
+          secret,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: globalRowId,
+              status: bulkContentStatus,
+              surface: record.surface,
+              contentKey: record.contentKey
+            })
+          }
+        );
+
+        return {
+          kind: "global" as const,
+          recordId: record.id,
+          rawGlobalRow: payload.rows?.[0] ?? record.rawGlobalRow
+        };
+      }));
+      const successfulResults = results.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
+      const updatedById = new Map(successfulResults.map((result) => [result.recordId, result]));
+      const failedCount = results.length - successfulResults.length;
+      const skippedCount = selectedContentRowIds.size - selectedPersistedContentRecords.length;
+
+      setReviewRecords((currentRecords) => {
+        const nextRecords = currentRecords.map((record) => {
+          const update = updatedById.get(record.id);
+
+          if (!update) {
+            return record;
+          }
+
+          if (update.kind === "private") {
+            return {
+              ...record,
+              status: update.rawPrivateRow.status,
+              title: update.rawPrivateRow.headline || record.title,
+              summary: update.rawPrivateRow.summary ?? record.summary,
+              body: update.rawPrivateRow.body ?? record.body,
+              updatedAt: update.rawPrivateRow.updated_at,
+              rawPrivateRow: update.rawPrivateRow
+            };
+          }
+
+          return {
+            ...record,
+            status: update.rawGlobalRow.status,
+            surface: update.rawGlobalRow.surface,
+            mode: update.rawGlobalRow.mode,
+            eventType: update.rawGlobalRow.event_type,
+            targetDate: update.rawGlobalRow.target_date,
+            contentKey: update.rawGlobalRow.content_key,
+            title: update.rawGlobalRow.headline || record.title,
+            summary: update.rawGlobalRow.summary ?? record.summary,
+            body: update.rawGlobalRow.body ?? record.body,
+            sections: Array.isArray(update.rawGlobalRow.sections) ? update.rawGlobalRow.sections : record.sections,
+            facts: update.rawGlobalRow.facts ?? record.facts,
+            sourceSnapshot: update.rawGlobalRow.source_snapshot ?? record.sourceSnapshot,
+            reviewerNotes: update.rawGlobalRow.reviewer_notes ?? record.reviewerNotes,
+            provider: update.rawGlobalRow.provider ?? record.provider,
+            model: update.rawGlobalRow.model ?? record.model,
+            evergreen: Boolean(update.rawGlobalRow.evergreen),
+            evergreenAt: update.rawGlobalRow.evergreen_at ?? null,
+            evergreenBy: update.rawGlobalRow.evergreen_by ?? null,
+            updatedAt: update.rawGlobalRow.updated_at,
+            rawGlobalRow: update.rawGlobalRow
+          };
+        });
+
+        setReviewCounts(reviewCountsForRecords(nextRecords));
+        return nextRecords;
+      });
+      setSelectedContentRowIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+
+        successfulResults.forEach((result) => nextIds.delete(result.recordId));
+        return nextIds;
+      });
+
+      const parts = [
+        `Updated ${successfulResults.length} row${successfulResults.length === 1 ? "" : "s"} to ${contentStatusLabel(bulkContentStatus)}.`,
+        skippedCount > 0 ? `${skippedCount} calculated placeholder${skippedCount === 1 ? " was" : "s were"} skipped.` : "",
+        failedCount > 0 ? `${failedCount} row${failedCount === 1 ? "" : "s"} failed.` : ""
+      ].filter(Boolean);
+
+      setMessage(parts.join(" "));
+      showSaveToast(successfulResults.length > 0 ? "Bulk status updated" : "No rows updated");
+    } catch (error) {
+      if (error instanceof AdminRequestError && error.status === 401) {
+        setAccessStatus("invalid");
+      }
+      setMessage(adminErrorMessage(error, "Could not update selected rows."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function patchGlobalReviewRecord(record: AdminReviewRecord, patch: Record<string, unknown>) {
+    const globalRowId = savedGlobalRowId(record);
+
+    if (!globalRowId) {
+      throw new Error(`${record.title} is not saved yet.`);
+    }
+
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      "/api/admin/generated-content",
+      secret,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          id: globalRowId,
+          surface: record.surface,
+          contentKey: record.contentKey,
+          ...patch
+        })
+      }
+    );
+    const row = payload.rows?.[0];
+
+    if (!row) {
+      throw new Error("The admin API did not return the updated row.");
+    }
+
+    updateReviewRecordFromGlobalRow(record, row);
+    return row;
+  }
+
+  async function updateReviewQueueCopy(record: AdminReviewRecord, updates: { summary?: string; body?: string }) {
+    if (!canUseApi) {
+      setMessage("Add the content generation secret first.");
+      return;
+    }
+
+    if (record.source === "private") {
+      setMessage("Personal rows still use the main content drawer for editing.");
+      return;
+    }
+
+    const nextSummary = updates.summary ?? record.summary;
+    const nextBody = updates.body ?? record.body;
+    const nextRecord = { ...record, summary: nextSummary, body: nextBody };
+    const blockReason = readerSafetyBlockReason(nextRecord);
+    const metaphorFlags = findMetaphorPhraseFlags(reviewRecordPlainText(nextRecord), nextRecord.contentKey);
+    const natalWarnings = skyNatalPhrasingWarnings(nextRecord);
+
+    if (blockReason && (record.status === "REVIEWED" || record.status === "LIVE")) {
+      setMessage(`Save blocked for ${record.title}: ${blockReason}`);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await patchGlobalReviewRecord(record, {
+        summary: nextSummary,
+        body: nextBody,
+        reviewerNotes: [
+          record.reviewerNotes ?? "",
+          metaphorFlags.length ? `Metaphor phrasebook flags: ${metaphorFlags.map((flag) => `${flag.contentKey}: "${flag.phrase}"`).join(" | ")}` : "",
+          natalWarnings.length ? `Sky-safe warning: possible natal phrasing (${natalWarnings.join(", ")}).` : ""
+        ].filter((item) => item.trim()).join("\n")
+      });
+      setMessage(metaphorFlags.length || natalWarnings.length
+        ? "Saved with non-blocking editorial warnings."
+        : "Saved queue copy.");
+      showSaveToast("Queue row saved");
+    } catch (error) {
+      setMessage(adminErrorMessage(error, "Could not save queue row."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function transitionReviewQueueRecord(record: AdminReviewRecord, nextStatus: GeneratedContentStatus) {
+    const blockReason = canTransitionReviewRecord(record, nextStatus);
+
+    if (blockReason) {
+      setMessage(`${contentStatusLabel(nextStatus)} blocked for ${record.title}: ${blockReason}`);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await patchGlobalReviewRecord(record, {
+        status: nextStatus,
+        ...(nextStatus === "REVIEWED" || nextStatus === "LIVE" ? { reviewState: null } : {})
+      });
+      setMessage(`${record.title} marked ${contentStatusLabel(nextStatus)}.`);
+      showSaveToast(contentStatusLabel(nextStatus));
+    } catch (error) {
+      setMessage(adminErrorMessage(error, "Could not update queue status."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function setReviewQueueEvergreen(record: AdminReviewRecord, nextEvergreen: boolean) {
+    if (!nextEvergreen && !window.confirm("Remove evergreen lock?")) {
+      return;
+    }
+
+    if (nextEvergreen) {
+      const blockReason = canMarkEvergreen(record);
+
+      if (blockReason) {
+        setMessage(`Evergreen blocked for ${record.title}: ${blockReason}`);
+        return;
+      }
+
+      if (hasRevoicePendingProvenance(record) && !window.confirm("This is interim CHANI copy pending your voice — lock anyway?")) {
+        return;
+      }
+    }
+
+    setIsLoading(true);
+    try {
+      await patchGlobalReviewRecord(record, {
+        evergreen: nextEvergreen,
+        evergreenBy: nextEvergreen ? "admin" : null
+      });
+      setMessage(nextEvergreen ? `${record.title} marked evergreen.` : `${record.title} unlocked from evergreen.`);
+      showSaveToast(nextEvergreen ? "Evergreen locked" : "Evergreen removed");
+    } catch (error) {
+      setMessage(adminErrorMessage(error, "Could not update evergreen lock."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function applyBulkEvergreen(nextEvergreen: boolean) {
+    const records = selectedPersistedContentRecords.filter((record) => record.source !== "private");
+
+    if (records.length === 0) {
+      setMessage("Select saved global rows first.");
+      return;
+    }
+
+    if (!nextEvergreen && !window.confirm("Remove evergreen lock from selected rows?")) {
+      return;
+    }
+
+    let skipped = 0;
+    let warned = 0;
+    let updated = 0;
+
+    setIsLoading(true);
+    try {
+      for (const record of records) {
+        if (nextEvergreen) {
+          const blockReason = canMarkEvergreen(record);
+          if (blockReason) {
+            skipped += 1;
+            continue;
+          }
+
+          if (hasRevoicePendingProvenance(record)) {
+            warned += 1;
+            continue;
+          }
+        }
+
+        await patchGlobalReviewRecord(record, {
+          evergreen: nextEvergreen,
+          evergreenBy: nextEvergreen ? "admin" : null
+        });
+        updated += 1;
+      }
+
+      setMessage(`${updated} row${updated === 1 ? "" : "s"} ${nextEvergreen ? "marked evergreen" : "unlocked"}.${skipped ? ` ${skipped} skipped by guards.` : ""}${warned ? ` ${warned} revoice-pending row${warned === 1 ? "" : "s"} skipped for manual review.` : ""}`);
+      showSaveToast(nextEvergreen ? "Bulk evergreen done" : "Bulk unlock done");
+    } catch (error) {
+      setMessage(adminErrorMessage(error, "Could not update selected evergreen locks."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function copyLunarCoverageEditorLink(definition: LunarCalendarContentKeyDefinition) {
+    const nextUrl = `${window.location.origin}${window.location.pathname}#lunar-row/${encodeURIComponent(definition.key)}`;
+
+    void copyAdminEditorLink(nextUrl, definition.key);
+  }
+
+  async function fetchGeneratedContentRowByContentKey(contentKey: string) {
+    const params = new URLSearchParams({
+      status: "all",
+      contentKey,
+      limit: "5"
+    });
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${params}`,
+      secret
+    );
+
+    return payload.rows?.find((row) => row.content_key === contentKey) ?? null;
+  }
+
   async function openLunarCoverageEditor(row: AdminGeneratedContentRow | undefined, definition: LunarCalendarContentKeyDefinition) {
     if (!canUseApi) {
       setMessage("Add the content generation secret first.");
       return;
     }
 
+    setSelectedHookCatalogItem(null);
+
     if (!row) {
       setIsLoading(true);
       try {
+        const existingRow = await fetchGeneratedContentRowByContentKey(definition.key);
+
+        if (existingRow) {
+          setLunarCoverageRows((currentRows) => (
+            currentRows.some((currentRow) => currentRow.id === existingRow.id)
+              ? currentRows
+              : [existingRow, ...currentRows]
+          ));
+          setRows((currentRows) => (
+            currentRows.some((currentRow) => currentRow.id === existingRow.id)
+              ? currentRows
+              : [existingRow, ...currentRows]
+          ));
+          selectRow(existingRow);
+          setActivePage("content");
+          setMessage(`Opened existing row for ${existingRow.content_key}.`);
+          return;
+        }
+
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
           "/api/admin/generated-content",
           secret,
@@ -5474,7 +6882,7 @@ export function GeneratedContentAdminDashboard() {
     setVocabularyDrafts((currentDrafts) => ({
       ...currentDrafts,
       [id]: {
-        ...(currentDrafts[id] ?? { headline: "", natal: "", sky: "" }),
+        ...(currentDrafts[id] ?? { headline: "", natal: "", sky: "", status: "DRAFT" }),
         ...patch
       }
     }));
@@ -5540,6 +6948,7 @@ export function GeneratedContentAdminDashboard() {
           method: "PATCH",
           body: JSON.stringify({
             id: row.id,
+            status: draftValue.status,
             headline: draftValue.headline,
             summary: vocabularySummaryFromDraft(row, draftValue),
             body: vocabularyBodyFromDraft(row, draftValue),
@@ -5642,17 +7051,32 @@ export function GeneratedContentAdminDashboard() {
 
     const patchVocabularyRow = async (row: AdminGeneratedContentRow) => {
       const draftValue = vocabularyDrafts[row.id] ?? vocabularyDraftFromRow(row);
+      const nextBody = vocabularyBodyFromDraft(row, draftValue);
+      const isLocalCompanionRow = row.id.startsWith("local:");
+
+      if (isLocalCompanionRow && !nextBody.trim()) {
+        return;
+      }
 
       await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         "/api/admin/generated-content",
         secret,
         {
-          method: "PATCH",
+          method: isLocalCompanionRow ? "POST" : "PATCH",
           body: JSON.stringify({
-            id: row.id,
+            ...(isLocalCompanionRow
+              ? {
+                  contentKey: row.content_key,
+                  surface: row.surface,
+                  mode: row.mode,
+                  eventType: row.event_type,
+                  status: draftValue.status,
+                  promptVersion: row.prompt_version
+                }
+              : { id: row.id, status: draftValue.status }),
             headline: draftValue.headline,
             summary: vocabularySummaryFromDraft(row, draftValue),
-            body: vocabularyBodyFromDraft(row, draftValue),
+            body: nextBody,
             sections: vocabularySectionsFromDraft(row, draftValue)
           })
         }
@@ -6363,6 +7787,22 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
       const nextKnowledgeIds = knowledgeIdsForReviewRecord(record);
       const nextContentKey = existingGlobalRowId ? record.contentKey : modularPayload.contentKey;
       const nextPromptVersion = promptVersionForReviewSave(record, modularPayload.promptVersion);
+      const metaphorFlags = findMetaphorPhraseFlags(
+        [
+          nextTitle,
+          nextSummary,
+          nextBody,
+          ...record.sections.flatMap((section) => [section.heading, section.body])
+        ].join("\n"),
+        nextContentKey
+      );
+      const metaphorReviewerNote = metaphorFlags.length
+        ? `Metaphor phrasebook flags: ${metaphorFlags.map((flag) => `${flag.contentKey}: "${flag.phrase}" in "${flag.sentence}"`).join(" | ")}`
+        : "";
+      const nextReviewerNotes = [
+        record.reviewerNotes ?? "",
+        metaphorReviewerNote
+      ].filter((item) => item.trim()).join("\n");
 
       if (record.source === "private" && record.rawPrivateRow) {
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>(
@@ -6370,11 +7810,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           secret,
           {
             method: "PATCH",
-            body: JSON.stringify({
-              id: record.rawPrivateRow.id,
-              status: nextStatus,
-              headline: nextTitle,
-              summary: nextSummary,
+              body: JSON.stringify({
+                id: record.rawPrivateRow.id,
+                status: nextStatus,
+                headline: nextTitle,
+                summary: nextSummary,
               body: nextBody
             })
           }
@@ -6424,7 +7864,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               savedFromReviewRecordId: record.id
             },
             knowledgeIds: nextKnowledgeIds,
-            reviewerNotes: record.reviewerNotes ?? "",
+            reviewerNotes: nextReviewerNotes,
             promptVersion: nextPromptVersion,
             blockType: modularPayload.blockType === "all" ? undefined : modularPayload.blockType
           })
@@ -6455,13 +7895,21 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               knowledgeIds: row?.knowledge_ids ?? nextKnowledgeIds,
               sourceSnapshot: row?.source_snapshot ?? currentRecord.sourceSnapshot,
               promptVersion: row?.prompt_version ?? nextPromptVersion ?? currentRecord.promptVersion,
+              reviewerNotes: row?.reviewer_notes ?? nextReviewerNotes,
+              evergreen: Boolean(row?.evergreen ?? currentRecord.evergreen),
+              evergreenAt: row?.evergreen_at ?? currentRecord.evergreenAt,
+              evergreenBy: row?.evergreen_by ?? currentRecord.evergreenBy,
               rawGlobalRow: row ?? currentRecord.rawGlobalRow
             }
           : currentRecord
       )));
       setEditingReviewId(null);
-      setMessage(nextStatus === "LIVE" ? "Saved changes to published copy." : nextStatus === "REVIEWED" ? "Approved this copy for review." : row ? "Saved edits as a draft." : "Saved edits.");
-      showSaveToast(nextStatus === "LIVE" ? "Published changes saved" : nextStatus === "REVIEWED" ? "Approved for review" : "Draft saved");
+      setMessage(metaphorFlags.length
+        ? `Saved with ${metaphorFlags.length} phrase-book flag${metaphorFlags.length === 1 ? "" : "s"} for editorial review.`
+        : nextStatus === "LIVE" ? "Saved changes to published copy." : nextStatus === "REVIEWED" ? "Approved this copy for review." : row ? "Saved edits as a draft." : "Saved edits.");
+      showSaveToast(metaphorFlags.length
+        ? "Saved with wording flags"
+        : nextStatus === "LIVE" ? "Published changes saved" : nextStatus === "REVIEWED" ? "Approved for review" : "Draft saved");
     } catch (error) {
       if (error instanceof AdminRequestError && error.status === 401) {
         setAccessStatus("invalid");
@@ -7285,10 +8733,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         </a>
 
         <nav className="admin-nav" aria-label="Content operations">
+          <p className="admin-nav-section-label">Content</p>
           <button
             className={activePage === "content" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("content")}
+            onClick={() => navigateAdminPage("content")}
             aria-current={activePage === "content" ? "page" : undefined}
           >
             <FileText size={18} aria-hidden="true" />
@@ -7296,18 +8745,28 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             {contentFailureQueueCount > 0 && <strong className="admin-nav-badge">{contentFailureQueueCount}</strong>}
           </button>
           <button
+            className={activePage === "reviewQueue" ? "active" : ""}
+            type="button"
+            onClick={() => navigateAdminPage("reviewQueue")}
+            aria-current={activePage === "reviewQueue" ? "page" : undefined}
+          >
+            <TreePine size={18} aria-hidden="true" />
+            Review Queue
+          </button>
+          <button
             className={activePage === "vocabulary" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("vocabulary")}
+            onClick={() => navigateAdminPage("vocabulary")}
             aria-current={activePage === "vocabulary" ? "page" : undefined}
           >
             <Database size={18} aria-hidden="true" />
             Vocabulary
           </button>
+          <p className="admin-nav-section-label">Templates</p>
           <button
             className={activePage === "slotDictionary" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("slotDictionary")}
+            onClick={() => navigateAdminPage("slotDictionary")}
             aria-current={activePage === "slotDictionary" ? "page" : undefined}
           >
             <KeyRound size={18} aria-hidden="true" />
@@ -7316,7 +8775,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <button
             className={activePage === "templates" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("templates")}
+            onClick={() => navigateAdminPage("templates")}
             aria-current={activePage === "templates" ? "page" : undefined}
           >
             <Sparkles size={18} aria-hidden="true" />
@@ -7325,7 +8784,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <button
             className={activePage === "knowledge" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("knowledge")}
+            onClick={() => navigateAdminPage("knowledge")}
             aria-current={activePage === "knowledge" ? "page" : undefined}
           >
             <BookOpenText size={18} aria-hidden="true" />
@@ -7334,16 +8793,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <button
             className={activePage === "hooks" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("hooks")}
+            onClick={() => navigateAdminPage("hooks")}
             aria-current={activePage === "hooks" ? "page" : undefined}
           >
             <LayoutDashboard size={18} aria-hidden="true" />
             Hook Catalog
           </button>
+          <p className="admin-nav-section-label">System</p>
           <button
             className={activePage === "connection" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("connection")}
+            onClick={() => navigateAdminPage("connection")}
             aria-current={activePage === "connection" ? "page" : undefined}
           >
             <Server size={18} aria-hidden="true" />
@@ -7352,7 +8812,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <button
             className={activePage === "appBehavior" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("appBehavior")}
+            onClick={() => navigateAdminPage("appBehavior")}
             aria-current={activePage === "appBehavior" ? "page" : undefined}
           >
             <Sparkles size={18} aria-hidden="true" />
@@ -7361,7 +8821,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           <button
             className={activePage === "releaseNotes" ? "active" : ""}
             type="button"
-            onClick={() => setActivePage("releaseNotes")}
+            onClick={() => navigateAdminPage("releaseNotes")}
             aria-current={activePage === "releaseNotes" ? "page" : undefined}
           >
             <BookOpenText size={18} aria-hidden="true" />
@@ -7370,7 +8830,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         </nav>
 
         <a className="admin-public-link" href="/">
-          Public app
+          <span className="admin-public-dot" aria-hidden="true" />
+          Public app live
         </a>
       </aside>
 
@@ -7396,7 +8857,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </span>
             {apiStatus.latencyMs !== null && <small>{apiStatus.latencyMs}ms</small>}
           </div>
-          {activePage === "content" && (
+          {(activePage === "content" || activePage === "reviewQueue") && (
             <div className="admin-header-actions">
               <button type="button" onClick={() => void loadReviewWorkspace()} disabled={isLoading || !canUseApi}>
                 <RefreshCw size={16} aria-hidden="true" />
@@ -7409,8 +8870,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
         <section className="admin-message-card" aria-live="polite">
           <Sparkles size={18} aria-hidden="true" />
           <span>{message}</span>
-          {activePage === "slotDictionary" && message.includes("fallback-hook placeholders") && (
-            <button type="button" onClick={() => setActivePage("connection")}>
+          {((activePage === "slotDictionary" && message.includes("fallback-hook placeholders")) || ((activePage === "content" || activePage === "reviewQueue") && !canUseApi)) && (
+            <button type="button" onClick={() => navigateAdminPage("connection")}>
               Add secret
             </button>
           )}
@@ -7674,39 +9135,75 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             )}
 
-            <div className="admin-slot-controls" aria-label="Slot dictionary controls">
-              <label>
-                <span>Search slots</span>
-                <input
-                  type="search"
-                  value={slotDictionaryQuery}
-                  onChange={(event) => setSlotDictionaryQuery(event.target.value)}
-                  placeholder="Search slot, source, or use"
-                />
-              </label>
-              <div className="admin-slot-filter-group" aria-label="Filter by source">
-                {slotDictionarySourceFilters.map((filter) => (
+            <div className="admin-slot-controls admin-filter-toolbar" aria-label="Slot dictionary controls">
+              <div className="admin-filter-toolbar-header">
+                <div>
+                  <p className="admin-eyebrow">Browse slots</p>
+                  <strong>{filteredSlotDictionaryRows.length} of {slotDictionaryRows.length}</strong>
+                </div>
+                {hasSlotDictionaryFilters && (
                   <button
-                    key={filter.key}
+                    className="admin-filter-reset"
                     type="button"
-                    className={slotDictionarySourceFilter === filter.key ? "active" : ""}
-                    onClick={() => setSlotDictionarySourceFilter(filter.key)}
+                    onClick={() => {
+                      setSlotDictionaryQuery("");
+                      setSlotDictionarySourceFilter("all");
+                      setSlotDictionaryStatusFilter("all");
+                    }}
                   >
-                    {filter.label}
+                    <X size={15} aria-hidden="true" />
+                    Reset
                   </button>
-                ))}
+                )}
               </div>
-              <div className="admin-slot-filter-group" aria-label="Filter by status">
-                {slotDictionaryStatusFilters.map((filter) => (
-                  <button
-                    key={filter.key}
-                    type="button"
-                    className={slotDictionaryStatusFilter === filter.key ? "active" : ""}
-                    onClick={() => setSlotDictionaryStatusFilter(filter.key)}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
+
+              <label className="admin-search-field admin-slot-search-field">
+                <span>Search</span>
+                <div className="admin-search-input-shell">
+                  <Search size={16} aria-hidden="true" />
+                  <input
+                    type="search"
+                    value={slotDictionaryQuery}
+                    onChange={(event) => setSlotDictionaryQuery(event.target.value)}
+                    placeholder="Slot, source, or use"
+                  />
+                  {slotDictionaryQuery.trim() && (
+                    <button type="button" onClick={() => setSlotDictionaryQuery("")} aria-label="Clear slot search">
+                      <X size={14} aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              </label>
+
+              <div className="admin-filter-groups">
+                <fieldset className="admin-slot-filter-group admin-segmented-filter" aria-label="Filter by source">
+                  <legend>Source</legend>
+                  {slotDictionarySourceFilters.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      className={slotDictionarySourceFilter === filter.key ? "active" : ""}
+                      onClick={() => setSlotDictionarySourceFilter(filter.key)}
+                    >
+                      <span>{filter.label}</span>
+                      <strong>{slotDictionarySourceCounts[filter.key]}</strong>
+                    </button>
+                  ))}
+                </fieldset>
+                <fieldset className="admin-slot-filter-group admin-segmented-filter" aria-label="Filter by status">
+                  <legend>Status</legend>
+                  {slotDictionaryStatusFilters.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      className={slotDictionaryStatusFilter === filter.key ? "active" : ""}
+                      onClick={() => setSlotDictionaryStatusFilter(filter.key)}
+                    >
+                      <span>{filter.label}</span>
+                      <strong>{slotDictionaryStatusCounts[filter.key]}</strong>
+                    </button>
+                  ))}
+                </fieldset>
               </div>
             </div>
 
@@ -7762,6 +9259,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         {rowAction ? (
                           <button
                             type="button"
+                            aria-label={rowAction.label}
                             title={rowAction.label}
                             onClick={() => {
                               if (rowAction.vocabularyFilter) {
@@ -7773,7 +9271,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                               setActivePage(rowAction.page);
                             }}
                           >
-                            {rowAction.label}
+                            <Eye size={14} aria-hidden="true" />
+                            Open
                           </button>
                         ) : (
                           <button type="button" disabled title="This slot is calculated by the app and has no editor.">
@@ -7801,7 +9300,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Prompt version vocab-v1</p>
                 <h2>Vocabulary</h2>
-                <p>Edit the planet, house, and zodiac phrases used by template interpolation and natal chart card taglines.</p>
+                <p>Edit reusable planet, house, zodiac, lunar, eclipse, relationship, and career language used by template interpolation and natal chart card taglines.</p>
               </div>
               <div className="admin-release-summary" aria-label="Vocabulary row count">
                 <article>
@@ -7841,13 +9340,18 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   { key: "houses", label: "Houses" },
                   { key: "zodiac", label: "Zodiac" },
                   { key: "lunar", label: "Lunar" },
-                  { key: "eclipses", label: "Eclipses" }
+                  { key: "eclipses", label: "Eclipses" },
+                  { key: "career", label: "Career" },
+                  { key: "relationship", label: "Relationship" }
                 ] as Array<{ key: AdminVocabularyCategoryFilter; label: string }>).map((filter) => (
                   <button
                     key={filter.key}
                     type="button"
                     className={vocabularyCategoryFilter === filter.key ? "active" : ""}
-                    onClick={() => setVocabularyCategoryFilter(filter.key)}
+                    onClick={() => {
+                      setVocabularyCategoryFilter(filter.key);
+                      setSelectedVocabularyContentKey(null);
+                    }}
                     role="tab"
                     aria-selected={vocabularyCategoryFilter === filter.key}
                   >
@@ -7860,215 +9364,386 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <p className="admin-template-note">
                 {vocabularyCategoryNote}
               </p>
+
+              <div className="admin-vocabulary-controls admin-filter-toolbar" aria-label="Vocabulary search and status filters">
+                <label className="admin-search-field">
+                  <span>Search vocabulary</span>
+                  <input
+                    type="search"
+                    value={vocabularyQuery}
+                    onChange={(event) => setVocabularyQuery(event.target.value)}
+                    placeholder="Search key, headline, copy, or category"
+                  />
+                </label>
+                <fieldset className="admin-slot-filter-group" aria-label="Filter vocabulary by status">
+                  <legend>Status</legend>
+                  {vocabularyStatusFilters.map((filter) => (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      className={vocabularyStatusFilter === filter.key ? "active" : ""}
+                      onClick={() => setVocabularyStatusFilter(filter.key)}
+                    >
+                      <span>{filter.label}</span>
+                      <strong>{vocabularyStatusCounts[filter.key]}</strong>
+                    </button>
+                  ))}
+                </fieldset>
+                <div className="admin-filter-result-count" aria-live="polite">
+                  <strong>{filteredVocabularyCardItems.length}</strong>
+                  <span>{filteredVocabularyCardItems.length === 1 ? "row" : "rows"}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="admin-managed-row-list">
-              {filteredVocabularyCardItems.map((item) => {
-                const topicRow = item.row;
-                const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
-                const signNeedDraft = item.signNeedRow ? vocabularyDrafts[item.signNeedRow.id] ?? vocabularyDraftFromRow(item.signNeedRow) : null;
-                const storyDraft = item.storyRow ? vocabularyDrafts[item.storyRow.id] ?? vocabularyDraftFromRow(item.storyRow) : null;
-                const shadowDraft = item.shadowRow ? vocabularyDrafts[item.shadowRow.id] ?? vocabularyDraftFromRow(item.shadowRow) : null;
-                const higherExpressionDraft = item.higherExpressionRow ? vocabularyDrafts[item.higherExpressionRow.id] ?? vocabularyDraftFromRow(item.higherExpressionRow) : null;
-                const isSignStyleRow = item.kind === "sign-style";
-                const vocabularyFamily = vocabularyRowFamily(item.contentKey);
-                const vocabularyCategory = vocabularyItemCategory(item);
-                const showsPrimaryPhraseFields = vocabularyFamily === "topic" || vocabularyFamily === "sign-style";
-                const showsSignNeed = vocabularyFamily === "sign-style" || vocabularyFamily === "sign-need" || Boolean(item.signNeedRow);
-                const showsZodiacStory = vocabularyFamily === "sign-style" || vocabularyFamily === "zodiac-story" || Boolean(item.storyRow);
-                const showsShadow = vocabularyFamily === "sign-style" || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" || Boolean(item.shadowRow);
-                const showsHigherExpression = vocabularyFamily === "higher-expression" || Boolean(item.higherExpressionRow);
-                const matchedTaglineRow = item.taglineContentKey
-                  ? findAdminGeneratedContentRow(taglineRows, {
-                    contentKey: item.taglineContentKey,
-                    mode: "feed"
-                  })
-                  : undefined;
-                const taglineDraft = item.taglineContentKey
-                  ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
-                  : null;
+            <div className="admin-table-scroll admin-vocabulary-table-scroll">
+              <table className="admin-content-table admin-vocabulary-table">
+                <thead className="admin-content-table-head">
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Kind</th>
+                    <th scope="col">Primary Copy</th>
+                    <th scope="col">Extras</th>
+                    <th scope="col">Tagline</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredVocabularyCardItems.map((item) => {
+                    const topicRow = item.row;
+                    const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
+                    const topicStatus = rowDraft?.status ?? topicRow?.status;
+                    const isSignStyleRow = item.kind === "sign-style";
+                    const vocabularyFamily = vocabularyRowFamily(item.contentKey);
+                    const vocabularyCategory = vocabularyItemCategory(item);
+                    const matchedTaglineRow = item.taglineContentKey
+                      ? findAdminGeneratedContentRow(taglineRows, {
+                        contentKey: item.taglineContentKey,
+                        mode: "feed"
+                      })
+                      : undefined;
+                    const taglineDraft = item.taglineContentKey
+                      ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
+                      : null;
+                    const primaryPreview = isSignStyleRow
+                      ? rowDraft?.stylePhrase || rowDraft?.styleShort || "No style phrase yet"
+                      : rowDraft?.you || rowDraft?.natal || rowDraft?.sky || "No phrase yet";
+                    const extraLabels = [
+                      item.signNeedRow || vocabularyFamily === "sign-need" ? "Moon sign" : "",
+                      item.storyRow || vocabularyFamily === "zodiac-story" ? "Story" : "",
+                      item.shadowRow || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" ? "Shadow" : "",
+                      item.higherExpressionRow || vocabularyFamily === "higher-expression" ? "Higher expression" : ""
+                    ].filter(Boolean);
 
-                return (
-                  <article className="admin-managed-row-card" data-vocab-row={item.contentKey} key={item.contentKey}>
-                    <header>
-                      <div>
+                    return (
+                      <tr
+                        key={item.contentKey}
+                        className={`admin-content-row admin-clickable-table-row ${selectedVocabularyContentKey === item.contentKey ? "selected" : ""}`}
+                        onClick={() => setSelectedVocabularyContentKey(item.contentKey)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            setSelectedVocabularyContentKey(item.contentKey);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        data-vocab-row={item.contentKey}
+                      >
+                        <td className="admin-vocabulary-item-cell">
+                          <strong>{rowDraft?.headline || item.point}</strong>
+                          <code>{topicRow?.content_key ?? item.contentKey}</code>
+                        </td>
+                        <td>
+                          <span className="ui-pill admin-status">{vocabularyCategory === "all" ? "Vocabulary" : vocabularyCategory}</span>
+                          {isSignStyleRow && <span className="ui-pill admin-status">Zodiac style</span>}
+                        </td>
+                        <td className="admin-vocabulary-preview-cell">{primaryPreview}</td>
+                        <td>
+                          <div className="admin-vocabulary-cell-list">
+                            {extraLabels.length > 0
+                              ? extraLabels.map((label) => <span className="ui-pill admin-status" key={label}>{label}</span>)
+                              : <span className="admin-muted-cell">None</span>}
+                          </div>
+                        </td>
+                        <td className="admin-vocabulary-preview-cell">
+                          {taglineDraft?.tagline || (item.taglineContentKey ? "Tagline not written" : "Not used")}
+                        </td>
+                        <td>
+                          <div className="admin-vocabulary-cell-list">
+                            {topicRow && topicStatus && <span className={`ui-pill admin-status status-${topicStatus.toLowerCase()}`}>{topicStatus}</span>}
+                            {item.taglineContentKey && (
+                              <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
+                                Tagline {matchedTaglineRow?.status ?? "not saved"}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {filteredVocabularyCardItems.length === 0 && (
+                <p className="admin-empty">No vocabulary rows match this filter.</p>
+              )}
+            </div>
+
+            {selectedVocabularyItem && (() => {
+              const item = selectedVocabularyItem;
+              const topicRow = item.row;
+              const rowDraft = topicRow ? vocabularyDrafts[topicRow.id] ?? vocabularyDraftFromRow(topicRow) : null;
+              const signNeedDraft = item.signNeedRow ? vocabularyDrafts[item.signNeedRow.id] ?? vocabularyDraftFromRow(item.signNeedRow) : null;
+              const storyDraft = item.storyRow ? vocabularyDrafts[item.storyRow.id] ?? vocabularyDraftFromRow(item.storyRow) : null;
+              const shadowDraft = item.shadowRow ? vocabularyDrafts[item.shadowRow.id] ?? vocabularyDraftFromRow(item.shadowRow) : null;
+              const higherExpressionDraft = item.higherExpressionRow ? vocabularyDrafts[item.higherExpressionRow.id] ?? vocabularyDraftFromRow(item.higherExpressionRow) : null;
+              const topicStatus = rowDraft?.status ?? topicRow?.status;
+              const signNeedStatus = signNeedDraft?.status ?? item.signNeedRow?.status;
+              const storyStatus = storyDraft?.status ?? item.storyRow?.status;
+              const shadowStatus = shadowDraft?.status ?? item.shadowRow?.status;
+              const higherExpressionStatus = higherExpressionDraft?.status ?? item.higherExpressionRow?.status;
+              const isSignStyleRow = item.kind === "sign-style";
+              const vocabularyFamily = vocabularyRowFamily(item.contentKey);
+              const vocabularyCategory = vocabularyItemCategory(item);
+              const isCareerVocabularyRow = vocabularyCategory === "career";
+              const showsPrimaryPhraseFields = vocabularyFamily === "topic" || vocabularyFamily === "sign-style";
+              const showsSignNeed = vocabularyFamily === "sign-style" || vocabularyFamily === "sign-need" || Boolean(item.signNeedRow);
+              const showsZodiacStory = vocabularyFamily === "sign-style" || vocabularyFamily === "zodiac-story" || Boolean(item.storyRow);
+              const showsShadow = vocabularyFamily === "sign-style" || vocabularyFamily === "planet-shadow" || vocabularyFamily === "house-shadow" || Boolean(item.shadowRow);
+              const showsHigherExpression = vocabularyFamily === "higher-expression" || Boolean(item.higherExpressionRow);
+              const matchedTaglineRow = item.taglineContentKey
+                ? findAdminGeneratedContentRow(taglineRows, {
+                  contentKey: item.taglineContentKey,
+                  mode: "feed"
+                })
+                : undefined;
+              const taglineDraft = item.taglineContentKey
+                ? taglineDrafts[item.taglineContentKey] ?? (matchedTaglineRow ? taglineDraftFromRow(matchedTaglineRow) : fallbackTaglineDraft(item.point))
+                : null;
+
+              return (
+                <div className="admin-drawer-backdrop" role="presentation" onClick={() => setSelectedVocabularyContentKey(null)}>
+                  <section className="admin-editor-panel admin-editor-drawer admin-vocabulary-drawer" aria-label="Vocabulary row editor" onClick={(event) => event.stopPropagation()}>
+                    <div className="admin-editor-toolbar">
+                      <div className="admin-drawer-topbar">
+                        <p className="admin-eyebrow">Editing vocabulary</p>
+                        <button type="button" onClick={() => setSelectedVocabularyContentKey(null)}>
+                          <X size={16} aria-hidden="true" />
+                          Close
+                        </button>
+                      </div>
+                      <div className="admin-editor-heading">
                         <p className="admin-eyebrow">{topicRow?.prompt_version ?? "tagline-v1"} / {topicRow?.surface ?? "natal card"}</p>
-                        {rowDraft && topicRow ? (
-                          <label className="admin-managed-title">
+                        <div className="admin-managed-badges">
+                          {topicRow && topicStatus && <span className={`ui-pill admin-status status-${topicStatus.toLowerCase()}`}>{topicStatus}</span>}
+                          {isSignStyleRow && <span className="ui-pill admin-status">Zodiac style</span>}
+                          {vocabularyFamily === "sign-need" && <span className="ui-pill admin-status">Current Moon in sign</span>}
+                          {vocabularyFamily === "zodiac-story" && <span className="ui-pill admin-status">Zodiac story</span>}
+                          {vocabularyFamily === "planet-shadow" && <span className="ui-pill admin-status">Planet shadow</span>}
+                          {vocabularyFamily === "house-shadow" && <span className="ui-pill admin-status">House shadow</span>}
+                          {vocabularyFamily === "higher-expression" && <span className="ui-pill admin-status">Higher expression</span>}
+                          {item.signNeedRow && signNeedStatus && <span className={`ui-pill admin-status status-${signNeedStatus.toLowerCase()}`}>Current Moon in sign</span>}
+                          {item.storyRow && storyStatus && <span className={`ui-pill admin-status status-${storyStatus.toLowerCase()}`}>Zodiac story</span>}
+                          {item.shadowRow && shadowStatus && <span className={`ui-pill admin-status status-${shadowStatus.toLowerCase()}`}>{vocabularyItemCategory(item) === "planets" ? "Planet shadow" : "House shadow"}</span>}
+                          {item.higherExpressionRow && higherExpressionStatus && <span className={`ui-pill admin-status status-${higherExpressionStatus.toLowerCase()}`}>Higher expression</span>}
+                          {vocabularyCategory === "houses" && <span className="ui-pill admin-status">House</span>}
+                          {vocabularyCategory === "planets" && <span className="ui-pill admin-status">Planet</span>}
+                          {vocabularyCategory === "career" && <span className="ui-pill admin-status">Career</span>}
+                          {item.taglineContentKey && (
+                            <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
+                              Tagline {matchedTaglineRow?.status ?? "not saved"}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {rowDraft && topicRow ? (
+                        <div className="admin-managed-two-column admin-vocabulary-title-grid">
+                          <label className="admin-title-field">
                             <span>Headline</span>
                             <input
                               value={rowDraft.headline}
                               onChange={(event) => updateVocabularyDraft(topicRow.id, { headline: event.target.value })}
                             />
+                            <small>{topicRow.content_key}</small>
                           </label>
-                        ) : (
-                          <h3>{item.point}</h3>
-                        )}
-                      </div>
-                      <div className="admin-managed-badges">
-                        {topicRow && <span className={`ui-pill admin-status status-${topicRow.status.toLowerCase()}`}>{topicRow.status}</span>}
-                        {isSignStyleRow && <span className="ui-pill admin-status">Zodiac style</span>}
-                        {vocabularyFamily === "sign-need" && <span className="ui-pill admin-status">Current Moon in sign</span>}
-                        {vocabularyFamily === "zodiac-story" && <span className="ui-pill admin-status">Zodiac story</span>}
-                        {vocabularyFamily === "planet-shadow" && <span className="ui-pill admin-status">Planet shadow</span>}
-                        {vocabularyFamily === "house-shadow" && <span className="ui-pill admin-status">House shadow</span>}
-                        {vocabularyFamily === "higher-expression" && <span className="ui-pill admin-status">Higher expression</span>}
-                        {item.signNeedRow && <span className={`ui-pill admin-status status-${item.signNeedRow.status.toLowerCase()}`}>Current Moon in sign</span>}
-                        {item.storyRow && <span className={`ui-pill admin-status status-${item.storyRow.status.toLowerCase()}`}>Zodiac story</span>}
-                        {item.shadowRow && <span className={`ui-pill admin-status status-${item.shadowRow.status.toLowerCase()}`}>{vocabularyItemCategory(item) === "planets" ? "Planet shadow" : "House shadow"}</span>}
-                        {item.higherExpressionRow && <span className={`ui-pill admin-status status-${item.higherExpressionRow.status.toLowerCase()}`}>Higher expression</span>}
-                        {vocabularyCategory === "houses" && <span className="ui-pill admin-status">House</span>}
-                        {vocabularyCategory === "planets" && <span className="ui-pill admin-status">Planet</span>}
-                        {item.taglineContentKey && (
-                          <span className={`ui-pill admin-status status-${matchedTaglineRow?.status.toLowerCase() ?? "draft"}`}>
-                            Tagline {matchedTaglineRow?.status ?? "not saved"}
-                          </span>
-                        )}
-                      </div>
-                    </header>
+                          <label className="admin-metadata-field admin-vocabulary-status-field">
+                            <span>Status</span>
+                            <select
+                              className={`admin-status-select status-${rowDraft.status.toLowerCase()}`}
+                              value={rowDraft.status}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { status: event.target.value as GeneratedContentStatus })}
+                            >
+                              <option value="DRAFT">Draft</option>
+                              <option value="REVIEWED">Reviewed</option>
+                              <option value="LIVE">Published</option>
+                              <option value="ARCHIVED">Archived</option>
+                              <option value="ERROR">Needs Review</option>
+                            </select>
+                            <small>Saved when you click Save Row.</small>
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="admin-title-field">
+                          <span>Headline</span>
+                          <h2>{item.point}</h2>
+                          <small>{item.contentKey}</small>
+                        </div>
+                      )}
+                    </div>
 
-                    <code className="admin-managed-key">{topicRow?.content_key ?? item.contentKey}</code>
-
-                    {rowDraft && topicRow && showsPrimaryPhraseFields && isSignStyleRow && (
-                      <div className="admin-managed-two-column">
-                        <label className="admin-field-wide">
-                          <span>Zodiac style phrase</span>
-                          <textarea
-                            value={rowDraft.stylePhrase ?? ""}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, { stylePhrase: event.target.value })}
-                            rows={3}
-                          />
-                        </label>
-                        <label className="admin-field-wide">
-                          <span>Short style</span>
-                          <textarea
-                            value={rowDraft.styleShort ?? ""}
-                            onChange={(event) => updateVocabularyDraft(topicRow.id, { styleShort: event.target.value })}
-                            rows={3}
-                          />
-                        </label>
-                      </div>
-                    )}
-
-                    {rowDraft && topicRow && showsPrimaryPhraseFields && !isSignStyleRow && (
-                      <>
+                    <div className="admin-vocabulary-drawer-body">
+                      {rowDraft && topicRow && showsPrimaryPhraseFields && isSignStyleRow && (
                         <div className="admin-managed-two-column">
                           <label className="admin-field-wide">
-                            <span>You phrase</span>
+                            <span>Zodiac style phrase</span>
                             <textarea
-                              value={rowDraft.you ?? ""}
-                              onChange={(event) => updateVocabularyDraft(topicRow.id, { you: event.target.value })}
+                              value={rowDraft.stylePhrase ?? ""}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { stylePhrase: event.target.value })}
                               rows={3}
                             />
                           </label>
                           <label className="admin-field-wide">
-                            <span>Friend phrase</span>
+                            <span>Short style</span>
                             <textarea
-                              value={rowDraft.friend ?? ""}
-                              onChange={(event) => updateVocabularyDraft(topicRow.id, { friend: event.target.value })}
+                              value={rowDraft.styleShort ?? ""}
+                              onChange={(event) => updateVocabularyDraft(topicRow.id, { styleShort: event.target.value })}
                               rows={3}
                             />
                           </label>
                         </div>
+                      )}
+
+                      {rowDraft && topicRow && showsPrimaryPhraseFields && isCareerVocabularyRow && (
+                        <label className="admin-field-wide">
+                          <span>Career vocabulary body</span>
+                          <textarea
+                            value={rowDraft.natal}
+                            onChange={(event) => updateVocabularyDraft(topicRow.id, {
+                              natal: event.target.value,
+                              ...(rowDraft.status === "DRAFT" ? { status: "LIVE" as GeneratedContentStatus } : {})
+                            })}
+                            rows={9}
+                          />
+                        </label>
+                      )}
+
+                      {rowDraft && topicRow && showsPrimaryPhraseFields && !isSignStyleRow && !isCareerVocabularyRow && (
+                        <>
+                          <div className="admin-managed-two-column">
+                            <label className="admin-field-wide">
+                              <span>You phrase</span>
+                              <textarea
+                                value={rowDraft.you ?? ""}
+                                onChange={(event) => updateVocabularyDraft(topicRow.id, { you: event.target.value })}
+                                rows={3}
+                              />
+                            </label>
+                            <label className="admin-field-wide">
+                              <span>Friend phrase</span>
+                              <textarea
+                                value={rowDraft.friend ?? ""}
+                                onChange={(event) => updateVocabularyDraft(topicRow.id, { friend: event.target.value })}
+                                rows={3}
+                              />
+                            </label>
+                          </div>
+                          <div className="admin-managed-two-column">
+                            <label className="admin-field-wide">
+                              <span>Natal fallback phrase</span>
+                              <textarea
+                                value={rowDraft.natal}
+                                onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
+                                rows={3}
+                              />
+                            </label>
+                            <label className="admin-field-wide">
+                              <span>Sky phrase</span>
+                              <textarea
+                                value={rowDraft.sky}
+                                onChange={(event) => updateVocabularyDraft(topicRow.id, { sky: event.target.value })}
+                                rows={3}
+                              />
+                            </label>
+                          </div>
+                        </>
+                      )}
+
+                      {rowDraft && topicRow && showsSignNeed && (
+                        <label className="admin-field-wide">
+                          <span>Current Moon in sign</span>
+                          <textarea
+                            value={item.signNeedRow ? signNeedDraft?.signNeed ?? "" : rowDraft.signNeed ?? ""}
+                            onChange={(event) => updateVocabularyDraft(item.signNeedRow?.id ?? topicRow.id, { signNeed: event.target.value })}
+                            rows={2}
+                          />
+                          <small>Used when the lunar calendar Moon is in this sign. Completes: Moon in this sign days tend to run on...</small>
+                        </label>
+                      )}
+
+                      {rowDraft && topicRow && (showsZodiacStory || showsShadow) && (
                         <div className="admin-managed-two-column">
-                          <label className="admin-field-wide">
-                            <span>Natal fallback phrase</span>
-                            <textarea
-                              value={rowDraft.natal}
-                              onChange={(event) => updateVocabularyDraft(topicRow.id, { natal: event.target.value })}
-                              rows={3}
-                            />
-                          </label>
-                          <label className="admin-field-wide">
-                            <span>Sky phrase</span>
-                            <textarea
-                              value={rowDraft.sky}
-                              onChange={(event) => updateVocabularyDraft(topicRow.id, { sky: event.target.value })}
-                              rows={3}
-                            />
-                          </label>
-                        </div>
-                      </>
-                    )}
-
-                    {rowDraft && topicRow && showsSignNeed && (
-                      <label className="admin-field-wide">
-                        <span>Current Moon in sign</span>
-                        <textarea
-                          value={item.signNeedRow ? signNeedDraft?.signNeed ?? "" : rowDraft.signNeed ?? ""}
-                          onChange={(event) => updateVocabularyDraft(item.signNeedRow?.id ?? topicRow.id, { signNeed: event.target.value })}
-                          rows={2}
-                        />
-                        <small>Used when the lunar calendar Moon is in this sign. Completes: Moon in this sign days tend to run on...</small>
-                      </label>
-                    )}
-
-                    {rowDraft && topicRow && (showsZodiacStory || showsShadow) && (
-                      <div className="admin-managed-two-column">
-                        {showsZodiacStory && (
-                          <label className="admin-field-wide">
-                            <span>Zodiac story / legend</span>
-                            <textarea
-                              value={item.storyRow ? storyDraft?.story ?? "" : rowDraft.story ?? ""}
-                              onChange={(event) => updateVocabularyDraft(item.storyRow?.id ?? topicRow.id, { story: event.target.value })}
-                              rows={4}
-                            />
-                          </label>
-                        )}
-                        {showsShadow && (
-                          <label className="admin-field-wide">
-                            <span>
-                              {item.shadowRow || vocabularyFamily === "house-shadow"
-                                ? "House shadow"
-                                : vocabularyFamily === "planet-shadow"
+                          {showsZodiacStory && (
+                            <label className="admin-field-wide">
+                              <span>Zodiac story / legend</span>
+                              <textarea
+                                value={item.storyRow ? storyDraft?.story ?? "" : rowDraft.story ?? ""}
+                                onChange={(event) => updateVocabularyDraft(item.storyRow?.id ?? topicRow.id, { story: event.target.value })}
+                                rows={4}
+                              />
+                            </label>
+                          )}
+                          {showsShadow && (
+                            <label className="admin-field-wide">
+                              <span>
+                                {item.shadowRow?.content_key.startsWith("vocab/planet-shadow/") || vocabularyFamily === "planet-shadow"
                                   ? "Planet shadow"
-                                  : "Zodiac shadow"}
-                            </span>
-                            <textarea
-                              value={item.shadowRow ? shadowDraft?.shadow ?? "" : rowDraft.shadow ?? ""}
-                              onChange={(event) => updateVocabularyDraft(item.shadowRow?.id ?? topicRow.id, { shadow: event.target.value })}
-                              rows={4}
-                            />
-                          </label>
-                        )}
-                      </div>
-                    )}
+                                  : item.shadowRow?.content_key.startsWith("vocab/house-shadow/") || vocabularyFamily === "house-shadow"
+                                    ? "House shadow"
+                                    : "Zodiac shadow"}
+                              </span>
+                              <textarea
+                                value={item.shadowRow ? shadowDraft?.shadow ?? "" : rowDraft.shadow ?? ""}
+                                onChange={(event) => updateVocabularyDraft(item.shadowRow?.id ?? topicRow.id, { shadow: event.target.value })}
+                                rows={4}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      )}
 
-                    {rowDraft && topicRow && showsHigherExpression && (
-                      <label className="admin-field-wide">
-                        <span>Higher expression</span>
-                        <textarea
-                          value={item.higherExpressionRow ? higherExpressionDraft?.higherExpression ?? "" : rowDraft.higherExpression ?? ""}
-                          onChange={(event) => updateVocabularyDraft(item.higherExpressionRow?.id ?? topicRow.id, { higherExpression: event.target.value })}
-                          rows={5}
-                        />
-                      </label>
-                    )}
+                      {rowDraft && topicRow && showsHigherExpression && (
+                        <label className="admin-field-wide">
+                          <span>Higher expression</span>
+                          <textarea
+                            value={item.higherExpressionRow ? higherExpressionDraft?.higherExpression ?? "" : rowDraft.higherExpression ?? ""}
+                            onChange={(event) => updateVocabularyDraft(item.higherExpressionRow?.id ?? topicRow.id, { higherExpression: event.target.value })}
+                            rows={5}
+                          />
+                        </label>
+                      )}
 
-                    {item.taglineContentKey && taglineDraft && (
-                      <label className="admin-field-wide">
-                        <span>Natal card tagline</span>
-                        <textarea
-                          value={taglineDraft.tagline}
-                          onChange={(event) => updateTaglineDraft(item.taglineContentKey ?? "", { tagline: event.target.value })}
-                          rows={2}
-                        />
-                      </label>
-                    )}
+                      {item.taglineContentKey && taglineDraft && (
+                        <label className="admin-field-wide">
+                          <span>Natal card tagline</span>
+                          <textarea
+                            value={taglineDraft.tagline}
+                            onChange={(event) => updateTaglineDraft(item.taglineContentKey ?? "", { tagline: event.target.value })}
+                            rows={2}
+                          />
+                        </label>
+                      )}
+                    </div>
 
-                    <div className="admin-template-actions">
+                    <div className="admin-vocabulary-drawer-footer admin-template-actions">
                       <button type="button" onClick={() => void saveVocabularyCard(item)} disabled={isLoading}>
                         <Save size={16} aria-hidden="true" />
                         Save Row
                       </button>
                     </div>
-                  </article>
-                );
-              })}
-              {filteredVocabularyCardItems.length === 0 && (
-                <p className="admin-empty">No vocabulary rows match this filter.</p>
-              )}
-            </div>
+                  </section>
+                </div>
+              );
+            })()}
           </section>
         ) : activePage === "knowledge" ? (
           <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback template content rows">
@@ -8671,6 +10346,16 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <h3>{selectedLunarCatalogDefinition.label}</h3>
                             <code>{selectedLunarCatalogDefinition.key}</code>
                             <p>{lunarCoverageDescription(selectedLunarCatalogDefinition)}</p>
+                            <div className="admin-hook-detail-actions">
+                              <button type="button" onClick={() => void openLunarCoverageEditor(savedRow, selectedLunarCatalogDefinition)}>
+                                <Pencil size={15} aria-hidden="true" />
+                                Open Row Editor
+                              </button>
+                              <button type="button" onClick={() => copyLunarCoverageEditorLink(selectedLunarCatalogDefinition)}>
+                                <KeyRound size={15} aria-hidden="true" />
+                                Copy Link to Row
+                              </button>
+                            </div>
                           </div>
 
                           <div className="admin-hook-detail-grid">
@@ -8729,6 +10414,16 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             <h3>{selectedFallbackCatalogHook.label}</h3>
                             <code>{selectedFallbackCatalogHook.key}</code>
                             <p>{plainDescription}</p>
+                            <div className="admin-hook-detail-actions">
+                              <button type="button" onClick={() => openFallbackHookTemplateEditor(selectedFallbackCatalogHook.key, "edit")}>
+                                <Pencil size={15} aria-hidden="true" />
+                                Open Fallback Row
+                              </button>
+                              <button type="button" onClick={() => copyFallbackHookEditorLink(selectedFallbackCatalogHook.key)}>
+                                <KeyRound size={15} aria-hidden="true" />
+                                Copy Link to Row
+                              </button>
+                            </div>
                           </div>
 
                           <div className="admin-hook-detail-grid">
@@ -8933,17 +10628,315 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </article>
             </div>
 
+            <section className="admin-phrasebook-panel" aria-label="Metaphor and specificity phrase book">
+              <div className="admin-section-heading-row">
+                <div>
+                  <p className="admin-eyebrow">Authoritative wording guide</p>
+                  <h3>Metaphor & Specificity</h3>
+                  <p>Use the concrete behavior before the metaphor. These flags are advisory and stay attached to reviewer notes.</p>
+                </div>
+                <span className="ui-pill">{metaphorValidationPhrases.length} validation phrases</span>
+              </div>
+              <div className="admin-phrasebook-grid">
+                <article>
+                  <span>Final editorial test</span>
+                  <ul>
+                    {metaphorGuidanceSummary.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+                <article>
+                  <span>Generation flags</span>
+                  <div className="admin-token-list">
+                    {metaphorValidationPhrases.map((phrase) => (
+                      <code key={phrase}>{phrase}</code>
+                    ))}
+                  </div>
+                </article>
+              </div>
+              <div className="admin-phrasebook-families">
+                {metaphorFamilies.slice(0, 6).map((family) => (
+                  <article key={family.name}>
+                    <span>{family.name}</span>
+                    <p>{family.useFor}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="admin-phrasebook-panel" aria-label="Fallback vocabulary dependency map">
+              <div className="admin-section-heading-row">
+                <div>
+                  <p className="admin-eyebrow">Fallback vocabulary wiring</p>
+                  <h3>Generation Dependencies</h3>
+                  <p>{fallbackVocabularyReferenceLanePolicy}</p>
+                </div>
+              </div>
+              <div className="admin-dependency-map-grid">
+                {fallbackVocabularyDependencyFamilies.map((family) => (
+                  <article key={family.id}>
+                    <span>{family.label}</span>
+                    <code>{family.required.join(" + ")}</code>
+                    {family.optional.length ? <small>Optional: {family.optional.join(" + ")}</small> : null}
+                    <p>{family.selection}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+
             <p className="admin-template-note">
               These templates shape the AI draft before review. With admin access, Save Templates also writes durable admin setting rows; without it, changes stay in this browser.
             </p>
           </section>
+        ) : activePage === "reviewQueue" ? (
+          <>
+            <section className="admin-content-toolbar admin-review-queue-hero" aria-label="Review queue progress">
+              <div>
+                <p className="admin-eyebrow">Editorial workflow</p>
+                <h2>Reviewed {reviewQueueProgress.reviewed} / {reviewQueueProgress.total} · Published {reviewQueueProgress.published} · Evergreen {reviewQueueProgress.evergreen}</h2>
+                <p>Drafts and review holds stay out of reader routes. Published is the admin label for the internal LIVE serving status.</p>
+              </div>
+              <div className="admin-new-actions" aria-label="Bulk evergreen actions">
+                <button type="button" onClick={() => void applyBulkEvergreen(true)} disabled={isLoading || selectedPersistedContentRecords.length === 0}>
+                  <TreePine size={16} aria-hidden="true" />
+                  Mark Evergreen
+                </button>
+                <button type="button" onClick={() => void applyBulkEvergreen(false)} disabled={isLoading || selectedPersistedContentRecords.length === 0}>
+                  <X size={16} aria-hidden="true" />
+                  Remove Evergreen
+                </button>
+              </div>
+            </section>
+
+            <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
+              <label>
+                <span>Status</span>
+                <select value={reviewQueueStatusFilter} onChange={(event) => setReviewQueueStatusFilter(event.target.value as AdminReviewQueueStatusFilter)}>
+                  {reviewQueueStatusFilters.map((filter) => (
+                    <option key={filter.key} value={filter.key}>{filter.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Evergreen</span>
+                <select value={reviewQueueEvergreenFilter} onChange={(event) => setReviewQueueEvergreenFilter(event.target.value as AdminReviewQueueEvergreenFilter)}>
+                  {reviewQueueEvergreenFilters.map((filter) => (
+                    <option key={filter.key} value={filter.key}>{filter.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Source</span>
+                <select value={reviewQueueSourceFilter} onChange={(event) => setReviewQueueSourceFilter(event.target.value as AdminReviewQueueSourceFilter)}>
+                  <option value="all">All sources</option>
+                  <option value="revoicePending">Revoice pending</option>
+                  <option value="voiced">Voiced</option>
+                </select>
+              </label>
+              <label>
+                <span>Family</span>
+                <select value={reviewQueueFamilyFilter} onChange={(event) => setReviewQueueFamilyFilter(event.target.value as AdminReviewQueueFamilyFilter)}>
+                  {(Object.keys(reviewQueueFamilyLabels) as AdminReviewQueueFamilyFilter[]).map((family) => (
+                    <option key={family} value={family}>{reviewQueueFamilyLabels[family]}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Planet</span>
+                <select value={reviewQueuePlanetFilter} onChange={(event) => setReviewQueuePlanetFilter(event.target.value)}>
+                  <option value="all">All planets</option>
+                  {reviewQueuePlacementPlanets.map((planet) => (
+                    <option key={planet} value={planet}>{planet}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="admin-review-queue-search">
+                <span>Search</span>
+                <div className="admin-search-input-shell">
+                  <Search size={15} aria-hidden="true" />
+                  <input value={reviewQueueQuery} onChange={(event) => setReviewQueueQuery(event.target.value)} placeholder="Title, content key, body text" />
+                </div>
+              </label>
+            </section>
+
+            <section className="admin-review-queue-layout" aria-label="Review queue">
+              <aside className="admin-review-queue-groups" aria-label="Queue families">
+                {reviewQueueGroups.length === 0 ? (
+                  <p>No rows match these filters.</p>
+                ) : reviewQueueGroups.map((group) => (
+                  <button
+                    key={group.key}
+                    type="button"
+                    className={activeReviewQueueGroup?.key === group.key ? "active" : ""}
+                    onClick={() => setSelectedReviewQueueGroupKey(group.key)}
+                  >
+                    <span>{group.label}</span>
+                    <small>{group.reviewed}/{group.total} reviewed · {group.evergreen} evergreen</small>
+                  </button>
+                ))}
+              </aside>
+
+              <div className="admin-review-queue-rows" aria-label="Review rows">
+                {activeReviewQueueRecords.length === 0 ? (
+                  <section className="admin-empty-state">
+                    <p>No review rows in this group.</p>
+                  </section>
+                ) : activeReviewQueueRecords.map((record) => {
+                  const transitionBlock = canTransitionReviewRecord(record, "REVIEWED");
+                  const publishBlock = canTransitionReviewRecord(record, "LIVE");
+                  const evergreenBlock = canMarkEvergreen(record);
+                  const isSelectableRecord = record.source !== "private" && Boolean(savedGlobalRowId(record));
+
+                  return (
+                    <article
+                      key={record.id}
+                      className={`admin-review-queue-row ${record.id === selectedReviewQueueRecord?.id ? "selected" : ""}`}
+                      onClick={() => setSelectedReviewId(record.id)}
+                    >
+                      <div className="admin-review-queue-row-head">
+                        <label className="admin-content-row-check" onClick={(event) => event.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={selectedContentRowIds.has(record.id)}
+                            disabled={isLoading || !isSelectableRecord}
+                            onChange={() => toggleContentRowSelection(record)}
+                            aria-label={`Select ${record.title}`}
+                          />
+                        </label>
+                        <div>
+                          <h3>{reviewQueueRecordLabel(record)}</h3>
+                          <code>{record.contentKey}</code>
+                        </div>
+                        <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
+                        <button
+                          type="button"
+                          className={`admin-evergreen-toggle ${record.evergreen ? "active" : ""}`}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void setReviewQueueEvergreen(record, !record.evergreen);
+                          }}
+                          disabled={isLoading || (!record.evergreen && Boolean(evergreenBlock))}
+                          title={record.evergreen ? "Remove evergreen lock" : evergreenBlock || "Mark evergreen"}
+                        >
+                          <TreePine size={16} aria-hidden="true" />
+                          <span>{record.evergreen ? "Evergreen" : "Set Evergreen"}</span>
+                        </button>
+                      </div>
+                      <label>
+                        <span>Summary</span>
+                        <textarea
+                          defaultValue={record.summary}
+                          rows={3}
+                          onBlur={(event) => {
+                            if (event.currentTarget.value !== record.summary) {
+                              void updateReviewQueueCopy(record, { summary: event.currentTarget.value });
+                            }
+                          }}
+                          onKeyDown={stopEditorKeyPropagation}
+                        />
+                      </label>
+                      <label>
+                        <span>Body</span>
+                        <textarea
+                          defaultValue={record.body}
+                          rows={5}
+                          onBlur={(event) => {
+                            if (event.currentTarget.value !== record.body) {
+                              void updateReviewQueueCopy(record, { body: event.currentTarget.value });
+                            }
+                          }}
+                          onKeyDown={stopEditorKeyPropagation}
+                        />
+                      </label>
+                      <div className="admin-review-queue-actions">
+                        <button type="button" onClick={() => void transitionReviewQueueRecord(record, "ERROR")} disabled={isLoading}>
+                          Needs Review
+                        </button>
+                        <button type="button" onClick={() => void transitionReviewQueueRecord(record, "DRAFT")} disabled={isLoading}>
+                          Draft
+                        </button>
+                        <button type="button" onClick={() => void transitionReviewQueueRecord(record, "REVIEWED")} disabled={isLoading || Boolean(transitionBlock)} title={transitionBlock || "Mark reviewed"}>
+                          <Check size={15} aria-hidden="true" />
+                          Mark Reviewed
+                        </button>
+                        <button type="button" onClick={() => void transitionReviewQueueRecord(record, "LIVE")} disabled={isLoading || Boolean(publishBlock)} title={publishBlock || "Publish"}>
+                          <Upload size={15} aria-hidden="true" />
+                          Publish
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <aside className="admin-review-queue-meta" aria-label="Focused row details">
+                {selectedReviewQueueRecord ? (() => {
+                  const phraseFlags = findMetaphorPhraseFlags(reviewRecordPlainText(selectedReviewQueueRecord), selectedReviewQueueRecord.contentKey);
+                  const safetyBlock = readerSafetyBlockReason(selectedReviewQueueRecord);
+                  const timeBoundBlock = hasTimeBoundEvergreenLanguage(selectedReviewQueueRecord);
+                  const skyWarnings = skyNatalPhrasingWarnings(selectedReviewQueueRecord);
+
+                  return (
+                    <>
+                      <p className="admin-eyebrow">Focused row</p>
+                      <h3>{selectedReviewQueueRecord.title}</h3>
+                      <dl>
+                        <div>
+                          <dt>Status</dt>
+                          <dd>{contentStatusLabel(selectedReviewQueueRecord.status)}</dd>
+                        </div>
+                        <div>
+                          <dt>Family</dt>
+                          <dd>{reviewQueueGroupLabel(reviewQueueGroupKey(selectedReviewQueueRecord))}</dd>
+                        </div>
+                        <div>
+                          <dt>Source</dt>
+                          <dd>{hasRevoicePendingProvenance(selectedReviewQueueRecord) ? "Revoice pending" : "Voiced"}</dd>
+                        </div>
+                        <div>
+                          <dt>Evergreen</dt>
+                          <dd>{selectedReviewQueueRecord.evergreen ? `Locked${selectedReviewQueueRecord.evergreenAt ? ` · ${adminDateLabel(selectedReviewQueueRecord.evergreenAt.slice(0, 10))}` : ""}` : "Not locked"}</dd>
+                        </div>
+                      </dl>
+                      <div className={`admin-reader-state-pill ${safetyBlock ? "fallback-needed" : "reader-ready"}`}>
+                        {safetyBlock || "Reader-facing copy passes basic safety checks."}
+                      </div>
+                      {timeBoundBlock && <p className="admin-review-warning">{timeBoundBlock}</p>}
+                      {skyWarnings.length > 0 && <p className="admin-review-warning">Sky-safe warning: possible natal phrasing in a sky row.</p>}
+                      {phraseFlags.length > 0 && (
+                        <div className="admin-phrasebook-flags">
+                          <strong>Phrasebook flags</strong>
+                          <ul>
+                            {phraseFlags.slice(0, 5).map((flag) => (
+                              <li key={`${flag.contentKey}-${flag.phrase}`}>
+                                <code>{flag.phrase}</code>
+                                <small>{flag.sentence}</small>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  );
+                })() : (
+                  <p>Select a row to inspect its review guards.</p>
+                )}
+              </aside>
+            </section>
+          </>
         ) : (
           <>
             <section className="admin-content-toolbar" aria-label="Content filters">
               <div>
                 <p className="admin-eyebrow">Content library</p>
                 <h2>All Entries</h2>
-                <p>{cmsStatusCounts.all} entries across generated, authored, global, and personal content.</p>
+                <p>
+                  {isLoading && allContentRecords.length === 0
+                    ? "Loading entries across generated, authored, global, and personal content."
+                    : `${cmsStatusCounts.all} entries across generated, authored, global, and personal content.`
+                  }
+                </p>
               </div>
               <div className="admin-new-actions" aria-label="New content">
                 <button type="button" onClick={() => void prepopulateContentQueue()} disabled={isLoading}>
@@ -9054,6 +11047,32 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               </div>
             </section>
 
+            <section className="admin-reader-safety-panel" aria-label="Reader safety status">
+              <div>
+                <p className="admin-eyebrow">Reader safety</p>
+                <h3>Runtime Readiness</h3>
+                <p>Reader routes only serve Published rows in the serving lane with no review hold and safe reader-facing copy. Everything else must remain editorial or fall back locally.</p>
+              </div>
+              <div className="admin-reader-safety-grid">
+                <article className="reader-ready">
+                  <span>Reader-ready</span>
+                  <strong>{readerSafetyCounts["reader-ready"]}</strong>
+                </article>
+                <article>
+                  <span>Draft/editorial</span>
+                  <strong>{readerSafetyCounts["draft-held"]}</strong>
+                </article>
+                <article>
+                  <span>Reference/review held</span>
+                  <strong>{readerSafetyCounts["reference-held"] + readerSafetyCounts["review-held"]}</strong>
+                </article>
+                <article className={readerSafetyCounts["fallback-needed"] ? "needs-fallback" : ""}>
+                  <span>Fallback needed</span>
+                  <strong>{readerSafetyCounts["fallback-needed"]}</strong>
+                </article>
+              </div>
+            </section>
+
             <section className="admin-workbench admin-review-workspace">
               <aside className="admin-list-panel" aria-label="Generated content records">
                 <div className="admin-panel-header">
@@ -9064,11 +11083,49 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <BarChart3 size={18} aria-hidden="true" />
                 </div>
 
+                <div className="admin-content-bulk-bar" aria-label="Bulk row actions">
+                  <div>
+                    <strong>{selectedContentRowIds.size}</strong>
+                    <span>selected</span>
+                    {selectedContentRowIds.size > selectedPersistedContentRecords.length && (
+                      <small>{selectedContentRowIds.size - selectedPersistedContentRecords.length} placeholder{selectedContentRowIds.size - selectedPersistedContentRecords.length === 1 ? "" : "s"} skipped</small>
+                    )}
+                  </div>
+                  <label>
+                    <span>Status</span>
+                    <select
+                      value={bulkContentStatus}
+                      onChange={(event) => setBulkContentStatus(event.target.value as GeneratedContentStatus)}
+                      disabled={isLoading}
+                    >
+                      <option value="DRAFT">Draft</option>
+                      <option value="REVIEWED">Reviewed</option>
+                      <option value="LIVE">Published</option>
+                      <option value="ARCHIVED">Archived</option>
+                      <option value="ERROR">Needs Review</option>
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => void applyBulkContentStatus()}
+                    disabled={isLoading || selectedPersistedContentRecords.length === 0}
+                  >
+                    <Check size={15} aria-hidden="true" />
+                    Apply
+                  </button>
+                  <button type="button" onClick={() => setSelectedContentRowIds(new Set())} disabled={isLoading || selectedContentRowIds.size === 0}>
+                    <X size={15} aria-hidden="true" />
+                    Clear
+                  </button>
+                </div>
+
                 <div className="admin-content-table-scroll">
                   <table className="admin-content-table">
                     <colgroup>
+                      <col className="admin-content-col-select" />
                       <col className="admin-content-col-title" />
                       <col className="admin-content-col-status" />
+                      <col className="admin-content-col-provider" />
                       <col className="admin-content-col-visibility" />
                       <col className="admin-content-col-location" />
                       <col className="admin-content-col-date" />
@@ -9076,6 +11133,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     </colgroup>
                     <thead className="admin-content-table-head">
                       <tr>
+                        <th scope="col">
+                          <label className="admin-content-row-check">
+                            <input
+                              type="checkbox"
+                              checked={areAllVisibleContentRowsSelected}
+                              onChange={toggleAllVisibleContentRows}
+                              disabled={isLoading || selectableContentRecords.length === 0}
+                              aria-label={areAllVisibleContentRowsSelected ? "Deselect all visible saved rows" : "Select all visible saved rows"}
+                            />
+                          </label>
+                        </th>
                         <th scope="col">Content</th>
                         <th scope="col">Status</th>
                         <th scope="col">Provider</th>
@@ -9087,6 +11155,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     </thead>
                     <tbody>
                       {allContentRecords.map((record) => {
+                        const isSelectableRecord = record.source === "private" ? Boolean(record.rawPrivateRow) : Boolean(savedGlobalRowId(record));
+                        const readerSafety = readerSafetyStateForRecord(record);
                         const openRecord = () => {
                           setSelectedReviewId(record.id);
                           cancelReviewEdit();
@@ -9112,8 +11182,23 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             tabIndex={0}
                             title={`${record.title} · ${recordMetadataLabel(record)}`}
                           >
+                            <td className="admin-content-select-cell" onClick={(event) => event.stopPropagation()}>
+                              <label className="admin-content-row-check" title={isSelectableRecord ? "Select row" : "Save this calculated row before bulk status changes"} onClick={(event) => event.stopPropagation()}>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedContentRowIds.has(record.id)}
+                                  disabled={isLoading || !isSelectableRecord}
+                                  onChange={() => toggleContentRowSelection(record)}
+                                  onClick={(event) => event.stopPropagation()}
+                                  aria-label={`Select ${record.title}`}
+                                />
+                              </label>
+                            </td>
                             <td className="admin-content-title-cell">
                               <strong className="admin-content-row-title">{record.title}</strong>
+                              <small className={`admin-reader-state-pill ${readerSafety.key}`} title={readerSafety.detail}>
+                                {readerSafety.label}
+                              </small>
                             </td>
                             <td className="admin-content-badge-cell">
                               <span className={`ui-pill admin-status status-${record.status.toLowerCase()}`}>{contentStatusLabel(record.status)}</span>
@@ -9138,7 +11223,13 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     </tbody>
                   </table>
                   {allContentRecords.length === 0 && (
-                    <p className="admin-empty">No content records match these filters yet.</p>
+                    <p className={`admin-empty${!isLoading && reviewLoadError ? " admin-empty-error" : ""}`}>
+                      {isLoading
+                        ? "Loading content records..."
+                        : reviewLoadError
+                        ? `Content could not load: ${reviewLoadError}`
+                        : "No content records match these filters yet."}
+                    </p>
                   )}
                 </div>
               </aside>
@@ -9147,104 +11238,109 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             {selectedReviewRecord && (
               <div className="admin-drawer-backdrop" role="presentation" onClick={closeReviewDrawer}>
                 <section className="admin-editor-panel admin-review-detail admin-editor-drawer" aria-label="Generated content record detail" onClick={(event) => event.stopPropagation()}>
-                  <>
-                    <div className="admin-editor-toolbar">
-                      <div className="admin-drawer-topbar">
-                        <p className="admin-eyebrow">Editing in place</p>
-                        <button type="button" onClick={closeReviewDrawer}>
-                          <X size={16} aria-hidden="true" />
-                          Close
-                        </button>
-                      </div>
-                      <div className="admin-editor-heading">
-                        <p className="admin-eyebrow">Post editor</p>
-                        <span className={`ui-pill admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
-                      </div>
-                      <label className="admin-title-field">
-                        <span>Title</span>
-                        <input
-                          value={isEditingReviewRecord ? reviewEditTitle : selectedReviewRecord.title}
-                          onKeyDownCapture={stopEditorKeyPropagation}
-                          onChange={(event) => {
-                            if (!isEditingReviewRecord) {
-                              beginReviewEdit(selectedReviewRecord);
-                            }
-                            setReviewEditTitle(event.target.value);
-                          }}
-                          readOnly={!canEditSelectedReviewRecord}
-                        />
-                        <small>{selectedReviewRecord.subtitle}</small>
-                        {recordAstrologyFactsLabel(selectedReviewRecord) ? (
-                          <small className="admin-astro-facts-line">{recordAstrologyFactsLabel(selectedReviewRecord)}</small>
-                        ) : null}
-                      </label>
-                      <div className="admin-toolbar-actions">
-                        <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading} title="Mark this content as needing review.">
-                          <Flag size={16} aria-hidden="true" />
-                          Needs Review
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            void saveReviewEdit(selectedReviewRecord, "REVIEWED");
-                          }}
-                          disabled={!canEditSelectedReviewRecord || isLoading || selectedReviewRecord.status === "REVIEWED"}
-                          title="Approve this draft for review. This does not publish it live."
-                        >
-                          <Check size={16} aria-hidden="true" />
-                          Approve Draft
-                        </button>
-                        {isEditingReviewRecord ? (
-                          <>
-                            <button type="button" onClick={cancelReviewEdit} disabled={isLoading}>
-                              <X size={16} aria-hidden="true" />
-                              Cancel
-                            </button>
-                            <button className="admin-primary-button" type="button" onClick={() => void saveReviewEdit(selectedReviewRecord)} disabled={isLoading}>
-                              <Save size={16} aria-hidden="true" />
-                              {selectedReviewRecord.status === "LIVE" ? "Save Changes" : "Save Draft"}
-                            </button>
-                          </>
-                        ) : (
-                          <button type="button" onClick={() => beginReviewEdit(selectedReviewRecord)} disabled={!canEditSelectedReviewRecord || isLoading}>
-                            <Pencil size={16} aria-hidden="true" />
-                            Edit
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            void saveReviewEdit(selectedReviewRecord, "LIVE");
-                          }}
-                          disabled={!canEditSelectedReviewRecord || isLoading}
-                        >
-                          <Check size={16} aria-hidden="true" />
-                          Publish
-                        </button>
-                        {selectedReviewRecord.source !== "private" && (
-                          <button
-                            className="admin-danger-button"
-                            type="button"
-                            onClick={() => {
-                              void deleteReviewRecord(selectedReviewRecord);
-                            }}
-                            disabled={isLoading || (Boolean(savedGlobalRowId(selectedReviewRecord)) && selectedReviewRecord.status === "LIVE")}
-                            title={
-                              savedGlobalRowId(selectedReviewRecord) && selectedReviewRecord.status === "LIVE"
-                                ? "Demote to DRAFT before deleting."
-                                : savedGlobalRowId(selectedReviewRecord)
-                                  ? "Delete this content row."
-                                  : "Discard this unsaved content entry."
-                            }
-                          >
-                            <Trash2 size={16} aria-hidden="true" />
-                            {savedGlobalRowId(selectedReviewRecord) ? "Delete" : "Discard"}
-                          </button>
-                        )}
-                      </div>
+                  <div className="admin-editor-toolbar">
+                    <div className="admin-drawer-topbar">
+                      <p className="admin-eyebrow">{isEditingReviewRecord ? "Edit mode" : "Row preview"}</p>
+                      <button type="button" onClick={closeReviewDrawer}>
+                        <X size={16} aria-hidden="true" />
+                        Close
+                      </button>
                     </div>
+                    <div className="admin-editor-heading">
+                      <p className="admin-eyebrow">Post editor</p>
+                      <span className={`ui-pill admin-mode-pill ${isEditingReviewRecord ? "is-editing" : "is-preview"}`}>
+                        {isEditingReviewRecord ? "Edit mode" : "Read-only preview"}
+                      </span>
+                      <span className={`ui-pill admin-status status-${selectedReviewRecord.status.toLowerCase()}`}>{contentStatusLabel(selectedReviewRecord.status)}</span>
+                    </div>
+                    <label className="admin-title-field">
+                      <span>Title</span>
+                      <input
+                        value={isEditingReviewRecord ? reviewEditTitle : selectedReviewRecord.title}
+                        onKeyDownCapture={stopEditorKeyPropagation}
+                        onChange={(event) => {
+                          setReviewEditTitle(event.target.value);
+                        }}
+                        readOnly={!isEditingReviewRecord}
+                      />
+                      <small>{selectedReviewRecord.subtitle}</small>
+                      {visibleReviewerNotes(selectedReviewRecord) ? (
+                        <small className="admin-reviewer-notes-line">
+                          <strong>Reviewer notes:</strong>
+                          <span>{visibleReviewerNotes(selectedReviewRecord)}</span>
+                        </small>
+                      ) : null}
+                      {recordAstrologyFactsLabel(selectedReviewRecord) ? (
+                        <small className="admin-astro-facts-line">{recordAstrologyFactsLabel(selectedReviewRecord)}</small>
+                      ) : null}
+                    </label>
+                    <div className="admin-toolbar-actions">
+                      <button type="button" onClick={() => void saveReviewEdit(selectedReviewRecord, "ERROR")} disabled={!canEditSelectedReviewRecord || isLoading} title="Mark this content as needing review.">
+                        <Flag size={16} aria-hidden="true" />
+                        Needs Review
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void saveReviewEdit(selectedReviewRecord, "REVIEWED");
+                        }}
+                        disabled={!canEditSelectedReviewRecord || isLoading || selectedReviewRecord.status === "REVIEWED"}
+                        title="Approve this draft for review. This does not publish it live."
+                      >
+                        <Check size={16} aria-hidden="true" />
+                        Approve Draft
+                      </button>
+                      {isEditingReviewRecord ? (
+                        <>
+                          <button type="button" onClick={cancelReviewEdit} disabled={isLoading}>
+                            <X size={16} aria-hidden="true" />
+                            Cancel
+                          </button>
+                          <button className="admin-primary-button" type="button" onClick={() => void saveReviewEdit(selectedReviewRecord)} disabled={isLoading}>
+                            <Save size={16} aria-hidden="true" />
+                            {selectedReviewRecord.status === "LIVE" ? "Save Changes" : "Save Draft"}
+                          </button>
+                        </>
+                      ) : (
+                        <button type="button" onClick={() => beginReviewEdit(selectedReviewRecord)} disabled={!canEditSelectedReviewRecord || isLoading}>
+                          <Pencil size={16} aria-hidden="true" />
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void saveReviewEdit(selectedReviewRecord, "LIVE");
+                        }}
+                        disabled={!canEditSelectedReviewRecord || isLoading}
+                      >
+                        <Check size={16} aria-hidden="true" />
+                        Publish
+                      </button>
+                      {selectedReviewRecord.source !== "private" && (
+                        <button
+                          className="admin-danger-button"
+                          type="button"
+                          onClick={() => {
+                            void deleteReviewRecord(selectedReviewRecord);
+                          }}
+                          disabled={isLoading || (Boolean(savedGlobalRowId(selectedReviewRecord)) && selectedReviewRecord.status === "LIVE")}
+                          title={
+                            savedGlobalRowId(selectedReviewRecord) && selectedReviewRecord.status === "LIVE"
+                              ? "Demote to DRAFT before deleting."
+                              : savedGlobalRowId(selectedReviewRecord)
+                                ? "Delete this content row."
+                                : "Discard this unsaved content entry."
+                          }
+                        >
+                          <Trash2 size={16} aria-hidden="true" />
+                          {savedGlobalRowId(selectedReviewRecord) ? "Delete" : "Discard"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
 
-                    <section className="admin-post-editor">
+                  <section className="admin-post-editor">
                     <section className="admin-review-copy-workspace">
                       <div className="admin-review-copy-heading">
                         <div>
@@ -9256,7 +11352,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <div className="admin-review-generation-bar">
                         <label>
                           <span>Provider</span>
-                          <select value={reviewGenerationProvider} onChange={(event) => setReviewGenerationProvider(event.target.value as AdminGenerationProvider)} disabled={isGeneratingReviewDraft || isSelectedReviewPublished}>
+                          <select value={reviewGenerationProvider} onChange={(event) => setReviewGenerationProvider(event.target.value as AdminGenerationProvider)} disabled={!isEditingReviewRecord || isGeneratingReviewDraft || isSelectedReviewPublished}>
                             <option value="openai">OpenAI</option>
                             <option value="claude">Claude</option>
                           </select>
@@ -9264,8 +11360,14 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <button
                           type="button"
                           onClick={() => void generateReviewDraft(selectedReviewRecord)}
-                          disabled={!canEditSelectedReviewRecord || isGeneratingReviewDraft || isSelectedReviewPublished}
-                          title={isSelectedReviewPublished ? "Move this row back to Draft before regenerating approved copy." : undefined}
+                          disabled={!isEditingReviewRecord || !canEditSelectedReviewRecord || isGeneratingReviewDraft || isSelectedReviewPublished}
+                          title={
+                            !isEditingReviewRecord
+                              ? "Enter edit mode before generating new copy."
+                              : isSelectedReviewPublished
+                                ? "Move this row back to Draft before regenerating approved copy."
+                                : undefined
+                          }
                         >
                           <Sparkles size={16} aria-hidden="true" />
                           {isGeneratingReviewDraft ? "Generating..." : "Generate Draft"}
@@ -9325,18 +11427,33 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         </div>
                       )}
 
+                      {selectedReviewMetaphorFlags.length > 0 && (
+                        <aside className="admin-phrasebook-flags" aria-label="Metaphor phrase book flags">
+                          <div>
+                            <p className="admin-eyebrow">Editorial wording flags</p>
+                            <strong>{selectedReviewMetaphorFlags.length} phrase-book match{selectedReviewMetaphorFlags.length === 1 ? "" : "es"}</strong>
+                          </div>
+                          <ul>
+                            {selectedReviewMetaphorFlags.slice(0, 4).map((flag) => (
+                              <li key={`${flag.phrase}-${flag.sentence}`}>
+                                <code>{flag.phrase}</code>
+                                <span>{flag.sentence}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <small>Flag only. Save keeps the text intact and adds this to reviewer notes.</small>
+                        </aside>
+                      )}
+
                       <label className="admin-review-tldr-editor">
                         <span>TLDR</span>
                         <textarea
                           rows={4}
                           value={selectedReviewTldr}
                           placeholder="Optional short reader-facing TLDR."
-                          readOnly={!canEditSelectedReviewRecord}
+                          readOnly={!isEditingReviewRecord}
                           onKeyDownCapture={stopEditorKeyPropagation}
                           onChange={(event) => {
-                            if (!isEditingReviewRecord && selectedReviewRecord) {
-                              beginReviewEdit(selectedReviewRecord);
-                            }
                             setReviewEditSummary(stripTldrPrefix(event.target.value));
                           }}
                         />
@@ -9347,12 +11464,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         <textarea
                           rows={18}
                           value={selectedReviewText}
-                          readOnly={!canEditSelectedReviewRecord}
+                          readOnly={!isEditingReviewRecord}
                           onKeyDownCapture={stopEditorKeyPropagation}
                           onChange={(event) => {
-                            if (!isEditingReviewRecord && selectedReviewRecord) {
-                              beginReviewEdit(selectedReviewRecord);
-                            }
                             const nextCopy = event.target.value;
                             const splitCopy = splitLeadingTldr(nextCopy);
 
@@ -9369,7 +11483,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
 
                     <aside className="admin-metadata-sidebar" aria-label="Content metadata">
                       <h3>Metadata</h3>
-                      <div className="admin-metadata-fields">
+                      <fieldset className="admin-metadata-fields" disabled={!isEditingReviewRecord}>
                         <label className="admin-metadata-field">
                           <span>Exact date</span>
                           <input
@@ -9734,7 +11848,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             )}
                           </>
                         )}
-                      </div>
+                      </fieldset>
                       <details className="admin-advanced admin-review-json">
                         <summary>Structured fields</summary>
                         <pre>{JSON.stringify({
@@ -9755,7 +11869,6 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       </details>
                     </aside>
                     </section>
-                  </>
                 </section>
               </div>
             )}

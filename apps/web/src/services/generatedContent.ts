@@ -1,10 +1,12 @@
 import { getSupabaseClient } from "./auth";
 import {
+  hasMissingTemplateSlots,
   hasTemplateSlots,
   interpolateTemplateString,
   type TemplateSlotValues
 } from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
+import { isReaderFacingCopy } from "../content/readerSafety";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
 export type GeneratedContentBlockType =
@@ -42,6 +44,9 @@ type GeneratedContentRow = {
   content_key: string;
   surface: string;
   mode: GeneratedContentMode;
+  status?: string | null;
+  lane?: "serving" | "reference" | null;
+  review_state?: string | null;
   event_type: string | null;
   target_date: string | null;
   facts?: Record<string, unknown> | null;
@@ -51,6 +56,7 @@ type GeneratedContentRow = {
   body: string;
   sections: unknown | null;
   block_type?: GeneratedContentBlockType | null;
+  flags?: string[] | null;
   provider?: string | null;
   model: string | null;
   updated_at: string;
@@ -130,6 +136,44 @@ function hasGeneratedContentTemplateSlots(content: LiveGeneratedContent) {
   );
 }
 
+function hasUnresolvedTemplateSlots(content: LiveGeneratedContent) {
+  return Boolean(
+    (content.headline && hasTemplateSlots(content.headline))
+    || (content.summary && hasTemplateSlots(content.summary))
+    || hasTemplateSlots(content.body)
+    || hasTemplateSlots(JSON.stringify(content.sections ?? {}))
+  );
+}
+
+function hasMissingGeneratedContentTemplateSlots(content: LiveGeneratedContent, slots: TemplateSlotValues) {
+  return Boolean(
+    (content.headline && hasMissingTemplateSlots(content.headline, slots))
+    || (content.summary && hasMissingTemplateSlots(content.summary, slots))
+    || hasMissingTemplateSlots(content.body, slots)
+    || hasMissingTemplateSlots(JSON.stringify(content.sections ?? {}), slots)
+  );
+}
+
+function hasReaderSafeRenderedTemplateOutput(content: LiveGeneratedContent) {
+  const bodyParagraphs = content.body
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  const sectionBodies = Array.isArray(content.sections)
+    ? content.sections.flatMap((section) => {
+      if (!section || typeof section !== "object") return [];
+      const body = (section as Record<string, unknown>).body;
+      return typeof body === "string" && body.trim() ? [body.trim()] : [];
+    })
+    : [];
+
+  return [
+    content.summary,
+    ...bodyParagraphs,
+    ...sectionBodies
+  ].some((value) => isReaderFacingCopy(value));
+}
+
 function fromRow(
   row: GeneratedContentRow
 ): LiveGeneratedContent {
@@ -172,6 +216,13 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
+  if (
+    content.sourceSnapshot?.contentType === "template"
+    && hasMissingGeneratedContentTemplateSlots(content, slots)
+  ) {
+    return null;
+  }
+
   const preserveMissingSlots = content.sourceSnapshot?.contentType === "synastry-kb-seed";
   const headline = interpolateOptionalString(content.headline, slots, {
     contentKey: content.contentKey,
@@ -207,13 +258,21 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
-  return {
+  const rendered = {
     ...content,
     headline,
     summary,
     body,
     sections
   };
+
+  if (content.sourceSnapshot?.contentType === "template") {
+    if (hasUnresolvedTemplateSlots(rendered) || !hasReaderSafeRenderedTemplateOutput(rendered)) {
+      return null;
+    }
+  }
+
+  return rendered;
 }
 
 function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: LiveGeneratedContent) {
@@ -245,7 +304,34 @@ export function generatedContentParagraphs(content?: LiveGeneratedContent | null
   return content.body
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+    .map(repairGeneratedParagraph)
+    .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph) && !containsBlockedScaffoldCopy(paragraph));
+}
+
+const blockedScaffoldCopyPatterns = [
+  /\bAt work this reads as\b/i,
+  /\bLuck favors\b/i,
+  /\bWatch:\s*/i,
+  /\boverplaying the drama\b/i,
+  /\bthe fuller story of this\b/i,
+  /\bfollows .+ to wherever it sits\b/i,
+  /\bmoves through\b.+\btone\b/i,
+  /\bgives\b.+\bquality right now\b/i,
+  /\bshows up in\b.+\bthe bigger picture\b/i,
+  /\bBeing themselves and\b/i
+];
+
+function containsBlockedScaffoldCopy(text: string) {
+  return blockedScaffoldCopyPatterns.some((pattern) => pattern.test(text));
+}
+
+function repairGeneratedParagraph(text: string) {
+  return text
+    .replace(/\bmake it all about they\b/gi, "make it all about themselves")
+    .replace(/\babout they\b/gi, "about themselves")
+    .replace(/\bgiving they\b/gi, "giving them")
+    .replace(/\brewards they\b/gi, "rewards them")
+    .replace(/\bIt rewards they\b/gi, "It rewards them");
 }
 
 function normalizeSection(value: unknown): GeneratedContentSection | null {
@@ -269,7 +355,13 @@ function normalizeSection(value: unknown): GeneratedContentSection | null {
     return null;
   }
 
-  return { heading, body };
+  const repairedBody = repairGeneratedParagraph(body);
+
+  if (!isReaderFacingCopy(repairedBody) || containsBlockedScaffoldCopy(repairedBody)) {
+    return null;
+  }
+
+  return { heading, body: repairedBody };
 }
 
 export function generatedContentSections(content?: LiveGeneratedContent | null): GeneratedContentSection[] {
@@ -363,9 +455,11 @@ export async function loadLiveGeneratedContentForSurfaces(
   const surfaces = Array.from(new Set([...requestedSurfaces, "modifier"]));
   let query = supabase
     .from("generated_interpretations")
-    .select("id, content_key, surface, mode, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, provider, model, updated_at")
+    .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
     .in("surface", surfaces)
     .eq("status", "LIVE")
+    .eq("lane", "serving")
+    .is("review_state", null)
     .order("updated_at", { ascending: false });
 
   if (targetDate && !requestedSurfaces.includes("sky")) {
@@ -382,6 +476,10 @@ export async function loadLiveGeneratedContentForSurfaces(
   const byKey = new Map<string, LiveGeneratedContent>();
 
   for (const row of data ?? []) {
+    if (!isReaderServableGeneratedContentRow(row)) {
+      continue;
+    }
+
     const content = fromRow(row);
 
     if (!byKey.has(row.content_key)) {
@@ -400,4 +498,35 @@ export async function loadLiveGeneratedContentForSurfaces(
   }
 
   return byKey;
+}
+
+export function isReaderServableGeneratedContentRow(
+  row: Pick<GeneratedContentRow, "facts" | "flags"> & { status?: string | null; lane?: string | null; review_state?: string | null }
+) {
+  const facts = row.facts && typeof row.facts === "object" ? row.facts : {};
+  const store = facts.tldrStore && typeof facts.tldrStore === "object"
+    ? facts.tldrStore as Record<string, unknown>
+    : null;
+
+  if (!store) {
+    return true;
+  }
+
+  const flags = new Set([
+    ...(Array.isArray(row.flags) ? row.flags : []),
+    ...(Array.isArray(store.flags) ? store.flags.map(String) : [])
+  ]);
+  const lane = row.lane ?? (typeof store.lane === "string" ? store.lane : null);
+  const review = row.review_state ?? (typeof store.review === "string" ? store.review : null);
+  const sourceStatus = typeof store.sourceStatus === "string" ? store.sourceStatus : null;
+
+  if (row.status && row.status !== "LIVE") return false;
+  if (lane && lane !== "serving") return false;
+  if (review) return false;
+  if (sourceStatus && ["REFERENCE_ONLY", "RAW_QUARANTINE", "MANUAL_ONLY", "DEPRECATED"].includes(sourceStatus)) return false;
+  if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM")) return false;
+  if (flags.has("PARAPHRASE_PENDING")) return false;
+  if (flags.has("BLOCKLIST_MATCH")) return false;
+
+  return true;
 }
