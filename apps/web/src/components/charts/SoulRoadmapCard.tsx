@@ -303,13 +303,13 @@ function missionStatement({
   const moonStyle = formatRoadmapText(moon.moonStyle, ownerKind, pronouns.reference);
   const name = sentenceSubject(ownerKind, ownerName);
   const opener = ownerKind === "self"
-    ? `Your purpose is strongest when your life direction has a clear place to land.`
-    : `${name}'s purpose is strongest when their life direction has a clear place to land.`;
-  const sunSentence = `With ${signArticle(sunSign)} ${sunSign} Sun, ${pronouns.possessive} vitality grows through ${sunExpression}.`;
+    ? `Your purpose becomes easier to recognize when ${signArticle(sunSign)} ${sunSign} part of you has room to act.`
+    : `${name}'s purpose becomes easier to recognize when ${signArticle(sunSign)} ${sunSign} part of ${pronouns.object} has room to act.`;
+  const sunSentence = `This gives ${pronouns.possessive} vitality a path through ${sunExpression}.`;
   const pathSentence = pathRoadmap && pathSign
-    ? `${pathSign} gives the path a direction through ${pathExpression}.`
-    : `The growth path will become clearer when more chart context is available.`;
-  const moonSentence = `The ${moonSign} Moon keeps the purpose emotionally honest through ${moonStyle}.`;
+    ? `${pathSign} helps that path develop through ${pathExpression}.`
+    : `The growth path can be named more clearly when more chart context is available.`;
+  const moonSentence = `The ${moonSign} Moon keeps the work emotionally honest through ${moonStyle}.`;
 
   return [opener, sunSentence, pathSentence, moonSentence]
     .join(" ")
@@ -364,6 +364,10 @@ export function resolveSoulRoadmapProfile({
   const pathSign = northNodeSign || risingSign;
   const pathExpression = pathRoadmap ? formatRoadmapText(pathRoadmap.pathExpression, ownerKind, pronouns.reference) : "";
   const moonStyle = formatRoadmapText(moonRoadmap.moonStyle, ownerKind, pronouns.reference);
+  const purposeHeading = ownerKind === "self" ? "Purpose pattern" : `${displayName}'s purpose pattern`;
+  const developmentBody = pathRoadmap && pathSign
+    ? `${pathSign} gives this purpose a direction through ${pathExpression}. The ${moonSign} Moon helps it stay honest by ${moonStyle}.`
+    : `The ${moonSign} Moon helps this purpose stay honest by ${moonStyle}. The growth path can be refined when more chart context is available.`;
 
   return {
     label,
@@ -376,21 +380,12 @@ export function resolveSoulRoadmapProfile({
     ],
     sections: [
       {
-        heading: `${sunSign} Sun`,
-        body: `The ${sunSign} Sun shows where vitality has to become a lived choice: ${sunExpression}.`
+        heading: purposeHeading,
+        body: tldr
       },
-      !pathRoadmap || !pathSign
-        ? {
-            heading: "Path pending",
-            body: "The growth path will become clearer when the chart has enough context to show it."
-          }
-        : {
-            heading: `${northNodeRoadmap ? "North Node" : "Path"} in ${pathSign}`,
-            body: `${pathSign} brings ${displayName} toward the mission through ${pathExpression}. This gives the purpose a lived direction.`
-          },
       {
-        heading: `${moonSign} Moon`,
-        body: `${moonSign} shows how ${pronouns.subject} ${pronouns.verb} life: ${moonStyle}. This gives the purpose a way to stay emotionally honest while it develops.`
+        heading: "How it develops",
+        body: developmentBody
       }
     ]
   };
@@ -453,7 +448,7 @@ export function SoulRoadmapCard({
         <h3>{profile.title}</h3>
         <p>{profile.tldr}</p>
       </div>
-      <div className="soul-roadmap-card__points" aria-label="Roadmap points">
+      <div className="soul-roadmap-card__points" aria-label="Purpose factors">
         {profile.points.map((point) => (
           <span key={point.label}>
             <strong>{point.label}</strong>
@@ -461,7 +456,7 @@ export function SoulRoadmapCard({
           </span>
         ))}
       </div>
-      <div className="soul-roadmap-card__keywords" aria-label="Roadmap keywords">
+      <div className="soul-roadmap-card__keywords" aria-label="Purpose reading">
         {profile.sections.map((section) => (
           <p key={section.heading}><strong>{section.heading}</strong> {section.body}</p>
         ))}

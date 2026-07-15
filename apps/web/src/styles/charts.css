@@ -356,6 +356,139 @@
   filter: var(--filter-synastry-inner-glyph);
 }
 
+.sky-wheel-synastry {
+  --chart-sign-label-size: 11.5px;
+  --chart-house-label-size: 11.5px;
+  --chart-degree-size: 9.5px;
+  --chart-planet-glyph-size: 22px;
+}
+
+.sky-wheel-synastry .sign-band {
+  stroke-width: 40px;
+}
+
+.sky-wheel-synastry .zodiac-wheel__sign-label {
+  font-family: var(--font-label);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  opacity: 0.88;
+}
+
+.sky-wheel-synastry .wheel-rings circle {
+  stroke-width: 1;
+}
+
+.sky-wheel-synastry .synastry-base-rings circle:nth-child(3),
+.sky-wheel-synastry .synastry-base-rings circle:nth-child(4) {
+  stroke: color-mix(in srgb, var(--chart-line) 76%, transparent);
+}
+
+.sky-wheel-synastry .synastry-house-band-guides circle {
+  fill: none;
+  stroke: color-mix(in srgb, var(--chart-line) 42%, transparent);
+  stroke-width: 0.7;
+  opacity: 0.42;
+  vector-effect: non-scaling-stroke;
+}
+
+.sky-wheel-synastry .wheel-sectors line {
+  stroke: color-mix(in srgb, var(--chart-label) 56%, transparent);
+  stroke-width: 0.68;
+  opacity: 0.48;
+}
+
+.sky-wheel-synastry .sign-band-dividers line {
+  stroke-width: 0.92;
+  opacity: 0.72;
+}
+
+.sky-wheel-synastry .natal-angle-lines .ascendant-axis {
+  stroke: var(--chart-glyph);
+  stroke-dasharray: 7 7;
+  stroke-width: 1.05;
+  opacity: 0.64;
+}
+
+.sky-wheel-synastry .natal-angle-lines .midheaven-axis {
+  stroke: var(--chart-glyph);
+  stroke-dasharray: 2 7;
+  stroke-width: 0.92;
+  opacity: 0.5;
+}
+
+.sky-wheel-synastry .zodiac-wheel__angle-icon {
+  opacity: 0.82;
+}
+
+.sky-wheel-synastry .synastry-house-number {
+  font-family: var(--font-label);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  fill: var(--wheel-label);
+  opacity: 0.5;
+}
+
+.sky-wheel-synastry .synastry-house-number--outer {
+  opacity: 0.48;
+}
+
+.sky-wheel-synastry .synastry-house-number--inner {
+  fill: color-mix(in srgb, var(--synastry-inner-glyph) 42%, var(--wheel-label));
+  opacity: 0.5;
+}
+
+.sky-wheel-synastry .planet-marker-outer .planet-glyph,
+.sky-wheel-synastry .planet-marker-outer .planet-degree {
+  fill: var(--chart-glyph);
+}
+
+.sky-wheel-synastry .planet-label-group {
+  paint-order: normal;
+}
+
+.sky-wheel-synastry .planet-degree {
+  font-family: var(--font-label);
+  letter-spacing: 0;
+  opacity: 0.78;
+}
+
+.sky-wheel-synastry .planet-hit-area {
+  fill: transparent;
+  opacity: 0;
+}
+
+.sky-wheel-synastry .interchart-aspect-lines line {
+  stroke-width: var(--aspect-line-width, 1.45);
+  opacity: max(var(--aspect-line-opacity, 0.48), 0.56);
+}
+
+.sky-wheel-synastry .planet-label-group--displaced .planet-glyph:not(.planet-glyph-image),
+.sky-wheel-synastry .planet-label-group--displaced .planet-degree {
+  stroke: color-mix(in srgb, var(--surface) 88%, transparent);
+  stroke-width: 3px;
+  paint-order: stroke fill;
+}
+
+.sky-wheel-synastry .chart-house-system-label {
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.68;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .wheel-sectors line {
+  stroke: var(--wheel-soft);
+  opacity: 0.42;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .synastry-house-number {
+  opacity: 0.62;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .synastry-house-number--inner {
+  fill: color-mix(in srgb, var(--synastry-inner-glyph) 54%, var(--wheel-label));
+}
+
 .chart-fullscreen-panel {
   width: min(1240px, 100%);
   max-height: min(960px, calc(100svh - 28px));

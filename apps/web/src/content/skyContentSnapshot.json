@@ -277,7 +277,7 @@
       "targetDate": null,
       "headline": "Sun is in Cancer",
       "summary": "Sun in Cancer: draws attention to belonging and the cost of protection",
-      "body": "Sun is in Cancer. Putting more attention on what people protect and how they react when something feels personal. This puts more focus on what people protect, who they check on, and which places or relationships still feel like home. You may notice decisions being shaped by loyalty, old memories, family pressure, or the wish to keep something familiar intact Before you answer from habit, name what actually needs care and what only feels familiar",
+      "body": "Sun in Cancer draws attention toward belonging, protection, and the places that still feel like home. Decisions may be shaped by loyalty, old memories, family pressure, or the wish to keep something familiar intact. Before you answer from habit, separate what genuinely needs care from what only feels familiar.",
       "sections": {
         "preview": "Sun in Cancer: draws attention to belonging and the cost of protection",
         "templateId": "current-sky-placement",
@@ -291,10 +291,10 @@
           "sign": "Cancer",
           "headline": "Sun is in Cancer",
           "compactSkyBehaviorClause": "draws attention to belonging and the cost of protection",
-          "skyShiftClause": "Putting more attention on what people protect and how they react when something feels personal",
-          "collectiveBehaviorClause": "This puts more focus on what people protect, who they check on, and which places or relationships still feel like home",
+          "skyShiftClause": "Attention turns toward what people protect and how they react when something feels personal.",
+          "collectiveBehaviorClause": "Home, belonging, family patterns, and emotional safety become easier to notice.",
           "recognizableSituationClause": "You may notice decisions being shaped by loyalty, old memories, family pressure, or the wish to keep something familiar intact",
-          "currentChoiceClause": "Before you answer from habit, name what actually needs care and what only feels familiar"
+          "currentChoiceClause": "Before you answer from habit, separate what genuinely needs care from what only feels familiar."
         },
         "sourceKeys": [
           "cc/sign/cancer/lived-behaviors",
@@ -3241,7 +3241,7 @@
       "targetDate": null,
       "headline": "Venus is in Virgo",
       "summary": "Venus in Virgo: sorts desire through what is workable enough to repair",
-      "body": "Venus is in Virgo. Putting more attention on the details that decide whether ease can actually last. Preference may become less abstract when the real terms of care and effort have to be named plainly. A small mismatch in effort, taste, or expectation can reveal what needs adjustment before resentment gathers. Make the repair specific enough that everyone knows what has changed.",
+      "body": "Venus in Virgo brings love, preference, and ease back to the details that make care sustainable. A small mismatch in effort, taste, or expectation can reveal what needs adjustment before resentment gathers. Make the repair specific enough that everyone knows what has changed.",
       "sections": {
         "preview": "Venus in Virgo: sorts desire through what is workable enough to repair",
         "templateId": "current-sky-placement",
@@ -3255,8 +3255,8 @@
           "sign": "Virgo",
           "headline": "Venus is in Virgo",
           "compactSkyBehaviorClause": "sorts desire through what is workable enough to repair",
-          "skyShiftClause": "Putting more attention on the details that decide whether ease can actually last",
-          "collectiveBehaviorClause": "Preference may become less abstract when the real terms of care and effort have to be named plainly",
+          "skyShiftClause": "Attention turns toward the details that decide whether ease can actually last.",
+          "collectiveBehaviorClause": "Care becomes clearer when effort, taste, and expectations are named plainly.",
           "recognizableSituationClause": "A small mismatch in effort, taste, or expectation can reveal what needs adjustment before resentment gathers.",
           "currentChoiceClause": "Make the repair specific enough that everyone knows what has changed."
         },
@@ -3943,7 +3943,7 @@
       "targetDate": null,
       "headline": "Mars is in Gemini",
       "summary": "Mars in Gemini: speeds up the argument or errand that needs a clearer channel",
-      "body": "Mars is in Gemini. Putting more heat into the words and unfinished threads already in the room. Action may scatter when too many questions compete for the same attention. A conversation can become the place where impatience, curiosity, and conflict all try to drive at once. Choose the message that actually needs to be sent before chasing the next one.",
+      "body": "Mars in Gemini puts heat into words, errands, questions, and unfinished threads. A conversation can become the place where impatience, curiosity, and conflict all try to drive at once. Choose the message that actually needs to be sent before chasing the next one.",
       "sections": {
         "preview": "Mars in Gemini: speeds up the argument or errand that needs a clearer channel",
         "templateId": "current-sky-placement",
@@ -3957,8 +3957,8 @@
           "sign": "Gemini",
           "headline": "Mars is in Gemini",
           "compactSkyBehaviorClause": "speeds up the argument or errand that needs a clearer channel",
-          "skyShiftClause": "Putting more heat into the words and unfinished threads already in the room",
-          "collectiveBehaviorClause": "Action may scatter when too many questions compete for the same attention",
+          "skyShiftClause": "Words, errands, questions, and unfinished threads carry more heat.",
+          "collectiveBehaviorClause": "Action works best when one message gets a clear channel.",
           "recognizableSituationClause": "A conversation can become the place where impatience, curiosity, and conflict all try to drive at once.",
           "currentChoiceClause": "Choose the message that actually needs to be sent before chasing the next one."
         },

@@ -527,19 +527,19 @@ function careerNarrativeSummary({
   const display = readerDisplayName(subject);
   const direction = mcSign || tenthHouseSign || "public";
   const opener = subject.mode === "self"
-    ? `Your public path is shaped by ${direction}, so the work needs a form other people can recognize and return to.`
-    : `${capitalizeSentence(display)}'s public path is shaped by ${direction}, so the work needs a form other people can recognize and return to.`;
+    ? `Your work becomes clearer when ${direction} has a form other people can recognize and return to.`
+    : `${capitalizeSentence(display)}'s work becomes clearer when ${direction} has a form other people can recognize and return to.`;
   const ruler = mcRuler && mcRulerPosition
-    ? `${direction} answers to ${mcRuler}. With ${mcRuler} in ${mcRulerPosition.sign} in the ${ordinal(mcRulerPosition.house)} house, the career pattern develops through ${houseCareerScene(mcRulerPosition.house)}.`
-    : `The Midheaven gives the work a visible direction, while the rest of the chart shows how that direction becomes practical.`;
+    ? `${direction} answers to ${mcRuler}. With ${mcRuler} in ${mcRulerPosition.sign} in the ${ordinal(mcRulerPosition.house)} house, the path develops through ${houseCareerScene(mcRulerPosition.house)}.`
+    : `The Midheaven gives the work a visible direction, and daily choices show how that direction becomes practical.`;
   const visible = visiblePlanet
-    ? `${visiblePlanet.planet} in the tenth house makes this harder to keep private; ${planetCareerAction(visiblePlanet.planet, subject)} through ${visiblePlanet.sign} conditions.`
-    : `Without a loud tenth-house planet, the reading leans on the Midheaven ruler and the daily choices that make the work repeatable.`;
+    ? `${visiblePlanet.planet} in the tenth house makes the pattern easier for other people to notice; ${planetCareerAction(visiblePlanet.planet, subject)} through ${visiblePlanet.sign} conditions.`
+    : `The pattern becomes steadier when the Midheaven ruler and daily choices give the work a repeatable shape.`;
   const condition = workCondition
     ? `${workCondition.planet} adds a working condition: ${planetWorkCondition(workCondition.planet, subject)} through the ${ordinal(workCondition.house)} house.`
     : "";
   const growth = northNode && northNodeMode
-    ? `The growth edge is to choose one usable next step, not to turn every chart factor into a separate job description.`
+    ? `Growth comes from choosing one usable next step and letting the direction become visible through practice.`
     : `The next useful move is to make the path visible through one concrete practice.`;
 
   return cleanCareerReaderText([opener, ruler, visible, condition, growth].filter(Boolean).join(" "));

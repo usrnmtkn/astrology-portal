@@ -240,7 +240,7 @@ const skyPlacementTopicByBody: Record<string, string> = {
   saturn: "limits, responsibility, patience, and what needs structure",
   uranus: "change, disruption, invention, and the need for more freedom",
   neptune: "sensitivity, imagination, uncertainty, and what needs clearer edges",
-  pluto: "power, pressure, release, and what is asking to transform",
+  pluto: "power, pressure, release, and what needs to transform",
   chiron: "old pain, repair, and the wisdom that comes from tending what hurts",
   lilith: "raw truth, refusal, and the parts of the story that will not be tamed",
   "north node": "growth, appetite, and the unfamiliar direction asking for courage",
@@ -269,14 +269,14 @@ function normalizedSkyLookupKey(value: string) {
 function safeSkyPlacementFallbackSummary(position: PlanetPosition) {
   const bodyTopic = skyPlacementTopicByBody[normalizedSkyLookupKey(position.planet)] ?? "the main theme of this transit";
   const signTone = skyPlacementToneBySign[normalizedSkyLookupKey(position.sign)] ?? `${position.sign} tone`;
-  const summary = `This transit brings ${bodyTopic} into ${signTone}.`;
+  const summary = `This sky placement brings ${bodyTopic} into ${signTone}.`;
   return isReaderFacingCopy(summary) ? summary : "";
 }
 
 function safeSkyPlacementFallbackParagraphs(position: PlanetPosition) {
   const bodyTopic = skyPlacementTopicByBody[normalizedSkyLookupKey(position.planet)] ?? "the main theme of this transit";
   const signTone = skyPlacementToneBySign[normalizedSkyLookupKey(position.sign)] ?? `${position.sign} tone`;
-  const paragraph = `This transit brings ${bodyTopic} into ${signTone}. Notice what needs care, what needs a boundary, and what can wait.`;
+  const paragraph = `This sky placement brings ${bodyTopic} into ${signTone}. Notice what needs care, what needs a boundary, and what can wait.`;
   return isReaderFacingCopy(paragraph) ? [paragraph] : [];
 }
 

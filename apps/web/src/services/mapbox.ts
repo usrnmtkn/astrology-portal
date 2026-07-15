@@ -1,5 +1,5 @@
 import type { LocationInput } from "../types";
-import { timeZoneForLocation } from "./timezones";
+import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 
 type MapboxFeature = {
   id: string;
@@ -80,6 +80,29 @@ function formatSuggestionLabel(feature: MapboxFeature) {
   return name ?? region ?? "Unknown city";
 }
 
+async function timeZoneForCoordinates(location: Pick<LocationInput, "label" | "latitude" | "longitude"> & { region?: string }) {
+  if (!isTldrAstroApiConfigured) {
+    return null;
+  }
+
+  try {
+    const response = await resolveTimezone({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      date: new Date().toISOString().slice(0, 10),
+      time: "12:00"
+    });
+
+    if (response.source !== "fallback" && response.timeZone) {
+      return response.timeZone;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
 export async function searchCities(query: string): Promise<CitySuggestion[]> {
   const trimmed = query.trim();
 
@@ -103,28 +126,34 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
 
   const data = (await response.json()) as MapboxResponse;
 
-  return (data.features ?? []).flatMap((feature) => {
+  const suggestions = await Promise.all((data.features ?? []).map(async (feature): Promise<CitySuggestion | null> => {
     const longitude = feature.properties?.coordinates?.longitude ?? feature.geometry?.coordinates?.[0];
     const latitude = feature.properties?.coordinates?.latitude ?? feature.geometry?.coordinates?.[1];
 
     if (typeof latitude !== "number" || typeof longitude !== "number") {
-      return [];
+      return null;
     }
+    const label = formatSuggestionLabel(feature);
+    const region = regionForFeature(feature);
+
+    const timeZone = await timeZoneForCoordinates({
+      label,
+      region,
+      latitude,
+      longitude
+    });
 
     return {
       id: feature.id ?? feature.properties?.mapbox_id ?? `${latitude}-${longitude}`,
-      label: formatSuggestionLabel(feature),
-      region: regionForFeature(feature),
+      label,
+      region,
       latitude,
       longitude,
-      timeZone: timeZoneForLocation({
-        label: formatSuggestionLabel(feature),
-        region: regionForFeature(feature),
-        latitude,
-        longitude
-      })
+      timeZone: timeZone ?? undefined
     };
-  });
+  }));
+
+  return suggestions.filter((suggestion): suggestion is CitySuggestion => Boolean(suggestion));
 }
 
 export async function reverseGeocodeCity(latitude: number, longitude: number): Promise<LocationInput | null> {
@@ -153,15 +182,20 @@ export async function reverseGeocodeCity(latitude: number, longitude: number): P
     return null;
   }
 
+  const label = formatSuggestionLabel(feature);
+  const region = regionForFeature(feature);
+
+  const timeZone = await timeZoneForCoordinates({
+    label,
+    region,
+    latitude,
+    longitude
+  });
+
   return {
-    label: formatSuggestionLabel(feature),
+    label,
     latitude,
     longitude,
-    timeZone: timeZoneForLocation({
-      label: formatSuggestionLabel(feature),
-      region: regionForFeature(feature),
-      latitude,
-      longitude
-    })
+    timeZone: timeZone ?? undefined
   };
 }

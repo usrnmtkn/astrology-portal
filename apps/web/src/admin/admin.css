@@ -7494,3 +7494,140 @@ body,
     grid-template-columns: repeat(2, minmax(140px, 1fr));
   }
 }
+
+/* Admin content layout stabilization.
+   Keep the content page dense, but prevent command controls from colliding with
+   headings or collapsing into one-word columns at laptop widths. */
+.admin-content-toolbar {
+  align-items: stretch;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: visible;
+}
+
+.admin-content-toolbar-copy {
+  min-width: 0;
+}
+
+.admin-content-toolbar-copy h2 {
+  margin-bottom: 4px;
+}
+
+.admin-content-toolbar-copy p:not(.admin-eyebrow) {
+  max-width: 720px;
+}
+
+.admin-new-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-content-toolbar .admin-new-actions button,
+.admin-content-toolbar .admin-emergency-floor-toggle {
+  display: inline-flex;
+  flex: 0 1 auto;
+  gap: 8px;
+  justify-content: center;
+  max-width: 100%;
+  min-height: 42px;
+  min-width: max-content;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.admin-content-toolbar .admin-new-actions button:first-child {
+  font-size: 15px;
+}
+
+.admin-content-toolbar .admin-new-actions button:first-child::after {
+  content: none;
+}
+
+.admin-content-toolbar .admin-new-actions button:nth-child(2) {
+  display: inline-flex;
+}
+
+.admin-content-toolbar .admin-emergency-floor-toggle {
+  min-width: 0;
+}
+
+.admin-content-toolbar .admin-emergency-floor-toggle strong {
+  display: inline-flex;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-content-filters {
+  gap: 18px;
+  overflow: visible;
+}
+
+.admin-content-filters .admin-status-pills,
+.admin-content-filters .admin-queue-chips {
+  min-width: 0;
+}
+
+.admin-review-filter-grid {
+  align-items: end;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.75fr) minmax(170px, 0.75fr) minmax(142px, auto);
+}
+
+.admin-review-filter-grid label,
+.admin-review-filter-grid input,
+.admin-review-filter-grid select {
+  min-width: 0;
+}
+
+.admin-review-filter-grid > button {
+  min-width: max-content;
+}
+
+.admin-message-card {
+  align-items: center;
+  display: flex;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+@media (max-width: 1280px) {
+  .admin-review-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-review-filter-grid label:nth-child(3),
+  .admin-review-filter-grid label:nth-child(4),
+  .admin-review-filter-grid label:nth-child(5),
+  .admin-review-filter-grid > button {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-content-toolbar,
+  .admin-content-filters,
+  .admin-template-panel,
+  .admin-list-panel {
+    padding: 18px;
+  }
+
+  .admin-content-toolbar .admin-new-actions button,
+  .admin-content-toolbar .admin-emergency-floor-toggle {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+
+  .admin-review-filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

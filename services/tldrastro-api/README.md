@@ -42,6 +42,29 @@ The service uses Swiss Ephemeris for natal, sky, transit, timing, synastry, and
 composite calculations. Keep licensed ephemeris data outside git and point the
 runtime at it with `TLDR_ASTRO_EPHEMERIS_PATH`.
 
+## Timezone Lookup
+
+The API resolves birth-location coordinates to IANA timezone IDs through
+`POST /utils/timezone`. For production, set a server-only Google Time Zone API
+key:
+
+```bash
+GOOGLE_MAPS_TIMEZONE_API_KEY=...
+```
+
+The aliases `GOOGLE_TIMEZONE_API_KEY` and `GOOGLE_MAPS_API_KEY` are also
+accepted. Do not use a `VITE_` prefix for this key; it must stay server-side.
+
+When the key is present, the API asks Google first. If Google is unavailable,
+the API falls back to the bundled `timezonefinder`/`tzdata` dependency. If both
+fail, chart creation fails instead of guessing or silently using UTC.
+
+To verify a local key without printing it:
+
+```bash
+GOOGLE_MAPS_TIMEZONE_API_KEY=... node scripts/verify-google-timezone-key.mjs
+```
+
 ## Production Deployment
 
 The service is deployable as a standalone Docker web service. Build from this
