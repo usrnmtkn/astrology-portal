@@ -61,6 +61,7 @@ import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContex
 import skyContentSnapshot from "./content/skyContentSnapshot.json";
 import {
   emergencyAspectBehavior,
+  emergencyDetailFallbackCopy,
   emergencyHouseArea,
   emergencyNatalPlacementCopy,
   emergencyPlanetFunction,
@@ -95,6 +96,7 @@ import {
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
+import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -179,7 +181,7 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
-import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship } from "./services/relationshipContext";
+import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
   genericPersonReferenceSlots,
@@ -198,6 +200,7 @@ import {
   compareRelationship,
   getPersonalTiming,
   isTldrAstroApiConfigured,
+  resolveTimezone,
   type RelationshipCompareResponse,
   type TldrAstroChartSettings,
   type TldrAstroSubject,
@@ -340,7 +343,7 @@ type TransitItem = {
 type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
-type FriendProfileTab = "natal" | "transits" | "synastry" | "composite";
+type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
 type FriendsTab = Exclude<FriendsMainView, "profile">;
 
@@ -524,7 +527,7 @@ function careerYouArticle(profile: CareerArchetypeProfile): YouTransitArticle {
     glyph: "♔",
     subtitle: profile.tldr,
     summary: profile.summary,
-    summaryHeading: "Natal career logic",
+    summaryHeading: "Career pattern",
     bodyBeforeSections: false,
     sections: careerDetailSections(profile).map((section) => ({
       heading: section.heading,
@@ -541,7 +544,7 @@ function careerSkyDetail(profile: CareerArchetypeProfile, routePath?: string): S
     glyph: "♔",
     kicker: "Career",
     title: profile.title,
-    meta: "Natal career logic",
+    meta: "Career pattern",
     subtitle: profile.tldr,
     compactHeader: true,
     body: [profile.summary],
@@ -558,18 +561,11 @@ function soulRoadmapYouArticle(profile: SoulRoadmapProfile): YouTransitArticle {
     summary: profile.tldr,
     summaryHeading: profile.label,
     bodyBeforeSections: false,
-    sections: [
-      {
-        heading: "Roadmap points",
-        tldr: "",
-        body: profile.points.map((point) => `${point.label}: ${point.value}`).join("\n")
-      },
-      ...profile.sections.map((section) => ({
+    sections: profile.sections.map((section) => ({
         heading: section.heading,
         tldr: "",
         body: section.body
-      }))
-    ],
+      })),
     meta: profile.points
   };
 }
@@ -580,17 +576,11 @@ function soulRoadmapSkyDetail(profile: SoulRoadmapProfile, routePath?: string): 
     glyph: "✦",
     kicker: profile.label,
     title: profile.title,
-    meta: "Natal mission statement",
+    meta: "Purpose pattern",
     subtitle: profile.tldr,
     compactHeader: true,
     body: [],
-    sections: [
-      {
-        heading: "Roadmap points",
-        body: profile.points.map((point) => `${point.label}: ${point.value}`).join("\n")
-      },
-      ...profile.sections
-    ]
+    sections: profile.sections
   };
 }
 
@@ -2320,7 +2310,7 @@ function parseFriendsTab(value: string | null): FriendsTab {
 }
 
 function parseFriendProfileTab(value: string | null): FriendProfileTab {
-  return value === "transits" || value === "synastry" || value === "composite" || value === "natal" ? value : "natal";
+  return value === "compatibility" || value === "transits" || value === "synastry" || value === "composite" || value === "natal" ? value : "compatibility";
 }
 
 function friendsHashParts(hash: string) {
@@ -2764,7 +2754,7 @@ const defaultManualChartForm: ManualChartForm = {
   chartType: "person",
   displayName: "",
   pronouns: defaultPronounChoice,
-  relationshipType: "friendship",
+  relationshipType: "friend",
   birthDate: "",
   birthTime: "12:00",
   birthTimeUnknown: false,
@@ -2870,13 +2860,10 @@ function apiSubjectFromUserChart(
   settings?: Partial<ChartSettings> | null
 ): TldrAstroSubject | null {
   const birthDate = validChartBirthDate(chart);
-  const birthCity = validChartBirthCity(chart);
   const birthTime = validChartBirthTime(chart);
-  const birthLocation = chart?.birthLocation
-    ? withTimeZone(chart.birthLocation)
-    : birthCity
-      ? locationFromLabel(birthCity)
-      : null;
+  const birthLocation = chart?.birthLocation?.timeZone
+    ? chart.birthLocation
+    : null;
 
   if (!birthDate || !birthTime || !birthLocation) {
     return null;
@@ -2905,8 +2892,12 @@ function apiSubjectFromManualChart(
     return null;
   }
 
-  const birthLocation = withTimeZone(chart.birthLocation);
+  const birthLocation = chart.birthLocation.timeZone ? chart.birthLocation : null;
   const timeKnown = !chart.birthTimeUnknown && Boolean(chart.birthTime);
+
+  if (!birthLocation) {
+    return null;
+  }
 
   return {
     name: chart.displayName,
@@ -3666,6 +3657,38 @@ function manualChartBigThree(chart: ManualChart) {
   }
 
   return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
+}
+
+async function resolvedManualChartBirthLocationForRepair(chart: ManualChart) {
+  if (isTldrAstroApiConfigured) {
+    try {
+      const response = await resolveTimezone({
+        latitude: chart.birthLocation.latitude,
+        longitude: chart.birthLocation.longitude,
+        date: chart.birthDate,
+        time: chart.birthTime ?? "12:00"
+      });
+
+      if (response.source !== "fallback" && response.timeZone) {
+        return {
+          ...chart.birthLocation,
+          timeZone: response.timeZone
+        };
+      }
+    } catch {
+      // If the API cannot resolve coordinates, do not guess a birth-chart timezone locally.
+    }
+  }
+
+  return chart.birthLocation.timeZone ? chart.birthLocation : null;
+}
+
+function manualChartNeedsNatalRepair(chart: ManualChart) {
+  if (chart.birthTimeUnknown || !chart.birthTime || !chart.birthDate || !chart.birthLocation) {
+    return false;
+  }
+
+  return isTldrAstroApiConfigured || !chart.natalChart || !chart.birthLocation.timeZone;
 }
 
 const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
@@ -4860,7 +4883,7 @@ function SkyDetailArticle({
               ) : null}
               {!hasReadableBody && !hasRelatedAspects ? (
                 <section className="article-section sky-detail-section">
-                  <p>This interpretation is still being prepared.</p>
+                  <p>{emergencyDetailFallbackCopy(detail.title, eyebrowLabel)}</p>
                 </section>
               ) : null}
               {detail.historicalLookback ? (
@@ -5379,13 +5402,10 @@ function currentSkyPlacementDetailArticle({
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
   const title = placementDetailTitle(position, activeAspects);
   const isRetrograde = position.motion === "retrograde";
-  const isUnwiredPoint = isUnwiredSkyPointPlacement(position);
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
-  const emergencyPlacementCopy = isUnwiredPoint
-    ? interpretationInReviewSummary
-    : emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
+  const emergencyPlacementCopy = emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
   const localContent = {
     summary: emergencyPlacementCopy,
     body: emergencyPlacementCopy,
@@ -5405,7 +5425,7 @@ function currentSkyPlacementDetailArticle({
     localContent,
     { allowKnowledgeOnly: false }
   );
-  const generated = isUnwiredPoint
+  const generated = isUnwiredSkyPointPlacement(position)
     ? null
     : liveGeneratedContentByKeysMatching(
         generatedContent,
@@ -5434,9 +5454,7 @@ function currentSkyPlacementDetailArticle({
       )
     : sourceGroundedBody.length > 0
       ? sourceGroundedBody
-      : isUnwiredPoint
-        ? interpretationInReviewParagraphs
-        : liveGeneratedBody(generated, fallbackDetailParagraphs);
+      : liveGeneratedBody(generated, fallbackDetailParagraphs);
   const historicalLookback = resolveSkyHistoricalLookback({
     enabled: skyHistoricalLookbackEnabled(generatedContent),
     eventIdentity: {
@@ -8389,13 +8407,17 @@ function synastryContactContentKeys(
 function richSynastryContactContextKeys(relationshipType?: string | null) {
   const normalized = normalizeRelationshipContextKey(relationshipType);
   const contextKeyByRelationship: Partial<Record<ReturnType<typeof normalizeRelationshipContextKey>, string>> = {
-    friendship: "friends",
-    romantic: "partner",
-    exes: "ex",
+    friend: "friends",
+    acquaintance: "friends",
+    "romantic-partner": "partner",
+    ex: "ex",
+    situationship: "partner",
     family: "family",
-    coworkers: "coworkers",
-    creative: "coworkers",
-    complicated: "friends"
+    coworker: "coworkers",
+    business: "coworkers",
+    "teacher-mentor": "coworkers",
+    "employer-manager": "coworkers",
+    "roommate-neighbor": "friends"
   };
   const contextKey = contextKeyByRelationship[normalized] ?? "friends";
 
@@ -8599,7 +8621,7 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\bpart of you being activated\b/g, () => `part of ${object(false)} that is being activated`)
       .replace(/\bpart of you\b/g, () => `part of ${object(false)}`)
       .replace(/\bthe standards you hold yourself to live inside you\b/g, () => `the standards ${subjectWithVerb(false, "carry", "carries")} live inside ${object(false)}`)
-      .replace(/\bthe authority you quietly earn becomes yours to claim\b/g, () => `the authority ${subjectWithAdverbVerb(false, "quietly", "earn", "earns")} becomes ${pronouns.possessivePronoun} to claim`)
+      .replace(/\bthe authority (?:you quietly earn|they quietly earned) becomes (?:yours|theirs) to claim\b/g, () => `the authority ${subjectWithAdverbVerb(false, "quietly", "earn", "earns")} becomes ${pronouns.possessivePronoun} to claim`)
       .replace(/\bwhat gives your life\b/g, `what gives ${pronouns.possessive} life`)
       .replace(/\byourself\b/g, pronouns.reflexive)
       .replace(/\bYours\b/g, () => capitalize(pronouns.possessivePronoun))
@@ -8869,13 +8891,17 @@ function synastryAspectBehaviorSentence(aspect?: string) {
 function relationshipContextNoun(value?: string | null) {
   const normalized = normalizeRelationshipContextKey(value);
   const labels: Record<string, string> = {
-    friendship: "friendship",
-    romantic: "relationship",
+    friend: "friendship",
+    acquaintance: "acquaintanceship",
+    "romantic-partner": "relationship",
+    ex: "connection",
+    situationship: "connection",
     family: "family relationship",
-    coworkers: "working relationship",
-    creative: "creative collaboration",
-    exes: "connection",
-    complicated: "connection"
+    coworker: "working relationship",
+    business: "working relationship",
+    "teacher-mentor": "mentoring relationship",
+    "employer-manager": "working relationship",
+    "roommate-neighbor": "home connection"
   };
 
   return labels[normalized] ?? "connection";
@@ -8884,7 +8910,7 @@ function relationshipContextNoun(value?: string | null) {
 function relationshipContextVerb(value?: string | null) {
   const normalized = normalizeRelationshipContextKey(value);
 
-  if (normalized === "coworkers") {
+  if (normalized === "coworker" || normalized === "business" || normalized === "employer-manager") {
     return "working relationship";
   }
 
@@ -9011,19 +9037,19 @@ function samePlanetSynastryFallback(context: RelationshipFallbackGrammarContext)
   const aspectFamily = samePlanetFallbackAspectFamily(context.aspect);
   const exactKey = `${contextKey}/${pointKey}/${aspectKey}`;
   const exactExamples: Record<string, string> = {
-    "friendship/saturn/conjunction": [
+    "friend/saturn/conjunction": [
       `${pairLabel} may both take promises seriously, even when the promise is small.`,
       "That can make the friendship steady: each person understands why follow-through matters.",
       "The edge is that you can make a simple plan heavier than it needs to be, or hesitate over the same risk until nobody moves.",
       "Let the structure help the friendship breathe. Keep the agreement clear, then let it be enough."
     ].join(" "),
-    "romantic/venus/square": [
+    "romantic-partner/venus/square": [
       `${pairLabel} may care about each other and still recognize care through different actions.`,
       "One person may want more shared time, softness, or reassurance while the other needs more space, directness, or practical proof.",
       "The square is not a lack of affection; it is the moment affection asks to be translated.",
       "Say what makes you feel chosen before resentment turns the mismatch into a scorecard."
     ].join(" "),
-    "exes/venus/square": [
+    "ex/venus/square": [
       `${pairLabel} may still remember what felt sweet, and also why sweetness was not enough.`,
       "The mismatch may have lived in timing, money, attention, or the way each person tried to repair discomfort.",
       "The square keeps the old preference visible without making it a reason to return.",
@@ -9035,19 +9061,19 @@ function samePlanetSynastryFallback(context: RelationshipFallbackGrammarContext)
       "The square asks for a pause before tone becomes the whole argument.",
       "Repeat what you heard before defending what you meant."
     ].join(" "),
-    "coworkers/mars/opposition": [
+    "coworker/mars/opposition": [
       `${pairLabel} may both want the work to move, but not from the same starting line.`,
       "One person may begin before the plan is settled while the other pushes back until the method is clear.",
       "The opposition can turn the task into a contest over who gets to set the pace.",
       "Name the next move and the reason for it before effort becomes resistance."
     ].join(" "),
-    "coworkers/jupiter/trine": [
+    "business/jupiter/trine": [
       `${pairLabel} may find it easy to believe a plan can grow.`,
       "That can help the business relationship when optimism is tied to a real offer, a clear audience, and numbers both people can check.",
       "The trine opens the door, but it still needs a decision about scope.",
       "Let the bigger vision earn trust through the next practical step."
     ].join(" "),
-    "friendship/neptune/conjunction": [
+    "friend/neptune/conjunction": [
       `${pairLabel} may share a soft spot for what could be better, kinder, or more meaningful.`,
       "In friendship, that can make space for compassion without needing every feeling explained right away.",
       "The conjunction can also blur what was promised, assumed, or left unsaid.",
@@ -9387,6 +9413,171 @@ function synastryContacts(
   return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
 }
 
+const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
+
+const compatibilityPlanetTopics: Record<typeof compatibilityPlanets[number], string> = {
+  Sun: "identity, direction, confidence, visibility",
+  Moon: "safety, instinct, care, emotional rhythm",
+  Mercury: "thinking, communication, listening, learning",
+  Venus: "affection, preference, values, pleasure, repair",
+  Mars: "action, desire, conflict, boundaries",
+  Jupiter: "growth, faith, encouragement, opportunity",
+  Saturn: "commitment, limits, responsibility, trust over time"
+};
+
+const signModalityMap: Record<string, "cardinal" | "fixed" | "mutable"> = {
+  Aries: "cardinal",
+  Cancer: "cardinal",
+  Libra: "cardinal",
+  Capricorn: "cardinal",
+  Taurus: "fixed",
+  Leo: "fixed",
+  Scorpio: "fixed",
+  Aquarius: "fixed",
+  Gemini: "mutable",
+  Virgo: "mutable",
+  Sagittarius: "mutable",
+  Pisces: "mutable"
+};
+
+function compatibilityPractice(relationshipType?: string | null) {
+  const group = relationshipContextGroup(relationshipType);
+  const practices: Record<ReturnType<typeof relationshipContextGroup>, string> = {
+    friendship: "Try naming the pattern as a difference in style before deciding anyone is being difficult.",
+    romance: "Make one direct request instead of asking attraction to translate every need.",
+    family: "Separate the old role from what each of you is actually asking for now.",
+    work: "Agree on ownership, timing, and what done means before the pattern has to carry the whole task.",
+    home: "Name shared-space expectations while the issue is still small enough to adjust.",
+    neutral: "Use one specific example before turning the pattern into a conclusion."
+  };
+
+  return practices[group] ?? practices.neutral;
+}
+
+function signExpression(planet: string, sign: string, owner: "reader" | "friend", friendName: string) {
+  const subject = owner === "reader" ? "you" : friendName;
+  const possessive = owner === "reader" ? "your" : possessiveLabel(friendName);
+  const element = signElementMap[sign] ?? null;
+  const modality = signModalityMap[sign] ?? null;
+  const elementPhrase = element ? `${element.toLowerCase()}-led` : "distinct";
+  const modalityPhrase = modality ? `${modality} rhythm` : "personal rhythm";
+
+  return owner === "reader"
+    ? `tends to move through ${possessive} ${planet.toLowerCase()} topics with a ${elementPhrase}, ${modalityPhrase}.`
+    : `brings a ${elementPhrase}, ${modalityPhrase} to ${possessive} ${planet.toLowerCase()} topics.`;
+}
+
+function signRelationSentence(personASign: string, personBSign: string, friendName: string) {
+  if (personASign === personBSign) {
+    return `Both placements share ${personASign}'s style, which can create recognition while also repeating the same blind spot.`;
+  }
+
+  const personAElement = signElementMap[personASign];
+  const personBElement = signElementMap[personBSign];
+  if (personAElement && personAElement === personBElement) {
+    return `Both signs work through ${personAElement.toLowerCase()} logic, so translation may come more easily even when your timing differs.`;
+  }
+
+  const personAModality = signModalityMap[personASign];
+  const personBModality = signModalityMap[personBSign];
+  if (personAModality && personAModality === personBModality) {
+    return `The signs share a ${personAModality} pace, which can feel familiar and can also raise questions about who sets the method.`;
+  }
+
+  return `Your ${personASign} style and ${possessiveLabel(friendName)} ${personBSign} style may need explicit translation; difference is context, not a verdict.`;
+}
+
+function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
+  const separation = angularDistance(zodiacLongitude(personAPosition), zodiacLongitude(personBPosition));
+
+  return transitAspectDefinitions
+    .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+    .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, personBPosition.planet, personAPosition.planet))
+    .sort((first, second) => first.orbValue - second.orbValue)[0] ?? null;
+}
+
+function compatibilityAspectVerb(aspect: string) {
+  const verbs: Record<string, string> = {
+    conjunction: "joins",
+    sextile: "opens",
+    trine: "supports",
+    square: "presses on",
+    opposition: "faces"
+  };
+
+  return verbs[aspect] ?? "contacts";
+}
+
+function compatibilityAspectDynamic(aspect: string) {
+  const dynamics: Record<string, string> = {
+    conjunction: "The two functions operate close together, so it helps to separate shared recognition from automatic agreement.",
+    sextile: "The opening becomes useful when one of you actively picks it up.",
+    trine: "Translation may come more easily here, though ease still needs attention to stay awake.",
+    square: "The friction asks for adjustment, clearer choices, and less mind-reading.",
+    opposition: "The pattern works best when both ends get named instead of one person carrying the contrast."
+  };
+
+  return dynamics[aspect] ?? "The contact describes one active thread in the relationship, not the whole relationship.";
+}
+
+function compatibilityPlanetCards(
+  profileNatalSky: SkySnapshot | null,
+  chart: ManualChart,
+  relationshipType?: string | null
+): CompatibilityPlanetCard[] {
+  const friendSky = chart.natalChart;
+
+  if (!profileNatalSky || !friendSky) {
+    return [];
+  }
+
+  return compatibilityPlanets.flatMap((planet) => {
+    const yourPosition = profileNatalSky.positions.find((position) => position.planet === planet);
+    const friendPosition = friendSky.positions.find((position) => position.planet === planet);
+
+    if (!yourPosition || !friendPosition) {
+      return [];
+    }
+
+    const exactAspect = samePlanetExactAspect(yourPosition, friendPosition);
+    const hasExactAspect = Boolean(exactAspect);
+    const synthesis = exactAspect
+      ? `Your ${planet} ${compatibilityAspectVerb(exactAspect.type)} ${possessiveLabel(chart.displayName)} ${planet} within ${wholeDegreeOrb(exactAspect.orbValue)}. ${compatibilityAspectDynamic(exactAspect.type)}`
+      : signRelationSentence(yourPosition.sign, friendPosition.sign, chart.displayName);
+
+    return [{
+      id: `compatibility-${normalizeContentIdPart(planet)}`,
+      glyph: yourPosition.glyph || pointGlyph(planet),
+      planet,
+      topic: compatibilityPlanetTopics[planet],
+      youSign: yourPosition.sign,
+      friendName: chart.displayName,
+      friendSign: friendPosition.sign,
+      planetFunction: `${planet} describes ${compatibilityPlanetTopics[planet].split(", ").slice(0, 3).join(", ")} in the relationship.`,
+      yourStyle: `Your ${planet} in ${yourPosition.sign} ${signExpression(planet, yourPosition.sign, "reader", chart.displayName)}`,
+      friendStyle: `${possessiveLabel(chart.displayName)} ${planet} in ${friendPosition.sign} ${signExpression(planet, friendPosition.sign, "friend", chart.displayName)}`,
+      synthesis,
+      practice: compatibilityPractice(relationshipType),
+      exactAspectLabel: hasExactAspect && exactAspect
+        ? `Exact contact: your ${planet} ${exactAspect.type} ${possessiveLabel(chart.displayName)} ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
+        : undefined,
+      contentTrace: `tier=${hasExactAspect ? "safe-floor-exact-aspect" : "safe-floor-sign-relation"};route=friends.compatibility;planet=${planet};relationship=${normalizeRelationshipContextKey(relationshipType)}`
+    }];
+  });
+}
+
+function compatibilityAtAGlance(cards: CompatibilityPlanetCard[]) {
+  const exactCard = cards.find((card) => card.exactAspectLabel);
+  const sameSignCard = cards.find((card) => card.youSign === card.friendSign);
+  const translationCard = cards.find((card) => card.youSign !== card.friendSign && signElementMap[card.youSign] !== signElementMap[card.friendSign]);
+
+  return [
+    exactCard ? `${exactCard.planet} gives this comparison one concrete contact to work with: ${exactCard.synthesis}` : sameSignCard ? `${sameSignCard.planet} has a shared sign style, so recognition may come quickly without proving sameness everywhere.` : "",
+    translationCard ? `${translationCard.planet} may need translation because ${translationCard.youSign} and ${translationCard.friendSign} use different elemental languages.` : "",
+    cards[0]?.practice ?? ""
+  ].filter(Boolean).slice(0, 3);
+}
+
 function synastryDetailCopy(
   friendName: string,
   comparisonName: string,
@@ -9655,7 +9846,22 @@ type PhrasebankCompositeRelationshipType =
   | "complicated";
 
 function phrasebankCompositeRelationshipType(value?: string | null): PhrasebankCompositeRelationshipType {
-  return normalizeRelationshipContextKey(value);
+  const normalized = normalizeRelationshipContextKey(value);
+  const phrasebankMap: Record<ReturnType<typeof normalizeRelationshipContextKey>, PhrasebankCompositeRelationshipType> = {
+    friend: "friendship",
+    acquaintance: "friendship",
+    "romantic-partner": "romantic",
+    ex: "exes",
+    situationship: "complicated",
+    family: "family",
+    coworker: "coworkers",
+    business: "coworkers",
+    "teacher-mentor": "coworkers",
+    "employer-manager": "coworkers",
+    "roommate-neighbor": "friendship"
+  };
+
+  return phrasebankMap[normalized] ?? "friendship";
 }
 
 function compositeRelationshipTypeSection(
@@ -11410,14 +11616,14 @@ export function App() {
     const birthCity = validChartBirthCity(primaryChart);
     const birthTime = validChartBirthTime(primaryChart);
 
-    if (!birthDate || !birthCity || !birthTime) {
+    if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       setProfileNatalSky(null);
       return;
     }
 
     const unknownBirthTime = birthTime === "Time unknown";
     let cancelled = false;
-    const birthLocation = withTimeZone(primaryChart?.birthLocation ?? locationFromLabel(birthCity));
+    const birthLocation = primaryChart.birthLocation;
     const birthDateTime = zonedDateTimeToUtc(birthDate, unknownBirthTime ? "12:00 PM" : birthTime, birthLocation.timeZone);
 
     getAstrodienstSky(birthLocation, birthDateTime)
@@ -12141,8 +12347,10 @@ export function App() {
     const birthCity = transitForm.birthPlace.trim();
     const birthLocation = birthCity
       ? transitForm.birthLocation?.label === birthCity
-        ? withTimeZone(transitForm.birthLocation)
-        : locationFromLabel(birthCity)
+        ? transitForm.birthLocation.timeZone
+          ? transitForm.birthLocation
+          : null
+        : null
       : null;
 
     if (currentCity) {
@@ -12161,6 +12369,11 @@ export function App() {
     }
 
     if (userProfile) {
+      if (birthCity && !birthLocation) {
+        setChartModalStep("birth");
+        return;
+      }
+
       const primaryChart = userProfile.charts[0];
       const nextProfileName = nextName || userProfile.name;
       let nextChart: UserChart = {
@@ -14873,9 +15086,7 @@ function PlacementTable({
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
           const isUnwiredPoint = isUnwiredSkyPointPlacement(position);
-          const emergencyPlacementCopy = isUnwiredPoint
-            ? interpretationInReviewSummary
-            : emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
+          const emergencyPlacementCopy = emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
           const localContent = {
             summary: emergencyPlacementCopy,
             body: emergencyPlacementCopy,
@@ -14915,7 +15126,7 @@ function PlacementTable({
               );
           const sourceGroundedSummary = sourceGroundedSkyPlacementSummary(position);
           const fallbackSummary = fallbackPreviewText(content);
-          const rowSummary = sourceGroundedSummary || (isUnwiredPoint ? interpretationInReviewSummary : "") || (
+          const rowSummary = sourceGroundedSummary || (
             isRetrograde
               ? retrogradeGeneratedSummary(position, generated, fallbackSummary)
               : liveGeneratedSummary(generated, fallbackSummary)
@@ -17005,7 +17216,7 @@ function ManualChartsPanel({
   const [editingChartId, setEditingChartId] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
-  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("natal");
+  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -17086,6 +17297,10 @@ function ManualChartsPanel({
         lifeAreaFocus
       )
     : [];
+  const selectedCompatibilityCards = selectedChart && !selectedChartIsEvent
+    ? compatibilityPlanetCards(relationshipComparisonSky, selectedChart, selectedChart.relationshipType)
+    : [];
+  const selectedCompatibilityAtAGlance = compatibilityAtAGlance(selectedCompatibilityCards);
   const selectedSynastryAspectLines: InterChartAspectLine[] = selectedChart && !selectedChartIsEvent
     ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
     : [];
@@ -17096,6 +17311,8 @@ function ManualChartsPanel({
       ? false
     : selectedChartIsEvent
       ? false
+      : friendProfileTab === "compatibility"
+      ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
@@ -17273,7 +17490,7 @@ function ManualChartsPanel({
     storeFriendsTab(nextTab);
     setFriendsMainView(nextTab);
     setSelectedChartId(null);
-    setFriendProfileTab("natal");
+    setFriendProfileTab("compatibility");
     setRelationshipChartFullscreenMode(null);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
@@ -17300,7 +17517,7 @@ function ManualChartsPanel({
     } else {
       setFriendsMainView(routeState.tab);
       setSelectedChartId(null);
-      setFriendProfileTab("natal");
+      setFriendProfileTab("compatibility");
       setRelationshipComparisonChartId("self");
       setRelationshipChartFullscreenMode(null);
     }
@@ -17314,7 +17531,7 @@ function ManualChartsPanel({
       storeFriendsTab(nextTab);
       setFriendsMainView(nextTab);
       setSelectedChartId(null);
-      setFriendProfileTab("natal");
+      setFriendProfileTab("compatibility");
       setRelationshipChartFullscreenMode(null);
       setRelationshipComparisonChartId("self");
       setRelationshipComparisonPickerOpen(false);
@@ -17330,7 +17547,7 @@ function ManualChartsPanel({
         storeFriendsTab(nextTab);
         setFriendsMainView(nextTab);
         setSelectedChartId(null);
-        setFriendProfileTab("natal");
+        setFriendProfileTab("compatibility");
         setRelationshipChartFullscreenMode(null);
         setRelationshipComparisonPickerOpen(false);
         setOpenChartMenuId(null);
@@ -17536,6 +17753,80 @@ function ManualChartsPanel({
   }, [chartOwnerUserId, chartRefreshKey, chartsReady, profile.id]);
 
   useEffect(() => {
+    if (!chartsReady || charts.length === 0) {
+      return;
+    }
+
+    const chartsToRepair = charts.filter(manualChartNeedsNatalRepair);
+
+    if (chartsToRepair.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+
+    Promise.allSettled(chartsToRepair.map(async (chart) => {
+      const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
+      if (!birthLocation) {
+        return null;
+      }
+
+      if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
+        return null;
+      }
+
+      const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+      const natalChart = await getAstrodienstSky(
+        birthLocation,
+        zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone)
+      );
+      const input: ManualChartInput = {
+        chartType: chart.chartType,
+        displayName: chart.displayName,
+        firstName: chart.firstName ?? null,
+        lastName: chart.lastName ?? null,
+        pronouns: chart.pronouns,
+        relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+        birthDate: chart.birthDate,
+        birthTime: chart.birthTime,
+        birthTimeUnknown: chart.birthTimeUnknown,
+        birthPlace: chart.birthPlace,
+        birthLocation,
+        natalChart,
+        notes: chart.notes ?? null
+      };
+
+      return updateManualChart(chartOwnerUserId, chart.id, input);
+    }))
+      .then((results) => {
+        if (cancelled) {
+          return;
+        }
+
+        const repairedCharts = results
+          .filter((result): result is PromiseFulfilledResult<ManualChart | null> => result.status === "fulfilled")
+          .map((result) => result.value)
+          .filter((chart): chart is ManualChart => Boolean(chart));
+
+        if (repairedCharts.length === 0) {
+          return;
+        }
+
+        setCharts((currentCharts) => {
+          const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+
+          return currentCharts
+            .map((chart) => repairedById.get(chart.id) ?? chart)
+            .sort((first, second) => first.displayName.localeCompare(second.displayName));
+        });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [chartOwnerUserId, charts, chartsReady]);
+
+  useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
     setRelationshipComparisonChartId((currentId) => {
       if (currentId === "self") {
@@ -17655,11 +17946,11 @@ function ManualChartsPanel({
   function openFriendProfile(chart: ManualChart) {
     setOpenChartMenuId(null);
     setSelectedChartId(chart.id);
-    setFriendProfileTab("natal");
+    setFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setFriendsMainView("profile");
-    updateFriendProfileUrl(chart.id, "natal");
+    updateFriendProfileUrl(chart.id, chart.chartType === "event" ? "natal" : "compatibility");
   }
 
   function changeFriendProfileTab(tab: FriendProfileTab) {
@@ -17678,7 +17969,7 @@ function ManualChartsPanel({
       ...currentForm,
       chartType,
       pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
-      relationshipType: chartType === "event" ? "friendship" : normalizeRelationshipContextKey(currentForm.relationshipType)
+      relationshipType: chartType === "event" ? "friend" : normalizeRelationshipContextKey(currentForm.relationshipType)
     }));
   }
 
@@ -17690,12 +17981,14 @@ function ManualChartsPanel({
     const birthPlace = form.birthPlace.trim();
     const birthLocation = birthPlace
       ? form.birthLocation?.label === birthPlace
-        ? withTimeZone(form.birthLocation)
-        : locationFromLabel(birthPlace)
+        ? form.birthLocation.timeZone
+          ? form.birthLocation
+          : null
+        : null
       : null;
 
     if (!displayName || !birthDate || !birthPlace || !birthLocation) {
-      setMessage(formCopy.requiredMessage);
+      setMessage(!birthLocation && birthPlace ? "Choose a city from the birth place suggestions. If it is already selected, timezone lookup is unavailable." : formCopy.requiredMessage);
       return;
     }
 
@@ -17744,14 +18037,20 @@ function ManualChartsPanel({
       });
       setSelectedChartId(savedChart.id);
       setFriendsMainView("profile");
-      setFriendProfileTab("natal");
+      setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
       setRelationshipComparisonChartId("self");
       setRelationshipComparisonPickerOpen(false);
-      updateFriendProfileUrl(savedChart.id, "natal", "replace");
+      updateFriendProfileUrl(savedChart.id, savedChart.chartType === "event" ? "natal" : "compatibility", "replace");
       resetForm(editingChartId ? "Chart updated." : "Chart created.");
       setFriendChartModalOpen(false);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save chart.");
+      const message = error instanceof Error
+        ? error.message
+        : typeof error === "object" && error && "message" in error && typeof error.message === "string"
+          ? error.message
+          : "Could not save chart.";
+
+      setMessage(message);
     } finally {
       setStatus("idle");
     }
@@ -17927,6 +18226,8 @@ function ManualChartsPanel({
               ascendant={selectedChart.natalChart.ascendant}
               ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
               midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+              innerAscendant={relationshipComparisonSky.ascendant}
+              innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
               houseSignLabelStyle={houseSignLabelStyle}
             />
           </RelationshipChartFullscreen>
@@ -17984,6 +18285,25 @@ function ManualChartsPanel({
                   </div>
                 </div>
               )}
+              {friendProfileTab === "compatibility" && selectedChart.natalChart && relationshipComparisonSky && (
+                <div className="friend-synastry-wheel-shell">
+                  <div className="chart-shell">
+                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} compatibility chart wheel`}>
+                      <SynastryWheel
+                        outerPositions={selectedChart.natalChart.positions}
+                        innerPositions={relationshipComparisonSky?.positions ?? []}
+                        interAspects={selectedSynastryAspectLines}
+                        ascendant={selectedChart.natalChart.ascendant}
+                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
+                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                        innerAscendant={relationshipComparisonSky.ascendant}
+                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
+                        houseSignLabelStyle={houseSignLabelStyle}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
               {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
                 <div className="friend-synastry-wheel-shell">
                   <div className="chart-shell">
@@ -17995,6 +18315,8 @@ function ManualChartsPanel({
                         ascendant={selectedChart.natalChart.ascendant}
                         ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
                         midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
+                        innerAscendant={relationshipComparisonSky.ascendant}
+                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
                         houseSignLabelStyle={houseSignLabelStyle}
                       />
                     </div>
@@ -18054,7 +18376,46 @@ function ManualChartsPanel({
           onTabChange={changeFriendProfileTab}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}
           sun={selectedFriendBigThree?.sun ?? "Pending"}
+          tabs={selectedChartIsEvent
+            ? [
+              { value: "natal", label: "Natal" }
+            ]
+            : [
+              { value: "compatibility", label: "Compatibility" },
+              { value: "transits", label: "Transits" },
+              { value: "natal", label: "Natal" },
+              { value: "synastry", label: "Synastry" },
+              { value: "composite", label: "Composite" }
+            ]}
         >
+
+          {friendProfileTab === "compatibility" && (
+            selectedCompatibilityCards.length > 0 ? (
+              <CompatibilityTab
+                atAGlance={selectedCompatibilityAtAGlance}
+                cards={selectedCompatibilityCards}
+                comparisonLabel={relationshipComparisonIsSelf ? "Compared with you" : `Compared with ${relationshipComparisonName}`}
+                dynamics={[]}
+                friendBigThree={[
+                  { label: "Sun", value: selectedFriendBigThree?.sun ?? "Pending" },
+                  { label: "Moon", value: selectedFriendBigThree?.moon ?? "Pending" },
+                  { label: "Rising", value: selectedFriendBigThree?.rising ?? "Rising pending" }
+                ].filter((item) => !/pending/i.test(item.value))}
+                friendName={selectedChart.displayName}
+                relationshipLabel={relationshipTypeLabel(selectedChart.relationshipType ?? undefined)}
+              />
+            ) : (
+              <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${selectedChart.displayName} compatibility`}>
+                <div className="friend-profile-copy-column compatibility-column">
+                  <article className="friends-logic-card">
+                    <span>Compatibility</span>
+                    <h3>Add both birth charts.</h3>
+                    <p>Compatibility appears when your chart and {possessiveLabel(selectedChart.displayName)} chart are both available. The comparison uses planets and signs without a score.</p>
+                  </article>
+                </div>
+              </div>
+            )
+          )}
 
           {friendProfileTab === "natal" && (
             <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">

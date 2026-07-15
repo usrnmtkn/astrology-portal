@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger, createServer } from "vite";
@@ -8,6 +9,12 @@ import { createLogger, createServer } from "vite";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const apiSrc = path.join(repoRoot, "services/tldrastro-api/src");
+const pythonCandidates = [
+  process.env.PYTHON_BIN,
+  "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+  "python3",
+  "python"
+].filter((candidate) => candidate && (!candidate.startsWith("/") || fs.existsSync(candidate)));
 
 const cases = [
   {
@@ -77,7 +84,7 @@ function runApi(caseData) {
     PYTHONPATH: process.env.PYTHONPATH ? `${apiSrc}:${process.env.PYTHONPATH}` : apiSrc
   };
 
-  for (const executable of ["python3", "python"]) {
+  for (const executable of pythonCandidates) {
     const result = spawnSync(executable, ["-c", apiCode], {
       input: JSON.stringify(payload),
       encoding: "utf8",

@@ -556,7 +556,7 @@ const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }
   { key: "reference", label: "References / articles" },
   { key: "user-generated", label: "User-generated" },
   { key: "other", label: "Other current rows" },
-  { key: "legacy", label: "Legacy archive" }
+  { key: "legacy", label: "Archive" }
 ];
 
 const phrasebankTierFilters: Array<{ key: AdminPhrasebankTierFilter; label: string }> = [
@@ -574,8 +574,8 @@ function nextGeneratedContentPreviewMode(mode: GeneratedContentPreviewMode): Gen
 }
 
 function generatedContentPreviewModeLabel(mode: GeneratedContentPreviewMode) {
-  if (mode === "emergency-floor") return "Floor only";
-  if (mode === "hide-emergency-floor") return "Hidden";
+  if (mode === "emergency-floor") return "Fallback floor";
+  if (mode === "hide-emergency-floor") return "Rich rows only";
   return "Normal";
 }
 
@@ -975,7 +975,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   if (activePage === "templates") return "Templates";
   if (activePage === "reviewQueue") return "Review Queue";
   if (activePage === "compositeByType") return "Composite Review";
-  if (activePage === "vocabulary") return "Vocabulary";
+  if (activePage === "vocabulary") return "Vocabulary & Phrases";
   if (activePage === "slotDictionary") return "Slots";
   if (activePage === "knowledge") return "Fallback Hooks";
   if (activePage === "hooks") return "Surface Map";
@@ -991,7 +991,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   if (activePage === "templates") return "Admin / Composition / Templates";
   if (activePage === "reviewQueue") return "Admin / Publish / Review queue";
   if (activePage === "compositeByType") return "Admin / Write / Composite review";
-  if (activePage === "vocabulary") return "Admin / Composition / Vocabulary";
+  if (activePage === "vocabulary") return "Admin / Composition / Vocabulary & phrases";
   if (activePage === "slotDictionary") return "Admin / Composition / Slots";
   if (activePage === "knowledge") return "Admin / Composition / Fallback hooks";
   if (activePage === "hooks") return "Admin / App surfaces / Surface map";
@@ -1032,7 +1032,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "vocabulary") {
-    return "Edit reusable words and clauses that fill template slots, such as planet topics, house topics, signs, angles, lunar phrases, and relationship language.";
+    return "Edit reusable words, clauses, and short phrases that fill template slots, such as planet topics, house topics, signs, angles, lunar phrases, and relationship language.";
   }
 
   if (activePage === "slotDictionary") {
@@ -1040,7 +1040,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   }
 
   if (activePage === "knowledge") {
-    return "Edit fallback hooks and slot templates by surface. These are the full-sentence safety templates that render when exact content and rich composition miss.";
+    return "Edit fallback-hook rows by surface. These are the full-sentence safety templates that render when exact content and rich composition miss.";
   }
 
   if (activePage === "hooks") {
@@ -1404,9 +1404,9 @@ function skyHistoricalLookbackSettingEnabled(row?: AdminGeneratedContentRow | nu
 
 function templateDraftFromRow(row: AdminGeneratedContentRow): AdminTemplateDraft {
   return {
-    headline: row.headline ?? "",
-    summary: row.summary ?? "",
-    body: row.body ?? "",
+    headline: adminReaderCopyOrEmpty(row.headline ?? ""),
+    summary: adminReaderCopyOrEmpty(row.summary ?? ""),
+    body: adminReaderCopyOrEmpty(row.body ?? ""),
     status: row.status
   };
 }
@@ -1671,14 +1671,29 @@ function templateSeedForFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, 
     ?? null;
 }
 
-function isLegacyFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "prompt_version" | "source_snapshot">) {
+function isLegacyFallbackTemplateRow(row: Pick<AdminGeneratedContentRow, "content_key" | "prompt_version" | "source_snapshot" | "facts" | "provider" | "model">) {
+  const contentKey = row.content_key.toLowerCase();
   const promptVersion = row.prompt_version ?? "";
   const sourceSnapshot = objectValue(row.source_snapshot);
+  const sourceName = typeof sourceSnapshot?.source === "string" ? sourceSnapshot.source.toLowerCase() : "";
+  const metadata = [
+    row.provider,
+    row.model,
+    promptVersion,
+    sourceName,
+    JSON.stringify(row.facts ?? {}),
+    JSON.stringify(row.source_snapshot ?? {})
+  ].join(" ").toLowerCase();
+
+  if (contentKey.startsWith("cc/fallback")) return true;
+  if (sourceName.includes("legacy") || sourceName.includes("fallback-template-legacy-restore")) return true;
+  if (metadata.includes("legacy copy") || metadata.includes("unsafe copy") || metadata.includes("archived model")) return true;
+  if (metadata.includes("replace the headline, summary, and body")) return true;
 
   return (
     promptVersion !== "fallback-hook-template-v1"
     && promptVersion !== "mustache-madlib-v2.2"
-  ) || sourceSnapshot?.source === "fallback-template-legacy-restore";
+  );
 }
 
 function hookSectionForKey(hookKey: string): AdminFallbackHookSectionFilter {
@@ -2108,6 +2123,107 @@ function dynamicSlotDictionaryRowsFromTemplates(
     });
 }
 
+function placeholderSlotsFromTemplate(value: string) {
+  const slots = new Set<string>();
+  const placeholderPattern = /\{([a-zA-Z0-9_.-]+)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = placeholderPattern.exec(value)) !== null) {
+    const slotName = match[1]?.trim();
+    if (!slotName) continue;
+    slots.add(`{{${slotName}}}`);
+  }
+
+  return [...slots];
+}
+
+function fallbackHookDefinitionSlots(hook: FallbackHookDefinition) {
+  const slots = new Set<string>();
+
+  hook.slotKeys?.forEach((slotKey) => slots.add(`{{${slotKey}}}`));
+  hook.requiredFacts.forEach((fact) => {
+    const tokenName = fact.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    if (tokenName) slots.add(`{{${tokenName}}}`);
+  });
+  hook.knowledgeIdTemplates.forEach((template) => {
+    placeholderSlotsFromTemplate(template).forEach((slot) => slots.add(slot));
+  });
+  Object.values(hook.copy).forEach((copyValue) => {
+    mustacheSlotsFromText(copyValue).forEach((slot) => slots.add(slot));
+  });
+
+  return [...slots];
+}
+
+function lunarContentDefinitionSlots(definition: LunarCalendarContentKeyDefinition) {
+  return definition.slotKeys.map((slotKey) => `{{${slotKey}}}`);
+}
+
+function slotDictionaryRowsFromRuntimeRegistry(
+  templateRows: AdminGeneratedContentRow[],
+  reusableRows: AdminGeneratedContentRow[]
+) {
+  const examplesBySlot = new Map<string, Set<string>>();
+
+  function addExample(slot: string, example: string) {
+    const examples = examplesBySlot.get(slot) ?? new Set<string>();
+    examples.add(example);
+    examplesBySlot.set(slot, examples);
+  }
+
+  fallbackHookDefinitions.forEach((hook) => {
+    fallbackHookDefinitionSlots(hook).forEach((slot) => addExample(slot, hook.key));
+  });
+  lunarCalendarContentKeyDefinitions.forEach((definition) => {
+    lunarContentDefinitionSlots(definition).forEach((slot) => addExample(slot, definition.key));
+  });
+
+  return [...examplesBySlot.entries()]
+    .sort(([first], [second]) => first.localeCompare(second))
+    .map(([slot, examples]) => {
+      const tokenName = slotNameFromBraces(slot);
+      const group = slotDictionaryGroupForToken(tokenName);
+      const editableIn = slotDictionaryEditableForToken(tokenName);
+      const matchingReusableRows = reusableRows.filter((row) => slotDictionaryVocabularyRowMatchesToken(row, tokenName));
+      const matchingTemplateRows = templateRows.filter((row) => {
+        const key = row.content_key.toLowerCase();
+        return [...examples].some((example) => {
+          const normalizedExample = example.toLowerCase();
+          return key === normalizedExample
+            || key === `fallback-hook/${normalizedExample}`
+            || key === `slot-template/${normalizedExample}`
+            || key.includes(normalizedExample.replace(/\//g, "."))
+            || key.includes(normalizedExample);
+        });
+      });
+      const status: SlotDictionaryStatus = editableIn === "Calculated"
+        ? "calculated"
+        : editableIn === "Vocabulary"
+          ? adminContentReadinessStatus(matchingReusableRows)
+          : adminContentReadinessStatus(matchingTemplateRows);
+
+      return {
+        slot,
+        label: readableLabelFromSlotName(tokenName),
+        group,
+        source: editableIn === "Calculated"
+          ? "Runtime hook registry / calculated context"
+          : editableIn === "Vocabulary"
+            ? `vocabulary or phrase rows for ${tokenName}`
+            : "registered fallback-hook or slot-template route",
+        editableIn,
+        status,
+        description: editableIn === "Calculated"
+          ? "The active route, sky event, natal chart, friend chart, or relationship context supplies this value at render time."
+          : editableIn === "Vocabulary"
+            ? "Reusable phrase-bank language required by one or more registered reader surfaces."
+            : "Template copy required by one or more registered reader surfaces.",
+        examples: [...examples].slice(0, 6),
+        action: slotDictionaryActionForDynamicToken(tokenName, editableIn, group)
+      } satisfies AdminSlotDictionaryRow;
+    });
+}
+
 function mergeSlotDictionaryRows(staticRows: AdminSlotDictionaryRow[], dynamicRows: AdminSlotDictionaryRow[]) {
   const rowsBySlot = new Map<string, AdminSlotDictionaryRow>();
 
@@ -2296,11 +2412,11 @@ function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
   const child = fallbackChildParts(row);
 
   if (child?.family === "placement") {
-    return "Specific Sky placement fallback used before the generic planetary-placement template and before local emergency copy.";
+    return "Specific Sky placement fallback used before the generic planetary-placement template and before local safety-net copy.";
   }
 
   if (child?.family === "aspect") {
-    return "Specific Sky aspect fallback used before the generic aspect-detail template and before local emergency copy.";
+    return "Specific Sky aspect fallback used before the generic aspect-detail template and before local safety-net copy.";
   }
 
   const hookKey = hookKeyFromFallbackTemplateRow(row);
@@ -2310,7 +2426,10 @@ function descriptionForFallbackTemplateRow(row: AdminGeneratedContentRow) {
 }
 
 function previewForFallbackTemplateDraft(draft: AdminTemplateDraft) {
-  return compactAdminText(draft.summary || draft.body || draft.headline, "No fallback copy saved yet.");
+  return compactAdminText(
+    [draft.summary, draft.body, draft.headline].find((value) => value && !isAdminImportMetadataText(value)),
+    "No fallback copy saved yet."
+  );
 }
 
 function fallbackTemplatePreviewField(
@@ -3503,6 +3622,25 @@ function compactAdminText(value: string | null | undefined, fallback = "No reade
   return normalized || fallback;
 }
 
+function isAdminImportMetadataText(value: string | null | undefined) {
+  const normalized = compactAdminText(value, "").toLowerCase();
+
+  if (!normalized) {
+    return false;
+  }
+
+  return /^(reviewed|confirmed|draft|live|published|archived)\s*[·•-]/i.test(normalized)
+    || normalized.includes("legacy copy: replace")
+    || normalized.includes("fallback: unsafe copy")
+    || normalized.includes("replace the headline, summary, and body")
+    || normalized.includes("saved legacy fallback copy")
+    || normalized.includes("archived model");
+}
+
+function adminReaderCopyOrEmpty(value: string | null | undefined) {
+  return isAdminImportMetadataText(value) ? "" : value ?? "";
+}
+
 function normalizeAdminSections(value: AdminGeneratedContentRow["sections"] | undefined): Array<{ heading: string; body: string }> {
   if (!Array.isArray(value)) {
     return [];
@@ -3660,6 +3798,32 @@ function isLegacyGeneratedContentRecord(record: AdminReviewRecord) {
   return record.source === "global" && !isPhrasebankRecord(record);
 }
 
+function isArchivedModelRecord(record: AdminReviewRecord) {
+  const contentKey = record.contentKey.toLowerCase();
+  const sourceSnapshot = objectValue(record.sourceSnapshot);
+  const sourceName = typeof sourceSnapshot?.source === "string" ? sourceSnapshot.source.toLowerCase() : "";
+  const metadata = [
+    record.provider,
+    record.model,
+    record.promptVersion,
+    record.reviewerNotes,
+    sourceName,
+    JSON.stringify(record.facts ?? {}),
+    JSON.stringify(record.sourceSnapshot ?? {}),
+    JSON.stringify(record.rawGlobalRow?.facts ?? {}),
+    JSON.stringify(record.rawGlobalRow?.source_snapshot ?? {})
+  ].join(" ").toLowerCase();
+
+  return contentKey.startsWith("cc/fallback")
+    || sourceName.includes("legacy")
+    || sourceName.includes("fallback-template-legacy-restore")
+    || metadata.includes("legacy copy")
+    || metadata.includes("unsafe copy")
+    || metadata.includes("archived model")
+    || metadata.includes("replace the headline, summary, and body")
+    || (isLegacyGeneratedContentRecord(record) && !isArticleReviewRecord(record));
+}
+
 function isArticleReviewRecord(record: AdminReviewRecord) {
   const sourceSnapshot = objectValue(record.sourceSnapshot);
 
@@ -3671,6 +3835,7 @@ function isArticleReviewRecord(record: AdminReviewRecord) {
 
 function contentClassForReviewRecord(record: AdminReviewRecord): AdminContentClass {
   if (record.source === "private") return "user-generated";
+  if (isArchivedModelRecord(record)) return "legacy";
   if (isFallbackTemplateRecord(record)) return "fallback-hook";
   if (isVocabularyContentRecord(record)) return "vocab";
   if (isArticleReviewRecord(record)) return "reference";
@@ -3685,6 +3850,14 @@ function contentClassForGeneratedRow(row: AdminGeneratedContentRow): AdminConten
   const eventType = (row.event_type ?? "").toLowerCase().replaceAll("_", "-");
   const sourceSnapshot = objectValue(row.source_snapshot);
   const sourceName = typeof sourceSnapshot?.source === "string" ? sourceSnapshot.source : "";
+  const metadata = [
+    row.provider,
+    row.model,
+    row.prompt_version,
+    sourceName,
+    JSON.stringify(row.facts ?? {}),
+    JSON.stringify(row.source_snapshot ?? {})
+  ].join(" ").toLowerCase();
   const factRecord = objectValue(row.facts);
   const hasPhrasebankTier = Boolean(
     objectValue(factRecord?.phrasebank)?.tier
@@ -3694,6 +3867,13 @@ function contentClassForGeneratedRow(row: AdminGeneratedContentRow): AdminConten
   );
 
   if (contentKey.startsWith("cc/fallback")) return "legacy";
+  if (
+    sourceName.toLowerCase().includes("legacy")
+    || metadata.includes("legacy copy")
+    || metadata.includes("unsafe copy")
+    || metadata.includes("archived model")
+    || metadata.includes("replace the headline, summary, and body")
+  ) return "legacy";
   if (contentKey.startsWith("fallback-hook/") || eventType === "fallback-hook" || row.block_type === "fallback_template") return "fallback-hook";
   if (contentKey.startsWith("vocab/") || contentKey.startsWith("fallback-vocab/") || eventType === "vocabulary") return "vocab";
   if (contentKey.startsWith("reference/") || sourceSnapshot?.referenceOnly === true) return "reference";
@@ -3704,7 +3884,7 @@ function contentClassForGeneratedRow(row: AdminGeneratedContentRow): AdminConten
 
 function contentClassLabel(contentClass: AdminContentClass) {
   if (contentClass === "phrasebank") return "Phrasebank";
-  if (contentClass === "fallback-hook") return "Fallback-hook";
+  if (contentClass === "fallback-hook") return "Fallback hooks";
   if (contentClass === "vocab") return "Vocab";
   if (contentClass === "reference") return "Reference";
   if (contentClass === "legacy") return "Archive";
@@ -4338,6 +4518,10 @@ function readerSafetyBlockReason(record: AdminReviewRecord) {
   const hasAnyCopy = Boolean(record.body.trim() || record.summary.trim() || record.sections.some((section) => section.body.trim()));
   const safeCopy = readerFacingCopyForRecord(record);
   const metadataReason = recordUnsafeServingMetadataReason(record);
+
+  if (isArchivedModelRecord(record)) {
+    return "Archived model rows are blocked from reader routes until they are rewritten as current exact content, fallback hooks, or slot templates.";
+  }
 
   if (metadataReason) {
     return metadataReason;
@@ -5391,9 +5575,17 @@ export function GeneratedContentAdminDashboard() {
     () => templateContentRows.filter((row) => !isLegacyFallbackTemplateRow(row)),
     [templateContentRows]
   );
+  const currentMustacheTemplateRows = useMemo(
+    () => currentTemplateContentRows.filter((row) => row.content_key.startsWith("slot-template/")),
+    [currentTemplateContentRows]
+  );
+  const currentFallbackHookRows = useMemo(
+    () => currentTemplateContentRows.filter((row) => row.content_key.startsWith("fallback-hook/")),
+    [currentTemplateContentRows]
+  );
   const fallbackHookSectionCounts = useMemo(() => {
     const counts = {
-      all: currentTemplateContentRows.length,
+      all: currentFallbackHookRows.length,
       sky: 0,
       you: 0,
       friends: 0,
@@ -5401,7 +5593,7 @@ export function GeneratedContentAdminDashboard() {
       settings: 0
     } satisfies Record<AdminFallbackHookSectionFilter, number>;
 
-    currentTemplateContentRows.forEach((row) => {
+    currentFallbackHookRows.forEach((row) => {
       const section = fallbackHookSectionForRow(row);
 
       if (section !== "all") {
@@ -5410,16 +5602,27 @@ export function GeneratedContentAdminDashboard() {
     });
 
     return counts;
-  }, [currentTemplateContentRows]);
-  const filteredTemplateContentRows = useMemo(() => (
+  }, [currentFallbackHookRows]);
+  const filteredFallbackHookRows = useMemo(() => (
     fallbackHookSectionFilter === "all"
-      ? currentTemplateContentRows
-      : currentTemplateContentRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
-  ), [currentTemplateContentRows, fallbackHookSectionFilter]);
+      ? currentFallbackHookRows
+      : currentFallbackHookRows.filter((row) => fallbackHookSectionForRow(row) === fallbackHookSectionFilter)
+  ), [currentFallbackHookRows, fallbackHookSectionFilter]);
+  const duplicateMustacheTemplateKeys = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    currentMustacheTemplateRows.forEach((row) => {
+      counts.set(row.content_key, (counts.get(row.content_key) ?? 0) + 1);
+    });
+
+    return Array.from(counts.entries())
+      .filter(([, count]) => count > 1)
+      .map(([contentKey]) => contentKey);
+  }, [currentMustacheTemplateRows]);
   const isLunarCoverageSelected = false;
-  const selectedTemplateContentRow = templateContentRows.find((row) => row.id === selectedTemplateContentId)
+  const selectedTemplateContentRow = currentTemplateContentRows.find((row) => row.id === selectedTemplateContentId)
     ?? (selectedFallbackHookKey
-      ? findFallbackTemplateRowForHook(templateContentRows, selectedFallbackHookKey)
+      ? findFallbackTemplateRowForHook(currentTemplateContentRows, selectedFallbackHookKey)
       : null);
   const selectedLunarCatalogDefinition = selectedHookCatalogItem?.type === "lunar"
     ? lunarCalendarContentKeyDefinitions.find((definition) => definition.key === selectedHookCatalogItem.key) ?? null
@@ -5461,7 +5664,7 @@ export function GeneratedContentAdminDashboard() {
 
   function openFallbackHookTemplateEditor(hookKey: string, mode: AdminTemplateDrawerMode = "edit") {
     const contentKey = canonicalFallbackTemplateContentKey(hookKey) ?? contextContentKey(hookKey);
-    const row = findFallbackTemplateRowForHook(templateContentRows, hookKey);
+    const row = findFallbackTemplateRowForHook(currentTemplateContentRows, hookKey);
 
     setFallbackHookSectionFilter(hookSectionForKey(hookKey));
     setTemplateDrawerMode(mode);
@@ -5569,8 +5772,8 @@ export function GeneratedContentAdminDashboard() {
     new Map(lunarCoverageRows.map((row) => [row.content_key, row]))
   ), [lunarCoverageRows]);
   const fallbackTemplateRowsByContentKey = useMemo(() => (
-    new Map(templateContentRows.map((row) => [row.content_key, row]))
-  ), [templateContentRows]);
+    new Map(currentTemplateContentRows.map((row) => [row.content_key, row]))
+  ), [currentTemplateContentRows]);
   const vocabularyRowsByContentKey = useMemo(() => (
     new Map(vocabularyRows.map((row) => [row.content_key, row]))
   ), [vocabularyRows]);
@@ -6079,7 +6282,7 @@ export function GeneratedContentAdminDashboard() {
       [...vocabularyRows, ...taglineRows].filter((row) => row.content_key.startsWith(prefix))
     );
     const fallbackReadiness = (prefix: string) => adminContentReadinessStatus(
-      templateContentRows.filter((row) => row.content_key.startsWith(prefix))
+      currentTemplateContentRows.filter((row) => row.content_key.startsWith(prefix))
     );
 
     const staticRows = baseSlotDictionaryRows.map((row) => {
@@ -6097,10 +6300,12 @@ export function GeneratedContentAdminDashboard() {
         status
       } satisfies AdminSlotDictionaryRow;
     });
-    const dynamicRows = dynamicSlotDictionaryRowsFromTemplates(templateContentRows, [...vocabularyRows, ...taglineRows]);
+    const reusableRows = [...vocabularyRows, ...taglineRows];
+    const dynamicRows = dynamicSlotDictionaryRowsFromTemplates(currentTemplateContentRows, reusableRows);
+    const registryRows = slotDictionaryRowsFromRuntimeRegistry(currentTemplateContentRows, reusableRows);
 
-    return mergeSlotDictionaryRows(staticRows, dynamicRows);
-  }, [taglineRows, templateContentRows, vocabularyRows]);
+    return mergeSlotDictionaryRows(mergeSlotDictionaryRows(staticRows, registryRows), dynamicRows);
+  }, [currentTemplateContentRows, taglineRows, vocabularyRows]);
   const slotDictionaryCounts = useMemo(() => ({
     calculated: slotDictionaryRows.filter((row) => row.status === "calculated").length,
     ready: slotDictionaryRows.filter((row) => row.status === "ready").length,
@@ -6226,6 +6431,23 @@ export function GeneratedContentAdminDashboard() {
     return (payload.rows ?? []).sort((first, second) => first.content_key.localeCompare(second.content_key));
   }
 
+  function chooseCurrentTemplateRowForAdmin(
+    existing: AdminGeneratedContentRow | undefined,
+    candidate: AdminGeneratedContentRow
+  ) {
+    if (!existing) return candidate;
+
+    const existingIsArchived = isLegacyFallbackTemplateRow(existing) || contentClassForGeneratedRow(existing) === "legacy";
+    const candidateIsArchived = isLegacyFallbackTemplateRow(candidate) || contentClassForGeneratedRow(candidate) === "legacy";
+
+    if (existingIsArchived && !candidateIsArchived) return candidate;
+    if (!existingIsArchived && candidateIsArchived) return existing;
+
+    return new Date(candidate.updated_at).getTime() > new Date(existing.updated_at).getTime()
+      ? candidate
+      : existing;
+  }
+
   async function fetchTemplateRowsForAdmin() {
     const prefixes = ["fallback-hook/", "slot-template/"];
     const payloads = await Promise.all(prefixes.map((prefix) => {
@@ -6248,12 +6470,10 @@ export function GeneratedContentAdminDashboard() {
         continue;
       }
 
-      const key = `${row.content_key}::${row.mode}`;
+      const key = row.content_key;
       const existing = savedRowsByKey.get(key);
 
-      if (!existing || new Date(row.updated_at).getTime() > new Date(existing.updated_at).getTime()) {
-        savedRowsByKey.set(key, row);
-      }
+      savedRowsByKey.set(key, chooseCurrentTemplateRowForAdmin(existing, row));
     }
 
     const savedRows = Array.from(savedRowsByKey.values())
@@ -7250,7 +7470,7 @@ export function GeneratedContentAdminDashboard() {
       if (fallbackMatch) {
         const hookKey = decodeURIComponent(fallbackMatch[1]);
         const contentKey = canonicalFallbackTemplateContentKey(hookKey) ?? contextContentKey(hookKey);
-        const row = findFallbackTemplateRowForHook(templateContentRows, hookKey);
+        const row = findFallbackTemplateRowForHook(currentTemplateContentRows, hookKey);
         const expectedSelectedId = row?.id ?? `placeholder:${contentKey}`;
 
         if (handledAdminDeepLinkHashRef.current === hash && selectedTemplateContentId === expectedSelectedId) {
@@ -7301,7 +7521,7 @@ export function GeneratedContentAdminDashboard() {
     window.addEventListener("hashchange", openFromHash);
 
     return () => window.removeEventListener("hashchange", openFromHash);
-  }, [lunarCoverageRowsByKey, selectedHookCatalogItem?.key, selectedId, selectedTemplateContentId, templateContentRows]);
+  }, [currentTemplateContentRows, lunarCoverageRowsByKey, selectedHookCatalogItem?.key, selectedId, selectedTemplateContentId]);
 
   useEffect(() => {
     void checkTldrAstroApiStatus();
@@ -10106,7 +10326,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             aria-current={activePage === "vocabulary" ? "page" : undefined}
           >
             <Database size={18} aria-hidden="true" />
-            Vocabulary
+            Vocabulary & Phrases
           </button>
           <button
             className={activePage === "knowledge" ? "active" : ""}
@@ -10213,8 +10433,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   <button type="button" role="menuitem" onClick={() => handleCreateAction("vocabulary", "Vocabulary rows fill slots with reusable words, clauses, and short phrases.")}>
                     <Database size={15} aria-hidden="true" />
                     <span>
-                      Vocabulary value
-                      <small>Reusable slot language</small>
+                      Reusable phrase
+                      <small>Slot language or clause</small>
                     </span>
                   </button>
                   <button type="button" role="menuitem" onClick={() => handleCreateAction("templates", "Templates control sentence structure and where slots appear.")}>
@@ -10224,11 +10444,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       <small>Mustache structure</small>
                     </span>
                   </button>
-                  <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Fallback hooks are the emergency templates used when richer content is unavailable.")}>
+                  <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Fallback hooks are the reusable safety-net templates used when richer content is unavailable.")}>
                     <KeyRound size={15} aria-hidden="true" />
                     <span>
                       Fallback hook
-                      <small>Emergency rendering floor</small>
+                      <small>Safety-net template</small>
                     </span>
                   </button>
                 </div>
@@ -10338,7 +10558,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <button type="button" onClick={() => navigateAdminPage("knowledge")}>
                 <BookOpenText size={18} aria-hidden="true" />
                 <span>Fallback Hooks</span>
-                <small>Edit emergency templates used when richer rows miss.</small>
+                <small>Edit safety-net templates used when richer rows miss.</small>
               </button>
               <button type="button" onClick={() => navigateAdminPage("hooks")}>
                 <LayoutDashboard size={18} aria-hidden="true" />
@@ -10390,7 +10610,7 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
               <div>
                 <p className="admin-eyebrow">Write</p>
                 <h2>Articles</h2>
-                <p>Create long-form editorial drafts here. Articles are saved as editable DRAFT rows and stay out of fallback hooks and vocabulary.</p>
+                <p>Create long-form editorial drafts here. Articles are editable DRAFT rows and stay separate from fallback hooks, templates, and vocabulary.</p>
               </div>
               <div className="admin-template-actions">
                 <button type="button" onClick={startNewArticle}>
@@ -10423,15 +10643,15 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                 <div className="admin-fallback-row-main">
                   <div>
                     <p className="admin-eyebrow">Current state</p>
-                    <h3>Article rows are visible, but not split into a dedicated API yet</h3>
+                    <h3>Start article drafts from this page</h3>
                   </div>
                   <span className="ui-pill admin-template-badge">Editor home</span>
                 </div>
-                <p>For now, create article drafts from Exact Content and classify them as article or essay rows. This page keeps article work out of fallback hooks, templates, and vocabulary while the dedicated article library is wired.</p>
+                <p>Use New Article Draft for essays, guides, long-form explainers, and reusable editorial excerpts. Use Exact Content only when copy belongs to one specific app card or chart surface.</p>
                 <div className="admin-fallback-row-actions">
-                  <button type="button" onClick={() => navigateAdminPage("content")}>
-                    <FileText size={15} aria-hidden="true" />
-                    Open Exact Content
+                  <button type="button" onClick={startNewArticle}>
+                    <Plus size={15} aria-hidden="true" />
+                    New Article Draft
                   </button>
                   <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                     <TreePine size={15} aria-hidden="true" />
@@ -11339,21 +11559,21 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             })()}
           </section>
         ) : activePage === "knowledge" ? (
-          <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback hook and slot-template rows">
+          <section className="admin-template-panel admin-knowledge-page" aria-label="Fallback hook rows">
             <div className="admin-template-header">
               <div>
                 <p className="admin-eyebrow">Composition</p>
                 <h2>Fallback Hooks</h2>
-                <p>Edit the emergency full-sentence templates that render after exact content and phrase-bank composition miss. Use Templates for structure and Vocabulary for reusable phrases.</p>
+                <p>Edit the fallback-hook rows that render after exact content and phrase-bank composition miss. Use Templates for Mustache structure and Vocabulary & Phrases for reusable clauses.</p>
               </div>
               <div className="admin-release-summary" aria-label="Fallback hook row count">
                 <article>
                   <span>{fallbackHookSectionFilter === "all" ? "Rows" : "Filtered"}</span>
-                  <strong>{filteredTemplateContentRows.length}</strong>
+                  <strong>{filteredFallbackHookRows.length}</strong>
                 </article>
                 <article>
                   <span>Families</span>
-                  <strong>fallback + slot</strong>
+                  <strong>fallback-hook/</strong>
                 </article>
               </div>
               <div className="admin-template-actions">
@@ -11375,11 +11595,11 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             <div className="admin-fallback-usage" aria-label="How fallback rows are used">
                 <article>
                   <span>Edit here</span>
-                  <p>Use this page for current <code>fallback-hook/</code> routes and <code>slot-template/</code> Mustache templates.</p>
+                  <p>Use this page for current <code>fallback-hook/</code> routes only.</p>
                 </article>
                 <article>
-                  <span>Do not put here</span>
-                  <p>Articles, rich readings, vocabulary fragments, and legacy <code>cc/fallback</code> rows belong outside this editor.</p>
+                  <span>Use other editors for</span>
+                  <p>Templates, articles, rich readings, archived rows, and vocabulary fragments each have their own editor.</p>
                 </article>
                 <article>
                   <span>Preview first</span>
@@ -11411,8 +11631,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             </div>
 
             {!isLunarCoverageSelected && (
-              <div className="admin-fallback-row-list" aria-label="Fallback hook and slot-template rows">
-                {filteredTemplateContentRows.map((row) => {
+              <div className="admin-fallback-row-list" aria-label="Fallback hook rows">
+                {filteredFallbackHookRows.map((row) => {
                   const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
                   const badge = contentTypeBadge(row);
                   const hookKey = hookKeyFromFallbackTemplateRow(row);
@@ -11469,8 +11689,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                     </article>
                   );
                 })}
-                {filteredTemplateContentRows.length === 0 && (
-                  <p className="admin-empty">No fallback hook or slot-template rows match this section.</p>
+                {filteredFallbackHookRows.length === 0 && (
+                  <p className="admin-empty">No fallback-hook rows match this section.</p>
                 )}
               </div>
             )}
@@ -12124,10 +12344,73 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
             )}
           </section>
         ) : activePage === "templates" ? (
-          <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Content voice templates">
+          <section id="voice-templates" className="admin-template-panel admin-template-page" aria-label="Template library and AI draft controls">
+            <section className="admin-phrasebook-panel" aria-label="Mustache template library">
+              <div className="admin-section-heading-row">
+                <div>
+                  <p className="admin-eyebrow">Composition</p>
+                  <h2>Mustache Template Library</h2>
+                  <p>Edit <code>slot-template/</code> rows here. These hold sentence structure and slot placement; Fallback Hooks hold route-specific safety copy.</p>
+                </div>
+                <span className="ui-pill">{currentMustacheTemplateRows.length} templates</span>
+              </div>
+
+              {duplicateMustacheTemplateKeys.length > 0 && (
+                <p className="admin-template-note admin-publication-note">
+                  Duplicate template IDs detected: {duplicateMustacheTemplateKeys.join(", ")}. Keep one current row per template key before publishing.
+                </p>
+              )}
+
+              <div className="admin-fallback-row-list" aria-label="Mustache templates">
+                {currentMustacheTemplateRows.map((row) => {
+                  const rowDraft = templateContentDrafts[row.id] ?? templateDraftFromRow(row);
+                  const badge = contentTypeBadge(row);
+
+                  const openTemplateRow = (mode: AdminTemplateDrawerMode) => {
+                    setTemplateDrawerMode(mode);
+                    setSelectedTemplateContentId(row.id);
+                    setSelectedFallbackHookKey(row.content_key);
+                    setActivePage("knowledge");
+                    window.history.replaceState(null, "", `#fallback-row/${encodeURIComponent(row.content_key)}`);
+                  };
+
+                  return (
+                    <article className="admin-fallback-row" data-template-row={row.content_key} key={row.id}>
+                      <div className="admin-fallback-row-main">
+                        <div>
+                          <p className="admin-eyebrow">{row.prompt_version ?? "template"} / {fallbackHookSurfaceLabel(row)}</p>
+                          <h3>{labelForFallbackTemplateRow(row)}</h3>
+                          <code>{row.content_key}</code>
+                        </div>
+                        <div className="admin-managed-badges">
+                          {badge && <span className="ui-pill admin-template-badge">{badge}</span>}
+                          <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{row.status}</span>
+                        </div>
+                      </div>
+                      <p>{descriptionForFallbackTemplateRow(row)}</p>
+                      <small>{previewForFallbackTemplateDraft(rowDraft)}</small>
+                      <div className="admin-fallback-row-actions">
+                        <button type="button" onClick={() => openTemplateRow("view")} title={`View ${row.content_key} inside the dashboard`}>
+                          <Eye size={15} aria-hidden="true" />
+                          View template
+                        </button>
+                        <button type="button" onClick={() => openTemplateRow("edit")} title={`Edit ${row.content_key}`}>
+                          <Pencil size={15} aria-hidden="true" />
+                          Edit
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+                {currentMustacheTemplateRows.length === 0 && (
+                  <p className="admin-empty">No slot-template rows are loaded.</p>
+                )}
+              </div>
+            </section>
+
             <div className="admin-template-header">
               <div>
-                <p className="admin-eyebrow">Generation controls</p>
+                <p className="admin-eyebrow">AI draft controls</p>
                 <h2>{voiceTemplateLabels[activeTemplateSurface]}</h2>
                 <p>Set the reusable instructions the generator should follow when creating this type of astrology content. Save here first, then go back to Content Review and generate drafts.</p>
               </div>
@@ -12465,8 +12748,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         {phrasebankTierText ? (
                           <span className="ui-pill admin-status">{phrasebankTierText}</span>
                         ) : null}
-                        {isLegacyGeneratedContentRecord(record) ? (
-                          <span className="ui-pill admin-status">Legacy</span>
+                        {isArchivedModelRecord(record) ? (
+                          <span className="ui-pill admin-status status-archived">Archive</span>
                         ) : null}
                         <button
                           type="button"
@@ -12667,17 +12950,17 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
           </section>
         ) : (
           <>
-            <section className="admin-content-toolbar" aria-label="Content filters">
-              <div>
+            <section className="admin-content-toolbar" aria-label="Content controls">
+              <div className="admin-content-toolbar-copy">
                 <p className="admin-eyebrow">Content library</p>
                 <h2>Phrasebank Content</h2>
                 <p>
                   {isLoading && visibleContentRecords.length === 0
                     ? "Loading phrasebank content."
                     : generatedContentPreviewMode === "emergency-floor"
-                    ? `${visibleContentRecords.length} emergency-floor rows visible in localhost preview.`
+                    ? `${visibleContentRecords.length} fallback floor rows visible in localhost preview.`
                     : generatedContentPreviewMode === "hide-emergency-floor"
-                    ? `${visibleContentRecords.length} rows with ${emergencyFloorRecords.length} emergency-floor rows hidden for diagnostic review.`
+                    ? `${visibleContentRecords.length} rows with ${emergencyFloorRecords.length} fallback floor rows hidden for diagnostic review.`
                     : `${cmsStatusCounts.all} reader-facing rows with the normal serving hierarchy.`
                   }
                 </p>
@@ -12695,16 +12978,24 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                   title={generatedContentPreviewModeDescription(generatedContentPreviewMode)}
                 >
                   {generatedContentPreviewMode === "hide-emergency-floor" ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
-                  <span>Viewer preview</span>
+                  <span>Preview</span>
                   <strong>{generatedContentPreviewModeLabel(generatedContentPreviewMode)}</strong>
                 </button>
                 <button type="button" onClick={() => setActivePage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
                 </button>
+                <button type="button" onClick={startNewArticle}>
+                  <Plus size={16} aria-hidden="true" />
+                  New Article
+                </button>
                 <button type="button" onClick={() => setActivePage("articles")}>
                   <BookOpenText size={16} aria-hidden="true" />
                   Articles
+                </button>
+                <button type="button" onClick={() => setActivePage("templates")}>
+                  <Sparkles size={16} aria-hidden="true" />
+                  Templates
                 </button>
                 <button type="button" onClick={() => setActivePage("vocabulary")}>
                   <BookOpenText size={16} aria-hidden="true" />
@@ -13017,9 +13308,9 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                         : reviewLoadError
                         ? `Content could not load: ${reviewLoadError}`
                         : generatedContentPreviewMode === "hide-emergency-floor" && emergencyFloorRecords.length > 0
-                        ? "Only emergency-floor rows match these filters. Turn the emergency floor back on to inspect them."
+                        ? "Only fallback floor rows match these filters. Turn the fallback floor back on to inspect them."
                         : generatedContentPreviewMode === "emergency-floor"
-                        ? "No emergency-floor rows match these filters."
+                        ? "No fallback floor rows match these filters."
                         : "No content records match these filters yet."}
                     </p>
                   )}
@@ -13047,8 +13338,8 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                       {phrasebankTierLabel(phrasebankTierForRecord(selectedReviewRecord)) ? (
                         <span className="ui-pill admin-status">{phrasebankTierLabel(phrasebankTierForRecord(selectedReviewRecord))}</span>
                       ) : null}
-                      {isLegacyGeneratedContentRecord(selectedReviewRecord) ? (
-                        <span className="ui-pill admin-status">Legacy</span>
+                      {isArchivedModelRecord(selectedReviewRecord) ? (
+                        <span className="ui-pill admin-status status-archived">Archive</span>
                       ) : null}
                     </div>
                     <label className="admin-title-field">
@@ -13128,10 +13419,10 @@ function factsWithReviewMetadata(record: AdminReviewRecord, metadata: AdminRevie
                             void saveReviewEdit(selectedReviewRecord, "LIVE");
                           }}
                           disabled={!canEditSelectedReviewRecord || isLoading}
-                          title="Final sign-off publishes the DRAFT row and clears review_state through the admin API."
+                          title="Publish this signed-off row and clear the review hold."
                         >
                           <Check size={16} aria-hidden="true" />
-                          Final Sign-off
+                          Sign Off
                         </button>
                       ) : null}
                       {selectedReviewRecord.source !== "private" && (

@@ -122,6 +122,18 @@ function clusterRadialOffset(index: number, size: number) {
   return index % 2 === 0 ? -4 : 4;
 }
 
+function boundedRadius(value: number, minRadius?: number, maxRadius?: number) {
+  if (typeof minRadius === "number" && value < minRadius) {
+    return minRadius;
+  }
+
+  if (typeof maxRadius === "number" && value > maxRadius) {
+    return maxRadius;
+  }
+
+  return value;
+}
+
 export function longitudeToChartAngle(
   longitudeDeg: number,
   ascendantDeg?: number,
@@ -169,7 +181,10 @@ export function wheelMarkerLayouts<T>(
     clusterThreshold = 6,
     maxClusterSpan = 24,
     clusterTangentSpacing,
-    maxClusterTangentOffset = 24
+    maxClusterTangentOffset = 24,
+    radialOffsets,
+    minMarkerRadius,
+    maxMarkerRadius
   }: {
     baseRadius: number;
     center: number;
@@ -177,6 +192,9 @@ export function wheelMarkerLayouts<T>(
     maxClusterSpan?: number;
     clusterTangentSpacing?: number;
     maxClusterTangentOffset?: number;
+    radialOffsets?: number[];
+    minMarkerRadius?: number;
+    maxMarkerRadius?: number;
   }
 ) {
   const entries = items
@@ -229,8 +247,8 @@ export function wheelMarkerLayouts<T>(
 
     group.forEach((entry, index) => {
       const visualAngle = entry.angle;
-      const radialOffset = clusterRadialOffset(index, group.length);
-      const markerRadius = baseRadius + radialOffset;
+      const radialOffset = radialOffsets?.[index % radialOffsets.length] ?? clusterRadialOffset(index, group.length);
+      const markerRadius = boundedRadius(baseRadius + radialOffset, minMarkerRadius, maxMarkerRadius);
       const markerBase = polarToCartesian(center, center, markerRadius, visualAngle);
       const tangentRad = ((visualAngle + 90) * Math.PI) / 180;
       const tangentOffset = tangentOffsets[index] ?? 0;

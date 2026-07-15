@@ -14,6 +14,7 @@ from tldrastro_api.models import (
     Position,
     Zodiac,
 )
+from tldrastro_api.services.timezone import resolve_timezone_name
 
 SIGNS: List[Tuple[str, str]] = [
     ("Aries", "♈"),
@@ -158,14 +159,21 @@ def resolve_datetime(subject: ChartSubject, warnings: List[str], unknown_time_me
 
     time_zone_name = value.timeZone or subject.location.timeZone
     if not time_zone_name:
-        warnings.append("No timezone supplied; UTC was used.")
-        time_zone_name = "UTC"
+        try:
+            time_zone_name, timezone_source, lookup_warnings = resolve_timezone_name(
+                subject.location.latitude,
+                subject.location.longitude,
+                value.date,
+            )
+            warnings.extend(lookup_warnings)
+            warnings.append(f"No timezone supplied; resolved {time_zone_name} from {timezone_source}.")
+        except Exception as error:
+            raise ValueError(f"No timezone supplied and coordinate lookup failed: {error}") from error
 
     try:
         local_zone = ZoneInfo(time_zone_name)
-    except Exception:
-        warnings.append(f"Timezone '{time_zone_name}' was not recognized; UTC was used.")
-        local_zone = timezone.utc
+    except Exception as error:
+        raise ValueError(f"Timezone '{time_zone_name}' was not recognized.") from error
 
     local = datetime.fromisoformat(f"{value.date}T{time_value}:00")
     return local.replace(tzinfo=local_zone).astimezone(timezone.utc)

@@ -17,13 +17,17 @@ export const samePlanetSynastryPlanets = [
 ] as const;
 
 export const samePlanetSynastryRelationshipContexts = [
-  "romantic",
-  "friendship",
+  "friend",
+  "acquaintance",
+  "romantic-partner",
+  "ex",
+  "situationship",
   "family",
-  "coworkers",
-  "creative",
-  "exes",
-  "complicated"
+  "coworker",
+  "business",
+  "teacher-mentor",
+  "employer-manager",
+  "roommate-neighbor"
 ] as const satisfies RelationshipContextKey[];
 
 const samePlanetSet = new Set<string>(samePlanetSynastryPlanets);

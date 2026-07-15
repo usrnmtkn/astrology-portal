@@ -41,7 +41,7 @@ export function createReaderSubject({
     subject: pronouns.subject ?? "they",
     object: pronouns.object ?? "them",
     possessive: pronouns.possessive ?? "their",
-    reflexive: pronouns.reflexive ?? "themself",
+    reflexive: pronouns.reflexive ?? "themselves",
     verbBe: (pronouns.subject ?? "they").toLowerCase() === "he" || (pronouns.subject ?? "they").toLowerCase() === "she" ? "is" : "are",
     verbHave: (pronouns.subject ?? "they").toLowerCase() === "he" || (pronouns.subject ?? "they").toLowerCase() === "she" ? "has" : "have"
   };

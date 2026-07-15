@@ -1,10 +1,16 @@
 import emergencyCopy from "./emergencyCopy.json";
+import ccSourcePhrases from "./templateHandoffV2/sources/cc-source-phrases.json";
 import { isReaderFacingCopy } from "./readerSafety";
 
 type EmergencyCopySlots = Record<string, string | number | null | undefined>;
 
 type EmergencyCopyData = typeof emergencyCopy;
 type EmergencyCopyTemplates = Record<string, string | undefined>;
+type SourcePhraseKey = keyof typeof ccSourcePhrases;
+
+function sourcePhrase(key: SourcePhraseKey) {
+  return ccSourcePhrases[key] ?? "";
+}
 
 const pointAliases: Record<string, string> = {
   "black-moon-lilith": "lilith",
@@ -285,7 +291,45 @@ export function emergencySkyAspectCopy(planetA: string, aspect: string, planetB:
   );
 }
 
+const skyPointGeneralCopy: Record<string, string> = {
+  chiron: "Chiron names the wounded-healer pattern: the place where an old hurt can become skill, mentorship, and repair.",
+  lilith: [
+    sourcePhrase("cc/guide-phrase/076"),
+    sourcePhrase("cc/guide-phrase/255").replace("your chart", "the chart"),
+    sourcePhrase("cc/guide-phrase/165")
+  ].filter(Boolean).join(" "),
+  "north-node": "The North Node points toward growth direction: the unfamiliar pattern that asks for practice, courage, and repetition.",
+  "south-node": "The South Node points toward a familiar pattern: what comes easily, what may be overused, and what is ready to be released or rebalanced."
+};
+
+const skyPointSignCopy: Record<string, Record<string, string>> = {
+  chiron: {
+    aries: "Chiron in Aries can make impulsiveness a mentor. The point is not to erase the spark, but to learn when courage needs care around it.",
+    gemini: "Chiron in Gemini can make curiosity a mentor. Questions become medicine when they help name what was confusing, unsaid, or misunderstood.",
+    scorpio: "Chiron in Scorpio does not skim the surface. This placement points toward deep material that asks to be met honestly rather than avoided."
+  }
+};
+
+export function emergencySkyPointPlacementCopy(point: string, sign?: string | null) {
+  const pointKey = normalizedEmergencyKey(point);
+  const signKey = sign ? normalizedEmergencyKey(sign) : "";
+  const copy = signKey ? skyPointSignCopy[pointKey]?.[signKey] : "";
+  const fallback = skyPointGeneralCopy[pointKey];
+
+  if (!copy && !fallback) {
+    return "";
+  }
+
+  return safeComposedCopy(copy || fallback || "", fallback || "");
+}
+
 export function emergencySkyPlacementCopy(planet: string, sign: string, options: { retrograde?: boolean } = {}) {
+  const pointCopy = emergencySkyPointPlacementCopy(planet, sign);
+
+  if (pointCopy) {
+    return pointCopy;
+  }
+
   const planetName = displayName(planet);
   const templateName = options.retrograde ? "sky.planetary-placement-retrograde" : "sky.planetary-placement";
   const composed = interpolateEmergencyCopy(template(templateName), {
@@ -306,6 +350,30 @@ export function emergencySkyPlacementCopy(planet: string, sign: string, options:
   return safeComposedCopy(composed, fallback);
 }
 
+export function emergencyDetailFallbackCopy(title: string, context: string = "") {
+  const pointMatch = title.match(/\b(Chiron|Black Moon Lilith|Lilith|North Node|South Node)\b/i);
+
+  if (pointMatch) {
+    const signMatch = title.match(/\bin\s+([A-Za-z]+)\b/);
+    const pointCopy = emergencySkyPointPlacementCopy(pointMatch[1], signMatch?.[1]);
+
+    if (pointCopy) {
+      return pointCopy;
+    }
+  }
+
+  const titleCopy = title.trim();
+  const contextCopy = context.trim().toLowerCase();
+  const composed = titleCopy
+    ? `${titleCopy} is active here. Use the chart facts on this page as a starting point, then notice what is asking for a clearer response.`
+    : "This chart factor is active here. Use the visible chart facts as a starting point, then notice what is asking for a clearer response.";
+  const fallback = contextCopy
+    ? `This ${contextCopy} is active here. Notice what is asking for a clearer response.`
+    : "This chart factor is active here. Notice what is asking for a clearer response.";
+
+  return safeComposedCopy(composed, fallback);
+}
+
 export function emergencyNatalPlacementCopy({
   house,
   point,
@@ -319,14 +387,14 @@ export function emergencyNatalPlacementCopy({
 }) {
   const houseNumber = house === null || house === undefined ? "" : String(house).replace(/\D/g, "");
   const houseLabel = ordinalHouse(houseNumber);
-  const signCopy = `${possessive} ${displayName(point)} is in ${sign}. This placement is still waiting for its reviewed paragraph, so use the chart facts here as context rather than a final interpretation.`;
+  const signCopy = `${possessive} ${displayName(point)} is in ${sign}. This placement describes how ${emergencyPlanetFunction(point)} moves through ${emergencySignTone(sign)} conditions.`;
 
   if (!houseLabel) {
-    return signCopy;
+    return safeComposedCopy(signCopy, `${possessive} ${displayName(point)} is in ${sign}. Notice how this placement asks for attention in real life.`);
   }
 
   const houseArea = emergencyHouseArea(houseNumber) || "the part of life asking for attention";
-  const houseCopy = `${possessive} ${displayName(point)} is in the ${houseLabel} house. This points attention toward ${houseArea}, where the placement needs a reviewed paragraph before the full reading is ready.`;
+  const houseCopy = `${possessive} ${displayName(point)} is in the ${houseLabel} house. This points attention toward ${houseArea}, where the placement asks for one clear, grounded response.`;
 
   return safeComposedCopy(houseCopy, signCopy);
 }

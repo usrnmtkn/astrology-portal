@@ -5,6 +5,7 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
+import { emergencyDetailFallbackCopy } from "../../content/emergencyCopy";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 
 type YouTab = "transits" | "chart";
@@ -667,7 +668,7 @@ function YouTransitArticlePage({
               })}
               {!hasReadableBody ? (
                 <section className="article-section sky-detail-section">
-                  <p>This interpretation is still being prepared.</p>
+                  <p>{emergencyDetailFallbackCopy(article.title, article.subtitle)}</p>
                 </section>
               ) : null}
               {article.relatedAspects?.rows.length ? (

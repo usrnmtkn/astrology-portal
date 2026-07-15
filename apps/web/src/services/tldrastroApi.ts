@@ -67,6 +67,24 @@ export type TldrAstroApiHealth = {
   };
 };
 
+export type TimezoneLookupRequest = {
+  latitude: number;
+  longitude: number;
+  date: string;
+  time?: string | null;
+  timeZone?: string | null;
+};
+
+export type TimezoneLookupResponse = {
+  timeZone: string;
+  utcOffsetMinutes: number;
+  isDst: boolean;
+  localDateTime: string;
+  utcDateTime: string;
+  source: "coordinates" | "request" | "fallback" | string;
+  warnings: string[];
+};
+
 type TimingBoostedTransit = {
   hit: Record<string, unknown>;
   baseScore: number;
@@ -162,6 +180,10 @@ export async function getTldrAstroApiHealth() {
 
 export function compareRelationship(request: RelationshipRequest) {
   return postTldrAstro<RelationshipCompareResponse>("/relationship/compare", request);
+}
+
+export function resolveTimezone(request: TimezoneLookupRequest) {
+  return postTldrAstro<TimezoneLookupResponse>("/utils/timezone", request);
 }
 
 export function getSynastry(request: RelationshipRequest) {

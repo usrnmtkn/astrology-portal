@@ -28,11 +28,11 @@ export type PersonReferenceInput = {
   isReader?: boolean;
 };
 
-export const defaultPronounChoice: PronounChoice = "name_only";
-export const pronounChoices: PronounChoice[] = ["name_only", "she", "he", "they"];
+export const defaultPronounChoice: PronounChoice = "they";
+export const pronounChoices: PronounChoice[] = ["they", "she", "he"];
 
 export const pronounChoiceLabels: Record<PronounChoice, string> = {
-  name_only: "Name only",
+  name_only: "They / Them",
   she: "She / Her",
   he: "He / Him",
   they: "They / Them"
@@ -41,7 +41,11 @@ export const pronounChoiceLabels: Record<PronounChoice, string> = {
 export type PersonSlotValues = Record<string, string>;
 
 export function normalizePronounChoice(value: string | null | undefined): PronounChoice {
-  return value === "she" || value === "he" || value === "they" || value === "name_only"
+  if (value === "name_only") {
+    return "they";
+  }
+
+  return value === "she" || value === "he" || value === "they"
     ? value
     : defaultPronounChoice;
 }
@@ -141,25 +145,21 @@ export function resolvePersonReference(person: PersonReferenceInput): PersonRefe
         name,
         verbAgreement: "plural"
       });
-    case "name_only":
     default:
       return buildPersonReference({
-        subject: name,
-        object: name,
-        possessiveAdjective: possessiveName(name),
-        possessivePronoun: possessiveName(name),
-        reflexive: name,
+        subject: "they",
+        object: "them",
+        possessiveAdjective: "their",
+        possessivePronoun: "theirs",
+        reflexive: "themselves",
         name,
-        verbAgreement: "singular"
+        verbAgreement: "plural"
       });
   }
 }
 
 export function resolveThirdPersonReference(person: PersonReferenceInput): PersonReference {
-  return resolvePersonReference({
-    ...person,
-    pronouns: normalizePronounChoice(person.pronouns) === "name_only" ? "they" : person.pronouns
-  });
+  return resolvePersonReference(person);
 }
 
 export function personReferenceSlots(prefix: string, reference: PersonReference): PersonSlotValues {

@@ -446,14 +446,14 @@ function skyPlacementClauses(planet: string, sign: string) {
     "Venus.Virgo": {
       compactSkyBehaviorClause: "sorts desire through what is workable enough to repair",
       skyShiftClause: "putting more attention on the details that decide whether ease can actually last",
-      collectiveBehaviorClause: "Preference may become less abstract when the real terms of care and effort have to be named plainly",
+      collectiveBehaviorClause: "Care works best when the terms are concrete, mutual, and easy to follow.",
       recognizableSituationClause: "A small mismatch in effort, taste, or expectation can reveal what needs adjustment before resentment gathers.",
       currentChoiceClause: "Make the repair specific enough that everyone knows what has changed."
     },
     "Mars.Gemini": {
       compactSkyBehaviorClause: "speeds up the argument or errand that needs a clearer channel",
       skyShiftClause: "putting more heat into the words and unfinished threads already in the room",
-      collectiveBehaviorClause: "Action may scatter when too many questions compete for the same attention",
+      collectiveBehaviorClause: "Momentum needs one clear channel before every question turns into an errand.",
       recognizableSituationClause: "A conversation can become the place where impatience, curiosity, and conflict all try to drive at once.",
       currentChoiceClause: "Choose the message that actually needs to be sent before chasing the next one."
     },
