@@ -60,6 +60,8 @@ const planetHitAreaRadius = 16;
 const angleIconSize = 34;
 const signIconSize = 27;
 const longSignIconSize = 29;
+const relationshipClusterTangentSpacing = 28;
+const relationshipClusterTangentLimit = 54;
 
 function zodiacLongitude(position?: PlanetPosition) {
   if (!position) {
@@ -102,7 +104,7 @@ function wheelPlanetIconFile(position: PlanetPosition) {
   return wheelPlanetIconFiles[position.planet];
 }
 
-function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
+function WheelPlanetGlyph({ position, yOffset = -4 }: { position: PlanetPosition; yOffset?: number }) {
   const iconHref = zodiacAssetHref(wheelPlanetIconFile(position));
   const iconSize = position.planet === "Sun" ? sunIconSize : planetIconSize;
 
@@ -111,7 +113,7 @@ function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
       <image
         href={iconHref}
         x={-iconSize / 2}
-        y={-iconSize / 2 - 4}
+        y={-iconSize / 2 + yOffset}
         width={iconSize}
         height={iconSize}
         className="planet-glyph planet-glyph-image wheel-placement__glyph"
@@ -123,14 +125,14 @@ function WheelPlanetGlyph({ position }: { position: PlanetPosition }) {
 
   if (position.planet === "Sun") {
     return (
-      <g className="planet-glyph planet-glyph-sun-symbol wheel-placement__glyph" transform="translate(0 -4) scale(0.64)" aria-hidden="true">
+      <g className="planet-glyph planet-glyph-sun-symbol wheel-placement__glyph" transform={`translate(0 ${yOffset}) scale(0.64)`} aria-hidden="true">
         <path transform="translate(-25 -25)" d="m7,25a18,18 0 1,1 0,.1zm3,0a15,15 0 1,0 0-.1zm11,0a4,4 0 1,0 0-.1z" />
       </g>
     );
   }
 
   return (
-    <text x={0} y={-4} className="planet-glyph wheel-placement__glyph">
+    <text x={0} y={yOffset} className="planet-glyph wheel-placement__glyph">
       {position.glyph}
     </text>
   );
@@ -289,7 +291,13 @@ export const SkyWheel = memo(function SkyWheel({
       baseRadius: radius.planet,
       center,
       clusterThreshold: 6,
-      maxClusterSpan: 24
+      maxClusterSpan: 24,
+      ...(variant === "composite"
+        ? {
+            clusterTangentSpacing: relationshipClusterTangentSpacing,
+            maxClusterTangentOffset: relationshipClusterTangentLimit
+          }
+        : {})
     }
   ), [positions, ascendantLongitude, isAscendantAnchored]);
 
@@ -435,7 +443,7 @@ export const SkyWheel = memo(function SkyWheel({
                 <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
                 <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                   <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
-                  <WheelPlanetGlyph position={position} />
+                  <WheelPlanetGlyph position={position} yOffset={variant === "composite" ? 0 : -4} />
                   <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
                     {formatWheelDegree(position)}
                   </text>
@@ -588,19 +596,34 @@ export const SynastryWheel = memo(function SynastryWheel({
     outerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
-    { baseRadius: radius.outerPlanet, center, clusterThreshold: 6, maxClusterSpan: 22 }
+    {
+      baseRadius: radius.outerPlanet,
+      center,
+      clusterThreshold: 6,
+      maxClusterSpan: 22,
+      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      maxClusterTangentOffset: relationshipClusterTangentLimit
+    }
   ), [outerPositions, ascendantLongitude, isNatalWheel]);
   const innerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
     innerPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
-    { baseRadius: radius.innerPlanet, center, clusterThreshold: 6, maxClusterSpan: 22 }
+    {
+      baseRadius: radius.innerPlanet,
+      center,
+      clusterThreshold: 6,
+      maxClusterSpan: 22,
+      clusterTangentSpacing: relationshipClusterTangentSpacing,
+      maxClusterTangentOffset: relationshipClusterTangentLimit
+    }
   ), [innerPositions, ascendantLongitude, isNatalWheel]);
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
     const layout = ring === "outer" ? outerPlanetLayouts.get(position.planet) : innerPlanetLayouts.get(position.planet);
-    const marker = layout?.marker ?? point(angle, ring === "outer" ? radius.outerPlanet : radius.innerPlanet);
+    const baseRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
+    const marker = layout?.marker ?? point(angle, baseRadius);
     const tickOuterRadius = ring === "outer" ? radius.signInner - 5 : radius.innerRingOuter - 5;
     const tickInnerRadius = ring === "outer" ? radius.signInner - 17 : radius.innerRingOuter - 17;
     const tickOuter = point(angle, tickOuterRadius);
@@ -617,7 +640,7 @@ export const SynastryWheel = memo(function SynastryWheel({
         <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
         <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={ring === "outer" ? planetHitAreaRadius : planetHitAreaRadius - 1} className="planet-hit-area" />
-          <WheelPlanetGlyph position={position} />
+          <WheelPlanetGlyph position={position} yOffset={0} />
           <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
           </text>

@@ -1267,7 +1267,8 @@
 }
 
 .synastry-placement-lead {
-  display: flex;
+  display: grid;
+  grid-template-columns: 34px auto;
   align-items: center;
   min-width: 0;
   gap: 2px;
@@ -1282,6 +1283,7 @@
   width: 34px;
   min-width: 34px;
   height: 32px;
+  transform: translateY(-1px);
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);

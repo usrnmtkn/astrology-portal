@@ -27,7 +27,8 @@ button.placement-table-row {
   align-self: start;
   width: 48px;
   min-width: 48px;
-  margin-top: 2px;
+  height: 32px;
+  margin-top: 0;
   color: var(--wheel-glyph);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
@@ -37,7 +38,7 @@ button.placement-table-row {
 .placement-table-row.is-retrograde .placement-table-row__glyph {
   width: 48px;
   min-width: 48px;
-  height: auto;
+  height: 32px;
   border-radius: 0;
   background: transparent;
   color: var(--wheel-glyph);

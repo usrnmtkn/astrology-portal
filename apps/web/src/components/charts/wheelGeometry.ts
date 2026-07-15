@@ -85,7 +85,17 @@ function angularDistance(first: number, second: number) {
   return difference > 180 ? 360 - difference : difference;
 }
 
-function clusterTangentOffsets(size: number) {
+function clusterTangentOffsets(size: number, customSpacing?: number, maxOffset = 24) {
+  if (typeof customSpacing === "number") {
+    const centerOffset = (size - 1) / 2;
+
+    return Array.from({ length: size }, (_, index) => {
+      const offset = (index - centerOffset) * customSpacing;
+
+      return Math.max(-maxOffset, Math.min(maxOffset, offset));
+    });
+  }
+
   const presetOffsets: Record<number, number[]> = {
     1: [0],
     2: [-8, 8],
@@ -157,12 +167,16 @@ export function wheelMarkerLayouts<T>(
     baseRadius,
     center,
     clusterThreshold = 6,
-    maxClusterSpan = 24
+    maxClusterSpan = 24,
+    clusterTangentSpacing,
+    maxClusterTangentOffset = 24
   }: {
     baseRadius: number;
     center: number;
     clusterThreshold?: number;
     maxClusterSpan?: number;
+    clusterTangentSpacing?: number;
+    maxClusterTangentOffset?: number;
   }
 ) {
   const entries = items
@@ -211,7 +225,7 @@ export function wheelMarkerLayouts<T>(
 
   const layouts = new Map<string, WheelMarkerLayout>();
   groups.forEach((group) => {
-    const tangentOffsets = clusterTangentOffsets(group.length);
+    const tangentOffsets = clusterTangentOffsets(group.length, clusterTangentSpacing, maxClusterTangentOffset);
 
     group.forEach((entry, index) => {
       const visualAngle = entry.angle;
