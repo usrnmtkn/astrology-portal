@@ -1,6 +1,7 @@
 import { skyBodyOrderIndex } from "../../astrologyConfig";
 import { fallbackHookByKey } from "../../content/fallbackHooks";
 import { lunarBeatArchetypeForKey, lunarBeatArchetypeLoreForKey, lunarBeatBodyForKey } from "../../content/lunarBeatCopy";
+import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../../services/generatedContent";
 import { slugContentPart } from "../../services/generatedContentKeys";
@@ -432,16 +433,16 @@ const twoWeekArcConnections: Record<string, string> = {
 
 const sixMonthArcConnections: Record<string, string> = {
   Capricorn: "Foundation to legacy.",
-  Aquarius: "Difference to belonging.",
+  Aquarius: "Innovation to revolution.",
   Pisces: "Dream to wisdom.",
   Aries: "Courage to command.",
   Taurus: "Value to harvest.",
-  Gemini: "Words to story.",
+  Gemini: "Words to vision.",
   Cancer: "Protection to belonging.",
   Leo: "Spark to radiance.",
-  Virgo: "Routine to devotion.",
-  Libra: "Harmony to honesty.",
-  Scorpio: "Death to rebirth.",
+  Virgo: "Routine to excellence.",
+  Libra: "Intention to embodiment.",
+  Scorpio: "Completion to renewal.",
   Sagittarius: "Journey to message."
 };
 
@@ -491,13 +492,13 @@ function arcPointFor(event: LunarCalendarEvent | null, fallbackSign: string): Lu
   } : null;
 }
 
-function contentBody(generatedContent: Map<string, LiveGeneratedContent> | undefined, keys: string[]) {
+function contentBody(generatedContent: Map<string, LiveGeneratedContent> | undefined, keys: string[]): string | null {
   if (!generatedContent) return null;
 
   for (const key of keys) {
-    const body = generatedContent.get(key)?.body.trim();
+    const body = generatedContent.get(key)?.body.trim() ?? "";
 
-    if (body) {
+    if (isReaderFacingCopy(body)) {
       return body;
     }
   }
@@ -509,13 +510,13 @@ function renderedContentBody(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   keys: string[],
   slots: TemplateSlotValues
-) {
+): string | null {
   if (!generatedContent) return null;
 
   for (const key of keys) {
-    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim();
+    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim() ?? "";
 
-    if (body) {
+    if (isReaderFacingCopy(body)) {
       return body;
     }
   }
@@ -533,22 +534,26 @@ function renderedContent(
   for (const key of keys) {
     const rendered = renderGeneratedContentTemplate(generatedContent.get(key), slots);
     const headline = rendered?.headline?.trim() ?? "";
-    const summary = rendered?.summary?.trim() ?? "";
-    const body = rendered?.body?.trim() ?? "";
+    const summary = firstReaderFacingCopy([rendered?.summary]) ?? "";
+    const body = firstReaderFacingCopy([rendered?.body]) ?? "";
 
     if (rendered && (headline || summary || body)) {
-      return rendered;
+      return {
+        ...rendered,
+        summary,
+        body
+      };
     }
   }
 
   return null;
 }
 
-function lunarBeatBody(keys: string[]) {
+function lunarBeatBody(keys: string[]): string | null {
   for (const key of keys) {
     const body = lunarBeatBodyForKey(key)?.trim();
 
-    if (body) {
+    if (isReaderFacingCopy(body)) {
       return body;
     }
   }
@@ -556,7 +561,7 @@ function lunarBeatBody(keys: string[]) {
   return null;
 }
 
-function lunarBeatArchetype(keys: string[]) {
+function lunarBeatArchetype(keys: string[]): string | null {
   for (const key of keys) {
     const archetypeTitle = lunarBeatArchetypeForKey(key)?.trim();
 
@@ -568,11 +573,11 @@ function lunarBeatArchetype(keys: string[]) {
   return null;
 }
 
-function lunarBeatArchetypeLore(keys: string[]) {
+function lunarBeatArchetypeLore(keys: string[]): string | null {
   for (const key of keys) {
-    const archetypeLore = lunarBeatArchetypeLoreForKey(key)?.trim();
+    const archetypeLore = lunarBeatArchetypeLoreForKey(key)?.trim() ?? "";
 
-    if (archetypeLore) {
+    if (isReaderFacingCopy(archetypeLore)) {
       return archetypeLore;
     }
   }
@@ -580,18 +585,20 @@ function lunarBeatArchetypeLore(keys: string[]) {
   return null;
 }
 
-function renderedFallbackHookDefinitionBody(hookContentKey: string, slots: TemplateSlotValues) {
+function renderedFallbackHookDefinitionBody(hookContentKey: string, slots: TemplateSlotValues): string | null {
   const hook = fallbackHookByKey(hookContentKey.replace(/^fallback-hook\//, ""));
-  const body = hook?.copy.body.trim();
+  const body = hook?.copy.body.trim() ?? "";
 
-  if (!body) {
+  if (!isReaderFacingCopy(body)) {
     return null;
   }
 
-  return interpolateTemplateString(body, slots, {
+  const rendered = interpolateTemplateString(body, slots, {
     contentKey: hookContentKey,
     field: "body"
-  }).trim() || null;
+  }).trim();
+
+  return isReaderFacingCopy(rendered) ? rendered : null;
 }
 
 function renderedContentSection(
@@ -599,7 +606,7 @@ function renderedContentSection(
   keys: string[],
   slots: TemplateSlotValues,
   sectionKey: string
-) {
+): string | null {
   if (!generatedContent) return null;
 
   for (const key of keys) {
@@ -612,7 +619,7 @@ function renderedContentSection(
 
     const value = (sections as Record<string, unknown>)[sectionKey];
 
-    if (typeof value === "string" && value.trim()) {
+    if (typeof value === "string" && isReaderFacingCopy(value)) {
       return value.trim();
     }
   }
@@ -624,13 +631,13 @@ function renderedContentKey(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   keys: string[],
   slots: TemplateSlotValues
-) {
+): { key: string; body: string } | null {
   if (!generatedContent) return null;
 
   for (const key of keys) {
-    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim();
+    const body = renderGeneratedContentTemplate(generatedContent.get(key), slots)?.body.trim() ?? "";
 
-    if (body) {
+    if (isReaderFacingCopy(body)) {
       return { key, body };
     }
   }
@@ -901,7 +908,7 @@ function editorialFor(
     generatedContent,
     slots
   );
-  const fallbackDayBody = fallbackDay?.body.trim() || null;
+  const fallbackDayBody = isReaderFacingCopy(fallbackDay?.body) ? fallbackDay?.body.trim() ?? null : null;
   const transitNotes = [
     ...transits.map((transit) => {
       const copyKey = `${slugContentPart(transit.title)}__${lunationSignPart}_lunation_${seasonPart}_season`;
@@ -937,12 +944,12 @@ function editorialFor(
 
   return {
     body: renderedContentBody(generatedContent, newBodyKeys, slots)
-      ?? phaseFallbackContent?.body.trim()
+      ?? firstReaderFacingCopy([phaseFallbackContent?.body])
       ?? lunarBeatBody(phaseContentKeys)
       ?? contentBody(generatedContent, baseKeys.map((key) => `${key}.body`))
       ?? fallbackDayBody,
     archetypeTitle: phaseFallbackContent?.headline?.trim() || lunarBeatArchetype(phaseContentKeys),
-    archetypeLore: phaseFallbackContent?.summary?.trim() || lunarBeatArchetypeLore(phaseContentKeys),
+    archetypeLore: firstReaderFacingCopy([phaseFallbackContent?.summary]) || lunarBeatArchetypeLore(phaseContentKeys),
     practice: contentBody(generatedContent, baseKeys.map((key) => `${key}.practice`)),
     reflect: contentBody(generatedContent, baseKeys.map((key) => `${key}.reflect`)),
     ritual: contentBody(generatedContent, baseKeys.map((key) => `${key}.ritual`)),

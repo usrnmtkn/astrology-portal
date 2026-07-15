@@ -36,7 +36,7 @@ npm run typecheck
 npm run build:knowledge
 ```
 
-Use `npm run dev` for local app work that touches admin or backend routes. It starts Vercel dev on `http://localhost:3000`, so `/api/*` functions are available. Use `npm run dev:web` only for pure frontend work; that starts Vite by itself on `http://127.0.0.1:5173`, and admin API routes will fail unless an API server is also running on `127.0.0.1:3000`.
+Use `npm run dev:vercel` for local app work that touches admin or backend routes. It starts Vercel dev on `http://localhost:3000`, so `/api/*` functions are available while Vercel runs the frontend dev command behind it. Use `npm run dev` or `npm run dev:web` only for pure frontend work; those start Vite by itself on `http://127.0.0.1:5173`, and admin API routes will fail unless an API server is also running on `127.0.0.1:3000`.
 
 Vercel builds from the monorepo root with `npm run build` and serves `apps/web/dist`.
 

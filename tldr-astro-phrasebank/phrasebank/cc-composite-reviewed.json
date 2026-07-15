@@ -1,0 +1,2594 @@
+{
+  "_meta": {
+    "title": "Reviewed composite chart: planet cores + lived planet-in-house scenes",
+    "planet_cores": 10,
+    "planet_in_house": 120,
+    "count": 130,
+    "voice": "the relationship as its own entity; lived relational scenes anchored per house",
+    "doctrine_source": "composites.txt (Dark Pixie) per-house relational characters + ms/composite/planet",
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/composite/sun",
+      "kind": "composite_planet",
+      "body": "sun",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's sun",
+      "slots": {
+        "meaning": "This is what the two of you become together that neither of you is alone. When the bond feels alive, this is the part that's shining; when it dims, this is what you've stopped feeding."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon",
+      "kind": "composite_planet",
+      "body": "moon",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's moon",
+      "slots": {
+        "meaning": "This is the emotional climate of the bond, how safe it feels to be inside it. It's the difference between a relationship you can exhale in and one you're always a little braced around."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury",
+      "kind": "composite_planet",
+      "body": "mercury",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's mercury",
+      "slots": {
+        "meaning": "This is how the two of you think and talk as a unit, whether words come easily and what you keep circling back to. When it flows, you can sort almost anything out loud; when it jams, small things turn into standoffs."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus",
+      "kind": "composite_planet",
+      "body": "venus",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's venus",
+      "slots": {
+        "meaning": "This is the bond's capacity for pleasure and affection, the glue of actually liking each other. It's what keeps you choosing each other's company, not just staying."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars",
+      "kind": "composite_planet",
+      "body": "mars",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's mars",
+      "slots": {
+        "meaning": "This is the bond's shared drive and its friction, how the two of you go after things and how you fight. Aimed well it's a team; aimed at each other it's a war."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn",
+      "kind": "composite_planet",
+      "body": "saturn",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's saturn",
+      "slots": {
+        "meaning": "This is the backbone and the weight of the bond, what commits you and where it feels heavy or tested. It's the part that asks whether you'll still choose this when it's work."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter",
+      "kind": "composite_planet",
+      "body": "jupiter",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's jupiter",
+      "slots": {
+        "meaning": "This is where the bond grows and feels generous, the room it gives you both to expand. It's the part of the relationship that makes your life bigger, not smaller."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus",
+      "kind": "composite_planet",
+      "body": "uranus",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's uranus",
+      "slots": {
+        "meaning": "This is the bond's need for freedom and its knack for surprise, where routine kills it and space keeps it alive. It's the part that resists being made ordinary."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune",
+      "kind": "composite_planet",
+      "body": "neptune",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's neptune",
+      "slots": {
+        "meaning": "This is the shared dream and the blind spot, the ideal you reach for together and the place you can quietly fool each other. It's where the bond is most magical and least clear."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto",
+      "kind": "composite_planet",
+      "body": "pluto",
+      "surface": "composite.planet",
+      "status": "REVIEWED_CLAUSE",
+      "title": "The relationship's pluto",
+      "slots": {
+        "meaning": "This is the bond's depth and its power dynamic, how it transforms you both and where control becomes a question. It's the part that changes you, for better or worse."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced; felt, not purely definitional",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 1st house",
+      "slots": {
+        "scene": "This relationship becomes the main character of both your lives, the thing you build everything else around. That's the gift and the trap, so don't let the 'us' quietly eat the two people who made it."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 2nd house",
+      "slots": {
+        "scene": "This bond runs on shared values and building something real, and it's actually good at growing something that lasts. But if you don't actually agree on what matters, you'll both dig in and try to win a fight nobody can."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 3rd house",
+      "slots": {
+        "scene": "This is a relationship that lives in conversation, the running commentary, the texts, the ideas passed back and forth. The mental connection is real; the work is letting it get past clever and into honest."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 4th house",
+      "slots": {
+        "scene": "This bond wants to be home, and it can feel like family fast. But the fourth house is where the bodies are buried, so make sure you're building something of your own here, not re-running someone else's marriage."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 5th house",
+      "slots": {
+        "scene": "This relationship comes alive when you're playing, flirting, and making things together. It stays warm as long as you keep dating each other, and the day you stop courting is the day it starts feeling like roommates."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 6th house",
+      "slots": {
+        "scene": "This is a working relationship in the plainest sense, built on being useful to each other day to day. Watch the ledger, because the moment one of you is always giving and the other always taking, resentment moves in and doesn't leave."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 7th house",
+      "slots": {
+        "scene": "This bond is built for real partnership, two equals actually facing life together, and commitment comes easier here. Invitation, availability, and trust are also actions, so keep choosing each other on purpose."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 8th house",
+      "slots": {
+        "scene": "This is a serious, all-the-way-in relationship that changes both of you and refuses to stay shallow. The eighth house isn't a curse, it's a slow burn, so remember the word 'eventually' and don't try to control what only trust can hold."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 9th house",
+      "slots": {
+        "scene": "This relationship is about getting bigger together, travel, ideas, belief, the horizon. The ninth house is the house of freedom, and this bond needs it, so cage it and you'll lose it faster than you can explain."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 10th house",
+      "slots": {
+        "scene": "This is a couple with a public face and a shared ambition, the kind other people can see. Just remember status is the role you play for others, while the real relationship is the private thing underneath, so feed that one."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 11th house",
+      "slots": {
+        "scene": "This is a friendship-first bond built on a shared future and the goals you're both walking toward. The strength of a team like this isn't speed, it's endurance, so keep the friendship alive under everything else it becomes."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/sun-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "sun",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Sun in the 12th house",
+      "slots": {
+        "scene": "A lot of this relationship lives out of sight, tender, private, half-spoken. There's real soul here, so watch the pull to keep it secret or to disappear into it, because what stays hidden between you tends to run the show."
+      },
+      "source_keys": [
+        "ms/composite/planet/sun",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 1st house",
+      "slots": {
+        "scene": "The two of you feel each other's moods before a word is said, and the relationship wears its heart right on its face. That's real intimacy, and it also means one person's bad day can flood the whole thing."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 2nd house",
+      "slots": {
+        "scene": "Feeling safe here is tangled up with feeling secure, so comfort, money, and steadiness matter more than either of you likes to admit. Tend the practical and the emotional settles down with it."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 3rd house",
+      "slots": {
+        "scene": "This bond talks its feelings through, and it needs the small daily check-ins to feel close. Silence reads as distance here, so keep the little conversations going even when there's nothing urgent to say."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 4th house",
+      "slots": {
+        "scene": "Emotionally this relationship is a home, and it can feel like family almost too fast. The comfort is deep, but the fourth house is where the bodies are buried, so watch where the old family patterns start running the two of you."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 5th house",
+      "slots": {
+        "scene": "This bond feels loved through play, flirting, and being actually delighted in. Your needs aren't too much here, so keep expressing the warmth out loud instead of assuming it's understood."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 6th house",
+      "slots": {
+        "scene": "This relationship shows love in the unglamorous way, the small daily acts of tending each other. Just make sure the caretaking runs both directions, or one of you quietly empties out while the other stays full."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 7th house",
+      "slots": {
+        "scene": "Emotional safety here comes through partnership itself, the feeling of being met and matched. You steady each other, so when it wobbles, lean on being a team rather than retreating to separate corners."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 8th house",
+      "slots": {
+        "scene": "Feelings here run deep, private, and all in, and this bond reaches places neither of you shows anyone else. Vulnerability isn't weakness here, it's the whole point, so let it stay honest instead of tipping into jealousy or control."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 9th house",
+      "slots": {
+        "scene": "This relationship feels best with room, hope, and something to look forward to together. It needs freedom to stay warm, so don't mistake space for distance, they're not the same thing."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 10th house",
+      "slots": {
+        "scene": "The two of you feel closest while building something visible together, a shared standing, a goal, a project. Just don't let the project become the only room the feelings are allowed to live in."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 11th house",
+      "slots": {
+        "scene": "This bond feels like home inside a wider circle, friends, community, a future you're both aimed at. It's warmest when you belong to something together, not only to each other."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/moon-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "moon",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Moon in the 12th house",
+      "slots": {
+        "scene": "The emotional life here is quiet and inward, and most of it happens under the surface. Say the unspoken things out loud sometimes, because tenderness that never gets named slowly turns into fog."
+      },
+      "source_keys": [
+        "ms/composite/planet/moon",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 1st house",
+      "slots": {
+        "scene": "Affection sits right on the surface here, and the two of you simply like being around each other. It's an easy, warm bond, so let the plain liking count as much as the grand loving."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 2nd house",
+      "slots": {
+        "scene": "This relationship shows love through comfort and the good things shared, and your worth here isn't what you have, it's what you give and receive. Build a actually pleasant life together and mean it."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 3rd house",
+      "slots": {
+        "scene": "Warmth here travels through words, wit, and the little kindnesses of daily talk. This bond loves out loud, so keep flirting in the conversation instead of going quiet and comfortable."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 4th house",
+      "slots": {
+        "scene": "This is love that wants to nest, cozy, domestic, home. It's tender and sweet, and it only stays that way if the shared space is somewhere you both actually want to be, not just end up."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 5th house",
+      "slots": {
+        "scene": "This relationship lights up through play and romance, dates, flirting, making things together. It stays warm as long as you keep dating each other, and the day the fun stops it starts feeling like a chore."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 6th house",
+      "slots": {
+        "scene": "Love here shows up as service, the quiet practical acts of tending each other's days. Just say the affection out loud too, because you don't need to fix everything to deserve love, and neither do they."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 7th house",
+      "slots": {
+        "scene": "This bond is built for partnership, and being an 'us' is actually the pleasure of it. For two people to complement each other, both have to be willing to receive as well as give, so keep it even."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 8th house",
+      "slots": {
+        "scene": "Attraction here runs deep and a little consuming, intimate and loyal and allergic to shallow. Let it be that deep without letting closeness quietly turn into possession."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 9th house",
+      "slots": {
+        "scene": "This is love with room in it, adventure, honesty, and a shared sense of what's beautiful and true. Keep exploring together, because sameness dulls this particular bond faster than conflict does."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 10th house",
+      "slots": {
+        "scene": "The two of you value building something worthwhile and visible together, and love shows up inside the shared ambition. Just keep some of the affection private, off the record, not only in the public project."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 11th house",
+      "slots": {
+        "scene": "This relationship loves like best friends, easy and accepting, warm without a lot of pressure. Keep the friendship at the center, because that's the room the affection actually lives in."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/venus-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "venus",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Venus in the 12th house",
+      "slots": {
+        "scene": "There's a tender, almost otherworldly sweetness here, and the love can feel fated. Keep one foot on the ground, because it's easy to fall for the version of each other you imagined instead of the real one."
+      },
+      "source_keys": [
+        "ms/composite/planet/venus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 1st house",
+      "slots": {
+        "scene": "The two of you spark, and there's real drive between you, sometimes as passion, sometimes as friction, often as both. Aim that heat at the life you're building, not at each other."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 2nd house",
+      "slots": {
+        "scene": "The heat here gathers around money, values, and what's worth the effort. Decide together what you're actually building, or the drive curdles into a slow tug-of-war over whose priorities win."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 3rd house",
+      "slots": {
+        "scene": "This bond argues and flirts in the same breath, quick, sharp, stimulating. Watch the tone, because clever turns into cutting fast, and words said in this relationship are hard to unsay."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 4th house",
+      "slots": {
+        "scene": "The friction here lives at home, around space, family, and the small daily terms of living together. Deal with the household stuff out loud and early, because it doesn't dissolve, it simmers."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 5th house",
+      "slots": {
+        "scene": "There's strong chemistry and a streak of playful competition here, and the passion is a real part of the draw. Keep it play, and don't let the need to win start mattering more than the wanting."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 6th house",
+      "slots": {
+        "scene": "The drive here pours into the daily grind, and the fights are almost always about chores, effort, and who does what. Split the load fairly on purpose, because that's the exact spot resentment starts."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 7th house",
+      "slots": {
+        "scene": "This bond clashes out in the open, which is actually healthy if you fight fair. Have it out cleanly and face to face, rather than letting the resentment go underground and come out sideways."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 8th house",
+      "slots": {
+        "scene": "The intensity here runs deep, around power, control, and what the two of you share. It's magnetic and combustible, so point it at transforming something real, not at winning the point."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 9th house",
+      "slots": {
+        "scene": "The energy here wants to move, travel, argue belief, chase something bigger. Aim the drive at a shared adventure, because turning it into a contest over who's right burns the bond down."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 10th house",
+      "slots": {
+        "scene": "The two of you're wired to build and achieve together, and the ambition is part of the attraction. Just make sure you're both pushing toward the same goal, not quietly competing for it."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 11th house",
+      "slots": {
+        "scene": "This bond does its best fighting for something, not with each other, channeling the drive into shared causes and goals. Put the energy toward something you both actually believe in."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mars-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "mars",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mars in the 12th house",
+      "slots": {
+        "scene": "The anger here goes underground, unspoken and indirect and hard to name. Say the frustration plainly, because buried Mars doesn't disappear, it leaks out as everything except the truth."
+      },
+      "source_keys": [
+        "ms/composite/planet/mars",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 1st house",
+      "slots": {
+        "scene": "This relationship is serious and defining, and it asks both of you to show up like adults from the start. It can feel heavy, but Saturn just wants you to act your age, and this is the kind of bond that lasts if you let it."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 2nd house",
+      "slots": {
+        "scene": "Commitment here is tied to security and what you build slowly together, brick by unglamorous brick. It isn't flashy, but it's durable, so do the patient work and let it compound."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 3rd house",
+      "slots": {
+        "scene": "The weight here settles on communication, and words can feel careful, measured, or stuck. Say the plain thing even when it's hard, because in this bond silence doesn't stay neutral, it hardens into distance."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 4th house",
+      "slots": {
+        "scene": "This bond takes home and family seriously, often with real weight carried over from the past. Build the foundation on purpose, because the fourth house is where the bodies are buried and old family scripts run quietly until you name them."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 5th house",
+      "slots": {
+        "scene": "Saturn cools the fun here, so romance and play take more effort and the whole thing can feel a little restrained. Put joy on the calendar if you have to, because this relationship won't manufacture it on its own."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 6th house",
+      "slots": {
+        "scene": "This is a duty-bound, hardworking relationship that runs on responsibility and shows up every day. Just make sure it isn't only obligation, because a bond that's all work eventually feels like a job you can't quit."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 7th house",
+      "slots": {
+        "scene": "Commitment is the whole theme here, and this bond is built to be real, defined, and lasting. It asks for honest limits and follow-through, and unlike most things, it actually rewards them."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 8th house",
+      "slots": {
+        "scene": "The seriousness here runs deep, around trust, shared resources, and control. It asks for total honesty about what's owed, and remember the word 'eventually', because this one doesn't survive on avoidance."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 9th house",
+      "slots": {
+        "scene": "This bond puts your beliefs and commitments to the test, sometimes across real distance or difference. Do the unglamorous work of aligning on what matters instead of assuming you already agree."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 10th house",
+      "slots": {
+        "scene": "This is a relationship with public weight and shared responsibility, a couple building a serious life in plain view. It's ambitious and durable, so carry the load together rather than keeping a private scoreboard."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 11th house",
+      "slots": {
+        "scene": "Saturn here makes the friendship and the shared future the serious part, the load-bearing wall. The strength of it isn't speed, it's endurance, and it lasts when the goals you're each chasing actually match."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/saturn-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "saturn",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Saturn in the 12th house",
+      "slots": {
+        "scene": "The weight here is quiet and private, old fears, unspoken duties, things each of you carries alone. Bring the hidden stuff into the light, because Saturn in the twelfth hardens whatever stays unsaid."
+      },
+      "source_keys": [
+        "ms/composite/planet/saturn",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 1st house",
+      "slots": {
+        "scene": "You figure this relationship out mostly by talking about it, and how you come across to each other gets negotiated out loud, in real time. Keep the channel open, because when this bond goes quiet it starts guessing, and it guesses wrong."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 2nd house",
+      "slots": {
+        "scene": "The two of you mostly talk about the practical, money, plans, logistics, what's worth it. Get honest about the concrete stuff, because that's the conversation this bond keeps circling back to whether you schedule it or not."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 3rd house",
+      "slots": {
+        "scene": "This bond is chatty, curious, and mentally alive, endless texts, inside jokes, half-finished thoughts. The connection is real, so just remember to feel it too, not only narrate it."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 4th house",
+      "slots": {
+        "scene": "The talk here keeps turning toward home, family, and the past. The fourth house is where the bodies are buried, so the important conversations are the old tender ones, and they don't stay buried politely."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 5th house",
+      "slots": {
+        "scene": "The two of you think and talk playfully, flirting through ideas and turning everything into a bit. Keep it clever and light, and let the banter be part of the romance instead of a substitute for it."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 6th house",
+      "slots": {
+        "scene": "This bond communicates about the daily details, who's doing what, the logistics, the fine print. Keep the practical talk kind, because this is exactly where petty friction likes to move in and set up house."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 7th house",
+      "slots": {
+        "scene": "The two of you think things through together as partners, out loud and as equals. Talk it out rather than deciding alone, because this bond actually sorts itself best in dialogue."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 8th house",
+      "slots": {
+        "scene": "The conversations here go deep and probing, into what usually stays hidden. It's powerful and can tip into interrogation, so use the depth to understand each other, not to corner each other."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 9th house",
+      "slots": {
+        "scene": "This bond loves the big talk, beliefs, ideas, plans, the whole horizon. Keep exploring out loud together, and don't let the debate over who's right replace the pleasure of thinking together."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 10th house",
+      "slots": {
+        "scene": "The two of you strategize, plan, and talk goals, the shared build. Talk strategy freely, and make sure you also talk about things that have nothing to do with the project."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 11th house",
+      "slots": {
+        "scene": "This relationship connects through shared ideas and a common picture of the future. Dream out loud together, because that vision is where the mental spark actually lives."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/mercury-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "mercury",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Mercury in the 12th house",
+      "slots": {
+        "scene": "A lot goes unsaid here, sensed instead of spoken. Put the quiet knowing into words sometimes, because too much left to telepathy in this bond becomes plain misunderstanding."
+      },
+      "source_keys": [
+        "ms/composite/planet/mercury",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 1st house",
+      "slots": {
+        "scene": "This relationship makes you both feel bigger, luckier, more capable than you're alone. Enjoy the lift, and just don't let the good feeling talk the two of you into promising more than you can carry."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 2nd house",
+      "slots": {
+        "scene": "The bond grows around abundance and shared resources, and there's real luck here with money and comfort. Build on it, and resist the Jupiter urge to overspend the goodwill."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 3rd house",
+      "slots": {
+        "scene": "The two of you expand each other's minds, more ideas, more curiosity, more to talk about. Keep feeding it, because this bond grows through what you go explore together."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 4th house",
+      "slots": {
+        "scene": "This relationship makes home feel abundant and warm, a generous place to land. Let it be the soft place it wants to be, and let yourselves actually receive it."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 5th house",
+      "slots": {
+        "scene": "This is a joyful, big-hearted bond that's actually lucky in love and fun to be in. Enjoy the abundance, and just keep an eye on the tendency to overdo a good time until it stops being one."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 6th house",
+      "slots": {
+        "scene": "The growth here is quiet and daily, the steady practical generosity of tending each other. Small consistent kindness compounds here into something surprisingly large."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 7th house",
+      "slots": {
+        "scene": "This bond expands through partnership itself, and being an 'us' visibly opens doors for both of you. Say yes to the growth the relationship keeps offering."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 8th house",
+      "slots": {
+        "scene": "The two of you grow through depth and what you share, and this bond can actually transform both of your lives. Go in honestly, because the payoff here is the kind you can't fake your way to."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 9th house",
+      "slots": {
+        "scene": "This relationship is built to explore and believe, travel, meaning, the bigger picture. Keep reaching for the horizon together, because that reaching is the point of you."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 10th house",
+      "slots": {
+        "scene": "The bond grows through shared ambition and public success, a couple that rises as a team. Reach for it together and let the win belong to both of you, not to a scoreboard."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 11th house",
+      "slots": {
+        "scene": "This relationship expands through friends, community, and a hopeful shared future. It grows best when it's plugged into something bigger than just the two of you."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/jupiter-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "jupiter",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Jupiter in the 12th house",
+      "slots": {
+        "scene": "The growth here is inward and quiet, spiritual, compassionate, mostly invisible. Trust the abundance you can't see yet, because in the twelfth it's real before it shows."
+      },
+      "source_keys": [
+        "ms/composite/planet/jupiter",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 1st house",
+      "slots": {
+        "scene": "This is an unconventional bond that flat-out refuses to be made ordinary. Give it room to be strange, because routine is the thing that actually kills it."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 2nd house",
+      "slots": {
+        "scene": "The two of you rethink money and security in your own way, and stable here looks nothing like the template. Let the arrangement be weird if weird is what works."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 3rd house",
+      "slots": {
+        "scene": "This relationship crackles with surprising ideas and conversation that never quite settles. Keep it interesting, because this bond gets bored faster than almost anything else could hurt it."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 4th house",
+      "slots": {
+        "scene": "Home here is changeable and unconventional, and the two of you may live in ways other people don't understand. Let the domestic life be yours, not the default one you inherited."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 5th house",
+      "slots": {
+        "scene": "The romance here is electric and actually unpredictable, thrilling and impossible to schedule. Enjoy the charge, and don't expect it to behave or repeat on command."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 6th house",
+      "slots": {
+        "scene": "The daily routines here have to stay loose, because rigid structure suffocates this bond. Build a life with room to improvise, because 'we always do it this way' is where it dies."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 7th house",
+      "slots": {
+        "scene": "This partnership rewrites the rules of relationship, freedom held inside commitment. Let it be the unconventional 'us' it wants to be instead of forcing it into a shape it'll break out of."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 8th house",
+      "slots": {
+        "scene": "The two of you share things in unexpected, boundary-breaking ways, and even the depth here is unpredictable. Stay honest as the ground keeps shifting, because it will."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 9th house",
+      "slots": {
+        "scene": "This bond cracks open each other's beliefs and keeps reaching for the new. Keep questioning together, because the day you both stop, it goes flat."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 10th house",
+      "slots": {
+        "scene": "The couple you're in public is unconventional, and you build in your own way on your own timeline. Don't force it into a standard shape for the sake of the picture."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 11th house",
+      "slots": {
+        "scene": "This relationship is future-facing and a little radical, best among a wider unconventional circle. Let the shared vision of what's coming be the glue."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/uranus-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "uranus",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Uranus in the 12th house",
+      "slots": {
+        "scene": "The freedom here works underground, a restlessness that's hard to see until it moves. Give the quiet restlessness room, because cornered, it doesn't negotiate, it erupts."
+      },
+      "source_keys": [
+        "ms/composite/planet/uranus",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 1st house",
+      "slots": {
+        "scene": "There's a dreamy, almost fated quality here, and it can be actually hard to see each other clearly. Enjoy the magic, and keep checking it against the actual person in front of you."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 2nd house",
+      "slots": {
+        "scene": "Money and values get foggy in this bond, easily idealized or quietly avoided. Be concrete about the practical, because this is exactly where the illusion ends up costing you."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 3rd house",
+      "slots": {
+        "scene": "The two of you communicate through intuition as much as words, finishing each other's feelings. Confirm the important things out loud anyway, because in this bond assumption is where it goes wrong."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 4th house",
+      "slots": {
+        "scene": "Home has a soft, sanctuary-like, almost boundaryless quality. Keep a little structure, or the shared dream of home drifts into confusion about who's actually holding it up."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 5th house",
+      "slots": {
+        "scene": "The romance here is idealized and inspired, beautiful and a half-step from unreal. Love the real person, not just the gorgeous version of them you painted."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 6th house",
+      "slots": {
+        "scene": "The daily life here blurs, unclear roles, quiet self-sacrifice, martyrdom nobody named. Say out loud who does what, because vagueness here breeds a very real resentment."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 7th house",
+      "slots": {
+        "scene": "This bond idealizes partnership itself and quietly longs for perfect union. Hold the ideal loosely, because the actual relationship, flawed and specific, is the one that can love you back."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 8th house",
+      "slots": {
+        "scene": "The depth here is spiritual and dissolving, and the two of you can merge right past your own edges. Keep some boundaries inside the intimacy, because losing yourself isn't the same as loving them."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 9th house",
+      "slots": {
+        "scene": "This relationship shares a dream, a faith, a vision of what's true and meaningful. Keep it grounded, because it's easy to get beautifully, mutually lost in the ideal."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 10th house",
+      "slots": {
+        "scene": "The public image here can be more dream than substance, a story that looks perfect. Make sure there's a real, ordinary relationship holding up the beautiful picture."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 11th house",
+      "slots": {
+        "scene": "The two of you share an idealistic vision of the future and a wide, compassionate circle. Tether the dream to something you can actually build, or it stays a lovely idea."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/neptune-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "neptune",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Neptune in the 12th house",
+      "slots": {
+        "scene": "This is the most otherworldly, soul-level bond of them all, and most of it lives in the unseen. Stay honest, because the twelfth is exactly where the two of you can quietly fool each other."
+      },
+      "source_keys": [
+        "ms/composite/planet/neptune",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-1st-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 1,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 1st house",
+      "slots": {
+        "scene": "This relationship transforms both of you right down at the level of identity, and it's intense from the first minute. Let it change you, without letting it consume the person it changed."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-2nd-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 2,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 2nd house",
+      "slots": {
+        "scene": "The power here plays out around money, worth, and control of what's shared. Get honest about what's owed, because this is where the quiet power struggle likes to hide."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-3rd-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 3,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 3rd house",
+      "slots": {
+        "scene": "The two of you get into deep, penetrating, sometimes obsessive conversations. Use the intensity to actually understand each other, not to dominate or extract."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-4th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 4,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 4th house",
+      "slots": {
+        "scene": "This bond reaches the roots, and it will stir up deep, old family material whether you asked it to or not. Face what surfaces, because burying it here only hands it more power."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-5th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 5,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 5th house",
+      "slots": {
+        "scene": "The passion here is consuming and all-or-nothing, and it doesn't do casual. Let it run deep without letting the intensity curdle into possession."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-6th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 6,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 6th house",
+      "slots": {
+        "scene": "The power dynamic here hides in the daily grind, control over routines, roles, whose way things get done. Share the power on purpose, because unwatched, it quietly concentrates in one of you."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-7th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 7,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 7th house",
+      "slots": {
+        "scene": "This is a fated, transformative partnership that permanently changes both of you. It's powerful, so keep it brutally honest about who's holding the reins."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-8th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 8,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 8th house",
+      "slots": {
+        "scene": "This is Pluto at home, deep, all-in, transformative to the core. The intimacy here can heal or control, and the only thing that decides which is your honesty."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-9th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 9,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 9th house",
+      "slots": {
+        "scene": "The two of you transform each other's beliefs and whole worldview, sometimes forcefully. Let the change be real without forcing your version down each other's throats."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-10th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 10,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 10th house",
+      "slots": {
+        "scene": "The power here is public, ambition, status, and control of the shared direction. Build together instead of quietly fighting over who steers."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-11th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 11,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 11th house",
+      "slots": {
+        "scene": "This bond transforms your sense of the future and your place among your people. Let it deepen you both, without one of you taking all the collective power."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/composite/pluto-in-12th-house",
+      "kind": "composite_planet_house",
+      "body": "pluto",
+      "house": 12,
+      "surface": "composite.planet_house",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Composite Pluto in the 12th house",
+      "slots": {
+        "scene": "The deepest transformation here happens out of sight, in what's buried and unspoken. Bring it into the light, because hidden Pluto runs the whole show from the shadows."
+      },
+      "source_keys": [
+        "ms/composite/planet/pluto",
+        "cc/ref/composite/dark-pixie",
+        "cc/house/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced lived relational scene, not a domain label",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    }
+  ]
+}

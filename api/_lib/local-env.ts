@@ -2,6 +2,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 let loadedLocalEnv = false;
+const localOverrideKeys = new Set([
+  "CONTENT_GENERATION_SECRET"
+]);
 
 function unquoteEnvValue(value: string) {
   const trimmed = value.trim();
@@ -45,7 +48,7 @@ export function loadLocalWebEnv() {
     const key = trimmed.slice(0, separatorIndex).trim();
     const value = unquoteEnvValue(trimmed.slice(separatorIndex + 1));
 
-    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key) && process.env[key] === undefined) {
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key) && (process.env[key] === undefined || localOverrideKeys.has(key))) {
       process.env[key] = value;
     }
   }

@@ -6,6 +6,7 @@
   .relationship-api-summary,
   .you-signatures-card,
   .soul-roadmap-card,
+  .career-archetype-card,
   .friend-signature-card,
   .manual-chart-row,
   .daily-horoscope-summary,
@@ -31,6 +32,21 @@
   gap: 0;
   overflow: hidden;
   border: 1px solid var(--card-border);
+}
+
+.soul-roadmap-card--button,
+.career-archetype-card--button {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.soul-roadmap-card--button:focus-visible,
+.career-archetype-card--button:focus-visible {
+  outline: 2px solid var(--card-title-color);
+  outline-offset: 3px;
 }
 
 .soul-roadmap-card__header {
@@ -107,6 +123,133 @@
 .soul-roadmap-card__keywords strong {
   color: var(--card-title-color);
   font-weight: var(--weight-semibold);
+}
+
+.career-archetype-card {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.career-archetype-card__header {
+  display: grid;
+  gap: 10px;
+  padding: 22px var(--card-padding) 20px;
+}
+
+.career-archetype-card__header h3,
+.career-archetype-card__sections h4 {
+  margin: 0;
+  color: var(--card-title-color);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.career-archetype-card__header h3 {
+  font-size: var(--type-xl);
+}
+
+.career-archetype-card__header p,
+.career-archetype-card__summary,
+.career-archetype-card__sections p {
+  margin: 0;
+  color: var(--card-body-color);
+  line-height: var(--leading-description);
+}
+
+.career-archetype-card__summary {
+  padding: 0 var(--card-padding) 18px;
+}
+
+.career-archetype-card__tldr {
+  display: grid;
+  gap: 4px;
+}
+
+.career-archetype-card__tldr strong {
+  display: block;
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.career-archetype-card__factors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.career-archetype-card__factors span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 13px var(--card-padding);
+}
+
+.career-archetype-card__factors span + span {
+  border-left: 1px solid var(--card-border);
+}
+
+.career-archetype-card__factors strong,
+.career-archetype-card__sections span,
+.career-archetype-card__sections small {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.career-archetype-card__factors em {
+  min-width: 0;
+  color: var(--card-title-color);
+  font-size: var(--type-sm);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+  overflow-wrap: anywhere;
+}
+
+.career-archetype-card__sections {
+  display: grid;
+}
+
+.career-archetype-card__sections article {
+  display: grid;
+  gap: 8px;
+  padding: 16px var(--card-padding) 18px;
+}
+
+.career-archetype-card__sections article + article {
+  border-top: 1px solid var(--card-border);
+}
+
+.career-archetype-card__sections article > div {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.career-archetype-card__sections code {
+  color: var(--card-meta-color);
+  font-size: var(--type-xs);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .career-archetype-card__factors {
+    grid-template-columns: 1fr;
+  }
+
+  .career-archetype-card__factors span + span {
+    border-left: 0;
+    border-top: 1px solid var(--card-border);
+  }
 }
 
 :where(

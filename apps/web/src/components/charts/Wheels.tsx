@@ -473,6 +473,9 @@ export const SkyWheel = memo(function SkyWheel({
             );
           })}
         </g>
+        <text x={center} y={626} className="chart-house-system-label">
+          Houses: Whole Sign
+        </text>
       </svg>
       <FloatingTooltipPortal
         anchor={activeTooltipPlanet ? planetMarkerRefs.current.get(activeTooltipPlanet) ?? null : null}
@@ -808,6 +811,9 @@ export const SynastryWheel = memo(function SynastryWheel({
           );
         })}
       </g>
+      <text x={center} y={626} className="chart-house-system-label">
+        Houses: Whole Sign
+      </text>
     </svg>
   );
 });

@@ -3,6 +3,7 @@ from typing import List
 
 from tldrastro_api.models import ChartMetadata, NatalChartRequest, NatalChartResponse, Zodiac
 from tldrastro_api.services.chart import (
+    CANONICAL_HOUSE_SYSTEM,
     SIGN_RULERS,
     angle_positions,
     calculate_aspects,
@@ -35,7 +36,7 @@ def calculate_natal_chart(request: NatalChartRequest) -> NatalChartResponse:
 
     return NatalChartResponse(
         metadata=ChartMetadata(
-            houseSystem=subject.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=subject.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,

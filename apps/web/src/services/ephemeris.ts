@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts";
 import { debugInfoForZonedDateTime } from "./timezones.js";
 
 const signs = [
@@ -50,6 +51,8 @@ type SkyCalculationOptions = {
 
 export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
 export type LunarCalendarEclipseType = "solar" | "lunar";
+export type RetrogradePhase = "pre-shadow" | "station-retrograde" | "retrograde-passage" | "cazimi" | "station-direct" | "post-shadow";
+export type PlanetDirection = "direct" | "retrograde";
 
 export type LunarCalendarEvent = {
   id: string;
@@ -67,6 +70,15 @@ export type LunarCalendarEvent = {
   sunSign?: string;
   fromSign?: string;
   toSign?: string;
+  direction?: PlanetDirection;
+  phase?: RetrogradePhase;
+  longitude?: number;
+  retrogradeStart?: string;
+  retrogradeEnd?: string;
+  shadowStart?: string;
+  shadowEnd?: string;
+  cazimi?: boolean;
+  cazimiOrb?: number;
   eclipseType?: LunarCalendarEclipseType;
 };
 
@@ -121,6 +133,7 @@ const aspectDefinitions = [
 ] as const;
 
 const calendarAspectDefinitions = aspectDefinitions.filter(([, degrees]) => degrees <= 180);
+const cazimiOrbDegrees = 1;
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
 
@@ -137,6 +150,24 @@ function wholeSignHouse(sign: string, ascendant: string) {
   }
 
   return ((signIndex - ascendantIndex + 12) % 12) + 1;
+}
+
+function wholeSignHouseCusps(ascendant: string): NonNullable<SkySnapshot["houseCusps"]> {
+  const ascendantIndex = signIndexFor(ascendant);
+  const startIndex = ascendantIndex >= 0 ? ascendantIndex : 0;
+
+  return Array.from({ length: 12 }, (_, index) => {
+    const signIndex = (startIndex + index) % 12;
+    const [sign] = signs[signIndex];
+
+    return {
+      house: index + 1,
+      longitude: signIndex * 30,
+      sign,
+      degree: 0,
+      houseSystem: "whole_sign"
+    };
+  });
 }
 
 function normalizeDegrees(degrees: number) {
@@ -219,6 +250,14 @@ function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
 
 function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date) {
   return signForLongitude(exactPlanetLongitude(swe, planetId, date)).sign;
+}
+
+function planetSunOrb(swe: SwissEphInstance, planetId: number, date: Date) {
+  return angularSeparation(exactPlanetLongitude(swe, planetId, date), exactPlanetLongitude(swe, swe.SE_SUN, date));
+}
+
+function isPlanetCazimi(swe: SwissEphInstance, planetId: number, date: Date) {
+  return planetSunOrb(swe, planetId, date) <= cazimiOrbDegrees;
 }
 
 function transitSearchStepDays(planet: string) {
@@ -505,7 +544,7 @@ function solarAltitudeCrossingForDay(
 }
 
 function horizonSignFor(swe: SwissEphInstance, location: LocationInput, date: Date, horizon: "ascendant" | "descendant") {
-  const houses = swe.houses(julianDayForDate(swe, date), location.latitude, location.longitude, "P") as unknown as {
+  const houses = swe.houses(julianDayForDate(swe, date), location.latitude, location.longitude, "W") as unknown as {
     ascmc: Float64Array;
   };
   const ascendantLongitude = normalizeDegrees(houses.ascmc[0]);
@@ -1200,9 +1239,10 @@ function findStations(
       if (previousSpeed === 0 || previousSpeed * currentSpeed < 0) {
         const occursAt = refineStationEvent(swe, planetId, previousDate, currentDate);
         const speedAfter = exactPlanetSpeed(swe, planetId, addDays(occursAt, 1));
-        const direction = speedAfter < 0 ? "retrograde" : "direct";
+        const direction: PlanetDirection = speedAfter < 0 ? "retrograde" : "direct";
         const dateKey = localDateKey(occursAt, timeZone);
         const sign = exactPlanetSign(swe, planetId, occursAt);
+        const longitude = Number(exactPlanetLongitude(swe, planetId, occursAt).toFixed(4));
 
         if (!events.some((event) => event.planet === planet && Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 24 * 60 * 60_000)) {
           events.push({
@@ -1214,7 +1254,12 @@ function findStations(
             glyph,
             primary: true,
             planet,
-            sign
+            sign,
+            direction,
+            phase: direction === "retrograde" ? "station-retrograde" : "station-direct",
+            longitude,
+            cazimi: isPlanetCazimi(swe, planetId, occursAt),
+            cazimiOrb: Number(planetSunOrb(swe, planetId, occursAt).toFixed(3))
           });
         }
       }
@@ -1291,6 +1336,8 @@ function findActiveRetrogrades(
 
       const sign = exactPlanetSign(swe, planetId, sampleTime);
       const endsAt = nextDirectStation(planetId, planet, sampleTime);
+      const retrogradeFacts = retrogradeCycleFactsFor(swe, planet, planetId, sampleTime, "retrograde");
+      const longitude = Number(exactPlanetLongitude(swe, planetId, sampleTime).toFixed(4));
 
       events.push({
         id: `retrograde-${planet.toLowerCase().replace(/\s+/g, "-")}-${dateKey}`,
@@ -1302,7 +1349,16 @@ function findActiveRetrogrades(
         glyph,
         primary: false,
         planet,
-        sign
+        sign,
+        direction: "retrograde",
+        phase: "retrograde-passage",
+        longitude,
+        retrogradeStart: retrogradeFacts.retrogradeStart ?? undefined,
+        retrogradeEnd: retrogradeFacts.retrogradeEnd ?? endsAt?.toISOString(),
+        shadowStart: retrogradeFacts.retrogradeShadowStart ?? undefined,
+        shadowEnd: retrogradeFacts.retrogradeShadowEnd ?? undefined,
+        cazimi: retrogradeFacts.cazimi ?? false,
+        cazimiOrb: retrogradeFacts.cazimiOrb ?? Number(planetSunOrb(swe, planetId, sampleTime).toFixed(3))
       });
     });
   }
@@ -1374,6 +1430,150 @@ function findNextStation(
   }
 
   return null;
+}
+
+function longitudeDistanceFromTarget(
+  swe: SwissEphInstance,
+  planetId: number,
+  date: Date,
+  targetLongitude: number
+) {
+  return shortestAngleDistance(exactPlanetLongitude(swe, planetId, date) - targetLongitude);
+}
+
+function refineLongitudeCrossing(
+  swe: SwissEphInstance,
+  planetId: number,
+  targetLongitude: number,
+  lowerDate: Date,
+  upperDate: Date
+) {
+  let lower = lowerDate;
+  let upper = upperDate;
+  let lowerDistance = longitudeDistanceFromTarget(swe, planetId, lower, targetLongitude);
+
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointDistance = longitudeDistanceFromTarget(swe, planetId, midpoint, targetLongitude);
+
+    if (Math.abs(midpointDistance) < 0.00001 || lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerDistance = midpointDistance;
+    }
+  }
+
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function findNearestPreviousLongitudeCrossing(
+  swe: SwissEphInstance,
+  planetId: number,
+  targetLongitude: number,
+  from: Date,
+  maxDays: number
+) {
+  const stepMs = 6 * 60 * 60_000;
+  let upper = from;
+  let upperDistance = longitudeDistanceFromTarget(swe, planetId, upper, targetLongitude);
+
+  for (let elapsedMs = stepMs; elapsedMs <= maxDays * 86_400_000; elapsedMs += stepMs) {
+    const lower = new Date(from.getTime() - elapsedMs);
+    const lowerDistance = longitudeDistanceFromTarget(swe, planetId, lower, targetLongitude);
+
+    if (Math.abs(lowerDistance) < 0.00001 || upperDistance === 0 || lowerDistance * upperDistance <= 0) {
+      return refineLongitudeCrossing(swe, planetId, targetLongitude, lower, upper);
+    }
+
+    upper = lower;
+    upperDistance = lowerDistance;
+  }
+
+  return null;
+}
+
+function findNearestNextLongitudeCrossing(
+  swe: SwissEphInstance,
+  planetId: number,
+  targetLongitude: number,
+  from: Date,
+  maxDays: number
+) {
+  const stepMs = 6 * 60 * 60_000;
+  let lower = from;
+  let lowerDistance = longitudeDistanceFromTarget(swe, planetId, lower, targetLongitude);
+
+  for (let elapsedMs = stepMs; elapsedMs <= maxDays * 86_400_000; elapsedMs += stepMs) {
+    const upper = new Date(from.getTime() + elapsedMs);
+    const upperDistance = longitudeDistanceFromTarget(swe, planetId, upper, targetLongitude);
+
+    if (Math.abs(upperDistance) < 0.00001 || lowerDistance === 0 || lowerDistance * upperDistance <= 0) {
+      return refineLongitudeCrossing(swe, planetId, targetLongitude, lower, upper);
+    }
+
+    lower = upper;
+    lowerDistance = upperDistance;
+  }
+
+  return null;
+}
+
+function retrogradeCycleFactsFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  date: Date,
+  motion: PlanetDirection
+): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource" | "retrogradePhase" | "retrogradeShadowStart" | "retrogradeShadowEnd" | "cazimi" | "cazimiOrb"> {
+  if (motion !== "retrograde") {
+    return {};
+  }
+
+  const searchDays = retrogradeSearchWindowDays(planet);
+  const previousStation = findPreviousStation(swe, planetId, date, searchDays);
+  const nextStation = findNextStation(swe, planetId, date, searchDays);
+
+  if (!previousStation || !nextStation) {
+    return {};
+  }
+
+  const speedAfterPreviousStation = exactPlanetSpeed(swe, planetId, addDays(previousStation, 1));
+  const speedAfterNextStation = exactPlanetSpeed(swe, planetId, addDays(nextStation, 1));
+
+  if (speedAfterPreviousStation >= 0 || speedAfterNextStation < 0) {
+    return {};
+  }
+
+  const retrogradeStartLongitude = exactPlanetLongitude(swe, planetId, previousStation);
+  const retrogradeEndLongitude = exactPlanetLongitude(swe, planetId, nextStation);
+  const shadowSearchDays = Math.max(90, Math.min(searchDays, 240));
+  const shadowStart = findNearestPreviousLongitudeCrossing(
+    swe,
+    planetId,
+    retrogradeEndLongitude,
+    previousStation,
+    shadowSearchDays
+  );
+  const shadowEnd = findNearestNextLongitudeCrossing(
+    swe,
+    planetId,
+    retrogradeStartLongitude,
+    nextStation,
+    shadowSearchDays
+  );
+  const cazimiOrb = Number(planetSunOrb(swe, planetId, date).toFixed(3));
+
+  return {
+    retrogradeStart: previousStation.toISOString(),
+    retrogradeEnd: nextStation.toISOString(),
+    retrogradeWindowSource: "station",
+    retrogradePhase: "retrograde-passage",
+    retrogradeShadowStart: shadowStart?.toISOString() ?? null,
+    retrogradeShadowEnd: shadowEnd?.toISOString() ?? null,
+    cazimi: cazimiOrb <= cazimiOrbDegrees,
+    cazimiOrb
+  };
 }
 
 function activeRetrogradeWindowFor(
@@ -1837,6 +2037,22 @@ function aspectForSeparation(separation: number) {
     .sort((a, b) => a.orb - b.orb)[0];
 }
 
+function applyingForAspect(from: CalculatedPlanet, to: CalculatedPlanet, exactDegrees: number) {
+  const currentDistance = Math.abs(shortestAngleDistance(angularSeparation(from.longitude, to.longitude) - exactDegrees));
+  const nextDistance = Math.abs(shortestAngleDistance(
+    angularSeparation(
+      normalizeDegrees(from.longitude + from.speed / 4),
+      normalizeDegrees(to.longitude + to.speed / 4)
+    ) - exactDegrees
+  ));
+
+  if (Math.abs(currentDistance) < 0.01) {
+    return false;
+  }
+
+  return nextDistance < currentDistance;
+}
+
 function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"] {
   const aspects: SkySnapshot["aspects"] = [];
 
@@ -1845,11 +2061,18 @@ function calculateAspects(positions: CalculatedPlanet[]): SkySnapshot["aspects"]
       const aspect = aspectForSeparation(angularSeparation(from.longitude, to.longitude));
 
       if (aspect) {
+        const definition = aspectDefinitions.find(([type]) => type === aspect.type);
+        const exactDegrees = definition?.[1] ?? 0;
+        const separation = angularSeparation(from.longitude, to.longitude);
+
         aspects.push({
           from: from.planet,
           to: to.planet,
           type: aspect.type,
-          orb: Number(aspect.orb.toFixed(1))
+          exactAngle: exactDegrees,
+          separation: Number(separation.toFixed(4)),
+          orb: Number(aspect.orb.toFixed(1)),
+          applying: applyingForAspect(from, to, exactDegrees)
         });
       }
     });
@@ -1890,7 +2113,8 @@ export async function getAstrodienstSky(
   }
 
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
-  const houses = swe.houses(jd, location.latitude, location.longitude, "P") as unknown as {
+  const houses = swe.houses(jd, location.latitude, location.longitude, "W") as unknown as {
+    cusps: Float64Array;
     ascmc: Float64Array;
   };
   const ascendantLongitude = normalizeDegrees(houses.ascmc[0]);
@@ -1915,6 +2139,7 @@ export async function getAstrodienstSky(
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
     const result = swe.calc_ut(jd, planetIds[index], flags);
     const longitude = normalizeDegrees(result[0]);
+    const latitude = Number(result[1].toFixed(4));
     const { sign, signGlyph, degree } = signForLongitude(longitude);
     const motion = result[3] < -0.0001 ? "retrograde" : "direct";
     const transitWindow = options.includeTransitWindows
@@ -1923,41 +2148,50 @@ export async function getAstrodienstSky(
     const retrogradeWindow = options.includeTransitWindows
       ? {
           ...nodeRetrogradeTransitWindowFor(planet, motion, transitWindow),
-          ...activeRetrogradeWindowFor(swe, planet, planetIds[index], date, motion)
+          ...retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
         }
       : {};
 
     return {
       planet,
       glyph,
+      longitude: Number(longitude.toFixed(4)),
+      latitude,
+      speed: Number(result[3].toFixed(6)),
       sign,
       signGlyph,
       degree,
       house: wholeSignHouse(sign, ascendant),
+      houseSystem: "whole_sign",
       motion,
       ...transitWindow,
-      ...retrogradeWindow,
-      longitude,
-      speed: result[3]
+      ...retrogradeWindow
     };
   });
   const sun = positions.find((position) => position.planet === "Sun") ?? positions[0];
   const moon = positions.find((position) => position.planet === "Moon") ?? positions[1];
-
-  return {
+  const houseCusps = wholeSignHouseCusps(ascendant);
+  const snapshot: SkySnapshot = {
     location,
     generatedAt: date.toISOString(),
+    calculationProvenance: ASTROLOGY_CALCULATION_PROVENANCE,
     ascendant,
     ascendantLongitude,
     midheaven,
     midheavenLongitude,
+    houseCusps,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
     moonStatus: moonStatusFor(swe, date),
     moonSignTransition: moonSignTransitionForDay(swe, date, location.timeZone),
     moonEvent: nextMoonEvent(swe, date),
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
-    positions: positions.map(({ longitude, speed, ...position }) => position),
+    positions: positions.map((position) => ({ ...position })),
     aspects: calculateAspects(positions)
+  };
+
+  return {
+    ...snapshot,
+    facts: factsFromSkySnapshot(snapshot)
   };
 }

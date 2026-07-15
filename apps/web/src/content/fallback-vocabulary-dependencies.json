@@ -1,0 +1,80 @@
+{
+  "families": [
+    {
+      "id": "sky-aspect-fallback",
+      "label": "Sky aspect fallback",
+      "required": ["ms/synastry-bank/aspect-behavior/{aspect}"],
+      "optional": ["cc/aspect-pair/{planetA}-{aspect}-{planetB}"],
+      "selection": "Use aspect behavior as the base. Add a specific aspect-pair row only when that exact pair exists; otherwise keep the copy aspect-level and concrete."
+    },
+    {
+      "id": "transit-to-natal-fallback",
+      "label": "Transit to natal fallback",
+      "required": ["cc/aspect-pair/{planetA}-{aspect}-{planetB}", "modifier/{modifier}"],
+      "optional": ["house-reliability"],
+      "selection": "Use planet-to-planet and modifier rows first. Only add house language when the receiving chart has reliable birth time."
+    },
+    {
+      "id": "ingress-fallback",
+      "label": "Ingress fallback",
+      "required": ["cc/planet-in-sign/{planet}-in-{sign}", "ms/ingress/{planet}"],
+      "optional": [],
+      "selection": "Compose planet-in-sign lived behavior with the ingress row; avoid keyword lists."
+    },
+    {
+      "id": "retrograde-phase-fallback",
+      "label": "Retrograde phase fallback",
+      "required": ["ms/retro-phase/{phase}", "ms/retrograde/{planet}"],
+      "optional": [],
+      "selection": "Use the phase row for timing behavior and the planet row for the reviewed function."
+    },
+    {
+      "id": "retrograde-per-planet-fallback",
+      "label": "Retrograde per-planet fallback",
+      "required": ["ms/retrograde/{planet}"],
+      "optional": [],
+      "selection": "Use Marie's per-planet retrograde flavor for the reviewed planet function."
+    },
+    {
+      "id": "eclipse-fallback",
+      "label": "Eclipse fallback",
+      "required": ["cc/fallback-hook/{type}-eclipse/{sign}/v1"],
+      "optional": ["cc/fallback-hook/eclipse/{sign}/v1"],
+      "selection": "Use the matching exported eclipse fallback row as reference-lane seed vocabulary when the sign/type is known. Authored fallback-hook/sky.eclipse.* rows remain DRAFT until editorial approval."
+    },
+    {
+      "id": "multi-retrograde-fallback",
+      "label": "Multi-retrograde fallback",
+      "required": ["ms/retrograde/{planet}"],
+      "optional": [],
+      "selection": "Retrieve one ms/retrograde row for each currently retrograde planet and synthesize the shared pacing without doom language."
+    },
+    {
+      "id": "synastry-short-fallback",
+      "label": "Synastry short fallback",
+      "required": ["ms/synastry-aspect/{contact}/core", "ms/synastry-bank/stakes/{context}", "ms/synastry-bank/helps/{context}"],
+      "optional": ["ms/synastry-house-overlay/{house}", "house-reliability"],
+      "selection": "Start with contact behavior, then context stakes and helps. Add house overlay only when the receiving chart has reliable birth time."
+    },
+    {
+      "id": "planet-lived-behavior-vocab",
+      "label": "Planet lived-behavior vocab",
+      "required": ["cc/planet/{planet}/{facet}", "cc/sign/{sign}/lived-behaviors"],
+      "optional": [],
+      "selection": "Use planet function/productive/excess with the sign lived-behavior row as generation context only."
+    }
+  ],
+  "houseReliabilityRules": [
+    {
+      "direction": "their-planet-in-your-house",
+      "requires": "yourReliableBirthTime",
+      "reason": "Your cusps place their planet in your house."
+    },
+    {
+      "direction": "your-planet-in-their-house",
+      "requires": "theirReliableBirthTime",
+      "reason": "Their cusps place your planet in their house."
+    }
+  ],
+  "referenceLanePolicy": "Reference-lane vocabulary is generation context only. Reader-facing fetches must require serving lane, published/reviewed status, and empty review blockers."
+}

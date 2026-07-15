@@ -5,18 +5,18 @@ delete from public.generated_interpretations
 where content_key in (
   'fallback-hook/sky.aspect-sign-context',
   'app-setting/sign-context-on-aspect-cards',
-  'vocab/sign-style/aries',
-  'vocab/sign-style/taurus',
-  'vocab/sign-style/gemini',
-  'vocab/sign-style/cancer',
-  'vocab/sign-style/leo',
-  'vocab/sign-style/virgo',
-  'vocab/sign-style/libra',
-  'vocab/sign-style/scorpio',
-  'vocab/sign-style/sagittarius',
-  'vocab/sign-style/capricorn',
-  'vocab/sign-style/aquarius',
-  'vocab/sign-style/pisces'
+  'fallback-vocab/sign-style/aries',
+  'fallback-vocab/sign-style/taurus',
+  'fallback-vocab/sign-style/gemini',
+  'fallback-vocab/sign-style/cancer',
+  'fallback-vocab/sign-style/leo',
+  'fallback-vocab/sign-style/virgo',
+  'fallback-vocab/sign-style/libra',
+  'fallback-vocab/sign-style/scorpio',
+  'fallback-vocab/sign-style/sagittarius',
+  'fallback-vocab/sign-style/capricorn',
+  'fallback-vocab/sign-style/aquarius',
+  'fallback-vocab/sign-style/pisces'
 );
 
 insert into public.generated_interpretations (
@@ -80,7 +80,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/aries',
+    'fallback-vocab/sign-style/aries',
     'sky',
     'feed',
     'LIVE',
@@ -100,7 +100,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/taurus',
+    'fallback-vocab/sign-style/taurus',
     'sky',
     'feed',
     'LIVE',
@@ -120,7 +120,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/gemini',
+    'fallback-vocab/sign-style/gemini',
     'sky',
     'feed',
     'LIVE',
@@ -140,7 +140,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/cancer',
+    'fallback-vocab/sign-style/cancer',
     'sky',
     'feed',
     'LIVE',
@@ -160,7 +160,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/leo',
+    'fallback-vocab/sign-style/leo',
     'sky',
     'feed',
     'LIVE',
@@ -180,7 +180,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/virgo',
+    'fallback-vocab/sign-style/virgo',
     'sky',
     'feed',
     'LIVE',
@@ -200,7 +200,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/libra',
+    'fallback-vocab/sign-style/libra',
     'sky',
     'feed',
     'LIVE',
@@ -220,7 +220,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/scorpio',
+    'fallback-vocab/sign-style/scorpio',
     'sky',
     'feed',
     'LIVE',
@@ -240,7 +240,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/sagittarius',
+    'fallback-vocab/sign-style/sagittarius',
     'sky',
     'feed',
     'LIVE',
@@ -260,7 +260,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/capricorn',
+    'fallback-vocab/sign-style/capricorn',
     'sky',
     'feed',
     'LIVE',
@@ -280,7 +280,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/aquarius',
+    'fallback-vocab/sign-style/aquarius',
     'sky',
     'feed',
     'LIVE',
@@ -300,7 +300,7 @@ insert into public.generated_interpretations (
     now()
   ),
   (
-    'vocab/sign-style/pisces',
+    'fallback-vocab/sign-style/pisces',
     'sky',
     'feed',
     'LIVE',

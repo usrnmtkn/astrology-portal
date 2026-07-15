@@ -1,0 +1,354 @@
+{
+  "_meta": {
+    "title": "Reviewed Moon phases (8) + Moon signs (12)",
+    "modules": {
+      "home.moon_forecast.phase": "8 phases",
+      "home.moon_forecast.sign": "12 signs"
+    },
+    "count": 20,
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1"
+  },
+  "reviewed": [
+    {
+      "id": "cc/moon-phase/new-moon",
+      "kind": "moon_phase",
+      "phase": "new-moon",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the dark before the seed: the cycle resets and the month's story isn't written yet",
+        "phase_action": "Set one quiet intention and begin small. Don't expect to see results yet"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/waxing-crescent",
+      "kind": "moon_phase",
+      "phase": "waxing-crescent",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the first fragile push past the New Moon, the intention taking its first breath",
+        "phase_action": "Take one concrete step and protect the young thing from your own doubt"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/first-quarter",
+      "kind": "moon_phase",
+      "phase": "first-quarter",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the first real resistance, where the seed runs into an obstacle and needs a decision",
+        "phase_action": "Push through the friction. Adjust the plan, don't abandon it"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/waxing-gibbous",
+      "kind": "moon_phase",
+      "phase": "waxing-gibbous",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the refining stretch before fullness, where the details start to matter",
+        "phase_action": "Refine, tweak, and stay with it. Trust the build"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/full-moon",
+      "kind": "moon_phase",
+      "phase": "full-moon",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the peak, where whatever was seeded is lit up and impossible to ignore",
+        "phase_action": "Witness it honestly and let something culminate or release. Don't start over"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/waning-gibbous",
+      "kind": "moon_phase",
+      "phase": "waning-gibbous",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the first exhale after the peak, time to share and digest what happened",
+        "phase_action": "Give back what you learned and start letting go of what's done"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/last-quarter",
+      "kind": "moon_phase",
+      "phase": "last-quarter",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the turning-inward crisis, where what no longer fits has to be released",
+        "phase_action": "Cut what's finished. Forgive, close the loop, make room"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-phase/balsamic",
+      "kind": "moon_phase",
+      "phase": "balsamic",
+      "surface": "home.moon_forecast.phase",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "cycle_role": "the last dark stretch, where the cycle composts and prepares for the next New Moon",
+        "phase_action": "Rest, clear, and let it end. Don't start the new thing yet"
+      },
+      "source_keys": [
+        "cc/ref/lunar-cycle"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; phase only, no Moon-sign copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/aries",
+      "kind": "moon_sign",
+      "sign": "aries",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Move. Your feelings want action, so run them through your body before they turn into a fight",
+        "care_prompt": "Don't pick the fight just to feel something"
+      },
+      "source_keys": [
+        "cc/sign/aries/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/taurus",
+      "kind": "moon_sign",
+      "sign": "taurus",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Slow down and get physical. Comfort, food, and calm are the medicine today",
+        "care_prompt": "Don't dig in just to prove you can't be moved"
+      },
+      "source_keys": [
+        "cc/sign/taurus/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/gemini",
+      "kind": "moon_sign",
+      "sign": "gemini",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Talk it out. Your feelings want words and a change of scene; text the friend, take the walk",
+        "care_prompt": "Don't outrun the feeling by staying busy"
+      },
+      "source_keys": [
+        "cc/sign/gemini/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/cancer",
+      "kind": "moon_sign",
+      "sign": "cancer",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Go gentle and go home. Cook, nest, call the person who feels safe",
+        "care_prompt": "You don't have to host everyone's feelings today"
+      },
+      "source_keys": [
+        "cc/sign/cancer/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/leo",
+      "kind": "moon_sign",
+      "sign": "leo",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Warm yourself up. A little play, affection, or spotlight feeds you now",
+        "care_prompt": "Don't perform being fine; let yourself actually be seen"
+      },
+      "source_keys": [
+        "cc/sign/leo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/virgo",
+      "kind": "moon_sign",
+      "sign": "virgo",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Sort one small thing. Tidying a corner or a list settles the whole mood",
+        "care_prompt": "Don't turn self-improvement into self-criticism today"
+      },
+      "source_keys": [
+        "cc/sign/virgo/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/libra",
+      "kind": "moon_sign",
+      "sign": "libra",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Restore some balance. Beauty, fairness, and a peaceful room steady you",
+        "care_prompt": "Don't keep the peace by abandoning your own preference"
+      },
+      "source_keys": [
+        "cc/sign/libra/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/scorpio",
+      "kind": "moon_sign",
+      "sign": "scorpio",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Let it be deep. Feel the real thing in private instead of forcing a smile",
+        "care_prompt": "Don't brood in a loop; let the feeling move and pass"
+      },
+      "source_keys": [
+        "cc/sign/scorpio/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/sagittarius",
+      "kind": "moon_sign",
+      "sign": "sagittarius",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Get some room. A walk, a plan, or a horizon lifts the mood",
+        "care_prompt": "Don't promise the world just because you feel expansive"
+      },
+      "source_keys": [
+        "cc/sign/sagittarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/capricorn",
+      "kind": "moon_sign",
+      "sign": "capricorn",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Do one useful thing. Competence is comfort for you today",
+        "care_prompt": "Don't mistake handling it for feeling it"
+      },
+      "source_keys": [
+        "cc/sign/capricorn/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/aquarius",
+      "kind": "moon_sign",
+      "sign": "aquarius",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Get a little distance. Space and perspective cool the feeling down",
+        "care_prompt": "Don't detach so far that you skip the feeling entirely"
+      },
+      "source_keys": [
+        "cc/sign/aquarius/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/moon-sign/pisces",
+      "kind": "moon_sign",
+      "sign": "pisces",
+      "surface": "home.moon_forecast.sign",
+      "status": "REVIEWED_CLAUSE",
+      "slots": {
+        "embodied_guidance": "Rest and let it flow. Music, water, art, and a nap are the medicine",
+        "care_prompt": "Guard your edges; you're soaking up everyone's weather today"
+      },
+      "source_keys": [
+        "cc/sign/pisces/lived-behaviors"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced original; short embodied imperative, no phase copy",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    }
+  ]
+}

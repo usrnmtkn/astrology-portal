@@ -1,0 +1,223 @@
+{
+  "_meta": {
+    "title": "Transit-by-house composition model (Transits surface)",
+    "surface": "transits.body_in_house",
+    "register": "personal, present-tense, non-deterministic; no em dashes",
+    "bodies": [
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+      "chiron",
+      "north_node"
+    ],
+    "houses": 12,
+    "combinations": 84,
+    "structure": [
+      "what's happening (body + duration + the house area it holds)",
+      "essence + concrete lived examples for this house + the flavor they take",
+      "how to work with it (the body's invitation)"
+    ],
+    "scope": "slow bodies only; fast planets (Sun/Mercury/Venus/Mars) cross a house too quickly",
+    "note": "House supplies concrete life events; the body's essence (grounded in Marie's transit writing + CC banks) colors them. A transit-through-house is personal timing, so no generational hedge."
+  },
+  "house_events": {
+    "1": {
+      "name": "how you show up and start things",
+      "events": "a change in your look, energy, or health, a fresh start, or a new way of putting yourself forward"
+    },
+    "2": {
+      "name": "your money and self-worth",
+      "events": "a shift in income, a change in what you own or value, or a new relationship with your own sense of worth"
+    },
+    "3": {
+      "name": "your daily mind and communication",
+      "events": "new learning, busier or quieter conversations, a local move, or shifts with siblings and the people you see every day"
+    },
+    "4": {
+      "name": "your home and family",
+      "events": "a move, a change in the household, something surfacing with a parent or your roots, or a reworking of where and how you live"
+    },
+    "5": {
+      "name": "your creativity, romance, and play",
+      "events": "a new romance, a creative project, a child or the question of one, or a change in what you do purely for joy"
+    },
+    "6": {
+      "name": "your work and health",
+      "events": "a change of job or daily routine, a health focus, new responsibilities in the everyday, or a rethink of how you care for yourself"
+    },
+    "7": {
+      "name": "your closest partnerships",
+      "events": "a marriage or serious commitment, a business partnership, taking on responsibility for someone, or renegotiating what feels fair between you"
+    },
+    "8": {
+      "name": "intimacy, shared money, and deep change",
+      "events": "a shift in joint finances or debt, a deepening or a crisis of intimacy, an inheritance, or a profound psychological change"
+    },
+    "9": {
+      "name": "your beliefs and horizons",
+      "events": "travel, study, a change of worldview, teaching or publishing, or a pull toward something bigger than your daily life"
+    },
+    "10": {
+      "name": "your career and public role",
+      "events": "a change of job, title, or direction, more visibility or responsibility, or a rethink of what you want to be known for"
+    },
+    "11": {
+      "name": "your friendships and future",
+      "events": "new friendships or the fading of old ones, a change of community or cause, or a reworking of your long-term hopes"
+    },
+    "12": {
+      "name": "your inner life and what works behind the scenes",
+      "events": "a turn inward, something hidden coming to light, a spiritual shift, or a real need for more rest and solitude"
+    }
+  },
+  "transit_bodies": {
+    "jupiter": {
+      "name": "Jupiter",
+      "duration": "about a year",
+      "essence": "Jupiter expands whatever it touches, and tends to grow opportunity, luck, and goodwill wherever it goes.",
+      "outcome": "This area opens up, the right people and openings tend to show up, and you feel invited to want more and reach further.",
+      "invitation": "Say yes to what genuinely grows you here. The one caution is Jupiter's overreach, which can inflate promises, spending, and optimism as easily as the real thing, so keep some perspective."
+    },
+    "saturn": {
+      "name": "Saturn",
+      "duration": "about two and a half years",
+      "essence": "Saturn weighs the life you have built and asks whatever is not truly yours to be rebuilt on real foundations.",
+      "outcome": "What is solid gets more serious, and what was never built well starts to give, so you either commit and do the work or let it go.",
+      "invitation": "Saturn is not punishing you; it is showing you what will hold. Do the patient, unglamorous work here, and what you commit to now is built to last."
+    },
+    "uranus": {
+      "name": "Uranus",
+      "duration": "about seven years",
+      "essence": "Uranus interrupts the settled version and pushes for change, freedom, and the truth you have been outgrowing.",
+      "outcome": "Expect the sudden and the unexpected here, breaks with how things have always been done, and experiments that pull you toward a freer, more honest arrangement.",
+      "invitation": "Try not to clamp down. Uranus asks you to loosen your grip on how this area is supposed to look, and the freedom it offers usually costs some security but frees you into something more truly yours."
+    },
+    "neptune": {
+      "name": "Neptune",
+      "duration": "about fourteen years",
+      "essence": "Neptune slowly dissolves the hard edges here, raising inspiration and confusion in the same breath.",
+      "outcome": "Dreams, longing, compassion, and illusion all rise, and it gets harder to tell a true intuition from a wishful story, so this area can feel both magical and slippery.",
+      "invitation": "Keep one foot on the ground and stay honest with yourself. Neptune can lend real vision and tenderness to this area, but it rewards you for noticing where you would rather not look."
+    },
+    "pluto": {
+      "name": "Pluto",
+      "duration": "many years",
+      "essence": "Pluto takes this area down to the root and will not leave it untouched, working through a slow and thorough transformation.",
+      "outcome": "Power, control, loss, and rebirth come up here, usually through something that has to end before the new can begin, and the change tends to go deeper than you first expect.",
+      "invitation": "Let what is genuinely dying go, and meet the intensity honestly rather than fighting it. What Pluto takes apart here, it eventually rebuilds stronger and more truly yours."
+    },
+    "chiron": {
+      "name": "Chiron",
+      "duration": "a few years",
+      "essence": "Chiron surfaces an old wound in this area so it can finally be tended.",
+      "outcome": "A familiar ache around this part of life may reopen, not to hurt you but to be met with more care than it got the first time, and your own healing here often becomes something you can offer other people.",
+      "invitation": "Tend the tender place gently and without rushing. The work you do here is slow, but it turns an old sore spot into hard-won wisdom."
+    },
+    "north_node": {
+      "name": "The North Node",
+      "duration": "about a year and a half",
+      "essence": "The North Node pulls your growth toward this area, even when it feels unfamiliar.",
+      "outcome": "You feel drawn to stretch here, toward experiences a little beyond your comfort, because this is the direction your life is trying to develop.",
+      "invitation": "Lean into what feels slightly beyond you here. The unfamiliar is the point, so follow the pull even when the old, easier pattern is calling you back."
+    }
+  },
+  "templates": {
+    "p1": "{Body} is spending {duration} moving through your {ord} house, the part of your chart that holds {houseName}.",
+    "p2": "{essence} Here that can show up as {houseEvents}. {outcome}",
+    "p3": "{invitation}"
+  },
+  "worked_examples": [
+    {
+      "title": "Saturn transiting your 7th house",
+      "eyebrow": {
+        "label": "Transit",
+        "body": "saturn",
+        "house": 7
+      },
+      "paragraphs": [
+        "Saturn is spending about two and a half years moving through your 7th house, the part of your chart that holds your closest partnerships.",
+        "Saturn weighs the life you have built and asks whatever is not truly yours to be rebuilt on real foundations. Here that can show up as a marriage or serious commitment, a business partnership, taking on responsibility for someone, or renegotiating what feels fair between you. What is solid gets more serious, and what was never built well starts to give, so you either commit and do the work or let it go.",
+        "Saturn is not punishing you; it is showing you what will hold. Do the patient, unglamorous work here, and what you commit to now is built to last."
+      ],
+      "trace": {
+        "body": "saturn",
+        "house": 7,
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Jupiter transiting your 2nd house",
+      "eyebrow": {
+        "label": "Transit",
+        "body": "jupiter",
+        "house": 2
+      },
+      "paragraphs": [
+        "Jupiter is spending about a year moving through your 2nd house, the part of your chart that holds your money and self-worth.",
+        "Jupiter expands whatever it touches, and tends to grow opportunity, luck, and goodwill wherever it goes. Here that can show up as a shift in income, a change in what you own or value, or a new relationship with your own sense of worth. This area opens up, the right people and openings tend to show up, and you feel invited to want more and reach further.",
+        "Say yes to what genuinely grows you here. The one caution is Jupiter's overreach, which can inflate promises, spending, and optimism as easily as the real thing, so keep some perspective."
+      ],
+      "trace": {
+        "body": "jupiter",
+        "house": 2,
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Pluto transiting your 4th house",
+      "eyebrow": {
+        "label": "Transit",
+        "body": "pluto",
+        "house": 4
+      },
+      "paragraphs": [
+        "Pluto is spending many years moving through your 4th house, the part of your chart that holds your home and family.",
+        "Pluto takes this area down to the root and will not leave it untouched, working through a slow and thorough transformation. Here that can show up as a move, a change in the household, something surfacing with a parent or your roots, or a reworking of where and how you live. Power, control, loss, and rebirth come up here, usually through something that has to end before the new can begin, and the change tends to go deeper than you first expect.",
+        "Let what is genuinely dying go, and meet the intensity honestly rather than fighting it. What Pluto takes apart here, it eventually rebuilds stronger and more truly yours."
+      ],
+      "trace": {
+        "body": "pluto",
+        "house": 4,
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "Uranus transiting your 10th house",
+      "eyebrow": {
+        "label": "Transit",
+        "body": "uranus",
+        "house": 10
+      },
+      "paragraphs": [
+        "Uranus is spending about seven years moving through your 10th house, the part of your chart that holds your career and public role.",
+        "Uranus interrupts the settled version and pushes for change, freedom, and the truth you have been outgrowing. Here that can show up as a change of job, title, or direction, more visibility or responsibility, or a rethink of what you want to be known for. Expect the sudden and the unexpected here, breaks with how things have always been done, and experiments that pull you toward a freer, more honest arrangement.",
+        "Try not to clamp down. Uranus asks you to loosen your grip on how this area is supposed to look, and the freedom it offers usually costs some security but frees you into something more truly yours."
+      ],
+      "trace": {
+        "body": "uranus",
+        "house": 10,
+        "readerAuthority": "composed-reviewed"
+      }
+    },
+    {
+      "title": "The North Node transiting your 9th house",
+      "eyebrow": {
+        "label": "Transit",
+        "body": "north_node",
+        "house": 9
+      },
+      "paragraphs": [
+        "The North Node is spending about a year and a half moving through your 9th house, the part of your chart that holds your beliefs and horizons.",
+        "The North Node pulls your growth toward this area, even when it feels unfamiliar. Here that can show up as travel, study, a change of worldview, teaching or publishing, or a pull toward something bigger than your daily life. You feel drawn to stretch here, toward experiences a little beyond your comfort, because this is the direction your life is trying to develop.",
+        "Lean into what feels slightly beyond you here. The unfamiliar is the point, so follow the pull even when the old, easier pattern is calling you back."
+      ],
+      "trace": {
+        "body": "north_node",
+        "house": 9,
+        "readerAuthority": "composed-reviewed"
+      }
+    }
+  ]
+}

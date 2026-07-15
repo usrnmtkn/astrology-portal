@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "title": "Natal intercepted signs (authored, REVIEWED)",
+    "count": 12,
+    "intercepted_signs": 12,
+    "tier": "REVIEWED_CLAUSE",
+    "register": "natal second-person",
+    "doctrine": "intercepted sign locked inside a house, on no cusp; develops later, through effort",
+    "note": "Serve after sign-off. Empty houses are composed separately (resolver/empty_house.py)."
+  },
+  "reviewed": [
+    {
+      "id": "cc/intercepted-sign/aries",
+      "kind": "intercepted_sign",
+      "sign": "aries",
+      "text": "When Aries is intercepted in your chart, your capacity for direct action and self-assertion is real but harder to reach, tucked inside a house instead of announced on a cusp. Standing up for yourself and starting things on your own may not come automatically; you might feel the drive and struggle to express it cleanly. This is a courage you develop on purpose, often later than your peers. The fire is yours to claim once you stop waiting for permission.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/taurus",
+      "kind": "intercepted_sign",
+      "sign": "taurus",
+      "text": "When Taurus is intercepted in your chart, your capacity for steadiness, patience, and simple security is real but harder to access, held inside a house rather than shown on a cusp. Building a stable base and trusting slow, physical pleasure may not come naturally; you might reach for stability and find it strangely elusive. This is a groundedness you cultivate deliberately, often growing into it with age. The steadiness is available once you stop rushing past it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/gemini",
+      "kind": "intercepted_sign",
+      "sign": "gemini",
+      "text": "When Gemini is intercepted in your chart, your quick, curious, communicative side is real but harder to reach, tucked inside a house instead of on a cusp. Speaking up, gathering information, and thinking out loud may feel blocked or come out sideways, and you might know more than you can easily say. This is a voice you develop with practice, often finding it fully later in life. The curiosity is yours to let loose once you trust it's worth hearing.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/cancer",
+      "kind": "intercepted_sign",
+      "sign": "cancer",
+      "text": "When Cancer is intercepted in your chart, your capacity for nurture, emotional safety, and belonging is real but harder to access, held inside a house rather than on a cusp. Feeling at home, letting yourself be cared for, and trusting your own tenderness may not come easily, and you might long for closeness while struggling to receive it. This is a softness you grow into on purpose, often later than expected. The warmth is there once you let yourself need it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/leo",
+      "kind": "intercepted_sign",
+      "sign": "leo",
+      "text": "When Leo is intercepted in your chart, your capacity for self-expression, warmth, and being seen is real but harder to reach, tucked inside a house instead of on a cusp. Shining, performing, and claiming the spotlight may feel awkward even when the creativity is clearly there, and you might create quietly while hesitating to be witnessed. This is a confidence you build deliberately, often blooming later in life. The light is yours to show once you decide it's allowed.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/virgo",
+      "kind": "intercepted_sign",
+      "sign": "virgo",
+      "text": "When Virgo is intercepted in your chart, your capacity for order, discernment, and useful service is real but harder to access, held inside a house rather than on a cusp. Getting organized, tending the details, and trusting your own competence may not come automatically, and you might crave order while feeling perpetually behind it. This is a skill you cultivate on purpose, often sharpening with age. The precision is available once you stop believing you're bad at it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/libra",
+      "kind": "intercepted_sign",
+      "sign": "libra",
+      "text": "When Libra is intercepted in your chart, your capacity for partnership, fairness, and easy harmony is real but harder to reach, tucked inside a house instead of on a cusp. Balancing your needs with others', reading social nuance, and trusting compromise may feel effortful, and you might want connection while fumbling the choreography of it. This is a grace you develop deliberately, often later in life. The diplomacy is yours to grow once you practice it consciously.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/scorpio",
+      "kind": "intercepted_sign",
+      "sign": "scorpio",
+      "text": "When Scorpio is intercepted in your chart, your capacity for depth, intensity, and transformation is real but harder to access, held inside a house rather than on a cusp. Going to the emotional bottom of things, trusting someone completely, and using your own power may feel blocked or frightening, and you might sense the depths while hesitating at the edge. This is an intensity you learn to hold on purpose, often growing into it with time. The power is yours once you stop fearing it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/sagittarius",
+      "kind": "intercepted_sign",
+      "sign": "sagittarius",
+      "text": "When Sagittarius is intercepted in your chart, your capacity for faith, adventure, and the bigger picture is real but harder to reach, tucked inside a house instead of on a cusp. Trusting the journey, chasing meaning, and believing in something larger may not come naturally, and you might hunger for freedom while feeling oddly fenced in. This is an optimism you cultivate deliberately, often expanding later in life. The horizon opens once you let yourself move toward it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/capricorn",
+      "kind": "intercepted_sign",
+      "sign": "capricorn",
+      "text": "When Capricorn is intercepted in your chart, your capacity for structure, discipline, and long-term achievement is real but harder to access, held inside a house rather than on a cusp. Taking authority, building slowly, and trusting your competence at the long game may feel elusive, and you might want to accomplish while struggling to find the scaffolding. This is a mastery you develop on purpose, often coming into its own with age. The authority is yours once you claim it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/aquarius",
+      "kind": "intercepted_sign",
+      "sign": "aquarius",
+      "text": "When Aquarius is intercepted in your chart, your capacity for independence, originality, and belonging to something larger is real but harder to reach, tucked inside a house instead of on a cusp. Standing apart, thinking for yourself, and finding your people may feel effortful, and you might sense your own difference while struggling to live it openly. This is a freedom you cultivate deliberately, often arriving fully later in life. The originality is yours once you stop apologizing for it.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    },
+    {
+      "id": "cc/intercepted-sign/pisces",
+      "kind": "intercepted_sign",
+      "sign": "pisces",
+      "text": "When Pisces is intercepted in your chart, your capacity for imagination, compassion, and surrender is real but harder to access, held inside a house rather than on a cusp. Dreaming, feeling with others, and trusting the intangible may not come easily even when the sensitivity clearly runs deep, and you might feel everything while struggling to give it form. This is a softness you grow into on purpose, often deepening with age. The imagination is yours once you let it flow.",
+      "tier": "REVIEWED_CLAUSE",
+      "surface": "me.intercepted_sign",
+      "register": "natal second-person",
+      "doctrine_source": "Stellium Handbook — intercepted signs (voiced original)",
+      "review_note": "authored; needs Marie/editorial sign-off"
+    }
+  ]
+}

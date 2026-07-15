@@ -242,7 +242,6 @@
 }
 
 .daily-horoscope-summary,
-.daily-horoscope-writeup,
 .personal-timing-summary {
   display: grid;
   gap: 10px;
@@ -258,8 +257,16 @@
   box-shadow: var(--card-shadow);
 }
 
+.daily-horoscope-summary__writeup,
 .daily-horoscope-writeup {
+  display: grid;
   gap: 18px;
+}
+
+.daily-horoscope-summary__writeup {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
 }
 
 .daily-horoscope-writeup__section {

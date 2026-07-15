@@ -2,7 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { CareerArchetypeCard } from "../../components/charts/CareerArchetypeCard";
 import { SoulRoadmapCard } from "../../components/charts/SoulRoadmapCard";
+import type { CareerArchetypeProfile } from "../../services/careerArchetype";
+import { isReaderFacingCopy } from "../../content/readerSafety";
 
 type YouTab = "transits" | "chart";
 
@@ -48,6 +51,7 @@ export type YouTransitArticle = {
 export type YouPageProps = {
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
+  careerArchetypeProfile?: CareerArchetypeProfile | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   displayMoon: string;
   displayRising: string;
@@ -62,6 +66,8 @@ export type YouPageProps = {
   natalAspectRows: ReactNode[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
+  onOpenCareerDetail?: () => void;
+  onOpenSoulRoadmapDetail?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
   profileAvatarUrl?: string;
@@ -72,6 +78,7 @@ export type YouPageProps = {
   signatureBody: string;
   signatureTitle: string;
   signaturesReady: boolean;
+  standaloneTransitRows?: ReactNode[];
   unknownBirthTime: boolean;
   transitArticle?: YouTransitArticle | null;
 };
@@ -233,6 +240,7 @@ function YouNatalChartPanel({
 
 function YouNatalTab({
   bigThreeRows,
+  careerArchetypeProfile,
   displayMoon,
   displayRising,
   displaySun,
@@ -240,6 +248,8 @@ function YouNatalTab({
   elementalSummarySentence,
   emptyHouseRows,
   natalAspectRows,
+  onOpenCareerDetail,
+  onOpenSoulRoadmapDetail,
   planetRows,
   showNatalSignatures,
   signatureBody,
@@ -247,6 +257,7 @@ function YouNatalTab({
   unknownBirthTime
 }: {
   bigThreeRows: ReactNode[];
+  careerArchetypeProfile?: CareerArchetypeProfile | null;
   displayMoon: string;
   displayRising: string;
   displaySun: string;
@@ -254,6 +265,8 @@ function YouNatalTab({
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
   natalAspectRows: ReactNode[];
+  onOpenCareerDetail?: () => void;
+  onOpenSoulRoadmapDetail?: () => void;
   planetRows: ReactNode[];
   showNatalSignatures: boolean;
   signatureBody: string;
@@ -283,20 +296,25 @@ function YouNatalTab({
 
       <SoulRoadmapCard
         moon={displayMoon}
+        onOpenDetail={onOpenSoulRoadmapDetail}
         rising={displayRising}
         risingPending={unknownBirthTime || displayRising === "Rising pending"}
         sun={displaySun}
       />
 
+      {careerArchetypeProfile && careerArchetypeProfile.sections.length > 0 && (
+        <CareerArchetypeCard onOpenDetail={onOpenCareerDetail} profile={careerArchetypeProfile} />
+      )}
+
       <span className="eyebrow section-label">Big Three</span>
-      <div className="list you-list-card planet-placement-list" aria-label="Big three">
+      <div className="list you-list-card planet-placement-list" aria-label="Natal placements">
         {bigThreeRows}
       </div>
 
       {planetRows.length > 0 && (
         <>
           <span className="eyebrow section-label">Planets</span>
-          <div className="list you-list-card planet-placement-list" aria-label="Planets">
+          <div className="list you-list-card planet-placement-list" aria-label="Bodies in signs and houses">
             {planetRows}
           </div>
         </>
@@ -314,7 +332,7 @@ function YouNatalTab({
       {natalAspectRows.length > 0 && (
         <>
           <span className="eyebrow section-label">Aspects</span>
-          <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Aspects">
+          <div className="list you-aspects-list aspect-row-list natal-aspects-list" aria-label="Natal aspects">
             {natalAspectRows}
           </div>
         </>
@@ -328,13 +346,15 @@ function YouUpdatesTab({
   dailyUpdateSummary,
   hasSavedCurrentCity,
   onCreateChart,
-  personalTimingSummary
+  personalTimingSummary,
+  standaloneTransitRows = []
 }: {
   aspectRows: ReactNode[];
   dailyUpdateSummary?: PersonalTimingSummary | null;
   hasSavedCurrentCity: boolean;
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
+  standaloneTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
@@ -354,18 +374,18 @@ function YouUpdatesTab({
               <span />
             </span>
           ) : null}
-        </section>
-      )}
-      {hasSavedCurrentCity && dailyWriteup.length > 0 && (
-        <section className="daily-horoscope-writeup" aria-label="Daily horoscope write-up">
-          {dailyWriteup.map((section, sectionIndex) => (
-            <div className="daily-horoscope-writeup__section" key={`${section.heading ?? "daily"}-${sectionIndex}`}>
-              {section.heading ? <h3>{section.heading}</h3> : null}
-              {section.body.map((paragraph, paragraphIndex) => (
-                <p key={`${sectionIndex}-${paragraphIndex}`}>{paragraph}</p>
+          {dailyWriteup.length > 0 && (
+            <div className="daily-horoscope-summary__writeup" aria-label="Daily horoscope write-up">
+              {dailyWriteup.map((section, sectionIndex) => (
+                <div className="daily-horoscope-writeup__section" key={`${section.heading ?? "daily"}-${sectionIndex}`}>
+                  {section.heading ? <h3>{section.heading}</h3> : null}
+                  {section.body.map((paragraph, paragraphIndex) => (
+                    <p key={`${sectionIndex}-${paragraphIndex}`}>{paragraph}</p>
+                  ))}
+                </div>
               ))}
             </div>
-          ))}
+          )}
         </section>
       )}
       {hasSavedCurrentCity && personalTimingSummary && (
@@ -396,11 +416,19 @@ function YouUpdatesTab({
           {aspectRows}
         </div>
       )}
-      {hasSavedCurrentCity && aspectRows.length === 0 && (
+      {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
+        <>
+          <span className="eyebrow section-label">House transits</span>
+          <div className="updates-aspect-list" aria-label="House transits">
+            {standaloneTransitRows}
+          </div>
+        </>
+      )}
+      {hasSavedCurrentCity && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
-          <h3>No major updates to your chart today.</h3>
-          <p>The sky is still moving, but nothing is pressing hard on your natal placements right now.</p>
+          <h3>No major updates are active today.</h3>
+          <p>The sky is still moving, but no major personalized transit is pressing on your natal placements in this window.</p>
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
       )}
@@ -411,13 +439,20 @@ function YouUpdatesTab({
 function isPlaceholderArticleText(value: string) {
   const normalized = value.trim().toLowerCase();
 
-  return !normalized || normalized === "tldr" || normalized === "tl;dr";
+  return (
+    !normalized ||
+    normalized === "tldr" ||
+    normalized === "tl;dr" ||
+    /^\d{1,2}°(?:\d{1,2})?'?$/.test(normalized) ||
+    /^reviewed\b/.test(normalized) ||
+    /^draft\b/.test(normalized)
+  );
 }
 
 function cleanArticleText(value?: string | null) {
   const text = (value ?? "").replace(/^TLDR:\s*/i, "").replace(/\s+/g, " ").trim();
 
-  return isPlaceholderArticleText(text) ? "" : text;
+  return isPlaceholderArticleText(text) || !isReaderFacingCopy(text) ? "" : text;
 }
 
 function articleParagraphs(value?: string | null) {
@@ -440,6 +475,21 @@ function dedupeArticleParagraphs(paragraphs: string[]) {
     seen.add(normalized);
     return true;
   });
+}
+
+function normalizedArticleCopy(value?: string | null) {
+  return cleanArticleText(value).replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function isDuplicateArticleCopy(value: string, seen: Set<string>) {
+  const normalized = normalizedArticleCopy(value);
+
+  if (!normalized || seen.has(normalized)) {
+    return true;
+  }
+
+  seen.add(normalized);
+  return false;
 }
 
 function cleanArticleHeading(value?: string | null) {
@@ -509,21 +559,39 @@ function YouTransitArticlePage({
   }, [article.id]);
 
   const summary = cleanArticleText(article.summary);
-  const sections = article.sections
-    .map((section) => ({
-      heading: cleanArticleHeading(section.heading),
-      tldr: cleanArticleText(section.tldr),
-      body: section.body
-    }))
-    .filter((section) => section.heading || section.tldr || articleParagraphs(section.body).length);
   const introParagraphs = article.bodyBeforeSections
     ? dedupeArticleParagraphs((article.body ?? [])
       .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
       .filter(Boolean))
     : [];
-  const hasReadableBody = Boolean(summary || introParagraphs.length || sections.length);
   const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
-  const articleTldr = cleanArticleText(article.subtitle || summary || introParagraphs[0] || sections[0]?.tldr);
+  const rawSectionTldr = article.sections.map((section) => cleanArticleText(section.tldr)).find(Boolean) ?? "";
+  const articleTldrCandidate = cleanArticleText(article.subtitle || summary || introParagraphs[0] || rawSectionTldr);
+  const articleTldr = articleTldrCandidate && normalizedArticleCopy(articleTldrCandidate) !== normalizedArticleCopy(introParagraphs[0])
+    ? articleTldrCandidate
+    : "";
+  const seenCopy = new Set<string>();
+
+  if (articleTldr) {
+    seenCopy.add(normalizedArticleCopy(articleTldr));
+  }
+
+  const displaySummary = summary && !isDuplicateArticleCopy(summary, seenCopy) ? summary : "";
+  const displayIntroParagraphs = introParagraphs.filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
+  const sections = article.sections
+    .map((section) => {
+      const tldr = cleanArticleText(section.tldr);
+      const bodyParagraphs = articleParagraphs(section.body).filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
+      const displayTldr = tldr && !isDuplicateArticleCopy(tldr, seenCopy) ? tldr : "";
+
+      return {
+        heading: cleanArticleHeading(section.heading),
+        tldr: displayTldr,
+        bodyParagraphs
+      };
+    })
+    .filter((section) => section.tldr || section.bodyParagraphs.length);
+  const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
   const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(article);
 
@@ -571,33 +639,37 @@ function YouTransitArticlePage({
                   {typeof article.lensHint === "string" ? <p>{cleanArticleText(article.lensHint)}</p> : article.lensHint}
                 </aside>
               ) : null}
-              {introParagraphs.length ? (
+              {displayIntroParagraphs.length ? (
                 <section className={`article-section sky-detail-section ${article.plainBody ? "sky-detail-plain-section" : "sky-detail-intro-section"}`}>
-                  {introParagraphs.map((paragraph, index) => (
+                  {displayIntroParagraphs.map((paragraph, index) => (
                     <p key={`intro-${index}`}>{paragraph}</p>
                   ))}
                 </section>
               ) : null}
-              {summary && !article.bodyBeforeSections ? (
+              {displaySummary && !article.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
                   <h2>{summaryHeading}</h2>
-                  <p>{summary}</p>
+                  <p>{displaySummary}</p>
                 </section>
               ) : null}
               {sections.map((section, index) => {
-                const showTldr = section.tldr && section.tldr !== section.body;
-                const bodyParagraphs = articleParagraphs(section.body);
+                const showTldr = section.tldr && normalizedArticleCopy(section.tldr) !== normalizedArticleCopy(section.bodyParagraphs[0]);
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
                   {section.heading ? <h2>{section.heading}</h2> : null}
                   {showTldr ? <p>{section.tldr}</p> : null}
-                  {bodyParagraphs.map((paragraph, paragraphIndex) => (
+                  {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
                     <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
                   ))}
                 </section>
                 );
               })}
+              {!hasReadableBody ? (
+                <section className="article-section sky-detail-section">
+                  <p>This interpretation is still being prepared.</p>
+                </section>
+              ) : null}
               {article.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
                   <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>
@@ -618,6 +690,7 @@ function YouTransitArticlePage({
 export function YouPage({
   aspectRows,
   bigThreeRows,
+  careerArchetypeProfile,
   dailyUpdateSummary,
   displayMoon,
   displayRising,
@@ -632,6 +705,8 @@ export function YouPage({
   natalChartPending,
   onCreateChart,
   onCloseTransitArticle,
+  onOpenCareerDetail,
+  onOpenSoulRoadmapDetail,
   personalTimingSummary,
   planetRows,
   profileAvatarUrl,
@@ -642,6 +717,7 @@ export function YouPage({
   signatureBody,
   signatureTitle,
   signaturesReady,
+  standaloneTransitRows = [],
   unknownBirthTime,
   transitArticle
 }: YouPageProps) {
@@ -687,6 +763,7 @@ export function YouPage({
           {profileTab === "chart" && (
             <YouNatalTab
               bigThreeRows={bigThreeRows}
+              careerArchetypeProfile={careerArchetypeProfile}
               displayMoon={displayMoon}
               displayRising={displayRising}
               displaySun={displaySun}
@@ -694,6 +771,8 @@ export function YouPage({
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
               natalAspectRows={natalAspectRows}
+              onOpenCareerDetail={onOpenCareerDetail}
+              onOpenSoulRoadmapDetail={onOpenSoulRoadmapDetail}
               planetRows={planetRows}
               showNatalSignatures={showNatalSignatures}
               signatureBody={signatureBody}
@@ -709,6 +788,7 @@ export function YouPage({
               hasSavedCurrentCity={hasSavedCurrentCity}
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
+              standaloneTransitRows={standaloneTransitRows}
             />
           )}
         </main>

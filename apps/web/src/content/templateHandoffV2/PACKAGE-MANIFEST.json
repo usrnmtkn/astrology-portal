@@ -1,0 +1,34 @@
+{
+  "package": "tldr-astro-template-handoff-v2",
+  "version": "2.2.0",
+  "created": "2026-07-13",
+  "status": "IMPLEMENTATION_HANDOFF",
+  "supersedes": ["tldr-astro-handoff-FINAL-SOURCE-GROUNDED-TEMPLATES.zip", "all earlier fallback/template handoff archives"],
+  "scope": ["fallback template composition", "surface resolution", "reader rendering", "admin preview parity", "source classification", "natal sect eligibility"],
+  "outOfScope": ["calculation/API checkpoint", "Dashboard information architecture", "navigation", "courses", "audio", "unrelated styling", "transit sect ranking"],
+  "authoritativeFiles": [
+    "CODEX-IMPLEMENTATION-PROMPT.md",
+    "AUTHORITIES.md",
+    "INFORMATION-TREE.md",
+    "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md",
+    "contracts/SURFACE-RESOLUTION-MATRIX.json",
+    "contracts/EXECUTABLE-TEMPLATE-CONTRACT.json",
+    "contracts/RENDER-FIELD-CONTRACT.md",
+    "contracts/SOURCE-TIER-CONTRACT.md",
+    "contracts/SOURCE-CLASSIFICATION.json",
+    "contracts/VOICE-AND-NARRATIVE-CONTRACT.md",
+    "contracts/SECT-ELIGIBILITY-CONTRACT.md",
+    "ACCEPTANCE-GATES.md"
+  ],
+  "packageTests": ["tests/verify-package-contract.mjs", "tests/verify-render-fixture-shape.mjs"],
+  "fixtureCount": 10,
+  "surfaceCount": 10,
+  "templateFamilyCount": 10,
+  "evidence": {
+    "legacyReferenceScreenshots": 40,
+    "currentReferenceScreenshots": 10,
+    "genericTransitHouseRowsQuarantined": 132,
+    "exactAspectPairRowsRequiringReview": 84
+  },
+  "sourcePolicy": "All sources and screenshots are evidence-only unless promoted to REVIEWED_CLAUSE or REVIEWED_RECORD under the source-tier contract."
+}
