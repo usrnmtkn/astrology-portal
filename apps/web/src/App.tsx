@@ -28,6 +28,7 @@ import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
+import { CareerArchetypeCard } from "./components/charts/CareerArchetypeCard";
 import {
   AspectGlyphs,
   DurationLabelText,
@@ -42,7 +43,7 @@ import {
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
-import { SoulRoadmapCard } from "./components/charts/SoulRoadmapCard";
+import { resolveSoulRoadmapProfile, SoulRoadmapCard, type SoulRoadmapProfile } from "./components/charts/SoulRoadmapCard";
 import type { PlacementHouseInsight, SocialPlacementRow } from "./components/charts/PlacementRows";
 import {
   aspectGlyph,
@@ -57,6 +58,40 @@ import {
 } from "./components/charts/chartAssets";
 import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import { fallbackHookByKey, knowledgeIdsForFallbackHook, type FallbackHookContext } from "./content/fallbackHooks";
+import skyContentSnapshot from "./content/skyContentSnapshot.json";
+import {
+  emergencyAspectBehavior,
+  emergencyHouseArea,
+  emergencyNatalPlacementCopy,
+  emergencyPlanetFunction,
+  emergencyPointFunction,
+  emergencyRulerBridgeCopy,
+  emergencySignRuler,
+  emergencySignTone,
+  emergencySkyPlacementCopy,
+  emergencySynastryAspectCopy,
+  emergencyTransitToNatalCopy
+} from "./content/emergencyCopy";
+import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
+import {
+  placementScaffoldHasMinimumCoverage,
+  placementScaffoldSections,
+  type PlacementScaffoldSection
+} from "./content/placementScaffold";
+import {
+  sourceGroundedNatalAspectComposition as sourceGroundedNatalAspectCompositionRuntime,
+  sourceGroundedNatalPlacementSections as sourceGroundedNatalPlacementSectionsRuntime,
+  sourceGroundedPersonalTransitComposition as sourceGroundedPersonalTransitCompositionRuntime,
+  sourceGroundedSkyAspectParagraphs as sourceGroundedSkyAspectParagraphsRuntime,
+  sourceGroundedSkyAspectSummary as sourceGroundedSkyAspectSummaryRuntime,
+  sourceGroundedSkyPlacementParagraphs as sourceGroundedSkyPlacementParagraphsRuntime,
+  sourceGroundedSkyPlacementSummary as sourceGroundedSkyPlacementSummaryRuntime
+} from "./content/sourceGroundedRuntime";
+import {
+  resolveSkyHistoricalLookback,
+  skyHistoricalLookbackSettingKey,
+  type SkyHistoricalLookback
+} from "./content/skyHistoricalLookback";
 import type { ContentBundle } from "./content/types";
 import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
 import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
@@ -96,26 +131,45 @@ import {
   generatedContentDrilldown,
   generatedContentSections,
   generatedContentParagraphs,
+  generatedContentPreviewModeChangeEvent,
   loadLiveGeneratedContent,
   loadLiveGeneratedContentForSurfaces,
+  readGeneratedContentPreviewMode,
   renderGeneratedContentTemplate,
+  type GeneratedContentPreviewMode,
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
+import { validateAstrologyFacts } from "./services/astrologyFacts";
+import { loadCareerVocabulary, resolveCareerArchetypeProfile, type CareerArchetypeProfile } from "./services/careerArchetype";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import type { TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
+  compositeHouseContentKey,
+  compositePointContentKey,
+  compositeSignContentKey,
+  natalAngleContentKey,
   natalAspectContentKey,
   natalHouseContentKey,
+  natalPlacementContentKey,
   natalRulerContentKey,
   natalSignContentKey,
   skyAspectContentKey,
   skyAspectInstanceContentKey,
+  skyIngressContentKey,
+  skyPlacementContentKey,
   synastryAspectContentKey,
-  transitToNatalAspectContentKey
+  transitHouseContentKey,
+  transitToNatalAspectContentKey,
+  transitToNatalAspectInstanceContentKey
 } from "./services/generatedContentKeys";
+import {
+  isSamePlanetSynastryContact,
+  samePlanetSynastryContentKeys,
+  samePlanetSynastryRuntimeFallbackKey
+} from "./services/samePlanetSynastry";
 import {
   createManualChart,
   deleteManualChart,
@@ -125,6 +179,7 @@ import {
   updateManualChart
 } from "./services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
   genericPersonReferenceSlots,
@@ -132,6 +187,7 @@ import {
   personReferenceSlots,
   possessiveName,
   resolvePersonReference,
+  resolveThirdPersonReference,
   type PersonReference,
   type PronounChoice
 } from "./services/personReferences";
@@ -178,7 +234,7 @@ type UserChart = {
 };
 
 type ChartSettings = {
-  houseSystem: "Whole House";
+  houseSystem: "Whole Sign";
   zodiac: "Tropical";
   aspects: "Standard" | "Tight";
   houseSignLabelStyle: HouseSignLabelStyle;
@@ -284,7 +340,7 @@ type TransitItem = {
 type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
 type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
 
-type FriendProfileTab = "natal" | "synastry" | "composite";
+type FriendProfileTab = "natal" | "transits" | "synastry" | "composite";
 type FriendsMainView = "circle" | "charts" | "profile";
 type FriendsTab = Exclude<FriendsMainView, "profile">;
 
@@ -350,6 +406,7 @@ type SkyDetail = {
   meta: string;
   duration?: string;
   subtitle?: string;
+  suppressTldr?: boolean;
   lensHint?: ReactNode;
   compactHeader?: boolean;
   plainBody?: boolean;
@@ -364,6 +421,7 @@ type SkyDetail = {
     heading: string;
     rows: ReactNode[];
   };
+  historicalLookback?: SkyHistoricalLookback | null;
   astrologyDrilldown?: GeneratedContentDrilldown | null;
   content?: ContentBundle;
 };
@@ -373,6 +431,56 @@ function isSkyDetail(value: unknown): value is SkyDetail {
 }
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
+
+type LocalSkySnapshotRow = Omit<LiveGeneratedContent, "mode" | "blockType"> & {
+  aliases?: string[];
+  mode: LiveGeneratedContent["mode"];
+  blockType?: LiveGeneratedContent["blockType"];
+};
+
+const legacyPublicLiveWritingEnabled = false;
+
+function sourceGroundedNatalAspectComposition(
+  ...args: Parameters<typeof sourceGroundedNatalAspectCompositionRuntime>
+) {
+  return legacyPublicLiveWritingEnabled ? sourceGroundedNatalAspectCompositionRuntime(...args) : null;
+}
+
+function sourceGroundedNatalPlacementSections(
+  ...args: Parameters<typeof sourceGroundedNatalPlacementSectionsRuntime>
+) {
+  return legacyPublicLiveWritingEnabled ? sourceGroundedNatalPlacementSectionsRuntime(...args) : [];
+}
+
+function sourceGroundedPersonalTransitComposition(
+  ...args: Parameters<typeof sourceGroundedPersonalTransitCompositionRuntime>
+) {
+  return legacyPublicLiveWritingEnabled ? sourceGroundedPersonalTransitCompositionRuntime(...args) : null;
+}
+
+function sourceGroundedSkyAspectParagraphs(
+  ...args: Parameters<typeof sourceGroundedSkyAspectParagraphsRuntime>
+) {
+  return sourceGroundedSkyAspectParagraphsRuntime(...args);
+}
+
+function sourceGroundedSkyAspectSummary(
+  ...args: Parameters<typeof sourceGroundedSkyAspectSummaryRuntime>
+) {
+  return sourceGroundedSkyAspectSummaryRuntime(...args);
+}
+
+function sourceGroundedSkyPlacementParagraphs(
+  ...args: Parameters<typeof sourceGroundedSkyPlacementParagraphsRuntime>
+) {
+  return sourceGroundedSkyPlacementParagraphsRuntime(...args);
+}
+
+function sourceGroundedSkyPlacementSummary(
+  ...args: Parameters<typeof sourceGroundedSkyPlacementSummaryRuntime>
+) {
+  return sourceGroundedSkyPlacementSummaryRuntime(...args);
+}
 
 type YouTransitArticle = {
   id: string;
@@ -395,17 +503,96 @@ type YouTransitArticle = {
     heading: string;
     rows: ReactNode[];
   };
+  historicalLookback?: SkyHistoricalLookback | null;
   meta: Array<{
     label: string;
     value: string;
   }>;
 };
 
-type NatalPlacementFrame = {
-  house: string;
-  growth: string;
-  integration: string;
-};
+function careerDetailSections(profile: CareerArchetypeProfile) {
+  return profile.sections.map((section) => ({
+    heading: section.label,
+    body: section.body
+  }));
+}
+
+function careerYouArticle(profile: CareerArchetypeProfile): YouTransitArticle {
+  return {
+    id: "career-archetype",
+    title: profile.title,
+    glyph: "♔",
+    subtitle: profile.tldr,
+    summary: profile.summary,
+    summaryHeading: "Natal career logic",
+    bodyBeforeSections: false,
+    sections: careerDetailSections(profile).map((section) => ({
+      heading: section.heading,
+      tldr: "",
+      body: section.body
+    })),
+    meta: profile.factors
+  };
+}
+
+function careerSkyDetail(profile: CareerArchetypeProfile, routePath?: string): SkyDetail {
+  return {
+    routePath,
+    glyph: "♔",
+    kicker: "Career",
+    title: profile.title,
+    meta: "Natal career logic",
+    subtitle: profile.tldr,
+    compactHeader: true,
+    body: [profile.summary],
+    sections: careerDetailSections(profile)
+  };
+}
+
+function soulRoadmapYouArticle(profile: SoulRoadmapProfile): YouTransitArticle {
+  return {
+    id: "soul-roadmap",
+    title: profile.title,
+    glyph: "✦",
+    subtitle: profile.tldr,
+    summary: profile.tldr,
+    summaryHeading: profile.label,
+    bodyBeforeSections: false,
+    sections: [
+      {
+        heading: "Roadmap points",
+        tldr: "",
+        body: profile.points.map((point) => `${point.label}: ${point.value}`).join("\n")
+      },
+      ...profile.sections.map((section) => ({
+        heading: section.heading,
+        tldr: "",
+        body: section.body
+      }))
+    ],
+    meta: profile.points
+  };
+}
+
+function soulRoadmapSkyDetail(profile: SoulRoadmapProfile, routePath?: string): SkyDetail {
+  return {
+    routePath,
+    glyph: "✦",
+    kicker: profile.label,
+    title: profile.title,
+    meta: "Natal mission statement",
+    subtitle: profile.tldr,
+    compactHeader: true,
+    body: [],
+    sections: [
+      {
+        heading: "Roadmap points",
+        body: profile.points.map((point) => `${point.label}: ${point.value}`).join("\n")
+      },
+      ...profile.sections
+    ]
+  };
+}
 
 type ContentDomain = "sky" | "natal" | "relationship";
 type LazyContentRegistry = Pick<
@@ -565,10 +752,10 @@ function approvedVoiceOrKnowledgeFallback(id: string, domain: ContentDomain = "n
       return emptyContentFallback(id);
     }
 
-    return {
+    return sanitizeContentFallback({
       ...fallback,
       detailParagraphs: fallback.detailParagraphs ?? []
-    };
+    });
   }
 
   void loadContentRegistry(domain);
@@ -589,6 +776,19 @@ function emptyContentFallback(id: string): ContentFallback {
   };
 }
 
+function sanitizeContentFallback(content: ContentFallback): ContentFallback {
+  const summary = firstReaderFacingCopy([content.summary]);
+  const bodyParagraphs = readerFacingParagraphs(content.body?.split(/\n{2,}/) ?? []);
+  const detailParagraphs = readerFacingParagraphs(content.detailParagraphs);
+
+  return {
+    ...content,
+    summary: summary ?? null,
+    body: bodyParagraphs.length > 0 ? bodyParagraphs.join("\n\n") : null,
+    detailParagraphs
+  };
+}
+
 function fallbackFromHook(
   hookKey: string,
   context: FallbackHookContext = {},
@@ -600,19 +800,19 @@ function fallbackFromHook(
   const allowKnowledgeOnly = options.allowKnowledgeOnly ?? true;
 
   for (const knowledgeId of knowledgeIds) {
-    const fallback = approvedVoiceOrKnowledgeFallback(knowledgeId, hook?.domain ?? "natal", allowKnowledgeOnly);
+    const fallback = sanitizeContentFallback(approvedVoiceOrKnowledgeFallback(knowledgeId, hook?.domain ?? "natal", allowKnowledgeOnly));
 
-    if (fallback.summary || fallback.body || fallback.detailParagraphs.length > 0) {
+    if (hasContentFallback(fallback)) {
       return fallback;
     }
   }
 
   if (hasContentFallback(localFallback)) {
-    return {
+    return sanitizeContentFallback({
       ...emptyContentFallback(hookKey),
       ...localFallback,
       detailParagraphs: localFallback.detailParagraphs ?? []
-    };
+    });
   }
 
   return emptyContentFallback(hookKey);
@@ -636,23 +836,49 @@ function hasApprovedVoiceContent(content: ContentFallback) {
 const interpretationInReviewSummary = "";
 const interpretationInReviewParagraphs: string[] = [];
 
+function hasReaderFacingGeneratedCopy(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  return Boolean(
+    firstReaderFacingCopy([content.summary])
+    || generatedContentParagraphs(content).length > 0
+    || generatedContentSections(content).length > 0
+  );
+}
+
 function liveGeneratedContent(generatedContent: GeneratedContentMap, contentKey: string, templateSlots?: TemplateSlotValues) {
-  return renderGeneratedContentTemplate(generatedContent.get(contentKey), templateSlots);
+  const content = renderGeneratedContentTemplate(generatedContent.get(contentKey), templateSlots);
+
+  return hasReaderFacingGeneratedCopy(content) ? content : null;
 }
 
 const templateFallbackContentKeys = {
   skySeasonalCurrent: "fallback-hook/sky.seasonal-current",
   skyLunarCycle: "fallback-hook/sky.lunar-cycle",
   skyPlanetaryPlacement: "fallback-hook/sky.planetary-placement",
+  skyPlanetaryPlacementRetrograde: "fallback-hook/sky.planetary-placement-retrograde",
+  skyIngress: "fallback-hook/sky.ingress",
   skyAspectDetail: "fallback-hook/sky.aspect-detail",
+  skyAspectRow: "fallback-hook/sky.aspect-row",
   skyAspectSignContext: "fallback-hook/sky.aspect-sign-context",
   skyRetrograde: "fallback-hook/sky.retrograde",
+  skyStation: "fallback-hook/sky.station",
   skyRetrogradeSection: "fallback-hook/sky.retrograde-section",
   youNatalPlacement: "fallback-hook/you.natal-placement",
+  youNatalHousePlacement: "fallback-hook/you.natal-house-placement",
+  youNatalAnglePlacement: "fallback-hook/you.natal-angle-placement",
+  youNatalRuler: "fallback-hook/you.natal-ruler",
+  youNatalChartRuler: "fallback-hook/you.natal-chart-ruler",
+  youNatalSynthesis: "fallback-hook/you.natal-synthesis",
   youNatalAspect: "fallback-hook/you.natal-aspect",
   youTransitToNatal: "fallback-hook/you.transit-to-natal",
+  youTransitThroughHouse: "fallback-hook/you.transit-through-house",
+  youTransitToAngle: "fallback-hook/you.transit-to-angle",
   youDailyTiming: "fallback-hook/you.daily-timing",
   friendsSynastryContact: "fallback-hook/friends.synastry-contact",
+  friendsSamePlanet: samePlanetSynastryRuntimeFallbackKey,
   friendsHouseOverlay: "fallback-hook/friends.house-overlay",
   friendsCompositeAspect: "fallback-hook/friends.composite-aspect",
   friendsCompositePlacement: "fallback-hook/friends.composite-placement",
@@ -670,7 +896,11 @@ type TemplateFallbackOptions = {
 };
 
 function hasContentFallback(content?: Partial<Pick<ContentFallback, "summary" | "body" | "detailParagraphs">> | null) {
-  return Boolean(content?.summary || content?.body || (content?.detailParagraphs?.length ?? 0) > 0);
+  return Boolean(
+    firstReaderFacingCopy([content?.summary])
+    || readerFacingParagraphs(content?.body?.split(/\n{2,}/) ?? []).length > 0
+    || readerFacingParagraphs(content?.detailParagraphs ?? []).length > 0
+  );
 }
 
 function templateFallbackDomain(contentKey: string): ContentDomain {
@@ -697,6 +927,47 @@ function mergeGeneratedContentMaps(...maps: GeneratedContentMap[]) {
   return merged;
 }
 
+function normalizedSkySnapshotContentMap() {
+  const map: GeneratedContentMap = new Map();
+
+  if (!legacyPublicLiveWritingEnabled) {
+    return map;
+  }
+
+  const rows = (skyContentSnapshot as { rows?: LocalSkySnapshotRow[] }).rows ?? [];
+
+  rows.forEach((row) => {
+    const content: LiveGeneratedContent = {
+      id: row.id,
+      contentKey: row.contentKey,
+      surface: row.surface,
+      mode: row.mode,
+      eventType: row.eventType,
+      targetDate: row.targetDate,
+      headline: row.headline,
+      summary: row.summary,
+      body: row.body,
+      sections: row.sections,
+      blockType: row.blockType ?? null,
+      provider: row.provider ?? null,
+      sourceSnapshot: row.sourceSnapshot ?? null,
+      model: row.model,
+      updatedAt: row.updatedAt
+    };
+
+    map.set(content.contentKey, content);
+    (row.aliases ?? []).forEach((alias) => {
+      if (!map.has(alias)) {
+        map.set(alias, content);
+      }
+    });
+  });
+
+  return map;
+}
+
+const normalizedSkySnapshotContent = normalizedSkySnapshotContentMap();
+
 function liveGeneratedContentByKeys(
   generatedContent: GeneratedContentMap,
   contentKeys: string[],
@@ -710,14 +981,82 @@ function liveGeneratedContentByKeys(
     }
   }
 
-  const registryReady = templateFallback ? templateFallbackRegistryReady(templateFallback) : false;
-  const hasFallback = hasContentFallback(templateFallback?.afterContentFallback);
-
   return templateFallback
-    && registryReady
-    && !hasFallback
     ? liveGeneratedContent(generatedContent, templateFallback.contentKey, templateFallback.slots)
     : null;
+}
+
+function liveGeneratedContentByKeysMatching(
+  generatedContent: GeneratedContentMap,
+  contentKeys: string[],
+  matches: (content: LiveGeneratedContent) => boolean,
+  templateFallback?: TemplateFallbackOptions
+) {
+  for (const contentKey of contentKeys) {
+    const generated = liveGeneratedContent(generatedContent, contentKey, templateFallback?.slots);
+
+    if (generated && matches(generated)) {
+      return generated;
+    }
+  }
+
+  if (!templateFallback) {
+    return null;
+  }
+
+  const fallback = liveGeneratedContent(generatedContent, templateFallback.contentKey, templateFallback.slots);
+
+  return fallback && matches(fallback) ? fallback : null;
+}
+
+function isPromotedEmergencyFloorContent(content: LiveGeneratedContent) {
+  const snapshot = content.sourceSnapshot ?? {};
+  const model = content.model ?? "";
+
+  return snapshot.servingFloor === true
+    || snapshot.action === "PROMOTE_AUTHORED_PLACEMENT_FLOOR"
+    || model === "compiled-phrasebank-authored-placement-floor";
+}
+
+function isNatalPlacementRuntimeContent(content: LiveGeneratedContent) {
+  const contentKey = content.contentKey;
+
+  if (contentKey.startsWith("fallback-hook/you.") || contentKey.startsWith("slot-template/5")) {
+    return true;
+  }
+
+  if (isPromotedEmergencyFloorContent(content)) {
+    return false;
+  }
+
+  if (content.surface === "natal" || content.surface === "you") {
+    return !contentKey.startsWith("sky.")
+      && !contentKey.startsWith("sky-")
+      && !contentKey.startsWith("ms/")
+      && !contentKey.startsWith("fallback-hook/sky.")
+      && !contentKey.startsWith("fallback-hook/lunation/")
+      && !contentKey.startsWith("vocab/")
+      && !contentKey.startsWith("fallback-vocab/")
+      && !contentKey.startsWith("cc/sign/");
+  }
+
+  return false;
+}
+
+function liveNatalPlacementContentByKeys(
+  generatedContent: GeneratedContentMap,
+  contentKeys: string[],
+  templateFallback?: TemplateFallbackOptions
+) {
+  return liveGeneratedContentByKeysMatching(generatedContent, contentKeys, isNatalPlacementRuntimeContent, templateFallback);
+}
+
+function natalPlacementParagraphsForKey(generatedContent: GeneratedContentMap, contentKey: string) {
+  const generated = liveGeneratedContent(generatedContent, contentKey);
+
+  return generated && isNatalPlacementRuntimeContent(generated)
+    ? generatedContentParagraphs(generated)
+    : [];
 }
 
 function generatedDetailSections(generated: LiveGeneratedContent | null) {
@@ -731,6 +1070,65 @@ function generatedAstrologyDrilldown(generated: LiveGeneratedContent | null) {
   return generatedContentDrilldown(generated);
 }
 
+function generatedContentSourceFile(content: LiveGeneratedContent | null) {
+  const file = content?.sourceSnapshot?.file;
+  const sourceFile = content?.sourceSnapshot?.sourceFile;
+
+  return typeof file === "string"
+    ? file
+    : typeof sourceFile === "string"
+      ? sourceFile
+      : "";
+}
+
+function isReviewedNatalAspectContent(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  const sourceFile = generatedContentSourceFile(content);
+
+  return content.blockType === "natal_aspect"
+    && content.surface === "natal"
+    && sourceFile.includes("cc-natal-aspect.json");
+}
+
+function isReviewedSkyAspectContent(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  const sourceFile = generatedContentSourceFile(content);
+
+  return (
+    content.surface === "sky"
+    && content.blockType === "sky_aspect"
+    && content.contentKey.startsWith("sky.aspect.")
+  ) || (
+    content.blockType === "transit_to_natal_aspect"
+    && sourceFile.includes("cc-aspect-pair-reviewed")
+  ) || (
+    content.blockType === "natal_aspect"
+    && sourceFile.includes("cc-natal-aspect")
+  );
+}
+
+function isAuthoredTransitAspectContent(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  const sourceFile = generatedContentSourceFile(content);
+
+  return (
+    content.blockType === "transit_to_natal_aspect"
+    && sourceFile.includes("cc-aspect-pair-reviewed")
+  ) || (
+    content.blockType === "natal_aspect"
+    && sourceFile.includes("cc-natal-aspect")
+  );
+}
+
 function skyGeneratedDateKey(generatedAt: string) {
   return generatedAt.slice(0, 10);
 }
@@ -740,6 +1138,7 @@ function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], g
   const signedAspect = aspect as SkySnapshot["aspects"][number] & { fromSign?: string; toSign?: string };
   const fromSign = signedAspect.fromSign || skyAspectPosition(aspect.from, positions)?.sign;
   const toSign = signedAspect.toSign || skyAspectPosition(aspect.to, positions)?.sign;
+  const aspectPart = normalizeContentIdPart(aspect.type);
 
   return [
     skyAspectInstanceContentKey(aspect.from, aspect.type, aspect.to, {
@@ -748,35 +1147,41 @@ function skyAspectGeneratedContentKeys(aspect: SkySnapshot["aspects"][number], g
       targetDate: dateKey
     }),
     skyAspectContentKey(aspect.from, aspect.type, aspect.to),
+    transitToNatalAspectContentKey(aspect.from, aspect.type, aspect.to),
+    transitToNatalAspectContentKey(aspect.to, aspect.type, aspect.from),
+    natalAspectContentKey(aspect.from, aspect.type, aspect.to),
+    `fallback-hook/sky.aspect-detail/${aspectPart}/expanded`,
+    `fallback-hook/sky.aspect-detail/${aspectPart}/feed`,
+    `fallback-hook/sky.aspect-detail/${aspectPart}/card`,
     `sky-aspect-${normalizeContentIdPart(aspect.from)}-${normalizeContentIdPart(aspect.type)}-${normalizeContentIdPart(aspect.to)}-${dateKey}`,
     currentSkyAspectContentId(aspect.from, aspect.type, aspect.to)
   ];
 }
 
 function signStyleSlot(sign: string) {
-  return signStylePhrase(sign) || natalSignFallbackFrames[sign]?.quality || "";
+  return signStylePhrase(sign) || emergencySignTone(sign);
 }
 
 function planetTopicSlot(planet: string, variant: PlanetTopicVariant = "natal") {
-  return planetTopicPhrase(planet, variant);
+  return planetTopicPhrase(planet, variant) || emergencyPlanetFunction(planet);
 }
 
 const relationshipPlanetTopicFallbacks: Record<string, string> = {
-  Sun: "identity and direction",
-  Moon: "needs and reactions",
-  Mercury: "thinking and communication",
-  Venus: "connection, pleasure, money, and desire",
-  Mars: "action, desire, and conflict",
-  Jupiter: "growth, meaning, and opportunity",
-  Saturn: "commitment, limits, timing, and responsibility",
-  Uranus: "change, disruption, and freedom",
-  Neptune: "sensitivity, ideals, uncertainty, and escape",
-  Pluto: "control, power, endings, and deeper pressure",
-  Chiron: "old tenderness, repair, and sensitive places",
-  Ascendant: "presence and first impression",
-  Midheaven: "visibility, direction, and public role",
-  "North Node": "direction, appetite, growth, and old patterns",
-  "True Node": "direction, appetite, growth, and old patterns"
+  Sun: emergencyPlanetFunction("Sun"),
+  Moon: emergencyPlanetFunction("Moon"),
+  Mercury: emergencyPlanetFunction("Mercury"),
+  Venus: emergencyPlanetFunction("Venus"),
+  Mars: emergencyPlanetFunction("Mars"),
+  Jupiter: emergencyPlanetFunction("Jupiter"),
+  Saturn: emergencyPlanetFunction("Saturn"),
+  Uranus: emergencyPlanetFunction("Uranus"),
+  Neptune: emergencyPlanetFunction("Neptune"),
+  Pluto: emergencyPlanetFunction("Pluto"),
+  Chiron: emergencyPlanetFunction("Chiron"),
+  Ascendant: emergencyPlanetFunction("Ascendant"),
+  Midheaven: emergencyPlanetFunction("Midheaven"),
+  "North Node": emergencyPlanetFunction("North Node"),
+  "True Node": emergencyPlanetFunction("True Node")
 };
 
 function relationshipPlanetTopicSlot(planet: string, variant: PlanetTopicVariant = "friend") {
@@ -790,26 +1195,64 @@ function relationshipPlanetTopicSlot(planet: string, variant: PlanetTopicVariant
 }
 
 function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues {
+  const body = skyDisplayPlanetName(position.planet);
+  const planetTopic = planetTopicSlot(position.planet, "sky");
+  const signStyle = signStyleSlot(position.sign);
+  const transitTiming = position.transitStart && position.transitEnd
+    ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd))
+    : null;
+  const retrogradeTiming = retrogradeRangeText(position) ?? transitTiming;
+  const compactCollectiveClaim = position.motion === "retrograde"
+    ? `${body} retrograde in ${position.sign}.`
+    : `${body} in ${position.sign}.`;
+
   return {
+    body,
+    compact_collective_claim: compactCollectiveClaim,
+    end_date_display: retrogradeTiming?.split(/\s+[-–]\s+/u)[1] ?? "",
+    is_retrograde: position.motion === "retrograde",
     planet: position.planet,
-    planetTopic: planetTopicSlot(position.planet, "sky"),
+    planetTopic,
     sign: position.sign,
-    signStyle: signStyleSlot(position.sign),
-    signNeed: position.planet === "Moon" ? signNeedPhrase(position.sign, "sky") : ""
+    signStyle,
+    signNeed: position.planet === "Moon" ? signNeedPhrase(position.sign, "sky") : "",
+    start_date_display: retrogradeTiming?.split(/\s+[-–]\s+/u)[0] ?? ""
   };
 }
 
+function skyRetrogradeTemplateSlots(position: PlanetPosition): TemplateSlotValues {
+  const body = skyDisplayPlanetName(position.planet);
+  const planetTopic = planetTopicSlot(position.planet, "sky");
+  const timingParts = (retrogradeRangeText(position) ?? "").split(/\s+[-–]\s+/u);
+  const reviewScene = `${body} retrograde in ${position.sign}`;
+  const specificMaterial = planetTopic || "the thing that keeps returning";
+
+  return {
+    body,
+    has_practical_action: false,
+    planet: position.planet,
+    planetTopic,
+    premature_next_step: "a final plan",
+    practical_action: "",
+    review_scene: reviewScene,
+    sign: position.sign,
+    specific_material: specificMaterial,
+    station_direct_date_display: timingParts[1] ?? "",
+    station_retrograde_date_display: timingParts[0] ?? ""
+  };
+}
+
+function skyPlacementFallbackChildKey(position: PlanetPosition) {
+  const planetPart = normalizeContentIdPart(position.planet)
+    .replace(/^true-node$/, "north-node")
+    .replace(/^black-moon-lilith$/, "lilith");
+
+  return `fallback-hook/sky.planetary-placement/${planetPart}/${normalizeContentIdPart(position.sign)}`;
+}
+
 function skyPlacementTemplateFallbackKey(position: PlanetPosition) {
-  if (position.planet === "Sun") {
-    return templateFallbackContentKeys.skySeasonalCurrent;
-  }
-
-  if (position.planet === "Moon") {
-    return templateFallbackContentKeys.skyLunarCycle;
-  }
-
   if (position.motion === "retrograde") {
-    return templateFallbackContentKeys.skyRetrograde;
+    return templateFallbackContentKeys.skyPlanetaryPlacementRetrograde;
   }
 
   return templateFallbackContentKeys.skyPlanetaryPlacement;
@@ -819,14 +1262,16 @@ function aspectTemplateSlots(
   firstPoint: string,
   aspect: string,
   secondPoint: string,
-  variant: PlanetTopicVariant = "natal"
+  variant: PlanetTopicVariant = "natal",
+  person?: PersonReference
 ): TemplateSlotValues {
   return {
     aspect: titleCase(aspect).toLowerCase(),
     planetA: firstPoint,
     planetATopic: variant === "friend" ? relationshipPlanetTopicSlot(firstPoint, variant) : planetTopicSlot(firstPoint, variant),
     planetB: secondPoint,
-    planetBTopic: variant === "friend" ? relationshipPlanetTopicSlot(secondPoint, variant) : planetTopicSlot(secondPoint, variant)
+    planetBTopic: variant === "friend" ? relationshipPlanetTopicSlot(secondPoint, variant) : planetTopicSlot(secondPoint, variant),
+    ...(person ? genericPersonReferenceSlots(person) : {})
   };
 }
 
@@ -859,46 +1304,79 @@ function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number], position
   };
 }
 
-function natalPlacementTemplateSlots(position: PlanetPosition, variant: PlanetTopicVariant = "natal"): TemplateSlotValues {
+function ownerPossessive(ownerContext?: ChartOwnerContext) {
+  if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
+    return resolveThirdPersonReference({
+      name: ownerContext.ownerName,
+      pronouns: ownerContext.ownerPronouns
+    }).possessiveAdjectiveCapitalized;
+  }
+
+  return "Your";
+}
+
+function natalPlacementTemplateSlots(
+  position: PlanetPosition,
+  variant: PlanetTopicVariant = "natal",
+  ownerContext?: ChartOwnerContext
+): TemplateSlotValues {
+  const houseNumber = position.house ?? null;
+
+  return {
+    possessive: ownerPossessive(ownerContext),
+    planet: position.planet,
+    point: position.planet,
+    planetTopic: planetTopicSlot(position.planet, variant),
+    pointFunction: planetTopicSlot(position.planet, variant),
+    sign: position.sign,
+    signStyle: emergencySignTone(position.sign),
+    house: houseNumber ? ordinalHouse(houseNumber) : "",
+    houseLifeArea: houseNumber ? houseLifeAreas[houseNumber] ?? "" : ""
+  };
+}
+
+function natalAngleTemplateSlots(position: PlanetPosition): TemplateSlotValues {
   return {
     planet: position.planet,
-    planetTopic: planetTopicSlot(position.planet, variant),
+    angle: position.planet,
+    planetTopic: planetTopicSlot(position.planet, "you"),
+    angleTopic: planetTopicSlot(position.planet, "you") || relationshipPlanetTopicFallbacks[position.planet] || "",
     sign: position.sign,
-    signStyle: signStyleSlot(position.sign),
-    house: position.house ? ordinalHouse(position.house) : ""
+    signStyle: emergencySignTone(position.sign),
+    house: position.house ? ordinalHouse(position.house) : "",
+    birthTimeConfidence: "reliable"
+  };
+}
+
+function natalRulerTemplateSlots(
+  position: PlanetPosition,
+  houseSign: string,
+  houseRuler: string,
+  rulerPosition: PlanetPosition,
+  ownerContext?: ChartOwnerContext
+): TemplateSlotValues {
+  const rulerHouse = rulerPosition.house ?? null;
+
+  return {
+    ...natalPlacementTemplateSlots(position, "you", ownerContext),
+    point: position.planet,
+    sign: houseSign,
+    ruler: houseRuler,
+    rulerSign: rulerPosition.sign,
+    rulerHouse: rulerHouse ? ordinalHouse(rulerHouse) : "",
+    rulerTopic: planetTopicSlot(houseRuler, "you"),
+    rulerFunction: planetTopicSlot(houseRuler, "you"),
+    rulerSignStyle: emergencySignTone(rulerPosition.sign),
+    rulerHouseLifeArea: rulerHouse ? houseLifeAreas[rulerHouse] ?? "" : ""
   };
 }
 
 function aspectTonePhrase(aspect: string) {
-  const tones: Record<string, string> = {
-    conjunction: "concentration, emphasis, and amplification",
-    opposition: "contrast, projection, and the need to see both sides",
-    square: "friction, pressure, and adjustment",
-    trine: "ease, support, and momentum",
-    sextile: "openings, cooperation, and small useful choices"
-  };
-
-  return tones[aspect.toLowerCase()] ?? "contact, timing, and response";
+  return emergencyAspectBehavior(aspect);
 }
 
 function transitPlanetWeatherPhrase(planet: string) {
-  const weather: Record<string, string> = {
-    Sun: "visibility, vitality, identity, and what needs attention",
-    Moon: "mood, instinct, memory, and immediate emotional weather",
-    Mercury: "thinking, messages, logistics, learning, and exchange",
-    Venus: "connection, pleasure, money, values, and desire",
-    Mars: "action, heat, urgency, conflict, and the impulse to move",
-    Jupiter: "growth, belief, opportunity, meaning, and expansion",
-    Saturn: "commitment, limits, timing, responsibility, and reality checks",
-    Uranus: "change, disruption, restlessness, freedom, and pattern breaks",
-    Neptune: "uncertainty, sensitivity, ideals, imagination, and escape",
-    Pluto: "power, pressure, exposure, endings, and deeper change",
-    Chiron: "old tenderness, repair, sensitivity, and what still needs care",
-    "North Node": "direction, appetite, growth, and old patterns",
-    "True Node": "direction, appetite, growth, and old patterns"
-  };
-
-  return weather[planet] ?? planetTopicSlot(planet, "sky");
+  return emergencyPlanetFunction(planet) || planetTopicSlot(planet, "sky");
 }
 
 function personalActivationPhrase(natalPoint: string, natalPointTopic: string) {
@@ -932,11 +1410,25 @@ function transitToNatalTemplateSlots(transit: TransitItem, natalVariant: PlanetT
     natalPointTopic,
     transitPlanetWeather: transitPlanetWeatherPhrase(transit.transitPlanet),
     personalActivation: personalActivationPhrase(transit.natalPoint, natalPointTopic),
+    house: transit.natalHouse ? ordinalHouse(transit.natalHouse) : "",
+    houseLifeArea: transit.natalHouse ? houseLifeAreas[transit.natalHouse] ?? "" : "",
     activatedHouse: transit.natalHouse ? ordinalHouse(transit.natalHouse) : "",
     activatedHouseTopic: transit.natalHouse ? houseLifeAreas[transit.natalHouse] ?? "" : "",
     timingIntensity: transitTimingIntensity(transit),
     timingPhase: transitTimingPhase(transit.direction)
   };
+}
+
+function transitToNatalTemplateFallbackKey(transit: Pick<TransitItem, "natalPoint" | "natalHouse">) {
+  if (isChartAnglePoint(transit.natalPoint)) {
+    return templateFallbackContentKeys.youTransitToAngle;
+  }
+
+  if (transit.natalHouse) {
+    return templateFallbackContentKeys.youTransitThroughHouse;
+  }
+
+  return templateFallbackContentKeys.youTransitToNatal;
 }
 
 function synastryTemplateSlots(
@@ -1017,7 +1509,8 @@ function compositePlacementTemplateSlots(position: { planet: string; sign: strin
     planetTopic: relationshipPlanetTopicSlot(position.planet, "friend"),
     sign: position.sign,
     signStyle: signStyleSlot(position.sign),
-    house: position.house ? ordinalHouse(position.house) : ""
+    house: position.house ? ordinalHouse(position.house) : "",
+    houseLifeArea: position.house ? houseLifeAreas[position.house] ?? readableHouseTopic(position.house) : "the shared life of the relationship"
   };
 }
 
@@ -1043,6 +1536,23 @@ function circleFeedPreviewChart(chart: Pick<ManualChart, "id" | "displayName">) 
   };
 }
 
+function isChartAnglePoint(point: string) {
+  return ["Ascendant", "Descendant", "Midheaven", "Imum Coeli"].includes(point);
+}
+
+function transitAspectTechnicalVerb(aspect: string) {
+  const normalized = normalizeAspectType(aspect);
+  const verbs: Record<string, string> = {
+    conjunction: "conjunct",
+    opposition: "opposite",
+    square: "square",
+    trine: "trine",
+    sextile: "sextile"
+  };
+
+  return verbs[normalized] ?? titleCase(aspect).toLowerCase();
+}
+
 function lifeAreaFocusTemplateSlots(option: { label: string; description: string }): TemplateSlotValues {
   return {
     lifeArea: option.label,
@@ -1065,31 +1575,58 @@ function skyPlacementGeneratedContentKeys(position: PlanetPosition, generatedAt:
   if (position.motion === "retrograde") {
     keys.add(`sky-retrograde-${normalizeContentIdPart(position.planet)}-${dateKey}`);
     keys.add(`sky-retrograde-${normalizeContentIdPart(position.planet)}`);
+    keys.add(`ms/retrograde/${normalizeContentIdPart(position.planet)}`);
+    keys.add(`fallback-hook/sky.retrograde/${normalizeContentIdPart(position.planet)}`);
   }
 
+  keys.add(skyPlacementContentKey(position.planet, position.sign));
   keys.add(placementContentId(position.planet, position.sign, "sky"));
+  keys.add(skyPlacementFallbackChildKey(position));
 
   return Array.from(keys);
 }
 
 function liveGeneratedSummary(generated: LiveGeneratedContent | null, fallback: string | null) {
-  return stripTldrPrefix(generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || fallback || interpretationInReviewSummary);
+  const summary = firstReaderFacingCopy([
+    generated?.summary,
+    ...generatedContentParagraphs(generated),
+    fallback
+  ]);
+
+  return stripTldrPrefix(summary || interpretationInReviewSummary);
 }
 
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
-  const summary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  const summary = firstReaderFacingCopy([
+    generated?.summary,
+    ...generatedContentParagraphs(generated)
+  ]);
 
   return summary ? stripTldrPrefix(summary) : "";
 }
 
 function liveGeneratedBody(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
-  const paragraphs = generatedContentParagraphs(generated);
+  const paragraphs = readerFacingParagraphs(generatedContentParagraphs(generated));
+  const fallback = readerFacingParagraphs(fallbackParagraphs);
 
   return paragraphs.length > 0
     ? paragraphs
-    : fallbackParagraphs.length > 0
-      ? fallbackParagraphs
+    : fallback.length > 0
+      ? fallback
       : interpretationInReviewParagraphs;
+}
+
+function skyPlacementGeneratedContentHasNatalLanguage(generated: LiveGeneratedContent | null) {
+  if (!generated) {
+    return false;
+  }
+
+  const text = [
+    generated.summary ?? "",
+    ...generatedContentParagraphs(generated)
+  ].join(" ");
+
+  return /\byou grow through\b|\bwhere you (?:grow|dream|transform|break|commit|direct your energy|think|value)\b|\byour (?:core self|inner world|birth chart|natal|chart|life goal|mission)\b/i.test(text);
 }
 
 function generatedObjectSectionText(generated: LiveGeneratedContent | null, key: string) {
@@ -1101,7 +1638,7 @@ function generatedObjectSectionText(generated: LiveGeneratedContent | null, key:
 
   const value = (sections as Record<string, unknown>)[key];
 
-  return typeof value === "string" ? value.trim() : "";
+  return firstReaderFacingCopy([typeof value === "string" ? value : null]) ?? "";
 }
 
 function synastryHeadlinerParagraphs(generated: LiveGeneratedContent | null) {
@@ -1201,6 +1738,10 @@ function skyAspectSignContextEnabled(generatedContent: GeneratedContentMap) {
   return generatedSettingEnabled(generatedContent, signContextAspectCardsSettingKey, true);
 }
 
+function skyHistoricalLookbackEnabled(generatedContent: GeneratedContentMap) {
+  return generatedSettingEnabled(generatedContent, skyHistoricalLookbackSettingKey, false);
+}
+
 function skyAspectSignContextLine(
   aspect: SkySnapshot["aspects"][number],
   generatedContent: GeneratedContentMap,
@@ -1222,7 +1763,10 @@ function skyAspectSignContextLine(
     slots
   );
 
-  return generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  return firstReaderFacingCopy([
+    generated?.summary,
+    ...generatedContentParagraphs(generated)
+  ]) || "";
 }
 
 function personalDailyGeneratedContentKey(targetDate: string) {
@@ -1448,10 +1992,11 @@ function textPreview(text: string, characterLimit = synastryCardPreviewCharacter
 }
 
 function fallbackPreviewText(fallback: ContentFallback) {
-  return fallback.summary
-    || fallback.detailParagraphs.find((paragraph) => paragraph.trim())?.trim()
-    || fallback.body?.split(/\n{2,}/).find((paragraph) => paragraph.trim())?.trim()
-    || null;
+  return firstReaderFacingCopy([
+    fallback.summary,
+    ...fallback.detailParagraphs,
+    ...(fallback.body?.split(/\n{2,}/) ?? [])
+  ]);
 }
 
 function stripTldrPrefix(value: string) {
@@ -1479,6 +2024,11 @@ function normalizedArticleCopy(value: ReactNode) {
 function articleSectionFromText(heading: string, text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   const body = cleanGeneratedSectionBody(normalized);
+
+  if (!isReaderFacingCopy(body)) {
+    return null;
+  }
+
   const sentenceEnd = body.search(/[.!?](\s|$)/);
   const tldr = sentenceEnd > 30 ? body.slice(0, sentenceEnd + 1).trim() : body;
 
@@ -1489,20 +2039,41 @@ function articleSectionFromText(heading: string, text: string) {
   };
 }
 
-function generatedArticleSections(generated: LiveGeneratedContent | null, fallbackParagraphs: string[]) {
+function generatedArticleSections(generated: LiveGeneratedContent | null, fallbackParagraphs: string[], excludeTexts: string[] = []) {
+  const seen = new Set(
+    excludeTexts
+      .map((value) => normalizedArticleCopy(value))
+      .filter(Boolean)
+  );
+  const keepUniqueReaderCopy = (value: string) => {
+    const cleaned = cleanGeneratedSectionBody(value);
+    const copy = normalizedArticleCopy(cleaned);
+
+    if (!copy || seen.has(copy) || !isReaderFacingCopy(cleaned)) {
+      return false;
+    }
+
+    seen.add(copy);
+    return true;
+  };
   const generatedSections = generatedContentSections(generated);
 
   if (generatedSections.length > 0) {
-    return generatedSections.slice(0, 4).map((section) => articleSectionFromText(section.heading, section.body));
+    return generatedSections
+      .filter((section) => keepUniqueReaderCopy(section.body))
+      .slice(0, 4)
+      .map((section) => articleSectionFromText(section.heading, section.body))
+      .filter((section): section is NonNullable<typeof section> => Boolean(section));
   }
 
-  const paragraphs = generatedContentParagraphs(generated).length > 0
-    ? generatedContentParagraphs(generated)
-    : fallbackParagraphs;
+  const generatedParagraphs = generatedContentParagraphs(generated);
+  const paragraphs = generatedParagraphs.length > 0 ? generatedParagraphs : fallbackParagraphs;
 
-  return paragraphs.slice(0, 4).map((paragraph, index) => (
-    articleSectionFromText(detailSectionTitle(index), paragraph)
-  ));
+  return paragraphs
+    .filter(keepUniqueReaderCopy)
+    .slice(0, 4)
+    .map((paragraph, index) => articleSectionFromText(detailSectionTitle(index), paragraph))
+    .filter((section): section is NonNullable<typeof section> => Boolean(section));
 }
 
 function normalizeGeneratedDailyCopy(value: string) {
@@ -1612,47 +2183,36 @@ const zodiacSignGlyphs: Record<string, string> = {
   Pisces: "♓"
 };
 
-const traditionalSignRulers: Record<string, string> = {
-  Aries: "Mars",
-  Taurus: "Venus",
-  Gemini: "Mercury",
-  Cancer: "Moon",
-  Leo: "Sun",
-  Virgo: "Mercury",
-  Libra: "Venus",
-  Scorpio: "Mars",
-  Sagittarius: "Jupiter",
-  Capricorn: "Saturn",
-  Aquarius: "Saturn",
-  Pisces: "Jupiter"
-};
+const traditionalSignRulers: Record<string, string> = Object.fromEntries(
+  zodiacSigns.map((sign) => [sign, emergencySignRuler(sign)])
+);
 const houseLifeAreas: Record<number, string> = {
-  1: "identity, body, and personal direction",
-  2: "money, resources, and self-worth",
-  3: "communication, siblings, and daily movement",
-  4: "home, family, roots, and emotional foundation",
-  5: "creativity, pleasure, romance, and children",
-  6: "workflows, health, service, and maintenance",
-  7: "partnerships, agreements, and direct others",
-  8: "shared resources, trust, debt, and deep change",
-  9: "belief, study, travel, and perspective",
-  10: "career, visibility, reputation, and calling",
-  11: "friends, networks, hopes, and belonging",
-  12: "rest, privacy, retreat, and hidden pressure"
+  1: emergencyHouseArea(1),
+  2: emergencyHouseArea(2),
+  3: emergencyHouseArea(3),
+  4: emergencyHouseArea(4),
+  5: emergencyHouseArea(5),
+  6: emergencyHouseArea(6),
+  7: emergencyHouseArea(7),
+  8: emergencyHouseArea(8),
+  9: emergencyHouseArea(9),
+  10: emergencyHouseArea(10),
+  11: emergencyHouseArea(11),
+  12: emergencyHouseArea(12)
 };
 const rulerHouseRouteKeywords: Record<number, string> = {
-  1: "identity, body, and personal direction",
-  2: "money, resources, and self-worth",
-  3: "communication, siblings, and daily movement",
-  4: "home, roots, and private foundations",
-  5: "creativity, pleasure, romance, and play",
-  6: "routines, work, health, and maintenance",
-  7: "partnership, agreements, attraction, and conflict",
-  8: "intimacy, taboo, trust, and shared power",
-  9: "belief, distance, study, and the bigger picture",
-  10: "career, visibility, authority, and reputation",
-  11: "friends, networks, audience, and future plans",
-  12: "solitude, dreams, hidden pressure, and retreat"
+  1: emergencyHouseArea(1),
+  2: emergencyHouseArea(2),
+  3: emergencyHouseArea(3),
+  4: emergencyHouseArea(4),
+  5: emergencyHouseArea(5),
+  6: emergencyHouseArea(6),
+  7: emergencyHouseArea(7),
+  8: emergencyHouseArea(8),
+  9: emergencyHouseArea(9),
+  10: emergencyHouseArea(10),
+  11: emergencyHouseArea(11),
+  12: emergencyHouseArea(12)
 };
 const naturalHouseSigns: Record<number, string> = {
   1: "Aries",
@@ -1760,11 +2320,11 @@ function parseFriendsTab(value: string | null): FriendsTab {
 }
 
 function parseFriendProfileTab(value: string | null): FriendProfileTab {
-  return value === "synastry" || value === "composite" || value === "natal" ? value : "natal";
+  return value === "transits" || value === "synastry" || value === "composite" || value === "natal" ? value : "natal";
 }
 
 function friendsHashParts(hash: string) {
-  const cleanHash = hash.replace(/^#/, "");
+  const cleanHash = hash.replace(/^#\/?/, "");
   const [path = "", query = ""] = cleanHash.split("?");
 
   return { path, params: new URLSearchParams(query) };
@@ -2204,7 +2764,7 @@ const defaultManualChartForm: ManualChartForm = {
   chartType: "person",
   displayName: "",
   pronouns: defaultPronounChoice,
-  relationshipType: "friend",
+  relationshipType: "friendship",
   birthDate: "",
   birthTime: "12:00",
   birthTimeUnknown: false,
@@ -2268,17 +2828,8 @@ const chartFormCopy: Record<ManualChartType, {
   }
 };
 
-const relationshipTypeLabels: Record<string, string> = {
-  event: "Event",
-  family: "Family",
-  friend: "Friendship",
-  other: "Connection",
-  partner: "Partnership",
-  work: "Work"
-};
-
 const defaultChartSettings: ChartSettings = {
-  houseSystem: "Whole House",
+  houseSystem: "Whole Sign",
   zodiac: "Tropical",
   aspects: "Standard",
   houseSignLabelStyle: "text",
@@ -2295,7 +2846,7 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
     : [];
 
   return {
-    houseSystem: "Whole House",
+    houseSystem: "Whole Sign",
     zodiac: "Tropical",
     aspects: settings?.aspects === "Tight" ? "Tight" : "Standard",
     houseSignLabelStyle: normalizeHouseSignLabelStyle(settings?.houseSignLabelStyle),
@@ -2537,6 +3088,19 @@ function isCachedSkySnapshot(value: unknown): value is SkySnapshot {
     && Boolean(snapshot.location);
 }
 
+function skyFactValidation(snapshot: SkySnapshot) {
+  return validateAstrologyFacts(snapshot.facts ?? []);
+}
+
+function logSkyFactDiagnostic(stage: string, snapshot: SkySnapshot | null, diagnostics: string[]) {
+  console.warn("[astrology-fact-validation]", {
+    stage,
+    generatedAt: snapshot?.generatedAt ?? null,
+    location: snapshot?.location ?? null,
+    diagnostics
+  });
+}
+
 function readCachedSkySnapshot(cacheKey: string) {
   if (typeof window === "undefined") {
     return null;
@@ -2546,7 +3110,18 @@ function readCachedSkySnapshot(cacheKey: string) {
     const saved = window.sessionStorage.getItem(cacheKey);
     const parsed = saved ? JSON.parse(saved) : null;
 
-    return isCachedSkySnapshot(parsed) ? parsed : null;
+    if (!isCachedSkySnapshot(parsed)) {
+      return null;
+    }
+
+    const validation = skyFactValidation(parsed);
+
+    if (!validation.ok) {
+      logSkyFactDiagnostic("cache-read", parsed, validation.diagnostics);
+      return null;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
@@ -2554,6 +3129,13 @@ function readCachedSkySnapshot(cacheKey: string) {
 
 function writeCachedSkySnapshot(cacheKey: string, snapshot: SkySnapshot) {
   if (typeof window === "undefined") {
+    return;
+  }
+
+  const validation = skyFactValidation(snapshot);
+
+  if (!validation.ok) {
+    logSkyFactDiagnostic("cache-write", snapshot, validation.diagnostics);
     return;
   }
 
@@ -3065,7 +3647,7 @@ function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
     chartType: chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person"),
     displayName: chart.displayName,
     pronouns: normalizePronounChoice(chart.pronouns),
-    relationshipType: chart.relationshipType || "friend",
+    relationshipType: normalizeRelationshipContextKey(chart.relationshipType),
     birthDate: chart.birthDate,
     birthTime: displayTimeToTwentyFourHour(chart.birthTime),
     birthTimeUnknown: chart.birthTimeUnknown,
@@ -3109,7 +3691,7 @@ function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot):
     sign: row.sign,
     signGlyph: zodiacGlyphText(row.sign),
     degree: row.degree,
-    house: row.house ?? 1,
+    house: row.house ?? 0,
     motion: "direct"
   };
 }
@@ -3536,6 +4118,10 @@ function articlePlacementGlyphs(title: string, meta = "") {
 }
 
 function articleEyebrowLabel(title: string, kicker?: string) {
+  if (/\b(?:rx|retrograde)\b/i.test(title)) {
+    return "Retrograde";
+  }
+
   if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
     return "Aspect";
   }
@@ -3573,10 +4159,23 @@ function articleEyebrowGlyphs({
   ]);
 }
 
-function articleTldrText(value: string) {
-  return stripTldrPrefix(value)
+function stripArticleTitlePrefix(value: string, title: string) {
+  const cleaned = stripTldrPrefix(value)
     .replace(/\s+/g, " ")
     .trim();
+  const normalizedTitle = title.replace(/\s+/g, " ").trim();
+
+  if (!cleaned || !normalizedTitle) {
+    return cleaned;
+  }
+
+  return cleaned
+    .replace(new RegExp(`^${escapeRegExpLiteral(normalizedTitle)}\\s*[:\\-–—]?\\s*`, "i"), "")
+    .trim();
+}
+
+function articleTldrText(value: string, title = "") {
+  return stripArticleTitlePrefix(value, title);
 }
 
 const averageDailyMotion: Record<string, number> = {
@@ -4090,7 +4689,9 @@ function SkyDetailArticle({
 
   const metaRows = detailMetaRows(detail.meta);
   const statement = detail.content?.knowledge?.interpretation.coreTheme;
-  const articleBody = detail.body.filter((node) => !isRetrogradeTimelineNode(node));
+  const articleBody = detail.body.filter((node) => (
+    !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
+  ));
   const paragraphs = articleBody;
   const generatedSections = (detail.sections ?? []).filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
@@ -4101,10 +4702,11 @@ function SkyDetailArticle({
     ...section,
     heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
     body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
-  }));
+  })).filter((section) => typeof section.body !== "string" || isReaderFacingCopy(section.body));
   const drilldown = detail.astrologyDrilldown;
-  const detailSubtitle = detail.subtitle ? stripTldrPrefix(detail.subtitle).trim() : "";
-  const articleSub = articleTldrText(detailSubtitle || statement || "");
+  const detailSubtitle = detail.subtitle ? stripArticleTitlePrefix(detail.subtitle, detail.title) : "";
+  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(detailSubtitle || statement || "", detail.title);
+  const articleSub = isReaderFacingCopy(articleSubCandidate) ? articleSubCandidate : "";
   const articleSubComparable = comparableText(articleSub);
   const displaySections = generatedSections.filter((section, index) => {
     if (index !== 0 || !articleSubComparable || typeof section.body !== "string") {
@@ -4113,7 +4715,9 @@ function SkyDetailArticle({
 
     return comparableText(stripLegacySkyArticleScaffoldPrefix(section.body)) !== articleSubComparable;
   });
-  const fallbackParagraphs = paragraphs;
+  const fallbackParagraphs = paragraphs.filter((paragraph) => (
+    typeof paragraph !== "string" || comparableText(stripTldrPrefix(paragraph)) !== articleSubComparable
+  ));
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
   const eyebrowGlyphs = articleEyebrowGlyphs({
@@ -4199,10 +4803,13 @@ function SkyDetailArticle({
                     const bodyParagraphs = typeof section.body === "string"
                       ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
+                    const sectionHeading = typeof section.heading === "string" && comparableText(section.heading) !== comparableText(detail.title)
+                      ? section.heading
+                      : "";
 
                     return (
                       <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
-                        {section.heading ? <h3>{section.heading}</h3> : null}
+                        {sectionHeading ? <h3>{sectionHeading}</h3> : null}
                         {bodyParagraphs.length > 0
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
                             <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
@@ -4219,11 +4826,13 @@ function SkyDetailArticle({
                       <p className="sky-detail-lede">{bodyLede}</p>
                     </section>
                   ) : null}
-                  {bodySectionParagraphs.map((paragraph, index) => (
-                    <section className="article-section sky-detail-section" key={index}>
-                      <p>{paragraph}</p>
+                  {bodySectionParagraphs.length > 0 ? (
+                    <section className="article-section sky-detail-section">
+                      {bodySectionParagraphs.map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
+                      ))}
                     </section>
-                  ))}
+                  ) : null}
                 </>
               )}
               {drilldown ? (
@@ -4248,6 +4857,20 @@ function SkyDetailArticle({
                     {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
                   </div>
                 </details>
+              ) : null}
+              {!hasReadableBody && !hasRelatedAspects ? (
+                <section className="article-section sky-detail-section">
+                  <p>This interpretation is still being prepared.</p>
+                </section>
+              ) : null}
+              {detail.historicalLookback ? (
+                <section className="article-section sky-detail-section sky-detail-historical-lookback" aria-label="Historical context">
+                  <h2>{detail.historicalLookback.heading}</h2>
+                  <p className="sky-detail-historical-lookback__date">{detail.historicalLookback.dateLabel}</p>
+                  {detail.historicalLookback.paragraphs.map((paragraph, index) => (
+                    <p key={`historical-${index}`}>{paragraph}</p>
+                  ))}
+                </section>
               ) : null}
               {detail.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label={detail.relatedAspects.heading}>
@@ -4419,15 +5042,7 @@ function formatOrb(orb: number) {
 }
 
 function transitNote(transitPlanet: string, aspect: string, natalPoint: string) {
-  const tones: Record<string, string> = {
-    conjunction: "starts a direct conversation with",
-    sextile: "opens a cooperative path to",
-    square: "creates useful friction with",
-    trine: "moves smoothly through",
-    opposition: "pulls awareness across"
-  };
-
-  return `${transitPlanet} ${tones[aspect] ?? "contacts"} your natal ${natalPoint}. Read this as timing: today's sky is activating that part of your chart.`;
+  return emergencyTransitToNatalCopy({ aspect, natalPoint, transitPlanet });
 }
 
 function natalPointTheme(point: string) {
@@ -4495,37 +5110,57 @@ function natalAspectDetailArticle(
     },
     approvedVoiceOrKnowledgeFallback(contentKey)
   );
-  const generated = liveGeneratedContentByKeys(
+  const generated = liveGeneratedContentByKeysMatching(
     generatedContent,
-    [contentKey],
+    [
+      natalAspectContentKey(aspect.from, aspect.type, aspect.to),
+      contentKey
+    ],
+    isReviewedNatalAspectContent,
     {
       contentKey: templateFallbackContentKeys.youNatalAspect,
-      slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, ownerContext ? "friend" : "you"),
+      slots: aspectTemplateSlots(
+        aspect.from,
+        aspect.type,
+        aspect.to,
+        ownerContext ? "friend" : "you",
+        ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName
+          ? resolveThirdPersonReference({ name: ownerContext.ownerName, pronouns: ownerContext.ownerPronouns })
+          : undefined
+      ),
       afterContentFallback: content
     }
   );
+  const sourceGrounded = sourceGroundedNatalAspectComposition({
+    aspect: aspect.type,
+    focalPlanet: aspect.from,
+    orb: wholeDegreeOrb(aspect.orb),
+    otherPlanet: aspect.to
+  }, "you");
   const body = liveGeneratedBody(
     generated,
-    content.detailParagraphs.length > 0
-      ? content.detailParagraphs
-      : [content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)]
+    sourceGrounded
+      ? sourceGrounded.sections.map((section) => section.body)
+      : []
   );
   const summary = liveGeneratedSummary(
     generated,
-    content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+    sourceGrounded?.finalCopy || ""
   );
   const ownerAwareCopy = (value: string) => ownerContext
     ? natalGeneratedCopyForOwner(value, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
     : value;
+  const resolvedSummary = ownerAwareCopy(summary);
+  const resolvedBody = body.map(ownerAwareCopy);
 
   return {
     id: contentKey,
     title,
     glyph: pointGlyph(aspect.from),
-    subtitle: stripTldrPrefix(ownerAwareCopy(summary)),
+    subtitle: stripTldrPrefix(resolvedSummary),
     compactHeader: true,
     bodyBeforeSections: true,
-    body: body.map(ownerAwareCopy),
+    body: resolvedBody,
     summary: "",
     summaryHeading: "",
     sections: [],
@@ -4553,19 +5188,28 @@ function currentSkyAspectDetailArticle(
     },
     approvedVoiceOrKnowledgeFallback(contentKey, "sky")
   );
-  const generated = liveGeneratedContentByKeys(
+  const generated = liveGeneratedContentByKeysMatching(
     generatedContent,
     skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
+    isReviewedSkyAspectContent,
     {
       contentKey: templateFallbackContentKeys.skyAspectDetail,
       slots: skyAspectTemplateSlots(aspect, positions),
       afterContentFallback: content
     }
   );
-  const fallbackSummary = aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content);
-  const rowSummary = liveGeneratedSummary(generated, fallbackSummary);
+  const sourceGroundedParagraphs = sourceGroundedSkyAspectParagraphs({
+    aspect: aspect.type,
+    focalPlanet: aspect.from,
+    orb: wholeDegreeOrb(aspect.orb),
+    otherPlanet: aspect.to,
+    timing: currentSkyAspectTransitRange(aspect, generatedAt)
+  });
+  const rowSummary = sourceGroundedParagraphs[0] || liveGeneratedSummary(generated, "");
   const subtitle = stripTldrPrefix(rowSummary);
-  const detailParagraphs = liveGeneratedBody(generated, content.detailParagraphs);
+  const detailParagraphs = sourceGroundedParagraphs.length > 0
+    ? sourceGroundedParagraphs
+    : liveGeneratedBody(generated, []);
   const normalizedSubtitle = comparableText(subtitle);
   const body = detailParagraphs.filter((paragraph) => {
     if (typeof paragraph !== "string") {
@@ -4578,6 +5222,14 @@ function currentSkyAspectDetailArticle(
   const modifierBody = conditionModifierBody(generatedContent, aspect);
   const timing = currentSkyAspectTransitRange(aspect, generatedAt);
   const baseBody = signContextLine ? [...body, signContextLine] : body;
+  const historicalLookback = resolveSkyHistoricalLookback({
+    enabled: skyHistoricalLookbackEnabled(generatedContent),
+    eventIdentity: {
+      eventType: "aspect-cycle",
+      bodies: [aspect.from, aspect.to],
+      aspect: aspect.type
+    }
+  });
 
   return {
     routePath: skyAspectRoutePath(aspect),
@@ -4590,6 +5242,7 @@ function currentSkyAspectDetailArticle(
     content: content.bundle,
     body: modifierBody.length > 0 ? [...baseBody, ...modifierBody] : baseBody,
     sections: generatedDetailSections(generated),
+    historicalLookback,
     astrologyDrilldown: generatedAstrologyDrilldown(generated)
   };
 }
@@ -4600,6 +5253,112 @@ function skyAspectsForPlacement(planet: string, aspects: SkySnapshot["aspects"])
     .slice()
     .sort((first, second) => first.orb - second.orb)
     .slice(0, 2);
+}
+
+function isLocalNormalizedGeneratedContent(content: LiveGeneratedContent | null) {
+  return content?.provider === "local-normalized-dashboard-source"
+    || content?.sourceSnapshot?.sourceType === "normalized-dashboard-source"
+    || content?.sourceSnapshot?.sourceType === "source-grounded-generated-snapshot";
+}
+
+const sourceGroundedTemplateVersion = "2.3.0";
+const unwiredSkyPointPlacementBodies = new Set([
+  "chiron",
+  "lilith",
+  "north-node",
+  "north_node",
+  "south-node",
+  "south_node",
+  "true-node",
+  "true_node"
+]);
+
+function isUnwiredSkyPointName(value: string | null | undefined) {
+  return unwiredSkyPointPlacementBodies.has(normalizeContentIdPart(value ?? ""));
+}
+
+function isUnwiredSkyPointPlacement(position: Pick<PlanetPosition, "planet"> | null | undefined) {
+  return isUnwiredSkyPointName(position?.planet);
+}
+
+function isUnwiredSkyPointPlacementContentKey(contentKey: string) {
+  const match = contentKey.match(/^sky\.placement\.([^.]+)\./);
+  return match ? isUnwiredSkyPointName(match[1]) : false;
+}
+
+function isCurrentSourceGroundedTemplateContent(content: LiveGeneratedContent | null, templateIds: string[]) {
+  if (!content?.sourceSnapshot) {
+    return false;
+  }
+
+  const templateId = typeof content.sourceSnapshot.templateId === "string" ? content.sourceSnapshot.templateId : "";
+  const templateVersion = typeof content.sourceSnapshot.templateVersion === "string" ? content.sourceSnapshot.templateVersion : "";
+  const readerSafe = content.sourceSnapshot.validation && typeof content.sourceSnapshot.validation === "object"
+    ? (content.sourceSnapshot.validation as { readerSafe?: unknown }).readerSafe !== false
+    : true;
+
+  return templateIds.includes(templateId)
+    && templateVersion === sourceGroundedTemplateVersion
+    && readerSafe;
+}
+
+function isCompatibleAuthoredSkyContent(content: LiveGeneratedContent | null, templateIds: string[]) {
+  if (!content) {
+    return false;
+  }
+
+  if (isCurrentSourceGroundedTemplateContent(content, templateIds)) {
+    return true;
+  }
+
+  const sourceFile = generatedContentSourceFile(content);
+
+  return content.surface === "sky"
+    && content.contentKey.startsWith("sky.placement.")
+    && (
+      sourceFile.includes("cc-planet-in-sign-reviewed")
+      || sourceFile.includes("cc-sky-points-authored")
+      || (
+        isUnwiredSkyPointPlacementContentKey(content.contentKey)
+        && sourceFile.includes("cc-sky-points-authored")
+      )
+    );
+}
+
+function isEmergencyFallbackTemplateContent(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  const contentType = content.sourceSnapshot?.contentType;
+
+  return (contentType === "template" || contentType === "mustache-template")
+    && (
+      content.contentKey.startsWith("fallback-hook/")
+      || content.contentKey.startsWith("slot-template/")
+      || content.eventType === "slot-template"
+    );
+}
+
+function isEmergencyTransitFloorContent(content: LiveGeneratedContent | null) {
+  if (!content) {
+    return false;
+  }
+
+  const category = typeof content.sourceSnapshot?.category === "string" ? content.sourceSnapshot.category : "";
+
+  return content.sourceSnapshot?.contentType === "transit"
+    && content.sourceSnapshot?.lane === "serving"
+    && (
+      content.contentKey.startsWith("ms/retrograde/")
+      || content.contentKey.startsWith("ms/ingress/")
+      || category === "retrograde"
+      || category === "ingress"
+    );
+}
+
+function isEmergencySkyFallbackContent(content: LiveGeneratedContent | null) {
+  return isEmergencyFallbackTemplateContent(content) || isEmergencyTransitFloorContent(content);
 }
 
 function currentSkyPlacementDetailArticle({
@@ -4620,11 +5379,18 @@ function currentSkyPlacementDetailArticle({
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
   const title = placementDetailTitle(position, activeAspects);
   const isRetrograde = position.motion === "retrograde";
+  const isUnwiredPoint = isUnwiredSkyPointPlacement(position);
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
     : placementTransitRangeLabel(position, generatedAt);
-  const contentKey = placementContentId(position.planet, position.sign, "sky");
-  const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+  const emergencyPlacementCopy = isUnwiredPoint
+    ? interpretationInReviewSummary
+    : emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
+  const localContent = {
+    summary: emergencyPlacementCopy,
+    body: emergencyPlacementCopy,
+    detailParagraphs: emergencyPlacementCopy ? [emergencyPlacementCopy] : []
+  };
   const placementHookKey = position.planet === "Sun"
     ? "sky.seasonal-current"
     : position.planet === "Moon"
@@ -4636,30 +5402,50 @@ function currentSkyPlacementDetailArticle({
       planet: position.planet,
       sign: position.sign
     },
-    localContent
+    localContent,
+    { allowKnowledgeOnly: false }
   );
-  const generated = liveGeneratedContentByKeys(
-    generatedContent,
-    skyPlacementGeneratedContentKeys(position, generatedAt),
-    {
-      contentKey: skyPlacementTemplateFallbackKey(position),
-      slots: skyPlacementTemplateSlots(position),
-      afterContentFallback: content
+  const generated = isUnwiredPoint
+    ? null
+    : liveGeneratedContentByKeysMatching(
+        generatedContent,
+        skyPlacementGeneratedContentKeys(position, generatedAt),
+        (candidate) => (
+          (isEmergencySkyFallbackContent(candidate) || isCompatibleAuthoredSkyContent(candidate, ["current-sky-placement", "retrograde-phase.retrograde-passage"]))
+          && !skyPlacementGeneratedContentHasNatalLanguage(candidate)
+        ),
+        {
+          contentKey: "slot-template/6I",
+          slots: skyRetrogradeTemplateSlots(position),
+          afterContentFallback: content
+        }
+      );
+  const hasAuthoredSkyPlacementBody = isCompatibleAuthoredSkyContent(generated, ["current-sky-placement", "retrograde-phase.retrograde-passage"]);
+  const sourceGroundedBody = sourceGroundedSkyPlacementParagraphs(position, transitRangeLabel);
+  const fallbackDetailParagraphs = [
+    content.body,
+    ...content.detailParagraphs,
+    content.summary
+  ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
+  const body = isRetrograde
+    ? stripRetrogradeGeneratedHeaderParagraphs(
+        position,
+        sourceGroundedBody.length > 0 ? sourceGroundedBody : liveGeneratedBody(generated, fallbackDetailParagraphs)
+      )
+    : sourceGroundedBody.length > 0
+      ? sourceGroundedBody
+      : isUnwiredPoint
+        ? interpretationInReviewParagraphs
+        : liveGeneratedBody(generated, fallbackDetailParagraphs);
+  const historicalLookback = resolveSkyHistoricalLookback({
+    enabled: skyHistoricalLookbackEnabled(generatedContent),
+    eventIdentity: {
+      eventType: isRetrograde ? "retrograde" : "planet-in-sign",
+      bodies: [position.planet],
+      sign: position.sign,
+      direction: isRetrograde ? "retrograde" : undefined
     }
-  );
-  const body = liveGeneratedBody(generated, content.detailParagraphs);
-  const relatedAspectRows = relatedAspectRowsForPlacement({
-    aspects: activeAspects,
-    generatedAt,
-    generatedContent,
-    mode: "sky",
-    onOpenSkyAspect: onOpenDetail
-      ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
-      : undefined,
-    pointName: position.planet,
-    positions
   });
-
   return {
     routePath: skyPlacementRoutePath(position),
     glyph: detailGlyphForPlacement(position),
@@ -4668,14 +5454,12 @@ function currentSkyPlacementDetailArticle({
     meta: [formatPlacementPosition(position).toUpperCase(), transitRangeLabel].filter(Boolean).join(" · "),
     duration: transitRangeLabel ?? undefined,
     retrograde: isRetrograde,
+    plainBody: sourceGroundedBody.length > 0,
+    suppressTldr: (sourceGroundedBody.length > 0 || hasAuthoredSkyPlacementBody) && !isRetrograde,
     body,
     sections: [],
-    relatedAspects: relatedAspectRows.length > 0
-      ? {
-          heading: `Aspects to ${position.planet} today`,
-          rows: relatedAspectRows
-        }
-      : undefined,
+    relatedAspects: undefined,
+    historicalLookback,
     astrologyDrilldown: generatedAstrologyDrilldown(generated),
     content: content.bundle
   };
@@ -4684,7 +5468,8 @@ function currentSkyPlacementDetailArticle({
 function skyDetailFromRoutePath(
   routePath: string,
   sky: SkySnapshot,
-  generatedContent: GeneratedContentMap
+  generatedContent: GeneratedContentMap,
+  onOpenDetail?: (detail: SkyDetail) => void
 ) {
   const [surface, detailType, firstPart, secondPart, thirdPart] = decodeSkyRouteParts(routePath);
 
@@ -4707,6 +5492,7 @@ function skyDetailFromRoutePath(
       aspects: sky.aspects,
       generatedAt: sky.generatedAt,
       generatedContent,
+      onOpenDetail,
       position,
       positions: displayPositions
     }) : null;
@@ -4766,28 +5552,48 @@ function relatedAspectRowsForPlacement({
             approvedVoiceOrKnowledgeFallback(aspectContentId(aspect.from, aspect.type, aspect.to))
           );
       const generated = mode === "sky" && generatedAt
-        ? liveGeneratedContentByKeys(
+        ? liveGeneratedContentByKeysMatching(
             generatedContent,
             skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
+            isReviewedSkyAspectContent,
             {
               contentKey: templateFallbackContentKeys.skyAspectDetail,
               slots: skyAspectTemplateSlots(aspect, positions),
               afterContentFallback: fallback
             }
           )
-        : liveGeneratedContentByKeys(generatedContent, [
+        : liveGeneratedContentByKeysMatching(generatedContent, [
             natalAspectContentKey(aspect.from, aspect.type, aspect.to),
             aspectContentId(aspect.from, aspect.type, aspect.to)
-          ], {
+          ], isReviewedNatalAspectContent, {
             contentKey: templateFallbackContentKeys.youNatalAspect,
-            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, ownerContext ? "friend" : "you"),
+            slots: aspectTemplateSlots(
+              aspect.from,
+              aspect.type,
+              aspect.to,
+              ownerContext ? "friend" : "you",
+              ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName
+                ? resolveThirdPersonReference({ name: ownerContext.ownerName, pronouns: ownerContext.ownerPronouns })
+                : undefined
+            ),
             afterContentFallback: fallback
           });
-      const rowSummary = liveGeneratedSummary(
+      const sourceGroundedSummary = mode === "sky"
+        ? sourceGroundedSkyAspectSummary({
+            aspect: aspect.type,
+            focalPlanet: pointName,
+            orb: wholeDegreeOrb(aspect.orb),
+            otherPlanet: otherPoint
+          })
+        : sourceGroundedNatalAspectComposition({
+            aspect: aspect.type,
+            focalPlanet: pointName,
+            orb: wholeDegreeOrb(aspect.orb),
+            otherPlanet: otherPoint
+          }, "you")?.finalCopy;
+      const rowSummary = sourceGroundedSummary || liveGeneratedSummary(
         generated,
-        mode === "sky"
-          ? aspectRelationshipDescription(pointName, aspect.type, otherPoint, { positions }) || fallback.summary
-          : fallback.summary || aspectRelationshipDescription(pointName, aspect.type, otherPoint)
+        ""
       );
       const displaySummary = ownerContext && mode === "natal"
         ? natalGeneratedCopyForOwner(rowSummary, ownerContext.ownerName, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)
@@ -4897,6 +5703,72 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
     })
   ))
     .sort((first, second) => transitOrbValue(first) - transitOrbValue(second));
+}
+
+const transitAxisPairs: Record<string, string> = {
+  Ascendant: "Descendant",
+  Descendant: "Ascendant",
+  Midheaven: "Imum Coeli",
+  "Imum Coeli": "Midheaven"
+};
+
+const transitAxisPriority: Record<string, number> = {
+  Ascendant: 0,
+  Midheaven: 1,
+  Descendant: 2,
+  "Imum Coeli": 3
+};
+
+function transitAxisDuplicateKey(transit: TransitItem) {
+  const pairedAngle = transitAxisPairs[transit.natalPoint];
+
+  if (!pairedAngle || !["conjunction", "opposition"].includes(transit.aspect)) {
+    return null;
+  }
+
+  const axisName = ["Ascendant", "Descendant"].includes(transit.natalPoint) ? "horizon" : "meridian";
+  const canonicalPoint = transit.aspect === "conjunction" ? transit.natalPoint : pairedAngle;
+
+  return `${transit.transitPlanet}-${axisName}-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
+}
+
+function dedupeTransitAxisContacts<T extends TransitItem>(transits: T[]) {
+  const byAxis = new Map<string, T>();
+  const deduped: T[] = [];
+
+  transits.forEach((transit) => {
+    const axisKey = transitAxisDuplicateKey(transit);
+
+    if (!axisKey) {
+      deduped.push(transit);
+      return;
+    }
+
+    const existing = byAxis.get(axisKey);
+
+    if (!existing) {
+      byAxis.set(axisKey, transit);
+      deduped.push(transit);
+      return;
+    }
+
+    const existingScore = transitAxisPriority[existing.natalPoint] ?? 99;
+    const nextScore = transitAxisPriority[transit.natalPoint] ?? 99;
+    const existingOrb = transitOrbValue(existing);
+    const nextOrb = transitOrbValue(transit);
+    const shouldReplace = nextScore < existingScore || (nextScore === existingScore && nextOrb < existingOrb);
+
+    if (shouldReplace) {
+      byAxis.set(axisKey, transit);
+      const existingIndex = deduped.indexOf(existing);
+
+      if (existingIndex >= 0) {
+        deduped[existingIndex] = transit;
+      }
+    }
+  });
+
+  return deduped;
 }
 
 function transitOrbValue(transit: TransitItem) {
@@ -5278,7 +6150,7 @@ const emptyHouseCardRulerHouseTopics: Record<number, string> = {
 };
 
 const emptyHouseCardRulerHouseLivedExpressions: Record<number, string> = {
-  1: "move through the world",
+  1: "enter the world",
   2: "build security",
   3: "use your voice",
   4: "build a private foundation",
@@ -5293,7 +6165,7 @@ const emptyHouseCardRulerHouseLivedExpressions: Record<number, string> = {
 };
 
 const emptyHouseFriendCardRulerHouseLivedExpressions: Record<number, string> = {
-  1: "move through the world",
+  1: "enter the world",
   2: "build security",
   3: "use their voice",
   4: "build a private foundation",
@@ -5329,61 +6201,61 @@ function emptyHouseSignSentence(sign: string, house: number, context: "self" | "
       Pisces: `With Pisces rising, ${firstHouseSubject} absorb the atmosphere before choosing a shape. ${capitalizeText(possessive)} presence can feel fluid because ${subject} are often responding to what has not been said yet.`
     };
 
-    return firstHouseSentences[sign] ?? `With ${sign || "the cusp sign"} on the 1st house cusp, ${subject} meet life through the style of that sign.`;
+    return firstHouseSentences[sign] ?? `With ${sign || "the house sign"} on the 1st house, ${subject} meet life through the style of that sign.`;
   }
 
   const sentences: Record<string, string> = {
-    Aries: `With Aries on the ${ordinalHouse(house)} house cusp, ${topic} needs a direct move. ${capitalizeText(subject)} may have to start the conversation, make the first choice, or act before the whole answer is clear.`,
-    Taurus: `With Taurus on the ${ordinalHouse(house)} house cusp, ${subject} may need calm, repetition, and physical proof before ${topic} feels settled. When life gets loud or rushed, familiar routines and a slower pace can help ${context === "friend" ? "them" : "you"} know what is actually worth keeping.`,
-    Gemini: `With Gemini on the ${ordinalHouse(house)} house cusp, ${topic} becomes easier to understand once ${subject} can talk it through, question it, and let the story change as new information arrives.`,
-    Cancer: `With Cancer on the ${ordinalHouse(house)} house cusp, ${topic} is tied to comfort, care, and the need to feel protected. When the situation feels unsettled, ${subject} may hold on tighter, pull back, or look for something familiar before making a choice.`,
-    Leo: `With Leo on the ${ordinalHouse(house)} house cusp, ${topic} has to feel personal. ${capitalizeText(subject)} may need room to be seen, take pride in what ${subject} want, or choose something because it genuinely matters.`,
-    Virgo: `With Virgo on the ${ordinalHouse(house)} house cusp, ${topic} becomes clearer through the details ${subject} cannot ignore. The point is not perfection; it is learning what actually makes life work better.`,
-    Libra: `With Libra on the ${ordinalHouse(house)} house cusp, ${topic} often becomes visible through another person. ${capitalizeText(possessive)} work is noticing the difference between real balance and simply keeping things pleasant.`,
-    Scorpio: `With Scorpio on the ${ordinalHouse(house)} house cusp, ${topic} is rarely casual. This house becomes clearer when ${subject} are honest about what is trusted, withheld, wanted, or feared.`,
-    Sagittarius: `With Sagittarius on the ${ordinalHouse(house)} house cusp, ${topic} needs a wider horizon. ${capitalizeText(possessive)} understanding here grows when experience challenges the first explanation and asks for something truer.`,
-    Capricorn: `With Capricorn on the ${ordinalHouse(house)} house cusp, ${topic} develops through time and consequence. This house may not reveal itself quickly, but it becomes more solid when ${subject} respect what has to be built.`,
-    Aquarius: `With Aquarius on the ${ordinalHouse(house)} house cusp, ${subject} may not approach ${topic} the way other people expect. ${capitalizeText(subject)} may need freedom to question the usual rules, try a different route, or choose something because it makes sense to ${context === "friend" ? "them" : "you"}, not because it is popular.`,
-    Pisces: `With Pisces on the ${ordinalHouse(house)} house cusp, ${topic} may not follow a straight line. ${capitalizeText(subject)} may need time, quiet, creativity, or a more compassionate pace before the right choice becomes clear.`
+    Aries: `With Aries on the ${ordinalHouse(house)} house, ${topic} needs a direct move. ${capitalizeText(subject)} may have to start the conversation, make the first choice, or act before the whole answer is clear.`,
+    Taurus: `With Taurus on the ${ordinalHouse(house)} house, ${subject} may need calm, repetition, and physical proof before ${topic} feels settled. When life gets loud or rushed, familiar routines and a slower pace can help ${context === "friend" ? "them" : "you"} know what is actually worth keeping.`,
+    Gemini: `With Gemini on the ${ordinalHouse(house)} house, ${topic} becomes easier to understand once ${subject} can talk it through, question it, and let the story change as new information arrives.`,
+    Cancer: `With Cancer on the ${ordinalHouse(house)} house, ${topic} is tied to comfort, care, and the need to feel protected. When the situation feels unsettled, ${subject} may hold on tighter, pull back, or look for something familiar before making a choice.`,
+    Leo: `With Leo on the ${ordinalHouse(house)} house, ${topic} has to feel personal. ${capitalizeText(subject)} may need room to be seen, take pride in what ${subject} want, or choose something because it genuinely matters.`,
+    Virgo: `With Virgo on the ${ordinalHouse(house)} house, ${topic} becomes clearer through the details ${subject} cannot ignore. The point is not perfection; it is learning what actually makes life work better.`,
+    Libra: `With Libra on the ${ordinalHouse(house)} house, ${topic} often becomes visible through another person. ${capitalizeText(possessive)} work is noticing the difference between real balance and simply keeping things pleasant.`,
+    Scorpio: `With Scorpio on the ${ordinalHouse(house)} house, ${topic} is rarely casual. This house becomes clearer when ${subject} are honest about what is trusted, withheld, wanted, or feared.`,
+    Sagittarius: `With Sagittarius on the ${ordinalHouse(house)} house, ${topic} needs a wider horizon. ${capitalizeText(possessive)} understanding here grows when experience challenges the first explanation and asks for something truer.`,
+    Capricorn: `With Capricorn on the ${ordinalHouse(house)} house, ${topic} develops through time and consequence. This house may not reveal itself quickly, but it becomes more solid when ${subject} respect what has to be built.`,
+    Aquarius: `With Aquarius on the ${ordinalHouse(house)} house, ${subject} may not approach ${topic} the way other people expect. ${capitalizeText(subject)} may need freedom to question the usual rules, try a different route, or choose something because it makes sense to ${context === "friend" ? "them" : "you"}, not because it is popular.`,
+    Pisces: `With Pisces on the ${ordinalHouse(house)} house, ${topic} may not follow a straight line. ${capitalizeText(subject)} may need time, quiet, creativity, or a more compassionate pace before the right choice becomes clear.`
   };
 
   if (house === 11 && sign === "Aries") {
     return context === "friend"
-      ? "With Aries on the 11th house cusp, belonging may require initiative. They may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until they feel completely certain can keep them outside of the spaces they are meant to test for themselves."
-      : "With Aries on the 11th house cusp, belonging may require initiative. You may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until you feel completely certain can keep you outside of the spaces you are meant to test for yourself.";
+      ? "With Aries on the 11th house, belonging may require initiative. They may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until they feel completely certain can keep them outside of the spaces they are meant to test for themselves."
+      : "With Aries on the 11th house, belonging may require initiative. You may have to be the one who reaches out, starts the conversation, joins the room, or leaves the group that no longer fits. Waiting until you feel completely certain can keep you outside of the spaces you are meant to test for yourself.";
   }
 
   if (house === 2 && sign === "Cancer") {
     return context === "friend"
-      ? "With Cancer on the 2nd house cusp, their sense of worth is tied to care, comfort, and feeling like they have enough to rely on. Money may not feel separate from emotion here. When they feel unsettled, it can affect how they spend, save, protect, or hold on."
-      : "With Cancer on the 2nd house cusp, your sense of worth is tied to care, comfort, and feeling like you have enough to rely on. Money may not feel separate from emotion here. When you feel unsettled, it can affect how you spend, save, protect, or hold on.";
+      ? "With Cancer on the 2nd house, their sense of worth is tied to care, comfort, and feeling like they have enough to rely on. Money may not feel separate from emotion here. When they feel unsettled, it can affect how they spend, save, protect, or hold on."
+      : "With Cancer on the 2nd house, your sense of worth is tied to care, comfort, and feeling like you have enough to rely on. Money may not feel separate from emotion here. When you feel unsettled, it can affect how you spend, save, protect, or hold on.";
   }
 
   if (house === 10 && sign === "Cancer") {
     return context === "friend"
-      ? "With Cancer on the 10th house cusp, their career path may be shaped by care, familiarity, and the need to feel emotionally safe before they commit to a direction. When work feels unstable or unclear, they may hold on tighter, pull back, or look for something familiar before making a move."
-      : "With Cancer on the 10th house cusp, your career path may be shaped by care, familiarity, and the need to feel emotionally safe before you commit to a direction. When work feels unstable or unclear, you may hold on tighter, pull back, or look for something familiar before making a move.";
+      ? "With Cancer on the 10th house, their career path may be shaped by care, familiarity, and the need to feel emotionally safe before they commit to a direction. When work feels unstable or unclear, they may hold on tighter, pull back, or look for something familiar before making a move."
+      : "With Cancer on the 10th house, your career path may be shaped by care, familiarity, and the need to feel emotionally safe before you commit to a direction. When work feels unstable or unclear, you may hold on tighter, pull back, or look for something familiar before making a move.";
   }
 
   if (house === 10 && sign === "Pisces") {
     return context === "friend"
-      ? "With Pisces on the 10th house cusp, their career path may not follow a straight line. They may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. They may need time to understand what kind of public role actually fits them."
-      : "With Pisces on the 10th house cusp, your career path may not follow a straight line. You may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. You may need time to understand what kind of public role actually fits you.";
+      ? "With Pisces on the 10th house, their career path may not follow a straight line. They may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. They may need time to understand what kind of public role actually fits them."
+      : "With Pisces on the 10th house, your career path may not follow a straight line. You may be drawn to work that feels creative, helpful, emotional, spiritual, or hard to define at first. You may need time to understand what kind of public role actually fits you.";
   }
 
   if (house === 5 && sign === "Aquarius") {
     return context === "friend"
-      ? "With Aquarius on the 5th house cusp, they may not enjoy what they are supposed to enjoy. Their creativity can be more experimental, unusual, thoughtful, or outside the usual style. They may need freedom to make something strange, personal, or different before it starts to feel like theirs."
-      : "With Aquarius on the 5th house cusp, you may not enjoy what you are supposed to enjoy. Your creativity can be more experimental, unusual, thoughtful, or outside the usual style. You may need freedom to make something strange, personal, or different before it starts to feel like yours.";
+      ? "With Aquarius on the 5th house, they may not enjoy what they are supposed to enjoy. Their creativity can be more experimental, unusual, thoughtful, or outside the usual style. They may need freedom to make something strange, personal, or different before it starts to feel like theirs."
+      : "With Aquarius on the 5th house, you may not enjoy what you are supposed to enjoy. Your creativity can be more experimental, unusual, thoughtful, or outside the usual style. You may need freedom to make something strange, personal, or different before it starts to feel like yours.";
   }
 
   if (house === 9 && sign === "Gemini") {
     return context === "friend"
-      ? "With Gemini on the 9th house cusp, they may look for meaning by asking questions, comparing ideas, and talking things through. They may not hold one fixed belief forever. Their views can change when they get new information, meet different people, study something closely, or hear another side of the story."
-      : "With Gemini on the 9th house cusp, you may look for meaning by asking questions, comparing ideas, and talking things through. You may not hold one fixed belief forever. Your views can change when you get new information, meet different people, study something closely, or hear another side of the story.";
+      ? "With Gemini on the 9th house, they may look for meaning by asking questions, comparing ideas, and talking things through. They may not hold one fixed belief forever. Their views can change when they get new information, meet different people, study something closely, or hear another side of the story."
+      : "With Gemini on the 9th house, you may look for meaning by asking questions, comparing ideas, and talking things through. You may not hold one fixed belief forever. Your views can change when you get new information, meet different people, study something closely, or hear another side of the story.";
   }
 
-  return sentences[sign] ?? `With ${sign || "the cusp sign"} on the ${ordinalHouse(house)} house cusp, ${subject} meet ${topic} through the behavior of that sign.`;
+  return sentences[sign] ?? `With ${sign || "the house sign"} on the ${ordinalHouse(house)} house, ${subject} meet ${topic} through the behavior of that sign.`;
 }
 
 function emptyHouseNaturalName(house: number, context: "self" | "friend") {
@@ -5438,7 +6310,7 @@ function emptyHousePlanetFunction(ruler: string, context: "self" | "friend") {
     Saturn: `where time, structure, privacy, or permission may be needed before anything feels possible`
   };
 
-  return functions[ruler] ?? `how this part of ${context === "friend" ? "them" : "you"} moves through life`;
+  return functions[ruler] ?? `how this part of ${context === "friend" ? "them" : "you"} finds a workable rhythm`;
 }
 
 function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: string, context: "self" | "friend") {
@@ -5470,11 +6342,11 @@ function emptyHouseRulerGuideParagraph(house: number, sign: string, ruler: strin
 
   if (house === 12) {
     return context === "friend"
-      ? `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for them to let down.`
-      : `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for you to let down.`;
+      ? `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for them to let down.`
+      : `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} shows what helps private pressure move somewhere useful. It points to the situations that make rest possible, and the ones that make it harder for you to let down.`;
   }
 
-  return `${sign || "The cusp sign"} is ruled by ${rulerLabel}, so ${rulerLabel} is the planet to follow here. It shows ${emptyHousePlanetFunction(ruler, context)} and where ${emptyHouseNaturalName(house, context)} starts to matter in ordinary life.`;
+  return `${sign || "The house sign"} is ruled by ${rulerLabel}, so ${rulerLabel} is the planet to follow here. It shows ${emptyHousePlanetFunction(ruler, context)} and where ${emptyHouseNaturalName(house, context)} starts to matter in ordinary life.`;
 }
 
 function emptyHouseNeedPhrase(house: number, context: "self" | "friend") {
@@ -5692,7 +6564,7 @@ function emptyHouseActivationParagraph(house: number, ruler: string, context: "s
     : `${possessive} ${ordinalHouse(house)} house`;
   const behavior = emptyHouseActivationBehavior(house, context);
 
-  return `This house can stay quiet for stretches of time. When ${rulerLabel} is activated, or when planets move through ${housePhrase}, ${behavior}`;
+  return `This house can stay quiet for stretches of time. When ${rulerLabel} is activated, or when current planets cross ${housePhrase}, ${behavior}`;
 }
 
 function emptyHouseActivationBehavior(house: number, context: "self" | "friend") {
@@ -5829,8 +6701,18 @@ function emptyHouseCardDescription(
   house: number,
   natalSky: SkySnapshot | null,
   context: "self" | "friend" = "self",
-  ownerName?: string
-) {
+  ownerName?: string,
+  ownerPronouns?: PronounChoice | null
+): string {
+  if (context === "friend" && ownerName) {
+    return natalGeneratedCopyForOwner(
+      emptyHouseCardDescription(house, natalSky, "self"),
+      ownerName,
+      "person",
+      ownerPronouns
+    );
+  }
+
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
   const rulerLabel = displayRulerName(ruler || "the house ruler");
   const topic = emptyHouseTopicSingulars[house] ?? emptyHouseCardAreaLabels[house] ?? "this topic";
@@ -5863,32 +6745,31 @@ function emptyHouseDetailArticle(
   house: number,
   natalSky: SkySnapshot | null,
   context: "self" | "friend" = "self",
-  ownerName?: string
+  ownerName?: string,
+  ownerPronouns?: PronounChoice | null
 ): YouTransitArticle {
   const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
   const title = emptyHouseTitle(house, natalSky);
   const rulerLabel = displayRulerName(ruler || "the house ruler");
-  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the sign on the cusp and the planet that rules that sign. A birth chart can describe a pattern before it feels obvious. This area may become clearer when its ruler is activated or when current planets move through it.";
-  const paragraphs = context === "friend"
-    ? [
-        emptyHouseSignSentence(sign, house, context),
-        emptyHouseRulerGuideParagraph(house, sign, ruler, context),
-        emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, context),
-        emptyHouseActivationParagraph(house, ruler, context)
-      ].filter(Boolean)
-    : [
-        emptyHouseSignSentence(sign, house, context),
-        emptyHouseRulerGuideParagraph(house, sign, ruler, context),
-        emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, context),
-        emptyHouseActivationParagraph(house, ruler, context)
-      ].filter(Boolean);
+  const emptyHouseHint = "Everyone has all 12 houses. An empty house means no natal planets sit there. It still operates, but it may have less pull and may not feel like a constant focus in your life. To understand it, look at the whole-sign house sign and the planet that rules that sign. A birth chart can name a pattern before it feels obvious. This area may become clearer when its ruler is activated or when current planets cross it.";
+  const compositionContext = context === "friend" && ownerName ? "self" : context;
+  const ownerAwareParagraph = (value: string) =>
+    context === "friend" && ownerName
+      ? natalGeneratedCopyForOwner(value, ownerName, "person", ownerPronouns)
+      : value;
+  const paragraphs = [
+    emptyHouseSignSentence(sign, house, compositionContext),
+    emptyHouseRulerGuideParagraph(house, sign, ruler, compositionContext),
+    emptyHouseRulerPlacementParagraph(house, ruler, rulerPosition, compositionContext),
+    emptyHouseActivationParagraph(house, ruler, compositionContext)
+  ].filter(Boolean).map(ownerAwareParagraph);
 
   return {
     id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
     title,
     glyph: sign ? zodiacSignGlyphs[sign] ?? "○" : "○",
     subtitle: `${ordinalHouse(house)} House`,
-    lensHint: emptyHouseHint,
+    lensHint: ownerAwareParagraph(emptyHouseHint),
     compactHeader: true,
     plainBody: true,
     bodyBeforeSections: true,
@@ -6081,7 +6962,7 @@ function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart, sunri
   const timing = friendTimingContext(chart, currentSky);
   const natalPositions = chart.natalChart ? natalTransitTargets(chart.natalChart) : [];
 
-  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing);
+  return dedupeTransitAxisContacts(rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing));
 }
 
 function transitLifeArea(transit: TransitItem, chart: ManualChart) {
@@ -6379,26 +7260,147 @@ function friendUpdateSummary(chart: ManualChart, transit?: TransitItem, generate
       topic: area
     }
   );
-  const generated = generatedContent
+  const generatedCandidate = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
         transitToNatalGeneratedContentKeys(transit),
         {
-          contentKey: templateFallbackContentKeys.youTransitToNatal,
+          contentKey: transitToNatalTemplateFallbackKey(transit),
           slots: transitToNatalTemplateSlots(transit, "friend"),
           afterContentFallback: content
         }
       )
     : null;
+  const fallbackTemplateKey = transitToNatalTemplateFallbackKey(transit);
+  const generated = generatedCandidate
+    && generatedCandidate.contentKey !== fallbackTemplateKey
+    && (
+      isAuthoredTransitAspectContent(generatedCandidate)
+      || isCurrentSourceGroundedTemplateContent(generatedCandidate, ["personalized-transit-short-term-v1", "personalized-transit-long-term-v1"])
+    )
+      ? generatedCandidate
+      : null;
+  const sourceGroundedTransit = sourceGroundedPersonalTransitComposition({
+    activeWindow: "current calculated window",
+    aspect: transit.aspect,
+    exactAt: null,
+    natalHouse: transit.natalHouse,
+    natalPoint: transit.natalPoint,
+    natalSign: transit.natalSign,
+    orb: wholeDegreeOrb(transitOrbValue(transit)),
+    pass: transit.timingBonuses?.find((bonus) => /pass/i.test(bonus)) ?? null,
+    phase: transit.direction ?? null,
+    term: transit.term,
+    transitingPlanet: transit.transitPlanet
+  });
 
-  return liveGeneratedSummary(generated, content.summary);
+  return sourceGroundedTransit?.finalCopy || liveGeneratedSummary(generated, content.summary);
+}
+
+function friendTransitGeneratedContent(
+  transit: TransitItem,
+  generatedContent: GeneratedContentMap,
+  ownerName: string,
+  ownerPronouns?: PronounChoice | null
+) {
+  const generated = liveGeneratedContentByKeys(
+    generatedContent,
+    transitToNatalGeneratedContentKeys(transit),
+    {
+      contentKey: transitToNatalTemplateFallbackKey(transit),
+      slots: {
+        ...transitToNatalTemplateSlots(transit, "friend"),
+        ...genericPersonReferenceSlots(resolveThirdPersonReference({ name: ownerName, pronouns: ownerPronouns })),
+        ownerName,
+        ownerNamePossessive: possessiveLabel(ownerName),
+        angle: isChartAnglePoint(transit.natalPoint) ? transit.natalPoint : "",
+        angleTopic: isChartAnglePoint(transit.natalPoint) ? planetTopicSlot(transit.natalPoint, "friend") : ""
+      }
+    }
+  );
+
+  return generated;
+}
+
+function friendTransitEmergencySummary(transit: TransitItem, ownerName: string, ownerPronouns?: PronounChoice | null) {
+  const pronouns = resolveThirdPersonReference({ name: ownerName, pronouns: ownerPronouns });
+  const technicalAspect = transitAspectTechnicalVerb(transit.aspect);
+  const transitTopic = emergencyPlanetFunction(transit.transitPlanet);
+  const natalTopic = emergencyPointFunction(transit.natalPoint);
+  const aspectBehavior = emergencyAspectBehavior(transit.aspect);
+
+  if (isChartAnglePoint(transit.natalPoint)) {
+    const angleScene: Record<string, string> = {
+      Ascendant: "how they are seen, met, and read in the moment",
+      Descendant: "the way contact, projection, and one-to-one dynamics ask for a response",
+      Midheaven: "visibility, work, reputation, and public direction",
+      "Imum Coeli": "home, private foundations, and what needs protection underneath"
+    };
+
+    return `${transit.transitPlanet} ${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}, bringing ${transitTopic} into ${angleScene[transit.natalPoint] ?? natalTopic}. ${aspectBehavior}. ${pronouns.subjectCapitalized} can choose one practical response while the contact is close.`;
+  }
+
+  return `${transit.transitPlanet} ${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint}, bringing ${transitTopic} into contact with ${natalTopic}. ${aspectBehavior}. ${pronouns.subjectCapitalized} can choose one practical response while the contact is close.`;
+}
+
+function friendTransitSummary(
+  transit: TransitItem,
+  generatedContent: GeneratedContentMap,
+  ownerName: string,
+  ownerPronouns?: PronounChoice | null
+) {
+  const generated = friendTransitGeneratedContent(transit, generatedContent, ownerName, ownerPronouns);
+  const generatedSummary = liveGeneratedSummaryIfPresent(generated);
+  const fallback = friendTransitEmergencySummary(transit, ownerName, ownerPronouns);
+
+  return generatedSummary
+    ? natalGeneratedCopyForOwner(generatedSummary, ownerName, "person", ownerPronouns)
+    : fallback;
+}
+
+function friendTransitFactLine(transit: TransitItem, ownerName: string) {
+  const technicalAspect = transitAspectTechnicalVerb(transit.aspect);
+  const angleHouse = isChartAnglePoint(transit.natalPoint) ? "" : transit.natalHouse ? ` in the ${ordinalHouse(transit.natalHouse)} house` : "";
+
+  return `${technicalAspect} ${possessiveLabel(ownerName)} natal ${transit.natalPoint} in ${transit.natalSign}${angleHouse}`;
 }
 
 function transitToNatalGeneratedContentKeys(transit: TransitItem) {
-  return [
-    transitToNatalAspectContentKey(transit.transitPlanet, transit.aspect, transit.natalPoint),
-    transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint)
-  ];
+  const keys = new Set<string>();
+
+  keys.add(transitToNatalAspectInstanceContentKey(transit.transitPlanet, transit.aspect, transit.natalPoint, {
+    transitingSign: transit.transitSign,
+    natalSign: transit.natalSign,
+    natalHouse: transit.natalHouse
+  }));
+  keys.add(transitToNatalAspectContentKey(transit.transitPlanet, transit.aspect, transit.natalPoint));
+  keys.add(natalAspectContentKey(transit.transitPlanet, transit.aspect, transit.natalPoint));
+
+  if (transit.natalHouse) {
+    keys.add(transitHouseContentKey(transit.transitPlanet, transit.natalHouse));
+  }
+
+  keys.add(transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint));
+
+  return Array.from(keys);
+}
+
+function sourceGroundedPersonalTransitForItem(transit: TransitItem, generatedAt: string) {
+  const timing = transitItemTimingDisplay(transit, generatedAt);
+
+  return sourceGroundedPersonalTransitComposition({
+    activeWindow: timing.rangeLabel || timing.label,
+    aspect: transit.aspect,
+    exactAt: null,
+    natalHouse: transit.natalHouse,
+    natalPoint: transit.natalPoint,
+    natalSign: transit.natalSign,
+    orb: wholeDegreeOrb(transitOrbValue(transit)),
+    pass: transit.timingBonuses?.find((bonus) => /pass/i.test(bonus)) ?? null,
+    phase: transit.direction ?? null,
+    term: transit.term,
+    transitingPlanet: transit.transitPlanet
+  });
 }
 
 function relationshipAspectContentKeys(firstPoint: string, aspect: string, secondPoint: string, context?: "synastry" | "composite") {
@@ -6452,6 +7454,21 @@ function relationshipPlacementContentKeys(point: string, sign: string, context?:
   return Array.from(keys);
 }
 
+function compositePlacementContentKeys(point: string, sign: string, house?: number | null) {
+  const keys = new Set<string>();
+
+  if (house) {
+    keys.add(compositeHouseContentKey(point, house));
+    keys.add(`composite-${normalizeContentIdPart(point)}-house-${house}`);
+    keys.add(`composite-${normalizeContentIdPart(point)}-house${house}`);
+  }
+
+  keys.add(compositeSignContentKey(point, sign));
+  keys.add(compositePointContentKey(point));
+
+  return Array.from(keys);
+}
+
 function timingSummary(chart: ManualChart, timing: FriendTimingContext) {
   if (!timing.profectedHouse || !timing.profectedSign || !timing.lordOfYear) {
     return `${chart.displayName}'s birth time is needed before the year ruler and house emphasis can be read clearly.`;
@@ -6489,9 +7506,9 @@ function profectionHouseMeaning(house: number) {
 
 function houseRealLifeQuestion(house: number) {
   const questions: Record<number, string> = {
-    1: "Can I still move through life as the same version of myself?",
+    1: "Can I still meet life as the same version of myself?",
     2: "Does this actually support my stability, or am I carrying it out of habit?",
-    3: "Is the way I am communicating, learning, and moving through daily life still working?",
+    3: "Is the way I am communicating, learning, and navigating daily life still working?",
     4: "Does home, family, or private life still feel safe enough to build from?",
     5: "Where did joy, desire, play, or creative risk become harder to access?",
     6: "Is this routine sustainable, or is the body starting to keep score?",
@@ -6625,7 +7642,7 @@ function circleTransitParagraph(chart: ManualChart, transit: TransitItem, curren
   const relevance = transit.natalPoint === timing.lordOfYear
     ? `Since ${transit.natalPoint} is the lord of the year, this ties directly into the main story.`
     : ["Ascendant", "Descendant"].includes(transit.natalPoint)
-      ? "Since this touches one of the relationship and visibility points in the chart, it may affect how they show up with other people or how readable they feel from the outside."
+      ? "Since this touches one of the relationship and visibility points in the chart, it can shape how the connection is read from the outside and what each person assumes is visible."
       : ["Sun", "Moon"].includes(transit.natalPoint)
         ? "Since this touches a core personal point, it may be easier to see in their mood, energy, confidence, or daily choices."
         : "Since this touches something already active in the house-year story, it may make the main theme harder to ignore.";
@@ -6705,10 +7722,10 @@ function circleProfectionDetailArticle(house: number, activeCharts: ManualChart[
     house === 12
       ? [
           "For this group, the focus is on what happens behind the scenes. Privacy, withdrawal, burnout, hidden pressure, and the need to release what has been carried for too long may be more present right now.",
-          "The details will be personal to each person, but the question moving through the group is similar: What needs space, rest, or privacy before it can be understood?"
+          "The details will be personal to each person, but the group question is similar: What needs space, rest, or privacy before it can be understood?"
         ]
       : [
-          `For this group, the focus is on ${groupHouseThemes(house)}. The details will be personal to each person, but the question moving through the group is similar: ${houseRealLifeQuestion(house)}`
+          `For this group, the focus is on ${groupHouseThemes(house)}. The details will be personal to each person, but the group question is similar: ${houseRealLifeQuestion(house)}`
         ];
 
   return {
@@ -6749,7 +7766,7 @@ function circlePlanetDetailBody(chart: ManualChart, planet: string, currentSky: 
   const transit = strongestCircleTransitForPlanet(chart, planet, currentSky, focusAreas, sunriseOrb);
 
   if (!transit) {
-    return `${chart.displayName} is part of this shared ${planet} pattern, but the exact chart contact is not available yet. Read this as a signal to look for ${groupPlanetThemes(planet)} in the way they are moving through the moment.`;
+    return `${chart.displayName} is part of this shared ${planet} pattern, but the exact chart contact is not available yet. Read this as a signal to look for ${groupPlanetThemes(planet)} in the way they are meeting the moment.`;
   }
 
   const timing = friendTimingContext(chart, currentSky);
@@ -6854,7 +7871,7 @@ function circleLordOfYearDetailArticle(planet: string, activeCharts: ManualChart
     plainBody: false,
     bodyBeforeSections: true,
     body: [
-      `The feed card is showing an annual timing pattern: more than one person has ${planet} as lord of the year. That means ${groupPlanetThemes(planet)} may be setting the tone in different charts, even when the visible circumstances are not the same.`
+      `The feed card is showing an annual timing pattern: more than one person has ${planet} as lord of the year. That means ${groupPlanetThemes(planet)} may be setting the tone in different charts, even when each person is meeting it in a different part of life.`
     ],
     sections: uniqueCharts.slice(0, 4).map((chart) => {
       const timing = friendTimingContext(chart, currentSky);
@@ -6887,7 +7904,7 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   const highlights = [
     {
       title: "Chart signature",
-      body: `${chart.displayName}'s chart opens with Sun in ${friendBigThree.sun}, Moon in ${friendBigThree.moon}, and ${friendBigThree.rising} rising. This gives the relationship its first layer: how they move through life, what they need emotionally, and how they tend to meet the world.`
+      body: `${chart.displayName}'s chart opens with Sun in ${friendBigThree.sun}, Moon in ${friendBigThree.moon}, and ${friendBigThree.rising} rising. This gives the relationship its first layer: how they enter life, what they need emotionally, and how they tend to meet the world.`
     }
   ];
 
@@ -6904,7 +7921,7 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
       const separation = angularDistance(zodiacLongitude(yourPosition), zodiacLongitude(theirPosition));
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= 5)
+        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, theirPosition.planet, yourPosition.planet))
         .sort((first, second) => first.orbValue - second.orbValue)[0];
 
       return aspect ? [{
@@ -6918,7 +7935,8 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
     .filter((hit) => ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.yourPosition.planet) && ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.theirPosition.planet))
     .sort((first, second) => second.score - first.score || first.aspect.orbValue - second.aspect.orbValue);
 
-  const topHit = synastryHits[0];
+  const topHit = synastryHits.find((hit) => synastryContactSignalTier(hit.theirPosition.planet, hit.yourPosition.planet) !== "background")
+    ?? synastryHits[0];
   if (topHit) {
     const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
     const hookFallback = fallbackFromHook(
@@ -6990,6 +8008,118 @@ function comparisonPointRole(point: string) {
   return roles[point] ?? point.toLowerCase();
 }
 
+const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
+const synastryAngles = new Set(["ascendant", "midheaven"]);
+const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
+
+function synastryPointKey(point: string) {
+  return normalizeContentIdPart(point);
+}
+
+function isSynastryPersonalOrAngle(point: string) {
+  const key = synastryPointKey(point);
+  return synastryPersonalPoints.has(key) || synastryAngles.has(key);
+}
+
+function isSameSocialOrOuterSynastryContact(firstPoint: string, secondPoint: string) {
+  const firstKey = synastryPointKey(firstPoint);
+  const secondKey = synastryPointKey(secondPoint);
+  return firstKey === secondKey && synastrySocialOuterPoints.has(firstKey);
+}
+
+function synastryAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
+  const baseLimits: Record<string, number> = {
+    conjunction: 4,
+    opposition: 3.5,
+    square: 3.5,
+    trine: 3,
+    sextile: 2.5
+  };
+  const baseLimit = baseLimits[aspect] ?? 3;
+  const firstIsPersonalOrAngle = isSynastryPersonalOrAngle(firstPoint);
+  const secondIsPersonalOrAngle = isSynastryPersonalOrAngle(secondPoint);
+
+  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
+    return Math.min(baseLimit, 1.25);
+  }
+
+  if (firstIsPersonalOrAngle && secondIsPersonalOrAngle) {
+    return baseLimit + 0.5;
+  }
+
+  if (firstIsPersonalOrAngle || secondIsPersonalOrAngle) {
+    return baseLimit;
+  }
+
+  return Math.min(baseLimit, 2);
+}
+
+function synastryWheelAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
+  const listLimit = synastryAspectOrbLimit(aspect, firstPoint, secondPoint);
+
+  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
+    return listLimit;
+  }
+
+  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
+    return Math.max(listLimit, 4.5);
+  }
+
+  return listLimit;
+}
+
+function synastryContactSignalTier(firstPoint: string, secondPoint: string) {
+  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
+    return "background";
+  }
+
+  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
+    return "primary";
+  }
+
+  if ([firstPoint, secondPoint].includes("Saturn")) {
+    return "secondary";
+  }
+
+  return "background";
+}
+
+function synastryWheelAspectLines(profileNatalSky: SkySnapshot | null, chart: ManualChart): InterChartAspectLine[] {
+  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
+  const yourPoints = comparisonPointsFromSky(profileNatalSky);
+
+  return friendPoints
+    .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+      const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
+      const aspect = transitAspectDefinitions
+        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
+        .filter((definition) => definition.orbValue <= synastryWheelAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
+        .sort((first, second) => first.orbValue - second.orbValue)[0];
+
+      if (!aspect) {
+        return [];
+      }
+
+      return [{
+        id: `${chart.id}-wheel-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
+        fromLongitude: friendPoint.longitude,
+        toLongitude: yourPoint.longitude,
+        type: aspect.type,
+        orb: aspect.orbValue,
+        score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue)
+      }];
+    }))
+    .sort((first, second) => second.score - first.score || first.orb - second.orb)
+    .slice(0, 18)
+    .map(({ id, fromLongitude, toLongitude, type, orb }) => ({
+      id,
+      fromLongitude,
+      toLongitude,
+      type,
+      orb
+    }));
+}
+
 function houseOverlayPlanetMeaning(planet: string) {
   const meanings: Record<string, string> = {
     Sun: "attention, vitality, recognition, and the feeling of being seen",
@@ -7006,7 +8136,7 @@ function houseOverlayPlanetMeaning(planet: string) {
 
 function houseOverlayHouseMeaning(house: number) {
   const meanings: Record<number, string> = {
-    1: "identity, appearance, first impressions, and the way someone moves through the world",
+    1: "identity, appearance, first impressions, and the way someone enters the world",
     2: "money, resources, values, self-worth, and what helps someone feel steady",
     3: "communication, siblings, daily movement, learning, and the small exchanges that shape everyday life",
     4: "home, family, roots, memory, and emotional foundation",
@@ -7084,12 +8214,16 @@ function synastryOrbWeight(orb: number) {
 }
 
 function synastryContactScore(friendPoint: string, yourPoint: string, aspect: string, orb: number) {
+  const signalTier = synastryContactSignalTier(friendPoint, yourPoint);
+  const sameSocialOrOuterPoint = signalTier === "background" && isSameSocialOrOuterSynastryContact(friendPoint, yourPoint);
   const personalPairBonus = ["Sun", "Moon", "Mercury", "Venus", "Mars"].includes(friendPoint)
     && ["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant"].includes(yourPoint)
     ? 12
     : 0;
-  const saturnBondBonus = [friendPoint, yourPoint].includes("Saturn") ? 5 : 0;
+  const saturnBondBonus = [friendPoint, yourPoint].includes("Saturn") && !sameSocialOrOuterPoint ? 5 : 0;
   const angleBonus = [friendPoint, yourPoint].some((point) => ["Ascendant", "Midheaven"].includes(point)) ? 8 : 0;
+  const signalBonus = signalTier === "primary" ? 14 : signalTier === "secondary" ? 5 : 0;
+  const generationalContextPenalty = sameSocialOrOuterPoint ? 32 : 0;
 
   return synastryOrbWeight(orb)
     + synastryAspectWeight(aspect)
@@ -7097,7 +8231,9 @@ function synastryContactScore(friendPoint: string, yourPoint: string, aspect: st
     + synastryPointWeight(yourPoint)
     + personalPairBonus
     + saturnBondBonus
-    + angleBonus;
+    + angleBonus
+    + signalBonus
+    - generationalContextPenalty;
 }
 
 function synastryAspectPhrase(aspect: string) {
@@ -7140,10 +8276,80 @@ function synastryActionLine(aspect: string) {
 }
 
 function relationshipThemeTitle(firstPoint: string, secondPoint: string, aspect: string) {
-  void firstPoint;
-  void secondPoint;
+  const firstKey = normalizeContentIdPart(firstPoint);
+  const secondKey = normalizeContentIdPart(secondPoint);
+
+  if (firstKey === secondKey) {
+    const samePointTitles: Record<string, Partial<Record<string, string>>> = {
+      mercury: {
+        conjunction: "You Think Along Similar Lines",
+        opposition: "You Argue From Different Angles",
+        square: "You Think Differently",
+        trine: "Conversation Comes Easily",
+        sextile: "You Help Each Other Clarify"
+      },
+      venus: {
+        conjunction: "You Recognize Similar Preferences",
+        opposition: "You Compare What Feels Worth It",
+        square: "You Want Different Kinds of Ease",
+        trine: "You Enjoy Similar Things",
+        sextile: "You Make Time Together Easier"
+      },
+      mars: {
+        conjunction: "You Move With Similar Drive",
+        opposition: "You Compete Over the Method",
+        square: "Your Paces Clash",
+        trine: "You Act Well Together",
+        sextile: "You Can Coordinate Effort"
+      },
+      jupiter: {
+        conjunction: "You Encourage Similar Risks"
+      },
+      saturn: {
+        conjunction: "You Understand the Same Pressures",
+        square: "You Reinforce Each Other's Standards",
+        opposition: "You Recognize the Same Limits",
+        trine: "You Share a Sense of Duty",
+        sextile: "You Build Trust Slowly"
+      }
+    };
+    const title = samePointTitles[firstKey]?.[aspect];
+
+    if (title) {
+      return title;
+    }
+  }
+
+  const directionalTitles: Record<string, Partial<Record<string, string>>> = {
+    "saturn-ascendant": {
+      conjunction: "Their Standards Shape Your First Move",
+      square: "Their Standards Affect Your Confidence"
+    },
+    "mars-midheaven": {
+      conjunction: "Their Initiative Pushes Your Ambitions"
+    },
+    "sun-mars": {
+      conjunction: "They Bring Out Your Initiative"
+    },
+    "venus-mars": {
+      conjunction: "Preference Meets Action",
+      square: "Timing and Tone Need Agreement"
+    },
+    "neptune-mercury": {
+      square: "Possibility Needs Clear Language"
+    },
+    "pluto-mars": {
+      conjunction: "Pressure Needs a Clear Goal"
+    }
+  };
+  const directionalTitle = directionalTitles[`${firstKey}-${secondKey}`]?.[aspect];
+
+  if (directionalTitle) {
+    return directionalTitle;
+  }
+
   const fallbackTitles: Record<string, string> = {
-    conjunction: "You Amplify Each Other",
+    conjunction: "This Contact Stands Out",
     opposition: "You Mirror Each Other",
     square: "You Challenge Each Other",
     trine: "You Get Each Other",
@@ -7157,8 +8363,63 @@ function relationshipAspectTitleFromSlots(slots: TemplateSlotValues) {
   return `${slots.personAPossessive} ${slots.planetA} ${slots.aspect} ${slots.personBPossessive} ${slots.planetB}`;
 }
 
-function synastryContactContentKeys(firstPoint: string, aspect: string, secondPoint: string) {
-  return relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
+function synastryContactContentKeys(
+  firstPoint: string,
+  aspect: string,
+  secondPoint: string,
+  relationshipType?: string | null
+) {
+  const richKeys = richSynastryContactContentKeys(firstPoint, aspect, secondPoint, relationshipType);
+  const relationshipKeys = relationshipAspectContentKeys(firstPoint, aspect, secondPoint, "synastry");
+
+  if (!isSamePlanetSynastryContact(firstPoint, secondPoint)) {
+    return [
+      ...richKeys,
+      ...relationshipKeys
+    ];
+  }
+
+  return [
+    ...samePlanetSynastryContentKeys(firstPoint, aspect, relationshipType),
+    ...richKeys,
+    ...relationshipKeys
+  ];
+}
+
+function richSynastryContactContextKeys(relationshipType?: string | null) {
+  const normalized = normalizeRelationshipContextKey(relationshipType);
+  const contextKeyByRelationship: Partial<Record<ReturnType<typeof normalizeRelationshipContextKey>, string>> = {
+    friendship: "friends",
+    romantic: "partner",
+    exes: "ex",
+    family: "family",
+    coworkers: "coworkers",
+    creative: "coworkers",
+    complicated: "friends"
+  };
+  const contextKey = contextKeyByRelationship[normalized] ?? "friends";
+
+  return Array.from(new Set([contextKey, "core"]));
+}
+
+function richSynastryContactContentKeys(
+  firstPoint: string,
+  aspect: string,
+  secondPoint: string,
+  relationshipType?: string | null
+) {
+  const first = normalizeContentIdPart(firstPoint);
+  const aspectKey = normalizeContentIdPart(aspect);
+  const second = normalizeContentIdPart(secondPoint);
+  const pairKeys = Array.from(new Set([
+    `${first}-${aspectKey}-${second}`,
+    `${second}-${aspectKey}-${first}`
+  ]));
+  const contextKeys = richSynastryContactContextKeys(relationshipType);
+
+  return pairKeys.flatMap((pairKey) => (
+    contextKeys.map((contextKey) => `fallback-hook/friends.synastry-contact/${pairKey}/${contextKey}`)
+  ));
 }
 
 function synastryContactFallback(firstPoint: string, aspect: string, secondPoint: string) {
@@ -7223,14 +8484,70 @@ function possessiveLabel(name: string) {
   return possessiveName(name);
 }
 
+function escapeRegExpLiteral(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function ownerDisplayPronouns(ownerName: string, ownerPronouns?: PronounChoice | null) {
+  return resolveThirdPersonReference({ name: ownerName, pronouns: ownerPronouns });
+}
+
+function collapseRepeatedOwnerNameMentions(
+  text: string,
+  ownerName: string,
+  pronouns: PersonReference,
+  keepFirstNamedMention = true
+) {
+  const trimmedName = ownerName.trim();
+
+  if (!trimmedName || trimmedName.toLowerCase() === pronouns.subject.toLowerCase()) {
+    return text;
+  }
+
+  const namePattern = escapeRegExpLiteral(trimmedName);
+  const mentionPattern = new RegExp(`\\b${namePattern}(?:'s)?\\b`, "g");
+  let hasKeptNamedMention = !keepFirstNamedMention;
+
+  return text
+    .replace(mentionPattern, (match, offset: number, fullText: string) => {
+      if (!hasKeptNamedMention) {
+        hasKeptNamedMention = true;
+        return match;
+      }
+
+      const isPossessive = match.endsWith("'s");
+      const previousText = fullText.slice(Math.max(0, offset - 32), offset).toLowerCase();
+      const startsSentence = /(?:^|[.!?]\s+)$/.test(fullText.slice(0, offset));
+
+      if (isPossessive) {
+        return startsSentence
+          ? pronouns.possessive.charAt(0).toUpperCase() + pronouns.possessive.slice(1)
+          : pronouns.possessive;
+      }
+
+      const objectContext = /\b(to|for|with|without|around|before|after|from|of|in|on|at|near|inside|outside|through|toward|towards|beside|behind|within)\s+$/.test(previousText)
+        || /\b(reward|rewards|help|helps|pull|pulls|support|supports|shape|shapes)\s+$/.test(previousText);
+      const replacement = objectContext ? pronouns.object : pronouns.subject;
+
+      return startsSentence
+        ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
+        : replacement;
+    })
+    .replace(/\bthey is\b/gi, (match) => match.charAt(0) === "T" ? "They are" : "they are")
+    .replace(/\bthey was\b/gi, (match) => match.charAt(0) === "T" ? "They were" : "they were")
+    .replace(/\bthey has\b/gi, (match) => match.charAt(0) === "T" ? "They have" : "they have")
+    .replace(/\bthey does\b/gi, (match) => match.charAt(0) === "T" ? "They do" : "they do");
+}
+
 function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
   const isChart = ownerKind === "chart";
   const firstSubject = isChart ? "This chart" : ownerName;
   const firstPossessive = isChart ? "This chart's" : possessiveLabel(ownerName);
-  const pronouns = isChart ? chartPronouns : resolvePersonReference({ name: ownerName, pronouns: ownerPronouns });
+  const pronouns = isChart ? chartPronouns : ownerDisplayPronouns(ownerName, ownerPronouns);
   let namedMentionUsed = false;
 
   const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+  const usesPluralVerb = (value: string) => value !== firstSubject && !isChart && pronouns.verbAgreement === "plural";
   const subject = (capitalized: boolean) => {
     if (!namedMentionUsed) {
       namedMentionUsed = true;
@@ -7238,6 +8555,14 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
     }
 
     return capitalized ? capitalize(pronouns.subject) : pronouns.subject;
+  };
+  const object = (capitalized: boolean) => {
+    if (!namedMentionUsed) {
+      namedMentionUsed = true;
+      return firstSubject;
+    }
+
+    return capitalized ? capitalize(pronouns.object) : pronouns.object;
   };
   const possessive = (capitalized: boolean) => {
     if (!namedMentionUsed) {
@@ -7250,27 +8575,41 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
   const subjectWithBe = (capitalized: boolean) => {
     const value = subject(capitalized);
 
-    return `${value} ${value === firstSubject || isChart ? "is" : "are"}`;
+    return `${value} ${usesPluralVerb(value) ? "are" : "is"}`;
   };
   const subjectWithHave = (capitalized: boolean) => {
     const value = subject(capitalized);
 
-    return `${value} ${value === firstSubject || isChart ? "has" : "have"}`;
+    return `${value} ${usesPluralVerb(value) ? "have" : "has"}`;
   };
   const subjectWithVerb = (capitalized: boolean, baseVerb: string, thirdPersonVerb: string) => {
     const value = subject(capitalized);
 
-    return `${value} ${value === firstSubject || isChart ? thirdPersonVerb : baseVerb}`;
+    return `${value} ${usesPluralVerb(value) ? baseVerb : thirdPersonVerb}`;
+  };
+  const subjectWithAdverbVerb = (capitalized: boolean, adverb: string, baseVerb: string, thirdPersonVerb: string) => {
+    const value = subject(capitalized);
+
+    return `${value} ${adverb} ${usesPluralVerb(value) ? baseVerb : thirdPersonVerb}`;
   };
   const subjectWithModal = (capitalized: boolean, modal: string) => `${subject(capitalized)} ${modal}`;
 
-  return (text: string) => text
-      .replace(/\bpart of you being activated\b/g, `part of ${pronouns.object} that is being activated`)
-      .replace(/\bpart of you\b/g, `part of ${pronouns.object}`)
+  return (text: string) => {
+    const converted = text
+      .replace(/\bpart of you being activated\b/g, () => `part of ${object(false)} that is being activated`)
+      .replace(/\bpart of you\b/g, () => `part of ${object(false)}`)
+      .replace(/\bthe standards you hold yourself to live inside you\b/g, () => `the standards ${subjectWithVerb(false, "carry", "carries")} live inside ${object(false)}`)
+      .replace(/\bthe authority you quietly earn becomes yours to claim\b/g, () => `the authority ${subjectWithAdverbVerb(false, "quietly", "earn", "earns")} becomes ${pronouns.possessivePronoun} to claim`)
       .replace(/\bwhat gives your life\b/g, `what gives ${pronouns.possessive} life`)
       .replace(/\byourself\b/g, pronouns.reflexive)
+      .replace(/\bYours\b/g, () => capitalize(pronouns.possessivePronoun))
+      .replace(/\byours\b/g, pronouns.possessivePronoun)
       .replace(/\bYour\b/g, () => possessive(true))
       .replace(/\byour\b/g, () => possessive(false))
+      .replace(/\b(in|for|to|with|without|around|before|after|from|of|at|near|inside|outside|through|toward|towards|beside|behind|within) you\b/gi, (_match, prep: string) => `${prep} ${object(false)}`)
+      .replace(/\b(reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped) you\b/gi, (_match, verb: string) => `${verb} ${object(false)}`)
+      .replace(/\bYou answer\b/g, () => subjectWithVerb(true, "answer", "answers"))
+      .replace(/\byou answer\b/g, () => subjectWithVerb(false, "answer", "answers"))
       .replace(/\bYou are\b/g, () => subjectWithBe(true))
       .replace(/\byou are\b/g, () => subjectWithBe(false))
       .replace(/\bYou have\b/g, () => subjectWithHave(true))
@@ -7279,6 +8618,8 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou discover\b/g, () => subjectWithVerb(false, "discover", "discovers"))
       .replace(/\bYou learn\b/g, () => subjectWithVerb(true, "learn", "learns"))
       .replace(/\byou learn\b/g, () => subjectWithVerb(false, "learn", "learns"))
+      .replace(/\bYou measure\b/g, () => subjectWithVerb(true, "measure", "measures"))
+      .replace(/\byou measure\b/g, () => subjectWithVerb(false, "measure", "measures"))
       .replace(/\bYou look\b/g, () => subjectWithVerb(true, "look", "looks"))
       .replace(/\byou look\b/g, () => subjectWithVerb(false, "look", "looks"))
       .replace(/\bYou build\b/g, () => subjectWithVerb(true, "build", "builds"))
@@ -7287,22 +8628,68 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou stop\b/g, () => subjectWithVerb(false, "stop", "stops"))
       .replace(/\bYou give\b/g, () => subjectWithVerb(true, "give", "gives"))
       .replace(/\byou give\b/g, () => subjectWithVerb(false, "give", "gives"))
+      .replace(/\bYou draw\b/g, () => subjectWithVerb(true, "draw", "draws"))
+      .replace(/\byou draw\b/g, () => subjectWithVerb(false, "draw", "draws"))
+      .replace(/\bYou hold\b/g, () => subjectWithVerb(true, "hold", "holds"))
+      .replace(/\byou hold\b/g, () => subjectWithVerb(false, "hold", "holds"))
+      .replace(/\bYou earn\b/g, () => subjectWithVerb(true, "earn", "earns"))
+      .replace(/\byou earn\b/g, () => subjectWithVerb(false, "earn", "earns"))
       .replace(/\bYou let\b/g, () => subjectWithVerb(true, "let", "lets"))
       .replace(/\byou let\b/g, () => subjectWithVerb(false, "let", "lets"))
       .replace(/\bYou need\b/g, () => subjectWithVerb(true, "need", "needs"))
       .replace(/\byou need\b/g, () => subjectWithVerb(false, "need", "needs"))
+      .replace(/\bYou know\b/g, () => subjectWithVerb(true, "know", "knows"))
+      .replace(/\byou know\b/g, () => subjectWithVerb(false, "know", "knows"))
+      .replace(/\bYou commit\b/g, () => subjectWithVerb(true, "commit", "commits"))
+      .replace(/\byou commit\b/g, () => subjectWithVerb(false, "commit", "commits"))
       .replace(/\bYou tend\b/g, () => subjectWithVerb(true, "tend", "tends"))
       .replace(/\byou tend\b/g, () => subjectWithVerb(false, "tend", "tends"))
       .replace(/\bYou feel\b/g, () => subjectWithVerb(true, "feel", "feels"))
       .replace(/\byou feel\b/g, () => subjectWithVerb(false, "feel", "feels"))
+      .replace(/\bYou care\b/g, () => subjectWithVerb(true, "care", "cares"))
+      .replace(/\byou care\b/g, () => subjectWithVerb(false, "care", "cares"))
       .replace(/\bYou want\b/g, () => subjectWithVerb(true, "want", "wants"))
       .replace(/\byou want\b/g, () => subjectWithVerb(false, "want", "wants"))
       .replace(/\bYou move\b/g, () => subjectWithVerb(true, "move", "moves"))
       .replace(/\byou move\b/g, () => subjectWithVerb(false, "move", "moves"))
       .replace(/\bYou live\b/g, () => subjectWithVerb(true, "live", "lives"))
       .replace(/\byou live\b/g, () => subjectWithVerb(false, "live", "lives"))
+      .replace(/\bYou ease\b/g, () => subjectWithVerb(true, "ease", "eases"))
+      .replace(/\byou ease\b/g, () => subjectWithVerb(false, "ease", "eases"))
+      .replace(/\bYou protect\b/g, () => subjectWithVerb(true, "protect", "protects"))
+      .replace(/\byou protect\b/g, () => subjectWithVerb(false, "protect", "protects"))
+      .replace(/\bYou explain\b/g, () => subjectWithVerb(true, "explain", "explains"))
+      .replace(/\byou explain\b/g, () => subjectWithVerb(false, "explain", "explains"))
       .replace(/\bYou respond\b/g, () => subjectWithVerb(true, "respond", "responds"))
       .replace(/\byou respond\b/g, () => subjectWithVerb(false, "respond", "responds"))
+      .replace(/\bYou read\b/g, () => subjectWithVerb(true, "read", "reads"))
+      .replace(/\byou read\b/g, () => subjectWithVerb(false, "read", "reads"))
+      .replace(/\bYou show\b/g, () => subjectWithVerb(true, "show", "shows"))
+      .replace(/\byou show\b/g, () => subjectWithVerb(false, "show", "shows"))
+      .replace(/\bYou choose\b/g, () => subjectWithVerb(true, "choose", "chooses"))
+      .replace(/\byou choose\b/g, () => subjectWithVerb(false, "choose", "chooses"))
+      .replace(/\bYou make\b/g, () => subjectWithVerb(true, "make", "makes"))
+      .replace(/\byou make\b/g, () => subjectWithVerb(false, "make", "makes"))
+      .replace(/\bYou shine\b/g, () => subjectWithVerb(true, "shine", "shines"))
+      .replace(/\byou shine\b/g, () => subjectWithVerb(false, "shine", "shines"))
+      .replace(/\bYou think\b/g, () => subjectWithVerb(true, "think", "thinks"))
+      .replace(/\byou think\b/g, () => subjectWithVerb(false, "think", "thinks"))
+      .replace(/\bYou talk\b/g, () => subjectWithVerb(true, "talk", "talks"))
+      .replace(/\byou talk\b/g, () => subjectWithVerb(false, "talk", "talks"))
+      .replace(/\bYou imagine\b/g, () => subjectWithVerb(true, "imagine", "imagines"))
+      .replace(/\byou imagine\b/g, () => subjectWithVerb(false, "imagine", "imagines"))
+      .replace(/\bYou reach\b/g, () => subjectWithVerb(true, "reach", "reaches"))
+      .replace(/\byou reach\b/g, () => subjectWithVerb(false, "reach", "reaches"))
+      .replace(/\bYou carry\b/g, () => subjectWithVerb(true, "carry", "carries"))
+      .replace(/\byou carry\b/g, () => subjectWithVerb(false, "carry", "carries"))
+      .replace(/\bYou speak\b/g, () => subjectWithVerb(true, "speak", "speaks"))
+      .replace(/\byou speak\b/g, () => subjectWithVerb(false, "speak", "speaks"))
+      .replace(/\bYou reinvent\b/g, () => subjectWithVerb(true, "reinvent", "reinvents"))
+      .replace(/\byou reinvent\b/g, () => subjectWithVerb(false, "reinvent", "reinvents"))
+      .replace(/\bYou survive\b/g, () => subjectWithVerb(true, "survive", "survives"))
+      .replace(/\byou survive\b/g, () => subjectWithVerb(false, "survive", "survives"))
+      .replace(/\bYou provoke\b/g, () => subjectWithVerb(true, "provoke", "provokes"))
+      .replace(/\byou provoke\b/g, () => subjectWithVerb(false, "provoke", "provokes"))
       .replace(/\bYou can\b/g, () => subjectWithModal(true, "can"))
       .replace(/\byou can\b/g, () => subjectWithModal(false, "can"))
       .replace(/\bYou will\b/g, () => subjectWithModal(true, "will"))
@@ -7311,6 +8698,9 @@ function createNatalGeneratedCopyForOwnerConverter(ownerName: string, ownerKind:
       .replace(/\byou may\b/g, () => subjectWithModal(false, "may"))
       .replace(/\bYou\b/g, () => subject(true))
       .replace(/\byou\b/g, () => subject(false));
+
+    return collapseRepeatedOwnerNameMentions(converted, ownerName, pronouns, !namedMentionUsed);
+  };
 }
 
 function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
@@ -7320,20 +8710,46 @@ function natalGeneratedCopyForOwner(text: string, ownerName: string, ownerKind: 
 const chartPronouns: PersonReference = {
   subject: "it",
   object: "it",
+  possessiveAdjective: "its",
   possessivePronoun: "its",
   possessive: "its",
   reflexive: "itself",
+  subjectCapitalized: "It",
+  objectCapitalized: "It",
+  possessiveAdjectiveCapitalized: "Its",
+  possessivePronounCapitalized: "Its",
+  reflexiveCapitalized: "Itself",
   name: "this chart",
   namePossessive: "this chart's",
-  verbAgreement: "singular"
+  verbAgreement: "singular",
+  bePresent: "is",
+  bePast: "was",
+  havePresent: "has",
+  verbSuffix: "s"
 };
 
 function capitalizeText(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function subjectVerb(reference: PersonReference, baseVerb: string, singularVerb: string) {
+  return `${reference.subject} ${reference.verbAgreement === "plural" ? baseVerb : singularVerb}`;
+}
+
+function capitalizedSubjectVerb(reference: PersonReference, baseVerb: string, singularVerb: string) {
+  return `${reference.subjectCapitalized} ${reference.verbAgreement === "plural" ? baseVerb : singularVerb}`;
+}
+
+function subjectBe(reference: PersonReference) {
+  return `${reference.subject} ${reference.bePresent}`;
+}
+
+function capitalizedSubjectBe(reference: PersonReference) {
+  return `${reference.subjectCapitalized} ${reference.bePresent}`;
+}
+
 function pronounSetForOwner(ownerName: string, ownerKind: "person" | "chart" = "person", pronouns?: PronounChoice | null): PersonReference {
-  return ownerKind === "chart" ? chartPronouns : resolvePersonReference({ name: ownerName, pronouns });
+  return ownerKind === "chart" ? chartPronouns : resolveThirdPersonReference({ name: ownerName, pronouns });
 }
 
 function relationshipPairLabel(primaryName: string, comparisonName: string, comparisonIsSelf: boolean) {
@@ -7368,7 +8784,435 @@ function relationshipGeneratedCopyForPerspective(text: string, primaryName: stri
     .replace(/\byou\b/g, pair);
 }
 
-function repairRelationshipFallbackGrammar(text: string) {
+type RelationshipFallbackGrammarContext = {
+  primaryName: string;
+  comparisonName: string;
+  comparisonIsSelf: boolean;
+  primaryPoint?: string;
+  comparisonPoint?: string;
+  aspect?: string;
+  romanticAllowed?: boolean;
+  relationshipType?: string | null;
+};
+
+function oldSynastryMatrixTopic(topic: string) {
+  const normalized = topic.trim().toLowerCase();
+  const replacements: Record<string, string> = {
+    "identity": relationshipPlanetTopicFallbacks.Sun,
+    "feelings": relationshipPlanetTopicFallbacks.Moon,
+    "needs": relationshipPlanetTopicFallbacks.Moon,
+    "mind": relationshipPlanetTopicFallbacks.Mercury,
+    "love and values": relationshipPlanetTopicFallbacks.Venus,
+    "drive": relationshipPlanetTopicFallbacks.Mars,
+    "growth": relationshipPlanetTopicFallbacks.Jupiter,
+    "structure": relationshipPlanetTopicFallbacks.Saturn,
+    "need for freedom": relationshipPlanetTopicFallbacks.Uranus,
+    "dreams": relationshipPlanetTopicFallbacks.Neptune,
+    "depth and power": relationshipPlanetTopicFallbacks.Pluto
+  };
+
+  return replacements[normalized] ?? topic.trim();
+}
+
+function oldSynastryMatrixAspectSentence(aspect: string) {
+  const normalized = aspect.trim().toLowerCase();
+
+  if (normalized.includes("conjunction")) {
+    return "What matters is how the two of you use that recognition.";
+  }
+
+  if (normalized.includes("square")) {
+    return "The useful move is to name the adjustment before the difference turns into a standoff.";
+  }
+
+  if (normalized.includes("opposition")) {
+    return "It works better when the difference becomes information instead of a contest.";
+  }
+
+  if (normalized.includes("trine")) {
+    return "That ease helps most when you still say what you need directly.";
+  }
+
+  if (normalized.includes("sextile")) {
+    return "It becomes useful when you turn the opening into a concrete choice.";
+  }
+
+  return "";
+}
+
+function synastryAspectBehaviorSentence(aspect?: string) {
+  const normalized = aspect?.trim().toLowerCase() ?? "";
+
+  if (normalized === "conjunction") {
+    return "The conjunction brings the two functions into the same room.";
+  }
+
+  if (normalized === "square") {
+    return "The square can make the difference between your styles more noticeable.";
+  }
+
+  if (normalized === "opposition") {
+    return "The opposition can make each person notice what the other one handles differently.";
+  }
+
+  if (normalized === "trine") {
+    return "The trine can make this exchange feel familiar or easy to use.";
+  }
+
+  if (normalized === "sextile") {
+    return "The sextile gives both of you something useful to work with, if you actually use it.";
+  }
+
+  return "This contact shows one way the two charts interact.";
+}
+
+function relationshipContextNoun(value?: string | null) {
+  const normalized = normalizeRelationshipContextKey(value);
+  const labels: Record<string, string> = {
+    friendship: "friendship",
+    romantic: "relationship",
+    family: "family relationship",
+    coworkers: "working relationship",
+    creative: "creative collaboration",
+    exes: "connection",
+    complicated: "connection"
+  };
+
+  return labels[normalized] ?? "connection";
+}
+
+function relationshipContextVerb(value?: string | null) {
+  const normalized = normalizeRelationshipContextKey(value);
+
+  if (normalized === "coworkers") {
+    return "working relationship";
+  }
+
+  return relationshipContextNoun(value);
+}
+
+function samePlanetFallbackAspectFamily(aspect?: string | null) {
+  const normalized = normalizeContentIdPart(aspect ?? "");
+
+  if (normalized === "square" || normalized === "opposition") {
+    return "challenging";
+  }
+
+  if (normalized === "trine" || normalized === "sextile") {
+    return "supportive";
+  }
+
+  return normalized || "contact";
+}
+
+function samePlanetRelationshipContextLine(contextKey: string, relationshipNoun: string) {
+  const contextLines: Record<string, string> = {
+    friend: "In a friendship, this is less about one person teaching the other and more about a pattern both people can notice in real time.",
+    "romantic-partner": "In a romantic relationship, this needs room for affection and difference at the same time.",
+    "romantic-partner-ex": "With an ex, recognition can be real without becoming a reason to repeat the old pattern.",
+    "family-sibling": "With siblings, the pattern can wake up comparison quickly, so it helps to separate the present moment from the old role.",
+    coworker: "At work, this needs clear timing, plain expectations, and enough room for each person to move without performing for the other.",
+    business: "In business, this works best when shared confidence is tied to decisions, numbers, and follow-through."
+  };
+
+  return contextLines[contextKey] ?? `In this ${relationshipNoun}, the shared planet works best when it becomes something both people can name and handle.`;
+}
+
+function samePlanetGeneralFallback(
+  pairLabel: string,
+  pointKey: string,
+  aspectKey: string,
+  aspectFamily: string,
+  contextKey: string,
+  relationshipNoun: string
+) {
+  const subjects: Record<string, string> = {
+    sun: "being seen, taking up room, and deciding who gets to lead",
+    moon: "comfort, mood, care, and the timing of emotional response",
+    mercury: "conversation, decisions, interruptions, and the way a point gets named",
+    venus: "preferences, affection, money, ease, and what feels worth maintaining",
+    mars: "initiative, speed, anger, courage, and how action starts",
+    jupiter: "faith, risk, appetite, promises, and how big a plan becomes",
+    saturn: "standards, promises, hesitation, pressure, and what has to be carried",
+    uranus: "freedom, disruption, refusal, and the need to change the rules",
+    neptune: "hope, sensitivity, uncertainty, and the places where clearer edges help",
+    pluto: "control, pressure, survival habits, and what nobody wants to keep pretending around"
+  };
+  const subject = subjects[pointKey] ?? "the same pattern";
+  const contextLine = samePlanetRelationshipContextLine(contextKey, relationshipNoun);
+
+  if (aspectKey === "conjunction") {
+    return [
+      `${pairLabel} may concentrate the same pattern around ${subject}.`,
+      contextLine,
+      "The gift is recognition: each person can understand why the other responds this way.",
+      "The edge is reinforcement: the same reflex can get louder when neither person slows it down."
+    ].join(" ");
+  }
+
+  if (aspectKey === "square") {
+    return [
+      `${pairLabel} may care about the same topic but handle it through different moves around ${subject}.`,
+      contextLine,
+      "The square shows up when both people are trying to solve the tension in their own style.",
+      "What helps is naming the mismatch before it becomes a test of who is right."
+    ].join(" ");
+  }
+
+  if (aspectKey === "opposition") {
+    return [
+      `${pairLabel} may stand on opposite sides of the same pattern around ${subject}.`,
+      contextLine,
+      "One person may reach for motion while the other asks for pause, or one may protect the part the other keeps skipping.",
+      "The contact works better when each side gets a real job instead of waiting for someone to concede."
+    ].join(" ");
+  }
+
+  if (aspectFamily === "supportive") {
+    return [
+      `${pairLabel} may find it easier to cooperate around ${subject}.`,
+      contextLine,
+      "Supportive does not mean automatic; it means the opening is easier to use when both people participate.",
+      "Let the ease become a clear choice, not an unspoken expectation."
+    ].join(" ");
+  }
+
+  if (aspectFamily === "challenging") {
+    return [
+      `${pairLabel} may recognize the same pattern through tension around ${subject}.`,
+      contextLine,
+      "The pressure is useful only if it becomes information instead of a repeat argument.",
+      "Name what each person is protecting before the pattern decides for both of you."
+    ].join(" ");
+  }
+
+  return [
+    `${pairLabel} may recognize the same pattern around ${subject}.`,
+    contextLine,
+    "Use that recognition to make one ordinary choice clearer."
+  ].join(" ");
+}
+
+function samePlanetSynastryFallback(context: RelationshipFallbackGrammarContext) {
+  const primaryPoint = context.primaryPoint?.trim();
+  const comparisonPoint = context.comparisonPoint?.trim();
+
+  if (!primaryPoint || !comparisonPoint || normalizeContentIdPart(primaryPoint) !== normalizeContentIdPart(comparisonPoint)) {
+    return "";
+  }
+
+  const pairLabel = context.comparisonIsSelf
+    ? `You and ${context.primaryName}`
+    : `${context.primaryName} and ${context.comparisonName}`;
+  const relationshipNoun = relationshipContextNoun(context.relationshipType);
+  const contextKey = normalizeRelationshipContextKey(context.relationshipType);
+  const pointKey = normalizeContentIdPart(primaryPoint);
+  const aspectKey = normalizeContentIdPart(context.aspect ?? "");
+  const aspectFamily = samePlanetFallbackAspectFamily(context.aspect);
+  const exactKey = `${contextKey}/${pointKey}/${aspectKey}`;
+  const exactExamples: Record<string, string> = {
+    "friendship/saturn/conjunction": [
+      `${pairLabel} may both take promises seriously, even when the promise is small.`,
+      "That can make the friendship steady: each person understands why follow-through matters.",
+      "The edge is that you can make a simple plan heavier than it needs to be, or hesitate over the same risk until nobody moves.",
+      "Let the structure help the friendship breathe. Keep the agreement clear, then let it be enough."
+    ].join(" "),
+    "romantic/venus/square": [
+      `${pairLabel} may care about each other and still recognize care through different actions.`,
+      "One person may want more shared time, softness, or reassurance while the other needs more space, directness, or practical proof.",
+      "The square is not a lack of affection; it is the moment affection asks to be translated.",
+      "Say what makes you feel chosen before resentment turns the mismatch into a scorecard."
+    ].join(" "),
+    "exes/venus/square": [
+      `${pairLabel} may still remember what felt sweet, and also why sweetness was not enough.`,
+      "The mismatch may have lived in timing, money, attention, or the way each person tried to repair discomfort.",
+      "The square keeps the old preference visible without making it a reason to return.",
+      "Let recognition tell the truth about the pattern, not rewrite the ending."
+    ].join(" "),
+    "family/mercury/square": [
+      `${pairLabel} may both want to be understood, but the conversation can quickly turn into correction.`,
+      "One person explains, the other counters, and suddenly the old sibling role is speaking louder than the actual point.",
+      "The square asks for a pause before tone becomes the whole argument.",
+      "Repeat what you heard before defending what you meant."
+    ].join(" "),
+    "coworkers/mars/opposition": [
+      `${pairLabel} may both want the work to move, but not from the same starting line.`,
+      "One person may begin before the plan is settled while the other pushes back until the method is clear.",
+      "The opposition can turn the task into a contest over who gets to set the pace.",
+      "Name the next move and the reason for it before effort becomes resistance."
+    ].join(" "),
+    "coworkers/jupiter/trine": [
+      `${pairLabel} may find it easy to believe a plan can grow.`,
+      "That can help the business relationship when optimism is tied to a real offer, a clear audience, and numbers both people can check.",
+      "The trine opens the door, but it still needs a decision about scope.",
+      "Let the bigger vision earn trust through the next practical step."
+    ].join(" "),
+    "friendship/neptune/conjunction": [
+      `${pairLabel} may share a soft spot for what could be better, kinder, or more meaningful.`,
+      "In friendship, that can make space for compassion without needing every feeling explained right away.",
+      "The conjunction can also blur what was promised, assumed, or left unsaid.",
+      "Keep the tenderness, and put the plan in clear words when the friendship needs something concrete."
+    ].join(" ")
+  };
+
+  return exactExamples[exactKey]
+    ?? samePlanetGeneralFallback(pairLabel, pointKey, aspectKey, aspectFamily, contextKey, relationshipNoun);
+}
+
+function directionalSynastryFallback(context: RelationshipFallbackGrammarContext) {
+  const primaryPoint = context.primaryPoint?.trim() || "";
+  const comparisonPoint = context.comparisonPoint?.trim() || "";
+  const aspect = context.aspect?.trim().toLowerCase() || "";
+  const primaryKey = normalizeContentIdPart(primaryPoint);
+  const comparisonKey = normalizeContentIdPart(comparisonPoint);
+  const comparisonObject = context.comparisonIsSelf ? "you" : context.comparisonName;
+  const comparisonPossessive = context.comparisonIsSelf ? "your" : possessiveLabel(context.comparisonName);
+  const relationshipNoun = relationshipContextVerb(context.relationshipType);
+
+  if (primaryKey === "saturn" && comparisonKey === "ascendant") {
+    return [
+      `${context.primaryName} may make ${comparisonObject} more aware of how ${context.comparisonIsSelf ? "you come" : `${context.comparisonName} comes`} across, especially when a choice gets questioned or the pace slows down.`,
+      `${possessiveLabel(context.primaryName)} caution can help with preparation, but it may also feel like judgment before there has been room to find a footing.`,
+      `The ${relationshipNoun} works better when advice is requested rather than automatically imposed.`
+    ].join(" ");
+  }
+
+  if (primaryKey === "mars" && comparisonKey === "midheaven") {
+    return [
+      `${context.primaryName} can push ${comparisonObject} to act on ambitions that might otherwise get postponed.`,
+      `${possessiveLabel(context.primaryName)} initiative may help a public goal feel more urgent, although it can also feel like pressure when the pace needs to stay self-directed.`,
+      "Let encouragement create momentum without giving someone else control of the direction."
+    ].join(" ");
+  }
+
+  if (primaryKey === "sun" && comparisonKey === "mars") {
+    return [
+      `${possessiveLabel(context.primaryName)} confidence can make it easier for ${comparisonObject} to act on instinct.`,
+      `Around ${context.primaryName}, ${context.comparisonIsSelf ? "you may" : `${context.comparisonName} may`} take initiative faster, speak up sooner, or become more competitive than usual.`,
+      `This can make the ${relationshipNoun} energizing, but it helps to notice when encouragement turns into escalation.`
+    ].join(" ");
+  }
+
+  if (primaryKey === "venus" && comparisonKey === "mars") {
+    if (context.romanticAllowed) {
+      return [
+        `${context.primaryName} may bring preference, warmth, and attraction into contact with ${comparisonPossessive} drive.`,
+        "That can create obvious interest, but wanting the same moment does not automatically mean wanting the same relationship.",
+        "Let the spark introduce the pattern, then check whether timing, respect, and follow-through are also there."
+      ].join(" ");
+    }
+
+    return [
+      `${context.primaryName} may prefer tact, comfort, or consensus where ${comparisonObject} wants a quicker response.`,
+      "That difference can improve things when diplomacy and action are both needed.",
+      "It can also create frustration about tone and timing.",
+      "Agree on who handles the conversation and who handles the immediate action."
+    ].join(" ");
+  }
+
+  if (primaryKey === "neptune" && comparisonKey === "mercury") {
+    return [
+      `${context.primaryName} may hear possibility in an idea while ${comparisonObject} is trying to establish exactly what was said.`,
+      "That can make conversations imaginative, but it can also leave important assumptions unstated.",
+      "Put plans in clear language when the details matter."
+    ].join(" ");
+  }
+
+  if (primaryKey === "pluto" && comparisonKey === "mars") {
+    return [
+      `${context.primaryName} may intensify ${comparisonPossessive} determination, especially when a shared goal or disagreement matters to both of you.`,
+      "That pressure can help with follow-through, but it can also make compromise feel like defeat.",
+      "Decide what outcome you want before the conflict becomes a contest of endurance."
+    ].join(" ");
+  }
+
+  const aspectMove = aspect === "square"
+    ? "The difference needs an adjustment before it turns into friction."
+    : aspect === "opposition"
+      ? "The difference works better when each person names their side without making the other person carry it."
+      : aspect === "trine"
+        ? "The ease helps most when neither person assumes the other already knows what is needed."
+        : aspect === "sextile"
+          ? "Start with what is observable, then choose one clear response together."
+          : "The contact works best when both people notice what it brings up and choose how to use it.";
+
+  return [
+    `${possessiveLabel(context.primaryName)} ${primaryPoint} brings ${primaryPoint.toLowerCase()} material into contact with ${comparisonPossessive} ${comparisonPoint.toLowerCase()} in the ${relationshipNoun}.`,
+    aspectMove
+  ].join(" ");
+}
+
+function relationshipAwareSynastryFallback(context: RelationshipFallbackGrammarContext) {
+  return samePlanetSynastryFallback(context) || directionalSynastryFallback(context);
+}
+
+function oldSynastryMatrixReplacementSentence(
+  topicA: string,
+  topicB: string,
+  aspectSentence: string,
+  context: RelationshipFallbackGrammarContext
+) {
+  const primaryPossessive = possessiveLabel(context.primaryName);
+  const comparisonPossessive = context.comparisonIsSelf ? "your" : possessiveLabel(context.comparisonName);
+  const primaryPoint = context.primaryPoint?.trim();
+  const comparisonPoint = context.comparisonPoint?.trim();
+  const samePlanetFallback = samePlanetSynastryFallback(context);
+
+  if (samePlanetFallback) {
+    return samePlanetFallback;
+  }
+
+  if (primaryPoint && comparisonPoint) {
+    void primaryPossessive;
+    void comparisonPossessive;
+    void topicA;
+    void topicB;
+    void aspectSentence;
+    return directionalSynastryFallback(context);
+  }
+
+  return relationshipAwareSynastryFallback(context);
+}
+
+function nonRomanticSynastryFallback(text: string, context?: RelationshipFallbackGrammarContext) {
+  if (!context || context.romanticAllowed) {
+    return text;
+  }
+
+  if (!/\b(attraction|attracted|chemistry|desire|desired|physical ease|physical pull|sexual|sexy|romance|romantic|dating|spark|heat|wanting someone|wants each other|wanted and pursued)\b/i.test(text)) {
+    return text;
+  }
+
+  const primaryPossessive = possessiveLabel(context.primaryName);
+  const comparisonPossessive = context.comparisonIsSelf ? "your" : possessiveLabel(context.comparisonName);
+  const primaryPoint = context.primaryPoint?.trim() || "planet";
+  const comparisonPoint = context.comparisonPoint?.trim() || "planet";
+
+  void primaryPossessive;
+  void comparisonPossessive;
+  void primaryPoint;
+  void comparisonPoint;
+  return relationshipAwareSynastryFallback(context);
+}
+
+function repairOldSynastryMatrixCopy(text: string, context?: RelationshipFallbackGrammarContext) {
+  if (!context) {
+    return text;
+  }
+
+  return text.replace(
+    /\bA's ([^.]+?) meets B's ([^.]+?)\. The ([^.]+?)\./gi,
+    (_match, rawTopicA: string, rawTopicB: string, rawAspectSentence: string) => {
+      const topicA = oldSynastryMatrixTopic(rawTopicA);
+      const topicB = oldSynastryMatrixTopic(rawTopicB);
+      const aspectSentence = oldSynastryMatrixAspectSentence(rawAspectSentence);
+
+      return oldSynastryMatrixReplacementSentence(topicA, topicB, aspectSentence, context);
+    }
+  );
+}
+
+function repairRelationshipFallbackGrammar(text: string, context?: RelationshipFallbackGrammarContext) {
   const repairedText = Object.entries({
     "how a person thinks, learns, communicates, decides, and exchanges information": relationshipPlanetTopicFallbacks.Mercury,
     "how a person thinks, learns, communicates, and makes decisions": relationshipPlanetTopicFallbacks.Mercury,
@@ -7389,7 +9233,7 @@ function repairRelationshipFallbackGrammar(text: string) {
     currentText.replace(new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), replacement)
   ), text);
 
-  return repairedText
+  return nonRomanticSynastryFallback(repairOldSynastryMatrixCopy(repairedText, context), context)
     .replace(/\b(A|B)'s ([^.!?]{0,80}\band\b[^.!?]{0,80}) meets\b/g, "$1's $2 meet")
     .replace(/\b(A|B)'s (dreams|feelings|needs|drives|values|ideas|beliefs|limits|patterns|wounds|sensitivities) meets\b/gi, "$1's $2 meet")
     .replace(/\bdescribes how how\b/gi, "describes how")
@@ -7406,15 +9250,38 @@ function synastryContactSummary(
   contact: Omit<SynastryContact, "summary">,
   generatedContent?: GeneratedContentMap,
   friendPronouns?: PronounChoice | null,
-  comparisonPronouns?: PronounChoice | null
+  comparisonPronouns?: PronounChoice | null,
+  romanticAllowed = false,
+  relationshipType?: string | null
 ) {
-  const afterContentFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
+  const isSamePlanetContact = isSamePlanetSynastryContact(contact.friendPoint.name, contact.yourPoint.name);
+  const samePlanetFallback = isSamePlanetContact
+    ? samePlanetSynastryFallback({
+        primaryName: friendName,
+        comparisonName,
+        comparisonIsSelf,
+        primaryPoint: contact.friendPoint.name,
+        comparisonPoint: contact.yourPoint.name,
+        aspect: contact.aspect,
+        romanticAllowed,
+        relationshipType
+      })
+    : "";
+  const afterContentFallback = samePlanetFallback
+    ? {
+        summary: samePlanetFallback,
+        body: samePlanetFallback,
+        detailParagraphs: [samePlanetFallback]
+      }
+    : synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
         contact.contentKeys,
         {
-          contentKey: templateFallbackContentKeys.friendsSynastryContact,
+          contentKey: isSamePlanetContact
+            ? templateFallbackContentKeys.friendsSamePlanet
+            : templateFallbackContentKeys.friendsSynastryContact,
           slots: synastryTemplateSlots(
             friendName,
             contact.friendPoint.name,
@@ -7434,16 +9301,31 @@ function synastryContactSummary(
     : null;
   const headlinerParagraphs = synastryHeadlinerParagraphs(generated);
   const generatedPreview = headlinerParagraphs[0]
-    || generated?.summary?.trim()
+    || firstReaderFacingCopy([generated?.summary])
     || generatedContentParagraphs(generated)[0]
+    || afterContentFallback.summary
+    || afterContentFallback.body
+    || afterContentFallback.detailParagraphs?.[0]
     || null;
 
-  return repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(
-    textPreview(generatedPreview || ""),
-    friendName,
-    comparisonName,
-    comparisonIsSelf
-  ));
+  return repairRelationshipFallbackGrammar(
+    relationshipGeneratedCopyForPerspective(
+      textPreview(generatedPreview || ""),
+      friendName,
+      comparisonName,
+      comparisonIsSelf
+    ),
+    {
+      primaryName: friendName,
+      comparisonName,
+      comparisonIsSelf,
+      primaryPoint: contact.friendPoint.name,
+      comparisonPoint: contact.yourPoint.name,
+      aspect: contact.aspect,
+      romanticAllowed,
+      relationshipType
+    }
+  );
 }
 
 function synastryContacts(
@@ -7452,17 +9334,19 @@ function synastryContacts(
   generatedContent?: GeneratedContentMap,
   comparisonName = "You",
   comparisonIsSelf = true,
-  comparisonPronouns?: PronounChoice | null
+  comparisonPronouns?: PronounChoice | null,
+  romanticAllowed = false,
+  relationshipType?: string | null
 ): SynastryContact[] {
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
 
-  return friendPoints
+  const contacts = friendPoints
     .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
       const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= Math.max(definition.orb, 5))
+        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
         .sort((first, second) => first.orbValue - second.orbValue)[0];
 
       if (!aspect) {
@@ -7477,7 +9361,7 @@ function synastryContacts(
         orb: aspect.orbValue,
         score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
         tone: synastryTone(aspect.type),
-        contentKeys: synastryContactContentKeys(friendPoint.name, aspect.type, yourPoint.name)
+        contentKeys: synastryContactContentKeys(friendPoint.name, aspect.type, yourPoint.name, relationshipType)
       };
 
       return [{
@@ -7489,12 +9373,18 @@ function synastryContacts(
           baseContact,
           generatedContent,
           chart.pronouns,
-          comparisonPronouns
+          comparisonPronouns,
+          romanticAllowed,
+          relationshipType
         )
       }];
-    }))
-    .sort((first, second) => second.score - first.score || first.orb - second.orb)
-    .slice(0, 16);
+    }));
+  const orderedContacts = contacts.sort((first, second) => second.score - first.score || first.orb - second.orb);
+  const primaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "primary");
+  const secondaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "secondary");
+  const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
+
+  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
 }
 
 function synastryDetailCopy(
@@ -7504,15 +9394,37 @@ function synastryDetailCopy(
   contact: SynastryContact,
   generatedContent?: GeneratedContentMap,
   friendPronouns?: PronounChoice | null,
-  comparisonPronouns?: PronounChoice | null
+  comparisonPronouns?: PronounChoice | null,
+  romanticAllowed = false,
+  relationshipType?: string | null
 ) {
-  const hookFallback = synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
+  const fallbackContext = {
+    primaryName: friendName,
+    comparisonName,
+    comparisonIsSelf,
+    primaryPoint: contact.friendPoint.name,
+    comparisonPoint: contact.yourPoint.name,
+    aspect: contact.aspect,
+    romanticAllowed,
+    relationshipType
+  };
+  const relationshipFallback = relationshipAwareSynastryFallback(fallbackContext);
+  const isSamePlanetContact = isSamePlanetSynastryContact(contact.friendPoint.name, contact.yourPoint.name);
+  const hookFallback = relationshipFallback
+    ? {
+        summary: relationshipFallback,
+        body: relationshipFallback,
+        detailParagraphs: [relationshipFallback]
+      }
+    : synastryContactFallback(contact.friendPoint.name, contact.aspect, contact.yourPoint.name);
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
         contact.contentKeys,
         {
-          contentKey: templateFallbackContentKeys.friendsSynastryContact,
+          contentKey: isSamePlanetContact
+            ? templateFallbackContentKeys.friendsSamePlanet
+            : templateFallbackContentKeys.friendsSynastryContact,
           slots: synastryTemplateSlots(
             friendName,
             contact.friendPoint.name,
@@ -7534,7 +9446,17 @@ function synastryDetailCopy(
 
   if (headlinerParagraphs.length > 0) {
     return headlinerParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
-      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf),
+      {
+        primaryName: friendName,
+        comparisonName,
+        comparisonIsSelf,
+        primaryPoint: contact.friendPoint.name,
+        comparisonPoint: contact.yourPoint.name,
+        aspect: contact.aspect,
+        romanticAllowed,
+        relationshipType
+      }
     ));
   }
 
@@ -7542,12 +9464,34 @@ function synastryDetailCopy(
 
   if (generatedParagraphs.length > 0) {
     return generatedParagraphs.map((paragraph) => repairRelationshipFallbackGrammar(
-      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf)
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf),
+      {
+        primaryName: friendName,
+        comparisonName,
+        comparisonIsSelf,
+        primaryPoint: contact.friendPoint.name,
+        comparisonPoint: contact.yourPoint.name,
+        aspect: contact.aspect,
+        romanticAllowed,
+        relationshipType
+      }
     ));
   }
 
   return liveGeneratedBody(generated, hookFallback.detailParagraphs).map((paragraph) => (
-    repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf))
+    repairRelationshipFallbackGrammar(
+      relationshipGeneratedCopyForPerspective(paragraph, friendName, comparisonName, comparisonIsSelf),
+      {
+        primaryName: friendName,
+        comparisonName,
+        comparisonIsSelf,
+        primaryPoint: contact.friendPoint.name,
+        comparisonPoint: contact.yourPoint.name,
+        aspect: contact.aspect,
+        romanticAllowed,
+        relationshipType
+      }
+    )
   ));
 }
 
@@ -7698,7 +9642,66 @@ function relationshipSignRows(profileNatalSky: SkySnapshot | null, chart: Manual
 }
 
 function relationshipTypeLabel(value?: string) {
-  return relationshipTypeLabels[value ?? "friend"] ?? value ?? "Friendship";
+  return value === "event" ? "Event" : relationshipContextLabel(value);
+}
+
+type PhrasebankCompositeRelationshipType =
+  | "romantic"
+  | "friendship"
+  | "family"
+  | "coworkers"
+  | "creative"
+  | "exes"
+  | "complicated";
+
+function phrasebankCompositeRelationshipType(value?: string | null): PhrasebankCompositeRelationshipType {
+  return normalizeRelationshipContextKey(value);
+}
+
+function compositeRelationshipTypeSection(
+  generated: LiveGeneratedContent | null,
+  relationshipType?: string | null
+) {
+  const sections = generated?.sections;
+
+  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+    return null;
+  }
+
+  const byRelationshipType = (sections as Record<string, unknown>).byRelationshipType;
+
+  if (!byRelationshipType || typeof byRelationshipType !== "object" || Array.isArray(byRelationshipType)) {
+    return null;
+  }
+
+  const typeKey = phrasebankCompositeRelationshipType(relationshipType);
+  const safeTypeKey = typeKey === "romantic" && !isExplicitRomanticRelationship(relationshipType)
+    ? "friendship"
+    : typeKey;
+  const variant = (byRelationshipType as Record<string, unknown>)[safeTypeKey];
+
+  if (!variant || typeof variant !== "object" || Array.isArray(variant)) {
+    return null;
+  }
+
+  return variant as Record<string, unknown>;
+}
+
+function compositeRelationshipTypeParagraphs(
+  generated: LiveGeneratedContent | null,
+  relationshipType?: string | null
+) {
+  const variant = compositeRelationshipTypeSection(generated, relationshipType);
+
+  if (!variant) {
+    return [];
+  }
+
+  return readerFacingParagraphs([
+    typeof variant.experience === "string" ? variant.experience : "",
+    typeof variant.advice === "string" ? variant.advice : "",
+    typeof variant.astro === "string" ? `The astro: ${variant.astro}.` : ""
+  ]);
 }
 
 function relationshipMidpointLongitude(first: number, second: number) {
@@ -7791,7 +9794,8 @@ function compositeAspectSummary(
   chartName: string,
   comparisonName: string,
   comparisonIsSelf: boolean,
-  generatedContent?: GeneratedContentMap
+  generatedContent?: GeneratedContentMap,
+  relationshipType?: string | null
 ) {
   if (!aspect) {
     return "No single aspect is dominating the relationship chart. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.";
@@ -7818,8 +9822,11 @@ function compositeAspectSummary(
     : null;
 
   if (generated) {
+    const typedParagraphs = compositeRelationshipTypeParagraphs(generated, relationshipType);
+    const generatedSummary = typedParagraphs[0] ?? liveGeneratedSummary(generated, null);
+
     return repairRelationshipFallbackGrammar(
-      relationshipGeneratedCopyForPerspective(liveGeneratedSummary(generated, null), chartName, comparisonName, comparisonIsSelf)
+      relationshipGeneratedCopyForPerspective(generatedSummary, chartName, comparisonName, comparisonIsSelf)
     );
   }
 
@@ -7836,7 +9843,7 @@ function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedCo
 
     const generated = liveGeneratedContentByKeys(
       generatedContent,
-      relationshipPlacementContentKeys(row.label, row.sign, "composite", row.house),
+      compositePlacementContentKeys(row.label, row.sign, row.house),
       {
         contentKey: templateFallbackContentKeys.friendsCompositePlacement,
         slots: compositePlacementTemplateSlots({
@@ -8294,7 +10301,7 @@ function circleFeedPreviewCards(
 
   return [
     {
-      label: "Friend updates",
+      label: "Friend transits",
       title: "Current astrology for each person",
       body: "Add a chart to see what the current sky is bringing up in that person's chart."
     },
@@ -8544,11 +10551,13 @@ export function App() {
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "ready" : "loading");
-  const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [settingsGeneratedContent, setSettingsGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
+  const [, setCareerVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
@@ -8720,7 +10729,7 @@ export function App() {
       return;
     }
 
-    const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent);
+    const detail = skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
 
     setSelectedSkyDetail(detail);
   }, [sky, skyDetailRoutePath, skyGeneratedContent]);
@@ -8742,6 +10751,20 @@ export function App() {
   }), []);
 
   useEffect(() => {
+    const syncPreviewMode = () => {
+      setGeneratedContentPreviewMode(readGeneratedContentPreviewMode());
+    };
+
+    window.addEventListener(generatedContentPreviewModeChangeEvent, syncPreviewMode);
+    window.addEventListener("storage", syncPreviewMode);
+
+    return () => {
+      window.removeEventListener(generatedContentPreviewModeChangeEvent, syncPreviewMode);
+      window.removeEventListener("storage", syncPreviewMode);
+    };
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     loadPlanetTopicVocabulary()
@@ -8752,6 +10775,24 @@ export function App() {
       })
       .catch((error) => {
         console.warn("Planet topic vocabulary failed to initialize; code fallbacks will be used.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadCareerVocabulary()
+      .then(() => {
+        if (!cancelled) {
+          setCareerVocabularyVersion((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Career vocabulary failed to initialize; code fallbacks will be used.", error);
       });
 
     return () => {
@@ -8782,7 +10823,7 @@ export function App() {
     const shouldLoadSkyGenerated = mode === "guest" || mode === "member";
 
     if (!shouldLoadSkyGenerated) {
-      setSkyGeneratedContent(new Map());
+      setSkyGeneratedContent(normalizedSkySnapshotContent);
       return () => {
         cancelled = true;
       };
@@ -8791,24 +10832,24 @@ export function App() {
     loadLiveGeneratedContent("sky", skyDate)
       .then((content) => {
         if (!cancelled) {
-          setSkyGeneratedContent(content);
+          setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
         }
       })
       .catch((error) => {
         console.warn("Live Sky interpretations failed to load; unpublished content will remain hidden.", error);
         if (!cancelled) {
-          setSkyGeneratedContent(new Map());
+          setSkyGeneratedContent(normalizedSkySnapshotContent);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [mode, skyDate]);
+  }, [generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadNatal = Boolean(userProfile) && ["profile", "friends"].includes(mode);
+    const shouldLoadNatal = ["guest", "member", "profile", "friends"].includes(mode);
 
     if (!shouldLoadNatal) {
       setNatalGeneratedContent(new Map());
@@ -8833,11 +10874,11 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, skyDate, userProfile]);
+  }, [generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadRelationships = Boolean(userProfile) && mode === "friends";
+    const shouldLoadRelationships = mode === "friends";
 
     if (!shouldLoadRelationships) {
       setRelationshipGeneratedContent(new Map());
@@ -8862,7 +10903,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, skyDate, userProfile]);
+  }, [generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -8890,7 +10931,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, skyDate]);
+  }, [generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -9162,6 +11203,15 @@ export function App() {
     getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
       .then((nextSky) => {
         if (!cancelled) {
+          const validation = skyFactValidation(nextSky);
+
+          if (!validation.ok) {
+            logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
+            setSky(null);
+            setSkyStatus("error");
+            return;
+          }
+
           setSky(nextSky);
           setSkyStatus("ready");
           writeCachedSkySnapshot(cacheKey, nextSky);
@@ -9562,7 +11612,7 @@ export function App() {
             chartId: subjectId
           },
           voiceNotes: [
-            "Write this as the user's personal daily horoscope for the Updates page.",
+            "Write this as the user's personal daily horoscope for the Transits page.",
             "Summarize the most important information from all of today's aspects, transits, and timing signals.",
             "Start the summary with the plainest useful takeaway. Do not add a visible TLDR label.",
             "Use the summary field for the short takeaway only.",
@@ -10587,6 +12637,13 @@ export function App() {
                       onOpenDetail={openSkyDetail}
                     />
                   )}
+                  {!isSkyLoading && sky && (
+                    <CalculationDiagnosticsPanel
+                      generatedContent={skyGeneratedContent}
+                      hydrationState={skyGeneratedContent === normalizedSkySnapshotContent ? "snapshot" : "hydrated"}
+                      sky={sky}
+                    />
+                  )}
                 </SkyRoute>
               )}
               {mode === "calendar" && (
@@ -10948,7 +13005,7 @@ function retrogradeCollapsedName(position: PlanetPosition) {
 }
 
 function retrogradeAttentionTopic(planet: string) {
-  return planetTopicPhrase(planet, "sky");
+  return planetTopicPhrase(planet, "sky") || emergencyPlanetFunction(planet) || "what this planet is asking you to review";
 }
 
 function generatedRetrogradeSummaryMatchesPlanets(summary: string, retrogrades: PlanetPosition[]) {
@@ -10983,7 +13040,7 @@ function retrogradeSummaryFallback(retrogrades: PlanetPosition[], personal: Plan
   const fastest = personal[0] ?? retrogrades[0];
   const fastestLabel = retrogradeCollapsedName(fastest);
 
-  return `${fastestLabel} may be the one you feel first, calling your attention to ${retrogradeAttentionTopic(fastest.planet)}. The slower retrogrades point to longer patterns you are still working through.`;
+  return `${fastestLabel} is likely to stand out first, drawing attention to ${retrogradeAttentionTopic(fastest.planet)}. The slower retrogrades point to longer patterns still unfolding in the background.`;
 }
 
 function stripGeneratedTitleParagraph(paragraphs: string[], title: string) {
@@ -11000,6 +13057,41 @@ function stripGeneratedTitleParagraph(paragraphs: string[], title: string) {
   });
 }
 
+function stripRetrogradeGeneratedHeaderParagraphs(position: PlanetPosition, paragraphs: string[]) {
+  const removable = [
+    retrogradePlacementTitle(position),
+    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde"),
+    retrogradeRangeText(position) ?? ""
+  ]
+    .map((value) => normalizedArticleCopy(value.replace(/\s*[-–]\s*/gu, " to ")))
+    .filter(Boolean);
+
+  return paragraphs.filter((paragraph, index) => {
+    if (index > 1) {
+      return true;
+    }
+
+    const normalizedParagraph = normalizedArticleCopy(
+      paragraph
+        .replace(/^\*\*(.+?)\*\*$/u, "$1")
+        .replace(/\s*[-–]\s*/gu, " to ")
+    );
+
+    return !removable.includes(normalizedParagraph);
+  });
+}
+
+function retrogradeGeneratedSummary(position: PlanetPosition, generated: LiveGeneratedContent | null, fallback: string | null) {
+  const paragraphs = stripRetrogradeGeneratedHeaderParagraphs(position, generatedContentParagraphs(generated));
+  const summary = firstReaderFacingCopy([
+    generated?.summary,
+    ...paragraphs,
+    fallback
+  ]);
+
+  return stripTldrPrefix(summary || interpretationInReviewSummary);
+}
+
 function firstSentences(value: string, count: number) {
   const sentences = value
     .replace(/\s+/g, " ")
@@ -11012,10 +13104,38 @@ function firstSentences(value: string, count: number) {
 }
 
 function retrogradeGeneratedBodyParagraphs(position: PlanetPosition, generated: LiveGeneratedContent | null) {
-  return stripGeneratedTitleParagraph(
-    generatedContentParagraphs(generated),
-    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+  return stripRetrogradeGeneratedHeaderParagraphs(
+    position,
+    stripGeneratedTitleParagraph(
+      generatedContentParagraphs(generated),
+      retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+    )
   );
+}
+
+function lowerInitialFragment(value: string) {
+  const trimmed = value.trim();
+
+  return trimmed ? `${trimmed.charAt(0).toLowerCase()}${trimmed.slice(1)}` : "";
+}
+
+function mercuryRetrogradeSignParagraph(position: PlanetPosition, generatedContent: GeneratedContentMap) {
+  if (normalizeContentIdPart(position.planet) !== "mercury") {
+    return "";
+  }
+
+  const signPart = normalizeContentIdPart(position.sign);
+  const generated = liveGeneratedContent(generatedContent, `ms/mercury-rx/sign/${signPart}`);
+  const signCopy = firstReaderFacingCopy([
+    generated?.summary,
+    ...generatedContentParagraphs(generated)
+  ]);
+
+  if (!signCopy) {
+    return "";
+  }
+
+  return `With Mercury retrograde in ${position.sign}, ${lowerInitialFragment(signCopy).replace(/[.!?]*$/u, ".")}`;
 }
 
 function retrogradePreviewCopy(
@@ -11024,7 +13144,7 @@ function retrogradePreviewCopy(
   content: ContentFallback
 ) {
   const generatedParagraphs = retrogradeGeneratedBodyParagraphs(position, generated);
-  const sourceText = generatedParagraphs.join(" ").trim() || generated?.summary?.trim();
+  const sourceText = generatedParagraphs.join(" ").trim() || firstReaderFacingCopy([generated?.summary]) || "";
 
   if (sourceText) {
     return firstSentences(stripTldrPrefix(sourceText), 3);
@@ -11056,7 +13176,7 @@ function retrogradeArticleTldr(
     return stripTldrPrefix(generatedTldr);
   }
 
-  const generatedSummary = generated?.summary?.trim() ?? "";
+  const generatedSummary = firstReaderFacingCopy([generated?.summary]) ?? "";
   const safeGeneratedSummary = /^Here['’]s a version\b/i.test(generatedSummary) ? "" : generatedSummary;
   const fallback = safeGeneratedSummary
     || content.summary
@@ -11101,7 +13221,7 @@ const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; l
   3: {
     intro: "The 3rd house is where life asks you to notice, name, and connect what is happening around you. It speaks to communication, learning, siblings, local movement, and the habits of daily perception.",
     focus: "your daily perception",
-    lived: "conversation, learning, writing, and the way you move through your immediate world"
+    lived: "conversation, learning, writing, and the way you navigate your immediate world"
   },
   4: {
     intro: "The 4th house is where life asks you to build an inner foundation. It speaks to home, family memory, ancestry, emotional security, and the private roots that shape everything else.",
@@ -11150,153 +13270,6 @@ const natalHouseFallbackFrames: Record<number, { intro: string; focus: string; l
   }
 };
 
-const natalPlanetFallbackFrames: Record<string, NatalPlacementFrame> = {
-  Sun: {
-    house: "your identity becomes involved here. You discover who you are by engaging this area directly and letting lived experience clarify your sense of purpose",
-    growth: "your sense of purpose",
-    integration: "what you believe has to become something you can live from, not just something you understand in theory"
-  },
-  Moon: {
-    house: "your emotional life is pulled into this territory. You look for safety here, and your instincts often respond before you have language for what is happening",
-    growth: "your emotional steadiness",
-    integration: "your feelings become more trustworthy when they have a real place to land"
-  },
-  Mercury: {
-    house: "your mind keeps returning to these questions. You learn by observing the pattern, naming what you notice, and letting conversation sharpen your understanding",
-    growth: "your voice and thinking",
-    integration: "what you notice becomes useful when you give it language and let it change how you move"
-  },
-  Venus: {
-    house: "desire, value, and connection are shaped here. You learn what feels worth choosing by noticing what brings ease, beauty, pleasure, or honest attraction into the house where Venus sits",
-    growth: "your sense of value",
-    integration: "what you want becomes clearer when it is tested against what actually feels sustaining"
-  },
-  Mars: {
-    house: "your drive has to find an outlet here. You learn through action, effort, conflict, and the courage to move toward what you want without waiting for every condition to be perfect",
-    growth: "your courage",
-    integration: "your energy becomes more effective when it has a clear direction and a real problem to meet"
-  },
-  Jupiter: {
-    house: "growth comes through this territory. You tend to find opportunity when you take the larger view, trust your experience, and let the house placement teach you something bigger",
-    growth: "your faith in life",
-    integration: "your confidence grows when experience gives your optimism something real to stand on"
-  },
-  Saturn: {
-    house: "this becomes a place of responsibility and slow-earned confidence. You may meet pressure here first, but over time you learn what can hold weight",
-    growth: "your inner authority",
-    integration: "the lesson becomes useful when responsibility turns into self-respect instead of fear"
-  },
-  Uranus: {
-    house: "change does not stay theoretical here. You are learning where freedom matters, where old patterns stop working, and where your life needs more room to breathe",
-    growth: "your freedom",
-    integration: "the breakthrough matters most when it gives you a more honest way to live"
-  },
-  Neptune: {
-    house: "longing, imagination, and sensitivity gather here. You may idealize the house topic, but you also receive subtle information through it",
-    growth: "your imagination",
-    integration: "the dream becomes stronger when it is held with enough clarity to survive real life"
-  },
-  Pluto: {
-    house: "this territory carries pressure and depth. You are learning where control, fear, honesty, and transformation have to be faced rather than managed from a distance",
-    growth: "your power",
-    integration: "what changes you here can eventually become a source of strength, but only after it is met honestly"
-  }
-};
-
-const natalSignFallbackFrames: Record<string, { quality: string; motion: string }> = {
-  Aries: {
-    quality: "direct and initiating",
-    motion: "You are not here to wait until every variable is settled. You learn by beginning, testing your courage, and letting action reveal what thought alone cannot."
-  },
-  Taurus: {
-    quality: "steady and embodied",
-    motion: "You are not here to rush past what your body knows. You learn by moving slowly enough to recognize what is real, valuable, and worth protecting over time."
-  },
-  Gemini: {
-    quality: "curious and responsive",
-    motion: "You are not here to settle for one fixed answer too quickly. You learn by asking better questions, making connections, and letting new information change the picture."
-  },
-  Cancer: {
-    quality: "protective and intuitive",
-    motion: "You are not here to ignore memory, belonging, or care. You learn by listening to your instincts and noticing what helps you feel safe enough to stay present."
-  },
-  Leo: {
-    quality: "expressive and visible",
-    motion: "You are not here to hide the warmth of your own heart. You learn by creating, responding generously, and letting what matters to you become recognizable."
-  },
-  Virgo: {
-    quality: "practical and observant",
-    motion: "You are not here to leave everything vague. You learn by refining the pattern, improving what is workable, and turning insight into something useful."
-  },
-  Libra: {
-    quality: "relational and balancing",
-    motion: "You are not here to understand life in isolation. You learn through contrast, response, beauty, fairness, and the choices that make exchange feel more honest."
-  },
-  Scorpio: {
-    quality: "private and intense",
-    motion: "You are not here to stay on the surface. You learn by telling the truth about trust, fear, desire, and the deeper motives that shape what people do."
-  },
-  Sagittarius: {
-    quality: "expansive and searching",
-    motion: "You are not here to accept a small explanation for your life. You learn by testing belief against experience and letting distance, study, and risk widen your perspective."
-  },
-  Capricorn: {
-    quality: "disciplined and consequential",
-    motion: "You are not here to treat this casually. You learn through responsibility, patience, structure, and the slow proof that comes from building something real."
-  },
-  Aquarius: {
-    quality: "unconventional and future-minded",
-    motion: "You are not here to inherit the usual answer without questioning it. You learn by studying systems, noticing patterns, and staying open to possibilities that challenge the status quo."
-  },
-  Pisces: {
-    quality: "sensitive and imaginative",
-    motion: "You are not here to limit reality to what can be explained cleanly. You learn through subtle perception, creativity, compassion, and the wisdom of porous edges."
-  }
-};
-
-const natalSignTonePhrases: Record<string, string> = {
-  Aries: "begin, act directly, and let motion reveal what thought alone cannot",
-  Taurus: "move slowly enough to trust what is real, valuable, and worth protecting",
-  Gemini: "ask better questions, make connections, and let new information change the picture",
-  Cancer: "listen to memory, belonging, care, and the instinct to protect what matters",
-  Leo: "let warmth, creativity, and personal meaning become visible",
-  Virgo: "refine the pattern, improve what is workable, and turn care into something useful",
-  Libra: "read contrast, choose consciously, and notice what makes exchange feel honest",
-  Scorpio: "go beneath the surface and tell the truth about trust, fear, desire, and motive",
-  Sagittarius: "test belief against experience and let distance, study, and risk widen perspective",
-  Capricorn: "respect time, effort, consequence, and the slow proof of building something real",
-  Aquarius: "question inherited answers, study systems, and stay open to possibilities outside the accepted path",
-  Pisces: "follow subtle perception, imagination, compassion, and the wisdom of porous edges"
-};
-
-const natalRulerHouseLinks: Record<number, string> = {
-  1: "identity, body, and the way you meet life directly",
-  2: "money, self-worth, and the resources that help you feel secure",
-  3: "language, learning, siblings, and your immediate environment",
-  4: "home, family, emotional security, and the private structures that support your life",
-  5: "creativity, romance, children, pleasure, and the courage to be seen",
-  6: "work, health, daily routines, and the habits that keep life functioning",
-  7: "partnership, agreement, attraction, and the people who meet you face to face",
-  8: "trust, shared resources, intimacy, and the deeper material people often avoid",
-  9: "belief, study, travel, wisdom, and the search for a wider truth",
-  10: "career, reputation, authority, and the public shape of your life",
-  11: "friends, networks, community, and the future you want to help build",
-  12: "solitude, hidden pressure, dreams, retreat, and what works beneath the surface"
-};
-
-const natalRulerProcessLines: Record<string, string> = {
-  Sun: "The lesson often comes through visibility, confidence, and choosing from the center of yourself.",
-  Moon: "The lesson often comes through emotional honesty, memory, care, and the need to feel safe enough to respond.",
-  Mercury: "The lesson often comes through noticing, naming, learning, and saying what needs to be said.",
-  Venus: "The lesson often comes through desire, value, attraction, and the choices that make connection feel real.",
-  Mars: "The lesson often comes through acting on what your instincts already know, especially when avoidance has started to cost you energy.",
-  Jupiter: "The lesson often comes through study, risk, faith, and the wider meaning you build from experience.",
-  Saturn: "The lesson often comes through time, responsibility, commitment, and the evidence of lived experience.",
-  Uranus: "The lesson often comes through disruption, freedom, and breaking a pattern that no longer fits.",
-  Neptune: "The lesson often comes through sensitivity, imagination, longing, and the work of clarifying what is real.",
-  Pluto: "The lesson often comes through pressure, honesty, endings, and the power that returns when something hidden is finally faced."
-};
-
 const natalPlacementTemplateLeakPatterns = [
   /\bthis part of the chart\b/i,
   /\bthis area of your chart\b/i,
@@ -11322,314 +13295,25 @@ const natalPlacementTemplateLeakPatterns = [
   /\bthis is inviting you\b/i
 ];
 
-function possessiveArea(focus: string) {
-  return focus.replace(/^your\s+/i, "");
+const blockedComposerCopyPatterns = [
+  /\bmoves through\b.+\btone\b/i,
+  /\bgives\b.+\bquality right now\b/i,
+  /\bshows up in\b.+\bthe bigger picture\b/i,
+  /\bAt work this reads as\b/i,
+  /\bLuck favors\b/i,
+  /\bWatch:\s*/i,
+  /\boverplaying the drama\b/i,
+  /\bthe fuller story of this\b/i,
+  /\bfollows .+ to wherever it sits\b/i,
+  /\bBeing themselves and\b/i
+];
+
+function isBlockedComposerCopy(text: string) {
+  return blockedComposerCopyPatterns.some((pattern) => pattern.test(text));
 }
 
-function natalRulerParagraph({
-  cuspSign,
-  houseFrame,
-  houseLabel,
-  houseRuler,
-  rulerHouse,
-  rulerPosition
-}: {
-  cuspSign: string;
-  houseFrame: { intro: string; focus: string; lived: string };
-  houseLabel: string;
-  houseRuler: string;
-  rulerHouse: number | null;
-  rulerPosition: PlanetPosition | null;
-}) {
-  const focus = houseFrame.focus;
-
-  if (houseRuler && rulerPosition && rulerHouse) {
-    const rulerHouseLink = natalRulerHouseLinks[rulerHouse] ?? readableHouseTopic(rulerHouse);
-    const originalArea = possessiveArea(focus);
-    const concreteSentence = emptyHouseRulerHouseConcreteSentence(rulerHouse, "self");
-    const concreteFollow = concreteSentence
-      ? ` ${concreteSentence.replace(/^This may show up through /, "This may show up through ")}`
-      : "";
-
-    if (rulerPosition.house === Number.parseInt(houseLabel, 10)) {
-      return `${houseRuler} also sits in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, so ${originalArea} keeps returning to the same ground. The pattern becomes clearer through the choices, pressures, and repeated situations that happen there.${concreteFollow}`;
-    }
-
-    return `${cuspSign} points this house toward ${houseRuler}. In your birth chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerHouse)} house, pulling ${originalArea} toward ${rulerHouseLink}. The connection becomes practical through what happens in that house.${concreteFollow}`;
-  }
-
-  if (houseRuler) {
-    const rulerProcess = natalRulerProcessLines[houseRuler] ?? `${houseRuler} shows where this pattern becomes easier to recognize in real life.`;
-
-    return `${cuspSign} points this house toward ${houseRuler}. ${rulerProcess}`;
-  }
-
-  return `The ruler of your ${houseLabel} shows where this pattern becomes easier to recognize in real life.`;
-}
-
-function natalPlanetCoreFunction(planet: string) {
-  const functions: Record<string, string> = {
-    Sun: "how you build identity, confidence, vitality, and a sense of direction",
-    Moon: "how your emotional body responds before you have had time to explain yourself",
-    Mercury: "how your mind notices, learns, translates, and puts experience into words",
-    Venus: "what you value, what you are drawn to, and what helps connection feel real",
-    Mars: "how you act, pursue, defend, and move toward what you want",
-    Jupiter: "where you look for growth, meaning, faith, and a wider view of life",
-    Saturn: "where you build maturity, boundaries, responsibility, and earned confidence",
-    Uranus: "where you need freedom, honesty, disruption, and room to break old patterns",
-    Neptune: "where you are sensitive, imaginative, porous, and moved by longing",
-    Pluto: "where you meet intensity, control, honesty, pressure, and deep change"
-  };
-
-  return functions[planet] ?? "how this part of you becomes active";
-}
-
-function natalPlanetPlainFunction(planet: string) {
-  const functions: Record<string, string> = {
-    Sun: "build identity and direction",
-    Moon: "feel safe enough to respond clearly",
-    Mercury: "think, speak, and understand what is happening",
-    Venus: "choose what feels valuable, pleasurable, and real",
-    Mars: "act on desire without burning through your own stability",
-    Jupiter: "grow without losing judgment",
-    Saturn: "build something reliable through time and responsibility",
-    Uranus: "make freedom livable instead of only disruptive",
-    Neptune: "keep sensitivity connected to reality",
-    Pluto: "turn pressure into honesty instead of control"
-  };
-
-  return functions[planet] ?? "function with more awareness";
-}
-
-function natalPlanetStressExpression(planet: string) {
-  const expressions: Record<string, string> = {
-    Sun: "confidence can start depending too much on external proof",
-    Moon: "your mood and body may start reacting before your mind understands why",
-    Mercury: "your thoughts may loop, scatter, or become harder to name clearly",
-    Venus: "desire, comfort, or approval can start making the decision for you",
-    Mars: "action can turn into reaction, pressure, or unnecessary conflict",
-    Jupiter: "hope can become overreach or a story that avoids the details",
-    Saturn: "responsibility can harden into fear, pressure, or self-protection",
-    Uranus: "the need for freedom can become restlessness without direction",
-    Neptune: "longing can blur what is real or make boundaries harder to hold",
-    Pluto: "control can become a substitute for telling the truth"
-  };
-
-  return expressions[planet] ?? "this part of you can become more reactive";
-}
-
-function natalPlanetPlacementLead(position: PlanetPosition) {
-  const houseLabel = position.house ? ` in the ${ordinalHouse(position.house)} house` : "";
-  const retrograde = position.motion === "retrograde" ? " is retrograde" : "";
-  const lead = `Your ${position.planet}${retrograde} in ${position.sign}${houseLabel}`;
-  const lines: Record<string, string> = {
-    Sun: `${lead} shows where identity has to become lived, not just understood.`,
-    Moon: `${lead} responds before you have had time to explain yourself.`,
-    Mercury: `${lead} shows how your mind looks for the point and turns experience into language.`,
-    Venus: `${lead} shows what you value, what you are drawn to, and what makes connection feel real.`,
-    Mars: `${lead} shows how desire becomes action and how you move toward what matters.`,
-    Jupiter: `${lead} shows where belief, confidence, and possibility have to prove themselves in real life.`,
-    Saturn: `${lead} shows where maturity is built through time, pressure, and choices that can hold weight.`,
-    Uranus: `${lead} shows where freedom needs a real shape instead of only a reaction against the old pattern.`,
-    Neptune: `${lead} shows where sensitivity, longing, and imagination need enough clarity to stay trustworthy.`,
-    Pluto: `${lead} shows where pressure asks for honesty, not control.`
-  };
-
-  return lines[position.planet] ?? `${lead} shows how this part of you works in real life.`;
-}
-
-function natalRetrogradePlacementNote(position: PlanetPosition, owner: "you" | "friend" = "you", pronouns?: PersonReference) {
-  if (position.motion !== "retrograde") {
-    return "";
-  }
-
-  if (owner === "friend") {
-    const reference = pronouns ?? resolvePersonReference({ name: "They", pronouns: "they" });
-    const subject = capitalizeText(reference.subject);
-    const notes: Record<string, string> = {
-      Mercury: `Because Mercury is retrograde, ${reference.possessive} mind may work by revisiting, rewording, checking, and thinking things through more than once. ${subject} may need time to find the right language, but the result can be more precise.`,
-      Venus: `Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before ${reference.name} can trust what feels valuable. ${subject} may need time before desire proves itself.`,
-      Mars: `Because Mars is retrograde, action may build internally before it becomes visible. ${subject} may need to understand anger, desire, and what is worth fighting for before moving.`,
-      Jupiter: `Because Jupiter is retrograde, confidence may need to be built from the inside first. ${subject} may need to test an idea, question it, and live with it before calling it true.`,
-      Saturn: `Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. ${subject} may carry pressure privately, or need to decide which rules are actually ${reference.possessive}.`,
-      Uranus: `Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. ${subject} may not rebel loudly, but may quietly refuse a pattern that no longer fits.`,
-      Neptune: `Because Neptune is retrograde, longing, sensitivity, imagination, and confusion may be processed privately. ${subject} may need to separate real intuition from wishful thinking.`,
-      Pluto: `Because Pluto is retrograde, power, control, fear, and deep change may work below the surface. ${subject} may go through major inner shifts before anyone else sees what has changed.`
-    };
-
-    return notes[position.planet] ?? "";
-  }
-
-  const notes: Record<string, string> = {
-    Mercury: "Because Mercury is retrograde, your mind may work by revisiting, rewording, checking, and thinking things through more than once. You may need time to find the right language, but the result can be more precise.",
-    Venus: "Because Venus is retrograde, desire, affection, money, beauty, and self-worth may need a private review before you know what you really value. You may not trust what you want until it has proven itself over time.",
-    Mars: "Because Mars is retrograde, action may build internally before it becomes visible. You may need to understand what you are angry about, what you want, or what is worth fighting for before you move.",
-    Jupiter: "Because Jupiter is retrograde, confidence may need to be built from the inside first. You may not fully believe an idea just because it sounds inspiring. You may need to test it, question it, and live with it before you can call it true.",
-    Saturn: "Because Saturn is retrograde, responsibility, fear, discipline, and authority may become an inner standard. You may carry pressure privately, or need to decide which rules are actually yours.",
-    Uranus: "Because Uranus is retrograde, the need for freedom may build internally before it becomes obvious. You may not rebel loudly, but you may quietly refuse to live inside a pattern that no longer fits.",
-    Neptune: "Because Neptune is retrograde, longing, sensitivity, imagination, and confusion may be processed privately. You may need to separate real intuition from wishful thinking.",
-    Pluto: "Because Pluto is retrograde, power, control, fear, and deep change may work below the surface. You may go through major inner shifts before anyone else sees what has changed."
-  };
-
-  return notes[position.planet] ?? "";
-}
-
-function natalPlacementOpeningParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
-  const signTone = natalSignTonePhrases[position.sign] ?? "express this part of you with more honesty and precision";
-
-  return `${natalPlanetPlacementLead(position)} In ${position.sign}, this part of you tends to ${signTone}.`;
-}
-
-function natalPlacementHouseSupportParagraph(
-  position: PlanetPosition,
-  houseFrame: { intro: string; focus: string; lived: string },
-  houseLabel: string
-) {
-  return `In the ${houseLabel}, this shows up through ${houseFrame.lived}. The house makes the pattern concrete: it shows where ordinary choices, pressure, and timing can make the placement easier to recognize. If this house is strained, ${natalPlanetStressExpression(position.planet)}.`;
-}
-
-function natalPlacementSynthesisParagraph(
-  position: PlanetPosition,
-  houseFrame: { intro: string; focus: string; lived: string },
-  planetFrame: { house: string; growth: string; integration: string }
-) {
-  const focus = possessiveArea(houseFrame.focus);
-
-  switch (position.planet) {
-    case "Sun":
-      return `Confidence lasts longer when it is built from what is true, not only from what gets recognized. Over time, this can become a direction that still holds up when real life tests it.`;
-    case "Moon":
-      return `Emotional honesty works better when it has somewhere real to land. The steadier path is listening before your body or mood has to get louder.`;
-    case "Mercury":
-      return `Your words can make a situation clearer when they stay connected to what is actually happening. The mind gets steadier when it stops looping around what needs to be said or understood.`;
-    case "Venus":
-      return `Connection becomes more honest when you can tell the difference between real value and the pull of comfort, approval, or chemistry. What lasts is what still feels worth choosing after the first pull settles.`;
-    case "Mars":
-      return `Courage becomes more useful when it has a real target. The clearer path is knowing when to act and when reaction would only drain you.`;
-    case "Jupiter":
-      return `A wider view can open doors, but the story still needs to hold up after the excitement passes. Growth becomes stronger when it can survive contact with details.`;
-    case "Saturn":
-      return `Earned confidence grows through time and repeated proof. Pressure does not always mean something is wrong; sometimes it shows what needs a stronger structure.`;
-    case "Uranus":
-      return `Freedom becomes more useful when it can be lived, not only demanded. Change works best when it gives the pattern a real way forward.`;
-    case "Neptune":
-      return `Sensitivity can perceive what others miss, but the dream still needs enough shape to survive real life. Clarity protects what is actually worth trusting.`;
-    case "Pluto":
-      return `Strength returns when the truth is easier to face than to control. Real change lasts longer when it is not forced just to escape fear.`;
-    default:
-      return `Over time, ${planetFrame.growth} becomes steadier when your ${focus} reflects what is actually true for you. ${planetFrame.integration}.`;
-  }
-}
-
-function hasNatalPlacementTemplateLeak(paragraph: string) {
-  return natalPlacementTemplateLeakPatterns.some((pattern) => pattern.test(paragraph));
-}
-
-function cleanNatalPlacementLensParagraphs({
-  fallbackParagraphs,
-  rebuiltRulerParagraph,
-  rebuiltSynthesisParagraph
-}: {
-  fallbackParagraphs: string[];
-  rebuiltRulerParagraph: string;
-  rebuiltSynthesisParagraph: string;
-}) {
-  return fallbackParagraphs.map((paragraph, index) => {
-    if ((index === 2 || /^Because\b/.test(paragraph)) && hasNatalPlacementTemplateLeak(paragraph)) {
-      return rebuiltRulerParagraph;
-    }
-
-    if ((index === 3 || /^(Over time|The gift)\b/.test(paragraph)) && hasNatalPlacementTemplateLeak(paragraph)) {
-      return rebuiltSynthesisParagraph;
-    }
-
-      return paragraph
-      .replace(/\s+/g, " ")
-      .replace(/\bthis part of the chart\b/gi, "this placement")
-      .replace(/\bboth places\b/gi, "the two areas of life")
-      .trim();
-  });
-}
-
-function approvedNatalPlacementBody(position: PlanetPosition) {
-  if (position.planet === "Sun" && position.sign === "Aquarius" && position.house === 9) {
-    return [
-      "Your identity grows through the search for meaning. You are not here to accept a worldview just because it was handed to you. With your Sun in Aquarius in the 9th house, you discover who you are by questioning inherited beliefs, studying systems, exploring different perspectives, and testing ideas against lived experience.",
-      "There is a future-minded quality to this placement. You may be drawn to philosophy, spirituality, education, travel, social issues, or any field that helps you understand people and the world from a wider angle. You are not only collecting knowledge. You are looking for the kind of truth that can change how you live and what you contribute.",
-      "This placement also has a teaching quality. You may be able to take complex ideas and make them clearer for other people, especially when those ideas challenge old assumptions or open a new way forward. Your growth comes from staying curious, thinking independently, and letting your beliefs evolve as your experience deepens.",
-      "The strongest version of this placement is not detached from real life. It asks you to bring your ideas back down to earth. What you believe has to become something you can live, share, and build from. Over time, your sense of purpose becomes clearer when your originality serves something larger than yourself."
-    ].join("\n\n");
-  }
-
-  if (position.planet === "Moon" && position.sign === "Scorpio" && position.house === 6) {
-    return [
-      "Your Moon describes how your emotional body responds before you have had time to explain yourself. In Scorpio, your Moon responds deeply, privately, and instinctively. You may feel what is hidden before it is spoken. Tension, avoidance, resentment, fear, desire, and motive can register in your body before your mind has organized the meaning.",
-      "In the 6th house, that emotional sensitivity is tied to daily life. Work, health, stress, routines, chores, sleep, food, and the small things that keep life running affect you more than they may appear to. When your days are steady, honest, and manageable, your emotional system has more room to settle. When your days become draining, chaotic, unfair, or disconnected from what your body needs, your mood usually knows first.",
-      "This placement can make the body a truth-teller. You may notice stress as tension, exhaustion, fixation, withdrawal, defensiveness, or a strong need to regain control. That does not mean you are overreacting. It means something in your daily rhythm, workload, environment, or responsibility pattern may need attention.",
-      "Scorpio points your 6th house toward Mars. This means the pattern is not only about feeling what is wrong. It is about responding to it. Mars brings action, boundaries, and movement. If something in your daily life is costing you too much effort, the way through is not to keep absorbing it silently. The way through is to change the pattern, name the pressure, or act on what your instincts already know.",
-      "In your birth chart, Mars is in Aquarius in the 9th house. This connects your daily life to belief, perspective, study, travel, wisdom, and the search for a wider truth. Your routines cannot only be functional. They need to make sense to you. Your work, habits, and responsibilities need some connection to freedom, learning, and a larger view of where your life is going.",
-      "Over time, your emotional steadiness grows when your daily life is built around what your body keeps telling you. You need routines that protect your energy, responsibilities that are not quietly consuming you, and enough space to think beyond survival mode. The more your days support your body, your instincts, and your need for meaning, the less you have to live in defense."
-    ].join("\n\n");
-  }
-
-  return "";
-}
-
-function natalPlacementFallbackSection(
-  position: PlanetPosition,
-  natalSky: SkySnapshot | null,
-  options: { includeApprovedBody?: boolean } = {}
-): YouTransitArticle["sections"][number] | null {
-  if (!position.house) {
-    return null;
-  }
-
-  const approvedBody = approvedNatalPlacementBody(position);
-
-  if (approvedBody && options.includeApprovedBody !== false) {
-    return {
-      heading: natalPlacementFullTitle(position),
-      tldr: "",
-      body: approvedBody
-    };
-  }
-
-  const house = position.house;
-  const houseLabel = `${ordinalHouse(house)} house`;
-  const houseFrame = natalHouseFallbackFrames[house];
-  const planetFrame = natalPlanetFallbackFrames[position.planet] ?? natalPlanetFallbackFrames.Sun;
-  const signFrame = natalSignFallbackFrames[position.sign] ?? natalSignFallbackFrames.Aries;
-  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : position.sign;
-  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
-  const rulerPosition = houseRuler
-    ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
-    : null;
-  const rulerHouse = rulerPosition?.house ?? null;
-
-  const signParagraph = natalPlacementOpeningParagraph(position, signFrame);
-  const retrogradeParagraph = natalRetrogradePlacementNote(position);
-  const houseParagraph = natalPlacementHouseSupportParagraph(position, houseFrame, houseLabel);
-  const rulerParagraph = natalRulerParagraph({
-    cuspSign,
-    houseFrame,
-    houseLabel,
-    houseRuler,
-    rulerHouse,
-    rulerPosition
-  });
-  const integrationParagraph = natalPlacementSynthesisParagraph(position, houseFrame, planetFrame);
-  const paragraphs = cleanNatalPlacementLensParagraphs({
-    fallbackParagraphs: [signParagraph, retrogradeParagraph, houseParagraph, rulerParagraph, integrationParagraph].filter(Boolean),
-    rebuiltRulerParagraph: rulerParagraph,
-    rebuiltSynthesisParagraph: integrationParagraph
-  });
-  const body = paragraphs.join("\n\n");
-
-  return {
-    heading: natalPlacementFullTitle(position),
-    tldr: "",
-    body
-  };
+function readerParagraphsWithoutBlockedComposerCopy(values: Array<string | null | undefined>) {
+  return readerFacingParagraphs(values).filter((paragraph) => !isBlockedComposerCopy(paragraph));
 }
 
 function articleSection(heading: string, paragraphs: string[]): YouTransitArticle["sections"][number] | null {
@@ -11638,163 +13322,217 @@ function articleSection(heading: string, paragraphs: string[]): YouTransitArticl
   return body ? { heading, tldr: "", body } : null;
 }
 
-function natalPlacementSignModuleParagraph(position: PlanetPosition, signFrame: { quality: string; motion: string }) {
-  const retrograde = position.motion === "retrograde" ? " retrograde" : "";
+function articleSectionFromPlacementScaffold(section: PlacementScaffoldSection) {
+  return articleSection(section.heading, [section.body]);
+}
 
-  return `Your ${position.planet}${retrograde} in ${position.sign} describes ${natalPlanetCoreFunction(position.planet)}. In ${position.sign}, this part of you is ${signFrame.quality}. ${signFrame.motion}`;
+function natalPlacementScaffoldArticleSections(position: PlanetPosition, natalSky: SkySnapshot | null): YouTransitArticle["sections"] {
+  if (!placementScaffoldHasMinimumCoverage(position)) {
+    return [];
+  }
+
+  return placementScaffoldSections({
+    natalSky,
+    position
+  })
+    .map(articleSectionFromPlacementScaffold)
+    .filter((section): section is YouTransitArticle["sections"][number] => Boolean(section));
 }
 
 function natalPlacementSignModule(
   position: PlanetPosition,
-  generatedContent: GeneratedContentMap
+  generatedContent: GeneratedContentMap,
+  ownerContext?: ChartOwnerContext
 ): YouTransitArticle["sections"][number] | null {
-  const content = fallbackFromHook(
-    "you.natal-placement",
-    {
-      planet: position.planet,
-      sign: position.sign,
-      house: position.house
-    },
-    {
-      summary: natalPlacementDescription(position.planet)
-    }
-  );
-  const generated = liveGeneratedContentByKeys(generatedContent, [
+  const generated = liveNatalPlacementContentByKeys(generatedContent, [
+    position.house ? natalPlacementContentKey(position.planet, position.sign, position.house) : "",
     natalSignContentKey(position.planet, position.sign),
     placementContentId(position.planet, position.sign)
-  ], {
+  ].filter(Boolean), {
     contentKey: templateFallbackContentKeys.youNatalPlacement,
-    slots: natalPlacementTemplateSlots(position, "you"),
-    afterContentFallback: content
+    slots: natalPlacementTemplateSlots(position, "you", ownerContext)
   });
-  const generatedParagraphs = generatedContentParagraphs(generated);
+  const generatedParagraphs = readerParagraphsWithoutBlockedComposerCopy(generatedContentParagraphs(generated));
 
   if (generatedParagraphs.length > 0) {
     return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), generatedParagraphs);
   }
 
-  if (content.detailParagraphs.length > 0) {
-    return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), content.detailParagraphs);
-  }
-
-  if (content.summary) {
-    return articleSection(placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"), [content.summary]);
-  }
-
-  const signFrame = natalSignFallbackFrames[position.sign] ?? natalSignFallbackFrames.Aries;
-  const retrogradeParagraph = natalRetrogradePlacementNote(position);
-
   return articleSection(
     placementTitleFromParts(position.planet, position.sign, position.motion === "retrograde"),
     [
-      natalPlacementSignModuleParagraph(position, signFrame),
-      retrogradeParagraph
+      emergencyNatalPlacementCopy({
+        point: position.planet,
+        possessive: ownerPossessive(ownerContext),
+        sign: position.sign
+      })
+    ]
+  );
+}
+
+function natalAnglePlacementModule(
+  position: PlanetPosition,
+  generatedContent: GeneratedContentMap,
+  ownerContext?: ChartOwnerContext
+): YouTransitArticle["sections"][number] | null {
+  const generated = liveNatalPlacementContentByKeys(generatedContent, [
+    natalAngleContentKey(position.planet, position.sign),
+    placementContentId(position.planet, position.sign)
+  ], {
+    contentKey: templateFallbackContentKeys.youNatalAnglePlacement,
+    slots: natalAngleTemplateSlots(position)
+  });
+  const generatedParagraphs = readerParagraphsWithoutBlockedComposerCopy(generatedContentParagraphs(generated));
+
+  if (generatedParagraphs.length > 0) {
+    return articleSection(placementTitleFromParts(position.planet, position.sign), generatedParagraphs);
+  }
+
+  return articleSection(
+    placementTitleFromParts(position.planet, position.sign),
+    [
+      emergencyNatalPlacementCopy({
+        point: position.planet,
+        possessive: ownerPossessive(ownerContext),
+        sign: position.sign
+      })
     ]
   );
 }
 
 function natalPlacementHouseModule(
   position: PlanetPosition,
-  generatedContent: GeneratedContentMap
+  generatedContent: GeneratedContentMap,
+  ownerContext?: ChartOwnerContext
 ): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
   }
 
   const houseLabel = `${ordinalHouse(position.house)} house`;
-  const generated = liveGeneratedContent(generatedContent, natalHouseContentKey(position.planet, position.house));
-  const generatedParagraphs = generatedContentParagraphs(generated);
+  const generated = liveNatalPlacementContentByKeys(generatedContent, [
+    natalPlacementContentKey(position.planet, position.sign, position.house),
+    natalHouseContentKey(position.planet, position.house)
+  ], {
+    contentKey: templateFallbackContentKeys.youNatalHousePlacement,
+    slots: natalPlacementTemplateSlots(position, "you", ownerContext)
+  });
+  const generatedParagraphs = readerParagraphsWithoutBlockedComposerCopy(generatedContentParagraphs(generated));
 
   if (generatedParagraphs.length > 0) {
     return articleSection(`${position.planet} in the ${houseLabel}`, generatedParagraphs);
   }
 
-  const houseFrame = natalHouseFallbackFrames[position.house];
-
-  if (!houseFrame) {
-    return null;
-  }
-
   return articleSection(
     `${position.planet} in the ${houseLabel}`,
-    [natalPlacementHouseSupportParagraph(position, houseFrame, houseLabel)]
+    [
+      emergencyNatalPlacementCopy({
+        house: position.house,
+        point: position.planet,
+        possessive: ownerPossessive(ownerContext),
+        sign: position.sign
+      })
+    ]
   );
 }
 
 function natalPlacementRulerModule(
   position: PlanetPosition,
   natalSky: SkySnapshot | null,
-  generatedContent: GeneratedContentMap
+  generatedContent: GeneratedContentMap,
+  ownerContext?: ChartOwnerContext,
+  options: { allowBankedFallback?: boolean } = {}
 ): YouTransitArticle["sections"][number] | null {
   if (!position.house) {
     return null;
   }
 
   const houseLabel = `${ordinalHouse(position.house)} house`;
-  const houseFrame = natalHouseFallbackFrames[position.house];
-  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, position.house) : position.sign;
-  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
+  const houseSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, position.house) : position.sign;
+  const houseRuler = traditionalSignRulers[houseSign] ?? "";
   const rulerPosition = houseRuler
     ? natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null
     : null;
-  const rulerHouse = rulerPosition?.house ?? null;
 
-  if (!houseFrame || !houseRuler) {
+  if (!houseRuler) {
     return null;
   }
 
   const heading = rulerPosition?.house
     ? `${houseRuler} in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house`
-    : `${cuspSign} ruled by ${houseRuler}`;
-  const generatedParagraphs = [
-    ...generatedContentParagraphs(liveGeneratedContent(generatedContent, natalRulerContentKey(houseRuler))),
+    : `${houseSign} ruled by ${houseRuler}`;
+  const generatedParagraphs = readerParagraphsWithoutBlockedComposerCopy([
+    ...natalPlacementParagraphsForKey(generatedContent, natalRulerContentKey(houseRuler)),
     ...(rulerPosition
-      ? generatedContentParagraphs(liveGeneratedContent(generatedContent, natalSignContentKey(houseRuler, rulerPosition.sign)))
+      ? natalPlacementParagraphsForKey(generatedContent, natalSignContentKey(houseRuler, rulerPosition.sign))
       : []),
     ...(rulerPosition?.house
-      ? generatedContentParagraphs(liveGeneratedContent(generatedContent, natalHouseContentKey(houseRuler, rulerPosition.house)))
+      ? natalPlacementParagraphsForKey(generatedContent, natalHouseContentKey(houseRuler, rulerPosition.house))
       : [])
-  ];
+  ]);
 
   if (generatedParagraphs.length > 0) {
     return articleSection(heading, generatedParagraphs);
   }
 
-  return articleSection(
-    heading,
-    [
-      natalRulerParagraph({
-        cuspSign,
-        houseFrame,
-        houseLabel,
-        houseRuler,
-        rulerHouse,
-        rulerPosition
-      })
-    ]
-  );
+  if (rulerPosition) {
+    const templateGenerated = liveGeneratedContent(
+      generatedContent,
+      normalizeContentIdPart(position.planet) === "ascendant"
+        ? templateFallbackContentKeys.youNatalChartRuler
+        : templateFallbackContentKeys.youNatalRuler,
+      natalRulerTemplateSlots(position, houseSign, houseRuler, rulerPosition, ownerContext)
+    );
+    const templateParagraphs = readerParagraphsWithoutBlockedComposerCopy(generatedContentParagraphs(templateGenerated));
+
+    if (templateParagraphs.length > 0) {
+      return articleSection(heading, templateParagraphs);
+    }
+  }
+
+  if (options.allowBankedFallback === false) {
+    return null;
+  }
+
+  return articleSection(heading, [
+    emergencyRulerBridgeCopy({
+      point: position.planet,
+      ruler: houseRuler,
+      rulerHouse: rulerPosition?.house ?? null,
+      rulerSign: rulerPosition?.sign ?? null,
+      sign: houseSign
+    })
+  ].filter(Boolean));
 }
 
 function natalPlacementSynthesisModule(
   position: PlanetPosition,
   liveWriteup: LiveGeneratedContent | null,
+  generatedContent: GeneratedContentMap,
   ownerContext?: ChartOwnerContext
 ): YouTransitArticle["sections"][number] | null {
-  const isFriendOwner = ownerContext?.ownerKind !== "chart" && Boolean(ownerContext?.ownerName);
   const liveParagraphs = generatedContentParagraphs(liveWriteup);
   const hasLiveAuthoredBody = liveParagraphs.length > 0 && !isNatalPlacementLensWriteup(liveWriteup);
-  const approvedBody = isFriendOwner ? "" : approvedNatalPlacementBody(position);
-  const approvedParagraphs = approvedBody.split(/\n\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
 
   if (hasLiveAuthoredBody) {
     return articleSection("Synthesis", liveParagraphs);
   }
 
-  if (approvedParagraphs.length > 0) {
-    return articleSection("Synthesis", approvedParagraphs);
+  if (!position.house) {
+    return null;
   }
 
-  return null;
+  const templateGenerated = liveNatalPlacementContentByKeys(
+    generatedContent,
+    [],
+    {
+      contentKey: templateFallbackContentKeys.youNatalSynthesis,
+      slots: natalPlacementTemplateSlots(position, "you", ownerContext)
+    }
+  );
+  const templateParagraphs = readerParagraphsWithoutBlockedComposerCopy(generatedContentParagraphs(templateGenerated));
+
+  return templateParagraphs.length > 0 ? articleSection("Synthesis", templateParagraphs) : null;
 }
 
 function natalPlacementModularSections({
@@ -11810,349 +13548,44 @@ function natalPlacementModularSections({
   ownerContext?: ChartOwnerContext;
   position: PlanetPosition;
 }) {
-  if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
-    const ownerBody = placementStructureBody(position, natalSky, ownerContext);
+  const scaffoldSections = natalPlacementScaffoldArticleSections(position, natalSky);
 
+  if (scaffoldSections.length > 0) {
+    return scaffoldSections;
+  }
+
+  const sourceGroundedSections = sourceGroundedNatalPlacementSections({
+    aspects: natalPlacementAspectFacts(position, natalSky).map((fact) => ({
+      aspect: fact.aspectType,
+      focalHouse: fact.primaryHouse,
+      focalPlanet: fact.primaryPlanet,
+      focalSign: fact.primarySign,
+      orb: fact.orb,
+      otherHouse: fact.aspectPlanetHouse,
+      otherPlanet: fact.aspectPlanet,
+      otherSign: fact.aspectPlanetSign
+    })),
+    dignityLabel: placementDignity(position)?.label ?? null,
+    natalSky,
+    ownerPerspective: "you",
+    position
+  });
+
+  if (sourceGroundedSections.length > 0) {
+    return sourceGroundedSections;
+  }
+
+  if (isChartAnglePoint(position.planet)) {
     return [
-      articleSection(natalPlacementFullTitle(position), ownerBody.split(/\n\n/))
+      natalAnglePlacementModule(position, generatedContent, ownerContext),
+      natalPlacementRulerModule(position, natalSky, generatedContent, ownerContext, { allowBankedFallback: false })
     ].filter((section): section is YouTransitArticle["sections"][number] => Boolean(section));
   }
 
   return [
-    natalPlacementSignModule(position, generatedContent),
-    natalPlacementHouseModule(position, generatedContent),
-    natalPlacementRulerModule(position, natalSky, generatedContent),
-    natalPlacementSynthesisModule(position, liveWriteup, ownerContext)
+    natalPlacementSignModule(position, generatedContent, ownerContext),
+    natalPlacementHouseModule(position, generatedContent, ownerContext)
   ].filter((section): section is YouTransitArticle["sections"][number] => Boolean(section));
-}
-
-const friendHousePlacementBridges: Record<number, string> = {
-  1: "In the 1st house, this becomes visible through presence: the way they enter situations, respond on instinct, and become recognizable to other people before anything is explained.",
-  2: "In the 2nd house, this is closely tied to worth: money, security, desire, comfort, and the things they want to hold onto because they matter.",
-  3: "In the 3rd house, this moves through everyday perception: what they notice, how they speak, what they keep learning, and the immediate world that keeps shaping their thoughts.",
-  4: "In the 4th house, this reaches into their private foundation. Home, family, memory, and emotional security all shape how safely this part of them can develop.",
-  5: "In the 5th house, this becomes part of creative risk. Pleasure, romance, play, and the courage to be seen all show where this part of them needs room to be chosen and enjoyed.",
-  6: "In the 6th house, this becomes part of daily maintenance. Work, health, routines, and the small choices that keep life functioning can affect how steadily this part of them works.",
-  7: "In the 7th house, this becomes visible through direct relationship. Partnership, attraction, conflict, and agreement all show them what cannot be worked out alone.",
-  8: "In the 8th house, this moves through trust. Intimacy, shared resources, vulnerability, and the deeper material people often avoid can make this placement feel more charged and consequential.",
-  9: "In the 9th house, this develops through the search for meaning. Study, travel, teaching, belief, and lived experience all widen what this placement can become.",
-  10: "In the 10th house, this becomes part of their public life. Career, reputation, responsibility, and visibility shape how this placement is tested and recognized over time.",
-  11: "In the 11th house, this develops through community. Friendship, networks, collaboration, and long-range hopes show what this part of them wants to build beyond private life.",
-  12: "In the 12th house, this works beneath the surface. Solitude, dreams, hidden pressure, and the need for retreat can make this placement private, sensitive, and hard to force into simple language."
-};
-
-const friendRulerHouseDynamics: Record<number, string> = {
-  1: "identity, embodiment, instinct, and the way they meet life directly",
-  2: "money, self-worth, values, and the resources that help them feel secure",
-  3: "language, learning, siblings, and the immediate world they move through every day",
-  4: "home, family, emotional security, and the private structures that support their life",
-  5: "creativity, romance, pleasure, children, and the courage to be seen",
-  6: "work, health, routines, service, and the habits that keep life functioning",
-  7: "partnership, agreement, attraction, conflict, and the people who meet them face to face",
-  8: "trust, shared resources, intimacy, vulnerability, and the deeper material people often avoid",
-  9: "belief, study, travel, wisdom, and the search for a wider truth",
-  10: "career, reputation, responsibility, authority, and the public shape of their life",
-  11: "friends, networks, community, collaboration, and the future they want to help build",
-  12: "solitude, hidden pressure, dreams, retreat, and what works beneath the surface"
-};
-
-const friendSignPlanetTone: Record<string, Record<string, string>> = {
-  Aries: {
-    Sun: "They build confidence by acting directly, naming what they want, and letting movement teach them what thinking alone cannot. The same directness can become reactive when difference starts to feel like a contest.",
-    Moon: "Their instincts are quick, direct, and protective. Feelings may move fast here, and emotional clarity often comes after they have acted, spoken, or admitted what they want.",
-    Mercury: "Their mind works quickly and directly. They may learn by testing an idea out loud, saying the thing first, and refining it once the conversation has started.",
-    Venus: "Their affection is direct and alive. They tend to know what attracts them quickly, but they may need connection that leaves room for independence and honest desire.",
-    Mars: "Their drive is immediate and initiating. They are strongest when they can move, choose, and respond honestly without turning every pressure point into a fight."
-  },
-  Taurus: {
-    Sun: "They build confidence through steadiness, patience, and contact with what feels real. They are not here to rush into every idea just because it is available.",
-    Moon: "Their emotional life needs steadiness, touch, time, and proof. Safety often comes from what is consistent enough to trust.",
-    Mercury: "Their mind works best when ideas have weight, texture, and practical value. They may need time to decide what they think, but once something settles, it tends to stay.",
-    Venus: "Their way of loving is steady, embodied, and loyal to what feels real. Desire becomes clearer when comfort and value have time to prove themselves.",
-    Mars: "Their drive gathers slowly and becomes powerful once it has a reason to keep going. They may resist being pushed, but they can stay with what matters for a long time."
-  },
-  Gemini: {
-    Sun: "They build confidence through curiosity, language, and movement between ideas. Identity becomes clearer when they can ask questions, make connections, and keep learning.",
-    Moon: "Their feelings often move through language and pattern recognition. They may need conversation, movement, or information before an emotion becomes clear.",
-    Mercury: "Their mind is fast, responsive, and built for connection. They may understand life by comparing details, asking better questions, and letting new information change the picture.",
-    Venus: "Their attraction is sparked by curiosity, wit, and exchange. Connection needs movement, language, and enough freshness to stay alive.",
-    Mars: "Their drive moves through words, ideas, and quick choices. They may act by naming the option, making the call, or following the thread that keeps pulling their attention."
-  },
-  Cancer: {
-    Sun: "They build confidence through care, memory, belonging, and the instinct to protect what matters. Identity becomes stronger when they trust what helps them feel safe enough to stay present.",
-    Moon: "Their emotional life is protective, intuitive, and deeply tied to memory. They often know what matters before they can explain why.",
-    Mercury: "Their mind remembers tone, context, and emotional weather. Communication works best when it leaves room for care and what is not being said directly.",
-    Venus: "Their affection is protective and emotionally attuned. They may value connection that feels familiar, caring, and safe enough to soften into.",
-    Mars: "Their drive is protective before it is performative. They may act most fiercely when someone or something they care about needs defending."
-  },
-  Leo: {
-    Sun: "They build confidence by letting warmth, creativity, and personal meaning become visible. Identity strengthens when they are allowed to care openly about what lights them up.",
-    Moon: "Their emotional life needs warmth, recognition, and room for the heart to be visible. They may feel safest where generosity is returned honestly.",
-    Mercury: "Their mind communicates with warmth and presence. Ideas become stronger when they can make them vivid, personal, and recognizable.",
-    Venus: "Their affection is generous, expressive, and drawn to aliveness. They may need love that makes room for play, admiration, and visible care.",
-    Mars: "Their drive strengthens when desire has heart behind it. They can move with courage when the goal feels personal and worth being seen for."
-  },
-  Virgo: {
-    Sun: "They build confidence through care, refinement, usefulness, and the ability to improve what is workable. Identity strengthens when they can turn attention into craft.",
-    Moon: "Their emotional life is sensitive to what is functional, ordered, and cared for. Small details can affect their sense of ease more than they may show.",
-    Mercury: "Their mind is observant, practical, and built for refinement. They may understand things by noticing what is missing, what repeats, and what can be improved.",
-    Venus: "Their affection often shows through care, attention, and practical support. Love becomes real when it is useful without becoming self-erasing.",
-    Mars: "Their drive sharpens through skill, precision, and repair. They may act most effectively when there is a concrete problem to solve."
-  },
-  Libra: {
-    Sun: "They build confidence through relationship, contrast, fairness, and the choices that make exchange feel honest. Identity becomes clearer when they understand what balance actually costs.",
-    Moon: "Their emotional life is shaped by tone, reciprocity, and the quality of exchange. They may feel safest where conflict can be handled without losing respect.",
-    Mercury: "Their mind works through comparison, dialogue, and the search for a cleaner balance. They may understand themselves by hearing another side.",
-    Venus: "Their affection is relational, aesthetic, and attuned to mutuality. Connection needs beauty, fairness, and enough honesty to stay real.",
-    Mars: "Their drive moves through negotiation, strategy, and the pressure to choose. They may need to act before perfect balance is possible."
-  },
-  Scorpio: {
-    Sun: "They build confidence by telling the truth about trust, fear, desire, and what has power. Identity strengthens when they stop staying on the surface of what matters.",
-    Moon: "Their emotional life is private, intense, and deeply perceptive. They may sense what is unspoken before anyone has named it.",
-    Mercury: "Their mind goes beneath the obvious answer. They may think best when they can investigate motive, subtext, and what people avoid saying.",
-    Venus: "With Venus in Scorpio, they are not usually casual about attachment. Their affection can be private, intense, and selective. They may be drawn to bonds that feel honest beneath the surface, where trust is proven through consistency and desire has emotional weight.",
-    Mars: "Their drive is focused, private, and difficult to redirect once desire has locked in. They may act from instinct before they explain the pressure underneath."
-  },
-  Sagittarius: {
-    Sun: "They build confidence through exploration, belief, risk, study, and the search for a wider truth. Identity strengthens when experience keeps expanding what they think is possible.",
-    Moon: "Their emotional life needs space, honesty, and room to keep learning. They may feel safest when life does not become too small or over-contained.",
-    Mercury: "Their mind looks for meaning, pattern, and the larger frame. They may communicate best when an idea has room to breathe and connect to experience.",
-    Venus: "Their affection needs freedom, honesty, humor, and shared growth. They may be drawn to people and experiences that widen their world.",
-    Mars: "Their drive strengthens through movement, conviction, and the promise of more. They may act quickly when something feels meaningful enough to chase."
-  },
-  Capricorn: {
-    Sun: "They build confidence through time, responsibility, discipline, and the slow proof of building something real. Identity strengthens when effort turns into earned authority.",
-    Moon: "Their emotional life may be private, contained, and shaped by responsibility. Safety often comes from knowing what can be relied on.",
-    Mercury: "Their mind works through structure, consequence, and practical strategy. They may trust ideas more when those ideas can survive pressure.",
-    Venus: "Their affection is serious about loyalty, time, and what can be built. Connection becomes real when it has integrity and staying power.",
-    Mars: "Their drive is disciplined and consequential. They may move slowly at first, but they can keep climbing when the goal is worth the effort."
-  },
-  Aquarius: {
-    Sun: "They build confidence by questioning inherited answers, studying systems, and staying open to possibilities outside the accepted path.",
-    Moon: "Their emotional life needs space, perspective, and permission to be different. They may process feelings by stepping back far enough to see the pattern.",
-    Mercury: "Their mind is drawn to systems, possibilities, and unconventional connections. They may understand life by noticing patterns other people miss.",
-    Venus: "Their affection needs friendship, freedom, and room for honesty outside the usual script. They may value connection that lets both people stay distinct.",
-    Mars: "Their drive sharpens around freedom, change, and the refusal to keep repeating a pattern that no longer fits."
-  },
-  Pisces: {
-    Sun: "They build confidence through imagination, compassion, sensitivity, and the ability to stay open to what cannot be explained cleanly.",
-    Moon: "Their emotional life is porous, imaginative, and deeply responsive to atmosphere. They may need quiet, art, rest, or solitude to know what is really theirs.",
-    Mercury: "Their mind is intuitive, associative, and drawn to subtle meaning. They may understand through image, feeling, metaphor, or what arrives between the lines.",
-    Venus: "Their affection is sensitive, romantic, and easily moved by longing or compassion. Connection needs tenderness and enough clarity to keep projection from taking over.",
-    Mars: "Their drive moves through feeling, imagination, and the pull of something meaningful. They may act best when desire has a dream, cause, or creative current behind it."
-  }
-};
-
-function friendSignTone(position: PlanetPosition, pronouns: PersonReference) {
-  const signTone = friendSignPlanetTone[position.sign]?.[position.planet]
-    ?? friendSignPlanetTone[position.sign]?.Sun
-    ?? `In ${position.sign}, the tone is shaped by how ${pronouns.subject} meet life, solve problems, and stay close to what feels real.`;
-
-  return signTone;
-}
-
-function friendPlacementSignBehavior(position: PlanetPosition, ownerName: string, pronouns: PersonReference) {
-  if (position.planet === "Jupiter" && position.sign === "Leo") {
-    return `In Leo, Jupiter wants confidence, warmth, and permission to care about what lights ${pronouns.object} up. ${ownerName} grows when ${pronouns.subject} let ${pronouns.possessive} perspective have a little more color and conviction.`;
-  }
-
-  if (position.planet === "Mercury" && position.sign === "Sagittarius") {
-    return `With Mercury in Sagittarius, ${pronouns.possessive} mind looks for the larger meaning behind the facts. ${capitalizeText(pronouns.subject)} may think best when an idea has room to expand, connect, and point toward something bigger.`;
-  }
-
-  if (position.planet === "Mars" && position.sign === "Capricorn") {
-    return `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`;
-  }
-
-  return friendSignTone(position, pronouns);
-}
-
-function friendHouseConcreteSentence(position: PlanetPosition, pronouns: PersonReference) {
-  const house = position.house ?? 0;
-  const sentences: Record<number, string> = {
-    1: `In the 1st house, this shows through presence: the way ${pronouns.subject} enter situations, respond on instinct, and become recognizable before anything is explained.`,
-    2: `In the 2nd house, this is closely tied to worth: money, security, desire, comfort, and what ${pronouns.subject} want to hold onto because it matters.`,
-    3: `In the 3rd house, this comes through everyday life: conversations, questions, writing, learning, siblings, neighbors, and the small observations that keep shaping how ${pronouns.subject} see things.`,
-    4: `In the 4th house, this is tied to home, family, privacy, emotional security, and the foundation ${pronouns.subject} build underneath the rest of ${pronouns.possessive} life.`,
-    5: `In the 5th house, this comes through creativity, pleasure, romance, play, and the courage to let something personal be seen.`,
-    6: `In the 6th house, this comes through work, health, routines, maintenance, and the small choices that decide how sustainable daily life feels.`,
-    7: `In the 7th house, this becomes visible through relationship: partnership, attraction, conflict, agreement, and the people who meet ${pronouns.object} face to face.`,
-    8: `In the 8th house, this moves through trust, intimacy, shared resources, vulnerability, and the material that is harder to keep on the surface.`,
-    9: `In the 9th house, this develops through belief, study, travel, teaching, and the kind of truth that changes how ${pronouns.subject} live.`,
-    10: `In the 10th house, this shows through career, reputation, responsibility, visibility, and the public shape of ${pronouns.possessive} life.`,
-    11: `In the 11th house, this develops through friendship, groups, communities, shared goals, and the future ${pronouns.subject} want to help build.`,
-    12: `In the 12th house, this works privately through solitude, hidden pressure, rest, retreat, and the patterns ${pronouns.subject} may need quiet to understand.`
-  };
-
-  return sentences[house] ?? `This placement becomes clearer through ${readableHouseTopic(house).replace(/^your\s+/i, "")}.`;
-}
-
-function friendPlacementHouseParagraph(ownerName: string, position: PlanetPosition, pronouns: PersonReference) {
-  const houseLabel = position.house ? `the ${ordinalHouse(position.house)} house` : "this house";
-  const retrograde = position.motion === "retrograde" ? " retrograde" : "";
-  const placement = `${position.planet} is${retrograde} in ${position.sign}${position.house ? ` in ${houseLabel}` : ""}`;
-
-  switch (position.planet) {
-    case "Sun":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where ${ownerName} builds identity, confidence, and a sense of direction. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Moon":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.possessive} body, moods, and instincts respond before everything has been explained. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Mercury":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.subject} notice, think, learn, and put experience into words. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Venus":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where ${pronouns.subject} learn what feels valuable, desirable, and worth choosing. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Mars":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where desire becomes action and where ${pronouns.subject} learn what deserves ${pronouns.possessive} effort. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Jupiter":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where ${ownerName} learns to trust ${pronouns.possessive} own voice, belief, and sense of possibility. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Saturn":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where pressure can become maturity, skill, and earned confidence over time. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Uranus":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where freedom needs a real shape and old patterns become harder to keep repeating. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Neptune":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where sensitivity, longing, and imagination need enough clarity to stay trustworthy. ${friendHouseConcreteSentence(position, pronouns)}`;
-    case "Pluto":
-      return `${possessiveLabel(ownerName)} ${placement}. This is where pressure asks for honesty, not control. ${friendHouseConcreteSentence(position, pronouns)}`;
-    default:
-      return `${possessiveLabel(ownerName)} ${placement}. ${friendHouseConcreteSentence(position, pronouns)}`;
-  }
-}
-
-function friendPlacementRulerConcern(position: PlanetPosition) {
-  if (position.planet === "Venus" && position.house === 2) {
-    return "worth and desire";
-  }
-
-  if (position.planet === "Moon" && position.house === 2) {
-    return "emotional security and self-worth";
-  }
-
-  const planetConcerns: Record<string, string> = {
-    Sun: "identity and direction",
-    Moon: "emotional safety",
-    Mercury: "voice and perception",
-    Venus: "value and connection",
-    Mars: "desire and action",
-    Jupiter: "growth and belief",
-    Saturn: "responsibility and confidence",
-    Uranus: "freedom and change",
-    Neptune: "sensitivity and imagination",
-    Pluto: "power and transformation"
-  };
-
-  return planetConcerns[position.planet] ?? "this placement";
-}
-
-function friendPlacementRulerParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
-  if (!position.house) {
-    return "";
-  }
-
-  const cuspSign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, position.house) : position.sign;
-  const houseRuler = traditionalSignRulers[cuspSign] ?? "";
-
-  if (!houseRuler) {
-    return "";
-  }
-
-  const rulerPosition = natalSky?.positions.find((candidate) => candidate.planet === houseRuler) ?? null;
-  const houseLabel = `${ordinalHouse(position.house)} house`;
-
-  if (!rulerPosition?.house) {
-    return `${cuspSign} points ${possessiveLabel(ownerName)} ${houseLabel} toward ${houseRuler}. That ruler shows where this pattern may become easier to recognize through real choices and timing.`;
-  }
-
-  const rulerHouseDynamic = friendRulerHouseDynamics[rulerPosition.house] ?? readableHouseTopic(rulerPosition.house).replace(/^your\s+/i, "");
-  const placementConcern = friendPlacementRulerConcern(position);
-
-  if (rulerPosition.planet === position.planet && rulerPosition.sign === position.sign && rulerPosition.house === position.house) {
-    return `${houseRuler} also sits in ${position.sign} in ${possessiveLabel(ownerName)} ${houseLabel}, so ${placementConcern} keeps returning to the same ground. That can make this placement feel more concentrated, familiar, and hard to ignore.`;
-  }
-
-  return `${cuspSign} points ${possessiveLabel(ownerName)} ${houseLabel} toward ${houseRuler}. In ${possessiveLabel(ownerName)} chart, ${houseRuler} is in ${rulerPosition.sign} in the ${ordinalHouse(rulerPosition.house)} house, pulling ${placementConcern} toward ${rulerHouseDynamic}.`;
-}
-
-function friendPlacementSynthesisParagraph(ownerName: string, position: PlanetPosition, pronouns: PersonReference) {
-  switch (position.planet) {
-    case "Sun":
-      return `Confidence gets stronger when it comes from what is true, not only from what gets recognized.`;
-    case "Moon":
-      return `Emotional honesty works better when it has somewhere real to land, before the body or mood has to get louder.`;
-    case "Mercury":
-      return `Their words become more useful when they help other people understand the point without rushing past the details.`;
-    case "Venus":
-      if (position.sign === "Scorpio") {
-        return `Connection becomes steadier when they can tell the difference between intensity and value.`;
-      }
-
-      return `What lasts is what still feels worth choosing after comfort, approval, or chemistry stops making the decision for them.`;
-    case "Mars":
-      return `Courage becomes more useful when they know what deserves effort before reaction takes over.`;
-    case "Jupiter":
-      return `Their wider view becomes stronger when the story still holds up after the excitement passes.`;
-    case "Saturn":
-      return `Confidence becomes steadier when pressure is treated as information, not proof that something is wrong.`;
-    case "Uranus":
-      return `Freedom becomes more useful when change gives them a livable way forward.`;
-    case "Neptune":
-      return `Sensitivity becomes easier to trust when the dream has enough shape to survive real life.`;
-    case "Pluto":
-      return `Strength returns when truth matters more than control.`;
-    default:
-      return `Over time, ${ownerName} can make this pattern more real in daily life. The more ${pronouns.subject} understand how it works, the more useful and honest it becomes.`;
-  }
-}
-
-function friendSpecificPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
-  const jupiterPosition = natalSky?.positions.find((candidate) => candidate.planet === "Jupiter") ?? null;
-  const saturnPosition = natalSky?.positions.find((candidate) => candidate.planet === "Saturn") ?? null;
-  const mercuryPosition = natalSky?.positions.find((candidate) => candidate.planet === "Mercury") ?? null;
-
-  if (
-    position.planet === "Ascendant"
-    && position.sign === "Gemini"
-    && mercuryPosition?.sign === "Aquarius"
-    && mercuryPosition.house === 9
-  ) {
-    return [
-      `${possessiveLabel(ownerName)} Ascendant describes how ${pronouns.subject} enter the world: ${pronouns.possessive} presence, first response, body language, and way of meeting new experiences.`,
-      `Gemini gives this Ascendant a curious, quick, and responsive quality. ${capitalizeText(pronouns.subject)} may move through life by asking questions, reading the room, making connections, and letting new information change how ${pronouns.subject} understand the moment.`,
-      `Mercury, the ruler of Gemini, shows where this Ascendant is developed further. In ${possessiveLabel(ownerName)} chart, Mercury is in Aquarius in the 9th house, linking ${pronouns.possessive} sense of self to belief, study, travel, philosophy, and wider perspective.`,
-      `${capitalizeText(pronouns.possessive)} way of moving through life becomes clearer when curiosity has room to turn into a larger understanding.`
-    ];
-  }
-
-  if (
-    position.planet === "Mercury"
-    && position.sign === "Sagittarius"
-    && position.house === 3
-    && jupiterPosition?.sign === "Leo"
-    && jupiterPosition.house === 11
-  ) {
-    return [
-      `${possessiveLabel(ownerName)} Mercury shows how ${pronouns.subject} notice, think, learn, and put experience into words. In the 3rd house, ${pronouns.possessive} mind is closely tied to everyday life: the conversations ${pronouns.subject} have, the questions ${pronouns.subject} follow, the things ${pronouns.subject} read, the places ${pronouns.subject} move through, and the patterns ${pronouns.subject} keep noticing in ${pronouns.possessive} immediate world. Small details can become important because they help ${ownerName} understand what is really happening.`,
-      `With Mercury in Sagittarius, ${pronouns.possessive} mind looks for the larger meaning behind the facts. ${capitalizeText(pronouns.subject)} may think best when an idea has room to expand, connect, and point toward something bigger. ${capitalizeText(pronouns.possessive)} communication can be honest, curious, and direct, especially when ${pronouns.subject} are trying to make sense of an experience instead of just repeating information.`,
-      `Jupiter, the ruler of Sagittarius, helps show where ${possessiveLabel(ownerName)} way of thinking and communicating finds room to grow. In ${possessiveLabel(ownerName)} chart, Jupiter is in Leo in the 11th house, connecting ${pronouns.possessive} ideas and conversations to friendships, groups, communities, and shared goals. ${capitalizeText(pronouns.subject)} may feel most inspired when exchanging ideas with others, and ${pronouns.possessive} confidence can grow through sharing ${pronouns.possessive} perspective in collaborative spaces where ${pronouns.subject} can inspire others, take a visible role, and help bring people together around a shared purpose.`,
-      `Over time, this placement becomes stronger when ${ownerName} learns how to turn what ${pronouns.subject} notice into meaning without rushing past the details. ${capitalizeText(pronouns.possessive)} gift is not only seeing the bigger picture. It is finding the words that help other people see it too.`
-    ];
-  }
-
-  if (
-    position.planet === "Mars"
-    && position.sign === "Capricorn"
-    && position.house === 4
-    && saturnPosition?.sign === "Virgo"
-    && saturnPosition.house === 12
-  ) {
-    return [
-      `${possessiveLabel(ownerName)} Mars shows how ${pronouns.subject} act, pursue, defend, and move toward what ${pronouns.subject} want. In the 4th house, that drive is tied to home, family, privacy, emotional security, and the foundation ${pronouns.subject} build underneath the rest of ${pronouns.possessive} life. ${capitalizeText(pronouns.subject)} may feel most motivated when there is something to protect, something to stabilize, or something real that needs to be built from the ground up.`,
-      `With Mars in Capricorn, ${possessiveLabel(ownerName)} drive works best when it has a clear purpose and a long-term goal. ${capitalizeText(pronouns.possessive)} effort can be disciplined, strategic, and patient enough to keep going after the first wave of urgency passes. ${capitalizeText(pronouns.subject)} are not usually at ${pronouns.possessive} strongest when ${pronouns.subject} are reacting in the moment. ${capitalizeText(pronouns.subject)} become stronger when ${pronouns.subject} can respect timing, measure the consequences, and put effort toward something that actually matters.`,
-      `Saturn, the ruler of Capricorn, helps show where ${possessiveLabel(ownerName)} drive is tested and developed over time. In ${possessiveLabel(ownerName)} chart, Saturn is in Virgo in the 12th house, connecting ${pronouns.possessive} inner foundation to solitude, hidden pressure, private fears, retreat, and the work that happens beneath the surface. Some of ${pronouns.possessive} courage may be built privately, through the things ${pronouns.subject} process alone, the responsibilities ${pronouns.subject} carry quietly, or the patterns ${pronouns.subject} are learning not to let run ${pronouns.possessive} life from behind the scenes.`,
-      `Over time, this placement becomes stronger when ${ownerName} learns how to act without burning through ${pronouns.possessive} own stability. ${capitalizeText(pronouns.possessive)} courage is not only about pushing harder. It is about knowing what deserves ${pronouns.possessive} effort, what needs protection, and what kind of foundation can actually support the life ${pronouns.subject} are trying to build.`
-    ];
-  }
-
-  return null;
 }
 
 function natalAspectsForPlacement(position: PlanetPosition, natalSky: SkySnapshot | null) {
@@ -12197,67 +13630,6 @@ function natalPlacementAspectFacts(position: PlanetPosition, natalSky: SkySnapsh
 
 function natalPlacementAspectKnowledgeIds(position: PlanetPosition, natalSky: SkySnapshot | null) {
   return natalAspectsForPlacement(position, natalSky).map((aspect) => aspectContentId(aspect.from, aspect.type, aspect.to));
-}
-
-function friendIntegratedPlacementAspectParagraph(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, pronouns: PersonReference) {
-  const aspects = natalAspectsForPlacement(position, natalSky);
-
-  if (position.planet !== "Venus") {
-    return "";
-  }
-
-  const hasUranusConjunction = aspects.some((aspect) => (
-    aspect.type === "conjunction" && aspectOtherPoint(aspect, position.planet) === "Uranus"
-  ));
-  const hasTrueNodeSextile = aspects.some((aspect) => (
-    aspect.type === "sextile" && aspectOtherPoint(aspect, position.planet) === "True Node"
-  ));
-  const aspectNotes: string[] = [];
-
-  if (hasUranusConjunction) {
-    aspectNotes.push(`Venus is also conjunct Uranus, which adds restlessness, originality, and surprise to the way ${ownerName} loves and chooses. ${capitalizeText(pronouns.subject)} may be drawn to people, aesthetics, or desires that interrupt ${pronouns.possessive} usual pattern. Connection may need honesty and depth, but it also needs freedom. If something becomes too controlled, predictable, or emotionally fixed, part of ${pronouns.object} may pull away just to feel like ${pronouns.subject} can breathe again.`);
-  }
-
-  if (hasTrueNodeSextile) {
-    aspectNotes.push(`Venus sextile the True Node gives this placement a growth path. The things ${ownerName} values are not random. Attraction, pleasure, money, beauty, and connection can all become ways ${ownerName} clarifies a future direction. When ${ownerName} chooses what feels alive and honest instead of what only feels familiar, Venus becomes part of ${pronouns.possessive} future direction.`);
-  }
-
-  return aspectNotes.join("\n\n");
-}
-
-function friendNatalPlacementBody(ownerName: string, position: PlanetPosition, natalSky: SkySnapshot | null, ownerKind: "person" | "chart" = "person", ownerPronouns?: PronounChoice | null) {
-  if (ownerKind === "chart") {
-    return null;
-  }
-
-  const pronouns = pronounSetForOwner(ownerName, ownerKind, ownerPronouns);
-  const specificBody = friendSpecificPlacementBody(ownerName, position, natalSky, pronouns);
-
-  if (specificBody) {
-    return specificBody;
-  }
-
-  const paragraphs = [
-    friendPlacementHouseParagraph(ownerName, position, pronouns),
-    natalRetrogradePlacementNote(position, "friend", pronouns),
-    friendPlacementSignBehavior(position, ownerName, pronouns),
-    friendPlacementRulerParagraph(ownerName, position, natalSky, pronouns),
-    friendPlacementSynthesisParagraph(ownerName, position, pronouns)
-  ].map((paragraph) => paragraph.trim()).filter(Boolean);
-
-  return paragraphs;
-}
-
-function placementStructureBody(
-  position: PlanetPosition,
-  natalSky: SkySnapshot | null,
-  ownerContext?: ChartOwnerContext
-) {
-  if (ownerContext?.ownerKind !== "chart" && ownerContext?.ownerName) {
-    return friendNatalPlacementBody(ownerContext.ownerName, position, natalSky, ownerContext.ownerKind ?? "person", ownerContext.ownerPronouns)?.join("\n\n") ?? "";
-  }
-
-  return "";
 }
 
 function natalPlacementSignTitle(position: PlanetPosition) {
@@ -12447,11 +13819,15 @@ function natalRisingKnowledgeSummary(risingSign: string, generatedContent?: Gene
   const generated = generatedContent
     ? liveGeneratedContentByKeys(
         generatedContent,
-        [placementContentId("Ascendant", risingSign)],
+        [
+          natalAngleContentKey("Ascendant", risingSign),
+          placementContentId("Ascendant", risingSign)
+        ],
         {
-          contentKey: templateFallbackContentKeys.youNatalPlacement,
+          contentKey: templateFallbackContentKeys.youNatalAnglePlacement,
           slots: {
             planet: "Ascendant",
+            angle: "Ascendant",
             planetTopic: planetTopicSlot("Ascendant", "you"),
             sign: risingSign,
             signStyle: signStyleSlot(risingSign),
@@ -12620,7 +13996,10 @@ function retrogradeSummaryCaption(
     contentKey: templateFallbackContentKeys.skyRetrogradeSection,
     slots
   });
-  const generatedSummary = generated?.summary?.trim() || generatedContentParagraphs(generated)[0] || "";
+  const generatedSummary = firstReaderFacingCopy([
+    generated?.summary,
+    ...generatedContentParagraphs(generated)
+  ]) || "";
 
   return generatedSummary && generatedRetrogradeSummaryMatchesPlanets(generatedSummary, retrogrades)
     ? generatedSummary
@@ -12687,12 +14066,16 @@ function currentSkyRetrogradeDetailData(
     },
     approvedVoiceOrKnowledgeFallback(contentKey, "sky")
   );
-  const generated = liveGeneratedContentByKeys(
+  const generated = liveGeneratedContentByKeysMatching(
     generatedContent,
     skyPlacementGeneratedContentKeys(position, generatedAt),
+    (candidate) => (
+      (isEmergencySkyFallbackContent(candidate) || isCompatibleAuthoredSkyContent(candidate, ["current-sky-placement", "retrograde-phase.retrograde-passage"]))
+      && !skyPlacementGeneratedContentHasNatalLanguage(candidate)
+    ),
     {
-      contentKey: skyPlacementTemplateFallbackKey(position),
-      slots: skyPlacementTemplateSlots(position),
+      contentKey: "slot-template/6I",
+      slots: skyRetrogradeTemplateSlots(position),
       afterContentFallback: content
     }
   );
@@ -12702,15 +14085,21 @@ function currentSkyRetrogradeDetailData(
     : null;
   const timelineLines = retrogradeTimelineLines(position);
   const retrogradeTiming = compactRetrogradeTiming(position);
-  const tldr = retrogradeArticleTldr(position, generated, content);
+  const sourceGroundedBody = sourceGroundedSkyPlacementParagraphs(position, retrogradeTiming);
+  const signSpecificParagraph = mercuryRetrogradeSignParagraph(position, generatedContent);
+  const tldr = sourceGroundedBody[0] ?? (signSpecificParagraph || retrogradeArticleTldr(position, generated, content));
   const fallbackDetailParagraphs = [
     content.body,
     ...content.detailParagraphs
   ].filter((paragraph): paragraph is string => Boolean(paragraph?.trim()));
-  const generatedBodyParagraphs = stripGeneratedTitleParagraph(
-    liveGeneratedBody(generated, fallbackDetailParagraphs),
-    retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+  const baseGeneratedBodyParagraphs = stripRetrogradeGeneratedHeaderParagraphs(
+    position,
+    stripGeneratedTitleParagraph(
+      sourceGroundedBody.length > 0 ? sourceGroundedBody : liveGeneratedBody(generated, fallbackDetailParagraphs),
+      retrogradePlacementTitle(position).replace(/\bRx\b/u, "Retrograde")
+    )
   );
+  const generatedBodyParagraphs = baseGeneratedBodyParagraphs;
   const detailParagraphs = [
     ...timelineLines.map((line) => <span className="retrograde-detail-line" key={line}>{line}</span>),
     ...(durationLine
@@ -12726,7 +14115,7 @@ function currentSkyRetrogradeDetailData(
   ];
 
   return {
-    blurb: retrogradePreviewCopy(position, generated, content),
+    blurb: firstSentences(sourceGroundedBody[0] ?? (signSpecificParagraph || retrogradePreviewCopy(position, generated, content)), 2),
     detail: {
       routePath: skyRetrogradeRoutePath(position),
       glyph: `${position.glyph} ℞`,
@@ -13368,21 +14757,28 @@ function ActiveAspects({
               },
               approvedVoiceOrKnowledgeFallback(contentKey, "sky")
             );
-            const generated = liveGeneratedContentByKeys(
+            const generated = liveGeneratedContentByKeysMatching(
               generatedContent,
               skyAspectGeneratedContentKeys(aspect, generatedAt, positions),
+              isReviewedSkyAspectContent,
               {
                 contentKey: templateFallbackContentKeys.skyAspectDetail,
                 slots: skyAspectTemplateSlots(aspect, positions),
                 afterContentFallback: content
               }
             );
-            const rowSummary = liveGeneratedSummary(
+            const sourceGroundedSummary = sourceGroundedSkyAspectSummary({
+              aspect: aspect.type,
+              focalPlanet: aspect.from,
+              orb: wholeDegreeOrb(aspect.orb),
+              otherPlanet: aspect.to
+            });
+            const rowSummary = sourceGroundedSummary || liveGeneratedSummary(
               generated,
-              aspectRelationshipDescription(aspect.from, aspect.type, aspect.to, { positions }) || fallbackPreviewText(content)
+              ""
             );
-            const signContextLine = skyAspectSignContextLine(aspect, generatedContent, positions);
-            const modifierSummary = conditionModifierSummary(generatedContent, aspect);
+            const signContextLine = generated ? skyAspectSignContextLine(aspect, generatedContent, positions) : "";
+            const modifierSummary = generated ? conditionModifierSummary(generatedContent, aspect) : "";
             const displaySummary = [rowSummary, signContextLine, modifierSummary].filter(Boolean).join(" ");
 
                 return (
@@ -13476,8 +14872,15 @@ function PlacementTable({
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
-          const contentKey = placementContentId(position.planet, position.sign, "sky");
-          const localContent = approvedVoiceOrKnowledgeFallback(contentKey, "sky");
+          const isUnwiredPoint = isUnwiredSkyPointPlacement(position);
+          const emergencyPlacementCopy = isUnwiredPoint
+            ? interpretationInReviewSummary
+            : emergencySkyPlacementCopy(position.planet, position.sign, { retrograde: isRetrograde });
+          const localContent = {
+            summary: emergencyPlacementCopy,
+            body: emergencyPlacementCopy,
+            detailParagraphs: emergencyPlacementCopy ? [emergencyPlacementCopy] : []
+          };
           const placementHookKey = position.planet === "Sun"
             ? "sky.seasonal-current"
             : position.planet === "Moon"
@@ -13489,18 +14892,34 @@ function PlacementTable({
               planet: position.planet,
               sign: position.sign
             },
-            localContent
+            localContent,
+            { allowKnowledgeOnly: false }
           );
-          const generated = liveGeneratedContentByKeys(
-            generatedContent,
-            skyPlacementGeneratedContentKeys(position, generatedAt),
-            {
-              contentKey: skyPlacementTemplateFallbackKey(position),
-              slots: skyPlacementTemplateSlots(position),
-              afterContentFallback: content
-            }
+          const generated = isUnwiredPoint
+            ? null
+            : liveGeneratedContentByKeysMatching(
+                generatedContent,
+                skyPlacementGeneratedContentKeys(position, generatedAt),
+                (candidate) => (
+                  (isEmergencySkyFallbackContent(candidate) || (
+                    candidate.contentKey !== skyPlacementTemplateFallbackKey(position)
+                    && isCompatibleAuthoredSkyContent(candidate, ["current-sky-placement", "retrograde-phase.retrograde-passage"])
+                  ))
+                  && !skyPlacementGeneratedContentHasNatalLanguage(candidate)
+                ),
+                {
+                  contentKey: skyPlacementTemplateFallbackKey(position),
+                  slots: skyPlacementTemplateSlots(position),
+                  afterContentFallback: content
+                }
+              );
+          const sourceGroundedSummary = sourceGroundedSkyPlacementSummary(position);
+          const fallbackSummary = fallbackPreviewText(content);
+          const rowSummary = sourceGroundedSummary || (isUnwiredPoint ? interpretationInReviewSummary : "") || (
+            isRetrograde
+              ? retrogradeGeneratedSummary(position, generated, fallbackSummary)
+              : liveGeneratedSummary(generated, fallbackSummary)
           );
-          const rowSummary = liveGeneratedSummary(generated, fallbackPreviewText(content));
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
             aspects,
             generatedAt,
@@ -13532,6 +14951,55 @@ function PlacementTable({
           );
         })}
     </SkyPlacementList>
+  );
+}
+
+function CalculationDiagnosticsPanel({
+  generatedContent,
+  hydrationState,
+  sky
+}: {
+  generatedContent: GeneratedContentMap;
+  hydrationState: "snapshot" | "hydrated";
+  sky: SkySnapshot;
+}) {
+  const diagnosticsEnabled = import.meta.env.DEV
+    || String(import.meta.env.VITE_ASTRO_DIAGNOSTICS ?? "false").toLowerCase() === "true";
+
+  if (!diagnosticsEnabled) {
+    return null;
+  }
+
+  const facts = sky.facts ?? [];
+  const validation = validateAstrologyFacts(facts);
+  const mercuryFact = facts.find((fact) => fact.planetOrPointId === "mercury" && fact.kind === "position");
+  const sampleContent = generatedContent.get("sky.retrograde.mercury.cancer.retrograde_passage")
+    ?? generatedContent.get("sky.placement.sun.cancer")
+    ?? null;
+  const cacheAge = Date.now() - new Date(sky.generatedAt).getTime();
+
+  return (
+    <details className="calculation-diagnostics-panel">
+      <summary>Calculation diagnostics</summary>
+      <dl>
+        <dt>Source</dt>
+        <dd>{sky.calculationProvenance?.library ?? "unknown"} {sky.calculationProvenance?.libraryVersion ?? ""}</dd>
+        <dt>Raw timestamp</dt>
+        <dd>{sky.generatedAt}</dd>
+        <dt>Normalized fact ID</dt>
+        <dd>{mercuryFact?.id ?? facts[0]?.id ?? "none"}</dd>
+        <dt>Content record ID</dt>
+        <dd>{sampleContent?.id ?? "none"}</dd>
+        <dt>Snapshot/live source</dt>
+        <dd>{typeof sampleContent?.sourceSnapshot?.sourceType === "string" ? sampleContent.sourceSnapshot.sourceType : sampleContent?.provider ?? "none"}</dd>
+        <dt>Hydration state</dt>
+        <dd>{hydrationState}</dd>
+        <dt>Cache age</dt>
+        <dd>{Number.isFinite(cacheAge) ? `${Math.max(0, Math.round(cacheAge / 1000))}s` : "unknown"}</dd>
+        <dt>Validation status</dt>
+        <dd>{validation.ok ? "valid primary calculation" : validation.diagnostics.join("; ")}</dd>
+      </dl>
+    </details>
   );
 }
 
@@ -13789,7 +15257,7 @@ function TransitResults({
   const chartDate = new Date(`${form.chartDate}T12:00:00`).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <section className="transit-results" aria-label="Daily transits">
+    <section className="transit-results" aria-label="Personalized transits">
       <div className="transit-summary">
         <div>
           <span>Birth chart details</span>
@@ -13806,14 +15274,14 @@ function TransitResults({
 
       <div className="transit-heading-row">
         <div>
-          <span>Daily transits</span>
+          <span>Transits</span>
           <strong>{new Date(`${form.chartDate}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</strong>
         </div>
       </div>
 
       <div className="transit-lists">
-        <TransitList title="Short term transits" transits={shortTransits} selectedTransitId={selectedTransitId} setSelectedTransitId={setSelectedTransitId} />
-        <TransitList title="Long term transits" transits={longTransits} selectedTransitId={selectedTransitId} setSelectedTransitId={setSelectedTransitId} />
+        <TransitList title="Short-term themes" transits={shortTransits} selectedTransitId={selectedTransitId} setSelectedTransitId={setSelectedTransitId} />
+        <TransitList title="Long-term themes" transits={longTransits} selectedTransitId={selectedTransitId} setSelectedTransitId={setSelectedTransitId} />
       </div>
 
       <TransitDetail transit={selectedTransit} form={form} />
@@ -14424,7 +15892,7 @@ function SettingsView({
             <div className="settings-list" aria-label="Birth chart settings">
               <div className="settings-row">
                 <span className="settings-row__label">House system</span>
-                <span className="settings-row__value">Whole House</span>
+                <span className="settings-row__value">Whole Sign</span>
               </div>
             </div>
           </div>
@@ -14685,7 +16153,7 @@ function AccountView({
             </label>
             <div className="settings-row">
               <span className="settings-row__label">House system</span>
-              <span className="settings-row__value">Whole House</span>
+              <span className="settings-row__value">Whole Sign</span>
             </div>
             {birthDraftDirty && (
               <div className="settings-row account-birth-save-row">
@@ -14778,15 +16246,28 @@ function ProfileView({
     : null;
   const natalSun = natalPositions.find((position) => position.planet === "Sun");
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
+  const natalAscendantPosition = typeof natalSky?.ascendantLongitude === "number"
+    ? { ...positionFromLongitude({ planet: "Ascendant", glyph: "↑", longitude: natalSky.ascendantLongitude }), house: 0 }
+    : null;
+  const natalMidheavenBasePosition = typeof natalSky?.midheavenLongitude === "number"
+    ? positionFromLongitude({ planet: "Midheaven", glyph: "MC", longitude: natalSky.midheavenLongitude })
+    : null;
+  const natalMidheavenPosition = natalMidheavenBasePosition
+    ? {
+        ...natalMidheavenBasePosition,
+        house: natalSky?.ascendant ? wholeSignHouseForSign(natalMidheavenBasePosition.sign, natalSky.ascendant) ?? 0 : 0
+      }
+    : null;
   const natalListOrder = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
   const planetRows = natalListOrder
     .map((planet) => natalPositions.find((position) => position.planet === planet))
     .filter((position): position is PlanetPosition => Boolean(position));
-  const routeableNatalPositions = [natalSun, natalMoon, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
+  const natalAnglePositions = [natalAscendantPosition, natalMidheavenPosition].filter((position): position is PlanetPosition => Boolean(position));
+  const routeableNatalPositions = [natalSun, natalMoon, ...natalAnglePositions, ...planetRows].filter((position): position is PlanetPosition => Boolean(position));
   const occupiedNatalHouses = new Set(
     routeableNatalPositions
       .map((position) => position.house)
-      .filter((house): house is number => typeof house === "number")
+      .filter((house): house is number => typeof house === "number" && house >= 1 && house <= 12)
   );
   const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
     .filter((house) => !occupiedNatalHouses.has(house));
@@ -14794,6 +16275,25 @@ function ProfileView({
     .slice()
     .sort((first, second) => first.orb - second.orb)
     .slice(0, 8);
+  const careerArchetypeProfile = resolveCareerArchetypeProfile(natalSky);
+  const natalNorthNode = natalPositions.find((position) => /north\s*node|true\s*node/i.test(position.planet));
+  const soulRoadmapProfile = resolveSoulRoadmapProfile({
+    moon: displayMoon,
+    northNode: natalNorthNode?.sign ?? "",
+    rising: displayRising,
+    risingPending: unknownBirthTime || displayRising === "Rising pending",
+    sun: displaySun
+  });
+  const openCareerDetail = () => {
+    if (careerArchetypeProfile) {
+      setTransitArticle(careerYouArticle(careerArchetypeProfile));
+    }
+  };
+  const openSoulRoadmapDetail = () => {
+    if (soulRoadmapProfile) {
+      setTransitArticle(soulRoadmapYouArticle(soulRoadmapProfile));
+    }
+  };
   const chartSettings = normalizeChartSettings(profile.settings);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
@@ -15035,12 +16535,28 @@ function ProfileView({
       key="moon"
     />,
     <PlacementTableRow
+      asButton={Boolean(natalAscendantPosition)}
+      degree={natalAscendantPosition ? formatPlanetDegree(natalAscendantPosition) : null}
       glyph="↑"
+      house={natalAscendantPosition?.house || null}
+      onClick={natalAscendantPosition ? () => openPlacementArticle(natalAscendantPosition) : undefined}
       pointName="Ascendant"
       title={displayRising && displayRising !== "Rising pending" ? `Ascendant in ${displayRising}` : displayRising || "Rising calculating"}
       description={natalCardTagline("Ascendant")}
       variant="natal"
       key="ascendant"
+    />,
+    <PlacementTableRow
+      asButton={Boolean(natalMidheavenPosition)}
+      degree={natalMidheavenPosition ? formatPlanetDegree(natalMidheavenPosition) : null}
+      description={natalCardTagline("Midheaven")}
+      glyph="MC"
+      house={natalMidheavenPosition?.house ?? null}
+      onClick={natalMidheavenPosition ? () => openPlacementArticle(natalMidheavenPosition) : undefined}
+      pointName="Midheaven"
+      title={natalMidheavenPosition ? `Midheaven in ${natalMidheavenPosition.sign}` : "Midheaven calculating"}
+      variant="natal"
+      key="midheaven"
     />
   ];
   const planetPlacementRows = planetRows.map((position) => (
@@ -15090,7 +16606,7 @@ function ProfileView({
       },
       approvedVoiceOrKnowledgeFallback(contentKey)
     );
-    const generated = liveGeneratedContentByKeys(
+    const generatedCandidate = liveGeneratedContentByKeys(
       generatedContent,
       [contentKey],
       {
@@ -15099,9 +16615,20 @@ function ProfileView({
         afterContentFallback: content
       }
     );
+    const generated = generatedCandidate
+      && generatedCandidate.contentKey !== templateFallbackContentKeys.youNatalAspect
+      && isCurrentSourceGroundedTemplateContent(generatedCandidate, ["natal-aspect-focal-supportive-v1", "natal-aspect-focal-challenging-v1"])
+      ? generatedCandidate
+      : null;
+    const sourceGroundedAspect = sourceGroundedNatalAspectComposition({
+      aspect: aspect.type,
+      focalPlanet: aspect.from,
+      orb: wholeDegreeOrb(aspect.orb),
+      otherPlanet: aspect.to
+    }, "you");
     const rowSummary = liveGeneratedSummary(
       generated,
-      content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
+      sourceGroundedAspect?.finalCopy || content.summary || aspectRelationshipDescription(aspect.from, aspect.type, aspect.to)
     );
 
     return (
@@ -15137,23 +16664,39 @@ function ProfileView({
       approvedVoiceOrKnowledgeFallback(contentKey)
     );
     const personalizedGenerated = liveGeneratedContent(personalTransitGeneratedContent, personalizedContentKey);
-    const generated = personalizedGenerated ?? liveGeneratedContentByKeys(
+    const generatedCandidate = personalizedGenerated ?? liveGeneratedContentByKeys(
       generatedContent,
-      [contentKey],
+      transitToNatalGeneratedContentKeys(transit),
       {
-        contentKey: templateFallbackContentKeys.youTransitToNatal,
+        contentKey: transitToNatalTemplateFallbackKey(transit),
         slots: transitToNatalTemplateSlots(transit, "you"),
         afterContentFallback: content
       }
     );
-    const rowSummary = liveGeneratedSummary(
+    const fallbackTemplateKey = transitToNatalTemplateFallbackKey(transit);
+    const generated = (
+      personalizedGenerated && isCurrentSourceGroundedTemplateContent(personalizedGenerated, ["personalized-transit-short-term-v1", "personalized-transit-long-term-v1"])
+        ? personalizedGenerated
+        : null
+    ) || (
+      generatedCandidate
+      && generatedCandidate.contentKey !== fallbackTemplateKey
+      && (
+        isAuthoredTransitAspectContent(generatedCandidate)
+        || isCurrentSourceGroundedTemplateContent(generatedCandidate, ["personalized-transit-short-term-v1", "personalized-transit-long-term-v1"])
+      )
+        ? generatedCandidate
+        : null
+    );
+    const sourceGroundedTransit = sourceGroundedPersonalTransitForItem(transit, transitForm.chartDate);
+    const rowSummary = sourceGroundedTransit?.finalCopy || liveGeneratedSummary(
       generated,
       content.summary || transitNote(transit.transitPlanet, transit.aspect, transit.natalPoint)
     );
     const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
     const timing = transitItemTimingDisplay(transit, transitForm.chartDate);
     const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
-    const articleSections = generatedArticleSections(generated, content.detailParagraphs);
+    const articleSections = sourceGroundedTransit?.sections ?? generatedArticleSections(generated, content.detailParagraphs, [rowSummary]);
     const openArticle = () => {
       setSelectedTransitId(transit.id);
       setActivePlacementRouteId(null);
@@ -15200,6 +16743,88 @@ function ProfileView({
         </span>
       </button>
     );
+  });
+  const standaloneHouseTransitRows = Array.from(
+    new Map(
+      aspectRows
+        .filter((transit) => transit.natalHouse)
+        .map((transit) => [`${transit.transitPlanet}-${transit.natalHouse}`, transit])
+    ).values()
+  ).slice(0, 4).flatMap((transit) => {
+    const house = transit.natalHouse;
+
+    if (!house) {
+      return [];
+    }
+
+    const contentKey = transitHouseContentKey(transit.transitPlanet, house);
+    const content = fallbackFromHook(
+      "you.transit-through-house",
+      {
+        transitPlanet: transit.transitPlanet,
+        house,
+        houseLifeArea: houseLifeAreas[house] ?? ""
+      }
+    );
+    const generated = liveGeneratedContentByKeys(
+      generatedContent,
+      [contentKey],
+      {
+        contentKey: templateFallbackContentKeys.youTransitThroughHouse,
+        slots: transitToNatalTemplateSlots(transit, "you"),
+        afterContentFallback: content
+      }
+    );
+    const rowSummary = liveGeneratedSummary(
+      generated,
+      content.summary || `${transit.transitPlanet} is crossing your ${ordinalHouse(house)} house.`
+    );
+    const title = `${transit.transitPlanet} through your ${ordinalHouse(house)} house`;
+    const articleSections = generatedArticleSections(generated, content.detailParagraphs, [rowSummary]);
+    const openArticle = () => {
+      setSelectedTransitId(transit.id);
+      setActivePlacementRouteId(null);
+      setTransitArticle({
+        id: contentKey,
+        title,
+        glyph: pointGlyph(transit.transitPlanet),
+        subtitle: stripTldrPrefix(rowSummary),
+        summary: stripTldrPrefix(rowSummary),
+        sections: articleSections,
+        meta: [
+          { label: "House", value: `${ordinalHouse(house)} House` },
+          { label: "Area", value: houseLifeAreas[house] ?? "" },
+          { label: "Transit planet", value: transit.transitPlanet }
+        ]
+      });
+    };
+
+    return [(
+      <button
+        type="button"
+        className="updates-aspect-row updates-aspect-row--house"
+        key={contentKey}
+        onClick={openArticle}
+      >
+        <span className="updates-aspect-row__glyphs" aria-hidden="true">
+          <span className="planet-glyph">{pointGlyph(transit.transitPlanet)}</span>
+        </span>
+        <span className="updates-aspect-row__content">
+          <span className="updates-aspect-row__title">{title}</span>
+          <span className="updates-aspect-row__meta-line">
+            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+              {transit.term === "long" ? "Long-term" : "Short-term"}
+            </span>
+            <span>{houseLifeAreas[house] ?? "house topic"}</span>
+          </span>
+          {rowSummary ? <span className="updates-aspect-row__description">{rowSummary}</span> : null}
+        </span>
+        <span className="updates-aspect-row__meta" aria-label={`${ordinalHouse(house)} house`}>
+          <span className="updates-aspect-row__dot" aria-hidden="true" />
+          <span className="updates-aspect-row__orb">{house}</span>
+        </span>
+      </button>
+    )];
   });
   const dailyTimingTemplate = personalTiming
     ? liveGeneratedContentByKeys(
@@ -15269,8 +16894,8 @@ function ProfileView({
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
-        aspectRows={updateAspectRows}
         bigThreeRows={bigThreeRows}
+        careerArchetypeProfile={careerArchetypeProfile}
         dailyUpdateSummary={dailyUpdateSummary}
         displayMoon={displayMoon}
         displayRising={displayRising}
@@ -15284,6 +16909,8 @@ function ProfileView({
         natalChart={natalChart}
         natalChartPending={!natalSky}
         onCreateChart={onCreateChart}
+        onOpenCareerDetail={careerArchetypeProfile ? openCareerDetail : undefined}
+        onOpenSoulRoadmapDetail={soulRoadmapProfile ? openSoulRoadmapDetail : undefined}
         onCloseTransitArticle={() => {
           setActivePlacementRouteId(null);
           setTransitArticle(null);
@@ -15296,9 +16923,11 @@ function ProfileView({
         profileName={profile.name}
         setupStepsLeft={setupStepsLeft}
         showNatalSignatures={showNatalSignatures}
+        aspectRows={updateAspectRows}
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
+        standaloneTransitRows={standaloneHouseTransitRows}
         unknownBirthTime={unknownBirthTime}
         transitArticle={transitArticle}
       />
@@ -15439,6 +17068,7 @@ function ManualChartsPanel({
     ? null
     : charts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
   const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
+  const selectedRelationshipRomantic = selectedChart ? isExplicitRomanticRelationship(selectedChart.relationshipType) : false;
   const selectedSynastryContacts = selectedChart
     ? selectedChartIsEvent
       ? []
@@ -15449,26 +17079,29 @@ function ManualChartsPanel({
           relationshipGeneratedContent,
           relationshipComparisonName,
           relationshipComparisonIsSelf,
-          relationshipComparisonPronouns
+          relationshipComparisonPronouns,
+          selectedRelationshipRomantic,
+          selectedChart.relationshipType
         ),
         lifeAreaFocus
       )
     : [];
-  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedSynastryContacts.slice(0, 10).map((contact) => ({
-    id: contact.id,
-    fromLongitude: contact.friendPoint.longitude,
-    toLongitude: contact.yourPoint.longitude,
-    type: contact.aspect,
-    orb: contact.orb
-  }));
+  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedChart && !selectedChartIsEvent
+    ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
+    : [];
   const selectedCompositeSky = selectedChart && !selectedChartIsEvent ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
+    : friendProfileTab === "transits"
+      ? false
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
+  const selectedFriendTransits = selectedChart && !selectedChartIsEvent
+    ? rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus).slice(0, 8)
+    : [];
   const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
   const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
   const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
@@ -15498,13 +17131,44 @@ function ManualChartsPanel({
         label: "Ascendant",
         sign: selectedFriendBigThree?.rising ?? "pending",
         degree: 0,
-        house: selectedChart?.birthTimeUnknown ? null : 1,
+        house: null,
         retrograde: false
       }
     ];
   const selectedFriendNatalPlacementRows = selectedChartIsEvent
     ? selectedFriendPlacementRows
     : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
+  const selectedFriendPronouns = selectedChart && !selectedChartIsEvent
+    ? resolvePersonReference({
+        name: selectedChart.displayName,
+        pronouns: selectedChart.pronouns
+      })
+    : null;
+  const selectedFriendCareerArchetypeProfile = selectedChart?.natalChart && !selectedChartIsEvent
+    ? resolveCareerArchetypeProfile(selectedChart.natalChart, undefined, {
+        ownerName: selectedChart.displayName,
+        pronouns: selectedFriendPronouns
+          ? {
+              subject: selectedFriendPronouns.subject,
+              object: selectedFriendPronouns.object,
+              possessive: selectedFriendPronouns.possessiveAdjective,
+              reflexive: selectedFriendPronouns.reflexive
+            }
+          : undefined
+      })
+    : null;
+  const selectedFriendSoulRoadmapProfile = selectedChart && !selectedChartIsEvent
+    ? resolveSoulRoadmapProfile({
+        moon: selectedFriendBigThree?.moon ?? "",
+        northNode: selectedChart.natalChart?.positions.find((position) => /north\s*node|true\s*node/i.test(position.planet))?.sign ?? "",
+        ownerKind: "person",
+        ownerName: selectedChart.displayName,
+        ownerPronouns: selectedChart.pronouns,
+        rising: selectedFriendBigThree?.rising ?? "",
+        risingPending: selectedChart.birthTimeUnknown || selectedFriendBigThree?.rising === "Rising pending",
+        sun: selectedFriendBigThree?.sun ?? ""
+      })
+    : null;
   const selectedFriendOccupiedHouses = new Set(
     (selectedChart?.natalChart?.positions ?? [])
       .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
@@ -15579,7 +17243,13 @@ function ManualChartsPanel({
       return;
     }
 
-    const article = emptyHouseDetailArticle(house, selectedChart.natalChart, "friend", selectedChart.displayName);
+    const article = emptyHouseDetailArticle(
+      house,
+      selectedChart.natalChart,
+      "friend",
+      selectedChart.displayName,
+      selectedChart.pronouns
+    );
 
     onOpenDetail({
       routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `empty-house-${house}`),
@@ -15706,6 +17376,7 @@ function ManualChartsPanel({
     compareRelationship({
       personA,
       personB,
+      relationshipContext: relationshipContextFromRole(selectedChart.relationshipType),
       settings: apiSettingsFromChartSettings(profile.settings),
       includeContentFacts: true
     })
@@ -16007,7 +17678,7 @@ function ManualChartsPanel({
       ...currentForm,
       chartType,
       pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
-      relationshipType: chartType === "event" ? "friend" : currentForm.relationshipType || "friend"
+      relationshipType: chartType === "event" ? "friendship" : normalizeRelationshipContextKey(currentForm.relationshipType)
     }));
   }
 
@@ -16051,7 +17722,7 @@ function ManualChartsPanel({
         firstName,
         lastName: lastNameParts.join(" ") || null,
         pronouns: form.chartType === "event" ? defaultPronounChoice : form.pronouns,
-        relationshipType: form.chartType === "event" ? null : form.relationshipType || "friend",
+        relationshipType: form.chartType === "event" ? null : normalizeRelationshipContextKey(form.relationshipType),
         birthDate,
         birthTime: form.birthTimeUnknown ? null : form.birthTime,
         birthTimeUnknown: form.birthTimeUnknown,
@@ -16391,12 +18062,27 @@ function ManualChartsPanel({
                 <SoulRoadmapCard
                   className="friend-soul-roadmap-card"
                   moon={selectedFriendBigThree?.moon ?? ""}
+                  onOpenDetail={selectedFriendSoulRoadmapProfile ? () => onOpenDetail(soulRoadmapSkyDetail(
+                    selectedFriendSoulRoadmapProfile,
+                    friendDetailRoutePath(selectedChart.id, friendProfileTab, "soul-roadmap")
+                  )) : undefined}
                   ownerKind={selectedChartIsEvent ? "chart" : "person"}
                   ownerName={selectedChart.displayName}
+                  ownerPronouns={selectedChart.pronouns}
                   rising={selectedFriendBigThree?.rising ?? ""}
                   risingPending={selectedChart.birthTimeUnknown || selectedFriendBigThree?.rising === "Rising pending"}
                   sun={selectedFriendBigThree?.sun ?? ""}
                 />
+                {selectedFriendCareerArchetypeProfile && selectedFriendCareerArchetypeProfile.sections.length > 0 && (
+                  <CareerArchetypeCard
+                    labelClassName="section-label friend-section-label"
+                    onOpenDetail={() => onOpenDetail(careerSkyDetail(
+                      selectedFriendCareerArchetypeProfile,
+                      friendDetailRoutePath(selectedChart.id, friendProfileTab, "career")
+                    ))}
+                    profile={selectedFriendCareerArchetypeProfile}
+                  />
+                )}
                 <span className="eyebrow section-label friend-section-label">Big three</span>
                 <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
                   {selectedFriendBigThreeDisplayRows.map((row) => {
@@ -16458,7 +18144,13 @@ function ManualChartsPanel({
                               <PlacementTableRow
                                 ariaLabel={`Read more about ${emptyHouseTitle(house, friendNatalChart)}`}
                                 asButton
-                                description={emptyHouseCardDescription(house, friendNatalChart, "friend", selectedChart.displayName)}
+                                description={emptyHouseCardDescription(
+                                  house,
+                                  friendNatalChart,
+                                  "friend",
+                                  selectedChart.displayName,
+                                  selectedChart.pronouns
+                                )}
                                 glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
                                 house={house}
                                 key={`friend-empty-house-${house}`}
@@ -16490,15 +18182,31 @@ function ManualChartsPanel({
                         );
                         const generated = liveGeneratedContentByKeys(
                           relationshipGeneratedContent,
-                          [contentKey],
+                          [
+                            natalAspectContentKey(aspect.from, aspect.type, aspect.to),
+                            contentKey
+                          ],
                           {
                             contentKey: templateFallbackContentKeys.youNatalAspect,
-                            slots: aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "friend"),
+                            slots: aspectTemplateSlots(
+                              aspect.from,
+                              aspect.type,
+                              aspect.to,
+                              "friend",
+                              selectedChartIsEvent
+                                ? undefined
+                                : resolveThirdPersonReference({ name: selectedChart.displayName, pronouns: selectedChart.pronouns })
+                            ),
                             afterContentFallback: content
                           }
                         );
                         const rawSummary = liveGeneratedSummary(generated, content.summary);
-                        const rowSummary = natalGeneratedCopyForOwner(rawSummary, selectedChart.displayName, selectedChartIsEvent ? "chart" : "person", selectedChart.pronouns);
+                        const rowSummary = natalGeneratedCopyForOwner(
+                          rawSummary,
+                          selectedChart.displayName,
+                          selectedChartIsEvent ? "chart" : "person",
+                          selectedChart.pronouns
+                        );
 
                         return (
                           <div
@@ -16520,6 +18228,77 @@ function ManualChartsPanel({
                     </div>
                   </>
                 ) : null}
+              </div>
+            </div>
+          )}
+
+          {friendProfileTab === "transits" && (
+            <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${selectedChart.displayName} transits`}>
+              <div className="friend-profile-copy-column">
+                <span className="eyebrow section-label friend-section-label">Transits</span>
+                <article className="friends-logic-card">
+                  <span>Personal timing</span>
+                  <h3>{selectedChart.displayName}&apos;s current themes</h3>
+                  <p>These are current sky contacts to {possessiveLabel(selectedChart.displayName)} natal chart, prioritized by exactness, natal target, and timing relevance.</p>
+                </article>
+                {(["short", "long"] as const).map((durationClass) => {
+                  const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
+
+                  if (durationTransits.length === 0) {
+                    return null;
+                  }
+
+                  return (
+                    <section
+                      className="friend-transit-group"
+                      aria-label={durationClass === "short" ? "Short-term themes" : "Long-term themes"}
+                      key={durationClass}
+                    >
+                      <span className="eyebrow section-label friend-section-label">
+                        {durationClass === "short" ? "Short-term themes" : "Long-term themes"}
+                      </span>
+                      <div className="updates-aspect-list friend-transit-list">
+                        {durationTransits.map((transit) => {
+                          const summary = friendTransitSummary(
+                            transit,
+                            relationshipGeneratedContent,
+                            selectedChart.displayName,
+                            selectedChart.pronouns
+                          );
+                          const factLine = friendTransitFactLine(transit, selectedChart.displayName);
+
+                          return (
+                            <article className="updates-aspect-row friend-transit-row" key={transit.id}>
+                              <span className="updates-aspect-row__glyphs" aria-hidden="true">
+                                <span className="aspect-row-glyphs">{transit.glyph}</span>
+                              </span>
+                              <span className="updates-aspect-row__content">
+                                <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
+                                <p className="updates-aspect-row__description">{summary}</p>
+                                <span className="updates-aspect-row__detail">
+                                  <span>{transit.transitPlanet} in the current sky</span>
+                                  <span>{factLine}</span>
+                                  <span>{transit.direction ?? "active"} · orb {transit.orb}</span>
+                                </span>
+                              </span>
+                              <span className="updates-aspect-row__meta" aria-label={`${transit.orb} orb`}>
+                                <span className="updates-aspect-row__dot" aria-hidden="true" />
+                                <span className="updates-aspect-row__orb">{transit.orb}</span>
+                              </span>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  );
+                })}
+                {selectedFriendTransits.length === 0 && (
+                  <article className="friends-logic-card">
+                    <span>Transits</span>
+                    <h3>No prioritized transits are active.</h3>
+                    <p>The sky is still moving, but no prioritized personalized transit is active for {selectedChart.displayName} in this window.</p>
+                  </article>
+                )}
               </div>
             </div>
           )}
@@ -16575,9 +18354,33 @@ function ManualChartsPanel({
                       contact,
                       relationshipGeneratedContent,
                       selectedChart.pronouns,
-                      relationshipComparisonPronouns
+                      relationshipComparisonPronouns,
+                      selectedRelationshipRomantic,
+                      selectedChart.relationshipType
                     ).filter(Boolean);
                     const description = contact.summary || textPreview(detailParagraphs.join("\n\n"));
+                    const detailFallback = relationshipAwareSynastryFallback({
+                      primaryName: selectedChart.displayName,
+                      comparisonName: relationshipComparisonName,
+                      comparisonIsSelf: relationshipComparisonIsSelf,
+                      primaryPoint: contact.friendPoint.name,
+                      comparisonPoint: contact.yourPoint.name,
+                      aspect: contact.aspect,
+                      romanticAllowed: selectedRelationshipRomantic,
+                      relationshipType: selectedChart.relationshipType
+                    });
+                    const detailBody = detailParagraphs.length > 0
+                      ? detailParagraphs
+                      : [
+                          detailFallback || emergencySynastryAspectCopy({
+                            primaryName: selectedChart.displayName,
+                            primaryPoint: contact.friendPoint.name,
+                            aspect: contact.aspect,
+                            comparisonName: relationshipComparisonName,
+                            comparisonPoint: contact.yourPoint.name,
+                            comparisonIsSelf: relationshipComparisonIsSelf
+                          })
+                        ];
 
                     return (
                       <button
@@ -16591,7 +18394,7 @@ function ManualChartsPanel({
                           kicker: "Synastry",
                           title,
                           meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
-                          body: detailParagraphs.length > 0 ? detailParagraphs : ["Content gap: this interaspect needs authored copy."],
+                          body: detailBody,
                           content: emptyContentFallback(contact.contentKeys[0] ?? contact.id).bundle
                         })}
                       >
@@ -16666,7 +18469,7 @@ function ManualChartsPanel({
                         <span className="aspect-row-copy">
                           <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
                           <span className="aspect-row-subtitle ui-pill ui-pill--muted">{relationshipThemeTitle(aspect.from, aspect.to, aspect.type)}</span>
-                          <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent)}</p>
+                          <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent, selectedChart.relationshipType)}</p>
                         </span>
                         <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                           <span className="aspect-row-dot" aria-hidden="true" />

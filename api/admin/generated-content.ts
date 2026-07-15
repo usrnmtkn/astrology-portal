@@ -44,6 +44,9 @@ type ExistingGeneratedContentRow = {
   target_date: string | null;
   mode: string;
   status: ReviewStatus;
+  provider?: string | null;
+  prompt_version?: string | null;
+  source_snapshot?: Record<string, unknown> | null;
 };
 
 type SkippedLiveGeneratedContentRow = {
@@ -59,6 +62,52 @@ const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing t
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
+}
+
+function sourceSnapshotSourceType(sourceSnapshot: unknown) {
+  return sourceSnapshot && typeof sourceSnapshot === "object" && !Array.isArray(sourceSnapshot)
+    ? String((sourceSnapshot as Record<string, unknown>).sourceType ?? "")
+    : "";
+}
+
+function isEmergencyFloorContentKey(contentKey?: string) {
+  const key = contentKey?.trim() ?? "";
+
+  return key.startsWith("fallback-hook/")
+    || key.startsWith("slot-template/")
+    || key.startsWith("vocab/")
+    || key.startsWith("fallback-vocab/")
+    || key.startsWith("guide-phrase/");
+}
+
+function isLegacyLiveWritingCandidate(row: {
+  contentKey?: string;
+  content_key?: string;
+  provider?: string | null;
+  promptVersion?: string | null;
+  prompt_version?: string | null;
+  sourceSnapshot?: unknown;
+  source_snapshot?: unknown;
+}) {
+  const contentKey = row.contentKey ?? row.content_key ?? "";
+
+  if (isEmergencyFloorContentKey(contentKey)) {
+    return false;
+  }
+
+  const sourceType = sourceSnapshotSourceType(row.sourceSnapshot ?? row.source_snapshot);
+  const promptVersion = row.promptVersion ?? row.prompt_version ?? "";
+
+  return row.provider === "local-normalized-dashboard-source"
+    || sourceType === "normalized-dashboard-source"
+    || sourceType === "source-grounded-generated-snapshot"
+    || String(promptVersion).startsWith("migration-seed");
+}
+
+function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWritingCandidate>[0]) {
+  if (isLegacyLiveWritingCandidate(row)) {
+    throw new Error("Legacy local/source-grounded generated rows cannot be published LIVE. Use fallback-hook, slot-template, vocab, or newly authored rows instead.");
+  }
 }
 
 function requireEnv(name: string) {
@@ -374,6 +423,10 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
   }
 
+  if (body.status === "LIVE") {
+    assertCanPublishGeneratedContent(body);
+  }
+
   return {
     content_key: body.contentKey.trim(),
     surface: body.surface,
@@ -409,7 +462,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   for (let index = 0; index < uniqueKeys.length; index += 80) {
     const batch = uniqueKeys.slice(index, index + 80);
     const params = new URLSearchParams();
-    params.set("select", "id,content_key,target_date,mode,status");
+    params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot");
     params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
     const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
@@ -424,6 +477,23 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   }
 
   return rows;
+}
+
+async function fetchExistingRowById(id: string) {
+  const params = new URLSearchParams();
+  params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot");
+  params.set("id", `eq.${id}`);
+  params.set("limit", "1");
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+    headers: adminHeaders()
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(`Supabase row lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+
+  return Array.isArray(payload) ? payload[0] as ExistingGeneratedContentRow | undefined : undefined;
 }
 
 function generatedContentTargetKey({
@@ -517,6 +587,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.status) {
     if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
       throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
+    }
+
+    if (body.status === "LIVE") {
+      const existing = await fetchExistingRowById(body.id);
+
+      assertCanPublishGeneratedContent({
+        ...existing,
+        contentKey: body.contentKey ?? existing?.content_key,
+        provider: body.provider ?? existing?.provider,
+        promptVersion: body.promptVersion ?? existing?.prompt_version,
+        sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot
+      });
     }
 
     patch.status = body.status;

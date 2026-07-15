@@ -55,16 +55,6 @@ def test_natal_chart_returns_core_chart_shape():
     assert isinstance(chart["aspects"], list)
 
 
-def test_natal_chart_accepts_placidus():
-    response = client.post("/chart/natal", json=natal_payload("placidus"))
-
-    assert response.status_code == 200
-    chart = response.json()
-
-    assert chart["metadata"]["houseSystem"] == "placidus"
-    assert len(chart["houseCusps"]) == 12
-
-
 def test_natal_chart_unknown_birth_time_warns():
     payload = natal_payload()
     payload["subject"]["datetime"]["timeKnown"] = False

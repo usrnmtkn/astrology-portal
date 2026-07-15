@@ -58,14 +58,8 @@ FAVOR_CASES = {
     ("Saturn", "Aries", "Sun", "Aries"),
 }
 
-HOUSE_SYSTEM_CODES: Dict[HouseSystem, bytes] = {
-    HouseSystem.whole_sign: b"W",
-    HouseSystem.placidus: b"P",
-    HouseSystem.koch: b"K",
-    HouseSystem.equal: b"E",
-    HouseSystem.porphyry: b"O",
-    HouseSystem.regiomontanus: b"R",
-}
+CANONICAL_HOUSE_SYSTEM = HouseSystem.whole_sign
+WHOLE_SIGN_HOUSE_SYSTEM_CODE = b"W"
 
 ASPECT_DEFINITIONS: List[Tuple[str, float]] = [
     ("conjunction", 0.0),
@@ -109,6 +103,12 @@ SIGN_RULERS = {
 
 def normalize_degrees(value: float) -> float:
     return value % 360.0
+
+
+def whole_sign_cusps_for_ascendant(ascendant_longitude: float) -> List[float]:
+    sign_index, *_ = sign_for_longitude(ascendant_longitude)
+    first_house = sign_index * 30.0
+    return [normalize_degrees(first_house + index * 30.0) for index in range(12)]
 
 
 def sign_for_longitude(longitude: float) -> Tuple[int, str, str, float, int, int]:
@@ -194,14 +194,13 @@ def configure_ephemeris(settings: ChartSettings) -> None:
 
 
 def house_cusps(julian_day: float, subject: ChartSubject) -> Tuple[List[float], Tuple[float, ...]]:
-    code = HOUSE_SYSTEM_CODES[subject.settings.houseSystem]
     cusps, ascmc = swe.houses_ex(
         julian_day,
         subject.location.latitude,
         subject.location.longitude,
-        code,
+        WHOLE_SIGN_HOUSE_SYSTEM_CODE,
     )
-    return [normalize_degrees(cusp) for cusp in cusps], tuple(ascmc)
+    return whole_sign_cusps_for_ascendant(ascmc[0]), tuple(ascmc)
 
 
 def house_for_longitude(longitude: float, cusps: List[float]) -> Optional[int]:

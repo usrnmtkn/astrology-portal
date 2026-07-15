@@ -1,6 +1,6 @@
 from typing import List
 
-from tldrastro_api.models import ContentFactPacket
+from tldrastro_api.models import ContentFactPacket, HouseSystem
 
 
 def synastry_contact_fact(contact, settings) -> ContentFactPacket:
@@ -10,7 +10,7 @@ def synastry_contact_fact(contact, settings) -> ContentFactPacket:
         headline=f"{contact.fromPoint} {contact.aspect} {contact.toPoint}",
         priority=min(100, contact.score),
         timeSensitivity="timeless",
-        houseSystem=settings.houseSystem,
+        houseSystem=HouseSystem.whole_sign,
         zodiac=settings.zodiac,
         facts={
             "type": "synastry_contact",
@@ -37,7 +37,7 @@ def house_overlay_fact(overlay, settings) -> ContentFactPacket:
         headline=f"{overlay.point} in the {overlay.house} house",
         priority=70,
         timeSensitivity="timeless",
-        houseSystem=settings.houseSystem,
+        houseSystem=HouseSystem.whole_sign,
         zodiac=settings.zodiac,
         facts={
             "type": "house_overlay",
@@ -58,7 +58,7 @@ def composite_aspect_fact(aspect, settings) -> ContentFactPacket:
         headline=f"Composite {aspect.from_} {aspect.type} {aspect.to}",
         priority=aspect.strength or 70,
         timeSensitivity="timeless",
-        houseSystem=settings.houseSystem,
+        houseSystem=HouseSystem.whole_sign,
         zodiac=settings.zodiac,
         facts={
             "type": "composite_aspect",
@@ -81,4 +81,3 @@ def relationship_facts(synastry, composite, settings, limit: int = 8) -> List[Co
     facts.extend(house_overlay_fact(overlay, settings) for overlay in synastry.houseOverlays[:2])
     facts.extend(composite_aspect_fact(aspect, settings) for aspect in composite.aspects[:2])
     return facts[:limit]
-

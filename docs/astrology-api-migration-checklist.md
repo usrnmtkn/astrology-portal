@@ -128,8 +128,8 @@ Richer API-native fields should be added alongside them:
 - Ephemeris file packaging on Vercel or the chosen host.
 - Historical timezone accuracy for birth charts.
 - Unknown birth time behavior.
-- Whether Placidus support is required in the first deployed version or only the
-  request/response contract.
+- Confirm the first deployed version exposes Whole Sign as the only supported
+  house system in the request/response contract.
 - Whether zodiacal releasing requires lots from the natal endpoint in every
   response.
 
@@ -138,7 +138,7 @@ Richer API-native fields should be added alongside them:
 Create fixture tests for:
 
 - Known natal chart with Sun, Moon, Ascendant, and MC.
-- Same chart in whole-sign and Placidus once Placidus is enabled.
+- Same chart through web and API, verifying Whole Sign house assignment parity.
 - DST transition date.
 - Pre-1970 birth date.
 - Current sky snapshot.

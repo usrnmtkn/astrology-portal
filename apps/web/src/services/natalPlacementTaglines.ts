@@ -1,4 +1,6 @@
 import { getSupabaseClient } from "./auth";
+import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export const natalCardTaglinePoints = [
   "Sun",
@@ -34,6 +36,10 @@ export const fallbackNatalCardTaglines: Record<string, string> = {
 
 type NatalCardTaglineRow = {
   content_key: string;
+  status?: string | null;
+  lane?: string | null;
+  review_state?: string | null;
+  flags?: string[] | null;
   body: string | null;
   sections: unknown;
 };
@@ -82,8 +88,15 @@ export function natalCardTaglinesFromRows(rows: NatalCardTaglineRow[]) {
   const taglines = new Map<string, string>();
 
   for (const row of rows) {
+    if (!row.content_key.startsWith("vocab/natal-card-tagline/")) {
+      continue;
+    }
+
     const point = row.content_key.replace(/^vocab\/natal-card-tagline\//, "");
-    const value = taglineFromSections(row.sections) || row.body?.trim() || "";
+    const value = firstReaderFacingCopy([
+      taglineFromSections(row.sections),
+      row.body
+    ]) || "";
 
     if (point && value) {
       taglines.set(point, value);
@@ -118,8 +131,10 @@ export async function loadNatalCardTaglines() {
 
     const { data, error } = await supabase
       .from("generated_interpretations")
-      .select("content_key, body, sections")
+      .select("content_key, status, lane, review_state, flags, body, sections")
       .eq("status", "LIVE")
+      .eq("lane", "serving")
+      .is("review_state", null)
       .eq("prompt_version", "tagline-v1")
       .like("content_key", "vocab/natal-card-tagline/%")
       .returns<NatalCardTaglineRow[]>();
@@ -130,7 +145,7 @@ export async function loadNatalCardTaglines() {
       return cachedTaglines;
     }
 
-    cachedTaglines = natalCardTaglinesFromRows(data ?? []);
+    cachedTaglines = natalCardTaglinesFromRows((data ?? []).filter(isReaderServableGeneratedContentRow));
     return cachedTaglines;
   })();
 

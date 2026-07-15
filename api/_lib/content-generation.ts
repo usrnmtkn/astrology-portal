@@ -6,6 +6,40 @@ type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
+type EmergencyVocab = {
+  angleFunction?: Record<string, string>;
+  aspectBehavior?: Record<string, string>;
+  houseArea?: Record<string, string>;
+  planetFunction?: Record<string, string>;
+  signTone?: Record<string, string>;
+};
+
+let cachedEmergencyVocab: EmergencyVocab | null = null;
+
+function loadEmergencyVocab() {
+  if (cachedEmergencyVocab) {
+    return cachedEmergencyVocab;
+  }
+
+  const candidates = [
+    path.join(process.cwd(), "apps/web/src/content/emergencyCopy.json"),
+    path.join(process.cwd(), "../apps/web/src/content/emergencyCopy.json"),
+    path.join(process.cwd(), "../../apps/web/src/content/emergencyCopy.json")
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      cachedEmergencyVocab = JSON.parse(fs.readFileSync(candidate, "utf8")) as EmergencyVocab;
+      return cachedEmergencyVocab;
+    } catch {
+      // Try the next deployment/local path.
+    }
+  }
+
+  cachedEmergencyVocab = {};
+  return cachedEmergencyVocab;
+}
+
 export type GenerateContentInput = {
   contentKey: string;
   surface: Surface;
@@ -428,6 +462,29 @@ const bannedUserFacingPhrases = [
   "unlock"
 ];
 
+const metaphorSpecificityValidationPhrases = [
+  "makes this feel real",
+  "makes it feel real",
+  "on the good days",
+  "on good days",
+  "on the harder days",
+  "on hard days",
+  "the thing",
+  "the thing that",
+  "asks one plain question",
+  "this contact asks",
+  "their weight settles on you",
+  "let the fog be information",
+  "the part of you that already knows",
+  "solid ground",
+  "rare kind of solid ground",
+  "flows naturally",
+  "magnetic and polarizing",
+  "push and pull",
+  "fused this tightly",
+  "hard to miss"
+];
+
 const natalPlacementHardBannedPhrases = [
   "magnetic value system",
   "visible abundance",
@@ -694,11 +751,28 @@ function softVoiceWarningFailures(content: GeneratedContent, input: GenerateCont
 }
 
 function styleNotesForGeneratedContent(content: GeneratedContent, input: GenerateContentInput) {
-  if (!isAdminDraftGeneration(input) || !isPrimaryNatalPlacementGeneration(input)) {
-    return [];
+  const notes: string[] = [];
+  const userFacingText = [
+    content.headline,
+    content.tldr,
+    content.summary,
+    content.body,
+    content.action,
+    content.timing,
+    ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].filter(Boolean).join("\n");
+  const normalizedUserFacingText = normalizeText(userFacingText);
+
+  for (const phrase of metaphorSpecificityValidationPhrases) {
+    if (hasBannedPhrase(normalizedUserFacingText, phrase)) {
+      notes.push(`phrasebook flag: ${phrase}`);
+    }
   }
 
-  const notes: string[] = [];
+  if (!isAdminDraftGeneration(input) || !isPrimaryNatalPlacementGeneration(input)) {
+    return [...new Set(notes)];
+  }
+
   const body = normalizeText(content.body);
 
   if (body.includes("may ") || body.includes("can ")) {
@@ -1513,6 +1587,19 @@ function bannedPhraseRules() {
   ].join("\n");
 }
 
+function metaphorSpecificityRules() {
+  return [
+    "METAPHOR AND SPECIFICITY PHRASE BOOK - AUTHORITATIVE WORDING GUIDE",
+    "This guide sits above the voice spec for wording decisions.",
+    "A metaphor must explain what is happening. It cannot be the explanation by itself.",
+    "Write in this order: placement or event named plainly, actual situation, recognizable behavior, real stakes, direct action or reframe when useful.",
+    "Use no more than one metaphor family in a short paragraph, and follow it with a real behavior or consequence.",
+    "Replace vague scaffolds with the actual object, agreement, decision, behavior, responsibility, or consequence.",
+    "Flagged phrases to avoid unless a human editor deliberately keeps them:",
+    ...metaphorSpecificityValidationPhrases.map((phrase) => `- ${phrase}`)
+  ].join("\n");
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -1523,6 +1610,39 @@ function stringValue(value: unknown) {
   }
 
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function relationshipContextInstruction(facts: Record<string, unknown> | undefined) {
+  const rawContext = isRecord(facts?.relationshipContext) ? facts.relationshipContext : {};
+  const primaryRole = stringValue(rawContext.primaryRole) || stringValue(facts?.primaryRole) || stringValue(facts?.relationshipType);
+  const secondaryRoles = Array.isArray(rawContext.secondaryRoles)
+    ? rawContext.secondaryRoles.map(stringValue).filter(Boolean)
+    : Array.isArray(facts?.secondaryRoles)
+      ? facts.secondaryRoles.map(stringValue).filter(Boolean)
+      : [];
+  const chosenStatus = stringValue(rawContext.chosenStatus) || stringValue(facts?.chosenStatus);
+  const authorityDirection = stringValue(rawContext.authorityDirection) || stringValue(facts?.authorityDirection);
+  const relationshipStatus = stringValue(rawContext.relationshipStatus) || stringValue(facts?.relationshipStatus);
+  const romantic = rawContext.romantic === true || facts?.romantic === true;
+
+  if (!primaryRole && secondaryRoles.length === 0 && !chosenStatus && !authorityDirection && !relationshipStatus && !romantic) {
+    return "";
+  }
+
+  return [
+    "RELATIONSHIP CONTEXT LOCK",
+    `Primary role: ${primaryRole || "unsupplied"}.`,
+    `Secondary roles: ${secondaryRoles.length ? secondaryRoles.join(", ") : "none supplied"}.`,
+    `Chosen status: ${chosenStatus || "unsupplied"}.`,
+    `Authority direction: ${authorityDirection || "unsupplied"}.`,
+    `Relationship status: ${relationshipStatus || "unsupplied"}.`,
+    `Romantic framing allowed: ${romantic ? "yes" : "no"}.`,
+    "Use the supplied relationship context as ordinary-life setting, not as a new aspect key.",
+    romantic
+      ? "Romantic language is allowed only because the relationship context explicitly permits it."
+      : "Do not use romantic, sexual, soulmate, marriage, dating, or reunion framing. Translate Venus, Mars, 5th, 7th, 8th, Pluto, and composite symbolism into the supplied nonromantic context.",
+    "Advice must fit the authority direction and chosen status. Do not tell someone to pursue closeness, repair, vulnerability, or confrontation beyond what this role can realistically hold."
+  ].join("\n");
 }
 
 function normalizePlanet(value: unknown): Planet | undefined {
@@ -2382,6 +2502,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
   }
 
   const bank = selectedSynastryExampleBank(input);
+  const contextInstruction = relationshipContextInstruction(input.facts);
 
   return [
     "SYNASTRY WRITING SYSTEM",
@@ -2394,6 +2515,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "Use names when supplied in ASTROLOGY FACTS. Be direct, specific, and human.",
     "Do not explain astrology mechanics in the body. The title already carries the chart label.",
     "Do not overstate fate, trauma, permanence, compatibility, or harm.",
+    contextInstruction,
     "",
     "STRUCTURE",
     "Open with the felt experience of being around this person.",
@@ -2461,6 +2583,7 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
   const exactDate = stringValue(facts.exactDate) || input.targetDate || "";
   const direction = stringValue(facts.direction);
   const orb = stringValue(facts.orb);
+  const relationshipContextRules = relationshipContextInstruction(facts);
 
   if (blockType.endsWith("_aspect")) {
     const commonRules = [
@@ -2562,6 +2685,7 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
         `Person B body sign: ${aspectSignB || "missing"}.`,
         `Person B body house: ${aspectHouseB || "missing"}.`,
         "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning.",
+        relationshipContextRules,
         "Write the body from the reader's lived experience of the other person's contact, not as abstract compatibility mechanics.",
         "Name the felt effect first, then the practical pattern, then one concrete move.",
         "Use one or two approved lived examples from the Synastry Writing System when they fit. Do not invent examples.",
@@ -2578,6 +2702,7 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
         `Composite sign B: ${aspectSignB || "missing"}.`,
         `Composite house B: ${aspectHouseB || "missing"}.`,
         "The pair is symmetric and reusable for the relationship's shared pattern. Do not write this as either person's natal wiring.",
+        relationshipContextRules,
         "Relationship voice kit is not final yet, so write direct plain relationship copy. No therapy-speak, no fate language, no soulmate language."
       ].join("\n");
     }
@@ -3140,23 +3265,11 @@ function lowerAspectDisplayLabel(value?: string) {
 
 function deterministicPlanetFunction(planet: string) {
   const key = comparableKey(planet);
-  const byPlanet: Record<string, string> = {
-    sun: "identity, confidence, vitality, and direction",
-    moon: "response, memory, protection, need, and the body signals that keep asking for attention",
-    mercury: "noticing, thinking, speaking, deciding, and making sense of what is happening",
-    venus: "value, affection, taste, loyalty, giving, receiving, and what feels worth keeping",
-    mars: "action, defense, pursuit, desire, anger, and the way a choice becomes movement",
-    jupiter: "belief, confidence, learning, judgment, and the desire to make meaning from experience",
-    saturn: "pressure, responsibility, limits, timing, discipline, and what has to become solid",
-    uranus: "disruption, distance, invention, refusal, and the need to break a pattern that has stopped working",
-    neptune: "longing, imagination, sensitivity, idealization, and the pull toward what cannot be fully proven",
-    pluto: "power, control, exposure, survival, and the places where something cannot stay buried",
-    chiron: "the sore point that keeps teaching you what needs care, skill, and language",
-    "north-node": "growth, appetite, risk, and the unfamiliar direction that keeps pulling you forward",
-    "south-node": "habit, memory, old skill, and the familiar pattern that can become too automatic"
-  };
+  const vocab = loadEmergencyVocab();
 
-  return byPlanet[key] ?? "attention, choice, and the way this part of the chart works";
+  return vocab.planetFunction?.[key]
+    ?? vocab.angleFunction?.[key]
+    ?? "attention, choice, and response";
 }
 
 function planetSubjectName(planet: string) {
@@ -3168,22 +3281,9 @@ function planetSubjectName(planet: string) {
 
 function deterministicSignExpression(sign: string) {
   const key = comparableKey(sign);
-  const bySign: Record<string, string> = {
-    aries: "directness, urgency, courage, and the need to act before everything is settled",
-    taurus: "steadiness, appetite, repetition, patience, and the need for something that can hold",
-    gemini: "language, movement, comparison, curiosity, and the need to keep the mind in motion",
-    cancer: "memory, protection, family patterning, and what feels personal enough to name",
-    leo: "warmth, pride, loyalty, style, and the desire to be seen clearly",
-    virgo: "precision, repair, usefulness, discernment, and the need to make the details work",
-    libra: "comparison, fairness, beauty, agreement, and the pressure of relationship",
-    scorpio: "intensity, privacy, focus, control, and the need to understand what is happening underneath",
-    sagittarius: "belief, distance, humor, study, risk, and the need to test a bigger meaning",
-    capricorn: "structure, consequence, ambition, restraint, and the need to build something real",
-    aquarius: "questions, pattern recognition, refusal, distance, and the ability to notice what a group is agreeing to before it understands the cost",
-    pisces: "porosity, imagination, surrender, compassion, and the difficulty of keeping a clean edge"
-  };
+  const vocab = loadEmergencyVocab();
 
-  return bySign[key] ?? "the sign's pattern, pace, and way of responding";
+  return vocab.signTone?.[key] ?? "a clear, present-tense";
 }
 
 function deterministicPlanetSentence(planet: string, sign: string) {
@@ -3226,105 +3326,37 @@ function deterministicPlanetSentence(planet: string, sign: string) {
 
 function deterministicHouseTopics(house: string) {
   const key = ordinalHouseKey(house);
-  const byHouse: Record<string, string> = {
-    "1": "presence, identity, body, and the first impression you make without trying",
-    "2": "money, possessions, appetite, self-worth, and what you are willing to keep or build",
-    "3": "speech, writing, siblings, neighbors, daily decisions, and the messages that move through ordinary life",
-    "4": "home, family, roots, privacy, and the emotional ground you return to",
-    "5": "pleasure, creativity, romance, children, risk, and the desire to make something that feels alive",
-    "6": "work habits, health, skill, maintenance, and the daily systems that either support or wear down the body",
-    "7": "partnership, conflict, negotiation, attraction, and the people who meet you directly",
-    "8": "shared money, debt, intimacy, trust, inheritance, and what becomes complicated once another person is involved",
-    "9": "study, belief, travel, teaching, publishing, religion, law, and the ideas that organize how you understand the world",
-    "10": "work, visibility, leadership, reputation, responsibility, and what other people can recognize about your direction",
-    "11": "friendship, audience, community, networks, hopes, and the groups or systems you move through",
-    "12": "privacy, retreat, dreams, grief, hidden patterns, and what is hard to explain in public"
-  };
+  const vocab = loadEmergencyVocab();
 
-  return byHouse[key] ?? "the part of life named by this house";
+  return vocab.houseArea?.[key] ?? "the part of life named by this house";
 }
 
 function deterministicShortPlanetAction(planet: string) {
-  const key = comparableKey(planet);
-  const byPlanet: Record<string, string> = {
-    sun: "identity and direction",
-    moon: "need and response",
-    mercury: "thought, speech, and decisions",
-    venus: "value, affection, and worth",
-    mars: "action, anger, and pursuit",
-    jupiter: "belief, confidence, and meaning",
-    saturn: "pressure, limits, and responsibility",
-    uranus: "disruption and refusal",
-    neptune: "longing and imagination",
-    pluto: "power and control",
-    chiron: "the sore point that needs language",
-    "north-node": "growth and appetite",
-    "south-node": "habit and memory"
-  };
-
-  return byPlanet[key] ?? "attention and choice";
+  return deterministicPlanetFunction(planet);
 }
 
 function deterministicShortSignStyle(sign: string) {
-  const key = comparableKey(sign);
-  const bySign: Record<string, string> = {
-    aries: "direct and urgent",
-    taurus: "steady and practical",
-    gemini: "curious and verbal",
-    cancer: "protective and personal",
-    leo: "warm and proud",
-    virgo: "precise and useful",
-    libra: "relational and fair-minded",
-    scorpio: "private and intense",
-    sagittarius: "restless and meaning-seeking",
-    capricorn: "structured and consequence-aware",
-    aquarius: "questioning and pattern-aware",
-    pisces: "sensitive and imaginal"
-  };
-
-  return bySign[key] ?? "specific";
+  return deterministicSignExpression(sign);
 }
 
 function deterministicShortHouseTopics(house: string) {
-  const key = ordinalHouseKey(house);
-  const byHouse: Record<string, string> = {
-    "1": "body and identity",
-    "2": "money, possessions, and self-worth",
-    "3": "speech, messages, siblings, and daily decisions",
-    "4": "home, family, and privacy",
-    "5": "pleasure, creativity, and risk",
-    "6": "work habits, health, and maintenance",
-    "7": "partnership and conflict",
-    "8": "shared money, debt, intimacy, and trust",
-    "9": "study, belief, travel, and teaching",
-    "10": "work, visibility, leadership, and responsibility",
-    "11": "friends, audience, community, and networks",
-    "12": "privacy, retreat, dreams, and hidden patterns"
-  };
-
-  return byHouse[key] ?? "this part of life";
+  return deterministicHouseTopics(house);
 }
 
 function deterministicAspectEffect(value?: string) {
   const aspect = canonicalAspectKey(value);
+  const behavior = loadEmergencyVocab().aspectBehavior?.[aspect];
 
-  if (aspect === "square") return "presses on";
-  if (aspect === "opposition") return "pulls against";
-  if (aspect === "trine") return "works with";
-  if (aspect === "sextile") return "opens a path for";
-  if (aspect === "conjunction") return "intensifies";
+  if (behavior) return behavior;
 
   return "changes";
 }
 
 function deterministicAspectPattern(value?: string) {
   const aspect = canonicalAspectKey(value);
+  const behavior = loadEmergencyVocab().aspectBehavior?.[aspect];
 
-  if (aspect === "square") return "The pattern can make the primary placement feel tested by consequence, timing, or resistance.";
-  if (aspect === "opposition") return "The pattern can make the primary placement meet itself through another person, demand, or exchange.";
-  if (aspect === "trine") return "The pattern can give the primary placement an easier channel, but it still needs to be used deliberately.";
-  if (aspect === "sextile") return "The pattern can make the primary placement more usable when attention turns into a concrete choice.";
-  if (aspect === "conjunction") return "The pattern can make the primary placement louder, more concentrated, and harder to ignore.";
+  if (behavior) return `${behavior.charAt(0).toUpperCase()}${behavior.slice(1)}.`;
 
   return "The pattern changes how the primary placement moves through the chart.";
 }
@@ -4434,6 +4466,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "Any source packet marked as business material is preserved for business/career-specific generation only. Do not include it in ordinary natal placement page copy.",
     "TECHNICAL ASPECT NOTES",
     "Use technical aspect notes only to preserve aspect accuracy and to keep aspect cards attached to the primary natal placement.",
+    "",
+    metaphorSpecificityRules(),
     "",
     "VOICE RULES",
     natalPlacementPrimitiveRules(),

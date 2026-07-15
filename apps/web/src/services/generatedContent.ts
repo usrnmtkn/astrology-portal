@@ -7,9 +7,18 @@ import {
 } from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
 import { isReaderFacingCopy } from "../content/readerSafety";
+import {
+  noProseSourceFiles,
+  servedFieldInstructionMarkers,
+  servedFieldInternalBlacklist,
+  servedFieldLabels,
+  servedFieldsContract,
+  type ServedFieldSurface
+} from "../content/servedFieldsContract";
 
 export type GeneratedContentMode = "feed" | "in_depth" | "article";
 export type GeneratedContentBlockType =
+  | "fallback_template"
   | "sign"
   | "house"
   | "ruler"
@@ -20,6 +29,11 @@ export type GeneratedContentBlockType =
   | "composite_aspect"
   | "synthesis"
   | "essay";
+
+export type GeneratedContentPreviewMode = "normal" | "emergency-floor" | "hide-emergency-floor";
+
+export const generatedContentPreviewModeStorageKey = "tldrastro:generatedContentPreviewMode";
+export const generatedContentPreviewModeChangeEvent = "tldrastro:generatedContentPreviewModeChange";
 
 export type LiveGeneratedContent = {
   id: string;
@@ -61,6 +75,66 @@ type GeneratedContentRow = {
   model: string | null;
   updated_at: string;
 };
+
+function isLocalGeneratedContentPreviewHost() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+}
+
+export function readGeneratedContentPreviewMode(): GeneratedContentPreviewMode {
+  if (!isLocalGeneratedContentPreviewHost()) {
+    return "normal";
+  }
+
+  try {
+    const override = new URL(window.location.href).searchParams.get("contentPreview");
+
+    if (override === "normal") {
+      window.localStorage.removeItem(generatedContentPreviewModeStorageKey);
+      return "normal";
+    }
+
+    if (override === "emergency-floor" || override === "hide-emergency-floor") {
+      window.localStorage.setItem(generatedContentPreviewModeStorageKey, override);
+      return override;
+    }
+  } catch {
+    // Fall through to the stored preview mode.
+  }
+
+  try {
+    const value = window.localStorage.getItem(generatedContentPreviewModeStorageKey);
+
+    if (value === "emergency-floor" || value === "hide-emergency-floor") {
+      return value;
+    }
+  } catch {
+    return "normal";
+  }
+
+  return "normal";
+}
+
+export function writeGeneratedContentPreviewMode(mode: GeneratedContentPreviewMode) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    if (mode === "normal") {
+      window.localStorage.removeItem(generatedContentPreviewModeStorageKey);
+    } else {
+      window.localStorage.setItem(generatedContentPreviewModeStorageKey, mode);
+    }
+  } catch {
+    // Keep the in-memory UI usable when localStorage is unavailable.
+  }
+
+  window.dispatchEvent(new Event(generatedContentPreviewModeChangeEvent));
+}
 
 export type GeneratedContentSection = {
   heading: string;
@@ -124,7 +198,7 @@ function interpolateSections(
 function shouldInterpolateGeneratedContent(content: LiveGeneratedContent) {
   const contentType = content.sourceSnapshot?.contentType;
 
-  return contentType === "template" || contentType === "synastry-kb-seed";
+  return contentType === "template" || contentType === "mustache-template" || contentType === "synastry-kb-seed";
 }
 
 function hasGeneratedContentTemplateSlots(content: LiveGeneratedContent) {
@@ -174,6 +248,153 @@ function hasReaderSafeRenderedTemplateOutput(content: LiveGeneratedContent) {
   ].some((value) => isReaderFacingCopy(value));
 }
 
+function sourceFileStem(value: unknown) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value
+    .split("/")
+    .pop()
+    ?.replace(/\.json$/i, "")
+    .trim()
+    ?? "";
+}
+
+function generatedContentSourceFileStem(content?: LiveGeneratedContent | null) {
+  const sourceSnapshot = content?.sourceSnapshot ?? {};
+  const fields = [
+    sourceSnapshot.record_file,
+    sourceSnapshot.recordFile,
+    sourceSnapshot.file,
+    sourceSnapshot.sourceFile
+  ];
+
+  for (const field of fields) {
+    const stem = sourceFileStem(field);
+
+    if (stem) {
+      return stem;
+    }
+  }
+
+  return "";
+}
+
+function generatedContentServedSurface(content: LiveGeneratedContent): ServedFieldSurface {
+  if (content.surface === "sky") {
+    return "sky";
+  }
+
+  if (content.contentKey.includes("horoscope") || content.eventType?.includes("horoscope")) {
+    return "horoscope";
+  }
+
+  return "natal";
+}
+
+function servedFieldValue(record: Record<string, unknown>, path: string) {
+  const parts = path.split(".");
+  let value: unknown = record;
+
+  for (const part of parts) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return "";
+    }
+
+    value = (value as Record<string, unknown>)[part];
+  }
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function servedFieldNamesForContent(content: LiveGeneratedContent) {
+  const file = generatedContentSourceFileStem(content);
+  const spec = servedFieldsContract[file];
+
+  if (!spec) {
+    return [];
+  }
+
+  return [
+    ...(spec.readerBySurface?.[generatedContentServedSurface(content)] ?? []),
+    ...(spec.reader ?? []),
+    ...(spec.extras ?? [])
+  ];
+}
+
+function servedFieldSections(content: LiveGeneratedContent): GeneratedContentSection[] {
+  const sections = content.sections;
+
+  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
+    return [];
+  }
+
+  const record = sections as Record<string, unknown>;
+
+  return servedFieldNamesForContent(content).flatMap((field) => {
+    if (servedFieldInternalBlacklist.has(field)) {
+      return [];
+    }
+
+    const body = repairGeneratedParagraph(servedFieldValue(record, field));
+
+    if (!body || !isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
+      return [];
+    }
+
+    return [{
+      heading: servedFieldLabels[field] ?? "",
+      body
+    }];
+  });
+}
+
+function isNoProseGeneratedContent(content: LiveGeneratedContent) {
+  return noProseSourceFiles.has(generatedContentSourceFileStem(content));
+}
+
+function containsSingleBraceSlot(value: string) {
+  return /(?<!\{)\{[A-Za-z][^{}\n]{0,80}\}(?!\})/.test(value);
+}
+
+function containsInstructionMarker(value: string) {
+  const normalized = value.toLowerCase();
+
+  return servedFieldInstructionMarkers.some((marker) => normalized.includes(marker.toLowerCase()));
+}
+
+function isReaderServableGeneratedContent(content: LiveGeneratedContent) {
+  if (isNoProseGeneratedContent(content)) {
+    return false;
+  }
+
+  const arraySectionBodies = Array.isArray(content.sections)
+    ? content.sections.flatMap((section) => {
+      if (!section || typeof section !== "object") return [];
+      const body = (section as Record<string, unknown>).body;
+      return typeof body === "string" ? [body] : [];
+    })
+    : [];
+  const visibleText = [
+    content.headline,
+    content.summary,
+    content.body,
+    ...servedFieldSections(content).map((section) => section.body),
+    ...arraySectionBodies
+  ].filter(Boolean).join("\n");
+
+  if (containsInstructionMarker(visibleText)) {
+    return false;
+  }
+
+  if (content.blockType === "fallback_template" && containsSingleBraceSlot(visibleText)) {
+    return false;
+  }
+
+  return true;
+}
+
 function fromRow(
   row: GeneratedContentRow
 ): LiveGeneratedContent {
@@ -216,10 +437,10 @@ export function renderGeneratedContentTemplate(
     return null;
   }
 
-  if (
-    content.sourceSnapshot?.contentType === "template"
-    && hasMissingGeneratedContentTemplateSlots(content, slots)
-  ) {
+  const requiresAllTemplateSlots = content.sourceSnapshot?.contentType === "template"
+    || content.sourceSnapshot?.contentType === "mustache-template";
+
+  if (requiresAllTemplateSlots && hasMissingGeneratedContentTemplateSlots(content, slots)) {
     return null;
   }
 
@@ -266,7 +487,7 @@ export function renderGeneratedContentTemplate(
     sections
   };
 
-  if (content.sourceSnapshot?.contentType === "template") {
+  if (requiresAllTemplateSlots) {
     if (hasUnresolvedTemplateSlots(rendered) || !hasReaderSafeRenderedTemplateOutput(rendered)) {
       return null;
     }
@@ -296,16 +517,67 @@ function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: 
   return false;
 }
 
+function generatedRowSourceType(row: Pick<GeneratedContentRow, "source_snapshot">) {
+  const sourceSnapshot = row.source_snapshot && typeof row.source_snapshot === "object"
+    ? row.source_snapshot as Record<string, unknown>
+    : null;
+  const sourceType = typeof sourceSnapshot?.sourceType === "string" ? sourceSnapshot.sourceType : "";
+
+  return sourceType;
+}
+
+function isEmergencyFloorContentKey(contentKey: string) {
+  return contentKey.startsWith("fallback-hook/")
+    || contentKey.startsWith("slot-template/")
+    || contentKey.startsWith("vocab/")
+    || contentKey.startsWith("fallback-vocab/")
+    || contentKey.startsWith("guide-phrase/");
+}
+
+function isEmergencyFloorGeneratedRow(row: Pick<GeneratedContentRow, "content_key" | "event_type" | "block_type" | "source_snapshot">) {
+  const sourceSnapshot = row.source_snapshot && typeof row.source_snapshot === "object"
+    ? row.source_snapshot as Record<string, unknown>
+    : null;
+
+  return sourceSnapshot?.servingFloor === true
+    || sourceSnapshot?.emergencyFloor === true
+    || isEmergencyFloorContentKey(row.content_key)
+    || row.event_type === "fallback-hook"
+    || row.event_type === "vocabulary"
+    || row.block_type === "fallback_template";
+}
+
+function isLegacyLiveWritingRow(row: Pick<GeneratedContentRow, "content_key" | "provider" | "source_snapshot">) {
+  if (isEmergencyFloorContentKey(row.content_key)) {
+    return false;
+  }
+
+  const sourceType = generatedRowSourceType(row);
+
+  return row.provider === "local-normalized-dashboard-source"
+    || sourceType === "normalized-dashboard-source"
+    || sourceType === "source-grounded-generated-snapshot";
+}
+
 export function generatedContentParagraphs(content?: LiveGeneratedContent | null) {
+  if (content && isNoProseGeneratedContent(content)) {
+    return [];
+  }
+
+  const servedSections = content ? servedFieldSections(content) : [];
+
+  if (servedSections.length > 0) {
+    return readerUniqueParagraphs(servedSections.map((section) => section.body));
+  }
+
   if (!content?.body) {
     return [];
   }
 
-  return content.body
+  return readerUniqueParagraphs(content.body
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
-    .map(repairGeneratedParagraph)
-    .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph) && !containsBlockedScaffoldCopy(paragraph));
+    .map(repairGeneratedParagraph));
 }
 
 const blockedScaffoldCopyPatterns = [
@@ -323,6 +595,28 @@ const blockedScaffoldCopyPatterns = [
 
 function containsBlockedScaffoldCopy(text: string) {
   return blockedScaffoldCopyPatterns.some((pattern) => pattern.test(text));
+}
+
+function readerUniqueParagraphs(values: string[]) {
+  const seen = new Set<string>();
+
+  return values.filter((value) => {
+    const paragraph = value.trim();
+    const normalized = paragraph.replace(/\s+/g, " ").toLowerCase();
+
+    if (
+      !paragraph
+      || seen.has(normalized)
+      || !isReaderFacingCopy(paragraph)
+      || containsBlockedScaffoldCopy(paragraph)
+      || containsInstructionMarker(paragraph)
+    ) {
+      return false;
+    }
+
+    seen.add(normalized);
+    return true;
+  });
 }
 
 function repairGeneratedParagraph(text: string) {
@@ -365,6 +659,16 @@ function normalizeSection(value: unknown): GeneratedContentSection | null {
 }
 
 export function generatedContentSections(content?: LiveGeneratedContent | null): GeneratedContentSection[] {
+  if (!content || isNoProseGeneratedContent(content)) {
+    return [];
+  }
+
+  const contractSections = servedFieldSections(content);
+
+  if (contractSections.length > 0) {
+    return contractSections;
+  }
+
   const sections = content?.sections;
 
   if (Array.isArray(sections)) {
@@ -452,37 +756,73 @@ export async function loadLiveGeneratedContentForSurfaces(
     return new Map<string, LiveGeneratedContent>();
   }
 
-  const surfaces = Array.from(new Set([...requestedSurfaces, "modifier"]));
-  let query = supabase
-    .from("generated_interpretations")
-    .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
-    .in("surface", surfaces)
-    .eq("status", "LIVE")
-    .eq("lane", "serving")
-    .is("review_state", null)
-    .order("updated_at", { ascending: false });
+  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
+  const surfaces = Array.from(new Set([
+    ...requestedSurfaces,
+    "modifier",
+    ...(includeSharedTransitFloor ? ["you"] : [])
+  ]));
+  const rows: GeneratedContentRow[] = [];
+  const pageSize = 1000;
 
-  if (targetDate && !requestedSurfaces.includes("sky")) {
-    query = query.or(`target_date.is.null,target_date.eq.${targetDate}`);
-  }
+  for (let page = 0; page < 10; page += 1) {
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+    let query = supabase
+      .from("generated_interpretations")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, model, updated_at")
+      .in("surface", surfaces)
+      .eq("status", "LIVE")
+      .eq("lane", "serving")
+      .is("review_state", null)
+      .order("updated_at", { ascending: false })
+      .range(from, to);
 
-  const { data, error } = await query.returns<GeneratedContentRow[]>();
+    if (targetDate && !requestedSurfaces.includes("sky")) {
+      query = query.or(`target_date.is.null,target_date.eq.${targetDate}`);
+    }
 
-  if (error) {
-    console.warn("Live generated content failed to load; unpublished content will remain hidden.", error);
-    return new Map<string, LiveGeneratedContent>();
+    const { data, error } = await query.returns<GeneratedContentRow[]>();
+
+    if (error) {
+      console.warn("Live generated content failed to load; unpublished content will remain hidden.", error);
+      return new Map<string, LiveGeneratedContent>();
+    }
+
+    rows.push(...(data ?? []));
+
+    if (!data || data.length < pageSize) {
+      break;
+    }
   }
 
   const byKey = new Map<string, LiveGeneratedContent>();
+  const previewMode = readGeneratedContentPreviewMode();
 
-  for (const row of data ?? []) {
+  for (const row of rows) {
     if (!isReaderServableGeneratedContentRow(row)) {
+      continue;
+    }
+
+    const emergencyFloorRow = isEmergencyFloorGeneratedRow(row);
+
+    if (previewMode === "emergency-floor" && !emergencyFloorRow) {
+      continue;
+    }
+
+    if (previewMode === "hide-emergency-floor" && emergencyFloorRow) {
       continue;
     }
 
     const content = fromRow(row);
 
-    if (!byKey.has(row.content_key)) {
+    if (!isReaderServableGeneratedContent(content)) {
+      continue;
+    }
+
+    const existingForExactKey = byKey.get(row.content_key);
+
+    if (!existingForExactKey || existingForExactKey.contentKey !== row.content_key) {
       byKey.set(row.content_key, content);
     }
 
@@ -501,12 +841,52 @@ export async function loadLiveGeneratedContentForSurfaces(
 }
 
 export function isReaderServableGeneratedContentRow(
-  row: Pick<GeneratedContentRow, "facts" | "flags"> & { status?: string | null; lane?: string | null; review_state?: string | null }
+  row: Pick<GeneratedContentRow, "content_key" | "facts" | "flags" | "provider" | "source_snapshot"> & {
+    status?: string | null;
+    lane?: string | null;
+    review_state?: string | null;
+    headline?: string | null;
+    summary?: string | null;
+    body?: string | null;
+    sections?: unknown;
+  }
 ) {
   const facts = row.facts && typeof row.facts === "object" ? row.facts : {};
   const store = facts.tldrStore && typeof facts.tldrStore === "object"
     ? facts.tldrStore as Record<string, unknown>
     : null;
+  const metadataText = [
+    row.content_key,
+    row.provider,
+    JSON.stringify(row.source_snapshot ?? {}),
+    JSON.stringify(facts ?? {}),
+    ...(Array.isArray(row.flags) ? row.flags : [])
+  ].join(" ").toLowerCase();
+  const copyValues = [
+    row.headline,
+    row.summary,
+    row.body,
+    typeof row.sections === "string" ? row.sections : JSON.stringify(row.sections ?? {})
+  ];
+  const unsafeMetadataMarkers = [
+    "legacy",
+    "unsafe",
+    "directional",
+    "editorial-only",
+    "editorial_only",
+    "superseded",
+    "source-grounded",
+    "source_grounded",
+    "local-normalized-dashboard-source",
+    "revoice-pending",
+    "revoice_pending",
+    "reference-only",
+    "raw_quarantine"
+  ];
+
+  if (row.content_key.startsWith("cc/fallback")) return false;
+  if (unsafeMetadataMarkers.some((marker) => metadataText.includes(marker))) return false;
+  if (copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
 
   if (!store) {
     return true;
@@ -516,14 +896,19 @@ export function isReaderServableGeneratedContentRow(
     ...(Array.isArray(row.flags) ? row.flags : []),
     ...(Array.isArray(store.flags) ? store.flags.map(String) : [])
   ]);
-  const lane = row.lane ?? (typeof store.lane === "string" ? store.lane : null);
-  const review = row.review_state ?? (typeof store.review === "string" ? store.review : null);
+  const lane = row.lane === undefined
+    ? (typeof store.lane === "string" ? store.lane : null)
+    : row.lane;
+  const review = row.review_state === undefined
+    ? (typeof store.review === "string" ? store.review : null)
+    : row.review_state;
   const sourceStatus = typeof store.sourceStatus === "string" ? store.sourceStatus : null;
 
   if (row.status && row.status !== "LIVE") return false;
   if (lane && lane !== "serving") return false;
   if (review) return false;
   if (sourceStatus && ["REFERENCE_ONLY", "RAW_QUARANTINE", "MANUAL_ONLY", "DEPRECATED"].includes(sourceStatus)) return false;
+  if (isLegacyLiveWritingRow(row)) return false;
   if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM")) return false;
   if (flags.has("PARAPHRASE_PENDING")) return false;
   if (flags.has("BLOCKLIST_MATCH")) return false;

@@ -13,6 +13,7 @@ from tldrastro_api.models import (
 )
 from tldrastro_api.services.chart import (
     ASPECT_DEFINITIONS,
+    CANONICAL_HOUSE_SYSTEM,
     angular_separation,
     aspect_orbs,
     julian_day_for,
@@ -229,7 +230,7 @@ def calculate_transits(request: TransitChartRequest) -> TransitChartResponse:
 
     return TransitChartResponse(
         metadata=ChartMetadata(
-            houseSystem=request.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=warnings,

@@ -1,0 +1,1205 @@
+{
+ "tier": "REVIEWED",
+ "reviewed": [
+  {
+   "id": "cc/horoscope/sun-1",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 1,
+   "title": "Sun through your 1st house",
+   "paragraphs": [
+    "The Sun is moving through your 1st house for about a month, so you, your body, and how you start things come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 1,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/1"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-2",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 2,
+   "title": "Sun through your 2nd house",
+   "paragraphs": [
+    "The Sun is moving through your 2nd house for about a month, so money, worth, spending, and security come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 2,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/2"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-3",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 3,
+   "title": "Sun through your 3rd house",
+   "paragraphs": [
+    "The Sun is moving through your 3rd house for about a month, so communication, errands, learning, and your local world come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 3,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/3"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-4",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 4,
+   "title": "Sun through your 4th house",
+   "paragraphs": [
+    "The Sun is moving through your 4th house for about a month, so home, family, and your private life come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 4,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/4"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-5",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 5,
+   "title": "Sun through your 5th house",
+   "paragraphs": [
+    "The Sun is moving through your 5th house for about a month, so romance, creativity, play, and what you do for fun come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 5,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/5"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-6",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 6,
+   "title": "Sun through your 6th house",
+   "paragraphs": [
+    "The Sun is moving through your 6th house for about a month, so work, health, and daily routines come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 6,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/6"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-7",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 7,
+   "title": "Sun through your 7th house",
+   "paragraphs": [
+    "The Sun is moving through your 7th house for about a month, so partnership and your closest one-to-one dealings come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 7,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/7"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-8",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 8,
+   "title": "Sun through your 8th house",
+   "paragraphs": [
+    "The Sun is moving through your 8th house for about a month, so shared money, intimacy, and the things you don't say out loud come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 8,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/8"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-9",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 9,
+   "title": "Sun through your 9th house",
+   "paragraphs": [
+    "The Sun is moving through your 9th house for about a month, so travel, study, beliefs, and the bigger picture come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 9,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/9"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-10",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 10,
+   "title": "Sun through your 10th house",
+   "paragraphs": [
+    "The Sun is moving through your 10th house for about a month, so career, reputation, and where you're headed in public come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 10,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/10"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-11",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 11,
+   "title": "Sun through your 11th house",
+   "paragraphs": [
+    "The Sun is moving through your 11th house for about a month, so friends, groups, and the future you're building toward come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 11,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/11"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/sun-12",
+   "kind": "planetary_horoscope",
+   "planet": "sun",
+   "house": 12,
+   "title": "Sun through your 12th house",
+   "paragraphs": [
+    "The Sun is moving through your 12th house for about a month, so rest, reflection, and what happens behind the scenes come into focus. Your attention, energy, and confidence gather here.",
+    "A good use of it: put yourself and your energy where they count in this area."
+   ],
+   "trace": {
+    "planet": "sun",
+    "house": 12,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/sun",
+     "cc/house/12"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-1",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 1,
+   "title": "Moon through your 1st house",
+   "paragraphs": [
+    "The Moon is moving through your 1st house for a day or two, so you, your body, and how you start things come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 1,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/1"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-2",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 2,
+   "title": "Moon through your 2nd house",
+   "paragraphs": [
+    "The Moon is moving through your 2nd house for a day or two, so money, worth, spending, and security come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 2,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/2"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-3",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 3,
+   "title": "Moon through your 3rd house",
+   "paragraphs": [
+    "The Moon is moving through your 3rd house for a day or two, so communication, errands, learning, and your local world come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 3,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/3"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-4",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 4,
+   "title": "Moon through your 4th house",
+   "paragraphs": [
+    "The Moon is moving through your 4th house for a day or two, so home, family, and your private life come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 4,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/4"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-5",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 5,
+   "title": "Moon through your 5th house",
+   "paragraphs": [
+    "The Moon is moving through your 5th house for a day or two, so romance, creativity, play, and what you do for fun come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 5,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/5"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-6",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 6,
+   "title": "Moon through your 6th house",
+   "paragraphs": [
+    "The Moon is moving through your 6th house for a day or two, so work, health, and daily routines come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 6,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/6"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-7",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 7,
+   "title": "Moon through your 7th house",
+   "paragraphs": [
+    "The Moon is moving through your 7th house for a day or two, so partnership and your closest one-to-one dealings come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 7,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/7"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-8",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 8,
+   "title": "Moon through your 8th house",
+   "paragraphs": [
+    "The Moon is moving through your 8th house for a day or two, so shared money, intimacy, and the things you don't say out loud come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 8,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/8"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-9",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 9,
+   "title": "Moon through your 9th house",
+   "paragraphs": [
+    "The Moon is moving through your 9th house for a day or two, so travel, study, beliefs, and the bigger picture come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 9,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/9"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-10",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 10,
+   "title": "Moon through your 10th house",
+   "paragraphs": [
+    "The Moon is moving through your 10th house for a day or two, so career, reputation, and where you're headed in public come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 10,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/10"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-11",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 11,
+   "title": "Moon through your 11th house",
+   "paragraphs": [
+    "The Moon is moving through your 11th house for a day or two, so friends, groups, and the future you're building toward come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 11,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/11"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/moon-12",
+   "kind": "planetary_horoscope",
+   "planet": "moon",
+   "house": 12,
+   "title": "Moon through your 12th house",
+   "paragraphs": [
+    "The Moon is moving through your 12th house for a day or two, so rest, reflection, and what happens behind the scenes come into focus. Your mood and needs pass through here.",
+    "A good use of it: tend to how you feel here, then let it move on."
+   ],
+   "trace": {
+    "planet": "moon",
+    "house": 12,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/moon",
+     "cc/house/12"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-1",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 1,
+   "title": "Mercury through your 1st house",
+   "paragraphs": [
+    "Mercury is moving through your 1st house for a couple of weeks, so you, your body, and how you start things come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 1,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/1"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-2",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 2,
+   "title": "Mercury through your 2nd house",
+   "paragraphs": [
+    "Mercury is moving through your 2nd house for a couple of weeks, so money, worth, spending, and security come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 2,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/2"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-3",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 3,
+   "title": "Mercury through your 3rd house",
+   "paragraphs": [
+    "Mercury is moving through your 3rd house for a couple of weeks, so communication, errands, learning, and your local world come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 3,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/3"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-4",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 4,
+   "title": "Mercury through your 4th house",
+   "paragraphs": [
+    "Mercury is moving through your 4th house for a couple of weeks, so home, family, and your private life come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 4,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/4"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-5",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 5,
+   "title": "Mercury through your 5th house",
+   "paragraphs": [
+    "Mercury is moving through your 5th house for a couple of weeks, so romance, creativity, play, and what you do for fun come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 5,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/5"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-6",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 6,
+   "title": "Mercury through your 6th house",
+   "paragraphs": [
+    "Mercury is moving through your 6th house for a couple of weeks, so work, health, and daily routines come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 6,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/6"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-7",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 7,
+   "title": "Mercury through your 7th house",
+   "paragraphs": [
+    "Mercury is moving through your 7th house for a couple of weeks, so partnership and your closest one-to-one dealings come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 7,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/7"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-8",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 8,
+   "title": "Mercury through your 8th house",
+   "paragraphs": [
+    "Mercury is moving through your 8th house for a couple of weeks, so shared money, intimacy, and the things you don't say out loud come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 8,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/8"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-9",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 9,
+   "title": "Mercury through your 9th house",
+   "paragraphs": [
+    "Mercury is moving through your 9th house for a couple of weeks, so travel, study, beliefs, and the bigger picture come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 9,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/9"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-10",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 10,
+   "title": "Mercury through your 10th house",
+   "paragraphs": [
+    "Mercury is moving through your 10th house for a couple of weeks, so career, reputation, and where you're headed in public come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 10,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/10"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-11",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 11,
+   "title": "Mercury through your 11th house",
+   "paragraphs": [
+    "Mercury is moving through your 11th house for a couple of weeks, so friends, groups, and the future you're building toward come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 11,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/11"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mercury-12",
+   "kind": "planetary_horoscope",
+   "planet": "mercury",
+   "house": 12,
+   "title": "Mercury through your 12th house",
+   "paragraphs": [
+    "Mercury is moving through your 12th house for a couple of weeks, so rest, reflection, and what happens behind the scenes come into focus. Your thinking, talking, and errands center here.",
+    "A good use of it: handle the conversations, messages, and details in this area."
+   ],
+   "trace": {
+    "planet": "mercury",
+    "house": 12,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mercury",
+     "cc/house/12"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-1",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 1,
+   "title": "Venus through your 1st house",
+   "paragraphs": [
+    "Venus is moving through your 1st house for a few weeks, so you, your body, and how you start things come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 1,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/1"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-2",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 2,
+   "title": "Venus through your 2nd house",
+   "paragraphs": [
+    "Venus is moving through your 2nd house for a few weeks, so money, worth, spending, and security come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 2,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/2"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-3",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 3,
+   "title": "Venus through your 3rd house",
+   "paragraphs": [
+    "Venus is moving through your 3rd house for a few weeks, so communication, errands, learning, and your local world come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 3,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/3"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-4",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 4,
+   "title": "Venus through your 4th house",
+   "paragraphs": [
+    "Venus is moving through your 4th house for a few weeks, so home, family, and your private life come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 4,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/4"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-5",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 5,
+   "title": "Venus through your 5th house",
+   "paragraphs": [
+    "Venus is moving through your 5th house for a few weeks, so romance, creativity, play, and what you do for fun come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 5,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/5"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-6",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 6,
+   "title": "Venus through your 6th house",
+   "paragraphs": [
+    "Venus is moving through your 6th house for a few weeks, so work, health, and daily routines come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 6,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/6"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-7",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 7,
+   "title": "Venus through your 7th house",
+   "paragraphs": [
+    "Venus is moving through your 7th house for a few weeks, so partnership and your closest one-to-one dealings come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 7,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/7"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-8",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 8,
+   "title": "Venus through your 8th house",
+   "paragraphs": [
+    "Venus is moving through your 8th house for a few weeks, so shared money, intimacy, and the things you don't say out loud come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 8,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/8"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-9",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 9,
+   "title": "Venus through your 9th house",
+   "paragraphs": [
+    "Venus is moving through your 9th house for a few weeks, so travel, study, beliefs, and the bigger picture come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 9,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/9"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-10",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 10,
+   "title": "Venus through your 10th house",
+   "paragraphs": [
+    "Venus is moving through your 10th house for a few weeks, so career, reputation, and where you're headed in public come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 10,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/10"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-11",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 11,
+   "title": "Venus through your 11th house",
+   "paragraphs": [
+    "Venus is moving through your 11th house for a few weeks, so friends, groups, and the future you're building toward come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 11,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/11"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/venus-12",
+   "kind": "planetary_horoscope",
+   "planet": "venus",
+   "house": 12,
+   "title": "Venus through your 12th house",
+   "paragraphs": [
+    "Venus is moving through your 12th house for a few weeks, so rest, reflection, and what happens behind the scenes come into focus. Warmth, pleasure, and what you value settle here.",
+    "A good use of it: connect, enjoy, and smooth things over in this area."
+   ],
+   "trace": {
+    "planet": "venus",
+    "house": 12,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/venus",
+     "cc/house/12"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-1",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 1,
+   "title": "Mars through your 1st house",
+   "paragraphs": [
+    "Mars is moving through your 1st house for about six weeks, so you, your body, and how you start things come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 1,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/1"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-2",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 2,
+   "title": "Mars through your 2nd house",
+   "paragraphs": [
+    "Mars is moving through your 2nd house for about six weeks, so money, worth, spending, and security come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 2,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/2"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-3",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 3,
+   "title": "Mars through your 3rd house",
+   "paragraphs": [
+    "Mars is moving through your 3rd house for about six weeks, so communication, errands, learning, and your local world come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 3,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/3"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-4",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 4,
+   "title": "Mars through your 4th house",
+   "paragraphs": [
+    "Mars is moving through your 4th house for about six weeks, so home, family, and your private life come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 4,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/4"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-5",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 5,
+   "title": "Mars through your 5th house",
+   "paragraphs": [
+    "Mars is moving through your 5th house for about six weeks, so romance, creativity, play, and what you do for fun come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 5,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/5"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-6",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 6,
+   "title": "Mars through your 6th house",
+   "paragraphs": [
+    "Mars is moving through your 6th house for about six weeks, so work, health, and daily routines come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 6,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/6"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-7",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 7,
+   "title": "Mars through your 7th house",
+   "paragraphs": [
+    "Mars is moving through your 7th house for about six weeks, so partnership and your closest one-to-one dealings come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 7,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/7"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-8",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 8,
+   "title": "Mars through your 8th house",
+   "paragraphs": [
+    "Mars is moving through your 8th house for about six weeks, so shared money, intimacy, and the things you don't say out loud come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 8,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/8"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-9",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 9,
+   "title": "Mars through your 9th house",
+   "paragraphs": [
+    "Mars is moving through your 9th house for about six weeks, so travel, study, beliefs, and the bigger picture come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 9,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/9"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-10",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 10,
+   "title": "Mars through your 10th house",
+   "paragraphs": [
+    "Mars is moving through your 10th house for about six weeks, so career, reputation, and where you're headed in public come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 10,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/10"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-11",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 11,
+   "title": "Mars through your 11th house",
+   "paragraphs": [
+    "Mars is moving through your 11th house for about six weeks, so friends, groups, and the future you're building toward come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 11,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/11"
+    ]
+   }
+  },
+  {
+   "id": "cc/horoscope/mars-12",
+   "kind": "planetary_horoscope",
+   "planet": "mars",
+   "house": 12,
+   "title": "Mars through your 12th house",
+   "paragraphs": [
+    "Mars is moving through your 12th house for about six weeks, so rest, reflection, and what happens behind the scenes come into focus. Your drive and initiative fire up here.",
+    "A good use of it: act, push, and start things in this area, and watch for friction."
+   ],
+   "trace": {
+    "planet": "mars",
+    "house": 12,
+    "readerAuthority": "composed-reviewed",
+    "sourceKeys": [
+     "cc/planet/mars",
+     "cc/house/12"
+    ]
+   }
+  }
+ ]
+}

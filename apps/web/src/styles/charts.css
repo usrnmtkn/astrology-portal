@@ -170,6 +170,18 @@
   text-anchor: middle;
 }
 
+.chart-house-system-label {
+  fill: var(--wheel-label);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-anchor: middle;
+  text-transform: uppercase;
+  opacity: 0.82;
+  pointer-events: none;
+}
+
 .planet-glyph {
   fill: var(--chart-glyph);
   font-family: var(--font-glyph);

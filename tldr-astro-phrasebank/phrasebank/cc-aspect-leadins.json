@@ -1,0 +1,57 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Aspect-section lead-ins (5K supportive/challenging aspects paragraph).",
+  "count": 2
+ },
+ "reviewed": [
+  {
+   "content_key": "cc/aspect-leadin/supportive",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The easier contacts to this placement give it support to lean on:",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "valence": "supportive"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/aspect-leadin/challenging",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "The harder contacts to this placement are where it gets tested and, over time, built:",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "valence": "challenging"
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

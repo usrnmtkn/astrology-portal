@@ -1,0 +1,204 @@
+{
+ "version": "served-fields-v1",
+ "note": "Reader-facing field whitelist per file (render in order). Everything in internal_blacklist must NEVER render. Files in no_prose have no clean served prose; their surfaces serve from the floor / a clean sibling. TLDR pill = a short derived summary shown ONCE; body = the reader fields; footer = astro. Never repeat a field across TLDR and body.",
+ "contract": {
+  "cc-natal-aspect": {
+   "reader": [
+    "experience",
+    "guidance",
+    "note"
+   ],
+   "footer": "astro",
+   "surfaces": [
+    "you.natal_aspect",
+    "natal.aspect"
+   ]
+  },
+  "cc-aspect-pair-reviewed": {
+   "reader": [
+    "expanded_narrative"
+   ],
+   "footer": null,
+   "extras": [
+    "pull_quote.text",
+    "marie_advice.text"
+   ],
+   "surfaces": [
+    "you.transit_to_natal",
+    "sky.aspect"
+   ]
+  },
+  "cc-planet-in-sign-reviewed": {
+   "reader_by_surface": {
+    "natal": [
+     "natal_sign_story"
+    ],
+    "sky": [
+     "collective_shift"
+    ]
+   },
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement",
+    "sky.planet_sign"
+   ]
+  },
+  "cc-planet-in-house-reviewed": {
+   "reader_by_surface": {
+    "natal": [
+     "house_integration"
+    ],
+    "horoscope": [
+     "home_scene"
+    ]
+   },
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement",
+    "home.planetary_horoscope"
+   ]
+  },
+  "cc-composite-typed": {
+   "reader": [
+    "meaning",
+    "experience",
+    "advice"
+   ],
+   "footer": "astro",
+   "surfaces": [
+    "friends.composite"
+   ]
+  },
+  "cc-composite-aspect": {
+   "reader": [
+    "experience",
+    "guidance",
+    "note"
+   ],
+   "footer": "astro",
+   "surfaces": [
+    "friends.composite_aspect"
+   ]
+  },
+  "cc-natal-angles-authored": {
+   "reader": [
+    "reading"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_angle"
+   ]
+  },
+  "cc-sky-points-authored": {
+   "reader": [
+    "collective_reading"
+   ],
+   "footer": null,
+   "surfaces": [
+    "sky.point_placement"
+   ]
+  },
+  "cc-dignity-paragraphs": {
+   "reader": [
+    "body"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement.dignity"
+   ]
+  },
+  "cc-ruler-bridge": {
+   "reader": [
+    "body"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement.ruler"
+   ]
+  },
+  "cc-natal-retrograde-authored": {
+   "reader": [
+    "text"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement.retro"
+   ]
+  },
+  "cc-sect-paragraphs": {
+   "reader": [
+    "body"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement.sect"
+   ]
+  },
+  "cc-aspect-leadins": {
+   "reader": [
+    "body"
+   ],
+   "footer": null,
+   "surfaces": [
+    "me.natal_placement.aspects"
+   ]
+  }
+ },
+ "internal_blacklist": [
+  "angle",
+  "aspect",
+  "astro",
+  "body",
+  "canonical_aspect",
+  "compose_note",
+  "doctrine_source",
+  "eyebrow",
+  "fields",
+  "house",
+  "house_domain",
+  "id",
+  "kind",
+  "originalityCheck",
+  "pair",
+  "recommended_long_template",
+  "recommended_short_template",
+  "relationshipType",
+  "requires_birth_time",
+  "review_note",
+  "revoice_version",
+  "sign",
+  "slots",
+  "source_keys",
+  "status",
+  "surface",
+  "surfaces",
+  "template_family",
+  "their_body",
+  "title",
+  "tone_version",
+  "trace",
+  "typeLabel",
+  "valence",
+  "your_body"
+ ],
+ "no_prose_files": {
+  "cc-natal-angle-reviewed": "angle placements -> serve cc-natal-angles-authored (48 authored readings)",
+  "cc-planetary-horoscope": "planetary horoscope -> serve cc-planet-in-house-reviewed.home_scene",
+  "cc-composite-reviewed": "composite placements -> serve cc-composite-typed",
+  "cc-synastry-reviewed": "synastry -> serve authored-content synastry (floor)"
+ },
+ "instruction_markers": [
+  "entries are ordered",
+  "do not apply",
+  "factual context when no reviewed",
+  "needs Marie",
+  "needs editorial",
+  "decomposed to slots",
+  "prohibited seams cleared",
+  "combine with ms/",
+  "recommended_",
+  "template_family",
+  "revoice_version",
+  "tone_version"
+ ]
+}

@@ -1,0 +1,509 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Sect paragraph per planet in/out of sect (5K sect_paragraph).",
+  "count": 20
+ },
+ "reviewed": [
+  {
+   "content_key": "cc/sect/sun/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/sun/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Sun is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "sun",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/moon/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/moon/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Moon is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "moon",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/mercury/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/mercury/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mercury is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mercury",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/venus/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/venus/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Venus is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "venus",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/mars/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/mars/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Mars is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "mars",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/jupiter/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/jupiter/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Jupiter is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "jupiter",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/saturn/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/saturn/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Saturn is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "saturn",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/uranus/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/uranus/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Uranus is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "uranus",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/neptune/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/neptune/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Neptune is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "neptune",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/pluto/in",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is in sect here, in its preferred half of the chart, so it operates in a steadier, more constructive key.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "in_sect": true
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "cc/sect/pluto/out",
+   "surface": "modifier",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "vocab",
+   "headline": "",
+   "summary": "",
+   "body": "Pluto is out of sect here, so its harder edges show more readily and it asks for more conscious handling.",
+   "sections": {},
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "vocab",
+    "category": "placement-scaffold",
+    "scope": {
+     "planet": "pluto",
+     "in_sect": false
+    }
+   },
+   "prompt_version": "placement-scaffold-v1",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

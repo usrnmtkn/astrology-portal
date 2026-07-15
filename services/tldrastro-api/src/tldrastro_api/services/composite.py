@@ -11,10 +11,12 @@ from tldrastro_api.models import (
     Position,
 )
 from tldrastro_api.services.chart import (
+    CANONICAL_HOUSE_SYSTEM,
     calculate_aspects,
     house_for_longitude,
     make_position,
     normalize_degrees,
+    whole_sign_cusps_for_ascendant,
 )
 from tldrastro_api.services.natal import calculate_natal_chart
 from tldrastro_api.services.relationship_facts import composite_aspect_fact
@@ -75,6 +77,15 @@ def _midpoint_cusps(first_cusps: List[float], second_cusps: List[float]) -> List
     ]
 
 
+def _composite_house_cusps(person_a, person_b) -> List[float]:
+    first = person_a.angles.get("Ascendant")
+    second = person_b.angles.get("Ascendant")
+    if first and second:
+        ascendant = midpoint_longitude(first.longitude, second.longitude)
+        return [round(cusp, 6) for cusp in whole_sign_cusps_for_ascendant(ascendant)]
+    return _midpoint_cusps(person_a.houseCusps, person_b.houseCusps)
+
+
 def _midpoint_angles(person_a, person_b, house_cusps: List[float]) -> Dict[str, Position]:
     angles: Dict[str, Position] = {}
     for point in ["Ascendant", "Midheaven"]:
@@ -117,7 +128,7 @@ def _natal_pair(request: CompositeRequest) -> Tuple[object, object]:
 
 def calculate_composite(request: CompositeRequest) -> CompositeResponse:
     person_a, person_b = _natal_pair(request)
-    house_cusps = _midpoint_cusps(person_a.houseCusps, person_b.houseCusps)
+    house_cusps = _composite_house_cusps(person_a, person_b)
     positions = _composite_positions(person_a, person_b, house_cusps)
     aspects = calculate_aspects(positions, request.settings)
     content_facts = (
@@ -131,7 +142,7 @@ def calculate_composite(request: CompositeRequest) -> CompositeResponse:
     ]
     return CompositeResponse(
         metadata=ChartMetadata(
-            houseSystem=request.settings.houseSystem,
+            houseSystem=CANONICAL_HOUSE_SYSTEM,
             zodiac=request.settings.zodiac,
             calculatedAt=datetime.now(timezone.utc).isoformat(),
             inputWarnings=list(dict.fromkeys(warnings)),

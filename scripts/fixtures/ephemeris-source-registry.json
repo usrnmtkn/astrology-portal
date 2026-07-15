@@ -1,0 +1,48 @@
+{
+  "authoritative": [
+    {
+      "id": "nasa-jpl-horizons",
+      "label": "NASA/JPL Horizons API",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+      "probeUrl": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&TLIST='2461234.1666667'&TLIST_TYPE='JD'&TIME_TYPE='UT'&QUANTITIES='31'&CSV_FORMAT='YES'&ANG_FORMAT='DEG'&EXTRA_PREC='YES'",
+      "expectedContentType": "text/plain",
+      "status": "configured-independent-partial-oracle",
+      "localPathEnv": null,
+      "notes": [
+        "Credential-free NASA/JPL Horizons API using DE441 apparent geocentric observer ecliptic-of-date longitudes.",
+        "Used by scripts/providers/nasa-horizons-provider.mjs through TLDR_ASTRO_VERIFY_PROVIDER_COMMAND.",
+        "Verifies Sun through Pluto, Moon, Chiron, direct/retrograde by finite difference, and aspects among supported bodies.",
+        "Does not verify mean node, Lilith, Asc/Desc/MC/IC, house cusps, retrograde stations, shadow boundaries, or transit exact-hit bisection in the current adapter."
+      ]
+    },
+    {
+      "id": "astrocom-swiss-ephemeris-2026",
+      "label": "Astro.com Swiss Ephemeris 2026 PDF",
+      "url": "https://www.astro.com/swisseph/ae/2000/ae_2026.pdf",
+      "expectedContentType": "application/pdf",
+      "status": "blocked-by-browser-check-in-this-environment",
+      "localPathEnv": "TLDR_ASTROCOM_SWISS_EPHEMERIS_2026_PDF",
+      "notes": [
+        "The URL redirects to /cgi/prep.cgi/swisseph/ae/2000/ae_2026.pdf.",
+        "Direct fetch in this environment returned an Astro.com browser-check HTML page, not a PDF.",
+        "Use a locally downloaded PDF path via TLDR_ASTROCOM_SWISS_EPHEMERIS_2026_PDF before treating this as an ingested oracle."
+      ]
+    }
+  ],
+  "secondarySanity": [
+    {
+      "id": "cafeastrology-2026-ephemeris",
+      "label": "Cafe Astrology 2026 Ephemeris",
+      "url": "https://cafeastrology.com/2026-ephemeris.html",
+      "pdfUrl": "https://cafeastrology.com/wp-content/uploads/2022/03/2026ephemeris.pdf",
+      "expectedContentType": "application/pdf",
+      "status": "downloadable-secondary-sanity-source",
+      "localPathEnv": "TLDR_CAFE_ASTROLOGY_2026_EPHEMERIS_PDF",
+      "notes": [
+        "Cafe Astrology describes the tables as daily tropical longitudes at midnight Eastern Time.",
+        "Cafe Astrology notes March 2026 and November 2026 PDF timezone caveats around DST.",
+        "This source can sanity-check daily sign/degree/station tables but does not verify arbitrary-location houses, angles, or topocentric/geocentric configuration."
+      ]
+    }
+  ]
+}

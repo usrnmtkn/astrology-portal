@@ -1,0 +1,2183 @@
+{
+ "tier": "REVIEWED",
+ "_meta": {
+  "note": "Mustache slot templates (1A..6O) verbatim from MUSTACHE-MADLIBS-v2.2. body holds the template; sections.slots lists every interpolation slot. Interpretive slots resolve from cc-vocab.json / authored records; fact slots from calculated astrology.",
+  "count": 63,
+  "source": "tldr-astro-records.json / MUSTACHE-MADLIBS-v2.2"
+ },
+ "reviewed": [
+  {
+   "content_key": "slot-template/1A",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Friction day",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{date_display}}\n\n{{lived_scene}} may make {{felt_tension}} harder to ignore today. {{habitual_response}} can feel like the fastest way through it, but it may leave {{specific_cost}}. {{practical_action}}.",
+   "sections": {
+    "slots": [
+     "date_display",
+     "editorial_headline",
+     "felt_tension",
+     "habitual_response",
+     "lived_scene",
+     "practical_action",
+     "specific_cost"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "1A",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/1B",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Opening day",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{date_display}}\n\nAn opening may appear when {{lived_scene}}. It could be easy to miss if {{avoidance_pattern}}. {{practical_action}}, then let the response tell you what is possible.",
+   "sections": {
+    "slots": [
+     "avoidance_pattern",
+     "date_display",
+     "editorial_headline",
+     "lived_scene",
+     "practical_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "1B",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/1C",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Reset day",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{date_display}}\n\n{{routine_scene}} may be ready for a small change. You do not have to overturn {{larger_commitment}} to interrupt {{stale_pattern}}. {{specific_reset}}.",
+   "sections": {
+    "slots": [
+     "date_display",
+     "editorial_headline",
+     "larger_commitment",
+     "routine_scene",
+     "specific_reset",
+     "stale_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "1C",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/1D",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Conversation day",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{date_display}}\n\nThe conversation may change once {{unspoken_issue}} is named. If you notice yourself {{habitual_response}}, pause before the exchange becomes about {{secondary_conflict}}. {{clarifying_question_or_request}}.",
+   "sections": {
+    "slots": [
+     "clarifying_question_or_request",
+     "date_display",
+     "editorial_headline",
+     "habitual_response",
+     "secondary_conflict",
+     "unspoken_issue"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "1D",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2A",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: New Moon",
+   "summary": "",
+   "body": "NEW MOON\n\nThe lunar cycle is beginning again. {{new_beginning_scene}} does not need a finished plan yet. Choose {{seed_action}}, and give it enough privacy to take root.",
+   "sections": {
+    "slots": [
+     "new_beginning_scene",
+     "seed_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2A",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2B",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Waxing Crescent",
+   "summary": "",
+   "body": "WAXING CRESCENT MOON\n\nThe first signs of movement are becoming visible. Support {{early_effort}} before judging its final shape. {{small_building_action}}.",
+   "sections": {
+    "slots": [
+     "early_effort",
+     "small_building_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2B",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2C",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: First Quarter",
+   "summary": "",
+   "body": "FIRST QUARTER MOON\n\nThe plan has reached a point of friction. {{decision_scene}} may require action before every doubt is resolved. Choose the obstacle you are willing to work with, then {{decisive_action}}.",
+   "sections": {
+    "slots": [
+     "decision_scene",
+     "decisive_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2C",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2D",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Waxing Gibbous",
+   "summary": "",
+   "body": "WAXING GIBBOUS MOON\n\nThe work is in refinement now. Look closely at {{developing_effort}} and adjust what is almost, but not quite, supporting it. {{refinement_action}}.",
+   "sections": {
+    "slots": [
+     "developing_effort",
+     "refinement_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2D",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2E",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Full Moon",
+   "summary": "",
+   "body": "FULL MOON\n\nSomething has reached visibility. {{culmination_scene}} may show you what has grown and what can no longer be overlooked. Acknowledge {{clear_result}}, then decide what deserves a response.",
+   "sections": {
+    "slots": [
+     "clear_result",
+     "culmination_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2E",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2F",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Waning Gibbous",
+   "summary": "",
+   "body": "WANING GIBBOUS MOON\n\nThe cycle is turning toward integration. Put words around {{lesson_or_result}} while it is still fresh. Share what is useful, and release the need to make the experience mean everything.",
+   "sections": {
+    "slots": [
+     "lesson_or_result"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2F",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2G",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Last Quarter",
+   "summary": "",
+   "body": "LAST QUARTER MOON\n\nRevision is part of the work now. {{outgrown_structure}} may have carried you this far without being able to carry you further. {{release_or_revision_action}}.",
+   "sections": {
+    "slots": [
+     "outgrown_structure",
+     "release_or_revision_action"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2G",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2H",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon phase: Balsamic Moon",
+   "summary": "",
+   "body": "BALSAMIC MOON\n\nThe lunar cycle is closing. Let {{ending_scene}} become quieter instead of forcing one more result from it. Compost {{outgrown_pattern}}, and leave room for the next beginning.",
+   "sections": {
+    "slots": [
+     "ending_scene",
+     "outgrown_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2H",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2I",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon sign: need-led",
+   "summary": "",
+   "body": "MOON SIGN\n\n{{moon_sign}}\n\nThe Moon is in {{moon_sign}}. {{embodied_need}} may be easier to feel than explain. {{boundary_or_care_action}}. {{energy_protection_or_connection_permission}}.",
+   "sections": {
+    "slots": [
+     "boundary_or_care_action",
+     "embodied_need",
+     "energy_protection_or_connection_permission",
+     "moon_sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2I",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2J",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon sign: scene-led",
+   "summary": "",
+   "body": "MOON SIGN\n\n{{moon_sign}}\n\n{{ordinary_scene}} may carry more feeling while the Moon is in {{moon_sign}}. Notice {{body_signal}} before deciding what the moment requires. {{short_permission}}.",
+   "sections": {
+    "slots": [
+     "body_signal",
+     "moon_sign",
+     "ordinary_scene",
+     "short_permission"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2J",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/2K",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Moon sign: imperative compact",
+   "summary": "",
+   "body": "{{moon_sign}} Moon: {{imperative_one}}. {{imperative_two}}. {{compassionate_limit}}.",
+   "sections": {
+    "slots": [
+     "compassionate_limit",
+     "imperative_one",
+     "imperative_two",
+     "moon_sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "2K",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/3A",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Current planet/sign list card",
+   "summary": "",
+   "body": "{{body_glyph}}  {{body}}{{#is_retrograde}} Rx{{/is_retrograde}} in {{sign}}\n{{start_date_display}} – {{end_date_display}}",
+   "sections": {
+    "slots": [
+     "body",
+     "body_glyph",
+     "end_date_display",
+     "is_retrograde",
+     "sign",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "3A",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/3B",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Personalized planet/sign/house: claim-led",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\n{{scene_claim}}. While {{body}} moves through {{sign}} and your {{house_ordinal}} house, {{same_subject_development}}. {{reflective_question_one}}? {{#has_reflective_question_two}}{{reflective_question_two}}?{{/has_reflective_question_two}}\n\n{{compassionate_bridge}}. {{practical_action}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "compassionate_bridge",
+     "end_date_display",
+     "has_reflective_question_two",
+     "house_ordinal",
+     "practical_action",
+     "reflective_question_one",
+     "reflective_question_two",
+     "same_subject_development",
+     "scene_claim",
+     "sign",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "3B",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/3C",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Personalized planet/sign/house: lived-moment-led",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\nYou may notice {{lived_scene}}. {{body_sign_dynamic}} becomes personal in your {{house_ordinal}} house through {{specific_house_scene}}. If {{habitual_response}}, {{likely_cost}}. {{practical_action}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "body_sign_dynamic",
+     "end_date_display",
+     "habitual_response",
+     "house_ordinal",
+     "likely_cost",
+     "lived_scene",
+     "practical_action",
+     "sign",
+     "specific_house_scene",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "3C",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/3D",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Personalized planet/sign/house: question-led",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\nWhat happens when {{central_question}}? This {{body}} in {{sign}} passage brings that question into {{specific_house_scene}}. Notice {{observable_behavior}}. {{second_question}}? {{practical_action}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "central_question",
+     "end_date_display",
+     "observable_behavior",
+     "practical_action",
+     "second_question",
+     "sign",
+     "specific_house_scene",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "3D",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/3E",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Personalized planet/sign/house: tension-and-compassion",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\n{{lived_tension}}. It makes sense that {{understandable_response}} when {{specific_pressure}}. The work is to {{developmental_task}} without {{unhelpful_extreme}}. {{practical_action}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "developmental_task",
+     "end_date_display",
+     "lived_tension",
+     "practical_action",
+     "sign",
+     "specific_pressure",
+     "start_date_display",
+     "understandable_response",
+     "unhelpful_extreme"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "3E",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4A",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Short-term challenging theme",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}}{{#has_exact_date}} · Exact {{exact_date_display}}{{/has_exact_date}}\n\n{{immediate_lived_scene}}. {{habitual_response}} may intensify {{specific_cost}}. {{practical_action}}.\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "editorial_headline",
+     "exact_date_display",
+     "habitual_response",
+     "has_exact_date",
+     "has_natal_house",
+     "has_natal_sign",
+     "immediate_lived_scene",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "practical_action",
+     "specific_cost",
+     "timing_display",
+     "transiting_point"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4A",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4B",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Short-term supportive theme",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}}{{#has_exact_date}} · Exact {{exact_date_display}}{{/has_exact_date}}\n\n{{available_opening}}. You could miss it by {{underuse_pattern}}. {{deliberate_participation}}.\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "available_opening",
+     "deliberate_participation",
+     "editorial_headline",
+     "exact_date_display",
+     "has_exact_date",
+     "has_natal_house",
+     "has_natal_sign",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "timing_display",
+     "transiting_point",
+     "underuse_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4B",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4C",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Short-term conjunction",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}}{{#has_exact_date}} · Exact {{exact_date_display}}{{/has_exact_date}}\n\n{{two_functions_becoming_entangled_scene}}. It may be difficult to separate {{function_a_lived}} from {{function_b_lived}} right now. {{concentration_action}}.\n\nThe astro: Transiting {{transiting_point}} conjoins your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "concentration_action",
+     "editorial_headline",
+     "exact_date_display",
+     "function_a_lived",
+     "function_b_lived",
+     "has_exact_date",
+     "has_natal_house",
+     "has_natal_sign",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "timing_display",
+     "transiting_point",
+     "two_functions_becoming_entangled_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4C",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4D",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Short-term angle contact",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}}{{#has_exact_date}} · Exact {{exact_date_display}}{{/has_exact_date}}\n\n{{angle_specific_scene}} may feel more immediate than usual. {{behavioral_consequence}}. {{proportionate_adjustment}}.\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{angle_name}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "angle_name",
+     "angle_specific_scene",
+     "aspect_verb",
+     "behavioral_consequence",
+     "editorial_headline",
+     "exact_date_display",
+     "has_exact_date",
+     "orb_display",
+     "proportionate_adjustment",
+     "timing_display",
+     "transiting_point"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4D",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4E",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Long-term pressure/restructuring",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}} · Long-term\n\n{{recurring_lived_scene}}.\n\n{{repeating_pattern}}. {{pressure_meaning}}.\n\n{{#has_practical_action}}{{practical_action}}.{{/has_practical_action}}\n\n{{#has_pass_context}}{{pass_context}}{{/has_pass_context}}\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "editorial_headline",
+     "has_natal_house",
+     "has_natal_sign",
+     "has_pass_context",
+     "has_practical_action",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "pass_context",
+     "practical_action",
+     "pressure_meaning",
+     "recurring_lived_scene",
+     "repeating_pattern",
+     "timing_display",
+     "transiting_point"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4E",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4F",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Long-term opening/expansion",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}} · Long-term\n\n{{recurring_opportunity_scene}}.\n\n{{trust_or_capacity_pattern}}. {{capacity_being_developed}}.\n\n{{#has_practical_action}}{{deliberate_participation}}.{{/has_practical_action}}\n\n{{#has_pass_context}}{{pass_context}}{{/has_pass_context}}\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "capacity_being_developed",
+     "deliberate_participation",
+     "editorial_headline",
+     "has_natal_house",
+     "has_natal_sign",
+     "has_pass_context",
+     "has_practical_action",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "pass_context",
+     "recurring_opportunity_scene",
+     "timing_display",
+     "transiting_point",
+     "trust_or_capacity_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4F",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4G",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Long-term disruption/liberation",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}} · Long-term\n\n{{recurring_disruption_scene}}.\n\n{{stability_pattern}} may no longer contain {{emerging_need}}. {{liberating_meaning}}.\n\n{{#has_practical_action}}{{bounded_experiment}}.{{/has_practical_action}}\n\n{{#has_pass_context}}{{pass_context}}{{/has_pass_context}}\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "bounded_experiment",
+     "editorial_headline",
+     "emerging_need",
+     "has_natal_house",
+     "has_natal_sign",
+     "has_pass_context",
+     "has_practical_action",
+     "liberating_meaning",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "pass_context",
+     "recurring_disruption_scene",
+     "stability_pattern",
+     "timing_display",
+     "transiting_point"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4G",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4H",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Long-term dissolution/uncertainty",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}} · Long-term\n\n{{uncertain_lived_scene}}.\n\n{{old_certainty}} may be losing definition before {{new_orientation}} is ready. {{discernment_meaning}}.\n\n{{#has_practical_action}}{{grounding_action}}.{{/has_practical_action}}\n\n{{#has_pass_context}}{{pass_context}}{{/has_pass_context}}\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "discernment_meaning",
+     "editorial_headline",
+     "grounding_action",
+     "has_natal_house",
+     "has_natal_sign",
+     "has_pass_context",
+     "has_practical_action",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "new_orientation",
+     "old_certainty",
+     "orb_display",
+     "pass_context",
+     "timing_display",
+     "transiting_point",
+     "uncertain_lived_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4H",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/4I",
+   "surface": "you",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Long-term transformation",
+   "summary": "",
+   "body": "{{editorial_headline}}\n\n{{timing_display}} · Long-term\n\n{{recurring_power_or_loss_scene}}.\n\n{{control_pattern}} has been protecting {{underlying_vulnerability}}, but it may now be intensifying {{specific_cost}}. {{transformational_meaning}}.\n\n{{#has_practical_action}}{{practical_action}}.{{/has_practical_action}}\n\n{{#has_pass_context}}{{pass_context}}{{/has_pass_context}}\n\nThe astro: Transiting {{transiting_point}} {{aspect_verb}} your natal {{natal_point}}{{#has_natal_sign}} in {{natal_sign}}{{/has_natal_sign}}{{#has_natal_house}} in the {{natal_house_ordinal}} house{{/has_natal_house}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_verb",
+     "control_pattern",
+     "editorial_headline",
+     "has_natal_house",
+     "has_natal_sign",
+     "has_pass_context",
+     "has_practical_action",
+     "natal_house_ordinal",
+     "natal_point",
+     "natal_sign",
+     "orb_display",
+     "pass_context",
+     "practical_action",
+     "recurring_power_or_loss_scene",
+     "specific_cost",
+     "timing_display",
+     "transformational_meaning",
+     "transiting_point",
+     "underlying_vulnerability"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "4I",
+    "originalSurface": "you",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5A",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Placement core: resource-led",
+   "summary": "",
+   "body": "{{body}} in {{sign}} in the {{house_ordinal}} house\n\n{{body_in_sign_lived_claim}}. In the {{house_ordinal}} house, this becomes visible through {{one_house_scene}}. {{integrated_resource}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "body_in_sign_lived_claim",
+     "house_ordinal",
+     "integrated_resource",
+     "one_house_scene",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5A",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5B",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Placement core: developmental tension",
+   "summary": "",
+   "body": "{{body}} in {{sign}} in the {{house_ordinal}} house\n\n{{body_in_sign_lived_tension}}. You may recognize it most clearly when {{one_house_scene}}. {{habitual_response}} can protect {{underlying_need}} while making {{specific_cost}} harder to avoid. {{developmental_direction}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "body_in_sign_lived_tension",
+     "developmental_direction",
+     "habitual_response",
+     "house_ordinal",
+     "one_house_scene",
+     "sign",
+     "specific_cost",
+     "underlying_need"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5B",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5C",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Placement core: relational expression",
+   "summary": "",
+   "body": "{{body}} in {{sign}} in the {{house_ordinal}} house\n\n{{relational_scene}} often shows how {{body_function_lived}} works through {{sign_style_lived}} for you. In the {{house_ordinal}} house, {{same_relationship_subject}}. {{relational_growth_edge}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "body_function_lived",
+     "house_ordinal",
+     "relational_growth_edge",
+     "relational_scene",
+     "same_relationship_subject",
+     "sign",
+     "sign_style_lived"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5C",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5D",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Placement core: private/internal expression",
+   "summary": "",
+   "body": "{{body}} in {{sign}} in the {{house_ordinal}} house\n\nMuch of this placement may happen before anyone else can see it. {{private_lived_process}}. The {{house_ordinal}} house locates that process in {{one_private_house_scene}}. {{integration_direction}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "house_ordinal",
+     "integration_direction",
+     "one_private_house_scene",
+     "private_lived_process",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5D",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5E",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Eligible sect modifier",
+   "summary": "",
+   "body": "{{#has_reliable_sect}}\n{{#is_day_chart}}Because this is a day chart, {{sect_modifier_day}}.{{/is_day_chart}}\n{{#is_night_chart}}Because this is a night chart, {{sect_modifier_night}}.{{/is_night_chart}}\n{{#has_calculated_mercury_sect}}{{mercury_sect_sentence}}{{/has_calculated_mercury_sect}}\n{{/has_reliable_sect}}",
+   "sections": {
+    "slots": [
+     "has_calculated_mercury_sect",
+     "has_reliable_sect",
+     "is_day_chart",
+     "is_night_chart",
+     "mercury_sect_sentence",
+     "sect_modifier_day",
+     "sect_modifier_night"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5E",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5F",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Natal retrograde modifier",
+   "summary": "",
+   "body": "{{#is_natal_retrograde}}{{retrograde_internalization_scene}}. {{retrograde_revision_pattern}}.{{/is_natal_retrograde}}",
+   "sections": {
+    "slots": [
+     "is_natal_retrograde",
+     "retrograde_internalization_scene",
+     "retrograde_revision_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5F",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5G",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Dignity modifier",
+   "summary": "",
+   "body": "{{#has_dignity}}{{dignity_lived_effect}}.{{/has_dignity}}",
+   "sections": {
+    "slots": [
+     "dignity_lived_effect",
+     "has_dignity"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5G",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5H",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Ruler bridge",
+   "summary": "",
+   "body": "{{#has_ruler_bridge}}{{sign}} answers to {{ruler_body}} here. With {{ruler_body}} in {{ruler_sign}} in the {{ruler_house_ordinal}} house, {{ruler_bridge_same_subject}}.{{/has_ruler_bridge}}",
+   "sections": {
+    "slots": [
+     "has_ruler_bridge",
+     "ruler_body",
+     "ruler_bridge_same_subject",
+     "ruler_house_ordinal",
+     "ruler_sign",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5H",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5I",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Supportive natal aspect modifier",
+   "summary": "",
+   "body": "{{#has_supportive_aspect}}{{supportive_aspect_scene}} can give this placement another way to respond. {{supportive_capacity}}.{{/has_supportive_aspect}}",
+   "sections": {
+    "slots": [
+     "has_supportive_aspect",
+     "supportive_aspect_scene",
+     "supportive_capacity"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5I",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5J",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Challenging natal aspect modifier",
+   "summary": "",
+   "body": "{{#has_challenging_aspect}}{{challenging_aspect_scene}} can make the placement harder to use consistently. {{integration_practice}}.{{/has_challenging_aspect}}",
+   "sections": {
+    "slots": [
+     "challenging_aspect_scene",
+     "has_challenging_aspect",
+     "integration_practice"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5J",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5K",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Full natal placement composition",
+   "summary": "",
+   "body": "{{body}} in {{sign}} in the {{house_ordinal}} house\n\n{{placement_core_paragraph}}\n\n{{#has_reliable_sect}}{{sect_paragraph}}{{/has_reliable_sect}}\n\n{{#is_natal_retrograde}}{{retrograde_paragraph}}{{/is_natal_retrograde}}\n\n{{#has_dignity}}{{dignity_paragraph}}{{/has_dignity}}\n\n{{#has_ruler_bridge}}{{ruler_bridge_paragraph}}{{/has_ruler_bridge}}\n\n{{#has_supportive_aspects}}{{supportive_aspects_paragraph}}{{/has_supportive_aspects}}\n\n{{#has_challenging_aspects}}{{challenging_aspects_paragraph}}{{/has_challenging_aspects}}",
+   "sections": {
+    "slots": [
+     "body",
+     "challenging_aspects_paragraph",
+     "dignity_paragraph",
+     "has_challenging_aspects",
+     "has_dignity",
+     "has_reliable_sect",
+     "has_ruler_bridge",
+     "has_supportive_aspects",
+     "house_ordinal",
+     "is_natal_retrograde",
+     "placement_core_paragraph",
+     "retrograde_paragraph",
+     "ruler_bridge_paragraph",
+     "sect_paragraph",
+     "sign",
+     "supportive_aspects_paragraph"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5K",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5L",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Angles: Ascendant",
+   "summary": "",
+   "body": "Ascendant in {{sign}}\n\n{{first_impression_scene}}. You tend to meet unfamiliar situations by {{approach_pattern}}. {{sign_style_lived}} shapes what others encounter first, while {{growth_edge}}.",
+   "sections": {
+    "slots": [
+     "approach_pattern",
+     "first_impression_scene",
+     "growth_edge",
+     "sign",
+     "sign_style_lived"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5L",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5M",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Angles: Midheaven",
+   "summary": "",
+   "body": "Midheaven in {{sign}}\n\n{{public_role_scene}}. Your direction becomes clearer when {{vocational_pattern}}. {{sign_style_lived}} influences how you handle visibility, responsibility, and the work you want attached to your name.",
+   "sections": {
+    "slots": [
+     "public_role_scene",
+     "sign",
+     "sign_style_lived",
+     "vocational_pattern"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5M",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5N",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Angles: Descendant",
+   "summary": "",
+   "body": "Descendant in {{sign}}\n\n{{partnership_scene}}. You may be drawn toward people who {{projected_or_sought_quality}}. The work is to recognize {{relational_quality}} as something to negotiate consciously, not simply expect another person to carry.",
+   "sections": {
+    "slots": [
+     "partnership_scene",
+     "projected_or_sought_quality",
+     "relational_quality",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5N",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5O",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Angles: IC",
+   "summary": "",
+   "body": "IC in {{sign}}\n\n{{private_foundation_scene}}. Home and belonging may depend on {{root_pattern}}. {{restorative_or_boundary_direction}}.",
+   "sections": {
+    "slots": [
+     "private_foundation_scene",
+     "restorative_or_boundary_direction",
+     "root_pattern",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5O",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5P",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Natal aspect: conjunction",
+   "summary": "",
+   "body": "{{point_a}} conjunct {{point_b}}\n\n{{combined_function_scene}}. These two functions are difficult to separate in your chart, so {{lived_consequence}}. {{integration_direction}}.",
+   "sections": {
+    "slots": [
+     "combined_function_scene",
+     "integration_direction",
+     "lived_consequence",
+     "point_a",
+     "point_b"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5P",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5Q",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Natal aspect: supportive",
+   "summary": "",
+   "body": "{{point_a}} {{aspect_name}} {{point_b}}\n\n{{supportive_lived_scene}}. {{point_a_function_lived}} and {{point_b_function_lived}} can cooperate when {{activation_condition}}. {{capacity_direction}}.",
+   "sections": {
+    "slots": [
+     "activation_condition",
+     "aspect_name",
+     "capacity_direction",
+     "point_a",
+     "point_a_function_lived",
+     "point_b",
+     "point_b_function_lived",
+     "supportive_lived_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5Q",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5R",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Natal aspect: square",
+   "summary": "",
+   "body": "{{point_a}} square {{point_b}}\n\n{{recurring_internal_conflict_scene}}. When {{point_a_need}} presses against {{point_b_need}}, you may {{habitual_response}}. The tension becomes useful when {{integration_direction}}.",
+   "sections": {
+    "slots": [
+     "habitual_response",
+     "integration_direction",
+     "point_a",
+     "point_a_need",
+     "point_b",
+     "point_b_need",
+     "recurring_internal_conflict_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5R",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/5S",
+   "surface": "natal",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Natal aspect: opposition",
+   "summary": "",
+   "body": "{{point_a}} opposite {{point_b}}\n\n{{polarity_scene}}. You may alternate between {{pole_a_behavior}} and {{pole_b_behavior}}, especially when {{activation_condition}}. {{relational_or_internal_balance}}.",
+   "sections": {
+    "slots": [
+     "activation_condition",
+     "point_a",
+     "point_b",
+     "polarity_scene",
+     "pole_a_behavior",
+     "pole_b_behavior",
+     "relational_or_internal_balance"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "5S",
+    "originalSurface": "natal",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6A",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Collective planet in sign: compact card",
+   "summary": "",
+   "body": "{{body}}{{#is_retrograde}} Rx{{/is_retrograde}} in {{sign}}\n{{start_date_display}} – {{end_date_display}}\n{{compact_collective_claim}}",
+   "sections": {
+    "slots": [
+     "body",
+     "compact_collective_claim",
+     "end_date_display",
+     "is_retrograde",
+     "sign",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6A",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6B",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Collective planet in sign: inner planet",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\n{{collective_lived_scene}} may become more noticeable while {{body}} moves through {{sign}}. {{body_sign_dynamic_in_same_scene}}. {{#has_collective_response}}{{collective_response}}.{{/has_collective_response}}",
+   "sections": {
+    "slots": [
+     "body",
+     "body_sign_dynamic_in_same_scene",
+     "collective_lived_scene",
+     "collective_response",
+     "end_date_display",
+     "has_collective_response",
+     "sign",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6B",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6C",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Collective planet in sign: social planet",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\n{{shared_priority_or_pressure_scene}} may develop over this passage. {{body_sign_dynamic_in_same_subject}}. Watch how {{observable_collective_pattern}} changes what people reward, require, or organize around.",
+   "sections": {
+    "slots": [
+     "body",
+     "body_sign_dynamic_in_same_subject",
+     "end_date_display",
+     "observable_collective_pattern",
+     "shared_priority_or_pressure_scene",
+     "sign",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6C",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6D",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Collective planet in sign: outer planet",
+   "summary": "",
+   "body": "{{body}} in {{sign}}\n\n{{start_date_display}} – {{end_date_display}}\n\nThis longer passage places {{collective_structure_or_assumption}} under sustained change. {{slow_collective_development}}. Its meaning will become clearer through repeated events, not one dramatic day.",
+   "sections": {
+    "slots": [
+     "body",
+     "collective_structure_or_assumption",
+     "end_date_display",
+     "sign",
+     "slow_collective_development",
+     "start_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6D",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6E",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Current-sky aspect: challenging",
+   "summary": "",
+   "body": "{{point_a}} {{aspect_name}} {{point_b}}\n\n{{timing_display}}{{#has_exact_time}} · Exact {{exact_time_display}}{{/has_exact_time}}\n\n{{collective_friction_scene}} may bring {{two_functions_conflict}} into sharper contact. {{#has_response}}{{proportionate_collective_response}}.{{/has_response}}\n\nThe astro: {{point_a}} {{aspect_verb}} {{point_b}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_name",
+     "aspect_verb",
+     "collective_friction_scene",
+     "exact_time_display",
+     "has_exact_time",
+     "has_response",
+     "orb_display",
+     "point_a",
+     "point_b",
+     "proportionate_collective_response",
+     "timing_display",
+     "two_functions_conflict"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6E",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6F",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Current-sky aspect: supportive",
+   "summary": "",
+   "body": "{{point_a}} {{aspect_name}} {{point_b}}\n\n{{timing_display}}{{#has_exact_time}} · Exact {{exact_time_display}}{{/has_exact_time}}\n\n{{collective_opening_scene}} can make {{cooperative_function}} easier to access. {{#has_response}}{{deliberate_collective_use}}.{{/has_response}}\n\nThe astro: {{point_a}} {{aspect_verb}} {{point_b}}. Orb: {{orb_display}}.",
+   "sections": {
+    "slots": [
+     "aspect_name",
+     "aspect_verb",
+     "collective_opening_scene",
+     "cooperative_function",
+     "deliberate_collective_use",
+     "exact_time_display",
+     "has_exact_time",
+     "has_response",
+     "orb_display",
+     "point_a",
+     "point_b",
+     "timing_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6F",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6G",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Pre-shadow",
+   "summary": "",
+   "body": "{{body}} enters pre-shadow\n\n{{start_date_display}} – {{station_retrograde_date_display}}\n\n{{early_recurrence_scene}} may introduce material that returns during the retrograde. Notice what begins repeating, but do not force a conclusion yet.\n\nThe astro: {{body}} entered its pre-retrograde shadow at {{shadow_degree_display}} {{sign}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "early_recurrence_scene",
+     "shadow_degree_display",
+     "sign",
+     "start_date_display",
+     "station_retrograde_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6G",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6H",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Station retrograde",
+   "summary": "",
+   "body": "{{body}} stations retrograde in {{sign}}\n\n{{station_date_display}}\n\n{{station_lived_scene}} may slow, double back, or require review. The station concentrates the change of direction, so give {{affected_process}} more time than usual.\n\nThe astro: {{body}} stationed retrograde at {{station_degree_display}} {{sign}} on {{station_date_display}}.",
+   "sections": {
+    "slots": [
+     "affected_process",
+     "body",
+     "sign",
+     "station_date_display",
+     "station_degree_display",
+     "station_lived_scene"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6H",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6I",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Retrograde passage",
+   "summary": "",
+   "body": "{{body}} Rx in {{sign}}\n\n{{station_retrograde_date_display}} – {{station_direct_date_display}}\n\n{{review_scene}} may return in a form that makes the unfinished part easier to recognize. Revisit {{specific_material}} before committing to {{premature_next_step}}. {{#has_practical_action}}{{practical_action}}.{{/has_practical_action}}\n\nThe astro: {{body}} is retrograde in {{sign}} from {{station_retrograde_date_display}} through {{station_direct_date_display}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "has_practical_action",
+     "practical_action",
+     "premature_next_step",
+     "review_scene",
+     "sign",
+     "specific_material",
+     "station_direct_date_display",
+     "station_retrograde_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6I",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6J",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Cazimi during retrograde",
+   "summary": "",
+   "body": "{{body}} cazimi\n\n{{exact_date_display}}\n\nThe retrograde reaches a moment of clarity around {{review_subject}}. A detail that was obscured may become easier to name. Record the insight before asking it to become a finished answer.\n\nThe astro: The Sun conjoins retrograde {{body}} at {{exact_degree_display}} {{sign}} on {{exact_date_display}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "exact_date_display",
+     "exact_degree_display",
+     "review_subject",
+     "sign"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6J",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6K",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Station direct",
+   "summary": "",
+   "body": "{{body}} stations direct in {{sign}}\n\n{{station_date_display}}\n\n{{reviewed_process}} begins moving forward again, though momentum may return gradually. Use what the retrograde clarified to make {{next_decision}} more deliberate.\n\nThe astro: {{body}} stationed direct at {{station_degree_display}} {{sign}} on {{station_date_display}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "next_decision",
+     "reviewed_process",
+     "sign",
+     "station_date_display",
+     "station_degree_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6K",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6L",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Post-shadow",
+   "summary": "",
+   "body": "{{body}} clears post-shadow\n\n{{station_direct_date_display}} – {{shadow_exit_date_display}}\n\nThe retrograde story is moving through its final degrees. {{integration_scene}} may show whether the revision can hold under ordinary conditions. Complete {{specific_follow_through}}.\n\nThe astro: {{body}} clears its post-retrograde shadow at {{shadow_degree_display}} {{sign}} on {{shadow_exit_date_display}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "integration_scene",
+     "shadow_degree_display",
+     "shadow_exit_date_display",
+     "sign",
+     "specific_follow_through",
+     "station_direct_date_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6L",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6M",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Ingress",
+   "summary": "",
+   "body": "{{body}} enters {{sign}}\n\n{{ingress_date_display}}{{#has_exit_date}} – {{exit_date_display}}{{/has_exit_date}}\n\n{{collective_focus_shift}} becomes more noticeable as {{body}} enters {{sign}}. {{same_subject_development}}. {{#has_response}}{{proportionate_collective_response}}.{{/has_response}}\n\nThe astro: {{body}} entered {{sign}} at {{ingress_time_display}} on {{ingress_date_display}}{{#has_timezone}} {{timezone_display}}{{/has_timezone}}.",
+   "sections": {
+    "slots": [
+     "body",
+     "collective_focus_shift",
+     "exit_date_display",
+     "has_exit_date",
+     "has_response",
+     "has_timezone",
+     "ingress_date_display",
+     "ingress_time_display",
+     "proportionate_collective_response",
+     "same_subject_development",
+     "sign",
+     "timezone_display"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6M",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6N",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Exact calendar event",
+   "summary": "",
+   "body": "{{event_title}}\n\n{{event_date_display}}{{#has_exact_time}} · {{exact_time_display}}{{/has_exact_time}}\n\n{{event_lived_meaning}}. {{#has_response}}{{event_response}}.{{/has_response}}\n\nThe astro: {{technical_event_sentence}}",
+   "sections": {
+    "slots": [
+     "event_date_display",
+     "event_lived_meaning",
+     "event_response",
+     "event_title",
+     "exact_time_display",
+     "has_exact_time",
+     "has_response",
+     "technical_event_sentence"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6N",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  },
+  {
+   "content_key": "slot-template/6O",
+   "surface": "sky",
+   "mode": "feed",
+   "status": "DRAFT",
+   "event_type": "slot-template",
+   "headline": "Calendar list row",
+   "summary": "",
+   "body": "{{event_date_compact}}  {{event_title}}{{#has_exact_time}} · {{exact_time_compact}}{{/has_exact_time}}",
+   "sections": {
+    "slots": [
+     "event_date_compact",
+     "event_title",
+     "exact_time_compact",
+     "has_exact_time"
+    ]
+   },
+   "facts": {},
+   "knowledge_ids": [],
+   "source_snapshot": {
+    "contentType": "mustache-template",
+    "templateId": "6O",
+    "originalSurface": "sky",
+    "kind": "slot_template",
+    "sourceFile": "TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+   },
+   "prompt_version": "mustache-madlib-v2.2",
+   "block_type": null,
+   "reviewer_notes": "",
+   "tier": "REVIEWED"
+  }
+ ]
+}

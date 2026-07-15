@@ -1,0 +1,157 @@
+{
+  "version": "2.0.0",
+  "fixtures": [
+    {
+      "id": "personalized-transit-saturn-square-venus-long",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "facts": ["transitingSaturn", "square", "natalVenus", "activeWindow", "orb", "natalSign", "natalHouse"],
+      "primarySource": "reviewed exact venus-square-saturn aspect-pair clause",
+      "supportingSources": ["saturn transit principle", "triple-pass principle", "natal Venus context", "8th-house scene constraint"],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualEventTitle": "FIXTURE_FIELD::saturn_square_venus_title",
+        "timingDisplay": "FIXTURE_FIELD::saturn_square_venus_timing",
+        "expandedNarrative": "FIXTURE_FIELD::saturn_square_venus_lived_situation",
+        "practicalResponse": "FIXTURE_FIELD::saturn_square_venus_response",
+        "passContext": "FIXTURE_FIELD::saturn_square_venus_pass_context",
+        "astroFooter": "FIXTURE_FIELD::saturn_square_venus_footer"
+      }
+    },
+    {
+      "id": "personalized-transit-mars-conjunct-asc-short",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "facts": ["transitingMars", "conjunction", "natalAscendant", "activeWindow", "orb", "exactDate"],
+      "primarySource": null,
+      "supportingSources": ["Mars metadata", "Ascendant metadata", "calculated timing facts"],
+      "sourceTier": "SOURCE_GAP",
+      "status": "SOURCE_GAP",
+      "gapReason": "No reviewed eligible exact Mars-Ascendant conjunction lived-situation source is present in this archive.",
+      "renderedFields": {}
+    },
+    {
+      "id": "sky-sun-cancer-collective",
+      "surface": "sky.planet_sign",
+      "templateFamily": "sky_planet_sign",
+      "mode": "detail",
+      "facts": ["Sun", "Cancer", "activeWindow"],
+      "primarySource": "reviewed collective Sun-in-Cancer record",
+      "supportingSources": [],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualPlacementTitle": "FIXTURE_FIELD::sky_sun_cancer_title",
+        "timingDisplay": "FIXTURE_FIELD::sky_sun_cancer_timing",
+        "recognizableCollectiveSituation": "FIXTURE_FIELD::sky_sun_cancer_collective_scene",
+        "expandedNarrative": "FIXTURE_FIELD::sky_sun_cancer_collective_story"
+      }
+    },
+    {
+      "id": "home-sun-cancer-gemini-rising",
+      "surface": "home.planetary_horoscope",
+      "templateFamily": "home_planetary_horoscope",
+      "mode": "detail",
+      "facts": ["Sun", "Cancer", "Gemini rising", "resolved 2nd house", "activeWindow"],
+      "primarySource": "reviewed Sun-in-Cancer combination integrated through a 2nd-house scene",
+      "supportingSources": ["2nd-house scene constraint"],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualPlacementTitle": "FIXTURE_FIELD::home_sun_cancer_title",
+        "timingDisplay": "FIXTURE_FIELD::home_sun_cancer_timing",
+        "openingClaim": "FIXTURE_FIELD::home_sun_cancer_opening",
+        "expandedNarrative": "FIXTURE_FIELD::home_sun_cancer_second_house_story",
+        "compassionateAgency": "FIXTURE_FIELD::home_sun_cancer_agency"
+      }
+    },
+    {
+      "id": "home-moon-phase",
+      "surface": "home.moon_forecast.phase",
+      "templateFamily": "moon_phase",
+      "mode": "detail",
+      "facts": ["Balsamic Moon", "timestamp"],
+      "primarySource": "reviewed Balsamic-phase record",
+      "supportingSources": [],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "phaseTitle": "FIXTURE_FIELD::moon_phase_title",
+        "cycleRole": "FIXTURE_FIELD::moon_phase_cycle_role",
+        "phaseAppropriateAction": "FIXTURE_FIELD::moon_phase_action"
+      }
+    },
+    {
+      "id": "home-moon-sign-cancer",
+      "surface": "home.moon_forecast.sign",
+      "templateFamily": "moon_sign",
+      "mode": "detail",
+      "facts": ["Moon", "Cancer", "activeWindow"],
+      "primarySource": "reviewed Moon-in-Cancer record",
+      "supportingSources": [],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "signTitle": "FIXTURE_FIELD::moon_sign_title",
+        "timingDisplay": "FIXTURE_FIELD::moon_sign_timing",
+        "embodiedGuidance": "FIXTURE_FIELD::moon_sign_guidance",
+        "boundaryOrCarePrompt": "FIXTURE_FIELD::moon_sign_care_prompt"
+      }
+    },
+    {
+      "id": "natal-sun-aquarius-9h-day",
+      "surface": "me.natal_placement",
+      "templateFamily": "natal_placement",
+      "mode": "detail",
+      "facts": ["natal Sun", "Aquarius", "9th house", "day chart", "reliable horizon data"],
+      "primarySource": "reviewed Sun-in-Aquarius placement record integrated through the 9th house",
+      "supportingSources": ["eligible day-sect clause", "ruler placement when available"],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualPlacementTitle": "FIXTURE_FIELD::natal_sun_aquarius_9h_title",
+        "integratedSignHouseStory": "FIXTURE_FIELD::natal_sun_aquarius_9h_story",
+        "sectClause": "FIXTURE_FIELD::natal_sun_day_sect",
+        "rulerBridge": "FIXTURE_FIELD::natal_sun_ruler_bridge"
+      }
+    },
+    {
+      "id": "natal-night-sect-eligible",
+      "surface": "me.natal_placement",
+      "templateFamily": "natal_placement",
+      "mode": "detail",
+      "facts": ["natal placement", "night chart", "reliable horizon data"],
+      "primarySource": "reviewed integrated natal placement record",
+      "supportingSources": ["eligible night-sect clause"],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualPlacementTitle": "FIXTURE_FIELD::natal_night_title",
+        "integratedSignHouseStory": "FIXTURE_FIELD::natal_night_story",
+        "sectClause": "FIXTURE_FIELD::natal_night_sect"
+      }
+    },
+    {
+      "id": "natal-sect-suppressed-unknown-time",
+      "surface": "me.natal_placement",
+      "templateFamily": "natal_placement",
+      "mode": "detail",
+      "facts": ["natal placement", "unreliable birth time"],
+      "primarySource": "reviewed integrated natal placement record",
+      "supportingSources": [],
+      "sourceTier": "REVIEWED_RECORD",
+      "renderedFields": {
+        "factualPlacementTitle": "FIXTURE_FIELD::natal_unknown_time_title",
+        "integratedSignHouseStory": "FIXTURE_FIELD::natal_unknown_time_story"
+      }
+    },
+    {
+      "id": "personalized-transit-missing-pair",
+      "surface": "transits.personalized",
+      "templateFamily": "personalized_transit",
+      "mode": "detail",
+      "facts": ["transitingPoint", "aspect", "natalPoint", "activeWindow", "orb"],
+      "primarySource": null,
+      "supportingSources": ["planet metadata", "house metadata"],
+      "sourceTier": "SOURCE_GAP",
+      "status": "SOURCE_GAP",
+      "renderedFields": {}
+    }
+  ]
+}

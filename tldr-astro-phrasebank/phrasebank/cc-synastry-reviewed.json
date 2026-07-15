@@ -1,0 +1,2406 @@
+{
+  "_meta": {
+    "title": "Reviewed synastry (two-chart): inter-aspects + house overlays",
+    "inter_aspect_pairs": 21,
+    "house_overlays": 12,
+    "count": 99,
+    "voice": "relational, second person about 'them' (their planet -> your planet)",
+    "render": "{relational_scene}. {dynamic}. {navigation}.",
+    "tier": "REVIEWED_CLAUSE",
+    "tone_version": "marie-calibrated-v1",
+    "note": "House-overlay records give the domain; the specific planet flavor composes from ms/synastry-bank/contribute/{planet}."
+  },
+  "reviewed": [
+    {
+      "id": "cc/synastry/sun-conjunction-sun",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "sun",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Sun",
+      "slots": {
+        "relational_scene": "Your core selves point the same way, so you recognize each other fast and pull in the same direction",
+        "dynamic": "It's easy and validating, and it can also mean you compete for the same spotlight",
+        "navigation": "Root for each other instead of racing; there's room for two"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/sun",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-trine-sun",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "sun",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun trine your Sun",
+      "slots": {
+        "relational_scene": "Your identities and goals cooperate without much effort",
+        "dynamic": "You back each other's direction naturally",
+        "navigation": "Lean on how naturally you line up and build something together"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/sun",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-sextile-sun",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "sun",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun sextile your Sun",
+      "slots": {
+        "relational_scene": "Your identities and goals cooperate without much effort",
+        "dynamic": "You back each other's direction naturally",
+        "navigation": "Lean on how naturally you line up and build something together"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/sun",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-sun",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "sun",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Sun",
+      "slots": {
+        "relational_scene": "Your core directions rub against each other, wanting different things at the same time",
+        "dynamic": "Respect can curdle into a contest of wills",
+        "navigation": "Take turns being the one who's right"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/sun",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-sun",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "sun",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Sun",
+      "slots": {
+        "relational_scene": "Your core directions rub against each other, wanting different things at the same time",
+        "dynamic": "Respect can curdle into a contest of wills",
+        "navigation": "Take turns being the one who's right"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/sun",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-conjunction-moon",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "moon",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Moon",
+      "slots": {
+        "relational_scene": "Their identity sits right on your feelings, so who they are shapes your mood almost automatically",
+        "dynamic": "It can feel like being deeply understood, and it can also mean their day sets yours",
+        "navigation": "Keep your own emotional weather; let them warm it, not run it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-trine-moon",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "moon",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun trine your Moon",
+      "slots": {
+        "relational_scene": "Their sense of self and your feelings fit together comfortably",
+        "dynamic": "You feel safe being yourself around them",
+        "navigation": "This is real compatibility glue, so trust it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-sextile-moon",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "moon",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun sextile your Moon",
+      "slots": {
+        "relational_scene": "Their sense of self and your feelings fit together comfortably",
+        "dynamic": "You feel safe being yourself around them",
+        "navigation": "This is real compatibility glue, so trust it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-moon",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "moon",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Moon",
+      "slots": {
+        "relational_scene": "Their direction and your needs keep pulling different ways",
+        "dynamic": "Their confidence can unsettle your comfort",
+        "navigation": "Name what you need out loud instead of quietly adjusting around them"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-moon",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "moon",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Moon",
+      "slots": {
+        "relational_scene": "Their direction and your needs keep pulling different ways",
+        "dynamic": "Their confidence can unsettle your comfort",
+        "navigation": "Name what you need out loud instead of quietly adjusting around them"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-conjunction-venus",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Venus",
+      "slots": {
+        "relational_scene": "You find them actually lovely, and being around them feels warm and easy",
+        "dynamic": "Affection and admiration flow, sometimes tipping into idealizing them",
+        "navigation": "Enjoy the warmth and still see them clearly"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-trine-venus",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "venus",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun trine your Venus",
+      "slots": {
+        "relational_scene": "Your identity and their affection cooperate, so liking each other comes easily",
+        "dynamic": "A natural, pleasant warmth",
+        "navigation": "Let the ease be part of the foundation"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-sextile-venus",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "venus",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun sextile your Venus",
+      "slots": {
+        "relational_scene": "Your identity and their affection cooperate, so liking each other comes easily",
+        "dynamic": "A natural, pleasant warmth",
+        "navigation": "Let the ease be part of the foundation"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-venus",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "venus",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Venus",
+      "slots": {
+        "relational_scene": "What you want to be and what they find lovely don't quite match",
+        "dynamic": "Affection is there but the taste or the timing is off",
+        "navigation": "Say what actually pleases you instead of guessing"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-venus",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "venus",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Venus",
+      "slots": {
+        "relational_scene": "What you want to be and what they find lovely don't quite match",
+        "dynamic": "Affection is there but the taste or the timing is off",
+        "navigation": "Say what actually pleases you instead of guessing"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-conjunction-mars",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Mars",
+      "slots": {
+        "relational_scene": "Their drive lands right on your sense of self, energizing you and occasionally challenging you",
+        "dynamic": "Attraction and rivalry can run on the same wire",
+        "navigation": "Point the shared energy at a goal, not at each other"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-trine-mars",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "mars",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun trine your Mars",
+      "slots": {
+        "relational_scene": "Their initiative and your identity move well together",
+        "dynamic": "You spur each other to act",
+        "navigation": "Take on something that needs both your engines"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-sextile-mars",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "mars",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun sextile your Mars",
+      "slots": {
+        "relational_scene": "Their initiative and your identity move well together",
+        "dynamic": "You spur each other to act",
+        "navigation": "Take on something that needs both your engines"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-mars",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "mars",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Mars",
+      "slots": {
+        "relational_scene": "Their push and your ego keep colliding",
+        "dynamic": "It's stimulating and combustible",
+        "navigation": "Fight fair, and burn the heat off physically rather than verbally"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-mars",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "mars",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Mars",
+      "slots": {
+        "relational_scene": "Their push and your ego keep colliding",
+        "dynamic": "It's stimulating and combustible",
+        "navigation": "Fight fair, and burn the heat off physically rather than verbally"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-conjunction-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "saturn",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Saturn",
+      "slots": {
+        "relational_scene": "They steady you, and they can also weigh on you",
+        "dynamic": "Their standards land as support or as judgment depending on the day",
+        "navigation": "Take the structure, refuse the shame"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-trine-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "saturn",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun trine your Saturn",
+      "slots": {
+        "relational_scene": "Their discipline and your direction build well together",
+        "dynamic": "They help you make it real and lasting",
+        "navigation": "Let them be the structure under your fire"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-sextile-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "saturn",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun sextile your Saturn",
+      "slots": {
+        "relational_scene": "Their discipline and your direction build well together",
+        "dynamic": "They help you make it real and lasting",
+        "navigation": "Let them be the structure under your fire"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "saturn",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Saturn",
+      "slots": {
+        "relational_scene": "Their caution presses on your confidence, and you feel checked",
+        "dynamic": "They can ground you or dim you",
+        "navigation": "Ask whether their limit is care or control, and answer that"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "saturn",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Saturn",
+      "slots": {
+        "relational_scene": "Their caution presses on your confidence, and you feel checked",
+        "dynamic": "They can ground you or dim you",
+        "navigation": "Ask whether their limit is care or control, and answer that"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-conjunction-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "pluto",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun conjunct your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity lands on your sense of self, transforming and sometimes overpowering you",
+        "dynamic": "Magnetic and heavy, with a pull toward control",
+        "navigation": "Let them deepen you, not run you"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-square-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "pluto",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun square your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity keeps pressing on who you are",
+        "dynamic": "Power and identity get tangled between you",
+        "navigation": "Hold your own center inside the intensity"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/sun-opposition-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "sun",
+      "your_body": "pluto",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Sun opposition your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity keeps pressing on who you are",
+        "dynamic": "Power and identity get tangled between you",
+        "navigation": "Hold your own center inside the intensity"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/sun",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-conjunction-moon",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "moon",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon conjunct your Moon",
+      "slots": {
+        "relational_scene": "You share very similar emotional rhythms, so you tend to feel things at the same time",
+        "dynamic": "Deeply comforting, and it can amplify a low mood between you",
+        "navigation": "When you're both down, one of you names it so it doesn't spiral"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-trine-moon",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "moon",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon trine your Moon",
+      "slots": {
+        "relational_scene": "Your emotional needs fit together easily",
+        "dynamic": "Home feels natural with them",
+        "navigation": "This is quiet, durable compatibility"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-sextile-moon",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "moon",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon sextile your Moon",
+      "slots": {
+        "relational_scene": "Your emotional needs fit together easily",
+        "dynamic": "Home feels natural with them",
+        "navigation": "This is quiet, durable compatibility"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-square-moon",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "moon",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon square your Moon",
+      "slots": {
+        "relational_scene": "Your emotional needs and habits keep missing each other",
+        "dynamic": "What soothes one of you unsettles the other",
+        "navigation": "Learn each other's actual comfort, not the one you'd assume"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-opposition-moon",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "moon",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon opposition your Moon",
+      "slots": {
+        "relational_scene": "Your emotional needs and habits keep missing each other",
+        "dynamic": "What soothes one of you unsettles the other",
+        "navigation": "Learn each other's actual comfort, not the one you'd assume"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/moon",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-conjunction-venus",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon conjunct your Venus",
+      "slots": {
+        "relational_scene": "Their affection lands on your need for closeness, and tenderness comes easily",
+        "dynamic": "A gentle, fond, nurturing warmth",
+        "navigation": "Let the softness matter as much as the spark"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-trine-venus",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "venus",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon trine your Venus",
+      "slots": {
+        "relational_scene": "Your feelings and their affection line up in a low-pressure way",
+        "dynamic": "Warmth is there when either of you reaches for it",
+        "navigation": "Reach for it; it's freely given here"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-sextile-venus",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "venus",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon sextile your Venus",
+      "slots": {
+        "relational_scene": "Your feelings and their affection line up in a low-pressure way",
+        "dynamic": "Warmth is there when either of you reaches for it",
+        "navigation": "Reach for it; it's freely given here"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-square-venus",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "venus",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon square your Venus",
+      "slots": {
+        "relational_scene": "What you need and what they value pull slightly apart",
+        "dynamic": "Affection and comfort are a little crossed",
+        "navigation": "Ask for the specific comfort instead of the grand gesture"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-opposition-venus",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "venus",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon opposition your Venus",
+      "slots": {
+        "relational_scene": "What you need and what they value pull slightly apart",
+        "dynamic": "Affection and comfort are a little crossed",
+        "navigation": "Ask for the specific comfort instead of the grand gesture"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-conjunction-mars",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon conjunct your Mars",
+      "slots": {
+        "relational_scene": "Their drive lands on your feelings, exciting and occasionally abrasive",
+        "dynamic": "Passion and irritation run close together",
+        "navigation": "Move the heat before it becomes a fight about feelings"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-trine-mars",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "mars",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon trine your Mars",
+      "slots": {
+        "relational_scene": "Their action and your feelings cooperate",
+        "dynamic": "They move you and you aim them",
+        "navigation": "Let them help you act on what you feel"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-sextile-mars",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "mars",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon sextile your Mars",
+      "slots": {
+        "relational_scene": "Their action and your feelings cooperate",
+        "dynamic": "They move you and you aim them",
+        "navigation": "Let them help you act on what you feel"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-square-mars",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "mars",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon square your Mars",
+      "slots": {
+        "relational_scene": "Their push keeps bruising your softer needs",
+        "dynamic": "You feel poked right where you're tender",
+        "navigation": "They slow down, and you say the hurt directly"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-opposition-mars",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "mars",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon opposition your Mars",
+      "slots": {
+        "relational_scene": "Their push keeps bruising your softer needs",
+        "dynamic": "You feel poked right where you're tender",
+        "navigation": "They slow down, and you say the hurt directly"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-conjunction-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "saturn",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon conjunct your Saturn",
+      "slots": {
+        "relational_scene": "They ground your feelings, and they can also cool them",
+        "dynamic": "Their seriousness lands as steadiness or as coldness",
+        "navigation": "Let them be safe, not stern, and tell them when it tips"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-trine-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "saturn",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon trine your Saturn",
+      "slots": {
+        "relational_scene": "Their steadiness and your feelings settle each other",
+        "dynamic": "They make your emotional world feel safe and durable",
+        "navigation": "This is commitment glue, so lean on it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-sextile-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "saturn",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon sextile your Saturn",
+      "slots": {
+        "relational_scene": "Their steadiness and your feelings settle each other",
+        "dynamic": "They make your emotional world feel safe and durable",
+        "navigation": "This is commitment glue, so lean on it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-square-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "saturn",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon square your Saturn",
+      "slots": {
+        "relational_scene": "Their restraint presses on your emotional needs at an angle that keeps catching",
+        "dynamic": "Their caution can feel like rejection until you can feel the care under it",
+        "navigation": "Name the need; don't wait for them to notice"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-opposition-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "saturn",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon opposition your Saturn",
+      "slots": {
+        "relational_scene": "Their restraint presses on your emotional needs at an angle that keeps catching",
+        "dynamic": "Their caution can feel like rejection until you can feel the care under it",
+        "navigation": "Name the need; don't wait for them to notice"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/moon-conjunction-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "moon",
+      "your_body": "pluto",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Moon conjunct your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity reaches your deepest feelings, and the bond gets profound fast",
+        "dynamic": "Deeply merging, with a risk of emotional control",
+        "navigation": "Stay honest about needs so depth doesn't become dependency"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/moon",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mercury-conjunction-mercury",
+      "kind": "synastry_aspect",
+      "their_body": "mercury",
+      "your_body": "mercury",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mercury conjunct your Mercury",
+      "slots": {
+        "relational_scene": "You think out loud together and finish each other's sentences",
+        "dynamic": "Constant, easy mental connection",
+        "navigation": "Make sure you also sit in silence together sometimes"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mercury",
+        "ms/synastry-bank/receive/mercury",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mercury-trine-mercury",
+      "kind": "synastry_aspect",
+      "their_body": "mercury",
+      "your_body": "mercury",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mercury trine your Mercury",
+      "slots": {
+        "relational_scene": "Your minds move well together",
+        "dynamic": "Conversation flows and ideas build",
+        "navigation": "Use the easy talk to sort things out early"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mercury",
+        "ms/synastry-bank/receive/mercury",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mercury-sextile-mercury",
+      "kind": "synastry_aspect",
+      "their_body": "mercury",
+      "your_body": "mercury",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mercury sextile your Mercury",
+      "slots": {
+        "relational_scene": "Your minds move well together",
+        "dynamic": "Conversation flows and ideas build",
+        "navigation": "Use the easy talk to sort things out early"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mercury",
+        "ms/synastry-bank/receive/mercury",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mercury-square-mercury",
+      "kind": "synastry_aspect",
+      "their_body": "mercury",
+      "your_body": "mercury",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mercury square your Mercury",
+      "slots": {
+        "relational_scene": "You think and talk in ways that keep catching on each other",
+        "dynamic": "Similar enough to engage constantly, different enough to misread",
+        "navigation": "Slow down and check what they actually meant"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mercury",
+        "ms/synastry-bank/receive/mercury",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mercury-opposition-mercury",
+      "kind": "synastry_aspect",
+      "their_body": "mercury",
+      "your_body": "mercury",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mercury opposition your Mercury",
+      "slots": {
+        "relational_scene": "You think and talk in ways that keep catching on each other",
+        "dynamic": "Similar enough to engage constantly, different enough to misread",
+        "navigation": "Slow down and check what they actually meant"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mercury",
+        "ms/synastry-bank/receive/mercury",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-conjunction-venus",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus conjunct your Venus",
+      "slots": {
+        "relational_scene": "You value and enjoy similar things, and express affection in compatible ways",
+        "dynamic": "Liking each other comes naturally",
+        "navigation": "Shared taste is a gift, so build a life around it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-trine-venus",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "venus",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus trine your Venus",
+      "slots": {
+        "relational_scene": "Your affections and tastes align",
+        "dynamic": "Ease, pleasure, and real enjoyment of each other",
+        "navigation": "Let this be the low-drama center of the bond"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-sextile-venus",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "venus",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus sextile your Venus",
+      "slots": {
+        "relational_scene": "Your affections and tastes align",
+        "dynamic": "Ease, pleasure, and real enjoyment of each other",
+        "navigation": "Let this be the low-drama center of the bond"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-square-venus",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "venus",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus square your Venus",
+      "slots": {
+        "relational_scene": "What you each find lovely doesn't quite match",
+        "dynamic": "You love differently, and it can feel like a mismatch",
+        "navigation": "Learn their love language instead of insisting on yours"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-opposition-venus",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "venus",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus opposition your Venus",
+      "slots": {
+        "relational_scene": "What you each find lovely doesn't quite match",
+        "dynamic": "You love differently, and it can feel like a mismatch",
+        "navigation": "Learn their love language instead of insisting on yours"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-conjunction-mars",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus conjunct your Mars",
+      "slots": {
+        "relational_scene": "Their drive and desire land right on your affection, so wanting and being wanted move fast",
+        "dynamic": "Strong chemistry, easy to act on before you've thought it through",
+        "navigation": "Enjoy the spark, and let the rest of the bond catch up to it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-trine-mars",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "mars",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus trine your Mars",
+      "slots": {
+        "relational_scene": "Their desire and your affection line up with almost no resistance",
+        "dynamic": "Attraction and warmth coordinate smoothly",
+        "navigation": "This is the classic attraction glue, so enjoy it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-sextile-mars",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "mars",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus sextile your Mars",
+      "slots": {
+        "relational_scene": "Their desire and your affection line up with almost no resistance",
+        "dynamic": "Attraction and warmth coordinate smoothly",
+        "navigation": "This is the classic attraction glue, so enjoy it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-square-mars",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "mars",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus square your Mars",
+      "slots": {
+        "relational_scene": "Desire and affection are there, but the timing or the approach keeps clashing",
+        "dynamic": "Attraction and irritation coexist",
+        "navigation": "Talk about pace and pursuit directly"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-opposition-mars",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "mars",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus opposition your Mars",
+      "slots": {
+        "relational_scene": "Desire and affection are there, but the timing or the approach keeps clashing",
+        "dynamic": "Attraction and irritation coexist",
+        "navigation": "Talk about pace and pursuit directly"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-conjunction-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "saturn",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus conjunct your Saturn",
+      "slots": {
+        "relational_scene": "They ask your affection to commit and get real",
+        "dynamic": "Their reserve reads as depth or as a cold shoulder",
+        "navigation": "Let them slow-build the love, and call out the chill when it's chill"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-trine-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "saturn",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus trine your Saturn",
+      "slots": {
+        "relational_scene": "Their commitment and your affection sit easily together",
+        "dynamic": "A love that's warm and built to last",
+        "navigation": "Define what you want and make it durable"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-sextile-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "saturn",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus sextile your Saturn",
+      "slots": {
+        "relational_scene": "Their commitment and your affection sit easily together",
+        "dynamic": "A love that's warm and built to last",
+        "navigation": "Define what you want and make it durable"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-square-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "saturn",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus square your Saturn",
+      "slots": {
+        "relational_scene": "Their caution keeps pressing on your warmth, so your affection can feel like pressure and their restraint like coldness",
+        "dynamic": "Love here is effortful and easily doubted",
+        "navigation": "Ask for what you need directly, and let their actions prove the care"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-opposition-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "saturn",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus opposition your Saturn",
+      "slots": {
+        "relational_scene": "Their caution keeps pressing on your warmth, so your affection can feel like pressure and their restraint like coldness",
+        "dynamic": "Love here is effortful and easily doubted",
+        "navigation": "Ask for what you need directly, and let their actions prove the care"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-conjunction-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "pluto",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus conjunct your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity lands on your affection, and the attraction goes deep fast",
+        "dynamic": "Magnetic and consuming, with a pull toward control or obsession",
+        "navigation": "Let it be deep without letting it become possession"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-square-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "pluto",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus square your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity and your affection make a charged, sometimes destabilizing pull",
+        "dynamic": "Jealousy or power can enter the love",
+        "navigation": "Keep your autonomy inside the intensity"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/venus-opposition-pluto",
+      "kind": "synastry_aspect",
+      "their_body": "venus",
+      "your_body": "pluto",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Venus opposition your Pluto",
+      "slots": {
+        "relational_scene": "Their intensity and your affection make a charged, sometimes destabilizing pull",
+        "dynamic": "Jealousy or power can enter the love",
+        "navigation": "Keep your autonomy inside the intensity"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/venus",
+        "ms/synastry-bank/receive/pluto",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-conjunction-mars",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "mars",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars conjunct your Mars",
+      "slots": {
+        "relational_scene": "You go after what you want in very similar ways, so you move in strong sync and also collide",
+        "dynamic": "Two identical drives that both want the wheel",
+        "navigation": "Decide who leads on what before the trip, not during"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-trine-mars",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "mars",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars trine your Mars",
+      "slots": {
+        "relational_scene": "Your drives cooperate and spur each other",
+        "dynamic": "You get things done together",
+        "navigation": "Take on the ambitious thing as a team"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-sextile-mars",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "mars",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars sextile your Mars",
+      "slots": {
+        "relational_scene": "Your drives cooperate and spur each other",
+        "dynamic": "You get things done together",
+        "navigation": "Take on the ambitious thing as a team"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-square-mars",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "mars",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars square your Mars",
+      "slots": {
+        "relational_scene": "Your drives keep clashing, wanting to move different ways at once",
+        "dynamic": "Friction, competition, and heat",
+        "navigation": "Aim the fight at a shared task, not at each other"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-opposition-mars",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "mars",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars opposition your Mars",
+      "slots": {
+        "relational_scene": "Your drives keep clashing, wanting to move different ways at once",
+        "dynamic": "Friction, competition, and heat",
+        "navigation": "Aim the fight at a shared task, not at each other"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/mars",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-conjunction-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "saturn",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars conjunct your Saturn",
+      "slots": {
+        "relational_scene": "Their caution lands on your drive, so you feel both braked and steadied",
+        "dynamic": "They can discipline your action or frustrate it",
+        "navigation": "Use their structure to aim your push, not to stop it"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-trine-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "saturn",
+      "aspect": "trine",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars trine your Saturn",
+      "slots": {
+        "relational_scene": "Their discipline and your drive build well",
+        "dynamic": "Steady, productive effort together",
+        "navigation": "This is a good working-partnership dynamic"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/trine"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-sextile-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "saturn",
+      "aspect": "sextile",
+      "valence": "harmonious",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars sextile your Saturn",
+      "slots": {
+        "relational_scene": "Their discipline and your drive build well",
+        "dynamic": "Steady, productive effort together",
+        "navigation": "This is a good working-partnership dynamic"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/sextile"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-square-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "saturn",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars square your Saturn",
+      "slots": {
+        "relational_scene": "Their limits and your drive grind against each other",
+        "dynamic": "You feel blocked, and they feel rushed",
+        "navigation": "Agree on the pace out loud"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/mars-opposition-saturn",
+      "kind": "synastry_aspect",
+      "their_body": "mars",
+      "your_body": "saturn",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Mars opposition your Saturn",
+      "slots": {
+        "relational_scene": "Their limits and your drive grind against each other",
+        "dynamic": "You feel blocked, and they feel rushed",
+        "navigation": "Agree on the pace out loud"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/mars",
+        "ms/synastry-bank/receive/saturn",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/saturn-conjunction-ascendant",
+      "kind": "synastry_aspect",
+      "their_body": "saturn",
+      "your_body": "ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Saturn conjunct your Ascendant",
+      "slots": {
+        "relational_scene": "Their standards affect how freely you show up around them",
+        "dynamic": "They can help you get serious or make you self-conscious",
+        "navigation": "Take the steadiness; don't make yourself smaller to fit their gravity"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/saturn",
+        "ms/synastry-bank/receive/ascendant",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/saturn-square-ascendant",
+      "kind": "synastry_aspect",
+      "their_body": "saturn",
+      "your_body": "ascendant",
+      "aspect": "square",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Saturn square your Ascendant",
+      "slots": {
+        "relational_scene": "Their caution or criticism affects how freely you present yourself",
+        "dynamic": "You may over-prepare, and feel watched",
+        "navigation": "Show up as yourself; their approval isn't the bar"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/saturn",
+        "ms/synastry-bank/receive/ascendant",
+        "cc/aspect/square"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/saturn-opposition-ascendant",
+      "kind": "synastry_aspect",
+      "their_body": "saturn",
+      "your_body": "ascendant",
+      "aspect": "opposition",
+      "valence": "hard",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Saturn opposition your Ascendant",
+      "slots": {
+        "relational_scene": "Their caution or criticism affects how freely you present yourself",
+        "dynamic": "You may over-prepare, and feel watched",
+        "navigation": "Show up as yourself; their approval isn't the bar"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/saturn",
+        "ms/synastry-bank/receive/ascendant",
+        "cc/aspect/opposition"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/jupiter-conjunction-venus",
+      "kind": "synastry_aspect",
+      "their_body": "jupiter",
+      "your_body": "venus",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Jupiter conjunct your Venus",
+      "slots": {
+        "relational_scene": "Their optimism lands on your affection, and the bond feels generous and warm",
+        "dynamic": "Easy enjoyment, with a risk of overpromising or overindulging",
+        "navigation": "Enjoy the abundance without letting it inflate the promises"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/jupiter",
+        "ms/synastry-bank/receive/venus",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/ascendant-conjunction-ascendant",
+      "kind": "synastry_aspect",
+      "their_body": "ascendant",
+      "your_body": "ascendant",
+      "aspect": "conjunction",
+      "valence": "conjunction",
+      "surface": "synastry.inter_aspect",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their Ascendant conjunct your Ascendant",
+      "slots": {
+        "relational_scene": "Your first impressions click, and you come across to each other as familiar right away",
+        "dynamic": "An easy, instinctive rapport",
+        "navigation": "Trust the early ease, and still let the real people show up over time"
+      },
+      "source_keys": [
+        "ms/synastry-bank/contribute/ascendant",
+        "ms/synastry-bank/receive/ascendant",
+        "cc/aspect/conjunction"
+      ],
+      "doctrine_source": "ms/synastry banks + Hayden/Jansky/Suskin (doctrine only, voiced)",
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced relational; no keyword seam",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-1",
+      "kind": "synastry_house_overlay",
+      "house": 1,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 1st house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 1st house, they light up how freely they act around you: your appearance, energy, and first moves"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/1"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-2",
+      "kind": "synastry_house_overlay",
+      "house": 2,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 2nd house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 2nd house, they light up your money, priorities, and self-worth, and what feels worth the cost between you"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/2"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-3",
+      "kind": "synastry_house_overlay",
+      "house": 3,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 3rd house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 3rd house, they light up your daily talk: texting, teasing, tone, errands, and how you coordinate"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/3"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-4",
+      "kind": "synastry_house_overlay",
+      "house": 4,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 4th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 4th house, they light up your home, privacy, and family expectations, and the emotional history you carry"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/4"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-5",
+      "kind": "synastry_house_overlay",
+      "house": 5,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 5th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 5th house, they light up dating, play, creativity, attention, and pleasure between you"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/5"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-6",
+      "kind": "synastry_house_overlay",
+      "house": 6,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 6th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 6th house, they light up your routines, chores, schedules, and who does what"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/6"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-7",
+      "kind": "synastry_house_overlay",
+      "house": 7,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 7th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 7th house, they light up agreements, cooperation, and direct negotiation between you"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/7"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-8",
+      "kind": "synastry_house_overlay",
+      "house": 8,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 8th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 8th house, they light up shared money, trust, dependency, and what each of you owes the other"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/8"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-9",
+      "kind": "synastry_house_overlay",
+      "house": 9,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 9th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 9th house, they light up your beliefs, travel, learning, and what you each think is right"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/9"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-10",
+      "kind": "synastry_house_overlay",
+      "house": 10,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 10th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 10th house, they light up your ambition, reputation, and public direction, for support or interference"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/10"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-11",
+      "kind": "synastry_house_overlay",
+      "house": 11,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 11th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 11th house, they light up friendship, shared goals, and where you each fit in the other's future"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/11"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    },
+    {
+      "id": "cc/synastry/house-overlay-12",
+      "kind": "synastry_house_overlay",
+      "house": 12,
+      "surface": "synastry.house_overlay",
+      "status": "REVIEWED_CLAUSE",
+      "title": "Their planet in your 12th house",
+      "slots": {
+        "overlay_domain": "When their planet falls in your 12th house, they light up the private and unspoken: hidden attraction, avoided conflict, hard-to-name irritation"
+      },
+      "compose_note": "combine with ms/synastry-bank/contribute/{planet} for the specific planet's flavor",
+      "source_keys": [
+        "ms/synastry-house-overlay/12"
+      ],
+      "tone_version": "marie-calibrated-v1",
+      "originalityCheck": "voiced",
+      "review_note": "needs Marie/editorial final sign-off before serving"
+    }
+  ]
+}

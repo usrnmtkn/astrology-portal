@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TLDR Astro Phrase Bank Entry",
+  "description": "Schema for every authored/templated entry in the phrase bank. Entries are keyed by a cc/ source id and belong to exactly one lane.",
+  "type": "object",
+  "required": ["id", "lane", "surface_scope", "kind"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "cc/ source id, e.g. cc/aspect-pair/venus-square-saturn",
+      "pattern": "^(cc|kw)/"
+    },
+    "lane": {
+      "type": "string",
+      "enum": ["exact", "context", "keyword"],
+      "description": "exact = primary interpretive source; context = supporting/refine only; keyword = metadata only, never prose."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "aspect-pair", "planet-in-sign", "planet-in-house", "house",
+        "moon-phase", "moon-sign", "daily", "angle", "ref", "ingress",
+        "retrograde", "keyword"
+      ]
+    },
+    "surface_scope": {
+      "type": "array",
+      "description": "Surfaces this entry is allowed to feed. Enforces that collective and personalized entries do not share a fallback paragraph.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "home.daily_horoscope",
+          "home.moon_forecast.phase",
+          "home.moon_forecast.sign",
+          "home.planetary_horoscopes.list",
+          "home.planetary_horoscopes.personal",
+          "transits.short_term",
+          "transits.long_term",
+          "transits.personalized_card",
+          "natal.placement",
+          "natal.angle",
+          "natal.aspect",
+          "sky.collective_planet_in_sign",
+          "sky.current_aspect",
+          "sky.retrograde_station",
+          "sky.ingress_calendar"
+        ]
+      }
+    },
+    "authored": {
+      "type": "boolean",
+      "description": "true = hand-authored copy; false = templated slot with variables.",
+      "default": true
+    },
+    "card": {
+      "type": "string",
+      "description": "Compact copy: ONE concise claim for the card/list view. Must NOT be identical to `detail` (rule 8: compact and expanded copy are separated)."
+    },
+    "detail": {
+      "type": "string",
+      "description": "Expanded copy: the developed interpretation for the detail page."
+    },
+    "state": {
+      "type": "string",
+      "enum": ["READER_READY", "SOURCE_GAP", "EVIDENCE_ONLY", "REFERENCE_SCAFFOLD"],
+      "description": "Publication state. Only READER_READY entries may render to a reader. Missing primary source -> SOURCE_GAP.",
+      "default": "READER_READY"
+    },
+    "situation": {
+      "type": "string",
+      "description": "The one recognizable lived situation. For exact-lane entries this is load-bearing."
+    },
+    "bridge": {
+      "type": "string",
+      "description": "Optional interpretive bridge. Suppressed if it only restates the situation."
+    },
+    "response": {
+      "type": "string",
+      "description": "Optional practical direction / imperative."
+    },
+    "refine": {
+      "type": "string",
+      "description": "Context-lane only: a clause that REFINES an exact reading. May not stand alone as a sentence."
+    },
+    "footer_terms": {
+      "type": "array",
+      "description": "Immutable technical astrology facts to render last (transit cards).",
+      "items": { "type": "string" }
+    },
+    "template": {
+      "type": "string",
+      "description": "For templated entries: a string with {slots}. Slots draw from other bank records, never from raw keywords."
+    },
+    "variables": {
+      "type": "object",
+      "description": "Named variables a template consumes, each mapped to an allowed source lane.",
+      "additionalProperties": { "type": "string" }
+    },
+    "keywords": {
+      "type": "array",
+      "description": "Metadata only. NEVER concatenated into prose.",
+      "items": { "type": "string" }
+    },
+    "sect_gated": {
+      "type": "boolean",
+      "description": "If true, copy is suppressed unless birth time + horizon are reliable.",
+      "default": false
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "lane": { "const": "exact" } } },
+      "then": {
+        "anyOf": [
+          { "required": ["situation"] },
+          { "required": ["template"] }
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "lane": { "const": "context" } } },
+      "then": {
+        "not": { "required": ["situation"] },
+        "description": "Context records may not carry an independent 'situation' sentence."
+      }
+    },
+    {
+      "if": { "properties": { "lane": { "const": "keyword" } } },
+      "then": {
+        "required": ["keywords"],
+        "not": { "anyOf": [ { "required": ["situation"] }, { "required": ["bridge"] }, { "required": ["response"] } ] }
+      }
+    }
+  ]
+}

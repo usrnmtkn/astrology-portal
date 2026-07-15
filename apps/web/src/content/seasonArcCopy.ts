@@ -1,4 +1,4 @@
-export type SeasonArcPhase = { phase: string; figure: string | null; body: string };
+export type SeasonArcPhase = { phase: string; figure: string | null; body: string; summary?: string; prompt?: string };
 
 export type SeasonArcCopy = { story: string; phases: SeasonArcPhase[] };
 
@@ -8,43 +8,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Forgotten One's Moon",
-        "body": "The beginning. Nobody is watching, and nobody is coming. What you build now, you build for yourself."
+        "figure": "The First Stone",
+        "body": "Capricorn Season begins where effort becomes real. This is the part of the cycle where you notice what needs structure, commitment, or a more honest relationship with time. The beginning may feel quiet or unsupported, but that is part of the teaching. You are not building for applause yet. You are finding the thing worth taking seriously.",
+        "summary": "Name what is worth taking seriously before anyone rewards it.",
+        "prompt": "What am I ready to build with more honesty?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Mountain Climber's Moon",
-        "body": "You've picked the mountain. The climb has started and the direction is set."
+        "figure": "The First Climb",
+        "body": "By the Crescent Moon, the work starts asking for a path. You may notice the first signs of ambition, pressure, planning, or resistance. The task is not to reach the summit immediately. It is to choose the mountain carefully and take the next step without turning the whole future into a burden.",
+        "summary": "Choose the mountain and take the next practical step.",
+        "prompt": "What direction deserves my steady effort?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Miner's Moon",
-        "body": "You've hit the silver in the rock. Watch what you abandon to dig, and what you're trying to buy instead of earn."
+        "figure": "The Cost Test",
+        "body": "At the First Quarter Moon, Capricorn Season asks what the climb is costing. You may be tempted to trade purpose for proof, craft for status, or self-respect for a visible win. This is where ambition needs ethics. The Moon asks you to notice what you are digging for, and what you are abandoning to get it.",
+        "summary": "Check what ambition is costing before you keep digging.",
+        "prompt": "What am I trying to earn, prove, or buy?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Smith's Moon",
-        "body": "The way out of the tunnel is craft. Shape what you dug up until the work itself is the point."
+        "figure": "The Craft",
+        "body": "By the Gibbous Moon, the raw material is in your hands. This phase asks for refinement, skill, and patience with the unglamorous part of mastery. The work may not be finished, but it can become more honest. Shape what you have gathered until the process itself becomes worthy of respect.",
+        "summary": "Shape the raw material until the work becomes worthy.",
+        "prompt": "What part of the work needs more craft and less performance?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Grandmother's Moon",
-        "body": "The authority is yours now. Hold the people you're responsible for without letting duty replace tenderness."
+        "figure": "The Responsibility",
+        "body": "The Full Moon shows what your structure is holding. It can reveal authority, duty, obligation, and the people or promises that depend on you. This is the emotional high point of Capricorn Season: can you carry responsibility without becoming hard, withholding, or unreachable? Strength is not the same as distance.",
+        "summary": "Hold responsibility without letting duty replace tenderness.",
+        "prompt": "Where has responsibility made me harder than I need to be?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Grandfather's Moon",
-        "body": "You're providing outward, carrying the load in public. Notice what you expect back for it."
+        "figure": "The Public Load",
+        "body": "After the Full Moon, the work moves outward. You may be carrying, providing, organizing, or setting the standard for others. This phase asks you to share what has been built without silently keeping score. Let support be named clearly instead of turning sacrifice into a private ledger.",
+        "summary": "Share the load clearly instead of keeping score.",
+        "prompt": "What do I need to name instead of silently resenting?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Miser's Moon",
-        "body": "The respect didn't come the way you wanted. Check what you're withholding and what score you're keeping."
+        "figure": "The Withholding",
+        "body": "At the Last Quarter Moon, Capricorn Season reviews the defenses built around disappointment. Maybe the respect did not come. Maybe the labor was unseen. Maybe you started gripping what you once meant to offer. The Moon asks what you are withholding now, and whether it is protection or punishment.",
+        "summary": "Notice what you are withholding and why.",
+        "prompt": "Where am I protecting myself by gripping too tightly?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Dragon's Moon",
-        "body": "You're sitting on everything you gathered. Decide what wisdom gets passed on, and to whom."
+        "figure": "The Earned Wisdom",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where achievement turns into wisdom, or hardens into a hoard. You do not have to keep proving what you survived, learned, or built. Decide what gets passed on, what gets released, and what no longer needs to define your worth.",
+        "summary": "Pass on the wisdom. Stop guarding the old proof.",
+        "prompt": "What have I earned that is ready to become wisdom?"
       }
     ]
   },
@@ -53,43 +69,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Father's Son Moon",
-        "body": "You're the favorite, playing the part well. Find out what you actually feel underneath it."
+        "figure": "The Assigned Role",
+        "body": "Aquarius Season begins with the question of belonging without performance. This is the part of the cycle where you notice the role you have been assigned, the approval you have learned to earn, or the version of yourself that keeps the system comfortable. The beginning asks for distance: enough space to feel what is true underneath the part you play.",
+        "summary": "Notice the role you have been playing before you rebel against it.",
+        "prompt": "What part of me has been performing belonging?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Father's Daughter Moon",
-        "body": "You're proving yourself in the model's world. Notice what gets left behind to earn the approval."
+        "figure": "The First Distance",
+        "body": "By the Crescent Moon, the self starts separating from the old model. You may notice the cost of approval, the pressure to prove usefulness, or the parts of you that went quiet to stay included. This phase asks you to make room for difference before it has to become rupture.",
+        "summary": "Make room for difference before it has to become rupture.",
+        "prompt": "What am I leaving behind to stay accepted?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Rebel Moon",
-        "body": "The break. Make it a decision, not a reaction, and keep the friends who can argue with you."
+        "figure": "The Break",
+        "body": "At the First Quarter Moon, Aquarius Season reaches the break point. Something in the old system no longer works. The Moon asks you to separate reaction from choice. Rebellion can clear space, but it can also throw away what still has value. Keep the people who can disagree with you without asking you to disappear.",
+        "summary": "Make the break a decision, not only a reaction.",
+        "prompt": "What am I rejecting, and what still deserves to come with me?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Trickster's Moon",
-        "body": "Turn the system sideways and see what falls out. Give the mischief a purpose."
+        "figure": "The Pattern Shift",
+        "body": "By the Gibbous Moon, the work becomes more precise. You can see the hidden assumptions, strange incentives, and stale rules more clearly. This phase asks you to turn the system sideways, but with purpose. Innovation is not only disruption. It is the clean adjustment that lets a truer pattern emerge.",
+        "summary": "Turn the system sideways so the hidden pattern shows itself.",
+        "prompt": "What rule needs to be questioned with care?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Friendship Moon",
-        "body": "The community is real. Stay human inside the collective."
+        "figure": "The Collective Mirror",
+        "body": "The Full Moon shows the difference between a community and an ideology. It can reveal where belonging is real, where distance has become superiority, or where the group has replaced actual intimacy. This is the emotional high point of Aquarius Season. The Moon asks you to stay human inside the collective.",
+        "summary": "See where community is real and where distance is hiding intimacy.",
+        "prompt": "Where am I using distance to avoid being known?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Apostle's Moon",
-        "body": "Carry the hope outward, and keep listening while you share it."
+        "figure": "The Shared Signal",
+        "body": "After the Full Moon, the vision starts moving outward. You may be sharing an idea, inviting people in, or carrying hope into a wider field. This phase asks you to communicate without turning the message into doctrine. Let the future stay alive enough to keep listening.",
+        "summary": "Share the vision without turning it into doctrine.",
+        "prompt": "What idea needs to be shared without becoming a test of loyalty?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Heretic's Moon",
-        "body": "They cast you out for saying it. Don't stay anywhere you must hide what you believe."
+        "figure": "The Heresy",
+        "body": "At the Last Quarter Moon, Aquarius Season reviews the cost of free thought. You may see where a group cannot hold your truth, or where your need to be different has become its own trap. The Moon asks what freedom actually requires now: departure, repair, honesty, or a less performative kind of independence.",
+        "summary": "Review where free thought costs belonging, and choose cleanly.",
+        "prompt": "Where do I need freedom without making exile my identity?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Prophet's Moon",
-        "body": "Speak to the future from your distance, but stay in the present enough to matter."
+        "figure": "The Future Memory",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where distance becomes perspective, and perspective becomes responsibility. You may see the future more clearly, but the Moon asks you to stay connected to the present enough to matter. Keep the signal. Release the isolation around it.",
+        "summary": "Keep the future signal without disappearing from the present.",
+        "prompt": "What future am I listening for, and who needs me here now?"
       }
     ]
   },
@@ -98,43 +130,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Dreamer's Moon",
-        "body": "Half in the other world. Honor the dream and give it a vessel."
+        "figure": "The First Dream",
+        "body": "Pisces Season begins where the edges soften. This is the part of the cycle where longing, intuition, grief, imagination, or compassion starts moving before it has language. The beginning asks you to honor the dream without letting it dissolve your life. Give the feeling a vessel, even if it is small.",
+        "summary": "Honor the dream and give it a vessel.",
+        "prompt": "What feeling is asking for form?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Mermaid Moon",
-        "body": "The fantasy ocean is more tempting than the shore. Let the longing make something."
+        "figure": "The First Enchantment",
+        "body": "By the Crescent Moon, the dream starts pulling harder. You may notice fantasy, avoidance, romance, escape, or the wish to disappear into something beautiful. This phase asks you to notice what the longing is protecting, and to let it make something instead of carrying you away.",
+        "summary": "Notice the escape route and turn the longing into something real.",
+        "prompt": "Where am I tempted to disappear instead of feel?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Martyr's Moon",
-        "body": "The giving has crossed the line. Give cleanly and keep enough to live on."
+        "figure": "The Sacrifice Test",
+        "body": "At the First Quarter Moon, Pisces Season asks where compassion has crossed into self-erasure. Giving can be beautiful, but it can also become a way to avoid having needs. The Moon asks you to give cleanly, without quiet superiority, resentment, or the hidden hope that being needed will keep you safe.",
+        "summary": "Give cleanly without using sacrifice to erase yourself.",
+        "prompt": "Where has compassion become self-abandonment?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Poet's Moon",
-        "body": "Turn the feeling into symbol. Don't let the poem replace the tending."
+        "figure": "The Translation",
+        "body": "By the Gibbous Moon, the feeling needs a language. This phase asks you to translate what ordinary speech cannot hold: through art, prayer, rest, music, image, or ritual. The work is to let symbol help the feeling move, without letting the symbol replace the actual tending.",
+        "summary": "Translate the feeling without letting the symbol replace the care.",
+        "prompt": "What form can hold what I cannot explain?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Healer's Moon",
-        "body": "Stop being drained. Open up and let the mercy come through you instead."
+        "figure": "The Open Channel",
+        "body": "The Full Moon shows the difference between being open and being drained. It can reveal where mercy flows through you, and where your boundaries have become too porous to protect a life. This is the emotional high point of Pisces Season. The Moon asks you to let compassion move without becoming the source for everyone.",
+        "summary": "Let compassion move through you without letting it drain you.",
+        "prompt": "Where do I need a clearer boundary around my openness?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Moon of the Angel of Mercy",
-        "body": "Serve the suffering, and include yourself in the mercy."
+        "figure": "The Shared Mercy",
+        "body": "After the Full Moon, the tenderness moves outward. You may be called to care, forgive, soothe, or witness suffering. This phase asks you to include yourself in the mercy you offer. Service becomes distorted when it requires you to vanish.",
+        "summary": "Offer mercy outward while including yourself in it.",
+        "prompt": "How can I care without disappearing?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Moon of Lost Souls",
-        "body": "Nothing left, and fog everywhere. Stop forcing clarity and rest near the strong."
+        "figure": "The Fog",
+        "body": "At the Last Quarter Moon, Pisces Season reviews the places where depletion, confusion, or grief has taken over. You may not be able to force clarity yet. The Moon asks for rest, honesty, and borrowed steadiness. You do not have to solve the whole fog to stop walking deeper into it.",
+        "summary": "Stop forcing clarity. Rest near what is steady.",
+        "prompt": "Where am I depleted enough to need support?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Mystic's Moon",
-        "body": "Touch the mystery. Let it deepen the human life instead of replacing it."
+        "figure": "The Human Mystery",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where mystery becomes wisdom, or escape becomes another loop. The Moon asks you to let the unseen deepen your human life instead of replacing it. Keep the softness. Release the fantasy that asks you to leave yourself behind.",
+        "summary": "Let the mystery deepen life instead of replacing it.",
+        "prompt": "What am I ready to release back into the unknown?"
       }
     ]
   },
@@ -143,43 +191,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Infant's Moon",
-        "body": "Everything is new and the wanting is immediate. Start before you talk yourself out of it, but wanting isn't permission."
+        "figure": "The First Want",
+        "body": "Aries Season begins with the first honest want. This is the part of the cycle where energy returns before strategy does. You may feel urgency, hunger, impatience, courage, or the need to move before you know the whole plan. The beginning asks you to admit what you want without confusing desire with permission.",
+        "summary": "Admit the want before turning it into a fight.",
+        "prompt": "What do I want clearly enough to name?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Torch-Bearer's Moon",
-        "body": "The fire has found a cause. Choose carefully what you follow."
+        "figure": "The First Spark",
+        "body": "By the Crescent Moon, the want starts looking for a cause. Motivation gathers around something that feels worth chasing. This phase asks you to choose the spark carefully. Not every rush deserves your fire, and not every invitation needs an immediate yes.",
+        "summary": "Choose what deserves your fire before you run after it.",
+        "prompt": "What cause, desire, or direction is actually worth my energy?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Brigand's Moon",
-        "body": "The world hit back and the anger is up. Check whether the person in front of you earned it."
+        "figure": "The Anger Test",
+        "body": "At the First Quarter Moon, Aries Season meets resistance. The world pushes back, and anger may rise quickly. This phase asks you to separate clean action from reaction. Anger can show where something matters, but it does not get to choose the whole response for you.",
+        "summary": "Use anger as information, not as the whole response.",
+        "prompt": "What is my anger protecting, and what response would be clean?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Adventurer's Moon",
-        "body": "Test yourself against something bigger than a grudge."
+        "figure": "The Courage Test",
+        "body": "By the Gibbous Moon, the story becomes a test of courage. You may need to try, risk, compete, or prove something to yourself. The Moon asks you to aim the fire at growth instead of grievance. Test yourself against something bigger than a grudge.",
+        "summary": "Aim the fire at growth, not only at the obstacle.",
+        "prompt": "What brave action would make me respect myself?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Warrior's Moon",
-        "body": "Fight in the open, for something worth protecting."
+        "figure": "The Open Fight",
+        "body": "The Full Moon shows what the fight is really about. It can reveal courage, conflict, competition, or the cause that deserves protection. This is the emotional high point of Aries Season. The Moon asks you to fight in the open, with honor, for something worth protecting rather than only something worth winning.",
+        "summary": "Fight openly for what deserves protection.",
+        "prompt": "What am I willing to defend without losing myself?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Soldier's Moon",
-        "body": "Your fight joins others now. Keep your conscience inside the mission."
+        "figure": "The Shared Mission",
+        "body": "After the Full Moon, the fire joins a larger mission. You may be working alongside others, lending strength, or learning how your courage affects the group. This phase asks you to keep your conscience inside the mission. Belonging to a cause does not erase personal responsibility.",
+        "summary": "Join the mission without handing over your conscience.",
+        "prompt": "Where do I need to act with others and still stay accountable?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Survivor's Moon",
-        "body": "The fight is over but the habits aren't. Start the healing without a schedule."
+        "figure": "The Fight Habit",
+        "body": "At the Last Quarter Moon, Aries Season reviews the habits left behind by conflict. The fight may be over, but your body may still be braced. The Moon asks what survival pattern is still running: defensiveness, speed, suspicion, or the need to strike first. Healing does not need a deadline.",
+        "summary": "Notice the fight habit that is still running.",
+        "prompt": "Where am I still reacting as if the fight is happening now?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Veteran's Moon",
-        "body": "Retired from the front lines. Tell the truth about the fight without polishing it."
+        "figure": "The Honest Scar",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where courage becomes wisdom, and battle stories lose their glamour. The Moon asks you to tell the truth about the fight without polishing it, replaying it, or turning it into your whole identity.",
+        "summary": "Tell the truth about the fight without living inside it.",
+        "prompt": "What can I lay down now that I have survived it?"
       }
     ]
   },
@@ -188,43 +252,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Dryad's Moon",
-        "body": "You belong to the body and the land. Start with what's real enough to touch."
+        "figure": "The First Ground",
+        "body": "Taurus Season begins by returning to what is real enough to touch. This is the part of the cycle where the body, the senses, money, food, land, rhythm, and value become louder. The beginning asks you to slow down and notice what actually supports life, not what only looks secure from a distance.",
+        "summary": "Return to what is real enough to support you.",
+        "prompt": "What does my body know is real right now?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Gardener's Moon",
-        "body": "The tending has begun. Growth needs patience and repeated care."
+        "figure": "The First Tending",
+        "body": "By the Crescent Moon, the value needs care. Something small wants repetition, patience, watering, feeding, or protection from hurry. This phase asks you to tend what you chose to grow. Growth is not proven by speed. It is proven by return.",
+        "summary": "Tend what you want to grow through repetition.",
+        "prompt": "What needs steady care instead of urgency?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Woodcutter's Moon",
-        "body": "The bargain point: something real gets cleared or sold to keep going. See the trade plainly."
+        "figure": "The Bargain",
+        "body": "At the First Quarter Moon, Taurus Season asks what security costs. You may need to clear space, spend resources, make a trade, or admit that comfort has a price. The Moon asks you to see the bargain plainly before you make it. Survival matters, but not every exchange is worth what it takes.",
+        "summary": "See the cost of security before you make the trade.",
+        "prompt": "What am I trading for comfort or stability?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Farmer's Moon",
-        "body": "Stewardship. Work with the cycle, not against it."
+        "figure": "The Stewardship",
+        "body": "By the Gibbous Moon, the work becomes stewardship. You can see the rhythms, seasons, limits, and conditions that affect what you are growing. This phase asks you to work with the cycle instead of forcing yield on command. Care becomes wiser when it respects timing.",
+        "summary": "Work with the cycle instead of forcing yield.",
+        "prompt": "What condition needs to change so growth can continue?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Earth Mother's Moon",
-        "body": "The harvest is visible and there's enough to hold others. Give without owning."
+        "figure": "The Harvest Mirror",
+        "body": "The Full Moon shows what has become abundant, and what abundance asks of you. It can reveal generosity, attachment, pleasure, possessiveness, or the fear that there will not be enough. This is the emotional high point of Taurus Season. The Moon asks you to receive and give without turning care into ownership.",
+        "summary": "Receive the harvest without turning care into ownership.",
+        "prompt": "Where does generosity need less control?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Builder's Moon",
-        "body": "Build something that outlasts you and share it."
+        "figure": "The Durable Gift",
+        "body": "After the Full Moon, the harvest moves outward. This phase asks what can be built, shared, repaired, or made useful for more than one person. The Moon favors practical generosity: something with a roof, a rhythm, a meal, a tool, or a promise that can hold weight.",
+        "summary": "Build something useful enough to be shared.",
+        "prompt": "What can I make more durable, useful, or generous?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Merchant's Moon",
-        "body": "Do the accounting. Keep what's worth the price and release what isn't."
+        "figure": "The Accounting",
+        "body": "At the Last Quarter Moon, Taurus Season asks you to review what things cost and what they return. This is not only about money. It is about attention, body, time, loyalty, pleasure, and peace. The Moon asks what is worth keeping, and what is too expensive to keep feeding.",
+        "summary": "Keep what is worth the price and release what is not.",
+        "prompt": "What am I paying too much to maintain?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Ancestor's Moon",
-        "body": "Sort the inheritance. Decide what gets passed down."
+        "figure": "The Inheritance",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where value becomes inheritance: what you keep, what you return, what you pass down, and what you stop preserving. The Moon asks you to sort the estate of the season with honesty.",
+        "summary": "Decide what is worth keeping, passing on, or releasing.",
+        "prompt": "What value am I ready to carry forward?"
       }
     ]
   },
@@ -233,43 +313,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Little Brother's Moon",
-        "body": "Everything is a question. Learn by asking and trying words on."
+        "figure": "The First Question",
+        "body": "Gemini Season begins with curiosity before certainty. This is the part of the cycle where questions, messages, choices, names, and small observations start multiplying. The beginning asks you to listen, ask, and experiment with language before you rush to make a final story.",
+        "summary": "Let the question open before you decide the story.",
+        "prompt": "What question is trying to get my attention?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Little Sister's Moon",
-        "body": "The words are social now. Say what you mean, not just what lands."
+        "figure": "The First Exchange",
+        "body": "By the Crescent Moon, the words start moving between people. You may notice texts, conversations, social cues, or the desire to be understood quickly. This phase asks you to say what you mean, not only what lands well. Connection needs accuracy as much as charm.",
+        "summary": "Say what you mean, not only what lands.",
+        "prompt": "Where do I need cleaner language?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Liar's Moon",
-        "body": "The words have bent. Find the one lie you've told yourself and face what's under it."
+        "figure": "The Bent Word",
+        "body": "At the First Quarter Moon, Gemini Season asks where language has bent away from truth. A story may have become convenient, clever, evasive, or too flexible to trust. The Moon asks you to find the distortion without shaming the need underneath it.",
+        "summary": "Find the distortion and the need underneath it.",
+        "prompt": "What story have I been bending to avoid a simpler truth?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Mercenary's Moon",
-        "body": "Skill for hire. Keep the ethics attached to the cleverness."
+        "figure": "The Cleverness Test",
+        "body": "By the Gibbous Moon, skill becomes useful and therefore tempting. You may see how easily words, information, timing, or wit can be used to get a result. This phase asks you to keep ethics attached to cleverness. Being persuasive is not the same as being clear.",
+        "summary": "Keep ethics attached to cleverness.",
+        "prompt": "Where am I being persuasive instead of clear?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Storyteller's Moon",
-        "body": "Tell the story so it reveals the truth instead of replacing it."
+        "figure": "The Story Mirror",
+        "body": "The Full Moon shows the story you are living inside. It can reveal what your language has clarified, confused, exaggerated, or hidden. This is the emotional high point of Gemini Season. The Moon asks you to tell the story so it reveals the truth instead of replacing it.",
+        "summary": "Tell the story so it reveals the truth.",
+        "prompt": "What story becomes more honest when I tell it plainly?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Scribe's Moon",
-        "body": "Write it down. Pass the knowledge along."
+        "figure": "The Record",
+        "body": "After the Full Moon, the message needs to be recorded, shared, taught, or passed along. This phase asks you to preserve the useful knowledge without turning it into noise. Write it down. Name the point. Let the information travel cleanly.",
+        "summary": "Record what is useful so it can travel cleanly.",
+        "prompt": "What needs to be written, named, or clarified?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Magician's Moon",
-        "body": "Look at what your words built. Test your own framing the way you test everyone else's."
+        "figure": "The Framing Spell",
+        "body": "At the Last Quarter Moon, Gemini Season reviews what your words have built. A frame can clarify reality, but it can also trap it. The Moon asks you to test your own framing the way you test everyone else's. What did your language make possible, and what did it make harder to see?",
+        "summary": "Review what your words built and what they obscured.",
+        "prompt": "What frame am I ready to revise?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Teacher's Moon",
-        "body": "Teach it. Meet the learner where they are."
+        "figure": "The Teaching",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where information becomes understanding. The Moon asks what is worth teaching, what is worth forgetting, and how to meet the learner where they are. Not every thought needs to become a lesson.",
+        "summary": "Turn information into understanding, then release the noise.",
+        "prompt": "What have I learned well enough to simplify?"
       }
     ]
   },
@@ -278,43 +374,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Mother's Daughter Moon",
-        "body": "The self is still woven into the family feeling. Learn whose feeling is whose."
+        "figure": "The First Need",
+        "body": "Cancer Season begins with the question of what needs care. This is the part of the cycle where you notice what feels raw, private, protective, or newly important. The beginning is quiet because it is still forming. You do not have to explain it yet. You only have to admit that something in you needs more safety, more honesty, or more room to feel.",
+        "summary": "Notice what needs care before you explain it.",
+        "prompt": "What am I beginning to care about again?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Mother's Son Moon",
-        "body": "You're different from the ones who held you, and you know it. The bond survives by changing."
+        "figure": "The First Reach",
+        "body": "By the Crescent Moon, the need starts looking for a place to land. You may notice yourself reaching for comfort, reassurance, familiar people, old habits, or small signs that you are not alone in this. The work is to notice what actually helps, and what only repeats an old dependency.",
+        "summary": "Look at what kind of support you are reaching for.",
+        "prompt": "What kind of support am I reaching for?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Weeping Moon",
-        "body": "The loss broke through. Let the feeling come, and let one person past the wall."
+        "figure": "The First Boundary",
+        "body": "At the First Quarter Moon, care meets pressure. Something asks you to choose between protecting your peace and keeping everyone comfortable. This is where Cancer Season gets more honest. A boundary is not a rejection. It is how care survives contact with real life.",
+        "summary": "Protect care from becoming resentment.",
+        "prompt": "Where do I need a boundary so care does not turn into resentment?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Life-Giver's Moon",
-        "body": "You're the one tending life now. Only take on what you can sustain."
+        "figure": "The Care Test",
+        "body": "By the Gibbous Moon, the story becomes more specific. You can see what you have been tending, and also what is taking more from you than it gives back. This phase asks you to adjust the way you care. Not everything needs more effort. Some things need better conditions.",
+        "summary": "Adjust what you are tending and how much it costs you.",
+        "prompt": "What am I over-tending?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Sea Mother's Moon",
-        "body": "You can hold everyone. Don't confuse being needed with being loved."
+        "figure": "The Mirror",
+        "body": "The Full Moon shows the difference between a home and a hiding place. It can reveal where protection has become control, where closeness has become obligation, or where old fear is deciding how much you let people in. This is the emotional high point of the season. What is exposed now is not here to shame you. It is here so you can stop confusing survival with safety.",
+        "summary": "See where protection has become isolation.",
+        "prompt": "Where have I been protecting myself in a way that keeps me alone?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Shield-Father's Moon",
-        "body": "Step out the door and guard what you built, without controlling the people inside it."
+        "figure": "The Aftermath",
+        "body": "After the Full Moon, the feeling has already spoken. Now you are living with what it revealed. This phase asks you to share the truth carefully, not dramatically. Say what needs to be said. Let people know what changed. Do not turn the revelation into a performance, a punishment, or a permanent story about who you are.",
+        "summary": "Share the truth without turning it into a weapon.",
+        "prompt": "What truth needs to be shared without making it bigger than it is?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Widow's Moon",
-        "body": "Loss again, as an adult this time. Build something from the grief or the house goes quiet."
+        "figure": "The Old Defense",
+        "body": "At the Last Quarter Moon, Cancer Season asks you to review the defense system you built around pain. Maybe it helped once. Maybe it kept you moving when you did not have better options. But now you can ask whether the old guard is still needed. You do not have to be ashamed of how you survived. You just do not have to keep living from that place.",
+        "summary": "Review the survival habit that is still running.",
+        "prompt": "Which survival habit am I still running that I no longer need?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Keeper of Memories Moon",
-        "body": "Keep the memories clean enough to be useful. Forgive on purpose."
+        "figure": "The Clean Memory",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where you decide what memory gets to become wisdom, and what memory needs to stop running the room. Forgiveness does not mean pretending it was fine. It means refusing to keep feeding the same old pain with new life.",
+        "summary": "Keep the lesson. Stop feeding the old pain.",
+        "prompt": "What am I ready to remember differently?"
       }
     ]
   },
@@ -323,43 +435,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Sun Child's Moon",
-        "body": "Shine before self-consciousness arrives. Play first."
+        "figure": "The First Light",
+        "body": "Leo Season begins with the question of what wants to be expressed. This is the part of the cycle where play, warmth, visibility, creativity, and pleasure start to return before self-consciousness has fully arrived. The beginning asks you to let the heart show up simply, without turning expression into proof.",
+        "summary": "Let expression begin before self-consciousness edits it.",
+        "prompt": "What wants to be expressed before I judge it?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Clown's Moon",
-        "body": "You've learned what gets the laugh. Keep the charm sincere."
+        "figure": "The First Response",
+        "body": "By the Crescent Moon, expression starts meeting an audience. You may notice what gets the laugh, the praise, the attention, or the warm response. This phase asks you to enjoy being received without letting the reaction become the reason you perform.",
+        "summary": "Enjoy the response without becoming dependent on it.",
+        "prompt": "Where am I performing for approval instead of sharing honestly?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Actor's Moon",
-        "body": "The masks are winning. Decide what you'd sell yourself for."
+        "figure": "The Mask Test",
+        "body": "At the First Quarter Moon, Leo Season asks where performance has started to overtake presence. A role may be working too well. You may know what people want from you, but not what you feel while giving it. The Moon asks you to notice the mask and decide what you are not willing to sell for applause.",
+        "summary": "Notice the role before it replaces the self.",
+        "prompt": "What version of me gets rewarded, and what does it cost?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Singer's Moon",
-        "body": "Make your own songs. Sing from the center, not toward applause."
+        "figure": "The True Voice",
+        "body": "By the Gibbous Moon, the performance needs to become more personal. This phase asks you to make your own song, choose your own gesture, or return to the center of your creative life. The work is to refine expression until it sounds like you, not only like what people clap for.",
+        "summary": "Refine the expression until it sounds like you.",
+        "prompt": "What would I make if applause were not the point?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Queen's Moon",
-        "body": "Rule with warmth. Don't let pride keep people at a distance."
+        "figure": "The Warm Throne",
+        "body": "The Full Moon shows how you hold attention, power, and affection. It can reveal generosity, pride, creative courage, or the distance that forms when being seen becomes too important. This is the emotional high point of Leo Season. The Moon asks you to rule with warmth and let love reach you.",
+        "summary": "Hold visibility with warmth instead of pride.",
+        "prompt": "Where does pride keep people farther away than I want?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "King's Moon",
-        "body": "Lead outward and provide. Being central isn't the same as being useful."
+        "figure": "The Useful Center",
+        "body": "After the Full Moon, the light moves outward. You may be asked to lead, encourage, host, provide, or use your visibility for more than self-expression. This phase asks you to remember that being central is not the same as being useful. Let warmth become service.",
+        "summary": "Use visibility to encourage and provide.",
+        "prompt": "How can my presence make more room for others?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Usurper's Moon",
-        "body": "The throne question. Some things cost less handed over than lost in a fight."
+        "figure": "The Throne Question",
+        "body": "At the Last Quarter Moon, Leo Season reviews your relationship with attention and control. Something may need to be shared, handed over, stepped down from, or held more lightly. The Moon asks whether you are protecting the creative fire, or only defending your place at the center.",
+        "summary": "Review what needs to be shared, released, or held lightly.",
+        "prompt": "Where am I defending attention instead of protecting love?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Bard's Moon",
-        "body": "Back to the stage with everything you learned. Use the voice to check power, including your own."
+        "figure": "The Honest Song",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where expression becomes testimony instead of performance. The Moon asks you to use your voice to keep the story honest, including the parts about power, pride, and the need to be loved.",
+        "summary": "Use the voice honestly after the applause fades.",
+        "prompt": "What truth can my creative voice carry now?"
       }
     ]
   },
@@ -368,43 +496,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Maiden's Moon",
-        "body": "Whole in yourself. Start simple and private."
+        "figure": "The First Discernment",
+        "body": "Virgo Season begins with the question of what needs care, repair, or clearer order. This is the part of the cycle where small details start speaking. The beginning asks you to notice what is useful without turning usefulness into self-erasure. Start simple, private, and honest.",
+        "summary": "Notice what needs care without making yourself a project.",
+        "prompt": "What small thing is asking for my attention?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Apprentice's Moon",
-        "body": "Practice. The mistakes are the training."
+        "figure": "The First Practice",
+        "body": "By the Crescent Moon, care becomes practice. You may be learning through repetition, mistakes, adjustment, and humble effort. This phase asks you to let imperfection teach you instead of treating it as evidence that you have failed.",
+        "summary": "Let practice and mistakes teach the next adjustment.",
+        "prompt": "What am I learning through repetition?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Counting Moon",
-        "body": "The counting has taken over. Fix what's broken and let one imperfect thing out the door."
+        "figure": "The Perfection Test",
+        "body": "At the First Quarter Moon, Virgo Season asks where discernment has turned into counting, criticism, or control. The desire to improve something may be real, but the Moon asks whether the measuring is helping life work better, or keeping life out.",
+        "summary": "Check whether improvement has become control.",
+        "prompt": "Where is the measuring no longer helping?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Housewife's Moon",
-        "body": "Life shoved people into the workroom. Balance the tasks and the humans."
+        "figure": "The Human System",
+        "body": "By the Gibbous Moon, the work has to include real people, bodies, needs, interruptions, and limits. This phase asks you to refine the system without forgetting the humans it is meant to serve. A routine that cannot hold a human life is not actually working.",
+        "summary": "Make the system serve the humans, not the other way around.",
+        "prompt": "What routine needs to become more humane?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Spinner's Moon",
-        "body": "You're at the center of the web. See the whole cloth, not just the thread."
+        "figure": "The Pattern Mirror",
+        "body": "The Full Moon shows the pattern made by all the small choices. It can reveal skill, stress, service, resentment, and the web of details holding life together. This is the emotional high point of Virgo Season. The Moon asks you to see the whole cloth, not only the thread that is out of place.",
+        "summary": "See the whole pattern, not only the flaw.",
+        "prompt": "What pattern becomes visible when I stop staring at one detail?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Weaver's Moon",
-        "body": "Weave with others. Don't try to hold every thread alone."
+        "figure": "The Shared Weave",
+        "body": "After the Full Moon, the repair moves outward. You may need to coordinate, delegate, document, help, or let someone else hold part of the thread. This phase asks you to serve without becoming the only person allowed to know how everything works.",
+        "summary": "Share the work instead of holding every thread alone.",
+        "prompt": "What can I teach, delegate, or stop carrying by myself?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Fate's Moon",
-        "body": "Pick up the scissors. Say the necessary no and let them resent it."
+        "figure": "The Necessary No",
+        "body": "At the Last Quarter Moon, Virgo Season reviews the line that needs to be cut. Some tasks, obligations, standards, or repairs are no longer yours. The Moon asks for the necessary no: clean, specific, and willing to be misunderstood if that is the cost of integrity.",
+        "summary": "Cut the cord that keeps service from staying clean.",
+        "prompt": "What necessary no would restore my integrity?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Monk's Moon",
-        "body": "Retreat into clean service. Make sure it's devotion, not avoidance."
+        "figure": "The Clean Service",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where service becomes devotion, or avoidance wearing useful clothes. The Moon asks what can be simplified, released, cleaned, and returned to quiet purpose.",
+        "summary": "Simplify service until only the clean purpose remains.",
+        "prompt": "What am I ready to release from the work?"
       }
     ]
   },
@@ -413,43 +557,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "White Knight's Moon",
-        "body": "The ideals are bright. Let fairness include truth."
+        "figure": "The First Ideal",
+        "body": "Libra Season begins with the question of balance. This is the part of the cycle where fairness, beauty, agreement, desire, and the space between people become more visible. The beginning asks you to notice the ideal without letting it flatten the truth. Harmony has to include what is real.",
+        "summary": "Notice the ideal while letting fairness include truth.",
+        "prompt": "What kind of balance am I actually seeking?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Dancer's Moon",
-        "body": "Follow what's beautiful, but keep your own rhythm in the dance."
+        "figure": "The First Harmony",
+        "body": "By the Crescent Moon, the ideal starts moving through relationship, taste, rhythm, and response. You may notice what feels beautiful, agreeable, or easy to meet. This phase asks you to follow harmony without losing your own timing inside it.",
+        "summary": "Follow harmony without losing your own rhythm.",
+        "prompt": "Where am I adjusting, and does it still include me?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Black Knight's Moon",
-        "body": "The politeness has cracked. Name the imbalance plainly."
+        "figure": "The Imbalance",
+        "body": "At the First Quarter Moon, Libra Season asks where politeness has covered a real imbalance. Something may need to be named plainly. The Moon asks you to stop using peacekeeping as a way to avoid truth. Repair begins where the nice version stops working.",
+        "summary": "Name the imbalance beneath the politeness.",
+        "prompt": "What needs to be said for balance to become real?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Lover's Moon",
-        "body": "Love has arrived and it changes things. Make it a real exchange."
+        "figure": "The Real Exchange",
+        "body": "By the Gibbous Moon, Libra Season becomes more specific about exchange. Love, desire, collaboration, or negotiation may ask for more honesty. This phase asks whether both sides are present, giving, receiving, and being changed by the relationship.",
+        "summary": "Make the exchange mutual enough to be real.",
+        "prompt": "Where does exchange need more honesty or reciprocity?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Artist's Moon",
-        "body": "Turn the love into form. Let beauty reveal, not conceal."
+        "figure": "The Beauty Mirror",
+        "body": "The Full Moon shows what relationship has made visible. It can reveal love, projection, artifice, longing, aesthetic truth, or the places where beauty has been used to conceal discomfort. This is the emotional high point of Libra Season. The Moon asks you to let beauty reveal instead of hide.",
+        "summary": "Let beauty reveal what is true instead of concealing it.",
+        "prompt": "Where am I making something beautiful so I do not have to make it honest?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Ambassador's Moon",
-        "body": "Carry the harmony outward, and keep a spine while you mediate."
+        "figure": "The Bridge",
+        "body": "After the Full Moon, the relational work moves outward. You may need to mediate, translate, invite, collaborate, or carry harmony into a wider field. This phase asks you to bridge without disappearing. A real mediator keeps a spine.",
+        "summary": "Bridge with grace while keeping a spine.",
+        "prompt": "Where can I create connection without abandoning my position?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Judge's Moon",
-        "body": "You're on the bench now. Notice how much of your fairness is feeling, and leave room for mercy."
+        "figure": "The Judgment",
+        "body": "At the Last Quarter Moon, Libra Season reviews the decision point. Evidence, fairness, preference, hurt, and mercy may all be present. The Moon asks you to notice how much of your fairness is feeling, and how much room justice still has for grace.",
+        "summary": "Review the judgment and leave room for mercy.",
+        "prompt": "What would be fair if I included both truth and mercy?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Sacred Whore's Moon",
-        "body": "Know your worth without outsourcing it to being desired."
+        "figure": "The Untethered Worth",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where worth separates from approval, desirability, agreement, or being chosen. The Moon asks you to keep the exchange sacred by remembering that your value is not owned by anyone else's response.",
+        "summary": "Know your worth without outsourcing it to being desired.",
+        "prompt": "Where am I ready to stop bargaining for worth?"
       }
     ]
   },
@@ -458,43 +618,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Raging Moon",
-        "body": "The feeling arrives as force. Let intensity become information."
+        "figure": "The First Intensity",
+        "body": "Scorpio Season begins where feeling becomes force. This is the part of the cycle where pressure, secrecy, desire, fear, trust, and truth start moving beneath the surface. The beginning asks you to let intensity become information before it becomes a weapon.",
+        "summary": "Let intensity become information before it becomes a weapon.",
+        "prompt": "What feeling is arriving with more force than words?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Blood Moon",
-        "body": "Study the dark instead of being ruled by it."
+        "figure": "The First Descent",
+        "body": "By the Crescent Moon, the feeling starts asking for deeper study. You may notice pain, attachment, jealousy, curiosity, or the pull to look under the surface. This phase asks you to study the dark without becoming ruled by it. Knowledge is not the same as control.",
+        "summary": "Study what is hidden without letting it rule you.",
+        "prompt": "What am I ready to look at more honestly?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Executioner's Moon",
-        "body": "The axe is in your hand. Check the strike, and speak for mercy when the ruling is wrong."
+        "figure": "The Power Test",
+        "body": "At the First Quarter Moon, Scorpio Season asks how you use power when the stakes feel high. You may want to punish, cut off, expose, retaliate, or make a final ruling. The Moon asks you to check the strike. Power becomes cleaner when mercy is still available.",
+        "summary": "Check the strike before power becomes punishment.",
+        "prompt": "Where do I need truth without retaliation?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Cloaked One's Moon",
-        "body": "Keep what's sacred contained, without letting secrecy run the show."
+        "figure": "The Containment",
+        "body": "By the Gibbous Moon, the work becomes containment. Not everything private is unhealthy, and not everything hidden is protected. This phase asks you to keep what is sacred contained without letting secrecy run the whole story.",
+        "summary": "Protect what is sacred without hiding from the truth.",
+        "prompt": "What needs privacy, and what needs honesty?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Priestess's Moon",
-        "body": "The depth is power now. Serve truth with it instead of dominating."
+        "figure": "The Depth Mirror",
+        "body": "The Full Moon shows what depth has revealed. It can expose trust, betrayal, desire, grief, medicine, or the places where control has replaced intimacy. This is the emotional high point of Scorpio Season. The Moon asks you to serve truth with your depth instead of using it to dominate.",
+        "summary": "Use depth to serve truth, not to control intimacy.",
+        "prompt": "Where has control replaced trust?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Witch's Moon",
-        "body": "Take the medicine to the people who need it, with consent."
+        "figure": "The Medicine",
+        "body": "After the Full Moon, the medicine moves outward. Something you have learned through pain, shadow, or survival may be useful to others. This phase asks you to offer it with consent and proportion. Not everyone needs the whole underworld at once.",
+        "summary": "Share the medicine with consent and proportion.",
+        "prompt": "What truth can help if I offer it carefully?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Madwoman's Moon",
-        "body": "It got too heavy to hold alone. Let steadier hands help before the breaking point."
+        "figure": "The Breaking Point",
+        "body": "At the Last Quarter Moon, Scorpio Season reviews what has become too heavy to hold alone. The Moon asks you to notice the edge before collapse turns into the only language left. Let steadier hands help. Recovery cannot be controlled into existence.",
+        "summary": "Notice what is too heavy to hold alone.",
+        "prompt": "Where do I need help before the breaking point?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Phoenix Moon",
-        "body": "Rise from what burned. Make the new life actually new."
+        "figure": "The New Life",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where transformation either becomes real, or becomes another dramatic story about the past. The Moon asks you to let what burned stay burned, and to make the new life actually new.",
+        "summary": "Let what burned stay burned. Make the new life new.",
+        "prompt": "What old intensity am I ready to stop reviving?"
       }
     ]
   },
@@ -503,43 +679,59 @@ export const seasonArcCopyBySign: Record<string, SeasonArcCopy> = {
     "phases": [
       {
         "phase": "New Moon",
-        "figure": "Gypsy's Moon",
-        "body": "Wander. Let the road pull you."
+        "figure": "The First Horizon",
+        "body": "Sagittarius Season begins with the pull toward more: more truth, movement, meaning, distance, or possibility. This is the part of the cycle where the road starts calling before the destination is clear. The beginning asks you to follow curiosity without pretending wandering is the same as direction.",
+        "summary": "Let the horizon call without pretending wandering is direction.",
+        "prompt": "What horizon is beginning to call me?"
       },
       {
         "phase": "Crescent Moon",
-        "figure": "Traveler's Moon",
-        "body": "The steps turn purposeful. Pick a direction."
+        "figure": "The First Route",
+        "body": "By the Crescent Moon, the road starts asking for a route. You may notice a direction, invitation, study, trip, risk, or truth that wants pursuit. This phase asks you to choose a path without demanding that it explain the whole meaning before you begin.",
+        "summary": "Choose a route and let movement teach you.",
+        "prompt": "What direction wants a real first step?"
       },
       {
         "phase": "First Quarter",
-        "figure": "Seeker's Moon",
-        "body": "The crisis of faith. The searching is the life; ask the question honestly."
+        "figure": "The Faith Test",
+        "body": "At the First Quarter Moon, Sagittarius Season reaches the crisis of belief. You may know you are searching for something real without knowing what it is yet. The Moon asks you to ask the question honestly and resist the urge to turn uncertainty into a premature answer.",
+        "summary": "Ask the honest question before forcing an answer.",
+        "prompt": "What belief is being tested by my actual life?"
       },
       {
         "phase": "Gibbous Moon",
-        "figure": "Scholar's Moon",
-        "body": "Hit the books. Keep the map answering to the road."
+        "figure": "The Map",
+        "body": "By the Gibbous Moon, the search needs study, context, and better maps. Books, teachers, traditions, and evidence can help, but this phase asks you to keep the map answering to the road. Knowledge should widen the world, not replace direct contact with it.",
+        "summary": "Study the map while staying answerable to the road.",
+        "prompt": "What do I need to learn before I claim certainty?"
       },
       {
         "phase": "Full Moon",
-        "figure": "Priest's Moon",
-        "body": "The belief is public now. Keep the faith alive enough to be humbled."
+        "figure": "The Belief Mirror",
+        "body": "The Full Moon shows what you believe when belief becomes visible. It can reveal faith, conviction, arrogance, inspiration, or the places where meaning has become too rigid to stay alive. This is the emotional high point of Sagittarius Season. The Moon asks you to keep the faith humble enough to keep growing.",
+        "summary": "Let belief become visible without hardening into certainty.",
+        "prompt": "Where does my belief need humility?"
       },
       {
         "phase": "Disseminating Moon",
-        "figure": "Philosopher's Moon",
-        "body": "Ask why, out loud, past what's already written down."
+        "figure": "The Bigger Question",
+        "body": "After the Full Moon, the meaning moves outward. You may be teaching, debating, preaching, exploring, or asking why out loud. This phase asks you to keep the conversation open past what is already written down. Truth grows when it can keep meeting the world.",
+        "summary": "Ask why out loud and keep the conversation open.",
+        "prompt": "What question is bigger than the answer I already have?"
       },
       {
         "phase": "Last Quarter",
-        "figure": "Hunter's Moon",
-        "body": "You've started hunting the doubters. Lower the bow and check the target."
+        "figure": "The Certainty Trap",
+        "body": "At the Last Quarter Moon, Sagittarius Season reviews where conviction has become a weapon. You may be tempted to hunt the doubters, win the argument, or defend the belief more than the truth. The Moon asks you to lower the bow and check the target.",
+        "summary": "Lower the bow when conviction becomes a weapon.",
+        "prompt": "Where am I defending certainty instead of seeking truth?"
       },
       {
         "phase": "Balsamic Moon",
-        "figure": "Shaman's Moon",
-        "body": "Bridge the worlds you split. Live the balance you preach."
+        "figure": "The Living Wisdom",
+        "body": "At the Balsamic Moon, the season begins to empty out. This is where belief becomes lived wisdom, or remains a story you tell about yourself. The Moon asks you to bridge the worlds you split and live the balance you preach.",
+        "summary": "Let belief become lived wisdom.",
+        "prompt": "What truth am I ready to practice instead of only proclaim?"
       }
     ]
   }

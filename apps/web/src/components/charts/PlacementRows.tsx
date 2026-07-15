@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
@@ -220,7 +219,7 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
         label: "Ascendant",
         sign: sky.ascendant,
         degree: normalizedAngle(sky.ascendantLongitude ?? 0) % 30,
-        house: 1,
+        house: null,
         retrograde: false
       }];
     }
@@ -717,7 +716,7 @@ export function FriendPlacementTable({
       {showTitle ? <h3 className="friend-placement-column-title">{title}</h3> : null}
       <div className="friend-placement-table">
         {rows.map((row) => {
-          const dignity = dignitiesFor(row.label, row.sign);
+          const dignity = generatedContext === "composite" ? [] : dignitiesFor(row.label, row.sign);
 
           return (
             <div className={`friend-placement-row${compact ? " friend-placement-row-compact" : ""}`} key={row.id}>
@@ -781,27 +780,15 @@ export function SynastryPlacementsComparison({
   const innerTitle = innerIsSelf ? "You" : innerName;
   const outerPlacements = relationshipPlacementPreview(outerSky);
   const innerPlacements = relationshipPlacementPreview(innerSky);
-  const placementRowCount = Math.max(outerPlacements.length, innerPlacements.length);
+  const hasPlacements = outerPlacements.length > 0 || innerPlacements.length > 0;
 
   return (
     <section className="synastry-placements-comparison" aria-label="Synastry placements comparison">
       <span className="eyebrow section-label friend-section-label">Placements</span>
-      <div className="synastry-placement-columns">
-        <div className="synastry-placement-column-header">
-          <h3>{outerName}</h3>
-        </div>
-        <div className="synastry-placement-column-header">
-          <h3>{innerTitle}</h3>
-        </div>
-      </div>
-      {placementRowCount > 0 ? (
-        <div className="synastry-placement-paired-table">
-          {Array.from({ length: placementRowCount }, (_, index) => (
-            <Fragment key={`synastry-placement-pair-${index}`}>
-              <SynastryPlacementCard position={outerPlacements[index] ?? null} variant="outer" />
-              <SynastryPlacementCard position={innerPlacements[index] ?? null} variant="inner" />
-            </Fragment>
-          ))}
+      {hasPlacements ? (
+        <div className="synastry-placement-columns">
+          <SynastryPlacementColumn name={outerName} placements={outerPlacements} variant="outer" />
+          <SynastryPlacementColumn name={innerTitle} placements={innerPlacements} variant="inner" />
         </div>
       ) : (
         <div className="synastry-placement-columns">
@@ -809,6 +796,33 @@ export function SynastryPlacementsComparison({
           <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
         </div>
       )}
+    </section>
+  );
+}
+
+function SynastryPlacementColumn({
+  name,
+  placements,
+  variant
+}: {
+  name: string;
+  placements: PlanetPosition[];
+  variant: "outer" | "inner";
+}) {
+  return (
+    <section className={`synastry-placement-column synastry-placement-column-${variant}`} aria-label={`${name} placements`}>
+      <div className="synastry-placement-column-header">
+        <h3>{name}</h3>
+      </div>
+      <div className="synastry-placement-table">
+        {placements.length > 0 ? (
+          placements.map((position) => (
+            <SynastryPlacementCard key={`${variant}-${position.planet}`} position={position} variant={variant} />
+          ))
+        ) : (
+          <p className="synastry-placement-empty">Complete this birth chart to show natal placements here.</p>
+        )}
+      </div>
     </section>
   );
 }

@@ -18,7 +18,7 @@
     {
       "id": "house-system-policy",
       "heading": "House System Policy",
-      "body": "Default transit framing uses whole-sign houses because it best fits the traditional spine and the interpretive data assumes one house equals one whole sign. Keep house-transit entries keyed only by house number so the meaning data stays system-agnostic. The calculation engine may also compute Placidus or another quadrant system as a user option, but that mapping choice belongs to the engine, not the authored entry."
+      "body": "Default transit framing uses whole-sign houses because it best fits the traditional spine and the interpretive data assumes one house equals one whole sign. Keep house-transit entries keyed only by house number so the meaning data stays aligned with TLDR Astro's single Whole Sign house policy."
     },
     {
       "id": "activators-not-events",

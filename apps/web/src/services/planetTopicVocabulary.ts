@@ -1,4 +1,7 @@
 import { getSupabaseClient } from "./auth";
+import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { emergencyPlanetFunction, emergencySignTone } from "../content/emergencyCopy";
+import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export type PlanetTopicVariant = "you" | "friend" | "sky" | "natal";
 
@@ -22,6 +25,13 @@ type SignNeedPhrases = {
 
 type PlanetTopicVocabularyRow = {
   content_key: string;
+  status?: string | null;
+  lane?: string | null;
+  review_state?: string | null;
+  facts?: Record<string, unknown> | null;
+  flags?: string[] | null;
+  provider?: string | null;
+  source_snapshot?: Record<string, unknown> | null;
   headline: string | null;
   body: string | null;
   sections: unknown;
@@ -31,20 +41,8 @@ export type PlanetTopicVocabulary = Map<string, PlanetTopicPhrases>;
 export type SignStyleVocabulary = Map<string, SignStylePhrases>;
 export type SignNeedVocabulary = Map<string, SignNeedPhrases>;
 
-const fallbackSignStyles: Record<string, SignStylePhrases> = {
-  aries: { phrase: "direct and initiating", short: "direct initiation" },
-  taurus: { phrase: "steady and embodied", short: "steady embodiment" },
-  gemini: { phrase: "curious and responsive", short: "curious responsiveness" },
-  cancer: { phrase: "protective and intuitive", short: "protective intuition" },
-  leo: { phrase: "expressive and visible", short: "expressive visibility" },
-  virgo: { phrase: "practical and observant", short: "practical observation" },
-  libra: { phrase: "relational and balancing", short: "relational balance" },
-  scorpio: { phrase: "private and intense", short: "private intensity" },
-  sagittarius: { phrase: "expansive and searching", short: "expansive searching" },
-  capricorn: { phrase: "disciplined and consequential", short: "disciplined consequence" },
-  aquarius: { phrase: "unconventional and future-minded", short: "future-minded change" },
-  pisces: { phrase: "sensitive and imaginative", short: "sensitive imagination" }
-};
+const natalLanguagePattern = /\b(you|your|yours|yourself|a person|someone|birth chart|natal|meant to|grow through|growth edge)\b/i;
+const fallbackVocabPrefix = "fallback-vocab";
 
 let cachedVocabulary: PlanetTopicVocabulary | null = null;
 let cachedSignStyles: SignStyleVocabulary | null = null;
@@ -78,14 +76,14 @@ function normalizedSignId(sign: string) {
 
 function stringField(record: Record<string, unknown>, key: string) {
   const value = record[key];
-  return typeof value === "string" ? value.trim() : "";
+  return firstReaderFacingCopy([typeof value === "string" ? value : null]) ?? "";
 }
 
 function topicFromRow(row: PlanetTopicVocabularyRow): PlanetTopicPhrases | null {
   const sections = row.sections;
 
   if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
-    const body = row.body?.trim() ?? "";
+    const body = firstReaderFacingCopy([row.body]) ?? "";
     return body ? { body } : null;
   }
 
@@ -98,7 +96,7 @@ function topicFromRow(row: PlanetTopicVocabularyRow): PlanetTopicPhrases | null 
   const friend = stringField(topicRecord, "friend");
   const natal = stringField(topicRecord, "natal");
   const sky = stringField(topicRecord, "sky");
-  const body = row.body?.trim() ?? "";
+  const body = firstReaderFacingCopy([row.body]) ?? "";
 
   if (!you && !friend && !sky && !natal && !body) {
     return null;
@@ -111,7 +109,7 @@ function signStyleFromRow(row: PlanetTopicVocabularyRow): SignStylePhrases | nul
   const sections = row.sections;
 
   if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
-    const body = row.body?.trim() ?? "";
+    const body = firstReaderFacingCopy([row.body]) ?? "";
     return body ? { phrase: body } : null;
   }
 
@@ -119,7 +117,7 @@ function signStyleFromRow(row: PlanetTopicVocabularyRow): SignStylePhrases | nul
   const style = record.style && typeof record.style === "object" && !Array.isArray(record.style)
     ? record.style as Record<string, unknown>
     : record;
-  const phrase = stringField(style, "phrase") || stringField(style, "style") || row.body?.trim() || "";
+  const phrase = stringField(style, "phrase") || stringField(style, "style") || firstReaderFacingCopy([row.body]) || "";
   const short = stringField(style, "short") || stringField(style, "summary");
 
   if (!phrase) {
@@ -136,7 +134,7 @@ function signNeedFromRow(row: PlanetTopicVocabularyRow): SignNeedPhrases | null 
   const need = sections.need && typeof sections.need === "object" && !Array.isArray(sections.need)
     ? sections.need as Record<string, unknown>
     : {};
-  const phrase = stringField(need, "phrase") || row.body?.trim() || "";
+  const phrase = stringField(need, "phrase") || firstReaderFacingCopy([row.body]) || "";
   const natal = stringField(need, "natal") || phrase;
   const sky = stringField(need, "sky") || natal;
 
@@ -169,23 +167,50 @@ function warnSignFallback(sign: string, reason: string) {
   }
 }
 
-function fallbackSignStyle(sign: string) {
-  return fallbackSignStyles[normalizedSignId(sign)] ?? { phrase: "the sign's current style", short: "the sign's style" };
+function fallbackSignStyle(sign: string): SignStylePhrases {
+  return { phrase: emergencySignTone(sign) || "the sign's current style" };
+}
+
+function fallbackSkyPlanetTopic(planet: string) {
+  return emergencyPlanetFunction(planet);
+}
+
+function skyTopicValue(topic: PlanetTopicPhrases | undefined, planet: string) {
+  const sky = topic?.sky?.trim() ?? "";
+
+  if (sky && !natalLanguagePattern.test(sky)) {
+    return sky;
+  }
+
+  if (sky) {
+    warnTopicMissing(planet, "sky", "sky field contains natal language");
+  } else {
+    warnTopicMissing(planet, "sky", topic ? "field" : "row");
+  }
+
+  return fallbackSkyPlanetTopic(planet);
 }
 
 export function planetTopicContentKey(planet: string) {
-  return `vocab/planet-topic/${normalizedPlanetId(planet)}`;
+  return `${fallbackVocabPrefix}/planet-topic/${normalizedPlanetId(planet)}`;
 }
 
 export function signStyleContentKey(sign: string) {
-  return `vocab/sign-style/${normalizedSignId(sign)}`;
+  return `${fallbackVocabPrefix}/sign-style/${normalizedSignId(sign)}`;
 }
 
 export function planetTopicVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
   const vocabulary: PlanetTopicVocabulary = new Map();
 
   for (const row of rows) {
-    const planet = row.content_key.replace(/^vocab\/planet-topic\//, "");
+    const match = row.content_key.match(/^fallback-vocab\/planet-topic\/(.+)$/)
+      ?? row.content_key.match(/^cc\/planet\/(.+)\/function$/);
+
+    if (!match) {
+      continue;
+    }
+
+    const [, planet] = match;
     const topic = topicFromRow(row);
 
     if (planet && topic) {
@@ -200,11 +225,14 @@ export function signStyleVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
   const vocabulary: SignStyleVocabulary = new Map();
 
   for (const row of rows) {
-    if (!row.content_key.startsWith("vocab/sign-style/")) {
+    const match = row.content_key.match(/^fallback-vocab\/sign-style\/(.+)$/)
+      ?? row.content_key.match(/^cc\/sign\/(.+)\/lived-behaviors$/);
+
+    if (!match) {
       continue;
     }
 
-    const sign = row.content_key.replace(/^vocab\/sign-style\//, "");
+    const [, sign] = match;
     const style = signStyleFromRow(row);
 
     if (sign && style) {
@@ -219,11 +247,14 @@ export function signNeedVocabularyFromRows(rows: PlanetTopicVocabularyRow[]) {
   const vocabulary: SignNeedVocabulary = new Map();
 
   for (const row of rows) {
-    if (!row.content_key.startsWith("vocab/sign-need/")) {
+    const match = row.content_key.match(/^fallback-vocab\/sign-need\/(.+)$/)
+      ?? row.content_key.match(/^cc\/sign\/(.+)\/actions$/);
+
+    if (!match) {
       continue;
     }
 
-    const sign = row.content_key.replace(/^vocab\/sign-need\//, "");
+    const [, sign] = match;
     const need = signNeedFromRow(row);
 
     if (sign && need) {
@@ -241,6 +272,11 @@ export function planetTopicPhraseFromVocabulary(
 ) {
   const planetId = normalizedPlanetId(planet);
   const topic = vocabulary?.get(planetId);
+
+  if (variant === "sky") {
+    return skyTopicValue(topic, planet);
+  }
+
   const rowValue = topic?.[variant] || topic?.natal || topic?.body || "";
 
   if (rowValue) {
@@ -282,7 +318,7 @@ export function signNeedPhrase(sign: string, variant: PlanetTopicVariant = "nata
   const signId = normalizedSignId(sign);
   const need = cachedSignNeeds?.get(signId);
   const rowValue = variant === "sky"
-    ? need?.sky || need?.natal
+    ? need?.sky
     : need?.natal;
 
   if (rowValue) {
@@ -322,25 +358,42 @@ export async function loadPlanetTopicVocabulary() {
       return cachedVocabulary;
     }
 
-    const { data, error } = await supabase
-      .from("generated_interpretations")
-      .select("content_key, headline, body, sections")
-      .eq("status", "LIVE")
-      .eq("prompt_version", "vocab-v1")
-      .like("content_key", "vocab/%")
-      .returns<PlanetTopicVocabularyRow[]>();
+    const rows: PlanetTopicVocabularyRow[] = [];
+    const pageSize = 1000;
 
-    if (error) {
-      console.warn("Planet topic vocabulary failed to load; topic slots will be blank.", error);
-      cachedVocabulary = new Map();
-      cachedSignStyles = new Map();
-      cachedSignNeeds = new Map();
-      return cachedVocabulary;
+    for (let page = 0; page < 5; page += 1) {
+      const from = page * pageSize;
+      const to = from + pageSize - 1;
+      const { data, error } = await supabase
+        .from("generated_interpretations")
+        .select("content_key, status, lane, review_state, facts, flags, provider, source_snapshot, headline, body, sections")
+        .eq("surface", "modifier")
+        .eq("status", "LIVE")
+        .eq("lane", "serving")
+        .is("review_state", null)
+        .or("content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%")
+        .range(from, to)
+        .returns<PlanetTopicVocabularyRow[]>();
+
+      if (error) {
+        console.warn("Planet topic vocabulary failed to load; topic slots will be blank.", error);
+        cachedVocabulary = new Map();
+        cachedSignStyles = new Map();
+        cachedSignNeeds = new Map();
+        return cachedVocabulary;
+      }
+
+      rows.push(...(data ?? []));
+
+      if (!data || data.length < pageSize) {
+        break;
+      }
     }
 
-    cachedVocabulary = planetTopicVocabularyFromRows(data ?? []);
-    cachedSignStyles = signStyleVocabularyFromRows(data ?? []);
-    cachedSignNeeds = signNeedVocabularyFromRows(data ?? []);
+    const servableRows = rows.filter(isReaderServableGeneratedContentRow);
+    cachedVocabulary = planetTopicVocabularyFromRows(servableRows);
+    cachedSignStyles = signStyleVocabularyFromRows(servableRows);
+    cachedSignNeeds = signNeedVocabularyFromRows(servableRows);
     return cachedVocabulary;
   })();
 
