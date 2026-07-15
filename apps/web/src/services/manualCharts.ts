@@ -1,6 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
-import { normalizeRelationshipContextKey } from "./relationshipContext";
+import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -96,14 +96,18 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
   };
 }
 
-function inputToRow(userId: string, input: ManualChartInput) {
+function inputToRow(userId: string, input: ManualChartInput, options: { storageRelationship?: boolean } = {}) {
   return {
     owner_user_id: userId,
     display_name: input.displayName,
     first_name: input.firstName ?? null,
     last_name: input.lastName ?? null,
     pronouns: normalizePronounChoice(input.pronouns),
-    relationship_type: input.chartType === "event" ? "event" : normalizeRelationshipContextKey(input.relationshipType),
+    relationship_type: input.chartType === "event"
+      ? "event"
+      : options.storageRelationship
+        ? relationshipContextStorageKey(input.relationshipType)
+        : normalizeRelationshipContextKey(input.relationshipType),
     birth_date: input.birthDate,
     birth_time: input.birthTimeUnknown ? null : input.birthTime,
     birth_time_unknown: input.birthTimeUnknown,
@@ -288,7 +292,7 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
 
   const { data, error } = await client
     .from("manual_charts")
-    .insert(inputToRow(userId, input))
+    .insert(inputToRow(userId, input, { storageRelationship: true }))
     .select("*")
     .single();
 
@@ -303,7 +307,7 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
       owner_user_id: userId,
       manual_chart_id: chart.id,
       status: "active",
-      relationship_type: chart.chartType === "event" ? "event" : normalizeRelationshipContextKey(chart.relationshipType),
+      relationship_type: chart.chartType === "event" ? "event" : relationshipContextStorageKey(chart.relationshipType),
       created_from: "manual_chart"
     });
 
@@ -406,7 +410,7 @@ export async function updateManualChart(userId: string, chartId: string, input: 
 
   const { data, error } = await client
     .from("manual_charts")
-    .update(inputToRow(userId, input))
+    .update(inputToRow(userId, input, { storageRelationship: true }))
     .eq("id", chartId)
     .eq("owner_user_id", userId)
     .select("*")
@@ -418,7 +422,7 @@ export async function updateManualChart(userId: string, chartId: string, input: 
 
   const { error: connectionError } = await client
     .from("connections")
-    .update({ relationship_type: input.chartType === "event" ? "event" : normalizeRelationshipContextKey(input.relationshipType) })
+    .update({ relationship_type: input.chartType === "event" ? "event" : relationshipContextStorageKey(input.relationshipType) })
     .eq("owner_user_id", userId)
     .eq("manual_chart_id", chartId);
 

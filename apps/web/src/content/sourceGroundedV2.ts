@@ -3,7 +3,6 @@ import executableTemplateContract from "./templateHandoffV2/contracts/EXECUTABLE
 import surfaceResolutionMatrix from "./templateHandoffV2/contracts/SURFACE-RESOLUTION-MATRIX.json";
 import ccSourcePhrases from "./templateHandoffV2/sources/cc-source-phrases.json";
 import sourceDerivedClauseExemplars from "./templateHandoffV2/sources/source-derived-clause-exemplars.json" with { type: "json" };
-import skyContentSnapshot from "./skyContentSnapshot.json";
 import normalizedSkySourceRecords from "../../../../scripts/content-source/normalized-sky-source-records.json";
 import { isReaderFacingCopy } from "./readerSafety";
 import { renderMustacheMadlib, type MustacheTemplateId } from "./sourceGroundedMustacheV22";
@@ -193,21 +192,6 @@ const exemplarRecords = (sourceDerivedClauseExemplars as unknown as {
     source_keys?: string[];
   }>;
 }).records ?? [];
-const skySnapshotRows = (skyContentSnapshot as unknown as {
-  rows?: Array<{
-    body?: string;
-    contentKey?: string;
-    headline?: string;
-    sourceSnapshot?: {
-      sourceKeys?: string[];
-      sourceRecordId?: string;
-      templateId?: string;
-      templateVersion?: string;
-    };
-    summary?: string;
-  }>;
-}).rows ?? [];
-
 const FIELD_COMPONENTS: Record<string, string> = {
   editorialHeadline: "optional eyebrow/headline",
   factualEventTitle: "page title",
@@ -522,9 +506,24 @@ function sentenceReadySkyDetailParagraphs(value: string | undefined, body: strin
     .map((part) => ensureTerminalPunctuation(sentenceCase(part)));
 }
 
-function safeSkySnapshotRow(body: string, sign: string) {
-  const key = `sky.placement.${slugPart(body)}.${slugPart(sign)}`;
-  return skySnapshotRows.find((row) => row.contentKey === key);
+type LegacySkySnapshotRow = {
+  summary?: string;
+  body?: string;
+  sourceSnapshot?: {
+    sourceKeys?: string[];
+  };
+};
+
+function safeSkySnapshotRow(body: string, sign: string): LegacySkySnapshotRow | undefined {
+  void body;
+  void sign;
+
+  // The legacy sky snapshot predates the current fallback-hook + slot-template
+  // model and contains archived prose that should not be promoted back into
+  // reader routes. Keep the parser in place for regenerated snapshots, but do
+  // not source live copy from this file until the snapshot is rebuilt from the
+  // current content contract.
+  return undefined;
 }
 
 function snapshotCardClaim(body: string, sign: string) {

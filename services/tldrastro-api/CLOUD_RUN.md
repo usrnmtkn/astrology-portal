@@ -30,6 +30,7 @@ Enable required APIs:
 gcloud services enable \
   artifactregistry.googleapis.com \
   cloudbuild.googleapis.com \
+  secretmanager.googleapis.com \
   run.googleapis.com \
   storage.googleapis.com
 ```
@@ -69,6 +70,19 @@ gcloud storage buckets add-iam-policy-binding "gs://$EPHEMERIS_BUCKET" \
   --role="roles/storage.objectViewer"
 ```
 
+Create a Secret Manager entry for the server-side Google Time Zone API key:
+
+```bash
+printf '%s' 'YOUR_GOOGLE_TIMEZONE_API_KEY' | \
+  gcloud secrets create google-maps-timezone-api-key \
+    --replication-policy=automatic \
+    --data-file=-
+
+gcloud secrets add-iam-policy-binding google-maps-timezone-api-key \
+  --member="serviceAccount:$RUNTIME_SERVICE_ACCOUNT" \
+  --role="roles/secretmanager.secretAccessor"
+```
+
 ## Deploy
 
 From the repo root:
@@ -88,6 +102,17 @@ The build will:
 - mount the Swiss Ephemeris bucket read-only at `/opt/swisseph`
 - set `TLDR_ASTRO_EPHEMERIS_PATH=/opt/swisseph`
 
+After the first deploy, attach the Google Time Zone API key secret to Cloud Run:
+
+```bash
+gcloud run services update "$SERVICE" \
+  --region "$REGION" \
+  --set-secrets=GOOGLE_MAPS_TIMEZONE_API_KEY=google-maps-timezone-api-key:latest
+```
+
+This keeps the key server-side. Do not add it to the Vercel app or any
+`VITE_` browser variable.
+
 ## Verify
 
 Get the service URL:
@@ -102,6 +127,18 @@ curl -fsSL "$API_URL/ready"
 ```
 
 `/ready` should return `"ok": true` and `"ephemeris": { "available": true }`.
+
+Verify the timezone endpoint resolves Jose's birth city through the deployed
+API:
+
+```bash
+curl -fsSL "$API_URL/utils/timezone" \
+  -H "Content-Type: application/json" \
+  -d '{"latitude":8.633333,"longitude":-71.65,"date":"1979-02-08","time":"09:00"}'
+```
+
+The response should include `"timeZone":"America/Caracas"` and, when the
+Google key is configured and healthy, `"source":"google"`.
 
 ## Connect Vercel
 

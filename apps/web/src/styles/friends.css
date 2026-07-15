@@ -2106,14 +2106,15 @@
 
 .app-shell.mode-friends .friend-view-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(172px, 1.25fr) repeat(4, minmax(124px, 1fr));
   min-height: 0;
   padding: var(--segmented-padding);
 }
 
 .app-shell.mode-friends .friend-view-tabs .segmented-control__item {
+  box-sizing: border-box;
   width: 100%;
-  min-width: 0;
+  min-width: max-content;
 }
 
 @media (min-width: 1040px) {
@@ -2156,6 +2157,150 @@
   .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
     height: 60px;
     width: 60px;
+  }
+}
+
+.compatibility-column {
+  gap: 18px;
+}
+
+.compatibility-summary,
+.compatibility-glance,
+.compatibility-card,
+.compatibility-dynamics__group {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.compatibility-summary {
+  position: relative;
+  overflow: hidden;
+}
+
+.compatibility-summary__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-bg) 68%, transparent);
+}
+
+.compatibility-summary h3,
+.compatibility-card h3,
+.compatibility-dynamics__group h3,
+.compatibility-dynamic-row h4 {
+  margin: 0;
+  color: var(--card-title-color);
+  line-height: var(--leading-h1);
+}
+
+.compatibility-summary h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+}
+
+.compatibility-summary__meta,
+.compatibility-card__signs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compatibility-summary__meta span,
+.compatibility-card__signs span,
+.compatibility-card__receipt {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: 1.2;
+}
+
+.compatibility-glance__list,
+.compatibility-card-list,
+.compatibility-card__body,
+.compatibility-dynamics {
+  display: grid;
+  gap: 14px;
+}
+
+.compatibility-glance p,
+.compatibility-card p {
+  margin: 0;
+  color: var(--card-body-color);
+  line-height: var(--leading-description);
+}
+
+.compatibility-card__header {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.compatibility-card__header p,
+.compatibility-card__function,
+.compatibility-card__receipt {
+  color: var(--muted);
+}
+
+.compatibility-card__glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 23px;
+  line-height: 1;
+}
+
+.compatibility-card__body {
+  border-top: 1px solid var(--card-border);
+  padding-top: 14px;
+}
+
+.compatibility-card__receipt {
+  justify-self: start;
+  border-style: dashed;
+}
+
+.compatibility-dynamics__group {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.compatibility-dynamic-row h4 {
+  font-size: var(--text-body-size);
+}
+
+@media (max-width: 560px) {
+  .app-shell.mode-friends .friend-view-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compatibility-card__header {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .compatibility-card__glyph {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
   }
 }
 

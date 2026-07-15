@@ -121,29 +121,26 @@ export function browserTimeZone() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 }
 
-export function timeZoneForLocation(location: Pick<LocationInput, "label" | "latitude" | "longitude"> & { region?: string }) {
+export type TimeZoneResolutionSource = "stored" | "label" | "browser";
+
+export function timeZoneResolutionForLocation(location: Pick<LocationInput, "label" | "latitude" | "longitude" | "timeZone"> & { region?: string }) {
+  if (location.timeZone) {
+    return { timeZone: location.timeZone, source: "stored" as const };
+  }
+
   const text = `${location.label}, ${location.region ?? ""}`;
 
   for (const [region, timeZone] of Object.entries({ ...stateTimeZones, ...provinceTimeZones })) {
     if (new RegExp(`(^|,|\\s)${region.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(,|\\s|$)`, "i").test(text)) {
-      return timeZone;
+      return { timeZone, source: "label" as const };
     }
   }
 
-  const { latitude, longitude } = location;
+  return { timeZone: browserTimeZone(), source: "browser" as const };
+}
 
-  if (latitude > 49 && longitude > -11 && longitude < 3) return "Europe/London";
-  if (latitude > 41 && latitude < 52 && longitude > -6 && longitude < 10) return "Europe/Paris";
-  if (latitude > 35 && latitude < 72 && longitude > -25 && longitude < 45) return "Europe/London";
-  if (latitude > 18 && latitude < 72 && longitude > -170 && longitude < -50) {
-    if (longitude < -135) return "America/Anchorage";
-    if (longitude < -115) return "America/Los_Angeles";
-    if (longitude < -100) return "America/Denver";
-    if (longitude < -85) return "America/Chicago";
-    return "America/New_York";
-  }
-
-  return browserTimeZone();
+export function timeZoneForLocation(location: Pick<LocationInput, "label" | "latitude" | "longitude" | "timeZone"> & { region?: string }) {
+  return timeZoneResolutionForLocation(location).timeZone;
 }
 
 export function withTimeZone<T extends LocationInput>(location: T): T {

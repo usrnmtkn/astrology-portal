@@ -10,6 +10,7 @@ substitutions:
   _CONCURRENCY: "20"
   _CPU: "1"
   _MEMORY: 1Gi
+  _GOOGLE_TIMEZONE_SECRET: google-maps-timezone-api-key
 
 steps:
   - id: build-api-image
@@ -19,14 +20,14 @@ steps:
       - -f
       - services/tldrastro-api/Dockerfile
       - -t
-      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID
       - services/tldrastro-api
 
   - id: push-api-image
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID
 
   - id: deploy-cloud-run
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
@@ -35,7 +36,7 @@ steps:
       - run
       - deploy
       - ${_SERVICE}
-      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID
       - --region=${_REGION}
       - --platform=managed
       - --allow-unauthenticated
@@ -47,8 +48,9 @@ steps:
       - --min-instances=${_MIN_INSTANCES}
       - --max-instances=${_MAX_INSTANCES}
       - --set-env-vars=^::^TLDR_ASTRO_ALLOWED_ORIGINS=${_ALLOWED_ORIGINS}::TLDR_ASTRO_EPHEMERIS_PATH=${_EPHEMERIS_PATH}
+      - --set-secrets=GOOGLE_MAPS_TIMEZONE_API_KEY=${_GOOGLE_TIMEZONE_SECRET}:latest
       - --add-volume=mount-path=${_EPHEMERIS_PATH},type=cloud-storage,bucket=${_EPHEMERIS_BUCKET},readonly=true
       - --startup-probe=httpGet.path=/ready,httpGet.port=8000,initialDelaySeconds=0,failureThreshold=3,timeoutSeconds=10,periodSeconds=10
 
 images:
-  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID

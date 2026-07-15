@@ -2,7 +2,11 @@ import { MoreVertical } from "lucide-react";
 import type { ReactNode } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 
-export type FriendDetailTab = "natal" | "transits" | "synastry" | "composite";
+export type FriendDetailTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
+export type FriendDetailTabOption = {
+  value: FriendDetailTab;
+  label: string;
+};
 
 type FriendDetailProps = {
   activeTab: FriendDetailTab;
@@ -18,6 +22,7 @@ type FriendDetailProps = {
   onTabChange: (tab: FriendDetailTab) => void;
   rising: string;
   sun: string;
+  tabs?: FriendDetailTabOption[];
 };
 
 export function FriendDetail({
@@ -33,7 +38,14 @@ export function FriendDetail({
   onEdit,
   onTabChange,
   rising,
-  sun
+  sun,
+  tabs = [
+    { value: "compatibility", label: "Compatibility" },
+    { value: "transits", label: "Transits" },
+    { value: "natal", label: "Natal" },
+    { value: "synastry", label: "Synastry" },
+    { value: "composite", label: "Composite" }
+  ]
 }: FriendDetailProps) {
   return (
     <section className={className} aria-label={ariaLabel}>
@@ -58,12 +70,7 @@ export function FriendDetail({
         {!isEventChart ? (
           <SegmentedControl<FriendDetailTab>
             value={activeTab}
-            options={[
-              { value: "natal", label: "Natal" },
-              { value: "transits", label: "Transits" },
-              { value: "synastry", label: "Synastry" },
-              { value: "composite", label: "Composite" }
-            ]}
+            options={tabs}
             onChange={onTabChange}
             ariaLabel="Chart profile sections"
             className="app-tabs profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
